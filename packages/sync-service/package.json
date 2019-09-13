@@ -1,6 +1,6 @@
 {
   "name": "spandx-deployment-service",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "The deployment service for the spandx platform.",
   "main": "index.js",
   "bin": "index.js",
