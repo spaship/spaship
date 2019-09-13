@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "The deployment service for the spandx platform.",
   "main": "index.js",
+  "bin": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
