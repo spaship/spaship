@@ -23,12 +23,12 @@
     "nconf": "^0.10.0"
   },
   "devDependencies": {
-    "conventional-changelog-cli": "^2.0.23",
-    "eslint": "^6.3.0",
-    "eslint-config-prettier": "^6.3.0",
-    "eslint-plugin-prettier": "^3.1.0",
-    "prettier": "^1.18.2",
-    "pretty-quick": "^1.11.1"
+    "conventional-changelog-cli": "2.0.23",
+    "eslint": "6.3.0",
+    "eslint-config-prettier": "6.3.0",
+    "eslint-plugin-prettier": "3.1.0",
+    "prettier": "1.18.2",
+    "pretty-quick": "1.11.1"
   },
   "eslintConfig": {
     "extends": [
