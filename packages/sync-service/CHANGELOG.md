@@ -1,3 +1,12 @@
+## [0.0.4](https://github.com/redhataccess/spandx-deployment-service/compare/v0.0.3...v0.0.4) (2019-09-17)
+
+
+### Features
+
+* **config:** print configuration on launch ([c8ef711](https://github.com/redhataccess/spandx-deployment-service/commit/c8ef711))
+
+
+
 ## [0.0.3](https://github.com/redhataccess/spandx-deployment-service/compare/v0.0.2...v0.0.3) (2019-09-13)
 
 
