@@ -1,5 +1,8 @@
 const path = require("path");
 const nconf = require("nconf");
+const { mapValues, flow, keyBy, identity } = require("lodash/fp");
+
+const validOptions = ["config_file", "upload_dir", "webroot", "host", "port"];
 
 // Read CLI flags first, then environment variables (argv).
 nconf
@@ -12,6 +15,7 @@ nconf
     }
   })
   .env({
+    whitelist: validOptions,
     lowerCase: true,
     parseValues: true,
     transform: obj => {
@@ -19,26 +23,35 @@ nconf
       obj.key = obj.key.replace(/^spandx_/, "");
       return obj;
     }
-  })
-  .defaults({
-    config_file: path.resolve(__dirname, "config.json"),
-    port: 8008,
-    host: "localhost",
-    webroot: "/var/www",
-    upload_dir: "/tmp/spandx_uploads"
   });
 
 // Get the config file location before continuing.
-const CONFIG_FILE = nconf.get("config_file");
+const configFile = nconf.get("config_file");
 
 // Now load settings from the config file.
-nconf.file({
-  file: CONFIG_FILE,
-  transform: obj => {
-    // use underscore as delimeter
-    obj.key = obj.key.replace(/-/g, "_");
-    return obj;
-  }
+if (configFile) {
+  nconf.file({
+    file: configFile,
+    transform: obj => {
+      // use underscore as delimeter
+      obj.key = obj.key.replace(/-/g, "_");
+      return obj;
+    }
+  });
+}
+
+nconf.defaults({
+  port: 8008,
+  host: "localhost",
+  webroot: "/var/www",
+  upload_dir: "/tmp/spandx_uploads"
 });
 
 module.exports = nconf;
+module.exports.toString = () => {
+  const out = flow(
+    keyBy(identity),
+    mapValues(opt => nconf.get(opt))
+  )(validOptions);
+  return JSON.stringify(out, null, 2);
+};

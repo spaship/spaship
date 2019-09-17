@@ -49,4 +49,12 @@ app.post("/deploy", upload.single("upload"), (req, res, next) => {
 
 app.listen(config.get("port"));
 
+console.log(` ____  ____   __   __ _  ____  _  _
+/ ___)(  _ \\ / _\\ (  ( \\(    \\( \\/ )
+\\___ \\ ) __//    \\/    / ) D ( )  (
+(____/(__)  \\_/\\_/\\_)__)(____/(_/\\_)
+`);
+console.log(`Running with configuration:\n`);
+console.log(config.toString());
+console.log();
 console.log(`Listening on http://${config.get("host")}:${config.get("port")}`);
