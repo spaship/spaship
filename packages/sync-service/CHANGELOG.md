@@ -1,3 +1,12 @@
+## [0.0.5](https://github.com/redhataccess/spandx-deployment-service/compare/v0.0.4...v0.0.5) (2019-09-18)
+
+
+### Features
+
+* add /list and spa metadata ([eb6bed9](https://github.com/redhataccess/spandx-deployment-service/commit/eb6bed9))
+
+
+
 ## [0.0.4](https://github.com/redhataccess/spandx-deployment-service/compare/v0.0.3...v0.0.4) (2019-09-17)
 
 
