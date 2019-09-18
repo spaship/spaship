@@ -2,7 +2,25 @@ const path = require("path");
 const nconf = require("nconf");
 const { mapValues, flow, keyBy, identity } = require("lodash/fp");
 
-const validOptions = ["config_file", "upload_dir", "webroot", "host", "port"];
+// make a relative filepath absolute, relative to CWD
+function rel2abs(p) {
+  return path.resolve(process.cwd(), p);
+}
+
+const validOptions = [
+  "config_file",
+  "upload_dir",
+  "webroot",
+  "host",
+  "port",
+  "metadata_dir"
+];
+const filepathOptions = [
+  "config_file",
+  "upload_dir",
+  "webroot",
+  "metadata_dir"
+]; // config options that represent filepaths
 
 // Read CLI flags first, then environment variables (argv).
 nconf
@@ -11,6 +29,13 @@ nconf
     transform: obj => {
       // use underscore as delimeter
       obj.key = obj.key.replace(/-/g, "_");
+
+      // for argv, allow relative paths for filepath configs, but convert them
+      // to absolute.  interpret them relative to CWD.
+      if (filepathOptions.includes(obj.key)) {
+        obj.value = rel2abs(obj.value);
+      }
+
       return obj;
     }
   })

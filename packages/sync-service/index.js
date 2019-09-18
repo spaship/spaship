@@ -6,6 +6,7 @@ const path = require("path");
 
 const config = require("./config");
 const deploy = require("./api/deploy");
+const list = require("./api/list");
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/deploy", ...deploy());
+app.get("/list", list());
 
 app.listen(config.get("port"));
 

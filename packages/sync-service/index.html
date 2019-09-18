@@ -13,6 +13,8 @@
         <p>Supports uploading of <code>.tar</code>,<code>.tar.bz2</code>,<code>.tar.gz</code>, and<code>.zip</code>.</p>
         <form action="/deploy" method="post" enctype="multipart/form-data" accept-charset="utf-8">
             <input type="text" placeholder="Name" value="" name="name">
+            <input type="text" placeholder="Path" value="" name="path">
+            <input type="text" placeholder="Git ref (tag or branch or commit hash)" value="" name="ref">
             <input type="file" name="upload">
             <input type="submit" value="Deploy" />
         </form>
