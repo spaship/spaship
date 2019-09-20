@@ -1,3 +1,7 @@
+## [0.0.8](https://github.com/redhataccess/spandx-sync-service/compare/v0.0.7...v0.0.8) (2019-09-20)
+
+
+
 ## [0.0.7](https://github.com/redhataccess/spandx-sync-service/compare/v0.0.6...v0.0.7) (2019-09-20)
 
 
