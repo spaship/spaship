@@ -11,12 +11,22 @@ async function write({ appName, appPath, type, value } = {}) {
   const appMetaDir = path.resolve(config.get("webroot"), `.${appPath}`);
   const filePath = path.resolve(appMetaDir, type);
 
+  // create the webroot (if it doesn't exist
   try {
     await mkdirAsync(config.get("webroot"));
+  } catch (e) {
+    if (e.code !== "EEXIST") {
+      console.error(e);
+      return;
+    }
+  }
+
+  try {
     await mkdirAsync(appMetaDir);
   } catch (e) {
     if (e.code !== "EEXIST") {
       console.error(e);
+      return;
     }
   }
 
