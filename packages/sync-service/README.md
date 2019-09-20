@@ -2,12 +2,21 @@
 
 REST API for deploying SPAs to the SPANDX platform.
 
-## Setup
+## Global install
 
 ```
-npm install
-npm start
+npm install -g spandx-sync-service
+spandx-sync-service
 ```
+
+## Hacking
+
+```
+git@github.com:redhataccess/spandx-sync-service.git
+npm install
+```
+
+From here, you can `npm start` to launch the service, or `npm run dev` to launch the service with auto-restart when source files are changed.
 
 ## Configuration
 
