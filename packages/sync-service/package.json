@@ -2,6 +2,15 @@
   "name": "spandx-sync-service",
   "version": "0.0.7",
   "description": "The file synchronization service for the spandx platform.",
+  "homepage": "https://github.com/redhataccess/spandx-sync-service",
+  "bugs": {
+    "url": "https://github.com/redhataccess/spandx-sync-service",
+    "email": "mclayton@redhat.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github:redhataccess/spandx-sync-service"
+  },
   "main": "index.js",
   "bin": "index.js",
   "scripts": {
