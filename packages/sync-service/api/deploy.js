@@ -1,7 +1,6 @@
-const fs = require("fs");
+const path = require("path");
 const decompress = require("decompress");
 const multer = require("multer");
-const path = require("path");
 const config = require("../config");
 const { write: writeMetadata } = require("../util/metadata");
 
@@ -41,12 +40,6 @@ function createDeployMiddleware() {
       appPath: destDirName,
       type: "name",
       value: name
-    });
-    writeMetadata({
-      appName: name,
-      appPath: destDirName,
-      type: "path",
-      value: urlpath
     });
 
     // extract the archive

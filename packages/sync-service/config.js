@@ -7,20 +7,8 @@ function rel2abs(p) {
   return path.resolve(process.cwd(), p);
 }
 
-const validOptions = [
-  "config_file",
-  "upload_dir",
-  "webroot",
-  "host",
-  "port",
-  "metadata_dir"
-];
-const filepathOptions = [
-  "config_file",
-  "upload_dir",
-  "webroot",
-  "metadata_dir"
-]; // config options that represent filepaths
+const validOptions = ["config_file", "upload_dir", "webroot", "host", "port"];
+const filepathOptions = ["config_file", "upload_dir", "webroot"]; // config options that represent filepaths
 
 // Read CLI flags first, then environment variables (argv).
 nconf

@@ -4,47 +4,63 @@ const config = require("../config");
 const { promisify } = require("util");
 const readFileAsync = promisify(fs.readFile);
 const readdirAsync = promisify(fs.readdir);
-const { zipObject } = require("lodash/fp");
+const mkdirAsync = promisify(fs.mkdir);
+const writeFileAsync = promisify(fs.writeFile);
 
-function write({ appName, appPath, type, value } = {}) {
-  const appMetaDir = path.resolve(
-    config.any("metadata_dir", "webroot"),
-    `.${appPath}`
-  );
+async function write({ appName, appPath, type, value } = {}) {
+  const appMetaDir = path.resolve(config.get("webroot"), `.${appPath}`);
   const filePath = path.resolve(appMetaDir, type);
-  fs.mkdir(appMetaDir, err => {
-    if (err && err.code !== "EEXIST") {
-      console.error(err);
+
+  try {
+    await mkdirAsync(config.get("webroot"));
+    await mkdirAsync(appMetaDir);
+  } catch (e) {
+    if (e.code !== "EEXIST") {
+      console.error(e);
     }
-    fs.writeFile(filePath, value, err => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(
-          `[deploy] wrote ${appName}'s "${type}" metadata to ${filePath}`
-        );
-      }
-    });
-  });
+  }
+
+  try {
+    await writeFileAsync(filePath, value);
+    console.log(
+      `[deploy] wrote ${appName}'s "${type}" metadata to ${filePath}`
+    );
+  } catch (e) {
+    console.error(e);
+  }
 }
 
-async function readAll() {
-  const dirs = await readdirAsync(config.get("metadata_dir"));
-  const metaDirs = dirs.filter(n => n.startsWith("."));
-  const allMeta = await Promise.all(metaDirs.map(readDir));
-  return allMeta;
+// Get all the SPA directories in the webroot (not including hidden dirs), then
+// look up metadata for each and return it.
+async function getAll() {
+  try {
+    const dirs = await readdirAsync(config.get("webroot"));
+    const spaDirs = dirs.filter(n => !n.startsWith("."));
+    return await Promise.all(spaDirs.map(get));
+  } catch (e) {
+    return [];
+  }
 }
 
-async function readDir(dir) {
-  const metaFiles = ["ref", "name", "path"];
-  const reads = metaFiles
-    .map(n => path.resolve(config.get("metadata_dir"), dir, n))
-    .map(n => readFileAsync(n));
-  const result = await Promise.all(reads);
-
-  const meta = zipObject(metaFiles, result.map(n => n.toString()));
-
-  return meta;
+// Read a metadata file and return the file's contents, or null if the file
+// can't be read for any reason.
+async function readMetaFile(spaDir, filename) {
+  try {
+    const value = await readFileAsync(
+      path.resolve(config.get("webroot"), `.${spaDir}`, filename)
+    );
+    return value.toString().trim();
+  } catch (e) {
+    return null;
+  }
 }
 
-module.exports = { write, readAll, readDir };
+async function get(spaDir) {
+  return {
+    path: `/${spaDir}`,
+    ref: await readMetaFile(spaDir, "ref"),
+    name: await readMetaFile(spaDir, "name")
+  };
+}
+
+module.exports = { write, getAll, get };

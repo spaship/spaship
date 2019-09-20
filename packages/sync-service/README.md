@@ -1,4 +1,4 @@
-# spandx deployment service
+# spandx sync service
 
 REST API for deploying SPAs to the SPANDX platform.
 
@@ -18,7 +18,6 @@ Configuration can be provided by CLI flags, environment variables, or a configur
 | **config file** | Where to find the config file. | `--config-file` | `SPANDX_CONFIG_FILE` | N/A | `stuff` |
 | **upload dir** | Directory to upload SPA archives. | `--upload-dir` | `SPANDX_UPLOAD_DIR` | `"upload-dir"`  | `/tmp/spandx_uploads` |
 | **webroot** | Directory to extract/deploy SPAs. | `--webroot` | `SPANDX_WEBROOT` | `"webroot"`  | `/var/www` |
-| **metadata-dir** | Directory to save SPA metadata. | `--metadata-dir` | `SPANDX_METADATA_DIR` | `"metadata-dir"`  | The `webroot` value. |
 | **host** | Hostname to run on. | `--host` | `SPANDX_HOST` | `"host"`  | `localhost` |
 | **port** | Port to run on. | `--port` | `SPANDX_PORT` | `"port"`  | `8008` |
 
@@ -26,25 +25,26 @@ Configuration can be provided by CLI flags, environment variables, or a configur
 
 ### SPA metadata
 
-SPA metadata is saved into a directory defined by `metadata-dir`.  Each deployed SPA gets a hidden directory inside `metadata-dir` which houses several files that contain the metadata.
+Each deployed SPA gets a hidden directory inside `webroot` which houses two files that contain some SPA metadata, `ref` and `name`.
 
-For example, a SPA deployed under the path `/my-app` at version `v1.0.0` would result in a 
+For example, a SPA deployed with name "My App", path `/my-app`, and ref `v1.0.0` would result in a webroot that looks like this:
 
-SPA metadata includes:
+```
+www
+├── .my-app
+│   ├── name
+│   └── ref
+└── my-app
+    └── index.html
+```
 
- - `name`
- - `path`
- - `ref`
+## API
 
-## Test with web UI
+### /deploy
 
-When you run the deployment service, it will print something like:
+Deploy a SPA to SPAndx.  A very simple Web UI is provided, or the deployment can be automated with an HTTP request.
 
-`Listening on http://localhost:8008`
-
-Open that URL in a browser and you'll see a form for uploading apps.
-
-## Test with cURL
+#### With cURL
 
 ```
 NAME="My Awesome Application"
@@ -54,3 +54,39 @@ curl -v -F upload=@test.zip -F name="$NAME" -F path="$SPA_PATH" -F ref="$REF" lo
 ```
 
 Change `localhost:8008` to the host and port the service is running on.  Change `APP_NAME` to your preferred app name, and `test.zip` to the archive you want to upload.
+
+#### With the web UI
+
+When you run the deployment service, it will print something like:
+
+`Listening on http://localhost:8008`
+
+Open that URL in a browser and you'll see a form for uploading apps.
+
+### /list
+
+Returns a list of all deployed SPAs.  If they have a metadata directory, that metadata will be included.
+
+Here's an example response from `/list`.  Two apps are listed in the example, "SPAnom" has metadata and "SPAnonymous" does not.
+
+```json
+[
+    {
+        "name": "SPAnominal",
+        "path": "/spanominal",
+        "ref": "v1.0.0"
+    },
+    {
+        "name": null,
+        "path": "/spanonymous",
+        "ref": null
+    }
+]
+```
+
+A few notes about the response.
+
+ - `path` is not stored in the metadata directory; it's inferred from the SPA's directory in the webroot.
+ - The "SPAnonymous" app has `null` values for name and ref because it was not deployed with `/deploy`, but it's included so that `/list` provides a complete report of what paths are being made available.
+
+
