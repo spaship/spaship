@@ -1,6 +1,6 @@
 {
   "name": "spandx-sync-service",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "The file synchronization service for the spandx platform.",
   "homepage": "https://github.com/redhataccess/spandx-sync-service",
   "bugs": {
