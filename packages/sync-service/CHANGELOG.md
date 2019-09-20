@@ -1,3 +1,12 @@
+## [0.0.7](https://github.com/redhataccess/spandx-sync-service/compare/v0.0.6...v0.0.7) (2019-09-20)
+
+
+### Features
+
+* include SPAs in /list that have no metadata ([241925f](https://github.com/redhataccess/spandx-sync-service/commit/241925f))
+
+
+
 ## [0.0.6](https://github.com/redhataccess/spandx-deployment-service/compare/v0.0.5...v0.0.6) (2019-09-18)
 
 
