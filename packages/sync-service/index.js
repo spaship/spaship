@@ -7,8 +7,11 @@ const path = require("path");
 const config = require("./config");
 const deploy = require("./api/deploy");
 const list = require("./api/list");
+const forceSyncAll = require("./api/forceSyncAll");
+const Autosync = require("./background/autosync");
 
 const app = express();
+const autosync = new Autosync();
 
 app.get("/", (req, res) => {
   fs.readFile(path.resolve(__dirname, "index.html"), (err, data) => {
@@ -18,8 +21,10 @@ app.get("/", (req, res) => {
 
 app.post("/deploy", ...deploy());
 app.get("/list", list());
+app.post("/autosync/forceSyncAll", forceSyncAll());
 
 app.listen(config.get("port"));
+autosync.start();
 
 console.log(` ____  ____   __   __ _  ____  _  _
 / ___)(  _ \\ / _\\ (  ( \\(    \\( \\/ )

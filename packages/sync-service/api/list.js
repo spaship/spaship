@@ -1,7 +1,6 @@
 const metadata = require("../util/metadata");
 
-// return an array of expressjs callbacks, the first using multer to support
-// uploading multipart forms (ie, files), and the second to handle extraction
+// Return a function for getting list of deployed spas and info about them
 module.exports = function createListMiddleware() {
   return (req, res, next) => {
     metadata.getAll().then(meta => {
