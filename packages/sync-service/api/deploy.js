@@ -28,23 +28,23 @@ function createDeployMiddleware() {
     const destDirName = urlpath.replace(/^\//, "");
     const destDir = path.resolve(config.get("webroot"), destDirName);
 
-    // write spa metadata to filesystem
-    writeMetadata({
-      appName: name,
-      appPath: destDirName,
-      type: "ref",
-      value: ref
-    });
-    writeMetadata({
-      appName: name,
-      appPath: destDirName,
-      type: "name",
-      value: name
-    });
-
     // extract the archive
     decompress(filepath, destDir)
       .then(result => {
+        // write spa metadata to filesystem
+        writeMetadata({
+          appName: name,
+          appPath: destDir,
+          type: "ref",
+          value: ref
+        });
+        writeMetadata({
+          appName: name,
+          appPath: destDir,
+          type: "name",
+          value: name
+        });
+
         console.log(
           `[deploy] extracted "${name}" to ${destDir}, deploy complete.`
         );

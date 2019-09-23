@@ -7,19 +7,16 @@ const readdirAsync = promisify(fs.readdir);
 const mkdirAsync = promisify(fs.mkdir);
 const writeFileAsync = promisify(fs.writeFile);
 
-async function write({ appName, appPath, type, value } = {}) {
-  const appMetaDir = path.resolve(config.get("webroot"), `.${appPath}`);
-  const filePath = path.resolve(appMetaDir, type);
+/**
+ * Get the path to the metadata directory of a given spa.
+ */
+function getMetaDir(spaDir) {
+  return path.resolve(config.get("webroot"), spaDir, `.meta`);
+}
 
-  // create the webroot (if it doesn't exist
-  try {
-    await mkdirAsync(config.get("webroot"));
-  } catch (e) {
-    if (e.code !== "EEXIST") {
-      console.error(e);
-      return;
-    }
-  }
+async function write({ appPath, type, value } = {}) {
+  const appMetaDir = getMetaDir(appPath);
+  const filePath = path.resolve(appMetaDir, type);
 
   try {
     await mkdirAsync(appMetaDir);
@@ -44,8 +41,7 @@ async function write({ appName, appPath, type, value } = {}) {
 // look up metadata for each and return it.
 async function getAll() {
   try {
-    const dirs = await readdirAsync(config.get("webroot"));
-    const spaDirs = dirs.filter(n => !n.startsWith("."));
+    const spaDirs = await readdirAsync(config.get("webroot"));
     return await Promise.all(spaDirs.map(get));
   } catch (e) {
     return [];
@@ -57,10 +53,12 @@ async function getAll() {
 async function readMetaFile(spaDir, filename) {
   try {
     const value = await readFileAsync(
-      path.resolve(config.get("webroot"), `.${spaDir}`, filename)
+      path.resolve(getMetaDir(spaDir), filename)
     );
+    console.log(value);
     return value.toString().trim();
   } catch (e) {
+    console.log(e);
     return null;
   }
 }
