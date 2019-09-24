@@ -1,3 +1,14 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [0.0.11](https://github.com/redhataccess/spandx-sync-service/compare/v0.0.10...v0.0.11) (2019-09-24)
+
+
+### Features
+
+* support cross-origin HTTP requests ([#15](https://github.com/redhataccess/spandx-sync-service/issues/15)) ([f2e9264](https://github.com/redhataccess/spandx-sync-service/commit/f2e9264))
+
 ## [0.0.10](https://github.com/redhataccess/spandx-sync-service/compare/v0.0.9...v0.0.10) (2019-09-24)
 
 
@@ -66,6 +77,3 @@ Accidental publish.
 ### Features
 
 * support global CLI installs ([e1efcf3](https://github.com/redhataccess/spandx-deployment-service/commit/e1efcf3))
-
-
-
