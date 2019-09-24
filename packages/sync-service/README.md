@@ -18,6 +18,16 @@ npm install
 
 From here, you can `npm start` to launch the service, or `npm run dev` to launch the service with auto-restart when source files are changed.
 
+### Pull requests and commit messages
+
+This repo follows Conventional Commits, a standard format for writing commit messages.  Each commit message becomes an entry in [CHANGELOG.md](./CHANGELOG.md), and the commit messages are also used to determine what version bump to apply.
+
+Read more about [Conventional Commits](https://www.conventionalcommits.org) for a description and examples!
+
+If you are working on a pull request, don't worry about commit message format.  Commit early and often.
+
+When your pull request is merged, "squash and merge" should be used, and a Conventional Commit message written at that point.  In this way, your pull request will become a single commit in the master branch and one entry in the CHANGELOG will be created.
+
 ## Configuration
 
 Configuration can be provided by CLI flags, environment variables, or a configuration file.  Arguments are processed in that order, so CLI flags take precedence over environment variables, which take precedence over the configuration file.

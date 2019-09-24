@@ -17,7 +17,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
+    "release": "standard-version"
   },
   "keywords": [],
   "author": "",
@@ -35,12 +35,12 @@
     "url-join": "^4.0.1"
   },
   "devDependencies": {
-    "conventional-changelog-cli": "2.0.23",
     "eslint": "6.4.0",
     "eslint-config-prettier": "6.3.0",
     "eslint-plugin-prettier": "3.1.1",
     "prettier": "1.18.2",
-    "pretty-quick": "1.11.1"
+    "pretty-quick": "1.11.1",
+    "standard-version": "^7.0.0"
   },
   "eslintConfig": {
     "extends": [
