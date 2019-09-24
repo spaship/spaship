@@ -1,7 +1,6 @@
 const config = require("../config");
 const ms = require("ms");
 const axios = require("axios");
-const shell = require("shelljs");
 const fsp = require("fs").promises;
 const path = require("path");
 const urljoin = require("url-join");

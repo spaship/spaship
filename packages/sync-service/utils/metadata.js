@@ -1,6 +1,6 @@
 const path = require("path");
 const fs = require("fs");
-const config = require("../config");
+const config = require.main.require("./config");
 const { promisify } = require("util");
 const readFileAsync = promisify(fs.readFile);
 const readdirAsync = promisify(fs.readdir);
