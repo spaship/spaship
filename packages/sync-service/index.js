@@ -13,8 +13,6 @@ routes.register(app);
 
 app.listen(config.get("port"));
 
-autosync.start();
-
 console.log(` ____  ____   __   __ _  ____  _  _
 / ___)(  _ \\ / _\\ (  ( \\(    \\( \\/ )
 \\___ \\ ) __//    \\/    / ) D ( )  (
@@ -24,3 +22,5 @@ console.log(`Running with configuration:\n`);
 console.log(config.toString());
 console.log();
 console.log(`Listening on http://${config.get("host")}:${config.get("port")}`);
+
+autosync.start();
