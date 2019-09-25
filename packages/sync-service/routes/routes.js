@@ -1,9 +1,11 @@
-const deploy = require("./deploy/deploy");
-const list = require("./list/list");
 const fs = require("fs");
 const path = require("path");
-const forceSyncAll = require("./forceSyncAll/forceSyncAll");
 const corsMiddleware = require("cors");
+
+// include our middlewares
+const forceSyncAll = require("./forceSyncAll/forceSyncAllMiddleware");
+const deploy = require("./deploy/deployMiddleware");
+const list = require("./list/listMiddleware");
 
 const cors = corsMiddleware({
   origin: true,

@@ -1,4 +1,4 @@
-const metadata = require("../../utils/metadata");
+const metadata = require("../../lib/metadata");
 
 // Return a function for getting list of deployed spas and info about them
 module.exports = function createListMiddleware() {

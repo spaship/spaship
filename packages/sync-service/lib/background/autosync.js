@@ -1,4 +1,4 @@
-const config = require("../config");
+const config = require("../../config");
 const ms = require("ms");
 const axios = require("axios");
 const fsp = require("fs").promises;
@@ -81,7 +81,7 @@ class Autosync {
         let exists = await this.isDirectory(path);
         if (!exists) {
           console.log("[Autosync] Making dir:", path);
-          await fsp.mkdir(path, {recursive: true});
+          await fsp.mkdir(path, { recursive: true });
         }
 
         // Now write destination file

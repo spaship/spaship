@@ -1,4 +1,4 @@
-const Autosync = require("../../background/autosync");
+const Autosync = require("../../lib/background/autosync");
 
 // Return a function for getting list of deployed spas and info about them
 module.exports = function createAutosyncMiddleware() {

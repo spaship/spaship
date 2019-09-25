@@ -10,7 +10,7 @@ function getMetaDir(spaDir) {
   return path.resolve(config.get("webroot"), spaDir, `.meta`);
 }
 
-async function write({ appPath, type, value } = {}) {
+async function write({ appName, appPath, type, value } = {}) {
   const appMetaDir = getMetaDir(appPath);
   const filePath = path.resolve(appMetaDir, type);
 

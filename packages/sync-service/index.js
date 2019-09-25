@@ -4,8 +4,8 @@ const express = require("express");
 
 const config = require("./config");
 const routes = require("./routes/routes");
-const Autosync = require("./background/autosync");
-const package = require("./package.json");
+const Autosync = require("./lib/background/autosync");
+const npmPackage = require("./package.json");
 
 const app = express();
 const autosync = new Autosync();
@@ -22,7 +22,7 @@ console.log(`
 ███████║██║     ██║  ██║███████║██║  ██║██║██║      ██╔╝
 ╚══════╝╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝      ╚═╝ `);
 console.log(
-  `Starting SPAship version ${package.version} with configuration:\n`
+  `Starting SPAship version ${npmPackage.version} with configuration:\n`
 );
 console.log(config.toString());
 console.log();
