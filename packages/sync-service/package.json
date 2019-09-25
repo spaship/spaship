@@ -21,6 +21,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "release": "standard-version"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [],
   "author": "",
   "license": "MIT",
