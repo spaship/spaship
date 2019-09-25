@@ -1,8 +1,8 @@
 const path = require("path");
 const decompress = require("decompress");
 const multer = require("multer");
-const config = require.main.require("./config");
-const { write: writeMetadata } = require.main.require("./utils/metadata");
+const config = require("../../config");
+const { write: writeMetadata } = require("../../utils/metadata");
 
 // return an array of expressjs callbacks, the first using multer to support
 // uploading multipart forms (ie, files), and the second to handle extraction

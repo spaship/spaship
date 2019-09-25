@@ -1,6 +1,6 @@
 const path = require("path");
 const fsp = require("fs").promises;
-const config = require.main.require("./config");
+const config = require("../config");
 const { flow, map, filter } = require("lodash/fp");
 
 /**
