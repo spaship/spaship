@@ -1,18 +1,20 @@
 {
-  "name": "spandx-sync-service",
+  "name": "@spaship/sync-service",
   "version": "0.0.11",
-  "description": "The file synchronization service for the spandx platform.",
-  "homepage": "https://github.com/redhataccess/spandx-sync-service",
+  "description": "The file synchronization service for the SPAship platform.",
+  "homepage": "https://github.com/spaship/sync-service",
   "bugs": {
-    "url": "https://github.com/redhataccess/spandx-sync-service",
+    "url": "https://github.com/spaship/sync-service",
     "email": "mclayton@redhat.com"
   },
   "repository": {
     "type": "git",
-    "url": "github:redhataccess/spandx-sync-service"
+    "url": "github:spaship/sync-service"
   },
   "main": "index.js",
-  "bin": "index.js",
+  "bin": {
+    "spaship-sync-service": "./index.js"
+  },
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",

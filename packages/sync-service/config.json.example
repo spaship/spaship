@@ -1,5 +1,5 @@
 {
-  "webroot": "/var/www/spandx",
+  "webroot": "/var/www/spaship",
   "autosync": {
     "targets": [
       {
@@ -14,7 +14,7 @@
           ]
         },
         "dest": {
-          "path": "/var/www/spandx/chrome/head",
+          "path": "/var/www/spaship/chrome/head",
           "filename": "head.html"
         }
       },
@@ -30,7 +30,7 @@
           ]
         },
         "dest": {
-          "path": "/var/www/spandx/chrome/header",
+          "path": "/var/www/spaship/chrome/header",
           "filename": "header.html"
         }
       },
@@ -46,7 +46,7 @@
           ]
         },
         "dest": {
-          "path": "/var/www/spandx/chrome/footer",
+          "path": "/var/www/spaship/chrome/footer",
           "filename": "footer.html"
         }
       }

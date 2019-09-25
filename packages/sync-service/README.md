@@ -1,18 +1,18 @@
-# spandx sync service
+# SPAship sync service
 
-REST API for deploying SPAs to the SPANDX platform.
+REST API for deploying SPAs to the SPAship platform.
 
 ## Global install
 
 ```
-npm install -g spandx-sync-service
-spandx-sync-service
+npm install -g @spaship/sync-service
+spaship-sync-service
 ```
 
 ## Hacking
 
 ```
-git@github.com:redhataccess/spandx-sync-service.git
+git@github.com:spaship/sync-service.git
 npm install
 ```
 
@@ -34,11 +34,11 @@ Configuration can be provided by CLI flags, environment variables, or a configur
 
 | Option | Description | CLI | Env | config.json | Default |
 | --- | --- | --- |--- | ---  | --- |
-| **config file** | Where to find the config file. | `--config-file` | `SPANDX_CONFIG_FILE` | N/A | `stuff` |
-| **upload dir** | Directory to upload SPA archives. | `--upload-dir` | `SPANDX_UPLOAD_DIR` | `"upload-dir"`  | `/tmp/spandx_uploads` |
-| **webroot** | Directory to extract/deploy SPAs. | `--webroot` | `SPANDX_WEBROOT` | `"webroot"`  | `/var/www` |
-| **host** | Hostname to run on. | `--host` | `SPANDX_HOST` | `"host"`  | `localhost` |
-| **port** | Port to run on. | `--port` | `SPANDX_PORT` | `"port"`  | `8008` |
+| **config file** | Where to find the config file. | `--config-file` | `SPASHIP_CONFIG_FILE` | N/A | `stuff` |
+| **upload dir** | Directory to upload SPA archives. | `--upload-dir` | `SPASHIP_UPLOAD_DIR` | `"upload-dir"`  | `/tmp/spaship_uploads` |
+| **webroot** | Directory to extract/deploy SPAs. | `--webroot` | `SPASHIP_WEBROOT` | `"webroot"`  | `/var/www` |
+| **host** | Hostname to run on. | `--host` | `SPASHIP_HOST` | `"host"`  | `localhost` |
+| **port** | Port to run on. | `--port` | `SPASHIP_PORT` | `"port"`  | `8008` |
 
 **Note** about the filepath configurations, `config file`, `upload dir`, and `webroot`: they must be absolute paths when defined in an environment variable or config file.  When defined in CLI options like, they can be written relative to CWD.  Example: `--config-file=./config.json`
 
@@ -61,7 +61,7 @@ www
 
 ### /deploy
 
-Deploy a SPA to SPAndx.  A very simple Web UI is provided, or the deployment can be automated with an HTTP request.
+Deploy a SPA to SPAship.  A very simple Web UI is provided, or the deployment can be automated with an HTTP request.
 
 #### With cURL
 

@@ -32,8 +32,8 @@ nconf
     lowerCase: true,
     parseValues: true,
     transform: obj => {
-      // remove the "SPANDX_" prefix from environment variables
-      obj.key = obj.key.replace(/^spandx_/, "");
+      // remove the "SPASHIP_" prefix from environment variables
+      obj.key = obj.key.replace(/^spaship_/, "");
       return obj;
     }
   });
@@ -57,7 +57,7 @@ nconf.defaults({
   port: 8008,
   host: "localhost",
   webroot: "/var/www",
-  upload_dir: "/tmp/spandx_uploads"
+  upload_dir: "/tmp/spaship_uploads"
 });
 
 module.exports = nconf;
