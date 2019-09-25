@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.13](https://github.com/spaship/sync-service/compare/v0.0.12...v0.0.13) (2019-09-25)
+
+
+### Bug Fixes
+
+* **deps:** correct two misplaced dependencies ([918c7db](https://github.com/spaship/sync-service/commit/918c7db))
+
+
+### Features
+
+* **autosync:** provide startup options for autosync ([cc98051](https://github.com/spaship/sync-service/commit/cc98051))
+* print autosync configuration at startup ([4edecac](https://github.com/spaship/sync-service/commit/4edecac))
+
 ### [0.0.12](https://github.com/spaship/sync-service/compare/v0.0.11...v0.0.12) (2019-09-25)
 
 Note, the project is renamed in this release, from "spandx-sync-service" to "@spaship/sync-service".  The rename covers the github repo, NPM package, and all internal logging and code.
