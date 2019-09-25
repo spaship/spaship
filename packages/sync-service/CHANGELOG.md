@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.12](https://github.com/spaship/sync-service/compare/v0.0.11...v0.0.12) (2019-09-25)
+
+Note, the project is renamed in this release, from "spandx-sync-service" to "@spaship/sync-service".  The rename covers the github repo, NPM package, and all internal logging and code.
+
+### Features
+
+* display version number when starting the service ([91a21b5](https://github.com/spaship/sync-service/commit/d6e8faebbde4fa9b0ca33318ebb03acd782611da))
+
+
+### Bug Fixes
+
+* **list:** only list directories in the webroot ([#17](https://github.com/spaship/sync-service/issues/17)) ([07edf29](https://github.com/spaship/sync-service/commit/07edf29))
+
 ### [0.0.11](https://github.com/spaship/sync-service/compare/v0.0.10...v0.0.11) (2019-09-24)
 
 
