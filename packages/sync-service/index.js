@@ -28,4 +28,9 @@ console.log(config.toString());
 console.log();
 console.log(`Listening on http://${config.get("host")}:${config.get("port")}`);
 
-autosync.start();
+if (config.get("autosync:enabled")) {
+  autosync.start();
+  if (config.get("autosync:onstartup")) {
+    autosync.forceSyncAll();
+  }
+}
