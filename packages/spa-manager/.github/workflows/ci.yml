@@ -16,9 +16,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: npm install, build, and test
         run: |
-          npm install
-          npm run build --if-present
-          npm test
+          yarn install
+          yarn run build --if-present
+          yarn test
         env:
           CI: true
   deploy:
@@ -29,7 +29,9 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-      - run: npm run build
+      - run: |
+          yarn install
+          yarn run build --if-present
       - name: Deploy
         if: success()
         uses: crazy-max/ghaction-github-pages@master
