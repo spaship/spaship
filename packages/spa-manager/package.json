@@ -1,0 +1,52 @@
+{
+  "name": "spa-manager",
+  "version": "0.0.1",
+  "description": "The SPAship UI",
+  "main": "index.js",
+  "homepage": ".",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:spaship/spa-manager.git"
+  },
+  "author": "Kun Yan <kyan@redhat.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test"
+  },
+  "devDependencies": {
+    "@patternfly/react-core": "^3.104.0",
+    "@patternfly/react-table": "^2.20.15",
+    "@types/jest": "24.0.18",
+    "@types/lodash": "^4.14.139",
+    "@types/node": "^12.7.8",
+    "@types/react": "^16.9.3",
+    "@types/react-dom": "^16.9.1",
+    "@types/react-router-dom": "^5.1.0",
+    "husky": "^3.0.5",
+    "lint-staged": "^9.3.0",
+    "prettier": "^1.18.2",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-router-dom": "^5.1.0",
+    "react-scripts": "^3.1.2",
+    "typescript": "^3.6.3"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
