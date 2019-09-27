@@ -5,6 +5,7 @@ import { IRow, Table, TableHeader, TableBody } from '@patternfly/react-table';
 import { Link } from 'react-router-dom';
 import Page from '../../layout/Page';
 import config from '../../config';
+import UpdateApplication from './UpdateApplication';
 
 interface IApp {
   name?: string;
@@ -44,7 +45,9 @@ export default () => {
               item.ref && {
                 title: <a href={`#${item.ref}`}>{item.ref.substring(0, 6)}</a>
               },
-              ''
+              {
+                title: <UpdateApplication application={item}/>
+              }
             ]
           }))
         );
@@ -62,7 +65,7 @@ export default () => {
       title="Application List"
       subTitle={
         <Link to={`/applications/new`}>
-          <Button variant="primary">Upload to Deploy</Button>
+          <Button variant="primary">New Application</Button>
         </Link>
       }
     >

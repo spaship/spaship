@@ -12,17 +12,12 @@ import {
 } from '@patternfly/react-core';
 import { Spinner } from '@patternfly/react-core/dist/js/experimental';
 import { withRouter } from 'react-router';
+import { IApplication } from '../../models/Application';
 import Page from '../../layout/Page';
 import config from '../../config';
 
-interface IForm {
-  name: string;
-  path: string;
-  ref: string;
-  upload: File | string;
-}
 export default withRouter(({ history }) => {
-  const [form, setForm] = useState<IForm>({
+  const [form, setForm] = useState<IApplication>({
     name: '',
     path: '',
     ref: '',
@@ -153,6 +148,11 @@ export default withRouter(({ history }) => {
                 placeholder="Supports uploading of .tar,.tar.bz2,.tar.gz, and.zip."
                 aria-describedby="upload-helper"
               />
+              <div><Button
+                component="label"
+                variant="tertiary"
+                htmlFor={`upload`}
+              >Choose File</Button></div>
             </FormGroup>
 
             <ActionGroup>
