@@ -2,8 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import map from 'lodash/map';
 import { Button } from '@patternfly/react-core';
 import { IRow, Table, TableHeader, TableBody } from '@patternfly/react-table';
-import Page from '../../layout/Page';
 import { Link } from 'react-router-dom';
+import Page from '../../layout/Page';
+import config from '../../config';
 
 interface IApp {
   name?: string;
@@ -22,7 +23,7 @@ export default () => {
 
   const fetchList = useCallback(() => {
     console.log('start to fetch');
-    fetch('http://spandx.gsslab.rdu2.redhat.com:8008/list')
+    fetch(`${config.apiHost}/list`)
       .then(res => res.json())
       .then(appList => {
         setRows(
@@ -32,7 +33,7 @@ export default () => {
               item.path && {
                 title: (
                   <a
-                    href={`https://spandx.usersys.redhat.com${item.path}`}
+                    href={config.siteHost + item.path}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

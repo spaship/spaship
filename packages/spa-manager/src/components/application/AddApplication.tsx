@@ -4,11 +4,16 @@ import {
   Button,
   Form,
   FormGroup,
-  TextInput
+  InputGroup,
+  InputGroupText,
+  TextInput,
+  Card,
+  CardBody
 } from '@patternfly/react-core';
-import Page from '../../layout/Page';
+import { Spinner } from '@patternfly/react-core/dist/js/experimental';
 import { withRouter } from 'react-router';
-import Spinner from '../general/Spinner';
+import Page from '../../layout/Page';
+import config from '../../config';
 
 interface IForm {
   name: string;
@@ -53,7 +58,7 @@ export default withRouter(({ history }) => {
     data.append('ref', form.ref);
     data.append('upload', form.upload);
 
-    fetch('http://spandx.gsslab.rdu2.redhat.com:8008/deploy', {
+    fetch(`${config.apiHost}/deploy`, {
       method: 'POST',
       body: data
     })
@@ -71,88 +76,106 @@ export default withRouter(({ history }) => {
 
   return (
     <Page title="Upload to deploy">
-      <Form>
-        <FormGroup
-          label="Name"
-          isRequired
-          fieldId="name"
-          helperText="Please provide app name"
-        >
-          <TextInput
-            isRequired
-            type="text"
-            id="name"
-            name="name"
-            aria-describedby="name-helper"
-            placeholder="Name"
-            value={form.name}
-            onChange={handleChange}
-          />
-        </FormGroup>
+      <Card>
+        <CardBody>
+          <Form>
+            <FormGroup
+              label="Name"
+              isRequired
+              fieldId="name"
+              helperText="Please provide app name"
+            >
+              <TextInput
+                isRequired
+                type="text"
+                id="name"
+                name="name"
+                aria-describedby="name-helper"
+                placeholder="Name"
+                value={form.name}
+                onChange={handleChange}
+              />
+            </FormGroup>
 
-        <FormGroup
-          label="Path"
-          isRequired
-          fieldId="path"
-          helperText="Please provide app path"
-        >
-          <TextInput
-            isRequired
-            type="text"
-            id="path"
-            name="path"
-            placeholder="/path-name"
-            aria-describedby="path-helper"
-            value={form.path}
-            onChange={handleChange}
-          />
-        </FormGroup>
+            <FormGroup
+              label="Path"
+              isRequired
+              fieldId="path"
+              helperText="Please provide app path"
+            >
+              <InputGroup>
+                <InputGroupText id="site-host">
+                  {config.siteHost}
+                </InputGroupText>
+                <TextInput
+                  isRequired
+                  type="text"
+                  id="path"
+                  name="path"
+                  placeholder="/path-name"
+                  aria-describedby="path-helper"
+                  value={form.path}
+                  onChange={handleChange}
+                />
+              </InputGroup>
+            </FormGroup>
 
-        <FormGroup
-          label="Git Ref"
-          isRequired
-          fieldId="ref"
-          helperText="Please provide Git Ref"
-        >
-          <TextInput
-            isRequired
-            type="text"
-            id="ref"
-            name="ref"
-            placeholder="Tag or Branch"
-            aria-describedby="ref-helper"
-            value={form.ref}
-            onChange={handleChange}
-          />
-        </FormGroup>
+            <FormGroup
+              label="Git Ref"
+              isRequired
+              fieldId="ref"
+              helperText="Please provide Git Ref"
+            >
+              <TextInput
+                isRequired
+                type="text"
+                id="ref"
+                name="ref"
+                placeholder="Tag or Branch"
+                aria-describedby="ref-helper"
+                value={form.ref}
+                onChange={handleChange}
+              />
+            </FormGroup>
 
-        <FormGroup
-          label="File"
-          isRequired
-          fieldId="upload"
-          helperText="Supports uploading of .tar,.tar.bz2,.tar.gz, and.zip."
-        >
-          <input
-            onChange={handleFileChange}
-            required
-            type="file"
-            id="upload"
-            name="upload"
-            placeholder="Supports uploading of .tar,.tar.bz2,.tar.gz, and.zip."
-            aria-describedby="upload-helper"
-          />
-        </FormGroup>
+            <FormGroup
+              label="File"
+              isRequired
+              fieldId="upload"
+              helperText="Supports uploading of .tar,.tar.bz2,.tar.gz, and.zip."
+            >
+              <input
+                onChange={handleFileChange}
+                required
+                type="file"
+                id="upload"
+                name="upload"
+                placeholder="Supports uploading of .tar,.tar.bz2,.tar.gz, and.zip."
+                aria-describedby="upload-helper"
+              />
+            </FormGroup>
 
-        <ActionGroup>
-          <Button variant="primary" onClick={onSubmit} isDisabled={isUploading}>
-            Submit
-          </Button>
-          <Button variant="secondary" onClick={onCancel}>
-            Cancel
-          </Button>
-        </ActionGroup>
-        <Spinner />
-      </Form>
+            <ActionGroup>
+              <Button
+                variant="primary"
+                onClick={onSubmit}
+                isDisabled={isUploading}
+              >
+                {isUploading && (
+                  <>
+                    <Spinner size="md" />
+                    <span> </span>
+                  </>
+                )}
+                Submit
+              </Button>
+              <Button variant="secondary" onClick={onCancel}>
+                Cancel
+              </Button>
+            </ActionGroup>
+          </Form>
+        </CardBody>
+      </Card>
     </Page>
   );
 });
