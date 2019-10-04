@@ -28,27 +28,9 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`spaship hello`](#spaship-hello)
 * [`spaship help [COMMAND]`](#spaship-help-command)
 * [`spaship init`](#spaship-init)
 * [`spaship validate`](#spaship-validate)
-
-## `spaship hello`
-
-Describe the command here
-
-```
-USAGE
-  $ spaship hello
-
-OPTIONS
-  -n, --name=name  name to print
-
-DESCRIPTION
-  Extra documentation goes here
-```
-
-_See code: [src/commands/hello.js](https://github.com/spaship/cli/blob/v0.0.0/src/commands/hello.js)_
 
 ## `spaship help [COMMAND]`
 
@@ -76,10 +58,13 @@ USAGE
   $ spaship init
 
 OPTIONS
-  -n, --name=name  name to print
+  -n, --name=name  [default: asdf] the name of your app
+  -p, --path=path  the URL path
+  -s, --single     route all non-asset requests to index.html
 
 DESCRIPTION
-  This command will ask you a few questions and generate a spaship.yaml config file for you.
+  Without arguments, init will ask you a few questions and generate a spaship.yaml config file.  The answers can also be 
+  passed in as CLI options.
 ```
 
 _See code: [src/commands/init.js](https://github.com/spaship/cli/blob/v0.0.0/src/commands/init.js)_
