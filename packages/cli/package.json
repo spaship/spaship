@@ -24,7 +24,11 @@
   "dependencies": {
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.13.3",
-    "@oclif/plugin-help": "^2.2.1"
+    "@oclif/plugin-help": "^2.2.1",
+    "fs-extra": "^8.1.0",
+    "handlebars": "^4.4.2",
+    "inquirer": "^7.0.0",
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.22.2",
