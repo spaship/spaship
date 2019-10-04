@@ -1,3 +1,9 @@
 {
-  "extends": "oclif"
+  "extends": ["oclif", "prettier"],
+  "rules": {
+    "prettier/prettier": "error"
+  },
+  "plugins": [
+    "prettier"
+  ]
 }
