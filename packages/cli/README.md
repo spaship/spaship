@@ -1,5 +1,4 @@
-@spaship/cli
-============
+# @spaship/cli
 
 A command line interface for SPAship.
 
@@ -9,11 +8,15 @@ A command line interface for SPAship.
 [![License](https://img.shields.io/npm/l/@spaship/cli.svg)](https://github.com/spaship/cli/blob/master/package.json)
 
 <!-- toc -->
-* [Usage](#usage)
-* [Commands](#commands)
-<!-- tocstop -->
+
+- [Usage](#usage)
+- [Commands](#commands)
+  <!-- tocstop -->
+
 # Usage
+
 <!-- usage -->
+
 ```sh-session
 $ npm install -g @spaship/cli
 $ spaship COMMAND
@@ -25,12 +28,15 @@ USAGE
   $ spaship COMMAND
 ...
 ```
+
 <!-- usagestop -->
+
 # Commands
+
 <!-- commands -->
-* [`spaship help [COMMAND]`](#spaship-help-command)
-* [`spaship init`](#spaship-init)
-* [`spaship validate`](#spaship-validate)
+
+- [`spaship help [COMMAND]`](#spaship-help-command)
+- [`spaship init`](#spaship-init)
 
 ## `spaship help [COMMAND]`
 
@@ -58,32 +64,16 @@ USAGE
   $ spaship init
 
 OPTIONS
-  -n, --name=name  [default: asdf] the name of your app
-  -p, --path=path  the URL path
-  -s, --single     route all non-asset requests to index.html
+  -n, --name=name    a human-friendly title for your app
+  -p, --path=path    the URL path for your app under the SPAship domain. ex: /my/app
+  -s, --[no-]single  route all non-asset requests to index.html
+  --overwrite        overwrite existing spaship.yaml
 
 DESCRIPTION
-  Without arguments, init will ask you a few questions and generate a spaship.yaml config file.  The answers can also be 
+  Without arguments, init will ask you a few questions and generate a spaship.yaml config file.  The answers can also be
   passed in as CLI options.
 ```
 
 _See code: [src/commands/init.js](https://github.com/spaship/cli/blob/v0.0.0/src/commands/init.js)_
 
-## `spaship validate`
-
-Describe the command here
-
-```
-USAGE
-  $ spaship validate
-
-OPTIONS
-  -n, --name=name  name to print
-
-DESCRIPTION
-  ...
-  Extra documentation goes here
-```
-
-_See code: [src/commands/validate.js](https://github.com/spaship/cli/blob/v0.0.0/src/commands/validate.js)_
 <!-- commandsstop -->
