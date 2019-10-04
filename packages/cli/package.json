@@ -6,7 +6,21 @@
   "bin": {
     "spaship": "./bin/run"
   },
+  "homepage": "https://github.com/spaship/cli",
   "bugs": "https://github.com/spaship/cli/issues",
+  "keywords": [
+    "oclif"
+  ],
+  "license": "MIT",
+  "main": "src/index.js",
+  "repository": "spaship/cli",
+  "scripts": {
+    "postpack": "rm -f oclif.manifest.json",
+    "posttest": "eslint .",
+    "prepack": "oclif-dev manifest && oclif-dev readme",
+    "test": "nyc mocha --forbid-only \"test/**/*.test.js\"",
+    "version": "oclif-dev readme && git add README.md"
+  },
   "dependencies": {
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.13.3",
@@ -36,12 +50,6 @@
     "/oclif.manifest.json",
     "/src"
   ],
-  "homepage": "https://github.com/spaship/cli",
-  "keywords": [
-    "oclif"
-  ],
-  "license": "MIT",
-  "main": "src/index.js",
   "oclif": {
     "commands": "./src/commands",
     "bin": "spaship",
@@ -49,12 +57,9 @@
       "@oclif/plugin-help"
     ]
   },
-  "repository": "spaship/cli",
-  "scripts": {
-    "postpack": "rm -f oclif.manifest.json",
-    "posttest": "eslint .",
-    "prepack": "oclif-dev manifest && oclif-dev readme",
-    "test": "nyc mocha --forbid-only \"test/**/*.test.js\"",
-    "version": "oclif-dev readme && git add README.md"
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   }
 }
