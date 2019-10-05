@@ -1,0 +1,28 @@
+{
+  "name": "path-proxy",
+  "version": "0.0.1",
+  "description": "SPAship path proxy. Proxies paths to the right SPA location or pass to different origin.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spaship/path-proxy.git"
+  },
+  "keywords": [
+    "SPAship",
+    "SPA",
+    "SinglePageApp",
+    "Proxy"
+  ],
+  "author": "Red Hat, Inc.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/spaship/path-proxy/issues"
+  },
+  "homepage": "https://github.com/spaship/path-proxy#readme",
+  "dependencies": {
+    "http-proxy-middleware": "^0.20.0"
+  }
+}
