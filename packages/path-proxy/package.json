@@ -4,7 +4,8 @@
   "description": "SPAship path proxy. Proxies paths to the right SPA location or pass to different origin.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,7 @@
   },
   "homepage": "https://github.com/spaship/path-proxy#readme",
   "dependencies": {
+    "express": "^4.17.1",
     "http-proxy-middleware": "^0.20.0"
   }
 }
