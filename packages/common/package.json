@@ -1,0 +1,39 @@
+{
+  "name": "@spaship/config",
+  "description": "A utility for reading and writing SPAship config files (spaship.yaml).",
+  "version": "0.0.0",
+  "author": "mclayton@redhat.com",
+  "homepage": "https://github.com/spaship/config",
+  "bugs": "https://github.com/spaship/config/issues",
+  "license": "MIT",
+  "main": "index.js",
+  "repository": "spaship/config",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "ajv": "^6.10.2",
+    "fs-extra": "^8.1.0",
+    "js-yaml": "^3.13.1",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "husky": "^3.0.8",
+    "prettier": "^1.18.2",
+    "pretty-quick": "^1.11.1"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
