@@ -3,7 +3,7 @@ const handlebars = require("handlebars");
 const path = require("path");
 const inquirer = require("inquirer");
 const fs = require("fs-extra");
-const { assign, isEmpty } = require("lodash");
+const { assign, last } = require("lodash");
 
 const templatePath = path.resolve(__dirname, "../templates/spaship.yaml.hbs");
 
@@ -11,6 +11,9 @@ const templatePath = path.resolve(__dirname, "../templates/spaship.yaml.hbs");
 const extraData = {
   package: require(path.resolve(__dirname, "../../package.json"))
 };
+
+// were any command line flags (options) passed in
+const hasOptions = last(process.argv) !== "init";
 
 class InitCommand extends Command {
   async run() {
@@ -23,7 +26,6 @@ class InitCommand extends Command {
 
     // process user's command
     const cmd = this.parse(InitCommand);
-    const hasOptions = !isEmpty(cmd.flags);
 
     // if no cli options were set, go into interactive questionaire mode
     let responses = {};
@@ -68,12 +70,12 @@ class InitCommand extends Command {
     const yaml = template(data);
 
     try {
-      const overwriteFile = {};
-      const noOverwriteFile = { flag: "wx" };
+      const fsOverwrite = {};
+      const fsNoOverwrite = { flag: "wx" };
       await fs.writeFile(
         "spaship.yaml",
         yaml,
-        data.overwrite ? overwriteFile : noOverwriteFile
+        data.overwrite ? fsOverwrite : fsNoOverwrite
       );
     } catch (error) {
       if (error.code === "EEXIST") {
@@ -94,12 +96,14 @@ Without arguments, init will ask you a few questions and generate a spaship.yaml
 InitCommand.flags = {
   name: flags.string({
     char: "n",
-    description: "a human-friendly title for your app"
+    description: "a human-friendly title for your app",
+    required: hasOptions // not required for interactive mode
   }),
   path: flags.string({
     char: "p",
     description:
-      "the URL path for your app under the SPAship domain. ex: /my/app"
+      "the URL path for your app under the SPAship domain. ex: /my/app",
+    required: hasOptions // not required for interactive mode
   }),
   single: flags.boolean({
     char: "s",
