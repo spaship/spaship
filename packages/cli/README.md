@@ -23,7 +23,7 @@ $ npm install -g @spaship/cli
 $ spaship COMMAND
 running command...
 $ spaship (-v|--version|version)
-@spaship/cli/0.0.3 linux-x64 node-v11.14.0
+@spaship/cli/0.0.4 linux-x64 node-v11.14.0
 $ spaship --help [COMMAND]
 USAGE
   $ spaship COMMAND
@@ -65,8 +65,8 @@ USAGE
   $ spaship init
 
 OPTIONS
-  -n, --name=name    a human-friendly title for your app
-  -p, --path=path    the URL path for your app under the SPAship domain. ex: /my/app
+  -n, --name=name    (required) a human-friendly title for your app
+  -p, --path=path    (required) the URL path for your app under the SPAship domain. ex: /my/app
   -s, --[no-]single  route all non-asset requests to index.html
   --overwrite        overwrite existing spaship.yaml
 
@@ -75,6 +75,6 @@ DESCRIPTION
   passed in as CLI options.
 ```
 
-_See code: [src/commands/init.js](https://github.com/spaship/cli/blob/v0.0.3/src/commands/init.js)_
+_See code: [src/commands/init.js](https://github.com/spaship/cli/blob/v0.0.4/src/commands/init.js)_
 
 <!-- commandsstop -->
