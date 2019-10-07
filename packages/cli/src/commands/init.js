@@ -3,6 +3,7 @@ const handlebars = require("handlebars");
 const path = require("path");
 const inquirer = require("inquirer");
 const fsp = require("fs").promises;
+const fs = require("fs");
 const { assign, last } = require("lodash");
 
 const templatePath = path.resolve(__dirname, "../templates/spaship.yaml.hbs");
@@ -18,7 +19,14 @@ const hasOptions = last(process.argv) !== "init";
 class InitCommand extends Command {
   async run() {
     // if spaship.yaml already exists, warn and abort
-    const existingConfig = await fsp.exists("spaship.yaml");
+    let existingConfig;
+
+    try {
+      await fsp.access("spaship.yaml");
+      existingConfig = true;
+    } catch (e) {
+      existingConfig = false;
+    }
 
     // load and compile handlebars template
     const templateFile = await fsp.readFile(templatePath);
