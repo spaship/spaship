@@ -4,14 +4,15 @@ const validate = require("./validate");
 const { assign } = require("lodash");
 
 async function append(filename, data) {
-  console.log(`appending ${data}`);
-  const current = await read(filename);
-  const combined = assign({}, current, data);
+  let current = {};
 
-  const valid = validate(combined);
-  if (!valid) {
-    throw new Error(`invalid config`);
+  // try to load an existing spaship.yaml.
+  try {
+    current = await read(filename);
+  } catch (e) {
+    /* if it doesn't exist, assume settings are coming from the POST */
   }
+  const combined = assign({}, current, data);
 
   await write(filename, combined);
 

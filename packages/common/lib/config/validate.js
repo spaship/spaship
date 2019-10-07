@@ -22,6 +22,11 @@ const schema = {
       description:
         "whether to serve $path/index.html for all non-asset routes. use this if you are using HTML5 pushState for client-side routing.",
       type: "boolean"
+    },
+    ref: {
+      description:
+        "the git ref (tag, branch, commit hash) tied to this deployment",
+      type: "string"
     }
   },
   required: ["path", "name"]
