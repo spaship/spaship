@@ -1,13 +1,13 @@
 {
-  "name": "@spaship/config",
-  "description": "A utility for reading and writing SPAship config files (spaship.yaml).",
+  "name": "@spaship/common",
+  "description": "A set of common utilities used by other SPAship components.",
   "version": "0.0.0",
   "author": "mclayton@redhat.com",
-  "homepage": "https://github.com/spaship/config",
-  "bugs": "https://github.com/spaship/config/issues",
+  "homepage": "https://github.com/spaship/common",
+  "bugs": "https://github.com/spaship/common/issues",
   "license": "MIT",
   "main": "index.js",
-  "repository": "spaship/config",
+  "repository": "spaship/common",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

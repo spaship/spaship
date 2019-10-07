@@ -1,5 +1,4 @@
-const read = require("lib/read");
-const validate = require("lib/validate");
-const write = require("lib/write");
+const config = require("./lib/config");
+const flatpath = require("./lib/flatpath");
 
-module.exports = { read, validate, write };
+module.exports = { config, flatpath };

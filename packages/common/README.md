@@ -1,7 +1,7 @@
-# @spaship/config
+# @spaship/common
 
-A utility for reading and writing SPAship config files (spaship.yaml).
+A set of common utilities used by other SPAship components.
 
-[![Version](https://img.shields.io/npm/v/@spaship/config.svg)](https://npmjs.org/package/@spaship/config)
-[![Downloads/week](https://img.shields.io/npm/dw/@spaship/config.svg)](https://npmjs.org/package/@spaship/config)
-[![License](https://img.shields.io/npm/l/@spaship/config.svg)](https://github.com/spaship/config/blob/master/package.json)
+[![Version](https://img.shields.io/npm/v/@spaship/common.svg)](https://npmjs.org/package/@spaship/common)
+[![Downloads/week](https://img.shields.io/npm/dw/@spaship/common.svg)](https://npmjs.org/package/@spaship/common)
+[![License](https://img.shields.io/npm/l/@spaship/common.svg)](https://github.com/spaship/common/blob/master/package.json)
