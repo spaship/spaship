@@ -1,9 +1,9 @@
 // Read a spaship.yaml file
-const fs = require("fs-extra");
+const fsp = require("fs").promises;
 const yaml = require("js-yaml");
 
 async function read(filepath) {
-  const rawYaml = await fs.readFile(filepath);
+  const rawYaml = await fsp.readFile(filepath);
   return yaml.safeLoad(rawYaml, filepath);
 }
 
