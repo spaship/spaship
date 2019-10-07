@@ -14,13 +14,6 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
 
   // create a dir in the tmp_dir location, but keep the random archive name
   let tmpDir = `${spaArchive}-extracted`;
-  try {
-    await fsp.mkdir(config.get("tmp_dir"));
-  } catch (e) {
-    if (e.code !== "EEXIST") {
-      throw e;
-    }
-  }
   await fsp.mkdir(tmpDir);
   // const tmpDir = await fsp.m({ template: path.join(config.get("tmp_dir"), " });
 
@@ -48,36 +41,41 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
       tmpDir = path.join(tmpDir, "package");
     }
 
-    let yaml;
+    let spaConfig = { name, path: appPath };
+    let hasYaml = false;
     const yamlFilePath = path.join(tmpDir, "spaship.yaml");
     try {
-      yaml = await common.config.read(yamlFilePath);
-      console.log(`yaml extracted:`, yaml);
-      name = yaml.name;
-      appPath = yaml.path;
-    } catch (e) {
-      console.log(`no spaship.yaml found`);
+      spaConfig = await common.config.read(yamlFilePath);
+      hasYaml = true;
+    } catch (e) {}
+
+    const valid = common.config.validate(spaConfig);
+    console.log("VALID?", valid);
+
+    if (!valid) {
+      throw new Error("spa config is not valid");
     }
-    // console.log(yaml.toString());
 
     // remove starting slashes in paths
-    const flatPath = common.flatpath.toDir(appPath);
-    const destDir = path.resolve(config.get("webroot"), flatPath);
+    const flatPath = common.flatpath.toDir(spaConfig.path);
+    const destDir = path.join(config.get("webroot"), flatPath);
 
     // move the goodies dir to the final destination in the webroot
     console.log(`moving from ${tmpDir} to ${destDir}`);
     await mvdir(tmpDir, destDir);
 
-    // // write spa metadata to filesystem
-    if (ref) {
-      writeMetadata(path.join(destDir, "spaship.yaml"), { ref });
+    // write spa metadata to filesystem
+    if (!hasYaml) {
+      writeMetadata(path.join(destDir, "spaship.yaml"), {
+        name,
+        path: spaConfig.path
+      });
     }
-    // writeMetadata({
-    //   appName: name,
-    //   appPath: destDir,
-    //   type: "name",
-    //   value: name
-    // });
+    if (ref) {
+      writeMetadata(path.join(destDir, "spaship.yaml"), {
+        ref
+      });
+    }
 
     console.log(`[deploy] extracted "${name}" to ${destDir}, deploy complete.`);
   } catch (err) {

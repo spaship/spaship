@@ -29,7 +29,7 @@ function createDeployMiddleware() {
         res.send("SPA uploaded successfully.");
       })
       .catch(err => {
-        res.status(418); // 418 because it's cool
+        res.status(403);
         console.log(err);
       });
   };
