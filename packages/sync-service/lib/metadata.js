@@ -1,6 +1,7 @@
 const path = require("path");
 const fsp = require("fs").promises;
 const config = require("../config");
+const common = require("@spaship/common");
 const { flow, map, filter } = require("lodash/fp");
 
 /**
@@ -10,27 +11,8 @@ function getMetaDir(spaDir) {
   return path.resolve(config.get("webroot"), spaDir, `.meta`);
 }
 
-async function write({ appName, appPath, type, value } = {}) {
-  const appMetaDir = getMetaDir(appPath);
-  const filePath = path.resolve(appMetaDir, type);
-
-  try {
-    await fsp.mkdir(appMetaDir);
-  } catch (e) {
-    if (e.code !== "EEXIST") {
-      console.error(e);
-      return;
-    }
-  }
-
-  try {
-    await fsp.writeFile(filePath, value);
-    console.log(
-      `[deploy] wrote ${appName}'s "${type}" metadata to ${filePath}`
-    );
-  } catch (e) {
-    console.error(e);
-  }
+async function write(filename, extraData) {
+  await common.config.append(filename, extraData);
 }
 
 // Get all the SPA directories in the webroot (not including hidden dirs), then
@@ -71,15 +53,7 @@ async function readMetaFile(spaDir, filename) {
 
 async function get(spaDir) {
   // read the contents of the ref and name files
-  const [ref, name] = await Promise.all([
-    readMetaFile(spaDir, "ref"),
-    readMetaFile(spaDir, "name")
-  ]);
-  return {
-    path: `/${spaDir}`,
-    ref,
-    name
-  };
+  return await common.config.read(path.join(spaDir, "spaship.yaml"));
 }
 
 module.exports = { write, getAll, get };

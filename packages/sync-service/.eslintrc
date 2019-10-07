@@ -1,0 +1,18 @@
+{
+  "extends": [
+    "prettier"
+  ],
+  "env": {
+    "shared-node-browser": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 9,
+    "sourceType": "module"
+  },
+  "rules": {
+    "prettier/prettier": "error"
+  },
+  "plugins": [
+    "prettier"
+  ]
+}

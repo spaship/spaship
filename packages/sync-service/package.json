@@ -28,6 +28,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@spaship/common": "^0.0.0",
     "axios": "^0.19.0",
     "cors": "^2.8.5",
     "decompress": "^4.2.0",
@@ -38,7 +39,9 @@
     "lodash": "^4.17.15",
     "ms": "^2.1.2",
     "multer": "^1.4.2",
+    "mvdir": "^1.0.5",
     "nconf": "^0.10.0",
+    "tmp-promise": "^2.0.2",
     "url-join": "^4.0.1"
   },
   "devDependencies": {
@@ -48,23 +51,5 @@
     "prettier": "1.18.2",
     "pretty-quick": "1.11.1",
     "standard-version": "7.0.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "prettier"
-    ],
-    "env": {
-      "shared-node-browser": true
-    },
-    "parserOptions": {
-      "ecmaVersion": 9,
-      "sourceType": "module"
-    },
-    "rules": {
-      "prettier/prettier": "error"
-    },
-    "plugins": [
-      "prettier"
-    ]
   }
 }

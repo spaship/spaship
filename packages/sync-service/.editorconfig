@@ -5,7 +5,7 @@ root = true
 
 # Rules for JavaScript files:
 
-[*.{js,py,json,sh,html}]
+[*]
 indent_style = space
 indent_size = 2
 # No trailing spaces
