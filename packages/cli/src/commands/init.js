@@ -2,7 +2,7 @@ const { Command, flags } = require("@oclif/command");
 const handlebars = require("handlebars");
 const path = require("path");
 const inquirer = require("inquirer");
-const fs = require("fs-extra");
+const fsp = require("fs").promises;
 const { assign, last } = require("lodash");
 
 const templatePath = path.resolve(__dirname, "../templates/spaship.yaml.hbs");
@@ -18,10 +18,10 @@ const hasOptions = last(process.argv) !== "init";
 class InitCommand extends Command {
   async run() {
     // if spaship.yaml already exists, warn and abort
-    const existingConfig = await fs.exists("spaship.yaml");
+    const existingConfig = await fsp.exists("spaship.yaml");
 
     // load and compile handlebars template
-    const templateFile = await fs.readFile(templatePath);
+    const templateFile = await fsp.readFile(templatePath);
     const template = handlebars.compile(templateFile.toString());
 
     // process user's command
@@ -72,7 +72,7 @@ class InitCommand extends Command {
     try {
       const fsOverwrite = {};
       const fsNoOverwrite = { flag: "wx" };
-      await fs.writeFile(
+      await fsp.writeFile(
         "spaship.yaml",
         yaml,
         data.overwrite ? fsOverwrite : fsNoOverwrite
