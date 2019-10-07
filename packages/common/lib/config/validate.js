@@ -27,6 +27,11 @@ const schema = {
       description:
         "the git ref (tag, branch, commit hash) tied to this deployment",
       type: "string"
+    },
+    deploykey: {
+      description:
+        "a unique key which allows re-deploying over existing bundles.",
+      type: "string"
     }
   },
   required: ["path", "name"]
