@@ -1,6 +1,6 @@
 {
   "name": "@spaship/sync-service",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "The file synchronization service for the SPAship platform.",
   "homepage": "https://github.com/spaship/sync-service",
   "bugs": {
