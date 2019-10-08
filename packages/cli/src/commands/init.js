@@ -1,5 +1,4 @@
 const { Command, flags } = require("@oclif/command");
-const handlebars = require("handlebars");
 const path = require("path");
 const inquirer = require("inquirer");
 const fsp = require("fs").promises;
@@ -20,10 +19,6 @@ class InitCommand extends Command {
     } catch (e) {
       existingConfig = false;
     }
-
-    // load and compile handlebars template
-    // const templateFile = await fsp.readFile(templatePath);
-    // const template = handlebars.compile(templateFile.toString());
 
     // process user's command
     const cmd = this.parse(InitCommand);
