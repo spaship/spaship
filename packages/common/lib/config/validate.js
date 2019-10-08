@@ -37,8 +37,16 @@ const schema = {
   },
   required: ["path", "name"]
 };
-const validateJSON = ajv.compile(schema);
-const validate = data => validateJSON(data);
+const validate = data => {
+  const validateJSON = ajv.compile(schema);
+  const valid = validateJSON(data);
+  const errors = validateJSON.errors;
+
+  return {
+    valid,
+    errors
+  };
+};
 
 module.exports = validate;
 
@@ -47,8 +55,8 @@ if (require.main === module) {
   read(process.argv[2] || "spaship.yaml").then(data => {
     console.log("Validating the following config object...");
     console.log(data);
-    const valid = validate(data);
-    if (!valid) console.log(validateJSON.errors);
+    const { valid, errors } = validate(data);
+    if (!valid) console.log(errors);
     if (valid) console.log("YAML is valid!");
   });
 }
