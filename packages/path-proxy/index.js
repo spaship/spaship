@@ -62,6 +62,7 @@ const uriToFlat = function(req) {
 
     // handle root path
     if (path === "/") {
+        // TODO: figure out a better way of handling the root context
         flatPath = "root"
     }
     else {
@@ -91,6 +92,10 @@ let options = {
     autoRewrite: true,
     onProxyRes: (proxyRes, req) => {
         if (proxyRes.statusCode >= 301 && proxyRes.statusCode <= 308 && proxyRes.headers['location']) {
+            // When the origin responds with a redirect it's location contains the flat path.
+            // This needs to be converted back to the url path. The original conversion is stored
+            // in the request headers to quickly restore just the spa portion of the path back to original
+
             let location = proxyRes.headers['location'];
             let spashipFlatPath = req.headers['x-spaship-flat-path'];
             let spashipUrlPath = req.headers['x-spaship-url-path'];
@@ -100,7 +105,6 @@ let options = {
             }
 
             proxyRes.headers['location'] = location;
-            console.log('proxyRes location:', proxyRes.headers['location']);
         }
     }
 };
