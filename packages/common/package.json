@@ -1,7 +1,7 @@
 {
   "name": "@spaship/common",
   "description": "A set of common utilities used by other SPAship components.",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": "mclayton@redhat.com",
   "homepage": "https://github.com/spaship/common",
   "bugs": "https://github.com/spaship/common/issues",
