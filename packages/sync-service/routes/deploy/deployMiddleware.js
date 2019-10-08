@@ -25,13 +25,11 @@ function createDeployMiddleware() {
 
     deploy({ name, spaArchive, appPath, ref })
       .then((result, err) => {
-        console.log(`extracted successfully`);
-        res.send("SPA uploaded successfully.");
+        res.send("SPA deployed successfully.");
       })
       .catch(err => {
         res.status(403);
         res.send("Deploy failed.  " + err);
-        console.log("booooo");
         console.log(err);
       });
   };
