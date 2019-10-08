@@ -23,7 +23,7 @@ $ npm install -g @spaship/cli
 $ spaship COMMAND
 running command...
 $ spaship (-v|--version|version)
-@spaship/cli/0.0.6 linux-x64 node-v11.14.0
+@spaship/cli/0.0.7 linux-x64 node-v11.14.0
 $ spaship --help [COMMAND]
 USAGE
   $ spaship COMMAND
@@ -37,7 +37,6 @@ USAGE
 <!-- commands -->
 
 - [`spaship help [COMMAND]`](#spaship-help-command)
-- [`spaship init`](#spaship-init)
 
 ## `spaship help [COMMAND]`
 
@@ -55,26 +54,5 @@ OPTIONS
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.1/src/commands/help.ts)_
-
-## `spaship init`
-
-Initialize a SPAship config file for your app.
-
-```
-USAGE
-  $ spaship init
-
-OPTIONS
-  -n, --name=name    (required) a human-friendly title for your app
-  -p, --path=path    (required) the URL path for your app under the SPAship domain. ex: /my/app
-  -s, --[no-]single  route all non-asset requests to index.html
-  --overwrite        overwrite existing spaship.yaml
-
-DESCRIPTION
-  Without arguments, init will ask you a few questions and generate a spaship.yaml config file.  The answers can also be
-  passed in as CLI options.
-```
-
-_See code: [src/commands/init.js](https://github.com/spaship/cli/blob/v0.0.6/src/commands/init.js)_
 
 <!-- commandsstop -->
