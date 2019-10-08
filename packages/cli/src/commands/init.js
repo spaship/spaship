@@ -3,15 +3,8 @@ const handlebars = require("handlebars");
 const path = require("path");
 const inquirer = require("inquirer");
 const fsp = require("fs").promises;
-const fs = require("fs");
-const { assign, last } = require("lodash");
-
-const templatePath = path.resolve(__dirname, "../templates/spaship.yaml.hbs");
-
-// just some extra data to pass into the handlebars template
-const extraData = {
-  package: require(path.resolve(__dirname, "../../package.json"))
-};
+const { config } = require("@spaship/common");
+const { assign, last, omit } = require("lodash");
 
 // were any command line flags (options) passed in
 const hasOptions = last(process.argv) !== "init";
@@ -22,15 +15,15 @@ class InitCommand extends Command {
     let existingConfig;
 
     try {
-      await fsp.access("spaship.yaml");
+      await config.read("spaship.yaml");
       existingConfig = true;
     } catch (e) {
       existingConfig = false;
     }
 
     // load and compile handlebars template
-    const templateFile = await fsp.readFile(templatePath);
-    const template = handlebars.compile(templateFile.toString());
+    // const templateFile = await fsp.readFile(templatePath);
+    // const template = handlebars.compile(templateFile.toString());
 
     // process user's command
     const cmd = this.parse(InitCommand);
@@ -38,24 +31,27 @@ class InitCommand extends Command {
     // if no cli options were set, go into interactive questionaire mode
     let responses = {};
     if (!hasOptions) {
+      // show questions if there is no existing config, or if overwrite was approved.
+      const showQuestions = r =>
+        !existingConfig || (existingConfig && r.overwrite);
       const questions = [
         {
           name: "name",
           message: "Name",
           type: "input",
-          when: r => !existingConfig || (existingConfig && r.overwrite)
+          when: showQuestions
         },
         {
           name: "path",
           message: "Path",
           type: "input",
-          when: r => !existingConfig || (existingConfig && r.overwrite)
+          when: showQuestions
         },
         {
           name: "single",
           message: "Single page?",
           type: "confirm",
-          when: r => !existingConfig || (existingConfig && r.overwrite)
+          when: showQuestions
         }
       ];
       // if a config file already exists, pre-empt the other questions with one
@@ -72,19 +68,12 @@ class InitCommand extends Command {
 
     // smush cli options, questionnaire answers, and anything extra into a data
     // object to pass into the template
-    const data = assign({}, extraData, responses, cmd.flags);
-
-    // render template
-    const yaml = template(data);
+    const data = assign({}, responses, cmd.flags);
 
     try {
-      const fsOverwrite = {};
-      const fsNoOverwrite = { flag: "wx" };
-      await fsp.writeFile(
-        "spaship.yaml",
-        yaml,
-        data.overwrite ? fsOverwrite : fsNoOverwrite
-      );
+      if (!existingConfig || data.overwrite) {
+        await config.write("spaship.yaml", omit(data, "overwrite"));
+      }
     } catch (error) {
       if (error.code === "EEXIST") {
         let msg = `Docking aborted.  A file named spaship.yaml already exists.`;
@@ -116,7 +105,7 @@ InitCommand.flags = {
   single: flags.boolean({
     char: "s",
     description: "route all non-asset requests to index.html",
-    allowNo: true
+    allowNo: true // support --no-single
   }),
   overwrite: flags.boolean({
     description: "overwrite existing spaship.yaml"
