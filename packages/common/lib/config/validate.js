@@ -9,6 +9,7 @@ const schema = {
   $schema: "http://json-schema.org/draft-07/schema#",
   title: "SPAshipConfig",
   type: "object",
+  additionalProperties: false,
   properties: {
     path: {
       description: "the URL path at which to deploy the SPA",
