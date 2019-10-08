@@ -17,9 +17,6 @@ function flatToUri(flatPath) {
     // Replace UNDRSCR token with _
     urlPath = urlPath.replace(/UNDRSCR/g, "_");
 
-    // Prepend /
-    urlPath = "/" + urlPath;
-
     console.log('[flatToUrl] urlPath:', urlPath);
 
     return urlPath;
@@ -45,7 +42,7 @@ const uriToFlat = function(req) {
     // See if this URL is hosted by SPAship
     for (let spaPath of spaPaths) {
         spaUri = flatToUri(spaPath);
-        let regEx = new RegExp('^' + spaUri + '(\\/+.*)?');
+        let regEx = new RegExp('^/' + spaUri + '([/\\?].*)?$');
         console.log('regEx:', regEx);
 
         match = path.match(regEx);
@@ -77,6 +74,8 @@ const uriToFlat = function(req) {
 
     // Now proxy to flat path
     req.url = flatPath;
+    req.headers['x-spaship-flat-path'] = matchedFlatPath;
+    req.headers['x-spaship-url-path'] = spaUri;
     let route = 'http://localhost:8008/';
     console.log("Routing to: ", route + req.url);
     return route;
@@ -88,7 +87,22 @@ let options = {
     target: 'https://access.redhat.com:443', // target host
     changeOrigin: true,
     router: uriToFlat,
-    logLevel: 'debug'
+    logLevel: 'debug',
+    autoRewrite: true,
+    onProxyRes: (proxyRes, req) => {
+        if (proxyRes.statusCode >= 301 && proxyRes.statusCode <= 308 && proxyRes.headers['location']) {
+            let location = proxyRes.headers['location'];
+            let spashipFlatPath = req.headers['x-spaship-flat-path'];
+            let spashipUrlPath = req.headers['x-spaship-url-path'];
+
+            if (spashipFlatPath && spashipUrlPath) {
+                location = location.replace(spashipFlatPath, spashipUrlPath);
+            }
+
+            proxyRes.headers['location'] = location;
+            console.log('proxyRes location:', proxyRes.headers['location']);
+        }
+    }
 };
 
 // create the proxy (without context)
