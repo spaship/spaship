@@ -1,8 +1,10 @@
 {
   "webroot": "/var/www/spaship",
   "autosync": {
+    "enabled": true,
     "targets": [
       {
+        "name": "chrome-head",
         "interval": "5s",
         "source": {
           "url": "https://access.redhat.com/services/chrome/head",
@@ -19,7 +21,8 @@
         }
       },
       {
-        "interval": "10s",
+        "name": "chrome-header",
+        "interval": "5s",
         "source": {
           "url": "https://access.redhat.com/services/chrome/header",
           "sub_paths": [
@@ -35,7 +38,8 @@
         }
       },
       {
-        "interval": "30s",
+        "name": "chrome-footer",
+        "interval": "5s",
         "source": {
           "url": "https://access.redhat.com/services/chrome/footer",
           "sub_paths": [
