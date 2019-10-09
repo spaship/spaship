@@ -4,6 +4,7 @@ const axios = require("axios");
 const fsp = require("fs").promises;
 const path = require("path");
 const urljoin = require("url-join");
+const { keyBy, mapValues, find } = require("lodash");
 
 /**
  * Automatically syncs remote url targets to local static files in the background at a set interval
@@ -17,6 +18,35 @@ class Autosync {
       this.targets = [];
     }
     this.intervalHandles = [];
+  }
+
+  static async getCachedTarget(name) {
+    // get named target from config
+    const targets = config.get("autosync:targets");
+    const target = find(targets, { name });
+
+    if (!target) return {};
+
+    let cachedTargets = {};
+
+    // set up keys based on sub-paths, or default "/" path if no sub-paths are defined
+    if (target.source.sub_paths) {
+      cachedTargets = keyBy(target.source.sub_paths);
+    } else {
+      cachedTargets["/"] = "";
+    }
+
+    // spin up a readFile for each path (one default path, or multiple subpaths)
+    cachedTargets = mapValues(cachedTargets, p =>
+      fsp.readFile(path.join(target.dest.path, p, target.dest.filename))
+    );
+
+    // await file read and convert to string
+    for (let f in cachedTargets) {
+      cachedTargets[f] = (await cachedTargets[f]).toString();
+    }
+
+    return cachedTargets;
   }
 
   start() {
@@ -109,3 +139,12 @@ class Autosync {
 }
 
 module.exports = Autosync;
+
+if (require.main === module) {
+  (async () => {
+    // get chrome-head (includes all sub-paths)
+    const head = await Autosync.getCachedTarget("chrome-head");
+    // trim the file content length just for the sake of printing to the terminal
+    console.log(mapValues(head, t => `${t.slice(0, 50)}...`));
+  })();
+}
