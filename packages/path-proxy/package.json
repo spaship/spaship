@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/spaship/path-proxy#readme",
   "dependencies": {
+    "@spaship/common": "0.0.9",
     "express": "^4.17.1",
     "http-proxy-middleware": "^0.20.0"
   }

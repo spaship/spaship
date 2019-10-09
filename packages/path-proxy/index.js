@@ -1,94 +1,71 @@
 const express = require('express');
 const proxy = require('http-proxy-middleware');
 const fsp = require('fs').promises;
+const { flatpath } = require('@spaship/common');
 
-let spaPaths = [];
-
-/**
- * Converts a flattened path to a URL path
- * @param flatPath
- */
-function flatToUri(flatPath) {
-    let urlPath = flatPath;
-
-    // Replace _ with /
-    urlPath = urlPath.replace(/_/g, "/");
-
-    // Replace UNDRSCR token with _
-    urlPath = urlPath.replace(/UNDRSCR/g, "_");
-
-    console.log('[flatToUrl] urlPath:', urlPath);
-
-    return urlPath;
-}
+let flatDirectories = [];
 
 async function getDirectoryNames() {
-    spaPaths = await fsp.readdir('/var/www/spaship');
-    spaPaths.sort((a, b) => b.length - a.length);
-    // return spaPaths;
+    // Load directory names into memory
+    //TODO: put the replace this hardcoded path with config
+    flatDirectories = await fsp.readdir('/var/www/spaship');
+
+    // Sort them by name length from longest to shortest, for most specific match wins matching policy
+    flatDirectories.sort((a, b) => b.length - a.length);
 }
 
-getDirectoryNames();
-
-const uriToFlat = function(req) {
-    let path = req.url;
-    let flatPath;
+const customRouter = function(req) {
+    let url = req.url;
+    let routeUrl;
     let match;
-    let spaUri;
-    let matchedFlatPath;
+    let spaPath;
+    let matchedFlatDir;
 
-    console.log('[router] incoming path:', path);
+    console.log('[router] incoming url:', url);
 
     // See if this URL is hosted by SPAship
-    for (let spaPath of spaPaths) {
-        spaUri = flatToUri(spaPath);
-        let regEx = new RegExp('^/' + spaUri + '([/\\?].*)?$');
-        console.log('regEx:', regEx);
-
-        match = path.match(regEx);
+    for (let flatDir of flatDirectories) {
+        spaPath = flatpath.toUrl(flatDir);
+        let regEx = new RegExp('^/' + spaPath + '([/\\?].*)?$');
+        match = url.match(regEx);
         if (match) {
-            matchedFlatPath = spaPath;
+            matchedFlatDir = flatDir;
             break;  // found a match
         }
     }
 
     if (match) {
-        console.log('This path is hosted by spaship: ', path, ' spaPath: ', spaUri, 'flatPath: ', matchedFlatPath);
+        console.log('[router] This path is hosted by spaship: ', url, ' spaPath: ', spaPath, 'flatDir: ', matchedFlatDir);
     }
     else {
-        console.log('This path is not hosted by spaship: ', path);
-        return 'https://access.redhat.com:443';
+        console.log('[router] This path is not hosted by spaship: ', url);
+        return 'https://access.redhat.com';
     }
 
-    // handle root path
-    if (path === "/") {
-        // TODO: figure out a better way of handling the root context
-        flatPath = "root"
-    }
-    else {
-        let extraStuff = "";
-        if (match[1]) {
-            extraStuff = match[1];
-        }
-        flatPath = matchedFlatPath + extraStuff;
-    }
 
-    // Now proxy to flat path
-    req.url = flatPath;
-    req.headers['x-spaship-flat-path'] = matchedFlatPath;
-    req.headers['x-spaship-url-path'] = spaUri;
-    let route = 'http://localhost:8008/';
-    console.log("Routing to: ", route + req.url);
-    return route;
+    let extraStuff = "";
+    if (match[1]) {
+        extraStuff = match[1]; // $1 of the RegExp
+    }
+    routeUrl = '/' + matchedFlatDir + extraStuff;
+
+    // Now proxy to flattened url path
+    req.url = routeUrl;
+    req.headers['x-spaship-flat-path'] = matchedFlatDir;
+    req.headers['x-spaship-url-path'] = spaPath;
+    let routHost = 'http://localhost:8008';
+
+    console.log("[router] Routing to: ", routHost + req.url);
+
+    return routHost;
 };
 
 // proxy middleware options
 let options = {
-    // target: 'http://localhost:8008', // target host
-    target: 'https://access.redhat.com:443', // target host
+    target: 'http://localhost:8008', // target host
     changeOrigin: true,
-    router: uriToFlat,
-    logLevel: 'debug',
+    router: customRouter,
+    logLevel: 'info',
     autoRewrite: true,
     onProxyRes: (proxyRes, req) => {
         if (proxyRes.statusCode >= 301 && proxyRes.statusCode <= 308 && proxyRes.headers['location']) {
@@ -97,11 +74,11 @@ let options = {
             // in the request headers to quickly restore just the spa portion of the path back to original
 
             let location = proxyRes.headers['location'];
-            let spashipFlatPath = req.headers['x-spaship-flat-path'];
-            let spashipUrlPath = req.headers['x-spaship-url-path'];
+            let flatPath = req.headers['x-spaship-flat-path'];
+            let urpPath = req.headers['x-spaship-url-path'];
 
-            if (spashipFlatPath && spashipUrlPath) {
-                location = location.replace(spashipFlatPath, spashipUrlPath);
+            if (flatPath && urpPath) {
+                location = location.replace(flatPath, urpPath);
             }
 
             proxyRes.headers['location'] = location;
@@ -109,10 +86,20 @@ let options = {
     }
 };
 
-// create the proxy (without context)
+// create the proxy
 let pathProxy = proxy(options);
 
-// Start proxy server on port
-let app = express();
-app.use('/', pathProxy);
-app.listen(3000);
+async function start() {
+    // Load the flat directory names into memory and keep them refreshed
+    await getDirectoryNames();
+    setInterval(await getDirectoryNames, 750);
+
+    // Start proxy server on port
+    let app = express();
+    app.use('/', pathProxy);
+    app.listen(3000);
+}
+
+start();
+
+
