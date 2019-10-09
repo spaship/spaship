@@ -53,7 +53,7 @@ const customRouter = function(req) {
     req.url = routeUrl;
     req.headers['x-spaship-flat-path'] = matchedFlatDir;
     req.headers['x-spaship-url-path'] = spaPath;
-    let routHost = 'http://localhost:8008';
+    let routHost = 'http://localhost:8080';
 
     console.log("[router] Routing to: ", routHost + req.url);
 
@@ -62,7 +62,7 @@ const customRouter = function(req) {
 
 // proxy middleware options
 let options = {
-    target: 'http://localhost:8008', // target host
+    target: 'http://localhost:8080', // target host
     changeOrigin: true,
     router: customRouter,
     logLevel: 'info',
