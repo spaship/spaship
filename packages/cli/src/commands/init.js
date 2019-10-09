@@ -61,9 +61,11 @@ class InitCommand extends Command {
       responses = await inquirer.prompt(questions);
     }
 
+    const deploykey = { deploykey: config.deploykey.generate() };
+
     // smush cli options, questionnaire answers, and anything extra into a data
     // object to pass into the template
-    const data = assign({}, responses, cmd.flags);
+    const data = assign({}, responses, cmd.flags, deploykey);
 
     try {
       if (!existingConfig || data.overwrite) {
