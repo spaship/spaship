@@ -4,7 +4,6 @@ const decompress = require("decompress");
 const config = require("../config");
 const mvdir = require("mvdir");
 const tmp = require("tmp-promise");
-const shortid = require("shortid");
 const common = require("@spaship/common");
 const metadata = require("./metadata");
 
@@ -77,11 +76,11 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
     existingDeployKey = existingConfig.deploykey;
   } catch (e) {}
 
-  const firstDeploy = typeof existingDeployKey === "undefined";
+  const noDeployKey = typeof existingDeployKey === "undefined";
 
   // if the deployment doesn't have a deploykey, add one
-  if (firstDeploy) {
-    const deploykey = shortid.generate();
+  if (noDeployKey) {
+    const deploykey = common.config.deploykey.generate();
     metadata.write(yamlFilePath, {
       deploykey
     });
@@ -98,7 +97,7 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
     typeof incomingDeployKey === "string";
   const deployKeysMatch = existingDeployKey === incomingDeployKey;
 
-  if (firstDeploy || (deployKeysValid && deployKeysMatch)) {
+  if (noDeployKey || (deployKeysValid && deployKeysMatch)) {
     await mvdir(tmpDir, destDir);
   } else {
     throw new Error("refusing to deploy; deploykey does not match");
