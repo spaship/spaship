@@ -79,7 +79,7 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
   const noDeployKey = typeof existingDeployKey === "undefined";
 
   // if the deployment doesn't have a deploykey, add one
-  if (noDeployKey) {
+  if (noDeployKey && !incomingDeployKey) {
     const deploykey = common.config.deploykey.generate();
     metadata.write(yamlFilePath, {
       deploykey
