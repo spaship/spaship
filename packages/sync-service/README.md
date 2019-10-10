@@ -35,7 +35,7 @@ Configuration can be provided by CLI flags, environment variables, or a configur
 | Option | Description | CLI | Env | config.json | Default |
 | --- | --- | --- |--- | ---  | --- |
 | **config file** | Where to find the config file. | `--config-file` | `SPASHIP_CONFIG_FILE` | N/A | `stuff` |
-| **upload dir** | Directory to upload SPA archives. | `--upload-dir` | `SPASHIP_UPLOAD_DIR` | `"upload-dir"`  | `/tmp/spaship_uploads` |
+| **upload dir** | Directory to upload SPA archives. | `--upload-dir` | `SPASHIP_UPLOAD_DIR` | `"upload_dir"`  | `/tmp/spaship_uploads` |
 | **webroot** | Directory to extract/deploy SPAs. | `--webroot` | `SPASHIP_WEBROOT` | `"webroot"`  | `/var/www` |
 | **host** | Hostname to run on. | `--host` | `SPASHIP_HOST` | `"host"`  | `localhost` |
 | **port** | Port to run on. | `--port` | `SPASHIP_PORT` | `"port"`  | `8008` |
