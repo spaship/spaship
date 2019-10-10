@@ -23,7 +23,7 @@ $ npm install -g @spaship/cli
 $ spaship COMMAND
 running command...
 $ spaship (-v|--version|version)
-@spaship/cli/0.0.10 linux-x64 node-v11.14.0
+@spaship/cli/0.0.11 linux-x64 node-v11.14.0
 $ spaship --help [COMMAND]
 USAGE
   $ spaship COMMAND
@@ -56,7 +56,7 @@ DESCRIPTION
   Extra documentation goes here
 ```
 
-_See code: [src/commands/deploy.js](https://github.com/spaship/cli/blob/v0.0.10/src/commands/deploy.js)_
+_See code: [src/commands/deploy.js](https://github.com/spaship/cli/blob/v0.0.11/src/commands/deploy.js)_
 
 ## `spaship help [COMMAND]`
 
@@ -94,6 +94,6 @@ DESCRIPTION
   passed in as CLI options.
 ```
 
-_See code: [src/commands/init.js](https://github.com/spaship/cli/blob/v0.0.10/src/commands/init.js)_
+_See code: [src/commands/init.js](https://github.com/spaship/cli/blob/v0.0.11/src/commands/init.js)_
 
 <!-- commandsstop -->
