@@ -28,7 +28,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@spaship/common": "^0.0.0",
+    "@spaship/common": "^0.0.9",
     "axios": "^0.19.0",
     "cors": "^2.8.5",
     "decompress": "^4.2.0",
