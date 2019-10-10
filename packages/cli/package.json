@@ -25,7 +25,7 @@
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.13.3",
     "@oclif/plugin-help": "^2.2.1",
-    "@spaship/common": "0.0.5",
+    "@spaship/common": "0.0.x",
     "inquirer": "^7.0.0",
     "lodash": "^4.17.15"
   },
