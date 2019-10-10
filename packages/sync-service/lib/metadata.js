@@ -4,13 +4,6 @@ const config = require("../config");
 const common = require("@spaship/common");
 const { flow, map, filter } = require("lodash/fp");
 
-/**
- * Get the path to the metadata directory of a given spa.
- */
-function getMetaDir(spaDir) {
-  return path.resolve(config.get("webroot"), spaDir, `.meta`);
-}
-
 async function write(filename, extraData) {
   await common.config.append(filename, extraData);
 }
@@ -34,26 +27,17 @@ async function getAll() {
   }
 }
 
-// Read a metadata file and return the file's contents, or null if the file
-// can't be read for any reason.
-async function readMetaFile(spaDir, filename) {
-  try {
-    const value = await fsp.readFile(
-      path.resolve(getMetaDir(spaDir), filename)
-    );
-    return value.toString().trim();
-  } catch (e) {
-    // don't log "does not exist" errors, they are expected
-    if (e.code !== "ENOENT") {
-      console.log(e);
-    }
-    return null;
-  }
-}
-
 async function get(spaDir) {
   // read the contents of the ref and name files
-  return await common.config.read(path.join(spaDir, "spaship.yaml"));
+  try {
+    // list entries with spaship.yaml
+    return await common.config.read(
+      path.resolve(config.get("webroot"), spaDir, "spaship.yaml")
+    );
+  } catch (e) {
+    // list entries without spaship.yaml
+    return { path: "/" + spaDir };
+  }
 }
 
 module.exports = { write, getAll, get };
