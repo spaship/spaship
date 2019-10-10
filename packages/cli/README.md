@@ -23,7 +23,7 @@ $ npm install -g @spaship/cli
 $ spaship COMMAND
 running command...
 $ spaship (-v|--version|version)
-@spaship/cli/0.0.11 linux-x64 node-v11.14.0
+@spaship/cli/0.0.12 linux-x64 node-v11.14.0
 $ spaship --help [COMMAND]
 USAGE
   $ spaship COMMAND
@@ -36,27 +36,29 @@ USAGE
 
 <!-- commands -->
 
-- [`spaship deploy`](#spaship-deploy)
+- [`spaship deploy ARCHIVE`](#spaship-deploy-archive)
 - [`spaship help [COMMAND]`](#spaship-help-command)
 - [`spaship init`](#spaship-init)
 
-## `spaship deploy`
+## `spaship deploy ARCHIVE`
 
-Describe the command here
+deploy to a SPAship host
 
 ```
 USAGE
-  $ spaship deploy
+  $ spaship deploy ARCHIVE
+
+ARGUMENTS
+  ARCHIVE  SPA archive file
 
 OPTIONS
-  -n, --name=name  name to print
+  -r, --ref=ref  [default: undefined] a version tag, commit hash, or branch to identify this release
 
 DESCRIPTION
-  ...
-  Extra documentation goes here
+  Send an archive containing a SPA to a SPAship host for deployment.  Supports .tar.gz/.tgz, .zip, and .tar.bz2.
 ```
 
-_See code: [src/commands/deploy.js](https://github.com/spaship/cli/blob/v0.0.11/src/commands/deploy.js)_
+_See code: [src/commands/deploy.js](https://github.com/spaship/cli/blob/v0.0.12/src/commands/deploy.js)_
 
 ## `spaship help [COMMAND]`
 
@@ -94,6 +96,6 @@ DESCRIPTION
   passed in as CLI options.
 ```
 
-_See code: [src/commands/init.js](https://github.com/spaship/cli/blob/v0.0.11/src/commands/init.js)_
+_See code: [src/commands/init.js](https://github.com/spaship/cli/blob/v0.0.12/src/commands/init.js)_
 
 <!-- commandsstop -->
