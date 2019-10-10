@@ -36,8 +36,27 @@ USAGE
 
 <!-- commands -->
 
+- [`spaship deploy`](#spaship-deploy)
 - [`spaship help [COMMAND]`](#spaship-help-command)
 - [`spaship init`](#spaship-init)
+
+## `spaship deploy`
+
+Describe the command here
+
+```
+USAGE
+  $ spaship deploy
+
+OPTIONS
+  -n, --name=name  name to print
+
+DESCRIPTION
+  ...
+  Extra documentation goes here
+```
+
+_See code: [src/commands/deploy.js](https://github.com/spaship/cli/blob/v0.0.10/src/commands/deploy.js)_
 
 ## `spaship help [COMMAND]`
 
