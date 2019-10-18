@@ -1,6 +1,6 @@
 {
   "name": "@rhcp/path-proxy",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "SPAship path proxy. Proxies paths to the right SPA location or pass to different origin.",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/spaship/path-proxy#readme",
   "dependencies": {
-    "@rhcp/common": "0.0.9",
+    "@rhcp/common": "^0.1.0",
     "express": "^4.17.1",
     "http-proxy-middleware": "^0.20.0"
   },

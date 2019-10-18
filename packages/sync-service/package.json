@@ -1,6 +1,6 @@
 {
   "name": "@rhcp/sync-service",
-  "version": "0.0.21",
+  "version": "0.1.0",
   "description": "The file synchronization service for the SPAship platform.",
   "homepage": "https://github.com/spaship/sync-service",
   "bugs": {
@@ -24,7 +24,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@rhcp/common": "0.0.x",
+    "@rhcp/common": "^0.1.0",
     "axios": "^0.19.0",
     "cors": "^2.8.5",
     "decompress": "^4.2.0",
