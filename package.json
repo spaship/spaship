@@ -18,7 +18,7 @@
     "test": "bash scripts/test.sh",
     "dev": "bash scripts/dev.sh",
     "lerna": "./node_modules/.bin/lerna",
-    "bump-version": "npm run lerna -- version --no-push --include-merged-tags --conventional-commits"
+    "bump-version": "npm run lerna -- version --include-merged-tags --conventional-commits --create-release=github"
   },
   "husky": {
     "hooks": {
