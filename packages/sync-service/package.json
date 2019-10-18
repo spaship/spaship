@@ -1,7 +1,7 @@
 {
   "name": "@rhcp/sync-service",
   "version": "0.1.0",
-  "description": "The file synchronization service for the SPAship platform.",
+  "description": "The file synchronization service for the SPAship platform!",
   "homepage": "https://github.com/spaship/sync-service",
   "bugs": {
     "url": "https://github.com/spaship/sync-service",
