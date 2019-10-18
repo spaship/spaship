@@ -3,16 +3,16 @@
   "description": "Monorepo for the SPAship project.",
   "private": true,
   "devDependencies": {
-    "eslint": "^5.16.0",
+    "eslint": "^6.5.1",
     "eslint-config-prettier": "^6.3.0",
     "eslint-plugin-prettier": "^3.1.1",
-    "prettier": "^1.18.2",
-    "pretty-quick": "^1.11.1",
     "husky": "^3.0.8",
-    "lerna": "^3.18.1"
+    "lerna": "^3.18.1",
+    "prettier": "^1.18.2",
+    "pretty-quick": "^1.11.1"
   },
   "scripts": {
-    "start": "scripts/start.sh",
+    "start": "npm run lerna run start",
     "bootstrap": "npm run lerna bootstrap --hoist",
     "postinstall": "npm run bootstrap",
     "test": "bash scripts/test.sh",
