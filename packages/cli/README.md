@@ -23,7 +23,7 @@ $ npm install -g @rhcp/cli
 $ spaship COMMAND
 running command...
 $ spaship (-v|--version|version)
-@rhcp/cli/0.1.0 linux-x64 node-v11.14.0
+@rhcp/cli/0.1.1 linux-x64 node-v11.14.0
 $ spaship --help [COMMAND]
 USAGE
   $ spaship COMMAND
@@ -58,7 +58,7 @@ DESCRIPTION
   Send an archive containing a SPA to a SPAship host for deployment.  Supports .tar.gz/.tgz, .zip, and .tar.bz2.
 ```
 
-_See code: [src/commands/deploy.js](https://github.com/spaship/cli/blob/v0.1.0/src/commands/deploy.js)_
+_See code: [src/commands/deploy.js](https://github.com/spaship/cli/blob/v0.1.1/src/commands/deploy.js)_
 
 ## `spaship help [COMMAND]`
 
@@ -96,6 +96,6 @@ DESCRIPTION
   passed in as CLI options.
 ```
 
-_See code: [src/commands/init.js](https://github.com/spaship/cli/blob/v0.1.0/src/commands/init.js)_
+_See code: [src/commands/init.js](https://github.com/spaship/cli/blob/v0.1.1/src/commands/init.js)_
 
 <!-- commandsstop -->
