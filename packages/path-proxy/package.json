@@ -1,5 +1,5 @@
 {
-  "name": "path-proxy",
+  "name": "@spaship/path-proxy",
   "version": "0.0.1",
   "description": "SPAship path proxy. Proxies paths to the right SPA location or pass to different origin.",
   "main": "index.js",
@@ -27,5 +27,8 @@
     "@spaship/common": "0.0.9",
     "express": "^4.17.1",
     "http-proxy-middleware": "^0.20.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

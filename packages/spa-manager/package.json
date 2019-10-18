@@ -1,9 +1,9 @@
 {
-  "name": "spa-manager",
+  "name": "@spaship/spa-manager",
   "version": "0.0.1",
   "description": "The SPAship UI",
   "main": "index.js",
-  "homepage": "./",
+  "homepage": "https://github.com/spaship/spa-manager",
   "repository": {
     "type": "git",
     "url": "git@github.com:spaship/spa-manager.git"
@@ -25,9 +25,6 @@
     "@types/react": "^16.9.3",
     "@types/react-dom": "^16.9.1",
     "@types/react-router-dom": "^5.1.0",
-    "husky": "^3.0.5",
-    "lint-staged": "^9.3.0",
-    "prettier": "^1.18.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-router-dom": "^5.1.0",
@@ -48,5 +45,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
