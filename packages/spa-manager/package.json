@@ -1,5 +1,5 @@
 {
-  "name": "@spaship/spa-manager",
+  "name": "@rhcp/spa-manager",
   "version": "0.0.1",
   "description": "The SPAship UI",
   "main": "index.js",
