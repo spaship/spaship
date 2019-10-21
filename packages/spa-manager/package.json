@@ -17,21 +17,21 @@
     "test": "react-scripts test"
   },
   "devDependencies": {
-    "@patternfly/react-core": "^3.104.0",
-    "@patternfly/react-table": "^2.20.15",
+    "@patternfly/react-core": "3.104.0",
+    "@patternfly/react-table": "2.20.15",
     "@types/jest": "24.0.18",
-    "@types/lodash": "^4.14.139",
-    "@types/node": "^12.7.8",
-    "@types/react": "^16.9.3",
-    "@types/react-dom": "^16.9.1",
-    "@types/react-router-dom": "^5.1.0",
-    "@typescript-eslint/eslint-plugin": "^2.4.0",
-    "@typescript-eslint/parser": "^2.4.0",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
-    "react-router-dom": "^5.1.0",
-    "react-scripts": "^3.1.2",
-    "typescript": "^3.6.3"
+    "@types/lodash": "4.14.139",
+    "@types/node": "12.7.8",
+    "@types/react": "16.9.3",
+    "@types/react-dom": "16.9.1",
+    "@types/react-router-dom": "5.1.0",
+    "@typescript-eslint/eslint-plugin": "2.4.0",
+    "@typescript-eslint/parser": "2.4.0",
+    "react": "16.9.0",
+    "react-dom": "16.9.0",
+    "react-router-dom": "5.1.0",
+    "react-scripts": "3.1.2",
+    "typescript": "3.6.3"
   },
   "eslintConfig": {
     "extends": "react-app"
