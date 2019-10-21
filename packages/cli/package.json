@@ -1,7 +1,7 @@
 {
   "name": "@rhcp/cli",
   "description": "A command line interface for SPAship!",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "author": "mclayton@redhat.com",
   "bin": {
     "spaship": "./bin/run"
@@ -19,7 +19,7 @@
     "posttest": "eslint .",
     "prepack": "oclif-dev manifest && oclif-dev readme",
     "test": "nyc mocha --forbid-only \"test/**/*.test.js\"",
-    "version": "oclif-dev readme && git add README.md"
+    "preversion": "oclif-dev readme && git add README.md"
   },
   "dependencies": {
     "@oclif/command": "^1.5.19",
