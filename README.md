@@ -16,17 +16,37 @@ Also, if you're working in a development branch, please don't worry about proper
 
 ### Release process
 
-There are two commands to create a new release.
+There are two commands to create and publish a new release.
 
-1.  `GH_TOKEN="YOUR_TOKEN" npm run autorelease` - this command will:
+1.  `GH_TOKEN="YOUR_TOKEN" npm run autorelease`
+2.  `npm run autopublish`
 
-- automatically bump versions of any packages which have changed since the last tag
-- update each package's CHANGELOG and the monorepo root CHANGELOG
-- create a "release" object in github
-- _Note_: "YOUR_TOKEN" is a placeholder; to successfully create the github release, create a [personal access token][token] with "public_repo" checked, and paste it over "YOUR_TOKEN"
+_Note_: "YOUR_TOKEN" is a placeholder; please replace it with a GitHub [personal access token][token]. When creating a personal access token, the only option that needs to be checked is "public_repo". Also, your GitHub user must have write access to this repository.
 
-2.  `npm run autopublish` - this command will publish the changes to NPM
+Here is more detail about what `autorelease` and `autopublish` do.
+
+#### `autorelease`
+
+`npm run autorelease` does a few things.
+
+- Automatically bump the version number of any packages which have changed since the last tag. The type of version bump (major, minor, patch) is chosen automatically based on the types of changes found in the conventional commit log. For instance, a `BREAKING CHANGE` will result in a major version bump, while `feat` will result in a minor bump.
+- Update each package's CHANGELOG.md files, and aggregate those updates into the monorepo's root CHANGELOG.md
+- Create a git tag for the new version
+- Create a "release" object in github
+
+`autorelease` is a wrapper around [`lerna version`][lernaversion].
+
+#### `autopublish`
+
+`autopublish` will publish to NPM any packages that were updated by `autorelease`. This command is meant to be run after `autorelease`.
+
+#### Recovering from autorelease with bad GH_TOKEN
+
+If something goes wrong when you run `autorelease`, such as an invalid or forgotten `GH_TOKEN`, that's okay. Versions will still be bumped, git tags will still be created and pushed. The only thing missing is the GitHub Release description. To remedy that, go to [spaship/releases][releases]. You should see a release listed for the new version number, but it will be lacking a description. Click on it, then click Edit Release. Paste the relevant lines from [CHANGELOG.md][changelog] into the description. That's it!
 
 [conventional]: https://www.conventionalcommits.org/en/v1.0.0/
 [squashgif]: https://imgur.com/download/HDd06gq/
 [token]: https://github.com/settings/tokens/new
+[lernaversion]: https://github.com/lerna/lerna/tree/master/commands/version#readme
+[releases]: https://github.com/spaship/spaship/releases
+[changelog]: ./CHANGELOG.md
