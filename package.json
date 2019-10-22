@@ -1,6 +1,7 @@
 {
   "name": "@spaship/spaship",
   "description": "Monorepo for the SPAship project.",
+  "version": "0.3.3",
   "private": true,
   "devDependencies": {
     "eslint": "6.5.1",

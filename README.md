@@ -40,7 +40,13 @@ Here is more detail about what `autorelease` and `autopublish` do.
 
 `autopublish` will publish to NPM any packages that were updated by `autorelease`. This command is meant to be run after `autorelease`.
 
+#### Recovering from autorelease with bad GH_TOKEN
+
+If something goes wrong when you run `autorelease`, such as an invalid or forgotten `GH_TOKEN`, that's okay. Versions will still be bumped, git tags will still be created and pushed. The only thing missing is the GitHub Release description. To remedy that, go to [spaship/releases][releases]. You should see a release listed for the new version number, but it will be lacking a description. Click on it, then click Edit Release. Paste the relevant lines from [CHANGELOG.md][changelog] into the description. That's it!
+
 [conventional]: https://www.conventionalcommits.org/en/v1.0.0/
 [squashgif]: https://imgur.com/download/HDd06gq/
 [token]: https://github.com/settings/tokens/new
 [lernaversion]: https://github.com/lerna/lerna/tree/master/commands/version#readme
+[releases]: https://github.com/spaship/spaship/releases
+[changelog]: ./CHANGELOG.md
