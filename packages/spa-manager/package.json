@@ -1,6 +1,6 @@
 {
   "name": "@rhcp/spa-manager",
-  "version": "0.3.1",
+  "version": "0.3.3",
   "description": "The SPAship UI.",
   "main": "index.js",
   "homepage": "https://github.com/spaship/spa-manager",
@@ -20,7 +20,7 @@
     "@patternfly/react-core": "3.112.3",
     "@patternfly/react-table": "2.22.19",
     "@types/jest": "24.0.19",
-    "@types/lodash": "4.14.139",
+    "@types/lodash": "4.14.144",
     "@types/node": "12.11.2",
     "@types/react": "16.9.3",
     "@types/react-dom": "16.9.1",
