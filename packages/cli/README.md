@@ -19,11 +19,11 @@ A command line interface for SPAship.
 <!-- usage -->
 
 ```sh-session
-$ npm install -g @rhcp/cli
+$ npm install -g @spaship/cli
 $ spaship COMMAND
 running command...
 $ spaship (-v|--version|version)
-@rhcp/cli/0.3.1 linux-x64 node-v11.14.0
+@spaship/cli/0.3.1 linux-x64 node-v11.14.0
 $ spaship --help [COMMAND]
 USAGE
   $ spaship COMMAND

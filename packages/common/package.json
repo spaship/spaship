@@ -1,5 +1,5 @@
 {
-  "name": "@rhcp/common",
+  "name": "@spaship/common",
   "description": "A set of common utilities used by other SPAship components.",
   "version": "0.3.1",
   "author": "mclayton@redhat.com",

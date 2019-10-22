@@ -1,5 +1,5 @@
 {
-  "name": "@rhcp/cli",
+  "name": "@spaship/cli",
   "description": "A command line interface for SPAship!",
   "version": "0.3.2",
   "author": "mclayton@redhat.com",
@@ -25,7 +25,7 @@
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.13.3",
     "@oclif/plugin-help": "^2.2.1",
-    "@rhcp/common": "^0.3.1",
+    "@spaship/common": "^0.3.1",
     "execa": "^2.1.0",
     "inquirer": "^7.0.0",
     "lodash": "^4.17.15"
