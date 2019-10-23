@@ -1,3 +1,4 @@
 module.exports = {
-  projects: ["<rootDir>", "<rootDir>/packages/*"]
+  projects: ["<rootDir>", "<rootDir>/packages/*"],
+  testPathIgnorePatterns: ["<rootDir>/packages/cli"]
 };
