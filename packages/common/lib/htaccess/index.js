@@ -22,31 +22,3 @@ async function write(destDir, data) {
 }
 
 module.exports = { generate, write };
-
-if (require.main === module) {
-  (async () => {
-    console.log(
-      await generate({
-        name: "Test Name",
-        path: "/test/path",
-        single: true
-      })
-    );
-
-    console.log(
-      await generate({
-        name: "Test Name 2",
-        path: "/test/path/two"
-      })
-    );
-
-    // this should error
-    console.log(
-      await generate({
-        name: "Test Name 2",
-        path: "/test/path/two",
-        x: 42
-      })
-    );
-  })();
-}
