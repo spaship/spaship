@@ -13,7 +13,7 @@ async function write(filename, data) {
 
 `;
 
-  const valid = validate(data);
+  const { valid } = validate(data);
   if (!valid) {
     console.warn(`WARNING: configuration is invalid, `, data);
   }
@@ -24,28 +24,3 @@ async function write(filename, data) {
 }
 
 module.exports = write;
-
-if (require.main === module) {
-  write("spaship.yaml", { name: "Foo", path: "/foo/bar", single: true }).then(
-    data => {
-      console.log("wrote the following data", data);
-    }
-  );
-  write("spaship2.yaml", {
-    name: "Foo",
-    path: "/foo/bar",
-    single: true,
-    deploykey: "dk-abcdefgh"
-  }).then(data => {
-    console.log("wrote the following data", data);
-  });
-  write("spaship3.yaml", {
-    name: "Foo",
-    BAD_PROPERTY: "nope",
-    path: "/foo/bar",
-    single: true,
-    deploykey: "dk-abcdefgh"
-  }).then(data => {
-    console.log("wrote the following data", data);
-  });
-}
