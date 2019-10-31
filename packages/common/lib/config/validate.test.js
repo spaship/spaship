@@ -1,12 +1,17 @@
 const fs = require("fs");
 const validate = require("./validate");
 
-describe("common/validate", () => {
+describe("common.config.validate", () => {
   test("should approve valid configurations", () => {
     expect(validate({ name: "Foo", path: "/foo" })).toHaveProperty("valid", true);
     expect(validate({ name: "Foo", path: "/foo", single: true })).toHaveProperty("valid", true);
     expect(validate({ name: "Foo", path: "/foo", single: false })).toHaveProperty("valid", true);
     expect(validate({ name: "Foo", path: "/foo", deploykey: "123123123" })).toHaveProperty("valid", true);
+    expect(validate({ name: "Foo", path: "/foo", ref: "master" })).toHaveProperty("valid", true);
+    expect(validate({ name: "Foo", path: "/foo", single: true, ref: "v1.0.0", deploykey: "123123123" })).toHaveProperty(
+      "valid",
+      true
+    );
   });
   test("should reject wrongly typed configuration values", () => {
     expect(validate({ name: 1, path: "/foo" })).toHaveProperty("valid", false);

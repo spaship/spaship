@@ -24,7 +24,7 @@ function trimYaml(yml) {
     .join("\n");
 }
 
-describe("common/write", () => {
+describe("common.config.write", () => {
   beforeEach(() => {
     fileData = {};
   });
