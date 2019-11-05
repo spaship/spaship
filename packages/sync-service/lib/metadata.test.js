@@ -10,10 +10,14 @@ config.get = jest.fn(opt => {
   return fakeConfig[opt];
 });
 
+// this is needed to allow console to continue working while the fs is mocked
+global.console = require("../../../__mocks__/console");
+
 describe("sync-service.metadata", () => {
   beforeEach(() => {
     mockfs({
       "/fake/webroot": {
+        // some SPAs in the webroot
         foo: {
           "index.html": "<!doctype html><html></html>",
           "spaship.yaml": "name: Foo\npath: /foo\nref: v1.0.1\nsingle: true\ndeploykey: sehvgqrnyre"
@@ -25,7 +29,10 @@ describe("sync-service.metadata", () => {
         baz: {
           "index.html": "<!doctype html><html></html>",
           "spaship.yaml": "name: Baz\npath: /baz\nref: a3eb124f\nsingle: true\ndeploykey: arfgrn"
-        }
+        },
+        // some non-SPAs in the webroot
+        chrome: {},
+        ".htaccess": "# global htaccess file"
       }
     });
   });
@@ -45,8 +52,9 @@ describe("sync-service.metadata", () => {
   // describe("write", () => {});
   describe("getAll", () => {
     test("should retrieve metadata for all deployed SPAs", async () => {
-      const all = await metadata.getAll();
-      expect(all).toEqual([
+      const actuall = await metadata.getAll();
+      const expected = [
+        // some SPAs in the webroot
         {
           name: "Foo",
           path: "/foo",
@@ -55,7 +63,7 @@ describe("sync-service.metadata", () => {
           deploykey: "sehvgqrnyre"
         },
         {
-          name: "Foo bar",
+          name: "Foo Bar",
           path: "/foo/bar",
           ref: "master",
           deploykey: "zvapuhy"
@@ -66,8 +74,20 @@ describe("sync-service.metadata", () => {
           ref: "a3eb124f",
           single: true,
           deploykey: "arfgrn"
+        },
+        // some non-SPAs in the webroot
+        {
+          path: "/.htaccess"
+        },
+        {
+          path: "/chrome"
         }
-      ]);
+      ];
+
+      // test that the actual and expected arrays have the same items (couldn't find a jest matcher that does exactly
+      // that, so I'm checking each array item one by one, and then checking the array lengths are the same)
+      actuall.forEach(n => expect(expected).toContainEqual(n));
+      expect(expected).toHaveLength(actuall.length);
     });
   });
   describe("get", () => {

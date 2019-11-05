@@ -11,16 +11,9 @@ async function write(filename, extraData) {
 // Get all the SPA directories in the webroot (not including hidden dirs), then
 // look up metadata for each and return it.
 async function getAll() {
-  console.log("GETTING ALL");
   try {
-    const webrootFiles = await fsp.readdir(config.get("webroot"), {
-      withFileTypes: true
-    });
-    const spaDirs = flow(
-      filter(d => d.isDirectory()),
-      map("name"),
-      map(get)
-    )(webrootFiles);
+    const webrootFiles = await fsp.readdir(config.get("webroot"));
+    const spaDirs = flow(map(get))(webrootFiles);
     return await Promise.all(spaDirs);
   } catch (e) {
     console.error(e);
