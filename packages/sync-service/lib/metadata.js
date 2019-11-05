@@ -11,6 +11,7 @@ async function write(filename, extraData) {
 // Get all the SPA directories in the webroot (not including hidden dirs), then
 // look up metadata for each and return it.
 async function getAll() {
+  console.log("GETTING ALL");
   try {
     const webrootFiles = await fsp.readdir(config.get("webroot"), {
       withFileTypes: true
@@ -31,9 +32,7 @@ async function get(spaDir) {
   // read the contents of the ref and name files
   try {
     // list entries with spaship.yaml
-    return await common.config.read(
-      path.resolve(config.get("webroot"), spaDir, "spaship.yaml")
-    );
+    return await common.config.read(path.resolve(config.get("webroot"), spaDir, "spaship.yaml"));
   } catch (e) {
     // list entries without spaship.yaml
     return { path: "/" + spaDir };

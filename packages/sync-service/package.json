@@ -42,5 +42,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "fs-monkey": "^0.3.3"
   }
 }

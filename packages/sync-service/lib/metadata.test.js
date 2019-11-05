@@ -4,7 +4,6 @@ const config = require("../config");
 
 // override some configuration values
 config.get = jest.fn(opt => {
-  console.log(`GETTING ${opt}`);
   const fakeConfig = {
     webroot: "/fake/webroot"
   };
@@ -14,7 +13,7 @@ config.get = jest.fn(opt => {
 describe("sync-service.metadata", () => {
   beforeEach(() => {
     mockfs({
-      "fake/webroot": {
+      "/fake/webroot": {
         foo: {
           "index.html": "<!doctype html><html></html>",
           "spaship.yaml": "name: Foo\npath: /foo\nref: v1.0.1\nsingle: true\ndeploykey: sehvgqrnyre"
@@ -43,7 +42,7 @@ describe("sync-service.metadata", () => {
   // const data = await read("./foo");
   // expect(data).toEqual({ name: "Foo", path: "/foo" });
   // });
-  describe("write", () => {});
+  // describe("write", () => {});
   describe("getAll", () => {
     test("should retrieve metadata for all deployed SPAs", async () => {
       const all = await metadata.getAll();
@@ -74,6 +73,7 @@ describe("sync-service.metadata", () => {
   describe("get", () => {
     test("should retrieve metadata when given a spa's directory", async () => {
       const meta = await metadata.get("foo");
+
       expect(meta).toEqual({
         name: "Foo",
         path: "/foo",
