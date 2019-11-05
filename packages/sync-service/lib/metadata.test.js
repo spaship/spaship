@@ -1,6 +1,8 @@
 const metadata = require("./metadata");
 const mockfs = require("mock-fs");
 const config = require("../config");
+const fsp = require("fs").promises;
+const fs = require("fs");
 
 // override some configuration values
 config.get = jest.fn(opt => {
@@ -43,7 +45,6 @@ describe("sync-service.metadata", () => {
   describe("write", () => {
     test("should add metadata to a deployed SPA", async () => {
       await metadata.write("/fake/webroot/baz/spaship.yaml", { ref: "a3eb124f" });
-      const fsp = require("fs").promises;
 
       const yaml = await fsp.readFile("/fake/webroot/baz/spaship.yaml");
       expect(yaml.toString()).toMatch("ref: a3eb124f");
@@ -87,6 +88,17 @@ describe("sync-service.metadata", () => {
       // that, so I'm checking each array item one by one, and then checking the array lengths are the same)
       actuall.forEach(n => expect(expected).toContainEqual(n));
       expect(expected).toHaveLength(actuall.length);
+    });
+    test("should return an empty array if the webroot can't be accessed", async () => {
+      // "remove" the webroot
+      mockfs.restore();
+      mockfs({
+        "/fake": {}
+      });
+
+      const all = await metadata.getAll();
+
+      expect(all).toHaveLength(0);
     });
   });
 
