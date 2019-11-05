@@ -28,7 +28,7 @@ describe("sync-service.metadata", () => {
         },
         baz: {
           "index.html": "<!doctype html><html></html>",
-          "spaship.yaml": "name: Baz\npath: /baz\nref: a3eb124f\nsingle: true\ndeploykey: arfgrn"
+          "spaship.yaml": "name: Baz\npath: /baz\nsingle: true\ndeploykey: arfgrn"
         },
         // some non-SPAs in the webroot
         chrome: {},
@@ -39,17 +39,17 @@ describe("sync-service.metadata", () => {
   afterEach(() => {
     mockfs.restore();
   });
-  // test("should read configuration data from a spaship.yaml file", async () => {
-  // // mock readFile
-  // fs.promises.readFile = jest.fn();
 
-  // const mockFileContent = "name: Foo\npath: /foo";
-  // fs.promises.readFile.mockResolvedValue(mockFileContent);
+  describe("write", () => {
+    test("should add metadata to a deployed SPA", async () => {
+      await metadata.write("/fake/webroot/baz/spaship.yaml", { ref: "a3eb124f" });
+      const fsp = require("fs").promises;
 
-  // const data = await read("./foo");
-  // expect(data).toEqual({ name: "Foo", path: "/foo" });
-  // });
-  // describe("write", () => {});
+      const yaml = await fsp.readFile("/fake/webroot/baz/spaship.yaml");
+      expect(yaml.toString()).toMatch("ref: a3eb124f");
+    });
+  });
+
   describe("getAll", () => {
     test("should retrieve metadata for all deployed SPAs", async () => {
       const actuall = await metadata.getAll();
@@ -71,7 +71,6 @@ describe("sync-service.metadata", () => {
         {
           name: "Baz",
           path: "/baz",
-          ref: "a3eb124f",
           single: true,
           deploykey: "arfgrn"
         },
@@ -90,6 +89,7 @@ describe("sync-service.metadata", () => {
       expect(expected).toHaveLength(actuall.length);
     });
   });
+
   describe("get", () => {
     test("should retrieve metadata when given a spa's directory", async () => {
       const meta = await metadata.get("foo");
