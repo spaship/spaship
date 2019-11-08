@@ -37,9 +37,7 @@ class Autosync {
     }
 
     // spin up a readFile for each path (one default path, or multiple subpaths)
-    cachedTargets = mapValues(cachedTargets, p =>
-      fsp.readFile(path.join(target.dest.path, p, target.dest.filename))
-    );
+    cachedTargets = mapValues(cachedTargets, p => fsp.readFile(path.join(target.dest.path, p, target.dest.filename)));
 
     // await file read and convert to string
     for (let f in cachedTargets) {
@@ -59,6 +57,10 @@ class Autosync {
       }, parseInt(ms(target.interval)));
       this.intervalHandles.push(handle); // save a reference to the handle in case we want to stop it later
     }
+  }
+
+  stop() {
+    this.intervalHandles.forEach(clearInterval);
   }
 
   /**
