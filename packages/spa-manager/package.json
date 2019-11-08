@@ -17,21 +17,21 @@
     "test": "react-scripts test"
   },
   "devDependencies": {
-    "@patternfly/react-core": "3.112.3",
-    "@patternfly/react-table": "2.22.19",
+    "@patternfly/react-core": "3.120.8",
+    "@patternfly/react-table": "2.24.22",
     "@types/jest": "24.0.20",
-    "@types/lodash": "4.14.144",
+    "@types/lodash": "4.14.146",
     "@types/node": "12.12.6",
     "@types/react": "16.9.11",
-    "@types/react-dom": "16.9.3",
-    "@types/react-router-dom": "5.1.0",
-    "@typescript-eslint/eslint-plugin": "2.6.0",
-    "@typescript-eslint/parser": "2.6.0",
+    "@types/react-dom": "16.9.4",
+    "@types/react-router-dom": "5.1.2",
+    "@typescript-eslint/eslint-plugin": "2.6.1",
+    "@typescript-eslint/parser": "2.6.1",
     "react": "16.11.0",
     "react-dom": "16.11.0",
     "react-router-dom": "5.1.2",
     "react-scripts": "3.2.0",
-    "typescript": "3.6.4"
+    "typescript": "3.7.2"
   },
   "eslintConfig": {
     "extends": "react-app"
