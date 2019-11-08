@@ -17,7 +17,7 @@
     "test": "react-scripts test"
   },
   "devDependencies": {
-    "@patternfly/react-core": "3.112.3",
+    "@patternfly/react-core": "3.120.8",
     "@patternfly/react-table": "2.22.19",
     "@types/jest": "24.0.20",
     "@types/lodash": "4.14.144",
