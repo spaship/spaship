@@ -4,7 +4,7 @@
   "description": "SPAship path proxy. Proxies paths to the right SPA location or pass to different origin.",
   "main": "index.js",
   "scripts": {
-    "test": "../../node_modules/.bin/jest ./",
+    "test": "../../node_modules/.bin/jest ./ --passWithNoTests",
     "start": "node $NODE_DEBUG_OPTION index.js"
   },
   "repository": {
