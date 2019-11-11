@@ -89,10 +89,10 @@ class Autosync {
         destPath = path.join(target.dest.path, subPath);
         file = path.join(destPath, target.dest.filename);
 
-        this._syncSingleURL(url, destPath, file);
+        await this._syncSingleURL(url, destPath, file);
       }
     } else {
-      this._syncSingleURL(url, destPath, file);
+      await this._syncSingleURL(url, destPath, file);
     }
   }
 
