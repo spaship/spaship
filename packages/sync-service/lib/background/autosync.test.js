@@ -68,7 +68,7 @@ config.get = jest.fn(opt => {
 });
 
 // this is needed to allow console to continue working while the fs is mocked
-global.console = require("../../../../__mocks__/console");
+// global.console = require("../../../../__mocks__/console");
 
 describe("sync-service.autosync", () => {
   beforeEach(() => {
@@ -101,7 +101,9 @@ describe("sync-service.autosync", () => {
         status: 200,
         data: responseText
       });
-      const target = find(config.get("autosync").targets, { name: "test-target-1" });
+      const target = find(config.get("autosync").targets, {
+        name: "test-target-1"
+      });
       await as.syncTarget(target);
       const cache = await fsp.readFile("/fake/webroot/spaship/test-target-1/index.html");
       expect(cache.toString()).toEqual(responseText);
@@ -110,15 +112,24 @@ describe("sync-service.autosync", () => {
     test("should save to disk the response from a sync target with subpaths", async () => {
       const responseText = "TEST RESPONSE STRING";
       const as = new Autosync();
-      axios.get.mockResolvedValue({
-        status: 200,
-        data: responseText
+      axios.get.mockImplementation(url => {
+        console.log(url);
+        const [lang] = /\/[^/]*$/.exec(url);
+        console.log(lang);
+        return {
+          status: 200,
+          data: `${lang} ${responseText}`
+        };
       });
-      const target = find(config.get("autosync").targets, { name: "target-with-subpaths" });
+
+      const target = find(config.get("autosync").targets, {
+        name: "target-with-subpaths"
+      });
       await as.syncTarget(target);
+
       for (let p of ["/path1", "/path2", "/path3", "/path4"]) {
         const cache = await fsp.readFile(`/fake/webroot/spaship/target-with-subpaths${p}/index.html`);
-        expect(cache.toString()).toEqual(responseText);
+        expect(cache.toString()).toEqual(`${p} ${responseText}`);
       }
     });
   });
