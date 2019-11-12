@@ -21,9 +21,7 @@ console.log(`
 ╚════██║██╔═══╝ ██╔══██║╚════██║██╔══██║██║██╔═══╝   ██╔╝
 ███████║██║     ██║  ██║███████║██║  ██║██║██║      ██╔╝
 ╚══════╝╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝      ╚═╝ `);
-console.log(
-  `Starting SPAship version ${npmPackage.version} with configuration:\n`
-);
+console.log(`Starting SPAship version ${npmPackage.version} with configuration:\n`);
 console.log(config.toString());
 console.log();
 console.log(`Listening on http://${config.get("host")}:${config.get("port")}`);
@@ -34,3 +32,5 @@ if (config.get("autosync:enabled")) {
     autosync.forceSyncAll();
   }
 }
+
+module.exports = { app, autosync, config, routes };

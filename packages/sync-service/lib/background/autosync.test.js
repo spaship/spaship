@@ -1,11 +1,12 @@
 const Autosync = require("./autosync");
 const mockfs = require("mock-fs");
-const { config } = require("@spaship/common");
-const { find } = require("lodash");
+const config = require("../../config");
+const { find, get } = require("lodash");
 const axios = require("axios");
 const fsp = require("fs").promises;
 
 jest.mock("axios");
+jest.mock("../../config");
 
 // override some configuration values
 config.get = jest.fn(opt => {
@@ -36,56 +37,23 @@ config.get = jest.fn(opt => {
             path: "/fake/webroot/spaship/target-with-subpaths",
             filename: "index.html"
           }
-        },
-        {
-          name: "chrome-header",
-          interval: "5s",
-          source: {
-            url: "https://access.redhat.com/services/chrome/header",
-            sub_paths: ["/en", "/kr", "/ja", "/zh_CN"]
-          },
-          dest: {
-            path: "/fake/webroot/spaship/chrome/header",
-            filename: "header.html"
-          }
-        },
-        {
-          name: "chrome-footer",
-          interval: "5s",
-          source: {
-            url: "https://access.redhat.com/services/chrome/footer",
-            sub_paths: ["/en", "/kr", "/ja", "/zh_CN"]
-          },
-          dest: {
-            path: "/fake/webroot/spaship/chrome/footer",
-            filename: "footer.html"
-          }
         }
       ]
     }
   };
-  return fakeConfig[opt];
+  const prop = opt.replace(":", ".");
+  const val = get(fakeConfig, prop);
+  return val;
 });
 
 // this is needed to allow console to continue working while the fs is mocked
-// global.console = require("../../../../__mocks__/console");
+global.console = require("../../../../__mocks__/console");
 
 describe("sync-service.autosync", () => {
   beforeEach(() => {
     mockfs({
-      // scaffold out the full directory structure because autosync uses fsp.mkdir with recursive:true, which does not
-      // seem to be supported in mockfs.  In a real filesystem, the full directory structure does _not_ need to be
-      // created ahead of time.  This could be reduced to `"/fake/webroot": {}` once mockfs supports the recusive option
-      // in fsp.mkdir.
-      "/fake/webroot": {
-        spaship: {
-          chrome: {
-            head: {},
-            header: {},
-            footer: {}
-          }
-        }
-      }
+      // scaffold the mock filesystem, just a webroot directory
+      "/fake/webroot": {}
     });
   });
 
@@ -94,43 +62,61 @@ describe("sync-service.autosync", () => {
   });
 
   describe("syncTarget", () => {
-    test("should save to disk the response from a sync target", async () => {
-      const responseText = "TEST RESPONSE STRING";
-      const as = new Autosync();
-      axios.get.mockResolvedValue({
-        status: 200,
-        data: responseText
+    describe("lifecycle", () => {
+      test("should start and stop", async () => {
+        const as = new Autosync();
+        expect(as.isRunning()).toEqual(false);
+        as.start();
+        expect(as.isRunning()).toEqual(true);
+        as.stop();
+        expect(as.isRunning()).toEqual(false);
+        as.start();
+        expect(as.isRunning()).toEqual(true);
+        as.stop();
+        expect(as.isRunning()).toEqual(false);
       });
-      const target = find(config.get("autosync").targets, {
-        name: "test-target-1"
-      });
-      await as.syncTarget(target);
-      const cache = await fsp.readFile("/fake/webroot/spaship/test-target-1/index.html");
-      expect(cache.toString()).toEqual(responseText);
+      test("should sync targets while running", async () => {});
+      test("should sync targets periodically per target's timer", async () => {});
     });
-
-    test("should save to disk the response from a sync target with subpaths", async () => {
-      const responseText = "TEST RESPONSE STRING";
-      const as = new Autosync();
-      axios.get.mockImplementation(url => {
-        console.log(url);
-        const [lang] = /\/[^/]*$/.exec(url);
-        console.log(lang);
-        return {
+    describe("disk cache", () => {
+      test("should save to disk the response from a sync target", async () => {
+        const responseText = "TEST RESPONSE STRING";
+        const as = new Autosync();
+        axios.get.mockResolvedValue({
           status: 200,
-          data: `${lang} ${responseText}`
-        };
+          data: responseText
+        });
+        const target = find(config.get("autosync:targets"), {
+          name: "test-target-1"
+        });
+        await as.syncTarget(target);
+        const cache = await fsp.readFile("/fake/webroot/spaship/test-target-1/index.html");
+        expect(cache.toString()).toEqual(responseText);
       });
 
-      const target = find(config.get("autosync").targets, {
-        name: "target-with-subpaths"
-      });
-      await as.syncTarget(target);
+      test("should save to disk the response from a sync target with subpaths", async () => {
+        const responseText = "TEST RESPONSE STRING";
+        const as = new Autosync();
+        axios.get.mockImplementation(url => {
+          // extract the lang and add it to the HTTP response, so that each endpoint has a unique response.
+          const [lang] = /\/[^/]*$/.exec(url);
+          return {
+            status: 200,
+            data: `${lang} ${responseText}`
+          };
+        });
 
-      for (let p of ["/path1", "/path2", "/path3", "/path4"]) {
-        const cache = await fsp.readFile(`/fake/webroot/spaship/target-with-subpaths${p}/index.html`);
-        expect(cache.toString()).toEqual(`${p} ${responseText}`);
-      }
+        const target = find(config.get("autosync:targets"), {
+          name: "target-with-subpaths"
+        });
+        await as.syncTarget(target);
+
+        // make sure each autosync'd file has the expected contents.
+        for (let p of ["/path1", "/path2", "/path3", "/path4"]) {
+          const cache = await fsp.readFile(`/fake/webroot/spaship/target-with-subpaths${p}/index.html`);
+          expect(cache.toString()).toEqual(`${p} ${responseText}`);
+        }
+      });
     });
   });
 });
