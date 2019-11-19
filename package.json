@@ -18,7 +18,7 @@
     "start": "npm run lerna run start",
     "bootstrap": "npm run lerna bootstrap --hoist",
     "postinstall": "npm run bootstrap",
-    "test": "npm run lerna run test",
+    "test": "CI=true npm run lerna run test",
     "dev": "bash scripts/dev.sh",
     "lerna": "./node_modules/.bin/lerna",
     "autorelease": "npm run lerna -- version --include-merged-tags --conventional-commits --create-release=github",
