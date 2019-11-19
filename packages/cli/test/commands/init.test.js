@@ -3,16 +3,11 @@ const fsp = require("fs").promises;
 
 async function clean() {
   console.log(`removing any existing spaship.yaml file`);
-  await fsp.unlink("spaship.yaml");
+  try {
+    await fsp.unlink("spaship.yaml");
+  } catch (e) {}
 }
 describe("init", () => {
-  // test
-  //   .stdout()
-  //   .command(["init"])
-  //   .it("runs hello", ctx => {
-  //     expect(ctx.stdout).to.contain("hello world");
-  //   });
-
   test
     .stdout()
     .do(clean)
