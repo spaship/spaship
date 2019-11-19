@@ -12,6 +12,8 @@ async function getDirectoryNames() {
 
   // Sort them by name length from longest to shortest, for most specific match wins matching policy
   flatDirectories.sort((a, b) => b.length - a.length);
+
+  console.log(flatDirectories);
 }
 
 const customRouter = function(req) {
@@ -87,15 +89,34 @@ let options = {
 // create the proxy
 let pathProxy = proxy(options);
 
+let intervalId;
+let server;
+
 async function start() {
   // Load the flat directory names into memory and keep them refreshed
   await getDirectoryNames();
-  setInterval(await getDirectoryNames, 750);
+  intervalId = setInterval(getDirectoryNames, 750);
 
   // Start proxy server on port
   let app = express();
   app.use("/", pathProxy);
-  app.listen(3000);
+  server = app.listen(3000);
 }
 
-start();
+/**
+ * Stop the running server.
+ * @async
+ */
+function stop() {
+  clearInterval(intervalId);
+  return new Promise(resolve => {
+    server.close(resolve);
+  });
+}
+
+module.exports = { start, stop };
+
+// if this module is the entry-point, go ahead and launch path-proxy
+if (require.main === module) {
+  start();
+}
