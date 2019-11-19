@@ -16,7 +16,6 @@
   "repository": "spaship/cli",
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
-    "posttest": "../../node_modules/.bin/eslint .",
     "prepack": "oclif-dev manifest && oclif-dev readme",
     "test": "nyc mocha --forbid-only \"test/**/*.test.js\"",
     "preversion": "oclif-dev readme && git add README.md"
