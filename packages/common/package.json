@@ -9,7 +9,7 @@
   "main": "index.js",
   "repository": "spaship/common",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "../../node_modules/.bin/jest ./"
   },
   "dependencies": {
     "ajv": "^6.10.2",

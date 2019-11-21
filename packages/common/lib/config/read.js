@@ -8,7 +8,3 @@ async function read(filepath) {
 }
 
 module.exports = read;
-
-if (require.main === module) {
-  read(process.argv[2] || "spaship.yaml").then(result => console.log(result));
-}

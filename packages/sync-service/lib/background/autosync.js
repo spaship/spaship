@@ -37,9 +37,7 @@ class Autosync {
     }
 
     // spin up a readFile for each path (one default path, or multiple subpaths)
-    cachedTargets = mapValues(cachedTargets, p =>
-      fsp.readFile(path.join(target.dest.path, p, target.dest.filename))
-    );
+    cachedTargets = mapValues(cachedTargets, p => fsp.readFile(path.join(target.dest.path, p, target.dest.filename)));
 
     // await file read and convert to string
     for (let f in cachedTargets) {
@@ -47,6 +45,10 @@ class Autosync {
     }
 
     return cachedTargets;
+  }
+
+  isRunning() {
+    return this.intervalHandles.length > 0;
   }
 
   start() {
@@ -61,13 +63,17 @@ class Autosync {
     }
   }
 
+  stop() {
+    this.intervalHandles.forEach(clearInterval);
+    this.intervalHandles = [];
+  }
+
   /**
    * Force a sync of all targets immediately
    */
-  forceSyncAll() {
-    for (let target of this.targets) {
-      this.syncTarget(target);
-    }
+  async forceSyncAll() {
+    const syncs = this.targets.map(target => this.syncTarget(this));
+    await Promise.all(syncs);
   }
 
   /**
@@ -87,10 +93,10 @@ class Autosync {
         destPath = path.join(target.dest.path, subPath);
         file = path.join(destPath, target.dest.filename);
 
-        this._syncSingleURL(url, destPath, file);
+        await this._syncSingleURL(url, destPath, file);
       }
     } else {
-      this._syncSingleURL(url, destPath, file);
+      await this._syncSingleURL(url, destPath, file);
     }
   }
 
@@ -139,12 +145,3 @@ class Autosync {
 }
 
 module.exports = Autosync;
-
-if (require.main === module) {
-  (async () => {
-    // get chrome-head (includes all sub-paths)
-    const head = await Autosync.getCachedTarget("chrome-head");
-    // trim the file content length just for the sake of printing to the terminal
-    console.log(mapValues(head, t => `${t.slice(0, 50)}...`));
-  })();
-}

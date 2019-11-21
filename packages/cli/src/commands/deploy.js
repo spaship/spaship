@@ -32,8 +32,7 @@ DeployCommand.args = [
 DeployCommand.flags = {
   ref: flags.string({
     char: "r",
-    description:
-      "a version tag, commit hash, or branch to identify this release",
+    description: "a version tag, commit hash, or branch to identify this release",
     required: false,
     default: "undefined"
   })
