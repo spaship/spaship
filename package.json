@@ -4,7 +4,7 @@
   "version": "0.3.3",
   "private": true,
   "devDependencies": {
-    "eslint": "6.6.0",
+    "eslint": "6.7.1",
     "eslint-config-prettier": "6.5.0",
     "eslint-plugin-prettier": "3.1.1",
     "husky": "3.0.9",
