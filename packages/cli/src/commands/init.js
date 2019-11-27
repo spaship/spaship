@@ -27,8 +27,7 @@ class InitCommand extends Command {
     let responses = {};
     if (!hasOptions) {
       // show questions if there is no existing config, or if overwrite was approved.
-      const showQuestions = r =>
-        !existingConfig || (existingConfig && r.overwrite);
+      const showQuestions = r => !existingConfig || (existingConfig && r.overwrite);
       const questions = [
         {
           name: "name",
@@ -71,6 +70,8 @@ class InitCommand extends Command {
       if (!existingConfig || data.overwrite) {
         await config.write("spaship.yaml", omit(data, "overwrite"));
       }
+
+      this.log("Generated spaship.yaml");
     } catch (error) {
       if (error.code === "EEXIST") {
         let msg = `Docking aborted.  A file named spaship.yaml already exists.`;
@@ -95,8 +96,7 @@ InitCommand.flags = {
   }),
   path: flags.string({
     char: "p",
-    description:
-      "the URL path for your app under the SPAship domain. ex: /my/app",
+    description: "the URL path for your app under the SPAship domain. ex: /my/app",
     required: hasOptions // not required for interactive mode
   }),
   single: flags.boolean({

@@ -16,7 +16,6 @@
   "repository": "spaship/cli",
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
-    "posttest": "eslint .",
     "prepack": "oclif-dev manifest && oclif-dev readme",
     "test": "nyc mocha --forbid-only \"test/**/*.test.js\"",
     "preversion": "oclif-dev readme && git add README.md"
@@ -37,7 +36,10 @@
     "eslint-config-oclif": "3.1.0",
     "globby": "10.0.1",
     "mocha": "6.2.2",
-    "nyc": "14.1.1"
+    "nock": "11.7.0",
+    "nyc": "14.1.1",
+    "shortid": "2.2.15",
+    "temp-dir": "2.0.0"
   },
   "engines": {
     "node": ">=8.0.0"

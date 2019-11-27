@@ -2,6 +2,29 @@
 
 SPAship is an early-stages Single-Page App deployment and hosting platform.
 
+## Packages
+
+SPAship consists of a few packages, found inside the `packages` directory.
+
+- **cli** - the `spaship` command
+- **common** - common utility functions for reading/writing config files, etc
+- **path-proxy** - a service for dynamically proxying requests to SPAs, or to remote systems
+- **spa-manager** - a web UI for managing SPAs
+- **sync-service** - an API for deploying SPAs
+
+## Testing
+
+SPAship packages can be tested in one command by running `npm test` at the root of the repository.
+
+You can also test individual packages by moving into their directory and running `npm test`. For example:
+
+```
+cd packages/common
+npm test
+```
+
+Each package may have extra testing options. Please see package READMEs for more about testing them, such as how to run a test watcher.
+
 ## Contributing
 
 Contributing is awesome! :sunglasses: This section is very much in progress, but here are a handful of established contribution guidelines.

@@ -25,13 +25,11 @@ const schema = {
       type: "boolean"
     },
     ref: {
-      description:
-        "the git ref (tag, branch, commit hash) tied to this deployment",
+      description: "the git ref (tag, branch, commit hash) tied to this deployment",
       type: "string"
     },
     deploykey: {
-      description:
-        "a unique key which allows re-deploying over existing bundles.",
+      description: "a unique key which allows re-deploying over existing bundles.",
       type: "string"
     }
   },
@@ -49,14 +47,3 @@ const validate = data => {
 };
 
 module.exports = validate;
-
-if (require.main === module) {
-  const read = require("./read");
-  read(process.argv[2] || "spaship.yaml").then(data => {
-    console.log("Validating the following config object...");
-    console.log(data);
-    const { valid, errors } = validate(data);
-    if (!valid) console.log(errors);
-    if (valid) console.log("YAML is valid!");
-  });
-}
