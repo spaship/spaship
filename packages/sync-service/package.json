@@ -32,13 +32,18 @@
     "decompress-tarbz2": "^4.1.1",
     "decompress-tarxz": "^3.0.0",
     "express": "^4.17.1",
+    "express-pino-logger": "^4.0.0",
     "lodash": "^4.17.15",
     "ms": "^2.1.2",
     "multer": "^1.4.2",
     "mvdir": "^1.0.5",
     "nconf": "^0.10.0",
+    "pino": "^5.14.0",
     "tmp-promise": "^2.0.2",
     "url-join": "^4.0.1"
+  },
+  "devDependencies": {
+    "pino-pretty": "^3.4.0"
   },
   "publishConfig": {
     "access": "public"

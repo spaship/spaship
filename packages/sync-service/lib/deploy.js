@@ -46,9 +46,7 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
   const validation = common.config.validate(spaConfig);
 
   if (!validation.valid) {
-    throw new Error(
-      `spaship.yaml is not valid: ${JSON.stringify(validation.errors)}`
-    );
+    throw new Error(`spaship.yaml is not valid: ${JSON.stringify(validation.errors)}`);
   }
 
   // remove starting slashes in paths
@@ -70,9 +68,7 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
 
   let existingDeployKey;
   try {
-    const existingConfig = await common.config.read(
-      path.join(destDir, "spaship.yaml")
-    );
+    const existingConfig = await common.config.read(path.join(destDir, "spaship.yaml"));
     existingDeployKey = existingConfig.deploykey;
   } catch (e) {}
 
@@ -92,9 +88,7 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
   // deploy if:
   //   no existing deploy key, or
   //   existing deploy key and incoming key matches
-  const deployKeysValid =
-    typeof existingDeployKey === "string" &&
-    typeof incomingDeployKey === "string";
+  const deployKeysValid = typeof existingDeployKey === "string" && typeof incomingDeployKey === "string";
   const deployKeysMatch = existingDeployKey === incomingDeployKey;
 
   if (noDeployKey || (deployKeysValid && deployKeysMatch)) {
@@ -102,8 +96,6 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
   } else {
     throw new Error("refusing to deploy; deploykey does not match");
   }
-
-  console.log(`[deploy] deployed "${spaConfig.name}" to ${destDir}`);
 }
 
 module.exports = deploy;

@@ -7,14 +7,7 @@ function rel2abs(p) {
   return path.resolve(process.cwd(), p);
 }
 
-const validOptions = [
-  "config_file",
-  "upload_dir",
-  "webroot",
-  "host",
-  "port",
-  "autosync"
-];
+const validOptions = ["config_file", "upload_dir", "webroot", "host", "port", "autosync"];
 const filepathOptions = ["config_file", "upload_dir", "webroot"]; // config options that represent filepaths
 
 // Read CLI flags first, then environment variables (argv).
@@ -68,6 +61,7 @@ nconf.defaults({
 });
 
 module.exports = nconf;
+
 module.exports.toString = () => {
   const out = flow(
     keyBy(identity),

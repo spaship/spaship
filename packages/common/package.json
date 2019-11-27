@@ -13,9 +13,11 @@
   },
   "dependencies": {
     "ajv": "^6.10.2",
+    "express-pino-logger": "^4.0.0",
     "handlebars": "^4.4.2",
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.15",
+    "pino": "^5.14.0",
     "shortid": "^2.2.15"
   },
   "engines": {
@@ -23,5 +25,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "pino-pretty": "^3.4.0"
   }
 }
