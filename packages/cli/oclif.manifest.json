@@ -1,0 +1,61 @@
+{
+  "version": "0.3.4",
+  "commands": {
+    "deploy": {
+      "id": "deploy",
+      "description": "deploy to a SPAship host\nSend an archive containing a SPA to a SPAship host for deployment.  Supports .tar.gz/.tgz, .zip, and .tar.bz2.\n",
+      "pluginName": "@spaship/cli",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": ["$ npm pack", "$ spaship deploy your-app-1.0.0.tgz"],
+      "flags": {
+        "ref": {
+          "name": "ref",
+          "type": "option",
+          "char": "r",
+          "description": "a version tag, commit hash, or branch to identify this release",
+          "required": false,
+          "default": "undefined"
+        }
+      },
+      "args": [{ "name": "archive", "description": "SPA archive file", "required": true }]
+    },
+    "init": {
+      "id": "init",
+      "description": "Initialize a SPAship config file for your app.\nWithout arguments, init will ask you a few questions and generate a spaship.yaml config file.  The answers can also be passed in as CLI options.\n",
+      "pluginName": "@spaship/cli",
+      "pluginType": "core",
+      "aliases": [],
+      "flags": {
+        "name": {
+          "name": "name",
+          "type": "option",
+          "char": "n",
+          "description": "a human-friendly title for your app",
+          "required": true
+        },
+        "path": {
+          "name": "path",
+          "type": "option",
+          "char": "p",
+          "description": "the URL path for your app under the SPAship domain. ex: /my/app",
+          "required": true
+        },
+        "single": {
+          "name": "single",
+          "type": "boolean",
+          "char": "s",
+          "description": "route all non-asset requests to index.html",
+          "allowNo": true
+        },
+        "overwrite": {
+          "name": "overwrite",
+          "type": "boolean",
+          "description": "overwrite existing spaship.yaml",
+          "allowNo": false
+        }
+      },
+      "args": []
+    }
+  }
+}

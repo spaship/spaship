@@ -38,4 +38,6 @@ DeployCommand.flags = {
   })
 };
 
+DeployCommand.examples = [`$ npm pack`, `$ spaship deploy your-app-1.0.0.tgz`];
+
 module.exports = DeployCommand;
