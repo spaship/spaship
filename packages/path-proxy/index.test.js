@@ -6,6 +6,8 @@ const pathProxy = require("./index");
 
 describe("path-proxy", () => {
   beforeEach(() => {
+    process.env.webroot = "/var/www/spaship";
+    process.env.port = 3000;
     mockfs({
       "/var/www/spaship": {
         foo: {
