@@ -1,6 +1,6 @@
 {
   "name": "@spaship/sync-service",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "The file synchronization service for the SPAship platform.",
   "homepage": "https://github.com/spaship/sync-service",
   "bugs": {
@@ -24,7 +24,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@spaship/common": "^0.3.4",
+    "@spaship/common": "^0.3.5",
     "axios": "^0.19.0",
     "cors": "^2.8.5",
     "decompress": "^4.2.0",

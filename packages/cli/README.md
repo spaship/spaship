@@ -23,7 +23,7 @@ $ npm install -g @spaship/cli
 $ spaship COMMAND
 running command...
 $ spaship (-v|--version|version)
-@spaship/cli/0.3.4 linux-x64 node-v13.2.0
+@spaship/cli/0.3.4 darwin-x64 node-v10.15.3
 $ spaship --help [COMMAND]
 USAGE
   $ spaship COMMAND
