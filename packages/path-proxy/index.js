@@ -18,7 +18,7 @@ async function getDirectoryNames() {
 }
 
 const customRouter = function(req) {
-  let url = req.url;
+  let url = req.url.replace(/\/+/g, "/"); // Avoid duplicate slash issue
   let routeUrl;
   let match;
   let spaPath;
