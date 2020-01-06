@@ -30,7 +30,7 @@ if (configFile) {
 }
 
 nconf.defaults({
-  port: 3000,
+  port: 8080,
   webroot: "/var/www",
   target: "http://localhost:8080",
   fallback: "https://access.redhat.com"
