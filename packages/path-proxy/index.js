@@ -32,7 +32,7 @@ const customRouter = function(req) {
     let regEx = new RegExp("^" + spaPath + "([/\\?].*)?$");
     match = url.match(regEx);
     if (match) {
-      matchedFlatDir = flatDir;
+      matchedFlatDir = "/" + flatDir;
       break; // found a match
     }
   }
@@ -48,7 +48,7 @@ const customRouter = function(req) {
   if (match[1]) {
     extraStuff = match[1]; // $1 of the RegExp
   }
-  routeUrl = "/" + matchedFlatDir + extraStuff;
+  routeUrl = matchedFlatDir + extraStuff;
 
   // Now proxy to flattened url path
   req.url = routeUrl;
