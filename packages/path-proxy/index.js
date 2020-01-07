@@ -2,13 +2,14 @@ const express = require("express");
 const proxy = require("http-proxy-middleware");
 const fsp = require("fs").promises;
 const { flatpath } = require("@spaship/common");
+const config = require("./config");
 
 let flatDirectories = [];
 
 async function getDirectoryNames() {
   // Load directory names into memory
   //TODO: put the replace this hardcoded path with config
-  flatDirectories = await fsp.readdir("/var/www/spaship");
+  flatDirectories = await fsp.readdir(config.get("webroot"));
 
   // Sort them by name length from longest to shortest, for most specific match wins matching policy
   flatDirectories.sort((a, b) => b.length - a.length);
@@ -17,7 +18,7 @@ async function getDirectoryNames() {
 }
 
 const customRouter = function(req) {
-  let url = req.url;
+  let url = req.url.replace(/\/+/g, "/"); // Avoid duplicate slash issue
   let routeUrl;
   let match;
   let spaPath;
@@ -31,7 +32,7 @@ const customRouter = function(req) {
     let regEx = new RegExp("^" + spaPath + "([/\\?].*)?$");
     match = url.match(regEx);
     if (match) {
-      matchedFlatDir = flatDir;
+      matchedFlatDir = "/" + flatDir;
       break; // found a match
     }
   }
@@ -40,20 +41,20 @@ const customRouter = function(req) {
     console.log("[router] This path is hosted by spaship: ", url, " spaPath: ", spaPath, "flatDir: ", matchedFlatDir);
   } else {
     console.log("[router] This path is not hosted by spaship: ", url);
-    return "https://access.redhat.com";
+    return config.get("fallback");
   }
 
   let extraStuff = "";
   if (match[1]) {
     extraStuff = match[1]; // $1 of the RegExp
   }
-  routeUrl = "/" + matchedFlatDir + extraStuff;
+  routeUrl = matchedFlatDir + extraStuff;
 
   // Now proxy to flattened url path
   req.url = routeUrl;
   req.headers["x-spaship-flat-path"] = matchedFlatDir;
   req.headers["x-spaship-url-path"] = spaPath;
-  let routHost = "http://localhost:8080";
+  let routHost = config.get("target");
 
   console.log("[router] Routing to: ", routHost + req.url);
 
@@ -62,7 +63,7 @@ const customRouter = function(req) {
 
 // proxy middleware options
 let options = {
-  target: "http://localhost:8080", // target host
+  target: config.get("target"), // target host
   changeOrigin: true,
   router: customRouter,
   logLevel: "info",
@@ -100,7 +101,7 @@ async function start() {
   // Start proxy server on port
   let app = express();
   app.use("/", pathProxy);
-  server = app.listen(3000);
+  server = app.listen(config.get("port"));
 }
 
 /**
