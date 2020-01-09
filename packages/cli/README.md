@@ -103,3 +103,7 @@ DESCRIPTION
 _See code: [src/commands/init.js](https://github.com/spaship/cli/blob/v0.3.4/src/commands/init.js)_
 
 <!-- commandsstop -->
+
+# Writing tests
+
+Tests are written using oclif's testing tools. See [oclif's testing documentation](https://oclif.io/docs/testing) for more.
