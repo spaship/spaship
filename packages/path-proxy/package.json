@@ -1,6 +1,6 @@
 {
   "name": "@spaship/path-proxy",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "SPAship path proxy. Proxies paths to the right SPA location or pass to different origin.",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/spaship/path-proxy.git"
+    "url": "git+https://github.com/spaship/spaship.git"
   },
   "keywords": [
     "SPAship",
@@ -20,18 +20,19 @@
   "author": "Red Hat, Inc.",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/spaship/path-proxy/issues"
+    "url": "https://github.com/spaship/spaship/issues"
   },
-  "homepage": "https://github.com/spaship/path-proxy#readme",
+  "homepage": "https://github.com/spaship/spaship/tree/master/packages/path-proxy#readme",
   "dependencies": {
-    "@spaship/common": "^0.3.4",
+    "@spaship/common": "^0.3.5",
     "express": "^4.17.1",
-    "http-proxy-middleware": "^0.20.0"
+    "http-proxy-middleware": "^0.20.0",
+    "nconf": "^0.10.0"
   },
   "publishConfig": {
     "access": "public"
   },
   "devDependencies": {
-    "axios": "^0.19.0"
+    "axios": "0.19.0"
   }
 }

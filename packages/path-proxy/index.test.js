@@ -6,6 +6,8 @@ const pathProxy = require("./index");
 
 describe("path-proxy", () => {
   beforeEach(() => {
+    process.env.webroot = "/var/www/spaship";
+    process.env.port = 8080;
     mockfs({
       "/var/www/spaship": {
         foo: {
@@ -22,7 +24,21 @@ describe("path-proxy", () => {
     await pathProxy.start();
     let response;
     try {
-      response = await axios.get("http://localhost:3000/foo/");
+      response = await axios.get("http://localhost:8080/foo/");
+    } catch (e) {
+      // errors are fine; this test is only looking for a response
+      response = e.response;
+    }
+    expect(response.status).toBeGreaterThan(1);
+    expect(response.status).toBeLessThan(599);
+    await pathProxy.stop();
+  });
+
+  test("should respond to requests with duplicate slash", async () => {
+    await pathProxy.start();
+    let response;
+    try {
+      response = await axios.get("http://localhost:8080//foo/");
     } catch (e) {
       // errors are fine; this test is only looking for a response
       response = e.response;

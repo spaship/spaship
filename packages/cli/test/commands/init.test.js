@@ -1,3 +1,6 @@
+// This test file uses oclif's testing tools.
+// See: https://oclif.io/docs/testing
+
 const { expect, test } = require("@oclif/test");
 const fsp = require("fs").promises;
 

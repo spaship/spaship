@@ -23,7 +23,7 @@ $ npm install -g @spaship/cli
 $ spaship COMMAND
 running command...
 $ spaship (-v|--version|version)
-@spaship/cli/0.3.2 linux-x64 node-v11.14.0
+@spaship/cli/0.3.4 darwin-x64 node-v10.15.3
 $ spaship --help [COMMAND]
 USAGE
   $ spaship COMMAND
@@ -56,9 +56,13 @@ OPTIONS
 
 DESCRIPTION
   Send an archive containing a SPA to a SPAship host for deployment.  Supports .tar.gz/.tgz, .zip, and .tar.bz2.
+
+EXAMPLES
+  $ npm pack
+  $ spaship deploy your-app-1.0.0.tgz
 ```
 
-_See code: [src/commands/deploy.js](https://github.com/spaship/cli/blob/v0.3.2/src/commands/deploy.js)_
+_See code: [src/commands/deploy.js](https://github.com/spaship/cli/blob/v0.3.4/src/commands/deploy.js)_
 
 ## `spaship help [COMMAND]`
 
@@ -96,6 +100,10 @@ DESCRIPTION
   passed in as CLI options.
 ```
 
-_See code: [src/commands/init.js](https://github.com/spaship/cli/blob/v0.3.2/src/commands/init.js)_
+_See code: [src/commands/init.js](https://github.com/spaship/cli/blob/v0.3.4/src/commands/init.js)_
 
 <!-- commandsstop -->
+
+# Writing tests
+
+Tests are written using oclif's testing tools. See [oclif's testing documentation](https://oclif.io/docs/testing) for more.

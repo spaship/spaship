@@ -1,4 +1,3 @@
-const path = require("path");
 const { Command, flags } = require("@oclif/command");
 const execa = require("execa");
 
@@ -7,7 +6,7 @@ class DeployCommand extends Command {
     const { args, flags } = this.parse(DeployCommand);
     this.log(`Deploying SPA...`);
     try {
-      const { stdout, stderr } = await execa.command(
+      const { stdout } = await execa.command(
         `curl http://spaship.usersys.redhat.com:8008/deploy -X POST -F upload=@${args.archive} -F ref=${flags.ref} -v`
       );
       this.log(stdout);
@@ -37,5 +36,7 @@ DeployCommand.flags = {
     default: "undefined"
   })
 };
+
+DeployCommand.examples = [`$ npm pack`, `$ spaship deploy your-app-1.0.0.tgz`];
 
 module.exports = DeployCommand;
