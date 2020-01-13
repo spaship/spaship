@@ -46,6 +46,7 @@ Configuration can be provided by CLI flags, environment variables, or a configur
 | **webroot**     | Directory to extract/deploy SPAs. | `--webroot`     | `SPASHIP_WEBROOT`     | `"webroot"`    | `/var/www`             |
 | **host**        | Hostname to run on.               | `--host`        | `SPASHIP_HOST`        | `"host"`       | `localhost`            |
 | **port**        | Port to run on.                   | `--port`        | `SPASHIP_PORT`        | `"port"`       | `8008`                 |
+| **verbose**     | Log more (HTTP logs).             | `--verbose`     | `SPASHIP_VERBOSE`     | `"verbose"`    | `false`                |
 
 **Note** about the filepath configurations, `config file`, `upload dir`, and `webroot`: they must be absolute paths when defined in an environment variable or config file. When defined in CLI options like, they can be written relative to CWD. Example: `--config-file=./config.json`
 

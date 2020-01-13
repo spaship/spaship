@@ -6,6 +6,7 @@ const fsp = require("fs").promises;
 const yaml = require("js-yaml");
 const pkg = require("../../package.json");
 const validate = require("./validate");
+const { log } = require("../logging/pino");
 
 async function write(filename, data) {
   const heading = `# SPAship config file
@@ -15,7 +16,7 @@ async function write(filename, data) {
 
   const { valid } = validate(data);
   if (!valid) {
-    console.warn(`WARNING: configuration is invalid, `, data);
+    log.warn(`WARNING: configuration is invalid, `, data);
   }
 
   const content = heading + yaml.safeDump(data);

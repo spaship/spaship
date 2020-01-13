@@ -7,10 +7,10 @@ const pinoOptions = {
   prettyPrint: isProduction && { translateTime: true }
 };
 
-const logger = require("pino")(pinoOptions);
+const log = require("pino")(pinoOptions);
 const pinoExpress = require("express-pino-logger")(pinoOptions);
 
 module.exports = {
-  logger,
+  log,
   pinoExpress
 };

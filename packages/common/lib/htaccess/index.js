@@ -12,7 +12,6 @@ async function generate(data) {
   }
   const templateFile = await fsp.readFile(templatePath);
   const template = hbs.compile(templateFile.toString());
-  // console.log(`template:\n${templateFile}`);
   return template(data);
 }
 

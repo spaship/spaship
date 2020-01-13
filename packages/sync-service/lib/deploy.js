@@ -94,7 +94,7 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
   if (noDeployKey || (deployKeysValid && deployKeysMatch)) {
     await mvdir(tmpDir, destDir);
   } else {
-    throw new Error("refusing to deploy; deploykey does not match");
+    throw new Error(`${name}'s deploykey does not match. Incoming deploy key: "${incomingDeployKey}"`);
   }
 }
 
