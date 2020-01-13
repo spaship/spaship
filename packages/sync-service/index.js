@@ -22,18 +22,23 @@ app.listen(config.get("port"));
 
 // do fun splash screen when in dev mode.  in production, be boring.
 if (process.env.NODE_ENV === "production") {
-  log.info(`Starting SPAship ${npmPackage.version} with the following settings`, config.toString());
+  log.info(config.toObject(), `Starting SPAship ${npmPackage.version} with the following settings`);
 } else {
-  log.info(`
+  log.info(
+    config.toObject(),
+    `
 ███████╗██████╗  █████╗ ███████╗██╗  ██╗██╗██████╗  ██╗
 ██╔════╝██╔══██╗██╔══██╗██╔════╝██║  ██║██║██╔══██╗ ╚██╗
 ███████╗██████╔╝███████║███████╗███████║██║██████╔╝  ╚██╗
 ╚════██║██╔═══╝ ██╔══██║╚════██║██╔══██║██║██╔═══╝   ██╔╝
 ███████║██║     ██║  ██║███████║██║  ██║██║██║      ██╔╝
 ╚══════╝╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝      ╚═╝
-Starting SPAship version ${npmPackage.version} with configuration:
-${config.toString()}
-Listening on http://${config.get("host")}:${config.get("port")}`);
+Starting SPAship version ${npmPackage.version}.
+
+Listening on http://${config.get("host")}:${config.get("port")}
+
+Configuration:`
+  );
 }
 
 if (config.get("autosync:enabled")) {
