@@ -4,7 +4,7 @@ const fsp = require("fs").promises;
 const { flatpath } = require("@spaship/common");
 const { log } = require("@spaship/common/lib/logging/pino");
 const config = require("./config");
-const { difference, isEmpty } = require("lodash");
+const { difference } = require("lodash");
 
 let topLevelDirs = [];
 
@@ -21,11 +21,8 @@ async function updateDirCache() {
   // Sort them by name length from longest to shortest, for most specific match wins matching policy
   topLevelDirs.sort((a, b) => b.length - a.length);
 
-  if (!isEmpty(added)) {
-    log.info(`detected creation of SPA dirs: ${added.join(" ")}`);
-  }
-  if (!isEmpty(removed)) {
-    log.info(`detected deletion of SPA dirs: ${removed.join(" ")}`);
+  if (added.length || removed.length) {
+    log.info({ dirCache: { added, removed } }, `detected changes in SPAship directory list`);
   }
 }
 
@@ -36,7 +33,7 @@ const customRouter = function(req) {
   let spaPath;
   let matchedFlatDir;
 
-  log.info("[router] incoming url:", url);
+  log.info({ router: { step: "initial", incUrl: url } }, "incoming request");
 
   // See if this URL is hosted by SPAship
   for (let flatDir of topLevelDirs) {
@@ -49,10 +46,17 @@ const customRouter = function(req) {
     }
   }
 
-  if (match) {
-    log.info("[router] This path is hosted by spaship: ", url, " spaPath: ", spaPath, "flatDir: ", matchedFlatDir);
-  } else {
-    log.info("[router] This path is not hosted by spaship: ", url);
+  log.info(
+    { router: { step: "matching", incUrl: url, spaPath, matchedFlatDir, matchFound: !!matchedFlatDir } },
+    "matching incoming path against SPAship directory list",
+    url,
+    " spaPath: ",
+    spaPath,
+    "flatDir: ",
+    matchedFlatDir
+  );
+
+  if (!match) {
     return config.get("fallback");
   }
 
@@ -66,11 +70,12 @@ const customRouter = function(req) {
   req.url = routeUrl;
   req.headers["x-spaship-flat-path"] = matchedFlatDir;
   req.headers["x-spaship-url-path"] = spaPath;
-  let routHost = config.get("target");
+  let routeHost = config.get("target");
+  let targetUrl = routeHost + req.url;
 
-  log.info("[router] Routing to: ", routHost + req.url);
+  log.info({ router: { incUrl: url, targetUrl } }, `Routing to: ${targetUrl}`);
 
-  return routHost;
+  return routeHost;
 };
 
 // proxy middleware options
@@ -79,6 +84,7 @@ let options = {
   changeOrigin: true,
   router: customRouter,
   logLevel: "info",
+  logProvider: () => log,
   autoRewrite: true,
   onProxyRes: (proxyRes, req) => {
     if (proxyRes.statusCode >= 301 && proxyRes.statusCode <= 308 && proxyRes.headers["location"]) {
