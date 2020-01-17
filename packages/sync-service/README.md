@@ -49,7 +49,6 @@ Configuration can be provided by CLI flags, environment variables, or a configur
 | **mongo_url**   | The base URL of your mongodb instance.                                                     | `--mongo-url`   | `SPASHIP_MONGO_URL`   | `"mongo_url"`  | `"mongodb://localhost:27017"`                  |
 | **mongo_db**    | The mongodb database name.                                                                 | `--mongo-db`    | `SPASHIP_MONGO_DB`    | `"mongo_db"`   | `"spaship"`                                    |
 | **mock_db**     | Whether to use a mock database ([mongo-mock](https://github.com/williamkapke/mongo-mock)). | `--mock-db`     | `SPASHIP_MOCK_DB`     | `"mock_db"`    | `true`, except when `NODE_ENV == "production"` |
-| **no_mock_db**  | Disable mock database. Overrides `mock_db`.                                                | `--no-mock-db`  | `SPASHIP_NO_MOCK_DB`  | `"no_mock_db"` | `false`                                        |
 
 **Note** about the filepath configurations, `config file`, `upload dir`, and `webroot`: they must be absolute paths when defined in an environment variable or config file. When defined in CLI options like, they can be written relative to CWD. Example: `--config-file=./config.json`
 
