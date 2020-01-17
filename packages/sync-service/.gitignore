@@ -65,3 +65,5 @@ config.json
 
 # webstorm
 .idea
+
+mongo-db.js
