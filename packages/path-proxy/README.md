@@ -32,3 +32,29 @@ Configuration can be provided by CLI flags, environment variables, or a configur
 | **fallback**    | Fallback location if not match any spa. | `--fallback`    | `SPASHIP_FALLBACK`    | `"fallback"` | `https://access.redhat.com` |
 
 **Note** about the filepath configurations, `config file` and `webroot`: they must be absolute paths when defined in an environment variable or config file. When defined in CLI options like, they can be written relative to CWD. Example: `--config-file=./config.json`
+
+## Logging
+
+A quick note about logging. Logs appear in JSON format by default and, while this is great for analysis of production logs, it isn't easy to read during development. Here's an example.
+
+    {"level":30,"time":1579296841039,"pid":4570,"hostname":"localhost.localdomain","msg":"[HPM] Proxy created: /  -> http://localhost:8080","v":1}
+    {"level":30,"time":1579296841041,"pid":4570,"hostname":"localhost.localdomain","dirCache":{"added":["cgi-bin","html"],"removed":[]},"msg":"detected changes in SPAship directory list","v":1}
+
+### Pretty printed logs
+
+For prettier logs, pipe the command into `pino-pretty`.
+
+```
+$ node index.js --port 1234 | npx pino-pretty
+[1579296883669] INFO  (4735 on localhost.localdomain): [HPM] Proxy created: /  -> http://localhost:8080
+[1579296883671] INFO  (4735 on localhost.localdomain): detected changes in SPAship directory list
+    dirCache: {
+      "added": [
+        "cgi-bin",
+        "html"
+      ],
+      "removed": []
+    }
+```
+
+Much nicer.

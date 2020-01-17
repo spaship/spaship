@@ -54,7 +54,7 @@ Configuration can be provided by CLI flags, environment variables, or a configur
 
 A quick note about logging. Logs appear in JSON format by default and, while this is great for analysis of production logs, it isn't easy to read during development. Here's an example.
 
-{"level":30,"time":1579289588362,"pid":31125,"hostname":"localhost.localdomain","upload_dir":"/tmp/spaship_uploads","webroot":"/var/www","host":"localhost","port":8008,"verbose":false,"msg":"\n███████╗██████╗ █████╗ ███████╗██╗ ██╗██╗██████╗ ██╗\n██╔════╝██╔══██╗██╔══██╗██╔════╝██║ ██║██║██╔══██╗ ╚██╗\n███████╗██████╔╝███████║███████╗███████║██║██████╔╝ ╚██╗\n╚════██║██╔═══╝ ██╔══██║╚════██║██╔══██║██║██╔═══╝ ██╔╝\n███████║██║ ██║ ██║███████║██║ ██║██║██║ ██╔╝\n╚══════╝╚═╝ ╚═╝ ╚═╝╚══════╝╚═╝ ╚═╝╚═╝╚═╝ ╚═╝\nStarting SPAship version 0.3.5.\n\nListening on http://localhost:8008\n\nConfiguration:","v":1}
+    {"level":30,"time":1579289588362,"pid":31125,"hostname":"localhost.localdomain","upload_dir":"/tmp/spaship_uploads","webroot":"/var/www","host":"localhost","port":8008,"verbose":false,"msg":"\n███████╗██████╗ █████╗ ███████╗██╗ ██╗██╗██████╗ ██╗\n██╔════╝██╔══██╗██╔══██╗██╔════╝██║ ██║██║██╔══██╗ ╚██╗\n███████╗██████╔╝███████║███████╗███████║██║██████╔╝ ╚██╗\n╚════██║██╔═══╝ ██╔══██║╚════██║██╔══██║██║██╔═══╝ ██╔╝\n███████║██║ ██║ ██║███████║██║ ██║██║██║ ██╔╝\n╚══════╝╚═╝ ╚═╝ ╚═╝╚══════╝╚═╝ ╚═╝╚═╝╚═╝ ╚═╝\nStarting SPAship version 0.3.5.\n\nListening on http://localhost:8008\n\nConfiguration:","v":1}
 
 ### Pretty printed logs
 
