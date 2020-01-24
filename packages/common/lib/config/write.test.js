@@ -1,6 +1,7 @@
 const fs = require("fs");
 const write = require("./write");
 const validate = require("./validate");
+const logger = require("../logging/pino");
 
 jest.mock("./validate");
 validate.mockImplementation(() => ({ valid: true }));
@@ -11,6 +12,9 @@ let fileData = {};
 fs.promises.writeFile = jest.fn((filename, content) => {
   fileData[filename] = content;
 });
+
+// mock logger
+jest.mock("../logging/pino");
 // fs.promises.readFile = jest.fn(filename => fileData[filename]);
 
 /**
@@ -38,8 +42,6 @@ describe("common.config.write", () => {
     expect(trimYaml(fileData[fn])).toEqual(mockFileContent);
   });
   test("should print a warning only when asked to write invalid configuration data", async () => {
-    const consoleSpy = jest.spyOn(console, "warn");
-
     validate.mockImplementationOnce(() => ({
       valid: false
     }));
@@ -47,8 +49,6 @@ describe("common.config.write", () => {
     // call write to test whether it responds to validate saying "no!"
     await write("", {});
 
-    expect(consoleSpy).toHaveBeenCalled();
-
-    consoleSpy.mockRestore();
+    expect(logger.log.warn).toHaveBeenCalled();
   });
 });
