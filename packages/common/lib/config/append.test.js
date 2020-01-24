@@ -43,5 +43,7 @@ describe("common.config.append", () => {
     await append(filename, data);
     const appended = yaml.safeLoad(fileData[filename]);
     expect(appended).toEqual(data);
+
+    fs.promises.readFile.mockRestore();
   });
 });
