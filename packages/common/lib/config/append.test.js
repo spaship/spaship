@@ -10,12 +10,17 @@ let fileData = {};
 describe("common.config.append", () => {
   beforeEach(() => {
     fileData = {};
-
+  });
+  beforeAll(() => {
     fs.promises.writeFile = jest.fn((filename, content) => {
       fileData[filename] = content;
     });
 
     fs.promises.readFile = jest.fn(filename => fileData[filename]);
+  });
+  afterAll(() => {
+    fs.promises.writeFile.mockRestore();
+    fs.promises.readFile.mockRestore();
   });
   test("should be able to append properties to an existing spaship.yaml file", async () => {
     const filename = "spaship.yaml";
@@ -36,7 +41,7 @@ describe("common.config.append", () => {
     const data = { name: "Foo", path: "/foo", ref: "v1.0.0" };
 
     // make readFile throw an error to simulate a nonexistant file
-    fs.promises.readFile = jest.fn(function() {
+    fs.promises.readFile = jest.fn(async function() {
       throw new Error();
     });
 
