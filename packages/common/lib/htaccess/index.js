@@ -10,9 +10,11 @@ async function generate(data) {
   if (!validation.valid) {
     throw new Error(`config not valid: ${JSON.stringify(validation.errors)}`);
   }
+  console.log(`### reading template file path: ${templatePath}`);
+  console.log(`### fsp.readFile:`, fsp.readFile);
   const templateFile = await fsp.readFile(templatePath);
+  console.log(`### template file: ${templateFile.tostring()}`);
   const template = hbs.compile(templateFile.toString());
-  // console.log(`template:\n${templateFile}`);
   return template(data);
 }
 
