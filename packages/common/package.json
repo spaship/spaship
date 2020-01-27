@@ -9,7 +9,7 @@
   "main": "index.js",
   "repository": "spaship/spaship",
   "scripts": {
-    "test": "../../node_modules/.bin/jest ./"
+    "test": "../../node_modules/.bin/jest --restoreMocks ./"
   },
   "dependencies": {
     "ajv": "^6.10.2",
