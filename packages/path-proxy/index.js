@@ -48,12 +48,7 @@ const customRouter = function(req) {
 
   log.info(
     { router: { step: "matching", incUrl: url, spaPath, matchedFlatDir, matchFound: !!matchedFlatDir } },
-    "matching incoming path against SPAship directory list",
-    url,
-    " spaPath: ",
-    spaPath,
-    "flatDir: ",
-    matchedFlatDir
+    "matching incoming path against SPAship directory list"
   );
 
   if (!match) {

@@ -11,10 +11,7 @@ const npmPackage = require("./package.json");
 const app = express();
 const autosync = new Autosync();
 
-// If --verbose, log HTTP requests
-if (config.get("verbose")) {
-  app.use(pinoExpress);
-}
+app.use(pinoExpress);
 
 routes.register(app);
 
