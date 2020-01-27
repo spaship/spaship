@@ -4,11 +4,15 @@ const htaccess = require("./index");
 // mock filesystem
 let fileData = {};
 
-fs.promises.writeFile = jest.fn((dir, content) => {
-  fileData[dir] = content;
-});
-
 describe("common/htaccess", () => {
+  beforeAll(() => {
+    fs.promises.writeFile = jest.fn((dir, content) => {
+      fileData[dir] = content;
+    });
+  });
+  afterAll(() => {
+    fs.promises.writeFile.mockRestore();
+  });
   beforeEach(() => {
     fileData = {};
   });
@@ -34,21 +38,3 @@ describe("common/htaccess", () => {
     });
   });
 });
-
-//       await generate({
-//         name: "Test Name",
-//         path: "/test/path",
-//         single: true
-//       })
-
-//       await generate({
-//         name: "Test Name 2",
-//         path: "/test/path/two"
-//       })
-
-// // should error
-//       await generate({
-//         name: "Test Name 2",
-//         path: "/test/path/two",
-//         x: 42
-//       })

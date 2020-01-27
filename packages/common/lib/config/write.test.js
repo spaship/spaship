@@ -3,20 +3,6 @@ const write = require("./write");
 const validate = require("./validate");
 const logger = require("../logging/pino");
 
-jest.mock("./validate");
-validate.mockImplementation(() => ({ valid: true }));
-
-// mock filesystem
-let fileData = {};
-
-fs.promises.writeFile = jest.fn((filename, content) => {
-  fileData[filename] = content;
-});
-
-// mock logger
-jest.mock("../logging/pino");
-// fs.promises.readFile = jest.fn(filename => fileData[filename]);
-
 /**
  * Remove comments and empty lines from a yaml string.
  */
@@ -28,7 +14,22 @@ function trimYaml(yml) {
     .join("\n");
 }
 
+// mock filesystem
+let fileData = {};
+jest.mock("./validate");
+
 describe("common.config.write", () => {
+  beforeAll(() => {
+    validate.mockImplementation(() => ({ valid: true }));
+
+    fs.promises.writeFile = jest.fn((filename, content) => {
+      fileData[filename] = content;
+    });
+  });
+  afterAll(() => {
+    jest.unmock("./validate");
+    fs.promises.writeFile.mockRestore();
+  });
   beforeEach(() => {
     fileData = {};
   });
