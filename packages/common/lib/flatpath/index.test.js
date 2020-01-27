@@ -31,33 +31,34 @@ describe("common/flatpath", () => {
       expect(flatpath.toDir("/foo_bar_ba/z_")).toEqual("fooUNDRSCRbarUNDRSCRba_zUNDRSCR");
     });
   });
-  describe("map from dir to URL", () => {});
-  // test("should have a special mapping for root path", () => {
-  //   expect(flatpath.toDir("")).toEqual("/");
-  // });
-  test("should restore leading '/'", () => {
-    expect(flatpath.toUrl("foo")).toEqual("/foo");
-  });
-  test("should decode '_' to '/'", () => {
-    expect(flatpath.toUrl("foo_bar")).toEqual("/foo/bar");
-    expect(flatpath.toUrl("foo_bar_baz")).toEqual("/foo/bar/baz");
-  });
-  test("should decode 'UNDRSCR' to '_'", () => {
-    expect(flatpath.toUrl("UNDRSCR")).toEqual("/_");
-    expect(flatpath.toUrl("UNDRSCRfoo")).toEqual("/_foo");
-    expect(flatpath.toUrl("fooUNDRSCR")).toEqual("/foo_");
-    expect(flatpath.toUrl("fooUNDRSCRbarUNDRSCR")).toEqual("/foo_bar_");
-    expect(flatpath.toUrl("UNDRSCRfooUNDRSCRbar")).toEqual("/_foo_bar");
-    expect(flatpath.toUrl("fooUNDRSCRbarUNDRSCRbaz")).toEqual("/foo_bar_baz");
-    expect(flatpath.toUrl("UNDRSCRfooUNDRSCRbarUNDRSCRbaz")).toEqual("/_foo_bar_baz");
-    expect(flatpath.toUrl("fooUNDRSCRbarUNDRSCRbazUNDRSCR")).toEqual("/foo_bar_baz_");
+  describe("map from dir to URL", () => {
+    // test("should have a special mapping for root path", () => {
+    //   expect(flatpath.toDir("")).toEqual("/");
+    // });
+    test("should restore leading '/'", () => {
+      expect(flatpath.toUrl("foo")).toEqual("/foo");
+    });
+    test("should decode '_' to '/'", () => {
+      expect(flatpath.toUrl("foo_bar")).toEqual("/foo/bar");
+      expect(flatpath.toUrl("foo_bar_baz")).toEqual("/foo/bar/baz");
+    });
+    test("should decode 'UNDRSCR' to '_'", () => {
+      expect(flatpath.toUrl("UNDRSCR")).toEqual("/_");
+      expect(flatpath.toUrl("UNDRSCRfoo")).toEqual("/_foo");
+      expect(flatpath.toUrl("fooUNDRSCR")).toEqual("/foo_");
+      expect(flatpath.toUrl("fooUNDRSCRbarUNDRSCR")).toEqual("/foo_bar_");
+      expect(flatpath.toUrl("UNDRSCRfooUNDRSCRbar")).toEqual("/_foo_bar");
+      expect(flatpath.toUrl("fooUNDRSCRbarUNDRSCRbaz")).toEqual("/foo_bar_baz");
+      expect(flatpath.toUrl("UNDRSCRfooUNDRSCRbarUNDRSCRbaz")).toEqual("/_foo_bar_baz");
+      expect(flatpath.toUrl("fooUNDRSCRbarUNDRSCRbazUNDRSCR")).toEqual("/foo_bar_baz_");
 
-    expect(flatpath.toUrl("UNDRSCRfoo")).toEqual("/_foo");
-    expect(flatpath.toUrl("fooUNDRSCR")).toEqual("/foo_");
-    expect(flatpath.toUrl("fooUNDRSCRbarUNDRSCR")).toEqual("/foo_bar_");
-    expect(flatpath.toUrl("UNDRSCRfooUNDRSCR_bar")).toEqual("/_foo_/bar");
-    expect(flatpath.toUrl("fooUNDRSCRbarUNDRSCRbaz")).toEqual("/foo_bar_baz");
-    expect(flatpath.toUrl("UNDRSCRfooUNDRSCRbar_UNDRSCRbaz")).toEqual("/_foo_bar/_baz");
-    expect(flatpath.toUrl("fooUNDRSCRbarUNDRSCRba_zUNDRSCR")).toEqual("/foo_bar_ba/z_");
+      expect(flatpath.toUrl("UNDRSCRfoo")).toEqual("/_foo");
+      expect(flatpath.toUrl("fooUNDRSCR")).toEqual("/foo_");
+      expect(flatpath.toUrl("fooUNDRSCRbarUNDRSCR")).toEqual("/foo_bar_");
+      expect(flatpath.toUrl("UNDRSCRfooUNDRSCR_bar")).toEqual("/_foo_/bar");
+      expect(flatpath.toUrl("fooUNDRSCRbarUNDRSCRbaz")).toEqual("/foo_bar_baz");
+      expect(flatpath.toUrl("UNDRSCRfooUNDRSCRbar_UNDRSCRbaz")).toEqual("/_foo_bar/_baz");
+      expect(flatpath.toUrl("fooUNDRSCRbarUNDRSCRba_zUNDRSCR")).toEqual("/foo_bar_ba/z_");
+    });
   });
 });
