@@ -46,10 +46,12 @@ describe("common.config.write", () => {
     validate.mockImplementationOnce(() => ({
       valid: false
     }));
+    logger.log.warn = jest.fn();
 
     // call write to test whether it responds to validate saying "no!"
     await write("", {});
 
     expect(logger.log.warn).toHaveBeenCalled();
+    logger.log.warn.mockRestore();
   });
 });
