@@ -34,7 +34,7 @@
     "@oclif/test": "1.2.5",
     "chai": "4.2.0",
     "eslint-config-oclif": "3.1.0",
-    "globby": "10.0.1",
+    "globby": "11.0.0",
     "mocha": "7.0.0",
     "nock": "11.7.1",
     "nyc": "15.0.0",
