@@ -46,6 +46,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "mongo-mock": "^3.8.1"
+    "mongo-mock": "3.8.1"
   }
 }
