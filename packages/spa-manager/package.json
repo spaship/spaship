@@ -21,11 +21,11 @@
     "@patternfly/react-icons": "3.14.28",
     "@patternfly/react-styles": "3.6.15",
     "@patternfly/react-table": "2.24.64",
-    "@types/jest": "24.0.25",
+    "@types/jest": "24.9.1",
     "@types/lodash": "4.14.149",
-    "@types/node": "12.12.24",
+    "@types/node": "12.12.25",
     "@types/react": "16.9.17",
-    "@types/react-dom": "16.9.4",
+    "@types/react-dom": "16.9.5",
     "@types/react-router-dom": "5.1.3",
     "@typescript-eslint/eslint-plugin": "2.18.0",
     "@typescript-eslint/parser": "2.18.0",
@@ -33,7 +33,7 @@
     "react-dom": "16.12.0",
     "react-router-dom": "5.1.2",
     "react-scripts": "3.3.0",
-    "typescript": "3.7.4"
+    "typescript": "3.7.5"
   },
   "eslintConfig": {
     "extends": "react-app"
