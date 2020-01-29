@@ -5,7 +5,7 @@ const path = require("path");
 const urljoin = require("url-join");
 const { keyBy, mapValues, find } = require("lodash");
 const config = require("../../config");
-const { logger } = require("@spaship/common/lib/logging/pino");
+const { log } = require("@spaship/common/lib/logging/pino");
 
 /**
  * Automatically syncs remote url targets to local static files in the background at a set interval
@@ -53,7 +53,7 @@ class Autosync {
   }
 
   start() {
-    logger.info("[Autosync] starting..");
+    log.info("[Autosync] starting..");
 
     // Start syncing each target on it's interval
     for (let target of this.targets) {
@@ -105,10 +105,10 @@ class Autosync {
     let response;
 
     try {
-      logger.info("[Autosync] Getting target url:", url);
+      log.info("[Autosync] Getting target url:", url);
       response = await axios.get(url);
     } catch (error) {
-      logger.error("[Autosync] Error fetching remote target:", url, error);
+      log.error("[Autosync] Error fetching remote target:", url, error);
       return;
     }
 
@@ -117,18 +117,18 @@ class Autosync {
         // Make sure dest path exists
         let exists = await this.isDirectory(path);
         if (!exists) {
-          logger.info("[Autosync] Making dir:", path);
+          log.info("[Autosync] Making dir:", path);
           await fsp.mkdir(path, { recursive: true });
         }
 
         // Now write destination file
         //TODO: Only write file if it is different that what is currently on disk
         await fsp.writeFile(file, response.data);
-        logger.info("[Autosync] Successfully wrote dest file:", file);
+        log.info("[Autosync] Successfully wrote dest file:", file);
         return true;
       }
     } catch (error) {
-      logger.error("[Autosync] Error writing local file:", file, error);
+      log.error("[Autosync] Error writing local file:", file, error);
     }
   }
 
