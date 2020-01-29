@@ -45,12 +45,9 @@
     "url-join": "^4.0.1"
   },
   "devDependencies": {
-    "pino-pretty": "^3.4.0"
+    "mongo-mock": "3.8.1"
   },
   "publishConfig": {
     "access": "public"
-  },
-  "devDependencies": {
-    "mongo-mock": "3.8.1"
   }
 }
