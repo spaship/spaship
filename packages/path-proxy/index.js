@@ -2,19 +2,28 @@ const express = require("express");
 const proxy = require("http-proxy-middleware");
 const fsp = require("fs").promises;
 const { flatpath } = require("@spaship/common");
+const { log } = require("@spaship/common/lib/logging/pino");
 const config = require("./config");
+const { difference } = require("lodash");
 
-let flatDirectories = [];
+let topLevelDirs = [];
 
-async function getDirectoryNames() {
+async function updateDirCache() {
   // Load directory names into memory
   //TODO: put the replace this hardcoded path with config
-  flatDirectories = await fsp.readdir(config.get("webroot"));
+  const freshDirs = await fsp.readdir(config.get("webroot"));
 
+  const added = difference(freshDirs, topLevelDirs);
+  const removed = difference(topLevelDirs, freshDirs);
+
+  // update cache
+  topLevelDirs = freshDirs;
   // Sort them by name length from longest to shortest, for most specific match wins matching policy
-  flatDirectories.sort((a, b) => b.length - a.length);
+  topLevelDirs.sort((a, b) => b.length - a.length);
 
-  console.log(flatDirectories);
+  if (added.length || removed.length) {
+    log.info({ dirCache: { added, removed } }, `detected changes in SPAship directory list`);
+  }
 }
 
 const customRouter = function(req) {
@@ -24,10 +33,10 @@ const customRouter = function(req) {
   let spaPath;
   let matchedFlatDir;
 
-  console.log("[router] incoming url:", url);
+  log.info({ router: { step: "initial", incUrl: url } }, "incoming request");
 
   // See if this URL is hosted by SPAship
-  for (let flatDir of flatDirectories) {
+  for (let flatDir of topLevelDirs) {
     spaPath = flatpath.toUrl(flatDir);
     let regEx = new RegExp("^" + spaPath + "([/\\?].*)?$");
     match = url.match(regEx);
@@ -37,10 +46,12 @@ const customRouter = function(req) {
     }
   }
 
-  if (match) {
-    console.log("[router] This path is hosted by spaship: ", url, " spaPath: ", spaPath, "flatDir: ", matchedFlatDir);
-  } else {
-    console.log("[router] This path is not hosted by spaship: ", url);
+  log.info(
+    { router: { step: "matching", incUrl: url, spaPath, matchedFlatDir, matchFound: !!matchedFlatDir } },
+    "matching incoming path against SPAship directory list"
+  );
+
+  if (!match) {
     return config.get("fallback");
   }
 
@@ -54,11 +65,12 @@ const customRouter = function(req) {
   req.url = routeUrl;
   req.headers["x-spaship-flat-path"] = matchedFlatDir;
   req.headers["x-spaship-url-path"] = spaPath;
-  let routHost = config.get("target");
+  let routeHost = config.get("target");
+  let targetUrl = routeHost + req.url;
 
-  console.log("[router] Routing to: ", routHost + req.url);
+  log.info({ router: { incUrl: url, targetUrl } }, `Routing to: ${targetUrl}`);
 
-  return routHost;
+  return routeHost;
 };
 
 // proxy middleware options
@@ -67,6 +79,7 @@ let options = {
   changeOrigin: true,
   router: customRouter,
   logLevel: "info",
+  logProvider: () => log,
   autoRewrite: true,
   onProxyRes: (proxyRes, req) => {
     if (proxyRes.statusCode >= 301 && proxyRes.statusCode <= 308 && proxyRes.headers["location"]) {
@@ -95,8 +108,8 @@ let server;
 
 async function start() {
   // Load the flat directory names into memory and keep them refreshed
-  await getDirectoryNames();
-  intervalId = setInterval(getDirectoryNames, 750);
+  await updateDirCache();
+  intervalId = setInterval(updateDirCache, 750);
 
   // Start proxy server on port
   let app = express();

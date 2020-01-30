@@ -1,6 +1,7 @@
 const fs = require("fs");
 const write = require("./write");
 const validate = require("./validate");
+const logger = require("../logging/pino");
 
 /**
  * Remove comments and empty lines from a yaml string.
@@ -42,17 +43,15 @@ describe("common.config.write", () => {
     expect(trimYaml(fileData[fn])).toEqual(mockFileContent);
   });
   test("should print a warning only when asked to write invalid configuration data", async () => {
-    const consoleSpy = jest.spyOn(console, "warn");
-
     validate.mockImplementationOnce(() => ({
       valid: false
     }));
+    logger.log.warn = jest.fn();
 
     // call write to test whether it responds to validate saying "no!"
     await write("", {});
 
-    expect(consoleSpy).toHaveBeenCalled();
-
-    consoleSpy.mockRestore();
+    expect(logger.log.warn).toHaveBeenCalled();
+    logger.log.warn.mockRestore();
   });
 });

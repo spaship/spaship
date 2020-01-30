@@ -46,6 +46,8 @@ Configuration can be provided by CLI flags, environment variables, or a configur
 | **webroot**     | Directory to extract/deploy SPAs.                                                          | `--webroot`     | `SPASHIP_WEBROOT`     | `"webroot"`    | `/var/www`                                     |
 | **host**        | Hostname to run on.                                                                        | `--host`        | `SPASHIP_HOST`        | `"host"`       | `localhost`                                    |
 | **port**        | Port to run on.                                                                            | `--port`        | `SPASHIP_PORT`        | `"port"`       | `8008`                                         |
+| **log-level**   | Granularity of log messages to print.                                                      | `--log-level`   | `SPASHIP_LOG_LEVEL`   | `"log_level"`  | `info`                                         |
+| **log-format**  | `pretty` for human-friendly logs, `json` for machine-friendly logs.                        | `--log-format`  | `SPASHIP_LOG_FORMAT`  | `"log_format"` | `pretty`                                       |
 | **mongo_url**   | The base URL of your mongodb instance.                                                     | `--mongo-url`   | `SPASHIP_MONGO_URL`   | `"mongo_url"`  | `"mongodb://localhost:27017"`                  |
 | **mongo_db**    | The mongodb database name.                                                                 | `--mongo-db`    | `SPASHIP_MONGO_DB`    | `"mongo_db"`   | `"spaship"`                                    |
 | **mock_db**     | Whether to use a mock database ([mongo-mock](https://github.com/williamkapke/mongo-mock)). | `--mock-db`     | `SPASHIP_MOCK_DB`     | `"mock_db"`    | `true`, except when `NODE_ENV == "production"` |
@@ -54,7 +56,7 @@ Configuration can be provided by CLI flags, environment variables, or a configur
 
 **Note:** When `mock_db` is on, the mocked database will be persisted as a flat file named `mock-db.js` right here in the same directory as this README.
 
-### SPA metadata
+## SPA metadata
 
 Each deployed SPA gets a hidden directory inside `webroot` which houses two files that contain some SPA metadata, `ref` and `name`.
 

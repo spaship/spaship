@@ -64,10 +64,18 @@ nconf.defaults({
 });
 
 module.exports = nconf;
+
 module.exports.toString = () => {
   const out = flow(
     keyBy(identity),
     mapValues(opt => nconf.get(opt))
   )(validOptions);
   return JSON.stringify(out, null, 2);
+};
+
+module.exports.toObject = () => {
+  return flow(
+    keyBy(identity),
+    mapValues(opt => nconf.get(opt))
+  )(validOptions);
 };

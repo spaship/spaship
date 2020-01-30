@@ -5,6 +5,7 @@ const multer = require("multer");
 const config = require("../../config");
 const { write: writeMetadata } = require("../../lib/metadata");
 const deploy = require("../../lib/deploy");
+const { log } = require("@spaship/common/lib/logging/pino");
 
 const multerUpload = multer({
   dest: config.get("upload_dir"),
@@ -26,11 +27,12 @@ function createDeployMiddleware() {
     deploy({ name, spaArchive, appPath, ref })
       .then((result, err) => {
         res.send("SPA deployed successfully.");
+        log.info(`deployed "${name}" to ${appPath}`);
       })
       .catch(err => {
         res.status(403);
         res.send("Deploy failed.  " + err);
-        console.log(err);
+        log.error(`failed to deploy "${name}" to ${appPath}: ${err}`);
       });
   };
 
