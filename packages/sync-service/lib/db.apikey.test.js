@@ -48,6 +48,7 @@ describe("sync-service.db.apikey", () => {
       const apikeys = await db_apikey.attach();
       const userid = "bigbadogre";
       const apikey = "853626948149";
+      const apikeyhash = "a8e998ee775645a42f5134aa26b7b55599b0924e7973b3561035ce4fdc526071";
 
       // special mock key for this test
       shortid.generate.mockReturnValueOnce(apikey);
@@ -55,13 +56,14 @@ describe("sync-service.db.apikey", () => {
       await apikeys.createKey(userid);
 
       const doc = await apikeys.getKeysByUser(userid);
-      expect(doc).toMatchObject([{ userid, apikey }]);
+      expect(doc).toMatchObject([{ userid, apikey: apikeyhash }]);
     });
 
     test("should be able to get userid by apikey", async () => {
       const apikeys = await db_apikey.attach();
       const userid = "babyyoda";
       const apikey = "018265271839";
+      const apikeyhash = "fdf1fcb03dab8d28a97d2ab228225a196b9d99f0b3e1a2c1f6a05165ccb1d255";
 
       // special mock key for this test
       shortid.generate.mockReturnValueOnce(apikey);
@@ -69,7 +71,7 @@ describe("sync-service.db.apikey", () => {
       await apikeys.createKey(userid);
 
       const doc = await apikeys.getUserByKey(apikey);
-      expect(doc).toMatchObject([{ userid, apikey }]);
+      expect(doc).toMatchObject([{ userid, apikey: apikeyhash }]);
     });
 
     test("should be able to delete a key", async () => {
