@@ -28,6 +28,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "pino-pretty": "^3.4.0"
+    "pino-pretty": "3.5.0"
   }
 }
