@@ -21,7 +21,7 @@
     "@patternfly/react-icons": "3.14.39",
     "@patternfly/react-styles": "3.6.26",
     "@patternfly/react-table": "2.25.6",
-    "@types/jest": "24.9.1",
+    "@types/jest": "25.1.2",
     "@types/lodash": "4.14.149",
     "@types/node": "12.12.26",
     "@types/react": "16.9.19",
