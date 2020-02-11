@@ -20,7 +20,7 @@
     "@patternfly/react-core": "3.134.2",
     "@patternfly/react-icons": "3.14.39",
     "@patternfly/react-styles": "3.6.26",
-    "@patternfly/react-table": "2.24.64",
+    "@patternfly/react-table": "2.25.6",
     "@types/jest": "24.9.1",
     "@types/lodash": "4.14.149",
     "@types/node": "12.12.25",
