@@ -27,11 +27,16 @@ function parse(): ParsedEnv {
     return cachedEnvs;
   }
 
-  const spashipApis = window.env.SPASHIP_APIS.trim()
+  const spashipAPIs = window.env.SPASHIP_APIS.trim()
     .split(/\s+/) // split on whitespace
     .map(def => ({ name: def.split("@")[0], url: def.split("@")[1] })); // name@url to { name, url }
 
-  const result = { SPASHIP_APIS: spashipApis };
+  // if no APIs were passed in via environment variable, add the default localhost URL
+  if (spashipAPIs.length === 0) {
+    spashipAPIs.push({ name: "local", url: "http://localhost:8008" });
+  }
+
+  const result = { SPASHIP_APIS: spashipAPIs };
 
   cachedEnvs = result;
 
