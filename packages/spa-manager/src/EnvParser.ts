@@ -2,32 +2,33 @@
  * Parse the window.env values into usable data structures.
  */
 
-interface WindowEnv {
+interface IWindowEnv {
   SPASHIP_APIS?: string;
 }
 declare global {
   interface Window {
-    env: WindowEnv;
+    env?: IWindowEnv;
   }
 }
 
-interface SPAshipAPI {
+interface ISPAshipAPI {
   name: string;
   url: string;
 }
 
-interface ParsedEnv {
-  SPASHIP_APIS: Array<SPAshipAPI>;
+interface IParsedEnv {
+  SPASHIP_APIS: Array<ISPAshipAPI>;
 }
 
-let cachedEnvs: ParsedEnv;
+let cachedEnvs: IParsedEnv;
 
-function parse(): ParsedEnv {
+function parse(): IParsedEnv {
   if (cachedEnvs) {
     return cachedEnvs;
   }
 
-  const SPASHIP_APIS_ENV = window.env.SPASHIP_APIS || "local@http://localhost:8008";
+  const ENV = window.env || {};
+  const SPASHIP_APIS_ENV = ENV.SPASHIP_APIS || "local@http://localhost:8008";
   const spashipAPIs = SPASHIP_APIS_ENV.trim()
     .split(/\s+/) // split on whitespace
     .map(def => ({ name: def.split("@")[0], url: def.split("@")[1] })); // name@url to { name, url }
