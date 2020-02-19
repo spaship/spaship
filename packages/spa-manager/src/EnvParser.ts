@@ -3,7 +3,7 @@
  */
 
 interface WindowEnv {
-  SPASHIP_APIS: string;
+  SPASHIP_APIS?: string;
 }
 declare global {
   interface Window {
@@ -27,14 +27,10 @@ function parse(): ParsedEnv {
     return cachedEnvs;
   }
 
-  const spashipAPIs = window.env.SPASHIP_APIS.trim()
+  const SPASHIP_APIS_ENV = window.env.SPASHIP_APIS || "local@http://localhost:8008";
+  const spashipAPIs = SPASHIP_APIS_ENV.trim()
     .split(/\s+/) // split on whitespace
     .map(def => ({ name: def.split("@")[0], url: def.split("@")[1] })); // name@url to { name, url }
-
-  // if no APIs were passed in via environment variable, add the default localhost URL
-  if (spashipAPIs.length === 0) {
-    spashipAPIs.push({ name: "local", url: "http://localhost:8008" });
-  }
 
   const result = { SPASHIP_APIS: spashipAPIs };
 
