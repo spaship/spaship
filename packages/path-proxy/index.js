@@ -1,5 +1,5 @@
 const express = require("express");
-const proxy = require("http-proxy-middleware");
+const { createProxyMiddleware } = require("http-proxy-middleware");
 const fsp = require("fs").promises;
 const { flatpath } = require("@spaship/common");
 const { log } = require("@spaship/common/lib/logging/pino");
@@ -101,7 +101,7 @@ let options = {
 };
 
 // create the proxy
-let pathProxy = proxy(options);
+let pathProxy = createProxyMiddleware(options);
 
 let intervalId;
 let server;
