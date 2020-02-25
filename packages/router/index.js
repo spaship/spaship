@@ -130,7 +130,7 @@ function stop() {
 
 module.exports = { start, stop };
 
-// if this module is the entry-point, go ahead and launch path-proxy
+// if this module is the entry-point, go ahead and launch the router
 if (require.main === module) {
   start();
 }

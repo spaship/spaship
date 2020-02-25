@@ -4,7 +4,7 @@ const axios = require("axios");
 const mockfs = require("mock-fs");
 const pathProxy = require("./index");
 
-describe("path-proxy", () => {
+describe("router", () => {
   beforeEach(() => {
     process.env.webroot = "/var/www/spaship";
     process.env.port = 8080;

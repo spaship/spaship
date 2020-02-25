@@ -1,6 +1,6 @@
-# path-proxy
+# SPAship Router
 
-Proxies paths to the right SPA location or pass to different origin
+Proxies paths to the right SPA location or pass to different origin.
 
 ## Testing
 
