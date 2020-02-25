@@ -1,12 +1,12 @@
 {
-  "name": "@spaship/spa-manager",
+  "name": "@spaship/manager",
   "version": "0.3.5",
   "description": "The SPAship UI.",
   "main": "index.js",
-  "homepage": "https://github.com/spaship/spa-manager",
+  "homepage": "https://github.com/spaship/manager",
   "repository": {
     "type": "git",
-    "url": "git@github.com:spaship/spa-manager.git"
+    "url": "git@github.com:spaship/manager.git"
   },
   "author": "Kun Yan <kyan@redhat.com>",
   "license": "MIT",
