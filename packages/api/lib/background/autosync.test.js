@@ -49,7 +49,7 @@ config.get = jest.fn(opt => {
 // this is needed to allow console to continue working while the fs is mocked
 global.console = require("../../../../__mocks__/console");
 
-describe("sync-service.autosync", () => {
+describe("api.autosync", () => {
   beforeEach(() => {
     mockfs({
       // scaffold the mock filesystem, just a webroot directory

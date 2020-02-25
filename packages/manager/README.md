@@ -6,5 +6,5 @@
 
 | Command               | Purpose                                       |
 | --------------------- | --------------------------------------------- |
-| `npm test`            | Run sync-service's tests.                     |
+| `npm test`            | Run tests.                                    |
 | `npm test -- --watch` | Run tests, and re-run them when files change. |

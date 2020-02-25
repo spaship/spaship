@@ -18,7 +18,7 @@ config.get = jest.fn(opt => {
 // this is needed to allow console to continue working while the fs is mocked
 global.console = require("../../../__mocks__/console");
 
-describe("sync-service.db.apikey", () => {
+describe("api.db.apikey", () => {
   beforeEach(() => {
     mockfs({});
   });

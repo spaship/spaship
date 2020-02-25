@@ -1,19 +1,19 @@
 {
-  "name": "@spaship/sync-service",
+  "name": "@spaship/api",
   "version": "0.3.5",
   "description": "The file synchronization service for the SPAship platform.",
-  "homepage": "https://github.com/spaship/sync-service",
+  "homepage": "https://github.com/spaship/ync-service",
   "bugs": {
-    "url": "https://github.com/spaship/sync-service",
+    "url": "https://github.com/spaship/api",
     "email": "mclayton@redhat.com"
   },
   "repository": {
     "type": "git",
-    "url": "github:spaship/sync-service"
+    "url": "github:spaship/api"
   },
   "main": "index.js",
   "bin": {
-    "spaship-sync-service": "./index.js"
+    "spaship-api": "./index.js"
   },
   "scripts": {
     "start": "node index.js",

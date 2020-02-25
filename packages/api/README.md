@@ -1,18 +1,18 @@
-# SPAship sync service
+# SPAship API
 
 REST API for deploying SPAs to the SPAship platform.
 
 ## Global install
 
 ```
-npm install -g @spaship/sync-service
-spaship-sync-service
+npm install -g @spaship/api
+spaship-api
 ```
 
 ## Hacking
 
 ```
-git@github.com:spaship/sync-service.git
+git@github.com:spaship/api.git
 npm install
 ```
 
@@ -22,7 +22,7 @@ From here, you can `npm start` to launch the service, or `npm run dev` to launch
 
 | Command               | Purpose                                       |
 | --------------------- | --------------------------------------------- |
-| `npm test`            | Run sync-service's tests.                     |
+| `npm test`            | Run tests.                                    |
 | `npm test -- --watch` | Run tests, and re-run them when files change. |
 
 ### Pull requests and commit messages
