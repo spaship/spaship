@@ -25,7 +25,7 @@ export default () => {
   }
 
   function onKebabDropdownToggle(isOpen: boolean) {
-    console.log('hello')
+    console.log("hello");
     setKebabDropdownOpen(isOpen);
   }
 
@@ -39,47 +39,38 @@ export default () => {
   ];
   const userDropdownItems = [
     <DropdownItem key="link-1">Link</DropdownItem>,
-    <DropdownItem key="link-2" component="button">Action</DropdownItem>,
-    <DropdownItem key="link-3" isDisabled>Disabled Link</DropdownItem>,
+    <DropdownItem key="link-2" component="button">
+      Action
+    </DropdownItem>,
+    <DropdownItem key="link-3" isDisabled>
+      Disabled Link
+    </DropdownItem>,
     <DropdownItem key="link-4" isDisabled component="button">
       Disabled Action
     </DropdownItem>,
-    <DropdownSeparator key="link-separator"/>,
+    <DropdownSeparator key="link-separator" />,
     <DropdownItem key="link-5">Separated Link</DropdownItem>,
-    <DropdownItem key="link-6" component="button">Separated Action</DropdownItem>
+    <DropdownItem key="link-6" component="button">
+      Separated Action
+    </DropdownItem>
   ];
 
   return (
     <Toolbar>
-      <ToolbarGroup
-        className={css(
-          accessibleStyles.screenReader,
-          accessibleStyles.visibleOnLg
-        )}
-      >
+      <ToolbarGroup className={css(accessibleStyles.screenReader, accessibleStyles.visibleOnLg)}>
         <ToolbarItem>
-          <Button
-            id="simple-example-uid-01"
-            aria-label="Notifications actions"
-            variant={ButtonVariant.plain}
-          >
+          <Button id="simple-example-uid-01" aria-label="Notifications actions" variant={ButtonVariant.plain}>
             <BellIcon />
           </Button>
         </ToolbarItem>
         <ToolbarItem>
-          <Button
-            id="simple-example-uid-02"
-            aria-label="Settings actions"
-            variant={ButtonVariant.plain}
-          >
+          <Button id="simple-example-uid-02" aria-label="Settings actions" variant={ButtonVariant.plain}>
             <CogIcon />
           </Button>
         </ToolbarItem>
       </ToolbarGroup>
       <ToolbarGroup>
-        <ToolbarItem
-          className={css(accessibleStyles.hiddenOnLg, spacingStyles.mr_0)}
-        >
+        <ToolbarItem className={css(accessibleStyles.hiddenOnLg, spacingStyles.mr_0)}>
           <Dropdown
             isPlain
             position="right"
@@ -88,21 +79,12 @@ export default () => {
             dropdownItems={kebabDropdownItems}
           />
         </ToolbarItem>
-        <ToolbarItem
-          className={css(
-            accessibleStyles.screenReader,
-            accessibleStyles.visibleOnMd
-          )}
-        >
+        <ToolbarItem className={css(accessibleStyles.screenReader, accessibleStyles.visibleOnMd)}>
           <Dropdown
             isPlain
             position="right"
             isOpen={isDropdownOpen}
-            toggle={
-              <DropdownToggle onToggle={onDropdownToggle}>
-                Kun Yan
-              </DropdownToggle>
-            }
+            toggle={<DropdownToggle onToggle={onDropdownToggle}>Kun Yan</DropdownToggle>}
             dropdownItems={userDropdownItems}
           />
         </ToolbarItem>

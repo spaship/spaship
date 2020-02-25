@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Nav, NavItem, NavList, NavVariants } from '@patternfly/react-core';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { Nav, NavItem, NavList, NavVariants } from "@patternfly/react-core";
 
 export default () => {
   const [activeItem, setActiveItem] = useState(1);

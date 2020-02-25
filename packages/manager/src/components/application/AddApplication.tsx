@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   ActionGroup,
   Button,
@@ -9,26 +9,23 @@ import {
   TextInput,
   Card,
   CardBody
-} from '@patternfly/react-core';
-import { Spinner } from '@patternfly/react-core/dist/js/experimental';
-import { withRouter } from 'react-router';
-import { IApplication } from '../../models/Application';
-import Page from '../../layout/Page';
-import config from '../../config';
+} from "@patternfly/react-core";
+import { Spinner } from "@patternfly/react-core/dist/js/experimental";
+import { withRouter } from "react-router";
+import { IApplication } from "../../models/Application";
+import Page from "../../layout/Page";
+import config from "../../config";
 
 export default withRouter(({ history }) => {
   const [form, setForm] = useState<IApplication>({
-    name: '',
-    path: '',
-    ref: '',
-    upload: ''
+    name: "",
+    path: "",
+    ref: "",
+    upload: ""
   });
   const [isUploading, setUploading] = useState(false);
 
-  function handleChange(
-    value: string,
-    event: React.FormEvent<HTMLInputElement>
-  ) {
+  function handleChange(value: string, event: React.FormEvent<HTMLInputElement>) {
     setForm({
       ...form,
       [event.currentTarget.name]: value
@@ -36,8 +33,7 @@ export default withRouter(({ history }) => {
   }
 
   function handleFileChange(event: React.FormEvent<HTMLInputElement>) {
-    const upload =
-      (event.currentTarget.files && event.currentTarget.files[0]) || '';
+    const upload = (event.currentTarget.files && event.currentTarget.files[0]) || "";
     setForm({
       ...form,
       upload
@@ -48,20 +44,20 @@ export default withRouter(({ history }) => {
     setUploading(true);
     console.log(form);
     const data = new FormData();
-    data.append('name', form.name);
-    data.append('path', form.path);
-    data.append('ref', form.ref);
-    data.append('upload', form.upload);
+    data.append("name", form.name);
+    data.append("path", form.path);
+    data.append("ref", form.ref);
+    data.append("upload", form.upload);
 
     fetch(`${config.apiHost}/deploy`, {
-      method: 'POST',
+      method: "POST",
       body: data
     })
       .then(res => res.text())
       .then(text => {
         console.log(text);
         setUploading(false);
-        history.push('/applications');
+        history.push("/applications");
       });
   }
 
@@ -74,12 +70,7 @@ export default withRouter(({ history }) => {
       <Card>
         <CardBody>
           <Form>
-            <FormGroup
-              label="Name"
-              isRequired
-              fieldId="name"
-              helperText="Please provide app name"
-            >
+            <FormGroup label="Name" isRequired fieldId="name" helperText="Please provide app name">
               <TextInput
                 isRequired
                 type="text"
@@ -92,16 +83,9 @@ export default withRouter(({ history }) => {
               />
             </FormGroup>
 
-            <FormGroup
-              label="Path"
-              isRequired
-              fieldId="path"
-              helperText="Please provide app path"
-            >
+            <FormGroup label="Path" isRequired fieldId="path" helperText="Please provide app path">
               <InputGroup>
-                <InputGroupText id="site-host">
-                  {config.siteHost}
-                </InputGroupText>
+                <InputGroupText id="site-host">{config.siteHost}</InputGroupText>
                 <TextInput
                   isRequired
                   type="text"
@@ -115,12 +99,7 @@ export default withRouter(({ history }) => {
               </InputGroup>
             </FormGroup>
 
-            <FormGroup
-              label="Git Ref"
-              isRequired
-              fieldId="ref"
-              helperText="Please provide Git Ref"
-            >
+            <FormGroup label="Git Ref" isRequired fieldId="ref" helperText="Please provide Git Ref">
               <TextInput
                 isRequired
                 type="text"
@@ -148,19 +127,15 @@ export default withRouter(({ history }) => {
                 placeholder="Supports uploading of .tar,.tar.bz2,.tar.gz, and.zip."
                 aria-describedby="upload-helper"
               />
-              <div><Button
-                component="label"
-                variant="tertiary"
-                htmlFor={`upload`}
-              >Choose File</Button></div>
+              <div>
+                <Button component="label" variant="tertiary" htmlFor={`upload`}>
+                  Choose File
+                </Button>
+              </div>
             </FormGroup>
 
             <ActionGroup>
-              <Button
-                variant="primary"
-                onClick={onSubmit}
-                isDisabled={isUploading}
-              >
+              <Button variant="primary" onClick={onSubmit} isDisabled={isUploading}>
                 {isUploading && (
                   <>
                     <Spinner size="md" />

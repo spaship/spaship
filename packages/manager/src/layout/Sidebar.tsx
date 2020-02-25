@@ -3,5 +3,5 @@ import { PageSidebar } from "@patternfly/react-core";
 import PageNav from "./PageNav";
 
 export default () => {
-  return <PageSidebar nav={<PageNav/>} theme="dark"/>;
+  return <PageSidebar nav={<PageNav />} theme="dark" />;
 };

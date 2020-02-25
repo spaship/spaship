@@ -1,13 +1,7 @@
-import React, { ReactNode } from 'react';
-import {
-  Page,
-  PageSection,
-  PageSectionVariants,
-  Text,
-  TextContent
-} from '@patternfly/react-core';
-import Header from './Header';
-import Sidebar from './Sidebar';
+import React, { ReactNode } from "react";
+import { Page, PageSection, PageSectionVariants, Text, TextContent } from "@patternfly/react-core";
+import Header from "./Header";
+import Sidebar from "./Sidebar";
 
 interface IProps {
   title: string;
@@ -31,11 +25,7 @@ export default (props: IProps) => {
         </TextContent>
       </PageSection>
 
-      {subTitle && (
-        <PageSection variant={PageSectionVariants.light}>
-          {subTitle}
-        </PageSection>
-      )}
+      {subTitle && <PageSection variant={PageSectionVariants.light}>{subTitle}</PageSection>}
       <PageSection>{children}</PageSection>
     </Page>
   );

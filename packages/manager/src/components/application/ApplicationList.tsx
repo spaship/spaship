@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import map from 'lodash/map';
-import { Button } from '@patternfly/react-core';
-import { IRow, Table, TableHeader, TableBody } from '@patternfly/react-table';
-import { Link } from 'react-router-dom';
-import Page from '../../layout/Page';
-import config from '../../config';
-import UpdateApplication from './UpdateApplication';
+import React, { useState, useEffect, useCallback } from "react";
+import map from "lodash/map";
+import { Button } from "@patternfly/react-core";
+import { IRow, Table, TableHeader, TableBody } from "@patternfly/react-table";
+import { Link } from "react-router-dom";
+import Page from "../../layout/Page";
+import config from "../../config";
+import UpdateApplication from "./UpdateApplication";
 
 interface IApp {
   name?: string;
@@ -13,17 +13,12 @@ interface IApp {
   ref?: string;
 }
 export default () => {
-  const [columns] = useState([
-    { title: 'Name' },
-    { title: 'Path' },
-    { title: 'Ref' },
-    { title: 'Actions' }
-  ]);
+  const [columns] = useState([{ title: "Name" }, { title: "Path" }, { title: "Ref" }, { title: "Actions" }]);
 
   const [rows, setRows] = useState<IRow[]>([]);
 
   const fetchList = useCallback(() => {
-    console.log('start to fetch');
+    console.log("start to fetch");
     fetch(`${config.apiHost}/list`)
       .then(res => res.json())
       .then(appList => {
@@ -33,11 +28,7 @@ export default () => {
               item.name,
               item.path && {
                 title: (
-                  <a
-                    href={config.siteHost + item.path}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                  <a href={config.siteHost + item.path} target="_blank" rel="noopener noreferrer">
                     {item.path}
                   </a>
                 )
@@ -46,7 +37,7 @@ export default () => {
                 title: <a href={`#${item.ref}`}>{item.ref.substring(0, 6)}</a>
               },
               {
-                title: <UpdateApplication application={item}/>
+                title: <UpdateApplication application={item} />
               }
             ]
           }))
