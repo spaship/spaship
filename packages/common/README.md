@@ -1,4 +1,4 @@
-# @spaship/common
+# SPAship Common Modules
 
 A set of common utilities used by other SPAship components.
 

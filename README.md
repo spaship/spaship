@@ -6,11 +6,11 @@ SPAship is an early-stages Single-Page App deployment and hosting platform.
 
 SPAship consists of a few packages, found inside the `packages` directory.
 
-- **cli** - the `spaship` command
-- **common** - common utility functions for reading/writing config files, etc
-- **path-proxy** - a service for dynamically proxying requests to SPAs, or to remote systems
-- **spa-manager** - a web UI for managing SPAs
-- **sync-service** - an API for deploying SPAs
+- **CLI** - the `spaship` command-line interface
+- **Router** - a service for dynamically proxying requests to SPAs, or to remote systems
+- **Manager** - a web UI for managing SPAs
+- **API** - an API for deploying SPAs
+- **Common** - common utility functions for reading/writing config files, etc
 
 ## Testing
 

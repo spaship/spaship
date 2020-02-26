@@ -6,14 +6,18 @@
   "bin": {
     "spaship": "./bin/run"
   },
-  "homepage": "https://github.com/spaship/cli",
+  "homepage": "https://github.com/spaship/spaship/tree/master/packages/cli#readme",
   "bugs": "https://github.com/spaship/cli/issues",
   "keywords": [
     "oclif"
   ],
   "license": "MIT",
   "main": "src/index.js",
-  "repository": "spaship/cli",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:spaship/spaship.git",
+    "directory": "packages/cli"
+  },
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "prepack": "oclif-dev manifest && oclif-dev readme",

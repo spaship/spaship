@@ -1,4 +1,4 @@
-# @spaship/cli
+# SPAship CLI
 
 A command line interface for SPAship.
 
