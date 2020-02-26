@@ -1,8 +1,8 @@
-# SPA Manager
+# SPAship Manager
 
 ## Testing
 
-`npm test` will run all of spa-manager's tests. It runs in watch mode by default.
+`npm test` will run all of SPAship Manager's tests. It runs in watch mode by default.
 
 | Command               | Purpose                                       |
 | --------------------- | --------------------------------------------- |
