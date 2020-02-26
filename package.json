@@ -7,11 +7,11 @@
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.10.0",
     "eslint-plugin-prettier": "3.1.2",
-    "husky": "4.2.1",
+    "husky": "4.2.3",
     "jest": "25.1.0",
     "lerna": "3.20.2",
     "mock-fs": "4.10.4",
-    "pino-pretty": "3.5.0",
+    "pino-pretty": "3.6.0",
     "prettier": "1.19.1",
     "pretty-quick": "2.0.1"
   },
