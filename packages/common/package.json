@@ -3,11 +3,15 @@
   "description": "A set of common utilities used by other SPAship components.",
   "version": "0.3.5",
   "author": "mclayton@redhat.com",
-  "homepage": "https://github.com/spaship/spaship",
+  "homepage": "https://github.com/spaship/spaship/tree/master/packages/common#readme",
   "bugs": "https://github.com/spaship/spaship/issues",
   "license": "MIT",
   "main": "index.js",
-  "repository": "spaship/spaship",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:spaship/spaship.git",
+    "directory": "packages/common"
+  },
   "scripts": {
     "test": "../../node_modules/.bin/jest --restoreMocks"
   },

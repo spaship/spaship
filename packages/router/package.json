@@ -9,7 +9,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/spaship/spaship.git"
+    "url": "git@github.com:spaship/spaship.git",
+    "directory": "packages/router"
   },
   "keywords": [
     "SPAship",

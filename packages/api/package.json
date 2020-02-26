@@ -2,14 +2,15 @@
   "name": "@spaship/api",
   "version": "0.3.5",
   "description": "The file synchronization service for the SPAship platform.",
-  "homepage": "https://github.com/spaship/ync-service",
+  "homepage": "https://github.com/spaship/spaship/tree/master/packages/api#readme",
   "bugs": {
     "url": "https://github.com/spaship/api",
     "email": "mclayton@redhat.com"
   },
   "repository": {
     "type": "git",
-    "url": "github:spaship/api"
+    "url": "git@github.com:spaship/spaship.git",
+    "directory": "packages/api"
   },
   "main": "index.js",
   "bin": {
