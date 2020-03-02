@@ -53,5 +53,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "keycloak-js": "^9.0.0"
   }
 }
