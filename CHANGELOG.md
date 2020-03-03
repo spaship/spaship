@@ -3,6 +3,44 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/spaship/spaship/compare/v0.3.5...v0.4.0) (2020-03-03)
+
+### Bug Fixes
+
+- **deps:** update dependency http-proxy-middleware to ^0.21.0 ([#174](https://github.com/spaship/spaship/issues/174)) ([9e73a48](https://github.com/spaship/spaship/commit/9e73a488e8b120adb65c649855e921f45344e9ef))
+- **deps:** update dependency http-proxy-middleware to v1 ([#186](https://github.com/spaship/spaship/issues/186)) ([415b736](https://github.com/spaship/spaship/commit/415b73638cf5c410802059291bdc74826a3f449f))
+- **path-proxy:** avoid duplicate slash error ([ebefa3d](https://github.com/spaship/spaship/commit/ebefa3dc8ea999dd3d5f94c8736b1cdea428e988))
+- **path-proxy:** avoid redirect with duplicate slash ([7122812](https://github.com/spaship/spaship/commit/712281299fcb15293dd24f16db1ee73b76b6a06d))
+- **path-proxy:** default port to 8080 ([94563bf](https://github.com/spaship/spaship/commit/94563bfd3af92641c365626ab7729e791fbca003))
+
+### Code Refactoring
+
+- rename packages ([#188](https://github.com/spaship/spaship/issues/188)) ([1e739b3](https://github.com/spaship/spaship/commit/1e739b3c08462d95db5af140405683af797b7daa))
+
+### Features
+
+- hash api keys ([#150](https://github.com/spaship/spaship/issues/150)) ([a182b70](https://github.com/spaship/spaship/commit/a182b709da08660b0b481a78a77eeb4da7abb4b3))
+- **path-proxy:** make path-proxy configurable ([75c3c1e](https://github.com/spaship/spaship/commit/75c3c1e1d61d9c8f18c7c8fcfea892c0a428e51b))
+- **sync-service:** add a mongo database with apikey helpers ([27f9c6b](https://github.com/spaship/spaship/commit/27f9c6b63dcdd2f656636f618876f469f5ab72a7))
+
+### BREAKING CHANGES
+
+- `sync-service` renamed to `api`, `spa-manager` renamed to `manager`, `path-proxy` renamed to `router`
+
+- rename directories
+
+- rename path-proxy within files
+
+- rename sync-service within files
+
+- rename spa-manager within files
+
+- regenerate manager's package-lock
+
+- fix homepage and repository links for renamed packages
+
+- standardize README titles
+
 ## [0.3.5](https://github.com/spaship/spaship/compare/v0.3.4...v0.3.5) (2019-12-24)
 
 ### Bug Fixes
