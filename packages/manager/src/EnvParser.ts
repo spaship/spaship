@@ -40,7 +40,10 @@ function parse(): IParsedEnv {
   // parse the SSO host URL
   const SSO_HOST = ENV.SSO_HOST || "mock";
 
-  const result = { SPASHIP_APIS, SSO_HOST };
+  // parse the SSO realm
+  const SSO_REALM = ENV.SSO_REALM || "mock";
+
+  const result = { SPASHIP_APIS, SSO_HOST, SSO_REALM };
 
   cachedEnvs = result;
 
