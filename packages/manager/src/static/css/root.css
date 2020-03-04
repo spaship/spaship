@@ -1,5 +1,6 @@
 #root {
   height: 100%;
+  --pf-c-page__sidebar--BoxShadow: 0;
 }
 
 input[type="file"] {
@@ -8,4 +9,67 @@ input[type="file"] {
   pointer-events: none;
   width: 1px;
   height: 1px;
+}
+
+.pf-c-page {
+  --pf-c-page--BackgroundColor: #ffffff !important;
+}
+
+#application-toolbar {
+  --pf-c-data-toolbar--PaddingTop: 0;
+  --pf-c-data-toolbar--PaddingBottom: 0;
+}
+
+.pf-c-nav__link > svg {
+  margin-right: 10px;
+}
+
+.pf-c-nav__simple-list .pf-c-nav__link.pf-m-current {
+  --pf-c-nav__simple-list-link--m-current--BackgroundColor: #e3eaf5;
+  font-weight: normal;
+}
+
+.pf-c-page__sidebar-body {
+  height: 100%;
+  padding: 0 !important;
+}
+
+.pf-c-accordion {
+  padding: 0 !important;
+}
+
+.pf-c-accordion__toggle {
+  outline: none;
+}
+
+.pf-c-accordion__toggle-text > .pf-l-split {
+  align-items: center;
+}
+
+.pf-c-page__sidebar-body .pf-c-accordion {
+  background-color: #f3f3f3;
+  --pf-c-button--m-primary--BackgroundColor: #f0392f;
+}
+
+button.spaship_btn {
+  --pf-c-button--m-primary--BackgroundColor: #fed402;
+  --pf-c-button--m-primary--Color: #000000 !important;
+
+  outline: none;
+}
+
+.spaship_btn:hover {
+  --pf-c-button--m-primary--hover--BackgroundColor: #f1c904 !important;
+}
+
+.spaship_btn:focus {
+  --pf-c-button--m-primary--focus--BackgroundColor: #f1c904 !important;
+}
+
+.loginForm {
+  background-color: #f5f5f5;
+}
+
+.pf-c-brand {
+  width: 180px;
 }

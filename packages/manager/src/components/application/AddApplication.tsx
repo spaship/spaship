@@ -21,7 +21,8 @@ export default withRouter(({ history }) => {
     name: "",
     path: "",
     ref: "",
-    upload: ""
+    upload: "",
+    environments: []
   });
   const [isUploading, setUploading] = useState(false);
 

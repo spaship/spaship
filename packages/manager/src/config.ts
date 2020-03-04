@@ -3,8 +3,8 @@ import EnvParser from "./EnvParser";
 const envs = EnvParser.parse();
 
 const config = {
-  apiHost: "http://spaship.usersys.redhat.com:8008",
-  siteHost: "http://spaship.usersys.redhat.com",
+  apiHost: "https://spaship-api-cpops-dev.ext.us-west.dc.preprod.paas.redhat.com",
+  siteHost: "https://spaship-router-cpops-dev.ext.us-west.dc.preprod.paas.redhat.com",
   apiHosts: envs.SPASHIP_APIS
 };
 

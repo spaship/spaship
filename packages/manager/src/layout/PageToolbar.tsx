@@ -25,7 +25,6 @@ export default () => {
   }
 
   function onKebabDropdownToggle(isOpen: boolean) {
-    console.log("hello");
     setKebabDropdownOpen(isOpen);
   }
 
