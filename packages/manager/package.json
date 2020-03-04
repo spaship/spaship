@@ -55,6 +55,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@react-keycloak/web": "^1.0.4",
     "keycloak-js": "^9.0.0"
   }
 }

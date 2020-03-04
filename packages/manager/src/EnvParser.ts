@@ -2,9 +2,11 @@
  * Parse the window.env values into usable data structures.
  */
 
+// The "environment variables" avaialble on window.env.
 interface IWindowEnv {
   SPASHIP_APIS?: string;
   SSO_HOST?: string;
+  SSO_REALM?: string;
 }
 declare global {
   interface Window {
@@ -12,14 +14,17 @@ declare global {
   }
 }
 
+// The name/url pairs for each entry in SPASHIP_APIs.
 interface ISPAshipAPI {
   name: string;
   url: string;
 }
 
+// The processed version of IWindowEnv, with values parsed from strings into proper data structures.
 interface IParsedEnv {
   SPASHIP_APIS: Array<ISPAshipAPI>;
   SSO_HOST: string;
+  SSO_REALM: string;
 }
 
 let cachedEnvs: IParsedEnv;
@@ -29,7 +34,7 @@ function parse(): IParsedEnv {
     return cachedEnvs;
   }
 
-  const ENV = window.env || {};
+  const ENV = window.env || ({} as IWindowEnv);
 
   // parse the SPAship API definitions
   const SPASHIP_APIS_ENV = ENV.SPASHIP_APIS || "local@http://localhost:8008";
