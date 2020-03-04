@@ -1,69 +1,71 @@
-import React, { useState, useEffect, useCallback } from "react";
-import map from "lodash/map";
-import { Button } from "@patternfly/react-core";
-import { IRow, Table, TableHeader, TableBody } from "@patternfly/react-table";
+import React, { useState, useEffect } from "react";
+import { Button, Level, LevelItem } from "@patternfly/react-core";
 import { Link } from "react-router-dom";
 import Page from "../../layout/Page";
 import config from "../../config";
-import UpdateApplication from "./UpdateApplication";
+import ApplicationFilter from "./ApplicationFilter";
+import ApplicationTable from "./ApplicationTable";
+import { IApplication } from "../../models/Application";
 
-interface IApp {
-  name?: string;
-  path: string;
-  ref?: string;
-}
 export default () => {
-  const [columns] = useState([{ title: "Name" }, { title: "Path" }, { title: "Ref" }, { title: "Actions" }]);
+  const [applications, setApplications] = useState<IApplication[]>([]);
+  const [keywords, setKeywords] = useState("");
 
-  const [rows, setRows] = useState<IRow[]>([]);
-
-  const fetchList = useCallback(() => {
-    console.log("start to fetch");
+  useEffect(() => {
     fetch(`${config.apiHost}/list`)
       .then(res => res.json())
-      .then(appList => {
-        setRows(
-          map(appList, item => ({
-            cells: [
-              item.name,
-              item.path && {
-                title: (
-                  <a href={config.siteHost + item.path} target="_blank" rel="noopener noreferrer">
-                    {item.path}
-                  </a>
-                )
-              },
-              item.ref && {
-                title: <a href={`#${item.ref}`}>{item.ref.substring(0, 6)}</a>
-              },
-              {
-                title: <UpdateApplication application={item} />
-              }
-            ]
-          }))
-        );
+      .then(apps => {
+        apps.forEach((app: IApplication) => {
+          app.environments = [
+            {
+              name: "Dev",
+              deployHistory: [
+                {
+                  version: "1.1.0",
+                  timestamp: new Date()
+                }
+              ]
+            },
+            {
+              name: "QA",
+              deployHistory: [
+                {
+                  version: "1.2.0",
+                  timestamp: new Date()
+                }
+              ]
+            }
+          ];
+        });
+        setApplications(apps);
       });
   }, []);
 
-  useEffect(() => {
-    fetchList();
-    const refresh = setInterval(fetchList, 5000);
-    return () => clearInterval(refresh);
-  }, [fetchList]);
+  const handleKeywordChange = (changedKeywords: string) => {
+    setKeywords(changedKeywords);
+  };
 
-  return (
-    <Page
-      title="Application List"
-      subTitle={
+  const environments = ["Dev", "QAs"];
+
+  const toolbar = (
+    <Level>
+      <LevelItem>
+        <ApplicationFilter onChange={handleKeywordChange} />
+      </LevelItem>
+      <LevelItem>
         <Link to={`/applications/new`}>
           <Button variant="primary">New Application</Button>
         </Link>
-      }
-    >
-      <Table cells={columns} rows={rows} aria-label="Application List">
-        <TableHeader />
-        <TableBody />
-      </Table>
+      </LevelItem>
+    </Level>
+  );
+
+  return (
+    <Page title="Applications" toolbar={toolbar}>
+      <ApplicationTable
+        applications={applications.filter(app => app.path && app.path.indexOf(keywords) !== -1)}
+        environments={environments}
+      />
     </Page>
   );
 };

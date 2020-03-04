@@ -1,32 +1,26 @@
 import React, { ReactNode } from "react";
-import { Page, PageSection, PageSectionVariants, Text, TextContent } from "@patternfly/react-core";
-import Header from "./Header";
+import { Page, PageSection, PageSectionVariants } from "@patternfly/react-core";
+import PageHeader from "./PageHeader";
 import Sidebar from "./Sidebar";
+import PageBreadcrumb from "./PageBreadcrumb";
 
 interface IProps {
   title: string;
-  subTitle?: ReactNode | string;
+  titleToolbar?: ReactNode;
+  toolbar?: ReactNode;
+  subTitle?: string;
   children: ReactNode | string;
 }
 
 export default (props: IProps) => {
-  const { title, subTitle, children } = props;
-  return (
-    <Page
-      header={<Header />}
-      sidebar={<Sidebar />}
-      isManagedSidebar
-      // skipToContent={PageSkipToContent}
-      mainContainerId="main-content-page-layout-simple-nav"
-    >
-      <PageSection variant={PageSectionVariants.light}>
-        <TextContent>
-          <Text component="h1">{title}</Text>
-        </TextContent>
-      </PageSection>
+  const { title, subTitle, titleToolbar, toolbar, children } = props;
 
-      {subTitle && <PageSection variant={PageSectionVariants.light}>{subTitle}</PageSection>}
-      <PageSection>{children}</PageSection>
+  return (
+    <Page sidebar={<Sidebar />} isManagedSidebar breadcrumb={<PageBreadcrumb />}>
+      <PageSection variant={PageSectionVariants.light}>
+        <PageHeader title={title} subTitle={subTitle} titleToolbar={titleToolbar} toolbar={toolbar} />
+      </PageSection>
+      <PageSection variant={PageSectionVariants.light}>{children}</PageSection>
     </Page>
   );
 };
