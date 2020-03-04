@@ -1,6 +1,6 @@
 const nconf = require("nconf");
 
-const whitelist = ["config_file", "port", "webroot", "target", "fallback"];
+const whitelist = ["config_file", "router_port", "webroot", "target", "fallback"];
 
 nconf
   .env({
@@ -30,7 +30,7 @@ if (configFile) {
 }
 
 nconf.defaults({
-  port: 8080,
+  router_port: 8080,
   webroot: "/var/www",
   target: "http://localhost:8080",
   fallback: "https://access.redhat.com"

@@ -7,7 +7,7 @@ function rel2abs(p) {
   return path.resolve(process.cwd(), p);
 }
 
-const validOptions = ["config_file", "upload_dir", "webroot", "host", "port", "autosync", "mongo_url", "mock_db"];
+const validOptions = ["config_file", "upload_dir", "webroot", "host", "api_port", "autosync", "mongo_url", "mock_db"];
 const filepathOptions = ["config_file", "upload_dir", "webroot"]; // config options that represent filepaths
 
 // Read CLI flags first, then environment variables (argv).
@@ -54,7 +54,7 @@ if (configFile) {
 }
 
 nconf.defaults({
-  port: 8008,
+  api_port: 8008,
   host: "localhost",
   webroot: "/var/www",
   upload_dir: "/tmp/spaship_uploads",
