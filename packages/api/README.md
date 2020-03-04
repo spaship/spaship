@@ -39,18 +39,20 @@ When your pull request is merged, "squash and merge" should be used, and a Conve
 
 Configuration can be provided by CLI flags, environment variables, or a configuration file. Arguments are processed in that order, so CLI flags take precedence over environment variables, which take precedence over the configuration file.
 
-| Option          | Description                                                                                | CLI             | Env                   | config.json    | Default                                        |
-| --------------- | ------------------------------------------------------------------------------------------ | --------------- | --------------------- | -------------- | ---------------------------------------------- |
-| **config file** | Where to find the config file.                                                             | `--config-file` | `SPASHIP_CONFIG_FILE` | N/A            | none                                           |
-| **upload dir**  | Directory to upload SPA archives.                                                          | `--upload-dir`  | `SPASHIP_UPLOAD_DIR`  | `"upload_dir"` | `/tmp/spaship_uploads`                         |
-| **webroot**     | Directory to extract/deploy SPAs.                                                          | `--webroot`     | `SPASHIP_WEBROOT`     | `"webroot"`    | `/var/www`                                     |
-| **host**        | Hostname to run on.                                                                        | `--host`        | `SPASHIP_HOST`        | `"host"`       | `localhost`                                    |
-| **port**        | Port to run on.                                                                            | `--port`        | `SPASHIP_PORT`        | `"port"`       | `8008`                                         |
-| **log-level**   | Granularity of log messages to print.                                                      | `--log-level`   | `SPASHIP_LOG_LEVEL`   | `"log_level"`  | `info`                                         |
-| **log-format**  | `pretty` for human-friendly logs, `json` for machine-friendly logs.                        | `--log-format`  | `SPASHIP_LOG_FORMAT`  | `"log_format"` | `pretty`                                       |
-| **mongo_url**   | The base URL of your mongodb instance.                                                     | `--mongo-url`   | `SPASHIP_MONGO_URL`   | `"mongo_url"`  | `"mongodb://localhost:27017"`                  |
-| **mongo_db**    | The mongodb database name.                                                                 | `--mongo-db`    | `SPASHIP_MONGO_DB`    | `"mongo_db"`   | `"spaship"`                                    |
-| **mock_db**     | Whether to use a mock database ([mongo-mock](https://github.com/williamkapke/mongo-mock)). | `--mock-db`     | `SPASHIP_MOCK_DB`     | `"mock_db"`    | `true`, except when `NODE_ENV == "production"` |
+| Option             | Description                                                                                | CLI                | Env                      | config.json        | Default                                        |
+| ------------------ | ------------------------------------------------------------------------------------------ | ------------------ | ------------------------ | ------------------ | ---------------------------------------------- |
+| **config file**    | Where to find the config file.                                                             | `--config-file`    | `SPASHIP_CONFIG_FILE`    | N/A                | none                                           |
+| **upload dir**     | Directory to upload SPA archives.                                                          | `--upload-dir`     | `SPASHIP_UPLOAD_DIR`     | `"upload_dir"`     | `/tmp/spaship_uploads`                         |
+| **webroot**        | Directory to extract/deploy SPAs.                                                          | `--webroot`        | `SPASHIP_WEBROOT`        | `"webroot"`        | `/var/www`                                     |
+| **host**           | Hostname to run on.                                                                        | `--host`           | `SPASHIP_HOST`           | `"host"`           | `localhost`                                    |
+| **port**           | Port to run on.                                                                            | `--port`           | `SPASHIP_PORT`           | `"port"`           | `8008`                                         |
+| **log-level**      | Granularity of log messages to print.                                                      | `--log-level`      | `SPASHIP_LOG_LEVEL`      | `"log_level"`      | `info`                                         |
+| **log-format**     | `pretty` for human-friendly logs, `json` for machine-friendly logs.                        | `--log-format`     | `SPASHIP_LOG_FORMAT`     | `"log_format"`     | `pretty`                                       |
+| **mongo_url**      | The hosts of your mongodb instance.                                                        | `--mongo-url`      | `SPASHIP_MONGO_URL`      | `"mongo_url"`      | `"localhost:27017"`                            |
+| **mongo_user**     | (Optional) The username of your mongodb instance.                                          | `--mongo-user`     | `SPASHIP_MONGO_USER`     | `"mongo_user"`     | `null`                                         |
+| **mongo_password** | (Optional) The password of your mongodb instance.                                          | `--mongo-password` | `SPASHIP_MONGO_PASSWORD` | `"mongo_password"` | `null`                                         |
+| **mongo_db**       | The mongodb database name.                                                                 | `--mongo-db`       | `SPASHIP_MONGO_DB`       | `"mongo_db"`       | `"spaship"`                                    |
+| **mock_db**        | Whether to use a mock database ([mongo-mock](https://github.com/williamkapke/mongo-mock)). | `--mock-db`        | `SPASHIP_MOCK_DB`        | `"mock_db"`        | `true`, except when `NODE_ENV == "production"` |
 
 **Note** about the filepath configurations, `config file`, `upload dir`, and `webroot`: they must be absolute paths when defined in an environment variable or config file. When defined in CLI options like, they can be written relative to CWD. Example: `--config-file=./config.json`
 
