@@ -6,8 +6,8 @@ const pathProxy = require("./index");
 
 describe("router", () => {
   beforeEach(() => {
-    process.env.webroot = "/var/www/spaship";
-    process.env.router_port = 8080;
+    process.env.SPASHIP_WEBROOT = "/var/www/spaship";
+    process.env.SPASHIP_ROUTER_PORT = 8080;
     mockfs({
       "/var/www/spaship": {
         foo: {

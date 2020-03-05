@@ -1,6 +1,6 @@
 const nconf = require("nconf");
 
-const whitelist = ["config_file", "router_port", "webroot", "target", "fallback"];
+const whitelist = ["config_file", "port", "webroot", "target", "fallback"];
 
 nconf
   .env({
@@ -9,7 +9,7 @@ nconf
     parseValues: true,
     transform: obj => {
       // remove the "SPASHIP_" prefix from environment variables
-      obj.key = obj.key.replace(/^spaship_/i, "").replace(/router_/i, "");
+      obj.key = obj.key.replace(/^spaship_/, "").replace(/^router_/, "");
       return obj;
     }
   })
@@ -30,7 +30,7 @@ if (configFile) {
 }
 
 nconf.defaults({
-  router_port: 8080,
+  port: 8080,
   webroot: "/var/www",
   target: "http://localhost:8080",
   fallback: "https://access.redhat.com"

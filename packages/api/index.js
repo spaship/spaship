@@ -32,7 +32,7 @@ if (process.env.NODE_ENV === "production") {
 ╚══════╝╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝      ╚═╝
 Starting SPAship version ${npmPackage.version}.
 
-Listening on http://${config.get("host")}:${config.get("api_port")}
+Listening on http://${config.get("host")}:${config.get("port")}
 
 Configuration:`
   );
