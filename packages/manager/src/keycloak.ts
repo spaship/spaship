@@ -14,11 +14,7 @@ export interface ISPAshipJWT extends Keycloak.KeycloakTokenParsed {
 
 // Setup Keycloak instance as needed
 // Pass initialization options as required or leave blank to load from 'keycloak.json'
-const keycloak = Keycloak<"native">({
-  url: config.ssoHost,
-  realm: "EmployeeIDP",
-  clientId: "spaship-reference"
-});
+const keycloak = Keycloak<"native">(config.sso.keycloak);
 
 function getUserToken() {
   return keycloak.tokenParsed as ISPAshipJWT;
