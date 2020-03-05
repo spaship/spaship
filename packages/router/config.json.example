@@ -1,6 +1,6 @@
 {
   "webroot": "/var/www/html",
-  "router_port": 8080,
+  "port": 8080,
   "target": "http://localhost:8080",
   "fallback": "https://access.devgssci.devlab.phx1.redhat.com"
 }

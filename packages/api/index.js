@@ -15,7 +15,7 @@ app.use(pinoExpress);
 
 routes.register(app);
 
-app.listen(config.get("api_port"));
+app.listen(config.get("port"));
 
 // do fun splash screen when in dev mode.  in production, be boring.
 if (process.env.NODE_ENV === "production") {

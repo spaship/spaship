@@ -10,7 +10,6 @@ let topLevelDirs = [];
 
 async function updateDirCache() {
   // Load directory names into memory
-  //TODO: put the replace this hardcoded path with config
   const freshDirs = await fsp.readdir(config.get("webroot"));
 
   const added = difference(freshDirs, topLevelDirs);
@@ -114,7 +113,7 @@ async function start() {
   // Start proxy server on port
   let app = express();
   app.use("/", pathProxy);
-  server = app.listen(config.get("router_port"));
+  server = app.listen(config.get("port"));
 }
 
 /**
