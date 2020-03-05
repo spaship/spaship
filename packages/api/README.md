@@ -125,3 +125,16 @@ A few notes about the response.
 - The "SPAnonymous" app has `null` values for name and ref because it was not deployed with `/deploy`, but it's included so that `/list` provides a complete report of what paths are being made available.
 
 [mongo-mock]: https://github.com/williamkapke/mongo-mock
+
+### /apikeys
+
+| HTTP Method | Endpoint                     | Description                                                                  |
+| ----------- | ---------------------------- | ---------------------------------------------------------------------------- |
+| `POST`      | `/apikey`                    | Creates and returns an API key object such as `{ key: "ABCD" }` <sup>1</sup> |
+| `DELETE`    | `/apikey?hashedKey=e12e115a` | Deletes key ABCD (hashed to "e12e115a") <sup>2</sup>                         |
+
+**Notes:**
+
+<sup>1</sup> This should return a JSON object describing whether the key creation was successful or not.
+
+<sup>2</sup> The `deleteKey(apikey)` function wants you to pass in the HASHED key, not the original key (since SPA manager does not have access to the original key when you click "Delete key"). That's why the querystring param is `hashedKey` and not `key`.
