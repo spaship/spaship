@@ -7,7 +7,18 @@ function rel2abs(p) {
   return path.resolve(process.cwd(), p);
 }
 
-const validOptions = ["config_file", "upload_dir", "webroot", "host", "port", "autosync", "mongo_url", "mock_db"];
+const validOptions = [
+  "config_file",
+  "upload_dir",
+  "webroot",
+  "host",
+  "port",
+  "autosync",
+  "mongo_user",
+  "mongo_password",
+  "mongo_url",
+  "mock_db"
+];
 const filepathOptions = ["config_file", "upload_dir", "webroot"]; // config options that represent filepaths
 
 // Read CLI flags first, then environment variables (argv).
@@ -58,7 +69,9 @@ nconf.defaults({
   host: "localhost",
   webroot: "/var/www",
   upload_dir: "/tmp/spaship_uploads",
-  mongo_url: "mongodb://localhost:27017",
+  mongo_user: null,
+  mongo_password: null,
+  mongo_url: "localhost:27017",
   mongo_db: "spaship",
   mock_db: process.env.NODE_ENV !== "production" // use a mock database by default in dev environments
 });
