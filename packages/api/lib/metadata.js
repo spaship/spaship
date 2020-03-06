@@ -2,7 +2,7 @@ const path = require("path");
 const fsp = require("fs").promises;
 const config = require("../config");
 const common = require("@spaship/common");
-const { flow, map, filter } = require("lodash/fp");
+const { flow, map } = require("lodash/fp");
 
 async function write(filename, extraData) {
   await common.config.append(filename, extraData);

@@ -10,7 +10,6 @@ let topLevelDirs = [];
 
 async function updateDirCache() {
   // Load directory names into memory
-  //TODO: put the replace this hardcoded path with config
   const freshDirs = await fsp.readdir(config.get("webroot"));
 
   const added = difference(freshDirs, topLevelDirs);

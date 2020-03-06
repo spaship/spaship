@@ -9,7 +9,7 @@ nconf
     parseValues: true,
     transform: obj => {
       // remove the "SPASHIP_" prefix from environment variables
-      obj.key = obj.key.replace(/^spaship_/, "");
+      obj.key = obj.key.replace(/^spaship_/, "").replace(/^router_/, "");
       return obj;
     }
   })
