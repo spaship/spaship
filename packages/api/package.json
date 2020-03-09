@@ -44,7 +44,9 @@
     "sha.js": "^2.4.11",
     "shortid": "^2.2.15",
     "tmp-promise": "^2.0.2",
-    "url-join": "^4.0.1"
+    "url-join": "^4.0.1",
+    "uuid": "^7.0.2",
+    "uuid-validate": "0.0.3"
   },
   "devDependencies": {
     "mongo-mock": "3.9.0"

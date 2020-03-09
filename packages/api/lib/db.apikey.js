@@ -1,5 +1,5 @@
 const db = require("./db");
-const shortid = require("shortid");
+const uuidv4 = require("uuid").v4;
 const shajs = require("sha.js");
 
 async function attach() {
@@ -12,7 +12,7 @@ async function attach() {
   }
 
   async function createKey(userid = null) {
-    const apikey = shortid.generate();
+    const apikey = uuidv4();
     const doc = { userid, apikey };
     await storeKey(doc);
     return doc;

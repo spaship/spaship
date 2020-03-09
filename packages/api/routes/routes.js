@@ -6,6 +6,7 @@ const corsMiddleware = require("cors");
 const forceSyncAll = require("./forceSyncAll/forceSyncAllMiddleware");
 const deploy = require("./deploy/deployMiddleware");
 const list = require("./list/listMiddleware");
+const auth = require("./authMiddleware");
 
 const cors = corsMiddleware({
   origin: true,
@@ -27,7 +28,10 @@ function register(app) {
       });
     });
 
-  app.route("/list").get(cors, list());
+  app
+    .route("/list")
+    .get(cors, auth(), list())
+    .options(cors); // for CORS preflight
 
   app.post("/autosync/forceSyncAll", cors, forceSyncAll());
 }

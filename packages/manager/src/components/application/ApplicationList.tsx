@@ -6,13 +6,22 @@ import config from "../../config";
 import ApplicationFilter from "./ApplicationFilter";
 import ApplicationTable from "./ApplicationTable";
 import { IApplication } from "../../models/Application";
+import { useKeycloak } from "@react-keycloak/web";
 
 export default () => {
   const [applications, setApplications] = useState<IApplication[]>([]);
   const [keywords, setKeywords] = useState("");
+  const [keycloak, initialized] = useKeycloak();
 
   useEffect(() => {
-    fetch(`${config.apiHost}/list`)
+    fetch(`${config.apiHosts[0].url}/list`, {
+      method: "GET",
+      credentials: "include",
+      mode: "cors",
+      headers: {
+        Authorization: `Bearer ${keycloak.token}`
+      }
+    })
       .then(res => res.json())
       .then(apps => {
         apps.forEach((app: IApplication) => {
