@@ -13,29 +13,34 @@ import {
 import LoginForm from "./LoginForm";
 import Header from "../../layout/Header";
 import { useHistory } from "react-router-dom";
+import { useKeycloak } from "@react-keycloak/web";
+import { RouteComponentProps } from "react-router-dom";
 
-export default () => {
+interface ILoginPageProps extends RouteComponentProps {}
+
+export default (props: any) => {
   const history = useHistory();
+  const [keycloak, initialized] = useKeycloak();
+  console.log("LoginPage props", props);
 
-  const onClickSAMLLogin = () => {
+  const onClickLogin = () => {
     history.push("/applications");
+    keycloak.login();
   };
+
   return (
     <Page header={<Header />}>
       <PageSection variant={PageSectionVariants.light}></PageSection>
       <Bullseye>
         <Card>
-          <CardBody className="loginForm">
-            <LoginForm />
-          </CardBody>
-          <CardFooter className="loginForm">
+          <CardBody>
             <Title headingLevel="h6" size="md">
               Sign in with
             </Title>
-            <Button isBlock variant="tertiary" onClick={onClickSAMLLogin}>
-              Red Hat SAML Login
+            <Button isBlock variant="primary" onClick={onClickLogin}>
+              Red Hat SSO
             </Button>
-          </CardFooter>
+          </CardBody>
         </Card>
       </Bullseye>
     </Page>

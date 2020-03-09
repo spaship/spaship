@@ -11,6 +11,9 @@ import {
   ToolbarGroup,
   ToolbarItem
 } from "@patternfly/react-core";
+import { useKeycloak } from "@react-keycloak/web";
+import { getUserToken } from "../keycloak";
+/* import { KeycloakInstance } from 'keycloak-js'; */
 import { BellIcon, CogIcon } from "@patternfly/react-icons";
 import { css } from "@patternfly/react-styles";
 import accessibleStyles from "@patternfly/react-styles/css/utilities/Accessibility/accessibility";
@@ -19,6 +22,7 @@ import spacingStyles from "@patternfly/react-styles/css/utilities/Spacing/spacin
 export default () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isKebabDropdownOpen, setKebabDropdownOpen] = useState(false);
+  const [keycloak, initialized] = useKeycloak();
 
   function onDropdownToggle(isOpen: boolean) {
     setDropdownOpen(isOpen);
@@ -79,13 +83,21 @@ export default () => {
           />
         </ToolbarItem>
         <ToolbarItem className={css(accessibleStyles.screenReader, accessibleStyles.visibleOnMd)}>
-          <Dropdown
-            isPlain
-            position="right"
-            isOpen={isDropdownOpen}
-            toggle={<DropdownToggle onToggle={onDropdownToggle}>Kun Yan</DropdownToggle>}
-            dropdownItems={userDropdownItems}
-          />
+          {initialized && keycloak.authenticated && (
+            <Dropdown
+              isPlain
+              position="right"
+              isOpen={isDropdownOpen}
+              toggle={<DropdownToggle onToggle={onDropdownToggle}>{getUserToken().name} </DropdownToggle>}
+              // toggle={<DropdownToggle onToggle={onDropdownToggle}>OPEN</DropdownToggle>}
+              dropdownItems={userDropdownItems}
+            />
+          )}
+          {initialized && !keycloak.authenticated && (
+            <Button variant="secondary" onClick={() => keycloak.login()}>
+              Login
+            </Button>
+          )}
         </ToolbarItem>
       </ToolbarGroup>
     </Toolbar>
