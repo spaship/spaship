@@ -1,6 +1,6 @@
 {
   "name": "@spaship/router",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "SPAship path proxy. Proxies paths to the right SPA location or pass to different origin.",
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/spaship/spaship/tree/master/packages/router#readme",
   "dependencies": {
-    "@spaship/common": "^0.4.0",
+    "@spaship/common": "^0.5.0",
     "express": "^4.17.1",
     "http-proxy-middleware": "^1.0.0",
     "lodash": "^4.17.15",
