@@ -4,24 +4,22 @@ import {
   Card,
   Button,
   CardBody,
-  CardFooter,
   Title,
   Page,
   PageSection,
   PageSectionVariants
 } from "@patternfly/react-core";
-import LoginForm from "./LoginForm";
 import Header from "../../layout/Header";
 import { useHistory } from "react-router-dom";
 import { useKeycloak } from "@react-keycloak/web";
-import { RouteComponentProps } from "react-router-dom";
 
-interface ILoginPageProps extends RouteComponentProps {}
-
-export default (props: any) => {
+export default () => {
   const history = useHistory();
   const [keycloak, initialized] = useKeycloak();
-  console.log("LoginPage props", props);
+
+  if (!initialized) {
+    return <div>Loading...</div>;
+  }
 
   const onClickLogin = () => {
     history.push("/applications");

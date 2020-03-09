@@ -7,7 +7,7 @@ import ApplicationIndex from "./components/application/ApplicationIndex";
 import LoginPage from "./components/user/LoginPage";
 import APIKeyIndex from "./components/authentication/APIKeyIndex";
 import PrivateRoute from "./PrivateRoute";
-import { useKeycloak, KeycloakProvider } from "@react-keycloak/web";
+import { useKeycloak } from "@react-keycloak/web";
 
 const history = createBrowserHistory();
 
