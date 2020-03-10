@@ -8,6 +8,8 @@ const deploy = require("./deploy/deployMiddleware");
 const list = require("./list/listMiddleware");
 const auth = require("./authMiddleware");
 
+const { protect } = require("./keycloakMiddleware");
+
 const cors = corsMiddleware({
   origin: true,
   credentials: true
@@ -30,7 +32,8 @@ function register(app) {
 
   app
     .route("/list")
-    .get(cors, auth(), list())
+    .get(cors, protect(), list())
+    // .get(cors, auth(), list())
     .options(cors); // for CORS preflight
 
   app.post("/autosync/forceSyncAll", cors, forceSyncAll());

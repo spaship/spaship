@@ -14,6 +14,7 @@ interface IParsedEnv {
   KEYCLOAK_URL: string;
   KEYCLOAK_REALM: string;
   KEYCLOAK_CLIENT_ID: string;
+  KEYCLOAK_JWT_UUID_PROP: string;
 }
 
 let cachedEnvs: IParsedEnv;
@@ -38,7 +39,10 @@ function parse(): IParsedEnv {
   // parse the SSO client id
   const KEYCLOAK_CLIENT_ID = process.env.REACT_APP_KEYCLOAK_CLIENT_ID || "mock";
 
-  const result = { SPASHIP_APIS, KEYCLOAK_URL, KEYCLOAK_REALM, KEYCLOAK_CLIENT_ID };
+  // parse the JWT prop to use for user's UUID
+  const KEYCLOAK_JWT_UUID_PROP = process.env.REACT_APP_KEYCLOAK_JWT_UUID_PROP || "sub";
+
+  const result = { SPASHIP_APIS, KEYCLOAK_URL, KEYCLOAK_REALM, KEYCLOAK_CLIENT_ID, KEYCLOAK_JWT_UUID_PROP };
 
   cachedEnvs = result;
 

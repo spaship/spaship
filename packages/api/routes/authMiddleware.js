@@ -2,12 +2,10 @@
 
 const uuidValidate = require("uuid-validate");
 const apiKeyDB = require("../lib/db.apikey");
+const config = require("../config");
 
 const apiKeyCheck = /^\s*APIKey/;
 const apiKeyValue = /^\s*APIKey\s+(\S+)$/;
-
-const jwtCheck = /^\s*Bearer/;
-const jwtValue = /^\s*Bearer\s+(\S+)$/;
 
 module.exports = function createAuthMiddleware() {
   return async (req, res, next) => {
@@ -47,8 +45,8 @@ module.exports = function createAuthMiddleware() {
           } else {
             // api key is valid; check for existence of the API key in the db
             const apiKeyExists = await apiKeys.getUserByKey(apiKey);
-            console.log(`api key exists?`, apiKeyExists);
             if (apiKeyExists.length) {
+              console.log(`user has api key +1`, apiKeyExists);
               next();
             } else {
               const msg = "API Key rejected.";
@@ -58,17 +56,6 @@ module.exports = function createAuthMiddleware() {
             }
           }
         }
-
-        // TODO validate API key
-      } else if (jwtCheck.test(authHeader)) {
-        console.log("jwt provided");
-
-        // TODO validate JWT and convert to API key
-      } else {
-        const msg = "Improperly formed Authorization header.";
-        res.status(403).send({ msg });
-        next(new Error(msg));
-        return;
       }
     }
 

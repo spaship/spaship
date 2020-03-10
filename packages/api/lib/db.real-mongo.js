@@ -4,11 +4,11 @@ const mongodb = require("mongodb");
 
 // Connection URL
 const connectUrls = ["mongodb://"];
-if (config.get("mongo_user") && config.get("mongo_password")) {
-  connectUrls.push(`${config.get("mongo_user")}:${config.get("mongo_password")}@`);
+if (config.get("db:mongo:user") && config.get("db:mongo:password")) {
+  connectUrls.push(`${config.get("db:mongo:user")}:${config.get("db:mongo:password")}@`);
 }
-connectUrls.push(config.get("mongo_url"));
-// connectUrls.push(`/${config.get("mongo_db")}`);
+connectUrls.push(config.get("db:mongo:url"));
+// connectUrls.push(`/${config.get("db:mongo:db")}`);
 const url = connectUrls.join("");
 
 log.info(`connecting to ${url}`);
@@ -28,7 +28,7 @@ async function connect(collectionName) {
   }
 
   // otherwise, connect
-  let db = reusableClient.db(config.get("mongo_db"));
+  let db = reusableClient.db(config.get("db:mongo:db"));
   return db.collection(collectionName);
 }
 

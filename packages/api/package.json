@@ -34,6 +34,8 @@
     "decompress-tarxz": "^3.0.0",
     "express": "^4.17.1",
     "express-pino-logger": "^4.0.0",
+    "express-session": "^1.17.0",
+    "keycloak-connect": "^9.0.0",
     "lodash": "^4.17.15",
     "mongodb": "^3.5.0",
     "ms": "^2.1.2",
