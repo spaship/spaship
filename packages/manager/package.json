@@ -3,7 +3,6 @@
   "version": "0.5.0",
   "description": "The SPAship UI.",
   "main": "index.js",
-  "homepage": ".",
   "repository": {
     "type": "git",
     "url": "git@github.com:spaship/spaship.git",
