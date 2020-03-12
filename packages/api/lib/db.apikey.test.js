@@ -1,11 +1,11 @@
-const shortid = require("shortid");
+const uuid = require("uuid");
 const mockfs = require("mock-fs");
 const db_apikey = require("./db.apikey");
 const config = require("../config");
 
-// make shortid non-random while testing
-jest.mock("shortid");
-shortid.generate.mockResolvedValue("MOCK_KEY");
+// make uuid non-random while testing
+jest.mock("uuid");
+uuid.v4.mockResolvedValue("MOCK_KEY");
 
 // override some configuration values
 config.get = jest.fn(opt => {
@@ -37,7 +37,7 @@ describe("api.db.apikey", () => {
       const apikeys = await db_apikey.attach();
 
       // special mock key for this test
-      shortid.generate.mockReturnValueOnce("fake.key");
+      uuid.v4.mockReturnValueOnce("fake.key");
 
       const doc = await apikeys.createKey("fake.name");
 
@@ -51,7 +51,7 @@ describe("api.db.apikey", () => {
       const apikeyhash = "a8e998ee775645a42f5134aa26b7b55599b0924e7973b3561035ce4fdc526071";
 
       // special mock key for this test
-      shortid.generate.mockReturnValueOnce(apikey);
+      uuid.v4.mockReturnValueOnce(apikey);
 
       await apikeys.createKey(userid);
 
@@ -66,7 +66,7 @@ describe("api.db.apikey", () => {
       const apikeyhash = "fdf1fcb03dab8d28a97d2ab228225a196b9d99f0b3e1a2c1f6a05165ccb1d255";
 
       // special mock key for this test
-      shortid.generate.mockReturnValueOnce(apikey);
+      uuid.v4.mockReturnValueOnce(apikey);
 
       await apikeys.createKey(userid);
 
@@ -80,7 +80,7 @@ describe("api.db.apikey", () => {
       const apikey = "018265271839";
 
       // special mock key for this test
-      shortid.generate.mockReturnValueOnce(apikey);
+      uuid.v4.mockReturnValueOnce(apikey);
 
       // create key, delete it, then check for its existance
 
