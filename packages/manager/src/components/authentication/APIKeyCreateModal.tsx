@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { ActionGroup, Button, Modal, Form, FormGroup, TextInput } from "@patternfly/react-core";
+import { ActionGroup, Button, Checkbox, Modal, Form, FormGroup, TextInput } from "@patternfly/react-core";
+import * as uuid from "uuid";
 
 interface IProps {
   isOpen: boolean;
@@ -9,6 +10,7 @@ export default (props: IProps) => {
   const { isOpen, onClose } = props;
   const [name, setName] = useState("");
   const [expired, setExpired] = useState("");
+  const [scopes, setScopes] = useState<string[]>([]);
   const [apiKey, setApiKey] = useState("");
 
   useEffect(() => {
@@ -18,15 +20,42 @@ export default (props: IProps) => {
   }, [isOpen]);
 
   const onSubmit = () => {
-    setApiKey(
-      Math.random()
-        .toString(36)
-        .substr(2)
-    );
+    setApiKey(uuid.v4());
   };
 
+  const isValid = () => {
+    if (name && name.trim().length > 0 && scopes.length > 0) {
+      return true;
+    }
+    return false;
+  };
+
+  const onChangeScope = (checked: boolean, event: React.FormEvent<HTMLInputElement>) => {
+    const env = event.currentTarget.name;
+    console.log(env);
+    if (!checked) {
+      setScopes(scopes.filter(scope => scope !== env));
+    } else {
+      setScopes([...scopes, env]);
+    }
+  };
+
+  const envs = ["Dev", "QA", "Stage", "Prod"];
+
+  const renderEnvironmentScopes = () =>
+    envs.map(env => (
+      <Checkbox
+        key={`env-${env}`}
+        label={env}
+        id={`env-${env}`}
+        name={env}
+        onChange={onChangeScope}
+        isChecked={!!scopes.find(scope => scope === env)}
+      />
+    ));
+
   return (
-    <Modal isSmall isOpen={isOpen} title="Create New API Key" ariaDescribedById="apiKey-generation" onClose={onClose}>
+    <Modal isLarge isOpen={isOpen} title="Create New API Key" ariaDescribedById="apiKey-generation" onClose={onClose}>
       <Form isHorizontal>
         <FormGroup
           label="Name"
@@ -54,8 +83,12 @@ export default (props: IProps) => {
             onChange={value => setExpired(value)}
           />
         </FormGroup>
+        <FormGroup label="Scopes" fieldId="api-key-scope">
+          {renderEnvironmentScopes()}
+        </FormGroup>
+
         <ActionGroup>
-          <Button variant="primary" onClick={onSubmit} isDisabled={name.trim() === "" || apiKey.trim().length > 0}>
+          <Button variant="primary" onClick={onSubmit} isDisabled={!isValid()}>
             Create API key
           </Button>
         </ActionGroup>
