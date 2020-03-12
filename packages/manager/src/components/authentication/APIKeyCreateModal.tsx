@@ -17,6 +17,7 @@ export default (props: IProps) => {
     setName("");
     setExpired("");
     setApiKey("");
+    setScopes([]);
   }, [isOpen]);
 
   const onSubmit = () => {
