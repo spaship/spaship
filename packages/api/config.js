@@ -1,5 +1,6 @@
 const path = require("path");
 const nconf = require("nconf");
+const { uniq } = require("lodash");
 const { mapValues, flow, keyBy, identity } = require("lodash/fp");
 
 // make a relative filepath absolute, relative to CWD
@@ -7,19 +8,31 @@ function rel2abs(p) {
   return path.resolve(process.cwd(), p);
 }
 
-const validOptions = [
+let validOptions = [
+  // filesystem related
   "config_file",
   "upload_dir",
   "webroot",
+
+  // network service options
   "host",
   "port",
+
+  // autosync stands alone
   "autosync",
-  "mongo_user",
-  "mongo_password",
-  "mongo_url",
-  "mock_db"
+
+  // database
+  "db:mongo:user",
+  "db:mongo:password",
+  "db:mongo:url",
+  "db:mongo:db_name",
+  "db:mongo:mock"
 ];
 const filepathOptions = ["config_file", "upload_dir", "webroot"]; // config options that represent filepaths
+
+// expand validOptions to include the nesting separator for environment variables (they use __ instead of :, since : is
+// an invalid character in env var names).
+validOptions = uniq(validOptions.concat(validOptions.map(p => p.replace(/:/g, "__"))));
 
 // Read CLI flags first, then environment variables (argv).
 nconf
@@ -39,6 +52,7 @@ nconf
     }
   })
   .env({
+    separator: "__",
     whitelist: validOptions,
     lowerCase: true,
     parseValues: true,
@@ -55,12 +69,7 @@ const configFile = nconf.get("config_file");
 // Now load settings from the config file.
 if (configFile) {
   nconf.file({
-    file: configFile,
-    transform: obj => {
-      // use underscore as delimeter
-      obj.key = obj.key.replace(/-/g, "_");
-      return obj;
-    }
+    file: configFile
   });
 }
 
@@ -69,11 +78,13 @@ nconf.defaults({
   host: "localhost",
   webroot: "/var/www",
   upload_dir: "/tmp/spaship_uploads",
-  mongo_user: null,
-  mongo_password: null,
-  mongo_url: "localhost:27017",
-  mongo_db: "spaship",
-  mock_db: process.env.NODE_ENV !== "production" // use a mock database by default in dev environments
+  db: {
+    mongo: {
+      url: "localhost:27017",
+      db_name: "spaship",
+      mock: process.env.NODE_ENV !== "production" // use a mock database by default in dev environments
+    }
+  }
 });
 
 module.exports = nconf;

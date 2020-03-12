@@ -8,11 +8,11 @@ MongoClient.persist = "mock-db.js"; //persist the data to disk
 
 // Connection URL
 const connectUrls = ["mongodb://"];
-if (config.get("mongo_user") && config.get("mongo_password")) {
-  connectUrls.push(`${config.get("mongo_user")}:${config.get("mongo_password")}@`);
+if (config.get("db:mongo:user") && config.get("db:mongo:password")) {
+  connectUrls.push(`${config.get("db:mongo:user")}:${config.get("db:mongo:password")}@`);
 }
-connectUrls.push(config.get("mongo_url"));
-connectUrls.push(`/${config.get("mongo_db")}`);
+connectUrls.push(config.get("db:mongo:url"));
+connectUrls.push(`/${config.get("db:mongo:db_name")}`);
 const url = connectUrls.join("");
 
 let reusableClient;
