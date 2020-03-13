@@ -6,7 +6,7 @@ module.exports = function createKeyMiddleware() {
     const apikey = await db_apikey.attach();
     const user = req.body.user ? req.body.user.trim() : req.body.user;
     const doc = user
-      ? await apikey.createKey(req.body.user)
+      ? await apikey.createKey(user)
       : {
           error: "Invalid Parameter",
           message: "Username Missing: Username cannot be empty. It is needed to create and assign a new API Key."

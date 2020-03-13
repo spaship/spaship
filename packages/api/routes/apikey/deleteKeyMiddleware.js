@@ -11,15 +11,15 @@ module.exports = function deleteKeyMiddleware() {
     const isValid = validate(hashedKey, 4);
 
     if (isValid) {
-      const user = await apikey.getUserByKey(req.query.hashedKey);
-      const dbRes = await apikey.deleteKey(req.query.hashedKey);
+      const user = await apikey.getUserByKey(hashedKey);
+      const dbRes = await apikey.deleteKey(hashedKey);
 
       const doc = dbRes.error
         ? dbRes
         : {
             user: user.length ? user[0].userid : "",
             message: dbRes.deletedCount + " key(s) deleted.",
-            hashedKey: req.query.hashedKey
+            hashedKey: hashedKey
           };
 
       res.send(doc);
