@@ -4,9 +4,13 @@ const db_apikey = require("../../lib/db.apikey");
 module.exports = function deleteKeyMiddleware() {
   return async (req, res, next) => {
     const apikey = await db_apikey.attach();
-    apikey.deleteKey(req.params.hashedKey).then(() => {
-      res.send("Key deleted");
-      next();
+    const user = await apikey.getUserByKey(req.query.hashedKey);
+    const doc = await apikey.deleteKey(req.query.hashedKey);
+    res.send({
+      user: user[0].userid,
+      message: doc.deletedCount + " key(s) deleted.",
+      hashedKey: req.query.hashedKey
     });
+    next();
   };
 };

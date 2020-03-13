@@ -30,7 +30,7 @@ async function attach() {
   }
 
   async function deleteKey(apikey) {
-    await apikeys.deleteMany({ apikey });
+    return await apikeys.deleteMany({ apikey });
   }
 
   async function getKeysByUser(userid, limit = 100) {
