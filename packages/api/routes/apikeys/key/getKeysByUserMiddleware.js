@@ -4,9 +4,14 @@ const db_apikey = require("../../../lib/db.apikey");
 module.exports = function getKeysByUser() {
   return async (req, res, next) => {
     const apikey = await db_apikey.attach();
-    apikey.getKeysByUser(req.query.user).then(keys => {
-      res.send(keys);
-      next();
-    });
+    const user = req.query.user ? req.query.user.trim() : req.query.user;
+    const doc = user
+      ? await apikey.getKeysByUser(user)
+      : {
+          error: "Invalid Parameter",
+          message: "Username Missing: Username cannot be empty. It is needed to identify and fetch API Keys."
+        };
+    res.send(doc);
+    next();
   };
 };
