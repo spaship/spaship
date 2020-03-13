@@ -47,7 +47,11 @@ async function attach() {
       .toArray();
   }
 
-  return { getKeysByUser, getUserByKey, createKey, deleteKey };
+  async function deleteKeysByUser(userid) {
+    return await apikeys.deleteMany({ userid });
+  }
+
+  return { getKeysByUser, getUserByKey, deleteKeysByUser, createKey, deleteKey };
 }
 
 module.exports = { attach };
