@@ -6,14 +6,22 @@ module.exports = function deleteKeysByUser() {
     const apikey = await db_apikey.attach();
     const user = req.body.user ? req.body.user.trim() : req.body.user;
 
-    const doc = user
-      ? await apikey.deleteKeysByUser(req.query.user)
-      : {
-          error: "Invalid Parameter",
-          message: "Username Missing: Username cannot be empty."
-        };
+    if (user) {
+      const dbRes = await apikey.deleteKeysByUser(user);
+      const doc = dbRes.error
+        ? dbRes
+        : {
+            user: user,
+            message: dbRes.deletedCount + " key(s) deleted."
+          };
 
-    res.send(doc);
+      res.send(doc);
+    } else {
+      res.send({
+        error: "Invalid Parameter",
+        message: "Username Missing: Username cannot be empty."
+      });
+    }
     next();
   };
 };
