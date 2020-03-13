@@ -1,9 +1,12 @@
-export interface IApplication {
+export interface IApplication extends IAPIApplication {
+  upload?: File | string;
+  environments: IEnvironment[];
+}
+
+export interface IAPIApplication {
   name: string;
   path: string;
   ref: string;
-  upload: File | string;
-  environments: IEnvironment[];
 }
 
 export interface IDeployHistory {
