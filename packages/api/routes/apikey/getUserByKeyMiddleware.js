@@ -1,6 +1,6 @@
 const db_apikey = require("../../lib/db.apikey");
 
-// Return a function for creating an API key for a given user.
+// Return a function for getting the user for a given API Key.
 module.exports = function getUserByKey() {
   return async (req, res, next) => {
     const apikey = await db_apikey.attach();
