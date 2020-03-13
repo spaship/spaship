@@ -6,6 +6,8 @@ const corsMiddleware = require("cors");
 const forceSyncAll = require("./forceSyncAll/forceSyncAllMiddleware");
 const deploy = require("./deploy/deployMiddleware");
 const list = require("./list/listMiddleware");
+const getUserByAPIKey = require("./apikey/getUserByKeyMiddleware");
+const getAPIKeysByUser = require("./apikey/getKeysByUserMiddleware");
 const createAPIKey = require("./apikey/createKeyMiddleware");
 const deleteAPIKey = require("./apikey/deleteKeyMiddleware");
 
@@ -36,7 +38,10 @@ function register(app) {
   // API Keys
   app
     .route("/apikey")
+    .get(cors, getAPIKeysByUser())
     .post(cors, createAPIKey())
     .delete(cors, deleteAPIKey());
+
+  app.route("/user").get(cors, getUserByAPIKey());
 }
 module.exports = { register };
