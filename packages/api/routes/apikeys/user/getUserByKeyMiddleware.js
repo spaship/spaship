@@ -1,4 +1,4 @@
-const db_apikey = require("../../lib/db.apikey");
+const db_apikey = require("../../../lib/db.apikey");
 
 // Return a function for getting the user for a given API Key.
 module.exports = function getUserByKey() {

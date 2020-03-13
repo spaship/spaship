@@ -1,4 +1,4 @@
-const db_apikey = require("../../lib/db.apikey");
+const db_apikey = require("../../../lib/db.apikey");
 
 // Return a function for deleting all API keys for a given user.
 module.exports = function deleteKeysByUser() {

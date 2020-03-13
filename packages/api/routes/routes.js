@@ -7,12 +7,12 @@ const forceSyncAll = require("./forceSyncAll/forceSyncAllMiddleware");
 const deploy = require("./deploy/deployMiddleware");
 const list = require("./list/listMiddleware");
 
-const getAPIKeysByUser = require("./apikey/getKeysByUserMiddleware");
-const deleteAPIKeysByUser = require("./apikey/deleteKeysByUserMiddleware");
+const getAPIKeysByUser = require("./apikeys/key/getKeysByUserMiddleware");
+const deleteAPIKeysByUser = require("./apikeys/user/deleteKeysByUserMiddleware");
 
-const getUserByAPIKey = require("./apikey/getUserByKeyMiddleware");
-const createAPIKey = require("./apikey/createKeyMiddleware");
-const deleteAPIKey = require("./apikey/deleteKeyMiddleware");
+const getUserByAPIKey = require("./apikeys/user/getUserByKeyMiddleware");
+const createAPIKey = require("./apikeys/key/createKeyMiddleware");
+const deleteAPIKey = require("./apikeys/key/deleteKeyMiddleware");
 
 const cors = corsMiddleware({
   origin: true,

@@ -1,4 +1,4 @@
-const db_apikey = require("../../lib/db.apikey");
+const db_apikey = require("../../../lib/db.apikey");
 var validate = require("uuid-validate");
 
 // Return a function for deleting an API key passed as a parameter.
