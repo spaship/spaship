@@ -31,7 +31,7 @@ async function attach() {
 
   async function deleteKey(apikey) {
     const keys = await apikeys.find({ apikey: hash(apikey) }).toArray();
-    const result = keys.length ? await apikeys.deleteMany({ apikey }) : { error: "Hashed key not found" };
+    const result = keys.length ? await apikeys.deleteMany({ apikey: hash(apikey) }) : { error: "Hashed key not found" };
     return result;
   }
 
