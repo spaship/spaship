@@ -1,16 +1,14 @@
 const db_apikey = require("../../lib/db.apikey");
-
-function validateHashedKey(hashedKey) {
-  const regex = /^[A-F\d]{8}-[A-F\d]{4}-4[A-F\d]{3}-[89AB][A-F\d]{3}-[A-F\d]{12}$/i;
-  return regex.test(hashedKey);
-}
+var validate = require("uuid-validate");
 
 // Return a function for deleting an API key passed as a parameter.
 module.exports = function deleteKeyMiddleware() {
   return async (req, res, next) => {
     const apikey = await db_apikey.attach();
     const hashedKey = req.query.hashedKey ? req.query.hashedKey.trim() : req.query.hashedKey;
-    const isValid = validateHashedKey(hashedKey);
+
+    // Validate that the HashedKey confirms to uuid v4.
+    const isValid = validate(hashedKey, 4);
 
     if (isValid) {
       const user = await apikey.getUserByKey(req.query.hashedKey);
