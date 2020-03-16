@@ -47,7 +47,7 @@
     "url-join": "^4.0.1"
   },
   "devDependencies": {
-    "mongo-mock": "3.9.0"
+    "mongo-mock": "3.9.1"
   },
   "publishConfig": {
     "access": "public"
