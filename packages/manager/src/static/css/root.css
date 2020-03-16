@@ -11,10 +11,6 @@ input[type="file"] {
   height: 1px;
 }
 
-.pf-c-page {
-  --pf-c-page--BackgroundColor: #ffffff !important;
-}
-
 #application-toolbar {
   --pf-c-data-toolbar--PaddingTop: 0;
   --pf-c-data-toolbar--PaddingBottom: 0;

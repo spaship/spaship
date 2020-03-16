@@ -29,7 +29,9 @@ export default (props: IProps) => {
     data.append("name", application.name);
     data.append("path", application.path);
     data.append("ref", application.ref);
-    data.append("upload", application.upload);
+    if (application.upload) {
+      data.append("upload", application.upload);
+    }
 
     fetch(`${config.apiHost}/deploy`, {
       method: "POST",

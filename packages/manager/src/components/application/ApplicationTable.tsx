@@ -6,14 +6,14 @@ import { IApplication } from "../../models/Application";
 import DeploySubTable from "./DeploySubTable";
 
 interface IProps {
-  environments: string[];
+  environmentNames: string[];
   applications: IApplication[];
 }
 
 const perPages = [10, 20, 50, 100];
 
 export default (props: IProps) => {
-  const { applications, environments } = props;
+  const { applications, environmentNames } = props;
   const [rows, setRows] = useState<IRow[]>([]);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(perPages[0]);
@@ -22,7 +22,7 @@ export default (props: IProps) => {
     {
       title: "Path"
     }
-  ].concat(environments.map(title => ({ title, cellTransforms: [compoundExpand] })));
+  ].concat(environmentNames.map(title => ({ title, cellTransforms: [compoundExpand] })));
 
   const applicationsToRows = useCallback(
     (apps: IApplication[]) => {
@@ -42,7 +42,9 @@ export default (props: IProps) => {
         app.environments &&
           app.environments.forEach((env, envIndex) => {
             const cell: ICell = {
-              title: env.name,
+              title:
+                env.deployHistory &&
+                env.deployHistory.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())[0].version,
               props: {
                 isOpen: false
               }
