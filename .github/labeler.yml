@@ -1,0 +1,11 @@
+common:
+  - packages/common/**/*
+
+api:
+  - packages/api/**/*
+
+router:
+  - packages/router/**/*
+
+manager:
+  - packages/manager/**/*

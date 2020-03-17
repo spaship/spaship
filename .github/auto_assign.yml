@@ -1,0 +1,10 @@
+addReviewers: true
+addAssignees: false
+reviewers:
+  - kunyan
+  - mwcz
+  - sayak-sarkar
+  - Jared-Sprague
+numberOfReviewers: 0
+skipKeywords:
+  - wip
