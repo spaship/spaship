@@ -1,31 +1,48 @@
 import React, { useState, useEffect } from "react";
-import { ActionGroup, Button, Checkbox, Modal, Form, FormGroup, TextInput } from "@patternfly/react-core";
+import {
+  ActionGroup,
+  Button,
+  Checkbox,
+  Modal,
+  Form,
+  FormGroup,
+  TextInput,
+  InputGroup,
+  InputGroupText
+} from "@patternfly/react-core";
 import * as uuid from "uuid";
+
+interface IAPIKey {
+  env: string;
+  value: string;
+}
 
 interface IProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
 export default (props: IProps) => {
   const { isOpen, onClose } = props;
   const [name, setName] = useState("");
   const [expired, setExpired] = useState("");
   const [scopes, setScopes] = useState<string[]>([]);
-  const [apiKey, setApiKey] = useState("");
+  const [apiKeys, setApiKeys] = useState<IAPIKey[]>([]);
 
   useEffect(() => {
     setName("");
     setExpired("");
-    setApiKey("");
+    setApiKeys([]);
     setScopes([]);
   }, [isOpen]);
 
   const onSubmit = () => {
-    setApiKey(uuid.v4());
+    // Todo call apiKey api
+    setApiKeys(scopes.map(env => ({ env, value: uuid.v4() })));
   };
 
   const isValid = () => {
-    if (name && name.trim().length > 0 && scopes.length > 0) {
+    if (name && name.trim().length > 0 && scopes.length > 0 && apiKeys.length === 0) {
       return true;
     }
     return false;
@@ -33,7 +50,6 @@ export default (props: IProps) => {
 
   const onChangeScope = (checked: boolean, event: React.FormEvent<HTMLInputElement>) => {
     const env = event.currentTarget.name;
-    console.log(env);
     if (!checked) {
       setScopes(scopes.filter(scope => scope !== env));
     } else {
@@ -53,6 +69,21 @@ export default (props: IProps) => {
         onChange={onChangeScope}
         isChecked={!!scopes.find(scope => scope === env)}
       />
+    ));
+
+  const renderAPIKeys = () =>
+    apiKeys.map(apiKey => (
+      <InputGroup>
+        <InputGroupText>{apiKey.env}</InputGroupText>
+        <TextInput
+          key={`api-key-${apiKey.env}`}
+          value={apiKey.value}
+          type="text"
+          readOnly
+          aria-describedby="api-key-helper"
+          name="api-key"
+        />
+      </InputGroup>
     ));
 
   return (
@@ -93,16 +124,9 @@ export default (props: IProps) => {
             Create API key
           </Button>
         </ActionGroup>
-        {apiKey && apiKey.trim() !== "" && (
+        {apiKeys && apiKeys.length > 0 && (
           <FormGroup label="Your New API Key" fieldId="api-key">
-            <TextInput
-              value={apiKey}
-              type="text"
-              readOnly
-              id="api-key"
-              aria-describedby="api-key-helper"
-              name="api-key"
-            />
+            {renderAPIKeys()}
           </FormGroup>
         )}
       </Form>
