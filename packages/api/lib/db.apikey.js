@@ -30,8 +30,8 @@ async function attach() {
   }
 
   async function deleteKey(apikey) {
-    const keys = await apikeys.find({ apikey: hash(apikey) }).toArray();
-    const result = keys.length ? await apikeys.deleteMany({ apikey: hash(apikey) }) : { error: "Hashed key not found" };
+    const keys = await apikeys.find({ apikey }).toArray();
+    const result = keys.length ? await apikeys.deleteMany({ apikey }) : { error: "Hashed key not found" };
     return result;
   }
 
@@ -49,13 +49,20 @@ async function attach() {
       .toArray();
   }
 
+  async function getUserByHashedKey(apikey, limit = 100) {
+    return await apikeys
+      .find({ apikey })
+      .limit(limit)
+      .toArray();
+  }
+
   async function deleteKeysByUser(userid) {
     const users = await apikeys.find({ userid }).toArray();
     const result = users.length ? await apikeys.deleteMany({ userid }) : { error: "User not found" };
     return result;
   }
 
-  return { getKeysByUser, getUserByKey, deleteKeysByUser, createKey, deleteKey };
+  return { getKeysByUser, getUserByKey, getUserByHashedKey, deleteKeysByUser, createKey, deleteKey };
 }
 
 module.exports = { attach };
