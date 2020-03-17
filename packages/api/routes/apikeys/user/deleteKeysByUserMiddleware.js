@@ -19,7 +19,7 @@ module.exports = function deleteKeysByUser() {
     } else {
       res.send({
         error: "Invalid Parameter",
-        message: "Username Missing: Username cannot be empty."
+        message: "User ID Missing: User ID cannot be empty."
       });
     }
     next();
