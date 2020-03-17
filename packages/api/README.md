@@ -128,13 +128,10 @@ A few notes about the response.
 
 ### /apikeys
 
-| HTTP Method | Endpoint                     | Description                                                                  |
-| ----------- | ---------------------------- | ---------------------------------------------------------------------------- |
-| `POST`      | `/apikey`                    | Creates and returns an API key object such as `{ key: "ABCD" }` <sup>1</sup> |
-| `DELETE`    | `/apikey?hashedKey=e12e115a` | Deletes key ABCD (hashed to "e12e115a") <sup>2</sup>                         |
-
-**Notes:**
-
-<sup>1</sup> This should return a JSON object describing whether the key creation was successful or not.
-
-<sup>2</sup> The `deleteKey(apikey)` function wants you to pass in the HASHED key, not the original key (since SPA manager does not have access to the original key when you click "Delete key"). That's why the querystring param is `hashedKey` and not `key`.
+| HTTP Method | Endpoint                     | Description                                                                                                                                              |
+| ----------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST`      | `/apikey`                    | Creates and returns an API key object such as `{ key: "ABCD" }`. It expects the body of the request body to contain an user id as `{ user: "babyyoda" }` |
+| `DELETE`    | `/apikey?hashedKey=e12e115a` | Deletes key ABCD (hashed to "e12e115a")                                                                                                                  |
+| `GET`       | `/apikey?user=babyyoda`      | Returns an API key object such as `{ user: "babyyoda", key: "ABCD" }`                                                                                    |
+| `GET`       | `/user?hashedKey=e12e115a`   | Returns an API key object such as `{ user: "babyyoda" }`                                                                                                 |
+| `DELETE`    | `/user?user=babyyoda`        | Deletes all API keys for user `babyyoda`                                                                                                                 |
