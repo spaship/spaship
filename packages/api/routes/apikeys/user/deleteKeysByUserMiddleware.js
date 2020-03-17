@@ -4,7 +4,7 @@ const db_apikey = require("../../../lib/db.apikey");
 module.exports = function deleteKeysByUser() {
   return async (req, res, next) => {
     const apikey = await db_apikey.attach();
-    const user = req.body.user ? req.body.user.trim() : req.body.user;
+    const user = req.query.user ? req.query.user.trim() : req.query.user;
 
     if (user) {
       const dbRes = await apikey.deleteKeysByUser(user);
