@@ -33,7 +33,8 @@ describe("api.metadata", () => {
           "spaship.yaml": "name: Baz\npath: /baz\nsingle: true\ndeploykey: arfgrn"
         },
         // some non-SPAs in the webroot
-        chrome: {},
+        _include: {},
+        _test1: {},
         ".htaccess": "# global htaccess file"
       }
     });
@@ -74,13 +75,6 @@ describe("api.metadata", () => {
           path: "/baz",
           single: true,
           deploykey: "arfgrn"
-        },
-        // some non-SPAs in the webroot
-        {
-          path: "/.htaccess"
-        },
-        {
-          path: "/chrome"
         }
       ];
 

@@ -13,7 +13,8 @@ async function write(filename, extraData) {
 async function getAll() {
   try {
     const webrootFiles = await fsp.readdir(config.get("webroot"));
-    const spaDirs = flow(map(get))(webrootFiles);
+    const validFiles = webrootFiles.filter(fileName => /^(?![_\.])[a-zA-Z0-9\_\-]*$/.test(fileName));
+    const spaDirs = flow(map(get))(validFiles);
     return await Promise.all(spaDirs);
   } catch (e) {
     console.error(e);
