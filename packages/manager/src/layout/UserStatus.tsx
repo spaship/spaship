@@ -14,7 +14,7 @@ import {
 import { useHistory } from "react-router-dom";
 import UserAvatar from "../static/img/avatar.svg";
 import { useKeycloak } from "@react-keycloak/web";
-import { getUserToken } from "../keycloak";
+import { getUserToken, getEncodedUserToken } from "../keycloak";
 
 export default () => {
   const [isExpanded, setExpanded] = useState(false);

@@ -2,13 +2,15 @@ const fs = require("fs");
 const path = require("path");
 const corsMiddleware = require("cors");
 
-// include our middlewares
+// include our endpoint middlewares
 const forceSyncAll = require("./forceSyncAll/forceSyncAllMiddleware");
 const deploy = require("./deploy/deployMiddleware");
 const list = require("./list/listMiddleware");
-const auth = require("./authMiddleware");
 
-const { protect } = require("./keycloakMiddleware");
+// include our auth middlewares
+const auth = require("./authMiddleware");
+const jwt = require("./jwtMiddleware");
+const apiKey = require("./apiKeyMiddleware");
 
 const cors = corsMiddleware({
   origin: true,
@@ -32,8 +34,7 @@ function register(app) {
 
   app
     .route("/list")
-    .get(cors, protect(), list())
-    // .get(cors, auth(), list())
+    .get(cors, auth(apiKey(), jwt()), list())
     .options(cors); // for CORS preflight
 
   app.post("/autosync/forceSyncAll", cors, forceSyncAll());
