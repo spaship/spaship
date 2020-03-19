@@ -39,24 +39,26 @@ When your pull request is merged, "squash and merge" should be used, and a Conve
 
 Configuration can be provided by CLI flags, environment variables, or a configuration file. Arguments are processed in that order, so CLI flags take precedence over environment variables, which take precedence over the configuration file.
 
-| Option                 | Description                                                                    | CLI                         | Env                                | config.json              | Default                                        |
-| ---------------------- | ------------------------------------------------------------------------------ | --------------------------- | ---------------------------------- | ------------------------ | ---------------------------------------------- |
-| **config file**        | Where to find the config file.                                                 | `--config-file`             | `SPASHIP_API_CONFIG_FILE`          | N/A                      | none                                           |
-| **upload dir**         | Directory to upload SPA archives.                                              | `--upload-dir`              | `SPASHIP_UPLOAD_DIR`               | `"upload_dir"`           | `/tmp/spaship_uploads`                         |
-| **webroot**            | Directory to extract/deploy SPAs.                                              | `--webroot`                 | `SPASHIP_WEBROOT`                  | `"webroot"`              | `/var/www`                                     |
-| **host**               | Hostname to run on.                                                            | `--host`                    | `SPASHIP_HOST`                     | `"host"`                 | `localhost`                                    |
-| **port**               | Port to run on.                                                                | `--port`                    | `SPASHIP_API_PORT`                 | `"port"`                 | `8008`                                         |
-| **log-level**          | Granularity of log messages to print.                                          | `--log-level`               | `SPASHIP_LOG_LEVEL`                | `"log_level"`            | `info`                                         |
-| **log-format**         | `pretty` for human-friendly logs, `json` for machine-friendly logs.            | `--log-format`              | `SPASHIP_LOG_FORMAT`               | `"log_format"`           | `pretty`                                       |
-| **mongo_url**          | The hosts of your mongodb instance.                                            | `--db:mongo:url`            | `SPASHIP_DB__MONGO__URL`           | `"db.mongo.url"`         | `"localhost:27017"`                            |
-| **mongo_user**         | (Optional) The username of your mongodb instance.                              | `--db:mongo:user`           | `SPASHIP_DB__MONGO__USER`          | `"db.mongo.user"`        | `null`                                         |
-| **mongo_password**     | (Optional) The password of your mongodb instance.                              | `--db:mongo:password`       | `SPASHIP_DB__MONGO__PASSWORD`      | `"db.mongo.password"`    | `null`                                         |
-| **mongo_db**           | The mongodb database name.                                                     | `--db:mongo:db`             | `SPASHIP_DB__MONGO__DB`            | `"db.mongo.db"`          | `"spaship"`                                    |
-| **mock_db**            | Whether to use a mock database ([mongo-mock][mongo-mock]).                     | `--db:mongo:mock`           | `SPASHIP_DB__MONGO__MOCK`          | `"db.mongo.mock"`        | `true`, except when `NODE_ENV == "production"` |
-| **Keycloak URL**       | The URL to a Keycloak instance you wish to use for authentication.<sup>2</sup> | `--auth:keycloak:url`       | `SPASHIP_AUTH__KEYCLOAK__URL`      | `auth.keycloak.url`      | none                                           |
-| **Keycloak REALM**     | The Keycloak Realm under which your SPAship Manager client is registered.      | `--auth:keycloak:realm`     | `SPASHIP_AUTH__KEYCLOAK__REALM`    | `auth.keycloak.realm`    | none                                           |
-| **Keycloak client id** | The Keycloak client id for your SPAship Manager instance.                      | `--auth:keycloak:client-id` | `SPASHIP_AUTH__KEYCLOAK__CLIENTID` | `auth.keycloak.clientid` | none                                           |
-| **JWT user UUID prop** | The JWT property to treat as a UUID.<sup>3</sup>                               | `--auth:keycloak:id_prop`   | `SPASHIP_AUTH__KEYCLOAK__ID_PROP`  | `auth.keycloak.id_prop`  | `"sub"` <sup>4</sup>                           |
+| Option                       | Description                                                                    | CLI                           | Env                                   | config.json                 | Default                                        |
+| ---------------------------- | ------------------------------------------------------------------------------ | ----------------------------- | ------------------------------------- | --------------------------- | ---------------------------------------------- |
+| **config file**              | Where to find the config file.                                                 | `--config-file`               | `SPASHIP_API_CONFIG_FILE`             | N/A                         | none                                           |
+| **upload dir**               | Directory to upload SPA archives.                                              | `--upload-dir`                | `SPASHIP_UPLOAD_DIR`                  | `"upload_dir"`              | `/tmp/spaship_uploads`                         |
+| **webroot**                  | Directory to extract/deploy SPAs.                                              | `--webroot`                   | `SPASHIP_WEBROOT`                     | `"webroot"`                 | `/var/www`                                     |
+| **host**                     | Hostname to run on.                                                            | `--host`                      | `SPASHIP_HOST`                        | `"host"`                    | `localhost`                                    |
+| **port**                     | Port to run on.                                                                | `--port`                      | `SPASHIP_API_PORT`                    | `"port"`                    | `8008`                                         |
+| **log-level**                | Granularity of log messages to print.                                          | `--log-level`                 | `SPASHIP_LOG_LEVEL`                   | `"log_level"`               | `info`                                         |
+| **log-format**               | `pretty` for human-friendly logs, `json` for machine-friendly logs.            | `--log-format`                | `SPASHIP_LOG_FORMAT`                  | `"log_format"`              | `pretty`                                       |
+| **mongo_url**                | The hosts of your mongodb instance.                                            | `--db:mongo:url`              | `SPASHIP_DB__MONGO__URL`              | `"db.mongo.url"`            | `"localhost:27017"`                            |
+| **mongo_user**               | (Optional) The username of your mongodb instance.                              | `--db:mongo:user`             | `SPASHIP_DB__MONGO__USER`             | `"db.mongo.user"`           | `null`                                         |
+| **mongo_password**           | (Optional) The password of your mongodb instance.                              | `--db:mongo:password`         | `SPASHIP_DB__MONGO__PASSWORD`         | `"db.mongo.password"`       | `null`                                         |
+| **mongo_db**                 | The mongodb database name.                                                     | `--db:mongo:db`               | `SPASHIP_DB__MONGO__DB`               | `"db.mongo.db"`             | `"spaship"`                                    |
+| **mock_db**                  | Whether to use a mock database ([mongo-mock][mongo-mock]).                     | `--db:mongo:mock`             | `SPASHIP_DB__MONGO__MOCK`             | `"db.mongo.mock"`           | `true`, except when `NODE_ENV == "production"` |
+| **Keycloak URL**             | The URL to a Keycloak instance you wish to use for authentication.<sup>2</sup> | `--auth:keycloak:url`         | `SPASHIP_AUTH__KEYCLOAK__URL`         | `auth.keycloak.url`         | none                                           |
+| **Keycloak REALM**           | The Keycloak Realm under which your SPAship Manager client is registered.      | `--auth:keycloak:realm`       | `SPASHIP_AUTH__KEYCLOAK__REALM`       | `auth.keycloak.realm`       | none                                           |
+| **Keycloak client id**       | The Keycloak client id for your SPAship Manager instance.                      | `--auth:keycloak:client-id`   | `SPASHIP_AUTH__KEYCLOAK__CLIENTID`    | `auth.keycloak.clientid`    | none                                           |
+| **JWT user UUID prop**       | The JWT property to treat as a UUID.<sup>3</sup>                               | `--auth:keycloak:id_prop`     | `SPASHIP_AUTH__KEYCLOAK__ID_PROP`     | `auth.keycloak.id_prop`     | `"sub"` <sup>4</sup>                           |
+| **Keycloak public key**      | Your Keycloak realm's public key.                                              | `--auth:keycloak:pubkey`      | `SPASHIP_AUTH__KEYCLOAK__PUBKEY`      | `auth.keycloak.pubkey`      | none                                           |
+| **Keycloak public key file** | A file path to your Keycloak realm's public key.                               | `--auth:keycloak:pubkey_file` | `SPASHIP_AUTH__KEYCLOAK__PUBKEY_FILE` | `auth.keycloak.pubkey_file` | none                                           |
 
 ``
 
@@ -129,5 +131,17 @@ A few notes about the response.
 
 - `path` is not stored in the metadata directory; it's inferred from the SPA's directory in the webroot.
 - The "SPAnonymous" app has `null` values for name and ref because it was not deployed with `/deploy`, but it's included so that `/list` provides a complete report of what paths are being made available.
+
+## Scripts
+
+During development, this repo includes a handy script (`npm run get-pubkey`) for downloading your Keycloak server's public key. It accepts the same `auth:keycloak:url` and `auth:keycloak:realm` options as the API itself. You can run it as follows:
+
+```
+npm run get-pubkey -- --auth:keycloak:url https://auth.spaship.io --auth:keycloak:realm SPAshipUsers
+```
+
+_(Just like the API, it also accepts environment variables or a config file instead of CLI options.)_
+
+After running the script, a `.key` file will be saved in your current directory. You can reference that file in the `auth:keycloak:pubkey_file` configuration option.
 
 [mongo-mock]: https://github.com/williamkapke/mongo-mock

@@ -31,6 +31,8 @@ let validOptions = [
   // authentication
   "auth:keycloak:url",
   "auth:keycloak:realm",
+  "auth:keycloak:pubkey",
+  "auth:keycloak:pubkey_file",
   "auth:keycloak:clientid",
   "auth:keycloak:id_prop"
 ];
