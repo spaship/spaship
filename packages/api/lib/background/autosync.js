@@ -113,7 +113,7 @@ class Autosync {
     }
 
     try {
-      if (response) {
+      if (response && response.status === 200) {
         // Make sure dest path exists
         let exists = await this.isDirectory(path);
         if (!exists) {
@@ -126,6 +126,9 @@ class Autosync {
         await fsp.writeFile(file, response.data);
         log.info("[Autosync] Successfully wrote dest file:", file);
         return true;
+      }
+      else {
+	log.error("[Autosync] Invalid response while trying to get url:", url, response.status);
       }
     } catch (error) {
       log.error("[Autosync] Error writing local file:", file, error);
