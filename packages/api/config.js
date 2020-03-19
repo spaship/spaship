@@ -90,10 +90,9 @@ nconf.defaults({
     mongo: {
       url: "localhost:27017",
       db: "spaship",
-      mock: false
+      mock: process.env.NODE_ENV !== "production" // use a mock database by default in dev environments
     }
   },
-  mock_db: process.env.NODE_ENV !== "production", // use a mock database by default in dev environments
   auth: {
     keycloak: {
       jwt_uuid_prop: "sub"
