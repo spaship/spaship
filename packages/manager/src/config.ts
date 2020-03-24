@@ -1,17 +1,21 @@
-import EnvParser from "./EnvParser";
-
-const envs = EnvParser.parse();
-const config = {
-  apiHost: "https://spaship-api-cpops-dev.ext.us-west.dc.preprod.paas.redhat.com",
-  siteHost: "https://spaship-router-cpops-dev.ext.us-west.dc.preprod.paas.redhat.com",
-  apiHosts: envs.SPASHIP_APIS,
-  sso: {
-    keycloak: {
-      url: envs.KEYCLOAK_URL,
-      realm: envs.KEYCLOAK_REALM,
-      clientId: envs.KEYCLOAK_CLIENT_ID
-    }
+export interface IEnvironment {
+  name: string;
+  api: string;
+  domain: string;
+}
+declare global {
+  interface Window {
+    SPAship: {
+      environments: IEnvironment[];
+      keycloak: {
+        url: string;
+        realm: string;
+        clientId: string;
+      };
+    };
   }
-};
+}
+
+const config = window.SPAship;
 
 export default config;

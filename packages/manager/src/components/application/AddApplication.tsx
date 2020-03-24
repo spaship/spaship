@@ -4,17 +4,19 @@ import {
   Button,
   Form,
   FormGroup,
+  FormSelect,
+  FormSelectOption,
   InputGroup,
   InputGroupText,
   TextInput,
   Card,
-  CardBody
+  CardBody,
 } from "@patternfly/react-core";
 import { Spinner } from "@patternfly/react-core/dist/js/experimental";
 import { withRouter } from "react-router";
 import { IApplication } from "../../models/Application";
 import Page from "../../layout/Page";
-import config from "../../config";
+import config, { IEnvironment } from "../../config";
 
 export default withRouter(({ history }) => {
   const [form, setForm] = useState<IApplication>({
@@ -22,41 +24,47 @@ export default withRouter(({ history }) => {
     path: "",
     ref: "",
     upload: "",
-    environments: []
+    environments: [],
   });
+  const [environment, setEnvironment] = useState<IEnvironment>(config.environments[0]);
   const [isUploading, setUploading] = useState(false);
 
   function handleChange(value: string, event: React.FormEvent<HTMLInputElement>) {
     setForm({
       ...form,
-      [event.currentTarget.name]: value
+      [event.currentTarget.name]: value,
     });
+  }
+
+  function handleEnvironmentChange(value: string) {
+    const match = config.environments.find((env) => env.name === value);
+    if (match) {
+      setEnvironment(match);
+    }
   }
 
   function handleFileChange(event: React.FormEvent<HTMLInputElement>) {
     const upload = (event.currentTarget.files && event.currentTarget.files[0]) || "";
     setForm({
       ...form,
-      upload
+      upload,
     });
   }
 
   function onSubmit() {
     setUploading(true);
-    console.log(form);
     const data = new FormData();
     data.append("name", form.name);
     data.append("path", form.path);
     data.append("ref", form.ref);
     form.upload && data.append("upload", form.upload);
 
-    fetch(`${config.apiHost}/deploy`, {
+    fetch(`${environment?.api}/deploy`, {
       method: "POST",
-      body: data
+      body: data,
     })
-      .then(res => res.text())
-      .then(text => {
-        console.log(text);
+      .then((res) => res.text())
+      .then((text) => {
         setUploading(false);
         history.push("/applications");
       });
@@ -83,10 +91,17 @@ export default withRouter(({ history }) => {
                 onChange={handleChange}
               />
             </FormGroup>
+            <FormGroup label="Environment" isRequired fieldId="environment" helperText="Please provide app name">
+              <FormSelect value={form.environments} onChange={handleEnvironmentChange} aria-label="FormSelect Input">
+                {config.environments.map((env, index) => (
+                  <FormSelectOption key={index} value={env.name} label={env.name} />
+                ))}
+              </FormSelect>
+            </FormGroup>
 
             <FormGroup label="Path" isRequired fieldId="path" helperText="Please provide app path">
               <InputGroup>
-                <InputGroupText id="site-host">{config.siteHost}</InputGroupText>
+                <InputGroupText id="site-host">{environment?.domain}</InputGroupText>
                 <TextInput
                   isRequired
                   type="text"
