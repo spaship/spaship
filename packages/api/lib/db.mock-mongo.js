@@ -12,7 +12,7 @@ if (config.get("db:mongo:user") && config.get("db:mongo:password")) {
   connectUrls.push(`${config.get("db:mongo:user")}:${config.get("db:mongo:password")}@`);
 }
 connectUrls.push(config.get("db:mongo:url"));
-connectUrls.push(`/${config.get("db:mongo:db")}`);
+connectUrls.push(`/${config.get("db:mongo:db_name")}`);
 const url = connectUrls.join("");
 
 let reusableClient;

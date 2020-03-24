@@ -25,7 +25,7 @@ let validOptions = [
   "db:mongo:user",
   "db:mongo:password",
   "db:mongo:url",
-  "db:mongo:database",
+  "db:mongo:db_name",
   "db:mongo:mock",
 
   // authentication
@@ -89,7 +89,7 @@ nconf.defaults({
   db: {
     mongo: {
       url: "localhost:27017",
-      db: "spaship",
+      db_name: "spaship",
       mock: process.env.NODE_ENV !== "production" // use a mock database by default in dev environments
     }
   },

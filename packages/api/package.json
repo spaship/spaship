@@ -55,7 +55,7 @@
     "uuid-validate": "0.0.3"
   },
   "devDependencies": {
-    "mongo-mock": "3.9.0"
+    "mongo-mock": "4.0.0"
   },
   "publishConfig": {
     "access": "public"

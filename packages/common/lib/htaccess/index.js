@@ -1,12 +1,12 @@
 const path = require("path");
 const fsp = require("fs").promises;
-const hbs = require("handlebars");
 const validate = require("../config/validate");
 
-const templateString = `
-Header set X-Spaship-Name "{{ name }}"
+const template = ({ name, single }) => {
+  let templateString = `Header set X-Spaship-Name ${name}`;
 
-{{#if single }}
+  if (single) {
+    templateString += `
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteCond %{REQUEST_FILENAME} !-f
@@ -14,9 +14,10 @@ Header set X-Spaship-Name "{{ name }}"
     RewriteRule (.*) index.html
     Header set X-Spaship-Single "true"
 </IfModule>
-{{/if}}
 `;
-const template = hbs.compile(templateString);
+  }
+  return templateString;
+};
 
 async function generate(data) {
   const validation = validate(data);

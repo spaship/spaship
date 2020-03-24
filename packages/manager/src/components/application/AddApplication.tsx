@@ -48,7 +48,7 @@ export default withRouter(({ history }) => {
     data.append("name", form.name);
     data.append("path", form.path);
     data.append("ref", form.ref);
-    data.append("upload", form.upload);
+    form.upload && data.append("upload", form.upload);
 
     fetch(`${config.apiHost}/deploy`, {
       method: "POST",

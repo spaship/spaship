@@ -28,7 +28,7 @@ async function connect(collectionName) {
   }
 
   // otherwise, connect
-  let db = reusableClient.db(config.get("db:mongo:db"));
+  let db = reusableClient.db(config.get("db:mongo:db_name"));
   return db.collection(collectionName);
 }
 

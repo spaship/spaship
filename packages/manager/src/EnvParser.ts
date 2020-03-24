@@ -3,7 +3,7 @@
  */
 
 // The name/url pairs for each entry in SPASHIP_APIs.
-interface ISPAshipAPI {
+export interface ISPAshipAPI {
   name: string;
   url: string;
 }
