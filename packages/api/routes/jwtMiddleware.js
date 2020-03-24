@@ -16,6 +16,7 @@ function getKeycloakPublicKey() {
 function handleError(err, req, res, next) {
   req.user = req.user || {};
   req.user.error = err;
+  next();
 }
 
 function createJwtMiddleware({ credentialsRequired = false } = {}) {
@@ -24,9 +25,9 @@ function createJwtMiddleware({ credentialsRequired = false } = {}) {
   return [
     jwt({
       secret: getKeycloakPublicKey(),
-      credentialsRequired
+      credentialsRequired,
     }),
-    handleError
+    handleError,
   ];
 }
 

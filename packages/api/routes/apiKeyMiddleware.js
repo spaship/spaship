@@ -8,8 +8,6 @@ module.exports = function createApiKeyMiddleware() {
   return async function apiKeyMiddleware(req, res, next) {
     const authHeader = req.headers.authorization;
 
-    console.log("running api key middleware");
-
     req.apikey = req.apikey || {};
 
     let error;
@@ -37,8 +35,14 @@ module.exports = function createApiKeyMiddleware() {
               }
             }
           }
+        } else {
+          error = { name: "APIKeyMalformedError", message: "API Key malformed." };
         }
+      } else {
+        error = { name: "AuthorizationHeaderMalformedError", message: "Authorization header malformed." };
       }
+    } else {
+      error = { name: "NoAuthorizationHeaderError", message: "Authorization header missing." };
     }
 
     if (error) {

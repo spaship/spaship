@@ -1,9 +1,17 @@
 import { ISPAshipAPI } from "../EnvParser";
 import { IAPIApplication, IApplication } from "../models/Application";
+import { keycloak } from "../keycloak";
 
 export const getApplicationList = async (environment: ISPAshipAPI) => {
   try {
-    const response = await fetch(`${environment.url}/list`);
+    const response = await fetch(`${environment.url}/list`, {
+      method: "GET",
+      credentials: "include",
+      mode: "cors",
+      headers: {
+        Authorization: `Bearer ${keycloak.token}`,
+      },
+    });
     const applications = (await response.json()) as Promise<IAPIApplication[]>;
     return applications;
   } catch (error) {
@@ -13,7 +21,7 @@ export const getApplicationList = async (environment: ISPAshipAPI) => {
 
 export const getAllEnvironmentApplicationList = async (environments: ISPAshipAPI[]) => {
   try {
-    const fetchApplicationJobs = environments.map(env => getApplicationList(env));
+    const fetchApplicationJobs = environments.map((env) => getApplicationList(env));
     const values = await Promise.all(fetchApplicationJobs);
 
     const applicationList: IApplication[] = [];
@@ -21,16 +29,16 @@ export const getAllEnvironmentApplicationList = async (environments: ISPAshipAPI
       const envAppList = values[index];
 
       envAppList?.forEach((apiApp: IAPIApplication) => {
-        const match = applicationList.find(app => app.path === apiApp.path);
+        const match = applicationList.find((app) => app.path === apiApp.path);
         if (match) {
           match.environments = [
             ...match.environments,
-            { name: env.name, deployHistory: [{ version: apiApp.ref, timestamp: new Date() }] }
+            { name: env.name, deployHistory: [{ version: apiApp.ref, timestamp: new Date() }] },
           ];
         } else {
           applicationList.push({
             ...apiApp,
-            environments: [{ name: env.name, deployHistory: [{ version: apiApp.ref, timestamp: new Date() }] }]
+            environments: [{ name: env.name, deployHistory: [{ version: apiApp.ref, timestamp: new Date() }] }],
           });
         }
       });
