@@ -143,3 +143,13 @@ _(Just like the API, it also accepts environment variables or a config file inst
 After running the script, a `.key` file will be saved in your current directory. You can reference that file in the `auth:keycloak:pubkey_file` configuration option.
 
 [mongo-mock]: https://github.com/williamkapke/mongo-mock
+
+### /apikeys
+
+| HTTP Method | Endpoint                     | Description                                                                                                                                              |
+| ----------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST`      | `/apikey`                    | Creates and returns an API key object such as `{ key: "ABCD" }`. It expects the body of the request body to contain an user id as `{ user: "babyyoda" }` |
+| `DELETE`    | `/apikey?hashedKey=e12e115a` | Deletes key ABCD (hashed to "e12e115a")                                                                                                                  |
+| `GET`       | `/apikey?user=babyyoda`      | Returns an API key object such as `{ user: "babyyoda", key: "ABCD" }`                                                                                    |
+| `GET`       | `/user?hashedKey=e12e115a`   | Returns an API key object such as `{ user: "babyyoda" }`                                                                                                 |
+| `DELETE`    | `/user?user=babyyoda`        | Deletes all API keys for user `babyyoda`                                                                                                                 |

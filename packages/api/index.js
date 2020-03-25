@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const express = require("express");
+const bodyParser = require("body-parser");
 
 const { log, pinoExpress } = require("@spaship/common/lib/logging/pino");
 const config = require("./config");
@@ -12,6 +13,10 @@ const app = express();
 const autosync = new Autosync();
 
 app.use(pinoExpress);
+
+// BodyParser for parsing application/json and for parsing application/x-www-form-urlencoded
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 routes.register(app);
 
