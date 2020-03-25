@@ -41,7 +41,7 @@ function register(app) {
 
   app.route("/list").get(cors, auth(apiKey(), jwt()), list()).options(cors); // for CORS preflight
 
-  app.post("/autosync/forceSyncAll", cors, forceSyncAll());
+  app.post("/autosync/forceSyncAll", cors, auth(apiKey(), jwt()), forceSyncAll());
 
   // API Keys
   app
