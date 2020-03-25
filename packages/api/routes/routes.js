@@ -7,6 +7,13 @@ const forceSyncAll = require("./forceSyncAll/forceSyncAllMiddleware");
 const deploy = require("./deploy/deployMiddleware");
 const list = require("./list/listMiddleware");
 
+const getAPIKeysByUser = require("./apikeys/key/getKeysByUserMiddleware");
+const deleteAPIKeysByUser = require("./apikeys/user/deleteKeysByUserMiddleware");
+
+const getUserByAPIKey = require("./apikeys/user/getUserByKeyMiddleware");
+const createAPIKey = require("./apikeys/key/createKeyMiddleware");
+const deleteAPIKey = require("./apikeys/key/deleteKeyMiddleware");
+
 const cors = corsMiddleware({
   origin: true,
   credentials: true
@@ -30,6 +37,17 @@ function register(app) {
   app.route("/list").get(cors, list());
 
   app.post("/autosync/forceSyncAll", cors, forceSyncAll());
-}
 
+  // API Keys
+  app
+    .route("/apikey")
+    .get(cors, getAPIKeysByUser())
+    .post(cors, createAPIKey())
+    .delete(cors, deleteAPIKey());
+
+  app
+    .route("/user")
+    .get(cors, getUserByAPIKey())
+    .delete(cors, deleteAPIKeysByUser());
+}
 module.exports = { register };

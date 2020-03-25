@@ -74,6 +74,22 @@ describe("api.db.apikey", () => {
       expect(doc).toMatchObject([{ userid, apikey: apikeyhash }]);
     });
 
+    test("should be able to get userid by hashedapikey", async () => {
+      const apikeys = await db_apikey.attach();
+      const userid = "babyyoda";
+      const apikey = "018265271839";
+      const apikeyhash = "fdf1fcb03dab8d28a97d2ab228225a196b9d99f0b3e1a2c1f6a05165ccb1d255";
+
+      // special mock key for this test
+      uuid.v4.mockReturnValueOnce(apikeyhash);
+
+      await apikeys.createKey(userid);
+
+      const doc = await apikeys.getUserByHashedKey(apikeyhash);
+      console.log(doc);
+      expect(doc).toMatchObject([{ userid, apikey: apikeyhash }]);
+    });
+
     test("should be able to delete a key", async () => {
       const apikeys = await db_apikey.attach();
       const userid = "babyyoda";

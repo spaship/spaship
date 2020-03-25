@@ -125,3 +125,13 @@ A few notes about the response.
 - The "SPAnonymous" app has `null` values for name and ref because it was not deployed with `/deploy`, but it's included so that `/list` provides a complete report of what paths are being made available.
 
 [mongo-mock]: https://github.com/williamkapke/mongo-mock
+
+### /apikeys
+
+| HTTP Method | Endpoint                     | Description                                                                                                                                              |
+| ----------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST`      | `/apikey`                    | Creates and returns an API key object such as `{ key: "ABCD" }`. It expects the body of the request body to contain an user id as `{ user: "babyyoda" }` |
+| `DELETE`    | `/apikey?hashedKey=e12e115a` | Deletes key ABCD (hashed to "e12e115a")                                                                                                                  |
+| `GET`       | `/apikey?user=babyyoda`      | Returns an API key object such as `{ user: "babyyoda", key: "ABCD" }`                                                                                    |
+| `GET`       | `/user?hashedKey=e12e115a`   | Returns an API key object such as `{ user: "babyyoda" }`                                                                                                 |
+| `DELETE`    | `/user?user=babyyoda`        | Deletes all API keys for user `babyyoda`                                                                                                                 |

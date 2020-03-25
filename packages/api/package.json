@@ -27,6 +27,7 @@
   "dependencies": {
     "@spaship/common": "^0.5.0",
     "axios": "^0.19.0",
+    "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "decompress": "^4.2.0",
     "decompress-bzip2": "^4.0.0",
@@ -44,7 +45,10 @@
     "sha.js": "^2.4.11",
     "shortid": "^2.2.15",
     "tmp-promise": "^2.0.2",
-    "url-join": "^4.0.1"
+    "url-join": "^4.0.1",
+    "uuid": "^7.0.2",
+    "uuid-validate": "0.0.3",
+    "validator": "^12.2.0"
   },
   "devDependencies": {
     "mongo-mock": "4.0.0"
