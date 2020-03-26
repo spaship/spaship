@@ -1,5 +1,4 @@
 const path = require("path");
-const fs = require("fs");
 const fsp = require("fs").promises;
 const config = require("../config");
 const common = require("@spaship/common");

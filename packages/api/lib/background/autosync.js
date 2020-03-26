@@ -38,7 +38,7 @@ class Autosync {
     }
 
     // spin up a readFile for each path (one default path, or multiple subpaths)
-    cachedTargets = mapValues(cachedTargets, p => fsp.readFile(path.join(target.dest.path, p, target.dest.filename)));
+    cachedTargets = mapValues(cachedTargets, (p) => fsp.readFile(path.join(target.dest.path, p, target.dest.filename)));
 
     // await file read and convert to string
     for (let f in cachedTargets) {
@@ -53,7 +53,7 @@ class Autosync {
   }
 
   start() {
-    log.info("[Autosync] starting..");
+    log.debug("[Autosync] starting..");
 
     // Start syncing each target on it's interval
     for (let target of this.targets) {
@@ -73,7 +73,7 @@ class Autosync {
    * Force a sync of all targets immediately
    */
   async forceSyncAll() {
-    const syncs = this.targets.map(target => this.syncTarget(this));
+    const syncs = this.targets.map((target) => this.syncTarget(this));
     await Promise.all(syncs);
   }
 
@@ -136,7 +136,7 @@ class Autosync {
 
   async isDirectory(path) {
     // the result can be either false (from the caught error) or it can be an fs.stats object
-    const result = await fsp.stat(path).catch(err => {
+    const result = await fsp.stat(path).catch((err) => {
       if (err.code === "ENOENT") {
         return false;
       }

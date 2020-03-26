@@ -22,21 +22,21 @@ describe("api.metadata", () => {
         items: {
           // some SPAs in the webroot
           foo: mockfs.directory({
-            mtime: new Date("2020-02-02"),
+            ctime: new Date("2020-02-02"),
             items: {
               "index.html": "<!doctype html><html></html>",
               "spaship.yaml": "name: Foo\npath: /foo\nref: v1.0.1\nsingle: true\ndeploykey: sehvgqrnyre",
             },
           }),
           foo_bar: mockfs.directory({
-            mtime: new Date("2020-02-02"),
+            ctime: new Date("2020-02-02"),
             items: {
               "index.html": "<!doctype html><html></html>",
               "spaship.yaml": "name: Foo Bar\npath: /foo/bar\nref: master\ndeploykey: zvapuhy",
             },
           }),
           baz: mockfs.directory({
-            mtime: new Date("2020-02-02"),
+            ctime: new Date("2020-02-02"),
             items: {
               "index.html": "<!doctype html><html></html>",
               "spaship.yaml": "name: Baz\npath: /baz\nsingle: true\ndeploykey: arfgrn",
