@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.6.0](https://github.com/spaship/spaship/compare/v0.5.0...v0.6.0) (2020-03-26)
+
+### Bug Fixes
+
+- **common:** remove handlebars dependency ([#256](https://github.com/spaship/spaship/issues/256)) ([0bd5ff9](https://github.com/spaship/spaship/commit/0bd5ff95fefbeebfee8e04714be598ad32b9e1cd))
+
 # [0.5.0](https://github.com/spaship/spaship/compare/v0.4.0...v0.5.0) (2020-03-09)
 
 **Note:** Version bump only for package @spaship/common

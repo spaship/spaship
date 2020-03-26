@@ -17,6 +17,7 @@ export default (props: IProps) => {
   return (
     <InputGroup>
       <TextInput
+        id="search-application-text"
         placeholder="Search"
         value={value}
         type="text"

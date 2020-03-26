@@ -6,7 +6,11 @@ import { Button } from "@patternfly/react-core";
 export default () => {
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const titleToolbar = <Button onClick={() => setModalOpen(true)}>Create API Key</Button>;
+  const titleToolbar = (
+    <Button id="add-apikey-button" onClick={() => setModalOpen(true)}>
+      Create API Key
+    </Button>
+  );
   return (
     <Page title="API Key Management" titleToolbar={titleToolbar}>
       <APIKeyCreateModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />

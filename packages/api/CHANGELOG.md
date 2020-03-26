@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.6.0](https://github.com/spaship/spaship/compare/v0.5.0...v0.6.0) (2020-03-26)
+
+### Bug Fixes
+
+- **api:** dont cache invalid response from autosync ([#243](https://github.com/spaship/spaship/issues/243)) ([af57dc0](https://github.com/spaship/spaship/commit/af57dc0349477838b61d5fe9377fa4fd0524c2a7))
+- **api:** exclude invalid spa paths ([#241](https://github.com/spaship/spaship/issues/241)) ([444db20](https://github.com/spaship/spaship/commit/444db202fb1a7a838ad39c8d87be9dba25888b68))
+- **api:** fix connection to mongodb ([#216](https://github.com/spaship/spaship/issues/216)) ([2342c66](https://github.com/spaship/spaship/commit/2342c66ce414603d40ba5dafb96f8aaee72e9d31))
+
+### Features
+
+- **api:** add jwt and api key validation to the api ([#218](https://github.com/spaship/spaship/issues/218)) ([0d5437f](https://github.com/spaship/spaship/commit/0d5437ff1677d658c6d42f7d06b7d822bd8b7e8d))
+- **api:** use UUID v4 format for API keys ([#223](https://github.com/spaship/spaship/issues/223)) ([3eff190](https://github.com/spaship/spaship/commit/3eff190271bbc215bcf3bd4c611fc4928c6157a6))
+- **apiKeys:** add REST endpoints for managing API keys. ([#204](https://github.com/spaship/spaship/issues/204)) ([618f8b1](https://github.com/spaship/spaship/commit/618f8b1bc94793da660699f90de4482540d59ee3))
+
 # [0.5.0](https://github.com/spaship/spaship/compare/v0.4.0...v0.5.0) (2020-03-09)
 
 ### Bug Fixes
