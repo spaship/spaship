@@ -9,7 +9,7 @@ import {
   Split,
   Text,
   TextVariants,
-  SplitItem
+  SplitItem,
 } from "@patternfly/react-core";
 import { useHistory } from "react-router-dom";
 import UserAvatar from "../static/img/avatar.svg";
@@ -41,14 +41,16 @@ export default () => {
         <AccordionToggle id="userInfo" onClick={onToggle} isExpanded={isExpanded}>
           <Split gutter="md">
             <SplitItem>
-              <Avatar src={UserAvatar} alt="Avatar image" />
+              <Avatar id="user-avatar" src={UserAvatar} alt="Avatar image" />
             </SplitItem>
             <SplitItem isFilled>{token.name}</SplitItem>
           </Split>
         </AccordionToggle>
         <AccordionContent isHidden={!isExpanded}>
-          <Text component={TextVariants.p}>{token.email}</Text>
-          <Button isBlock className="spaship_btn" onClick={onClickLogout}>
+          <Text id="user-email" component={TextVariants.p}>
+            {token.email}
+          </Text>
+          <Button id="logout-button" isBlock className="spaship_btn" onClick={onClickLogout}>
             Logout
           </Button>
         </AccordionContent>
