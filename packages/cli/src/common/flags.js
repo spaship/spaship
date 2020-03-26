@@ -13,7 +13,6 @@ module.exports = {
     apikey: flags.string({
       description: "a SPAship API key",
       required: false,
-      default: config.apikey,
     }),
   },
   env: {
