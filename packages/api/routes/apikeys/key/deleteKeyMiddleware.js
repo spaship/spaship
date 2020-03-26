@@ -19,14 +19,14 @@ module.exports = function deleteKeyMiddleware() {
         : {
             user: user.length ? user[0].userid : "",
             message: dbRes.deletedCount + " key(s) deleted.",
-            hashedKey: hashedKey
+            hashedKey: hashedKey,
           };
 
       res.send(doc);
     } else {
       res.send({
         error: "Invalid Parameter",
-        message: "Hashed Key Invalid: Argument is not a valid Hashed Key."
+        message: "Hashed Key Invalid: Argument is not a valid Hashed Key.",
       });
     }
     next();

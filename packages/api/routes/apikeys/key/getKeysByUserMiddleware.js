@@ -9,7 +9,7 @@ module.exports = function getKeysByUser() {
       ? await apikey.getKeysByUser(user)
       : {
           error: "Invalid Parameter",
-          message: "User ID Missing: User ID cannot be empty. It is needed to identify and fetch API Keys."
+          message: "User ID Missing: User ID cannot be empty. It is needed to identify and fetch API Keys.",
         };
     res.send(doc);
     next();

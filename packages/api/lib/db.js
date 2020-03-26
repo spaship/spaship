@@ -5,7 +5,7 @@
 const config = require("../config");
 
 if (config.get("db:mongo:mock")) {
-  module.exports = require("./db.mock-mongo.js");
+  module.exports = require("./db.mongo-mock.js");
 } else {
-  module.exports = require("./db.real-mongo.js");
+  module.exports = require("./db.mongo.js");
 }

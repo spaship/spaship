@@ -67,3 +67,5 @@ config.json
 .idea
 
 mongo-db.js
+
+*.key

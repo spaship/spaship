@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const corsMiddleware = require("cors");
 
-// include our middlewares
+// include our endpoint middlewares
 const forceSyncAll = require("./forceSyncAll/forceSyncAllMiddleware");
 const deploy = require("./deploy/deployMiddleware");
 const list = require("./list/listMiddleware");
@@ -14,9 +14,14 @@ const getUserByAPIKey = require("./apikeys/user/getUserByKeyMiddleware");
 const createAPIKey = require("./apikeys/key/createKeyMiddleware");
 const deleteAPIKey = require("./apikeys/key/deleteKeyMiddleware");
 
+// include our auth middlewares
+const auth = require("./authMiddleware");
+const jwt = require("./jwtMiddleware");
+const apiKey = require("./apiKeyMiddleware");
+
 const cors = corsMiddleware({
   origin: true,
-  credentials: true
+  credentials: true,
 });
 
 function register(app) {
@@ -27,27 +32,27 @@ function register(app) {
 
   app
     .route("/deploy")
-    .post(cors, ...deploy())
+    .post(cors, auth(jwt(), apiKey()), ...deploy())
     .get((req, res) => {
       fs.readFile(path.resolve(__dirname, "..", "index.html"), (err, data) => {
         res.send(data.toString());
       });
     });
 
-  app.route("/list").get(cors, list());
+  app.route("/list").get(cors, auth(apiKey(), jwt()), list()).options(cors); // for CORS preflight
 
-  app.post("/autosync/forceSyncAll", cors, forceSyncAll());
+  app.post("/autosync/forceSyncAll", cors, auth(apiKey(), jwt()), forceSyncAll());
 
   // API Keys
   app
     .route("/apikey")
-    .get(cors, getAPIKeysByUser())
-    .post(cors, createAPIKey())
-    .delete(cors, deleteAPIKey());
+    .get(cors, auth(jwt(), apiKey()), getAPIKeysByUser())
+    .post(cors, auth(jwt()), createAPIKey())
+    .delete(cors, auth(jwt(), apiKey()), deleteAPIKey());
 
   app
     .route("/user")
-    .get(cors, getUserByAPIKey())
-    .delete(cors, deleteAPIKeysByUser());
+    .get(cors, auth(jwt(), apiKey()), getUserByAPIKey())
+    .delete(cors, auth(jwt(), apiKey()), deleteAPIKeysByUser());
 }
 module.exports = { register };

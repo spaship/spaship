@@ -126,9 +126,8 @@ class Autosync {
         await fsp.writeFile(file, response.data);
         log.info("[Autosync] Successfully wrote dest file:", file);
         return true;
-      }
-      else {
-	log.error("[Autosync] Invalid response while trying to get url:", url, response.status);
+      } else {
+        log.error("[Autosync] Invalid response while trying to get url:", url, response.status);
       }
     } catch (error) {
       log.error("[Autosync] Error writing local file:", file, error);

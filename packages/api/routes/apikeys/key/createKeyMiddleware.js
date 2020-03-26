@@ -9,7 +9,7 @@ module.exports = function createKeyMiddleware() {
       ? await apikey.createKey(user)
       : {
           error: "Invalid Parameter",
-          message: "User ID Missing: User ID cannot be empty. It is needed to create and assign a new API Key."
+          message: "User ID Missing: User ID cannot be empty. It is needed to create and assign a new API Key.",
         };
     res.send(doc);
     next();

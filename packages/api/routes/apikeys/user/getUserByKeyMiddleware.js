@@ -14,14 +14,14 @@ module.exports = function getUserByKey() {
       const user = await apikey.getUserByKey(apiKey);
 
       const doc = {
-        user: user.length ? user[0].userid : ""
+        user: user.length ? user[0].userid : "",
       };
 
       res.send(doc);
     } else {
       res.send({
         error: "Invalid Parameter",
-        message: "API Key Invalid: Argument is not a valid API Key."
+        message: "API Key Invalid: Argument is not a valid API Key.",
       });
     }
     next();

@@ -12,14 +12,14 @@ module.exports = function deleteKeysByUser() {
         ? dbRes
         : {
             user: user,
-            message: dbRes.deletedCount + " key(s) deleted."
+            message: dbRes.deletedCount + " key(s) deleted.",
           };
 
       res.send(doc);
     } else {
       res.send({
         error: "Invalid Parameter",
-        message: "User ID Missing: User ID cannot be empty."
+        message: "User ID Missing: User ID cannot be empty.",
       });
     }
     next();

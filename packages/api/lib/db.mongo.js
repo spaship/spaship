@@ -8,7 +8,6 @@ if (config.get("db:mongo:user") && config.get("db:mongo:password")) {
   connectUrls.push(`${config.get("db:mongo:user")}:${config.get("db:mongo:password")}@`);
 }
 connectUrls.push(config.get("db:mongo:url"));
-// connectUrls.push(`/${config.get("db:mongo:db")}`);
 const url = connectUrls.join("");
 
 log.info(`connecting to ${url}`);

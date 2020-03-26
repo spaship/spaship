@@ -26,7 +26,15 @@ let validOptions = [
   "db:mongo:password",
   "db:mongo:url",
   "db:mongo:db_name",
-  "db:mongo:mock"
+  "db:mongo:mock",
+
+  // authentication
+  "auth:keycloak:url",
+  "auth:keycloak:realm",
+  "auth:keycloak:pubkey",
+  "auth:keycloak:pubkey_file",
+  "auth:keycloak:clientid",
+  "auth:keycloak:id_prop"
 ];
 const filepathOptions = ["config_file", "upload_dir", "webroot"]; // config options that represent filepaths
 
@@ -83,6 +91,11 @@ nconf.defaults({
       url: "localhost:27017",
       db_name: "spaship",
       mock: process.env.NODE_ENV !== "production" // use a mock database by default in dev environments
+    }
+  },
+  auth: {
+    keycloak: {
+      jwt_uuid_prop: "sub"
     }
   }
 });

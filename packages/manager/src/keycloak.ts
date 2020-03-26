@@ -20,4 +20,8 @@ function getUserToken() {
   return keycloak.tokenParsed as ISPAshipJWT;
 }
 
-export { keycloak, getUserToken };
+function getEncodedUserToken() {
+  return keycloak.token;
+}
+
+export { keycloak, getUserToken, getEncodedUserToken };

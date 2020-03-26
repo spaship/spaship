@@ -6,9 +6,7 @@ async function attach() {
   const apikeys = await db.connect("apikeys");
 
   function hash(apikey) {
-    return shajs("sha256")
-      .update(apikey)
-      .digest("hex");
+    return shajs("sha256").update(apikey).digest("hex");
   }
 
   async function createKey(userid = null) {
@@ -25,7 +23,7 @@ async function attach() {
   async function storeKey(doc) {
     return await apikeys.insertOne({
       userid: doc.userid,
-      apikey: hash(doc.apikey)
+      apikey: hash(doc.apikey),
     });
   }
 
@@ -36,10 +34,7 @@ async function attach() {
   }
 
   async function getKeysByUser(userid, limit = 100) {
-    return await apikeys
-      .find({ userid })
-      .limit(limit)
-      .toArray();
+    return await apikeys.find({ userid }).limit(limit).toArray();
   }
 
   async function getUserByKey(apikey, limit = 100) {
@@ -50,10 +45,7 @@ async function attach() {
   }
 
   async function getUserByHashedKey(apikey, limit = 100) {
-    return await apikeys
-      .find({ apikey })
-      .limit(limit)
-      .toArray();
+    return await apikeys.find({ apikey }).limit(limit).toArray();
   }
 
   async function deleteKeysByUser(userid) {

@@ -8,9 +8,9 @@ jest.mock("uuid");
 uuid.v4.mockResolvedValue("MOCK_KEY");
 
 // override some configuration values
-config.get = jest.fn(opt => {
+config.get = jest.fn((opt) => {
   const fakeConfig = {
-    webroot: "/fake/webroot"
+    webroot: "/fake/webroot",
   };
   return fakeConfig[opt];
 });
