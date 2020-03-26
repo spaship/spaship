@@ -13,7 +13,7 @@ A command line interface for SPAship.
 - [Usage](#usage)
 - [Commands](#commands)
 - [Writing tests](#writing-tests)
-  <!-- tocstop -->
+<!-- tocstop -->
 
 # Usage
 
@@ -24,7 +24,7 @@ $ npm install -g @spaship/cli
 $ spaship COMMAND
 running command...
 $ spaship (-v|--version|version)
-@spaship/cli/0.4.0 linux-x64 node-v13.5.0
+@spaship/cli/0.5.0 darwin-x64 node-v12.16.1
 $ spaship --help [COMMAND]
 USAGE
   $ spaship COMMAND
@@ -63,7 +63,7 @@ EXAMPLES
   $ spaship deploy your-app-1.0.0.tgz
 ```
 
-_See code: [src/commands/deploy.js](https://github.com/spaship/spaship/blob/v0.4.0/src/commands/deploy.js)_
+_See code: [src/commands/deploy.js](https://github.com/spaship/spaship/blob/v0.5.0/src/commands/deploy.js)_
 
 ## `spaship help [COMMAND]`
 
@@ -101,7 +101,7 @@ DESCRIPTION
   passed in as CLI options.
 ```
 
-_See code: [src/commands/init.js](https://github.com/spaship/spaship/blob/v0.4.0/src/commands/init.js)_
+_See code: [src/commands/init.js](https://github.com/spaship/spaship/blob/v0.5.0/src/commands/init.js)_
 
 <!-- commandsstop -->
 
