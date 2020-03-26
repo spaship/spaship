@@ -18,34 +18,36 @@ global.console = require("../../../__mocks__/console");
 describe("api.metadata", () => {
   beforeEach(() => {
     mockfs({
-      "/fake/webroot": {
-        // some SPAs in the webroot
-        foo: mockfs.directory({
-          mtime: new Date("2020-02-02"),
-          items: {
-            "index.html": "<!doctype html><html></html>",
-            "spaship.yaml": "name: Foo\npath: /foo\nref: v1.0.1\nsingle: true\ndeploykey: sehvgqrnyre",
-          },
-        }),
-        foo_bar: mockfs.directory({
-          mtime: new Date("2020-02-02"),
-          items: {
-            "index.html": "<!doctype html><html></html>",
-            "spaship.yaml": "name: Foo Bar\npath: /foo/bar\nref: master\ndeploykey: zvapuhy",
-          },
-        }),
-        baz: mockfs.directory({
-          mtime: new Date("2020-02-02"),
-          items: {
-            "index.html": "<!doctype html><html></html>",
-            "spaship.yaml": "name: Baz\npath: /baz\nsingle: true\ndeploykey: arfgrn",
-          },
-        }),
-        // some non-SPAs in the webroot
-        _include: {},
-        _test1: {},
-        ".htaccess": "# global htaccess file",
-      },
+      "/fake/webroot": mockfs.directory({
+        items: {
+          // some SPAs in the webroot
+          foo: mockfs.directory({
+            mtime: new Date("2020-02-02"),
+            items: {
+              "index.html": "<!doctype html><html></html>",
+              "spaship.yaml": "name: Foo\npath: /foo\nref: v1.0.1\nsingle: true\ndeploykey: sehvgqrnyre",
+            },
+          }),
+          foo_bar: mockfs.directory({
+            mtime: new Date("2020-02-02"),
+            items: {
+              "index.html": "<!doctype html><html></html>",
+              "spaship.yaml": "name: Foo Bar\npath: /foo/bar\nref: master\ndeploykey: zvapuhy",
+            },
+          }),
+          baz: mockfs.directory({
+            mtime: new Date("2020-02-02"),
+            items: {
+              "index.html": "<!doctype html><html></html>",
+              "spaship.yaml": "name: Baz\npath: /baz\nsingle: true\ndeploykey: arfgrn",
+            },
+          }),
+          // some non-SPAs in the webroot
+          _include: {},
+          _test1: {},
+          ".htaccess": "# global htaccess file",
+        },
+      }),
     });
   });
   afterEach(() => {
