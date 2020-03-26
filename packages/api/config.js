@@ -9,13 +9,17 @@ function rel2abs(p) {
 }
 
 let validOptions = [
+  // filesystem related
+  "config_file",
+  "upload_dir",
+  "webroot",
+
   // network service options
-  "env",
+  "host",
   "port",
 
-  "envs",
-
-  "config",
+  // autosync stands alone
+  "autosync",
 
   // database
   "db:mongo:user",
