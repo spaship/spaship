@@ -4,14 +4,14 @@ REST API for deploying SPAs to the SPAship platform.
 
 ## Global install
 
-```
+```bash
 npm install -g @spaship/api
 spaship-api
 ```
 
 ## Hacking
 
-```
+```bash
 git@github.com:spaship/api.git
 npm install
 ```
@@ -70,7 +70,7 @@ Each deployed SPA gets a hidden directory inside `webroot` which houses two file
 
 For example, a SPA deployed with name "My App", path `/my-app`, and ref `v1.0.0` would result in a webroot that looks like this:
 
-```
+```bash
 www
 ├── .my-app
 │   ├── name
@@ -87,7 +87,7 @@ Deploy a SPA to SPAship. A very simple Web UI is provided, or the deployment can
 
 #### With cURL
 
-```
+```bash
 NAME="My Awesome Application"
 SPA_PATH="/my-app"
 REF="v1.0.0"
