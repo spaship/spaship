@@ -1,5 +1,5 @@
 const { flags } = require("@oclif/command");
-const { loadRcFile } = require("../common/rc-loader");
+const { loadRcFile } = require("../common/spashiprc-loader");
 
 const config = loadRcFile();
 

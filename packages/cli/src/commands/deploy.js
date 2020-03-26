@@ -3,7 +3,7 @@ const { Command, flags } = require("@oclif/command");
 const execa = require("execa");
 const { assign } = require("lodash");
 const commonFlags = require("../common/flags");
-const { loadRcFile } = require("../common/rc-loader");
+const { loadRcFile } = require("../common/spashiprc-loader");
 
 function isURL(s) {
   try {
