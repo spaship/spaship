@@ -12,10 +12,10 @@ export default () => {
   const [applications, setApplications] = useState<IApplication[]>([]);
   const [keywords, setKeywords] = useState("");
   const environments = EnvParser.parse().SPASHIP_APIS;
-  const environmentNames = environments.map(env => env.name);
+  const environmentNames = environments.map((env) => env.name);
 
   useEffect(() => {
-    APIService.getAllEnvironmentApplicationList(environments).then(apps => {
+    APIService.getAllEnvironmentApplicationList(environments).then((apps) => {
       setApplications(apps);
     });
   }, [environments]);
@@ -31,7 +31,9 @@ export default () => {
       </LevelItem>
       <LevelItem>
         <Link to={`/applications/new`}>
-          <Button variant="primary">New Application</Button>
+          <Button id="add-application-button" variant="primary">
+            New Application
+          </Button>
         </Link>
       </LevelItem>
     </Level>
@@ -40,7 +42,7 @@ export default () => {
   return (
     <Page title="Applications" toolbar={toolbar}>
       <ApplicationTable
-        applications={applications.filter(app => app.path && app.path.indexOf(keywords) !== -1)}
+        applications={applications.filter((app) => app.path && app.path.indexOf(keywords) !== -1)}
         environmentNames={environmentNames}
       />
     </Page>

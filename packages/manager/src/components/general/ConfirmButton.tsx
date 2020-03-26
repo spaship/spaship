@@ -33,12 +33,12 @@ export default (props: IProps) => {
         isOpen={isOpen}
         onClose={() => setOpen(false)}
         actions={[
-          <Button key="confirm" variant={variant} onClick={onClickConfirm}>
+          <Button id="confrim-modal-yes" key="confirm" variant={variant} onClick={onClickConfirm}>
             Confirm
           </Button>,
-          <Button key="cancel" variant="link" onClick={onClickCancel}>
+          <Button id="confirm-modal-cancel" key="cancel" variant="link" onClick={onClickCancel}>
             Cancel
-          </Button>
+          </Button>,
         ]}
       >
         {children}

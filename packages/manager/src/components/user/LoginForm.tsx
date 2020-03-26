@@ -19,7 +19,7 @@ export default () => {
 
   return (
     <Form>
-      <Button isBlock className="spaship_btn" onClick={onClickLogin}>
+      <Button id="login-button" isBlock className="spaship_btn" onClick={onClickLogin}>
         Sign In
       </Button>
     </Form>
