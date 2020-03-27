@@ -62,3 +62,6 @@ typings/
 
 # mock mongo db database file
 mock-db.js
+
+# spaship rc file
+.spashiprc.*
