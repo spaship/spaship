@@ -57,6 +57,6 @@
   },
   "dependencies": {
     "@react-keycloak/web": "1.0.5",
-    "keycloak-js": "9.0.0"
+    "keycloak-js": "9.0.2"
   }
 }
