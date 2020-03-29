@@ -1,25 +1,26 @@
-import { ISPAshipAPI } from "../EnvParser";
+import { IEnvironment } from "../config";
 import { IAPIApplication, IApplication } from "../models/Application";
 import { keycloak } from "../keycloak";
 
-export const getApplicationList = async (environment: ISPAshipAPI) => {
+export const getApplicationList = async (environment: IEnvironment) => {
   try {
-    const response = await fetch(`${environment.url}/list`, {
-      method: "GET",
-      credentials: "include",
-      mode: "cors",
+    const response = await fetch(`${environment.api}/list`, {
       headers: {
         Authorization: `Bearer ${keycloak.token}`,
       },
     });
     const applications = (await response.json()) as Promise<IAPIApplication[]>;
-    return applications;
+    return (await applications).map((app) => ({
+      ...app,
+      environments: [environment],
+    }));
   } catch (error) {
     console.error(error);
   }
+  return [];
 };
 
-export const getAllEnvironmentApplicationList = async (environments: ISPAshipAPI[]) => {
+export const getAllEnvironmentApplicationList = async (environments: IEnvironment[]) => {
   try {
     const fetchApplicationJobs = environments.map((env) => getApplicationList(env));
     const values = await Promise.all(fetchApplicationJobs);
@@ -27,7 +28,6 @@ export const getAllEnvironmentApplicationList = async (environments: ISPAshipAPI
     const applicationList: IApplication[] = [];
     environments.forEach((env, index) => {
       const envAppList = values[index];
-
       envAppList?.forEach((apiApp: IAPIApplication) => {
         const match = applicationList.find((app) => app.path === apiApp.path);
         if (match) {

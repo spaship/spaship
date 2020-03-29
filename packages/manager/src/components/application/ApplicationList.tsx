@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Level, LevelItem } from "@patternfly/react-core";
 import { Link } from "react-router-dom";
 import Page from "../../layout/Page";
-import EnvParser from "../../EnvParser";
+import config from "../../config";
 import ApplicationFilter from "./ApplicationFilter";
 import ApplicationTable from "./ApplicationTable";
 import { IApplication } from "../../models/Application";
@@ -11,9 +11,7 @@ import * as APIService from "../../services/APIService";
 export default () => {
   const [applications, setApplications] = useState<IApplication[]>([]);
   const [keywords, setKeywords] = useState("");
-  const environments = EnvParser.parse().SPASHIP_APIS;
-  const environmentNames = environments.map((env) => env.name);
-
+  const environments = config.environments;
   useEffect(() => {
     APIService.getAllEnvironmentApplicationList(environments).then((apps) => {
       setApplications(apps);
@@ -43,7 +41,7 @@ export default () => {
     <Page title="Applications" toolbar={toolbar}>
       <ApplicationTable
         applications={applications.filter((app) => app.path && app.path.indexOf(keywords) !== -1)}
-        environmentNames={environmentNames}
+        environments={environments}
       />
     </Page>
   );
