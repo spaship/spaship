@@ -134,7 +134,7 @@ A few notes about the response.
 
 During development, this repo includes a handy script (`npm run get-pubkey`) for downloading your Keycloak server's public key. It accepts the same `auth:keycloak:url` and `auth:keycloak:realm` options as the API itself. You can run it as follows:
 
-```
+```bash
 npm run get-pubkey -- --auth:keycloak:url https://auth.spaship.io --auth:keycloak:realm SPAshipUsers
 ```
 
