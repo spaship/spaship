@@ -18,6 +18,6 @@ router.post("/", apiKey.post);
 /**
  * Delete a apiKey
  */
-router.delete("/{name}", apiKey.delete);
+router.delete("/:label", apiKey.delete);
 
 module.exports = router;

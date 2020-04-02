@@ -1,10 +1,10 @@
-class APIKeyError extends Error {
+class UnknownError extends Error {
   constructor(message) {
     super(message);
-    this.name = "APIKeyError";
-    this.status = "fail";
-    this.statusCode = 401;
+    this.name = "UnknownError";
+    this.status = "error";
+    this.statusCode = 500;
   }
 }
 
-module.exports = APIKeyError;
+module.exports = UnknownError;

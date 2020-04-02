@@ -1,10 +1,10 @@
-class UnknownError extends Error {
-  constructor(error) {
-    super(error.stack);
-    this.name = "UnknownError";
-    this.status = "error";
-    this.statusCode = 500;
+class NotFoundError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "NotFoundError";
+    this.status = "fail";
+    this.statusCode = 404;
   }
 }
 
-module.exports = UnknownError;
+module.exports = NotFoundError;

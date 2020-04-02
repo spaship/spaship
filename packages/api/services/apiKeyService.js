@@ -1,13 +1,14 @@
 const APIKey = require("../models/apiKey");
 const APIKeyError = require("../utils/errors/APIKeyError");
+const { encrypt } = require("../utils/cryptoUtil");
 
 const getAPIKeysByUser = (userId) => APIKey.find({ userId });
 
 const validation = async (apiKey) => {
-  const result = await APIKey.findOne({ hashKey: apiKey });
+  const hashKey = encrypt(apiKey);
+  const result = await APIKey.findOne({ hashKey });
 
   if (result) {
-    console.log(result);
     const expiredDate = result.get("expiredDate");
     if (expiredDate && expiredDate.getTime() <= new Date().getTime()) {
       throw new APIKeyError("API Key is expired");

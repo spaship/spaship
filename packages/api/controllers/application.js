@@ -4,7 +4,7 @@ const Application = require("../models/application");
 const DeployError = require("../utils/errors/DeployError");
 const { getUserUUID } = require("../utils/requestUtil");
 
-module.exports.list = async (req, res) => {
+module.exports.list = async (req, res, next) => {
   const list = await fileService.getAll();
   res.send(list);
 };

@@ -7,6 +7,7 @@ const APIKeySchema = new Schema({
     index: true,
     unique: true,
   },
+  shortKey: String,
   hashKey: String,
   expiredDate: Date,
   userId: String,

@@ -2,7 +2,6 @@ const path = require("path");
 const fsp = require("fs").promises;
 const config = require("../config");
 const common = require("@spaship/common");
-const { log } = require("@spaship/common/lib/logging/pino");
 const { flow, map } = require("lodash/fp");
 
 const write = async (filename, extraData) => await common.config.append(filename, extraData);
@@ -18,7 +17,7 @@ const getAll = async () => {
     const spaDirs = flow(map(get))(validFiles);
     return await Promise.all(spaDirs);
   } catch (e) {
-    log.error(e);
+    console.error(e);
   }
   return [];
 };
@@ -34,7 +33,7 @@ const get = async (spaDir) => {
       timestamp: stat.ctime,
     };
   } catch (error) {
-    log.error(error);
+    console.error(error);
     // list entries without spaship.yaml
     return { path: "/" + spaDir };
   }
@@ -44,7 +43,7 @@ const remove = async (spaDir) => {
   try {
     await fsp.rmdir(spaDir);
   } catch (error) {
-    log.error(error);
+    console.error(error);
   }
 };
 
