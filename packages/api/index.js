@@ -5,7 +5,7 @@ const config = require("./config");
 const pkgJSON = require("./package.json");
 
 if (process.env.NODE_ENV === "production") {
-  log.info(config.toObject(), `Starting SPAship ${npmPackage.version} with the following settings`);
+  log.info(config.toObject(), `Starting SPAship ${pkgJSON.version} with the following settings`);
 } else {
   log.info(
     config.toObject(),
