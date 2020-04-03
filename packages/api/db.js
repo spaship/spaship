@@ -8,6 +8,7 @@ const connect = async () => {
   const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useCreateIndex: true,
   };
   config.get("db:mongo:db_name") && (options.dbName = config.get("db:mongo:db_name"));
   config.get("db:mongo:user") && (options.user = config.get("db:mongo:user"));
