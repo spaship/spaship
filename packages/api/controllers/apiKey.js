@@ -49,7 +49,6 @@ module.exports.post = async (req, res, next) => {
 module.exports.delete = async (req, res, next) => {
   const userId = getUserUUID(req);
   const { label } = req.params;
-  console.log(label);
   try {
     const apiKey = await APIKey.findOneAndDelete({ label, userId });
     if (apiKey) {
