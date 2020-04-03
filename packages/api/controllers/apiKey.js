@@ -12,6 +12,7 @@ module.exports.list = async (req, res, next) => {
       label: obj.label,
       shortKey: obj.shortKey,
       expiredDate: obj.expiredDate,
+      createdAt: obj.createdAt,
     }));
     res.send(apiKeys);
   } catch (error) {
@@ -35,11 +36,12 @@ module.exports.post = async (req, res, next) => {
   };
 
   try {
-    await APIKey.create(data);
+    const result = await APIKey.create(data);
     res.status(201).send({
       label,
       key,
       expiredDate,
+      createdAt: result.createdAt,
     });
   } catch (error) {
     next(error);

@@ -31,6 +31,7 @@ describe("API Key Controller", () => {
         shortKey: "1234567",
         hashKey: "175344ddf79cd569645dee71fd9a58d3ee034f7b92156a08068438caa1c092b7",
         userId: "d37763ab-d01c-43f2-8f94-3a6e7ab1d396",
+        createdAt: new Date("2020-02-02"),
       },
     ];
     mockingoose(APIKey).toReturn(mockData);
@@ -39,6 +40,7 @@ describe("API Key Controller", () => {
       {
         label: "mock",
         shortKey: "1234567",
+        createdAt: new Date("2020-02-02"),
       },
     ];
 
@@ -64,6 +66,7 @@ describe("API Key Controller", () => {
       shortKey: "1234567",
       hashKey: "175344ddf79cd569645dee71fd9a58d3ee034f7b92156a08068438caa1c092b7",
       userId: "d37763ab-d01c-43f2-8f94-3a6e7ab1d396",
+      createAt: new Date("2020-02-02"),
     };
 
     mockingoose(APIKey).toReturn(mockData, "findOneAndDelete");
