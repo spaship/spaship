@@ -9,7 +9,8 @@ export const getApplicationList = async (environment: IEnvironment) => {
         Authorization: `Bearer ${keycloak.token}`,
       },
     });
-    const applications = (await response.json()) as Promise<IAPIApplication[]>;
+    const json = await response.json();
+    const applications = json.data as Promise<IAPIApplication[]>;
     return (await applications).map((app) => ({
       ...app,
       environments: [environment],
