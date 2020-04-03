@@ -88,7 +88,7 @@ nconf.defaults({
   upload_dir: "/tmp/spaship_uploads",
   db: {
     mongo: {
-      url: "mongodb://localhost:27017",
+      url: "localhost:27017",
       db_name: "spaship",
       mock: process.env.NODE_ENV !== "production", // use a mock database by default in dev environments
     },
