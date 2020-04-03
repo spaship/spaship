@@ -4,7 +4,7 @@ import { keycloak } from "../keycloak";
 
 export const getApplicationList = async (environment: IEnvironment) => {
   try {
-    const response = await fetch(`${environment.api}/list`, {
+    const response = await fetch(`${environment.api}/applications`, {
       headers: {
         Authorization: `Bearer ${keycloak.token}`,
       },
