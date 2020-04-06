@@ -65,7 +65,7 @@ if (configFile) {
 }
 
 nconf.defaults({
-  port: 8008,
+  port: 8009,
   host: "localhost",
 });
 

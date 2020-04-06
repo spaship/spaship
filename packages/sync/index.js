@@ -1,8 +1,7 @@
 const http = require("http");
+const { log } = require("@spaship/common/lib/logging/pino");
 const config = require("./config");
 const AutoSync = require("./lib/autoSync");
-
-console.log(config.get("port"));
 
 const autoSync = new AutoSync();
 const host = config.get("host");
@@ -16,13 +15,13 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(port, host, () => {
-  console.log(`Server is listening on port ${port} of ${host} 🚀`);
-  console.log(`config: ${config.toString()}`);
+  log.info(`Server is listening on port ${port} of ${host} 🚀`);
+  log.info(`config: ${config.toString()}`);
 });
 
-if (config.get("enabled")) {
+if (config.get("autosync:enabled")) {
   autoSync.start();
-  if (config.get("onstart")) {
+  if (config.get("autosync:onstart")) {
     autoSync.forceSyncAll();
   }
 }

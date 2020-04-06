@@ -39,13 +39,14 @@ When your pull request is merged, "squash and merge" should be used, and a Conve
 
 Configuration can be provided by CLI flags, environment variables, or a configuration file. Arguments are processed in that order, so CLI flags take precedence over environment variables, which take precedence over the configuration file.
 
-| Option          | Description                                                         | CLI             | Env                        | config.json    | Default     |
-| --------------- | ------------------------------------------------------------------- | --------------- | -------------------------- | -------------- | ----------- |
-| **config file** | Where to find the config file.                                      | `--config-file` | `SPASHIP_SYNC_CONFIG_FILE` | N/A            | none        |
-| **host**        | Hostname to run on.                                                 | `--host`        | `SPASHIP_SYNC_HOST`        | `"host"`       | `localhost` |
-| **port**        | Port to run on.                                                     | `--port`        | `SPASHIP_SYNC_PORT`        | `"port"`       | `8008`      |
-| **log-level**   | Granularity of log messages to print.                               | `--log-level`   | `SPASHIP_LOG_LEVEL`        | `"log_level"`  | `info`      |
-| **log-format**  | `pretty` for human-friendly logs, `json` for machine-friendly logs. | `--log-format`  | `SPASHIP_LOG_FORMAT`       | `"log_format"` | `pretty`    |
+| Option          | Description                                                         | CLI             | Env                        | config.json    | Default                       |
+| --------------- | ------------------------------------------------------------------- | --------------- | -------------------------- | -------------- | ----------------------------- |
+| **config file** | Where to find the config file.                                      | `--config-file` | `SPASHIP_SYNC_CONFIG_FILE` | N/A            | none                          |
+| **autosync**    | Sync details                                                        | `--autosync`    | `SPASHIP_AUTOSYNC`         | `"autosync"`   | [view](./config.json.example) |
+| **host**        | Hostname to run on.                                                 | `--host`        | `SPASHIP_SYNC_HOST`        | `"host"`       | `localhost`                   |
+| **port**        | Port to run on.                                                     | `--port`        | `SPASHIP_SYNC_PORT`        | `"port"`       | `8009`                        |
+| **log-level**   | Granularity of log messages to print.                               | `--log-level`   | `SPASHIP_LOG_LEVEL`        | `"log_level"`  | `info`                        |
+| **log-format**  | `pretty` for human-friendly logs, `json` for machine-friendly logs. | `--log-format`  | `SPASHIP_LOG_FORMAT`       | `"log_format"` | `pretty`                      |
 
 **Note:** the filepath configurations (`config file`) must be absolute paths when defined in an environment variable or config file. When defined in CLI options like, they can be written relative to CWD. Example: `--config-file=../config.json`.
 
