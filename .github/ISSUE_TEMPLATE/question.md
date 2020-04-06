@@ -3,8 +3,7 @@ name: "Question \U0001F914"
 about: Usage question or discussion about anything related to the platform
 title: "[Question]:"
 labels: question
-assignees: ''
-
+assignees: ""
 ---
 
 <!--
