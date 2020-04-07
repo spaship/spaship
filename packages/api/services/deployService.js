@@ -1,5 +1,6 @@
 const fsp = require("fs").promises;
 const path = require("path");
+const mvdir = require("mvdir");
 const common = require("@spaship/common");
 const { log } = require("@spaship/common/lib/logging/pino");
 const decompress = require("decompress");
@@ -103,11 +104,7 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
   //   throw new Error(`${name}'s deploykey does not match. Incoming deploy key: "${incomingDeployKey}"`);
   // }
 
-  try {
-    await fsp.rename(tmpDir, destDir);
-  } catch (error) {
-    log.error(error);
-  }
+  await mvdir(tmpDir, destDir);
 }
 
 module.exports = { deploy };
