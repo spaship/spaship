@@ -40,14 +40,12 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
 
   let spaConfig = { name, path: appPath };
   let hasYaml = false;
-  let incomingDeployKey;
   const yamlFilePath = path.join(tmpDir, "spaship.yaml");
   try {
     spaConfig = await common.config.read(yamlFilePath);
-    incomingDeployKey = spaConfig.deploykey;
     hasYaml = true;
   } catch (e) {
-    log.error(e);
+    log.warn(e);
   }
 
   const validation = common.config.validate(spaConfig);
@@ -73,36 +71,8 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
     });
   }
 
-  let existingDeployKey;
-  try {
-    const existingConfig = await common.config.read(path.join(destDir, "spaship.yaml"));
-    existingDeployKey = existingConfig.deploykey;
-  } catch (e) {}
-
-  const noDeployKey = typeof existingDeployKey === "undefined";
-
-  // if the deployment doesn't have a deploykey, add one
-  if (noDeployKey && !incomingDeployKey) {
-    const deploykey = common.config.deploykey.generate();
-    fileService.write(yamlFilePath, {
-      deploykey,
-    });
-  }
-
   // write htaccess file
   await common.htaccess.write(tmpDir, spaConfig);
-
-  // @kyan : I remove following lines because we don't deployKey in yaml any more
-  // // deploy if:
-  // //   no existing deploy key, or
-  // //   existing deploy key and incoming key matches
-  // const deployKeysValid = typeof existingDeployKey === "string" && typeof incomingDeployKey === "string";
-  // const deployKeysMatch = existingDeployKey === incomingDeployKey;
-  // if (noDeployKey || (deployKeysValid && deployKeysMatch)) {
-  //   await fsp.rename(tmpDir, destDir);
-  // } else {
-  //   throw new Error(`${name}'s deploykey does not match. Incoming deploy key: "${incomingDeployKey}"`);
-  // }
 
   await mvdir(tmpDir, destDir);
 }
