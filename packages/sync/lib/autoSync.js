@@ -73,7 +73,7 @@ class Autosync {
    * Force a sync of all targets immediately
    */
   async forceSyncAll() {
-    const syncs = this.targets.map((target) => this.syncTarget(this));
+    const syncs = this.targets.map((target) => this.syncTarget(target));
     await Promise.all(syncs);
   }
 
