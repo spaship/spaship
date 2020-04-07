@@ -60,15 +60,10 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
 
   // write spa metadata to filesystem
   if (!hasYaml) {
-    fileService.write(path.join(tmpDir, "spaship.yaml"), {
-      name,
-      path: spaConfig.path,
-    });
+    await fileService.write(yamlFilePath, { name, path: spaConfig.path });
   }
   if (ref) {
-    fileService.write(path.join(tmpDir, "spaship.yaml"), {
-      ref,
-    });
+    await fileService.write(yamlFilePath, { ref });
   }
 
   // write htaccess file
