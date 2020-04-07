@@ -4,7 +4,6 @@ const config = require("./config");
 const AutoSync = require("./lib/autoSync");
 
 const autoSync = new AutoSync();
-const host = config.get("host");
 const port = config.get("port");
 
 const server = http.createServer((req, res) => {
@@ -14,8 +13,8 @@ const server = http.createServer((req, res) => {
   }
 });
 
-server.listen(port, host, () => {
-  log.info(`Server is listening on port ${port} of ${host} 🚀`);
+server.listen(port, () => {
+  log.info(`Server is listening on port ${port} 🚀`);
   log.info(`config: ${config.toString()}`);
 });
 

@@ -13,7 +13,6 @@ let validOptions = [
   "config_file",
 
   // network service options
-  "host",
   "port",
 
   // autosync stands alone
@@ -66,7 +65,6 @@ if (configFile) {
 
 nconf.defaults({
   port: 8009,
-  host: "localhost",
 });
 
 module.exports = nconf;

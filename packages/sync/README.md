@@ -43,7 +43,6 @@ Configuration can be provided by CLI flags, environment variables, or a configur
 | --------------- | ------------------------------------------------------------------- | --------------- | -------------------------- | -------------- | ----------------------------- |
 | **config file** | Where to find the config file.                                      | `--config-file` | `SPASHIP_SYNC_CONFIG_FILE` | N/A            | none                          |
 | **autosync**    | Sync details                                                        | `--autosync`    | `SPASHIP_AUTOSYNC`         | `"autosync"`   | [view](./config.json.example) |
-| **host**        | Hostname to run on.                                                 | `--host`        | `SPASHIP_SYNC_HOST`        | `"host"`       | `localhost`                   |
 | **port**        | Port to run on.                                                     | `--port`        | `SPASHIP_SYNC_PORT`        | `"port"`       | `8009`                        |
 | **log-level**   | Granularity of log messages to print.                               | `--log-level`   | `SPASHIP_LOG_LEVEL`        | `"log_level"`  | `info`                        |
 | **log-format**  | `pretty` for human-friendly logs, `json` for machine-friendly logs. | `--log-format`  | `SPASHIP_LOG_FORMAT`       | `"log_format"` | `pretty`                      |
