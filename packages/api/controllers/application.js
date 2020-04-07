@@ -1,11 +1,12 @@
 const { log } = require("@spaship/common/lib/logging/pino");
-const fileService = require("../services/fileService");
+const FileService = require("../services/fileService");
+const DeployService = require("../services/deployService");
 const Application = require("../models/application");
 const DeployError = require("../utils/errors/DeployError");
 const { getUserUUID } = require("../utils/requestUtil");
 
 module.exports.list = async (req, res, next) => {
-  const list = await fileService.getAll();
+  const list = await FileService.getAll();
   res.send(list);
 };
 
@@ -39,7 +40,7 @@ module.exports.deploy = async (req, res) => {
   const { path: spaArchive } = req.file;
 
   try {
-    await deploy({ name, spaArchive, appPath, ref });
+    await DeployService.deploy({ name, spaArchive, appPath, ref });
     await Application.create({ name, path, ref, userId });
     log.info(`deployed "${name}" to ${appPath}`);
     res.status(201).send("SPA deployed successfully.");
@@ -55,6 +56,6 @@ module.exports.delete = async (req, res) => {
   const application = await Application.findOne({ name, userId });
   const path = application.get("path");
   await Application.deleteOne({ name, userId });
-  await fileService.remove(path);
+  await FileService.remove(path);
   res.send("remove successfully");
 };
