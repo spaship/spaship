@@ -44,7 +44,7 @@ module.exports.deploy = async (req, res) => {
     await Application.create({ name, path, ref, userId });
     log.info(`deployed "${name}" to ${appPath}`);
     res.status(201).send("SPA deployed successfully.");
-  } catch (error) {
+  } catch (err) {
     log.error(`failed to deploy "${name}" to ${appPath}: ${err}`);
     throw new DeployError(err);
   }

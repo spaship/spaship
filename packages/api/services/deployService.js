@@ -110,4 +110,4 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
   }
 }
 
-module.exports = deploy;
+module.exports = { deploy };
