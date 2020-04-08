@@ -53,8 +53,8 @@ module.exports.deploy = async (req, res, next) => {
   try {
     await DeployService.deploy({ name, spaArchive, appPath, ref });
 
-    const application = Application.findOne({ name, path: appPath });
-
+    const application = await Application.findOne({ name, path: appPath });
+    console.log(application);
     if (application) {
       await Application.updateOne({ name, path: appPath }, { ref });
     } else {
@@ -77,7 +77,11 @@ module.exports.delete = async (req, res, next) => {
   const userId = getUserUUID(req);
   const { name } = req.params;
   try {
+    const result = await Application.findOne({ name, userId });
+    console.log(result);
     const application = await Application.findOneAndDelete({ name, userId });
+    console.log(name);
+    console.log(application);
     if (application) {
       const path = application.path;
       await FileService.remove(path);
