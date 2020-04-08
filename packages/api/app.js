@@ -3,12 +3,16 @@ const bodyParser = require("body-parser");
 const compression = require("compression");
 const cors = require("cors");
 const helmet = require("helmet");
+const swaggerUi = require("swagger-ui-express");
+const YAML = require("yamljs");
 const { pinoExpress } = require("@spaship/common/lib/logging/pino");
 const authentication = require("./middlewares/authentication");
 const responseWrapper = require("./middlewares/responseWrapper");
 const errorHandler = require("./middlewares/errorHandler");
 const { liveness, readiness } = require("./health");
 const routes = require("./routes");
+
+const swaggerDocument = YAML.load("./openapi.yml");
 
 const app = new express();
 app
@@ -21,6 +25,7 @@ app
   .use(responseWrapper())
   .get("/liveness", liveness)
   .get("/readiness", readiness)
+  .use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
   .use("/api", authentication(), routes)
   .use(errorHandler());
 
