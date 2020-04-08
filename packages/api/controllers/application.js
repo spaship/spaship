@@ -3,6 +3,8 @@ const FileService = require("../services/fileService");
 const DeployService = require("../services/deployService");
 const Application = require("../models/application");
 const DeployError = require("../utils/errors/DeployError");
+const NotFoundError = require("../utils/errors/NotFoundError");
+const NotImplementedError = require("../utils/errors/NotImplementedError");
 const { getUserUUID } = require("../utils/requestUtil");
 
 module.exports.list = async (req, res, next) => {
@@ -17,49 +19,73 @@ module.exports.get = async (req, res) => {
   res.send(application);
 };
 
-module.exports.post = async (req, res) => {
+module.exports.post = async (req, res, next) => {
   const userId = getUserUUID(req);
-  const { name, path, ref } = req.body;
+  const { name, path } = req.body;
   const data = {
     name,
     path,
-    ref,
     userId,
   };
-  const app = await Application.create(data);
-  res.send(app);
+  try {
+    const app = await Application.create(data);
+    res.status(201).send({
+      name,
+      path,
+      timestamp: app.createdAt,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-module.exports.put = async (req, res) => {
-  res.send();
+module.exports.put = async (req, res, next) => {
+  const userId = getUserUUID(req);
+  const { name } = req.params;
+  next(new NotImplementedError());
 };
 
-module.exports.deploy = async (req, res) => {
+module.exports.deploy = async (req, res, next) => {
   const userId = getUserUUID(req);
   const { name, path: appPath, ref } = req.body;
   const { path: spaArchive } = req.file;
 
   try {
     await DeployService.deploy({ name, spaArchive, appPath, ref });
-    // await Application.create({ name, path: appPath, ref, userId });
+
+    const application = Application.findOne({ name, path: appPath });
+
+    if (application) {
+      await Application.updateOne({ name, path: appPath }, { ref });
+    } else {
+      await Application.create({ name, path: appPath, ref, userId });
+    }
     log.info(`deployed "${name}" to ${appPath}`);
     res.status(201).json({
       name,
       path: appPath,
       ref,
+      timestamp: new Date(),
     });
   } catch (err) {
     log.error(`failed to deploy "${name}" to ${appPath}: ${err}`);
-    throw new DeployError(err);
+    next(new DeployError(err));
   }
 };
 
-module.exports.delete = async (req, res) => {
+module.exports.delete = async (req, res, next) => {
   const userId = getUserUUID(req);
-  const { name } = req.param;
-  const application = await Application.findOne({ name, userId });
-  const path = application.get("path");
-  await Application.deleteOne({ name, userId });
-  await FileService.remove(path);
-  res.send("remove successfully");
+  const { name } = req.params;
+  try {
+    const application = await Application.findOneAndDelete({ name, userId });
+    if (application) {
+      const path = application.path;
+      await FileService.remove(path);
+      res.status(200).json({ message: "remove success" });
+    } else {
+      next(new NotFoundError(`Can not found application by name:${name}`));
+    }
+  } catch (error) {
+    next(error);
+  }
 };

@@ -1,5 +1,6 @@
 const path = require("path");
 const fsp = require("fs").promises;
+const fs = require("fs");
 const config = require("../config");
 const common = require("@spaship/common");
 const { flow, map } = require("lodash/fp");
@@ -39,9 +40,11 @@ const get = async (spaDir) => {
   }
 };
 
-const remove = async (spaDir) => {
+const remove = async (spaPath) => {
   try {
-    await fsp.rmdir(spaDir);
+    const flatPath = common.flatpath.toDir(spaPath);
+    const destDir = path.join(config.get("webroot"), flatPath);
+    await fsp.rmdir(destDir, { recursive: true });
   } catch (error) {
     console.error(error);
   }

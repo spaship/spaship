@@ -39,6 +39,7 @@ module.exports.post = async (req, res, next) => {
     const result = await APIKey.create(data);
     res.status(201).send({
       label,
+      shortKey,
       key,
       expiredDate,
       createdAt: result.createdAt,
@@ -54,9 +55,9 @@ module.exports.delete = async (req, res, next) => {
   try {
     const apiKey = await APIKey.findOneAndDelete({ label, userId });
     if (apiKey) {
-      res.status(200).send("remove success");
+      res.status(200).json({ message: "remove success" });
     } else {
-      throw new NotFoundError(`Can not found APIKey by label:${label}`);
+      next(new NotFoundError(`Can not found APIKey by label:${label}`));
     }
   } catch (error) {
     next(error);

@@ -14,7 +14,7 @@ router.get("/", application.list);
 /**
  * Get application
  */
-router.get("/{name}", application.get);
+router.get("/:name", application.get);
 
 /**
  * Add a application
@@ -29,11 +29,11 @@ router.post("/deploy", upload.single("file"), application.deploy);
 /**
  * Delete a application
  */
-router.put("/{name}", application.put);
+router.put("/:name", application.put);
 
 /**
  * Delete a application
  */
-router.delete("/{name}", application.delete);
+router.delete("/:name", application.delete);
 
 module.exports = router;

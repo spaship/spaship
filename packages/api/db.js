@@ -12,7 +12,6 @@ const connect = async () => {
   };
   config.get("db:mongo:user") && (options.user = config.get("db:mongo:user"));
   config.get("db:mongo:password") && (options.pass = config.get("db:mongo:password"));
-  console.log(options);
   await mongoose.connect(uri, options);
 };
 

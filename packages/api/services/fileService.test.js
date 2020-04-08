@@ -24,21 +24,21 @@ describe("api.metadata", () => {
             ctime: new Date("2020-02-02"),
             items: {
               "index.html": "<!doctype html><html></html>",
-              "spaship.yaml": "name: Foo\npath: /foo\nref: v1.0.1\nsingle: true\ndeploykey: sehvgqrnyre",
+              "spaship.yaml": "name: Foo\npath: /foo\nref: v1.0.1\nsingle: true",
             },
           }),
           foo_bar: mockfs.directory({
             ctime: new Date("2020-02-02"),
             items: {
               "index.html": "<!doctype html><html></html>",
-              "spaship.yaml": "name: Foo Bar\npath: /foo/bar\nref: master\ndeploykey: zvapuhy",
+              "spaship.yaml": "name: Foo Bar\npath: /foo/bar\nref: master",
             },
           }),
           baz: mockfs.directory({
             ctime: new Date("2020-02-02"),
             items: {
               "index.html": "<!doctype html><html></html>",
-              "spaship.yaml": "name: Baz\npath: /baz\nsingle: true\ndeploykey: arfgrn",
+              "spaship.yaml": "name: Baz\npath: /baz\nsingle: true",
             },
           }),
           // some non-SPAs in the webroot
@@ -72,21 +72,18 @@ describe("api.metadata", () => {
           path: "/foo",
           ref: "v1.0.1",
           single: true,
-          deploykey: "sehvgqrnyre",
           timestamp: new Date("2020-02-02"),
         },
         {
           name: "Foo Bar",
           path: "/foo/bar",
           ref: "master",
-          deploykey: "zvapuhy",
           timestamp: new Date("2020-02-02"),
         },
         {
           name: "Baz",
           path: "/baz",
           single: true,
-          deploykey: "arfgrn",
           timestamp: new Date("2020-02-02"),
         },
       ];
@@ -118,7 +115,6 @@ describe("api.metadata", () => {
         path: "/foo",
         ref: "v1.0.1",
         single: true,
-        deploykey: "sehvgqrnyre",
         timestamp: new Date("2020-02-02"),
       });
     });
