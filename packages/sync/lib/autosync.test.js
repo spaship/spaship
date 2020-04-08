@@ -1,4 +1,4 @@
-const Autosync = require("./autoSync");
+const Autosync = require("./autosync");
 const mockfs = require("mock-fs");
 const config = require("../config");
 const { find, get } = require("lodash");
