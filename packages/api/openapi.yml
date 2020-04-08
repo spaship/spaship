@@ -58,7 +58,7 @@ paths:
             schema:
               $ref: "#/components/schemas/Application"
       responses:
-        200:
+        201:
           description: successful operation
           content:
             application/json:
@@ -98,7 +98,7 @@ paths:
                 - ref
                 - file
       responses:
-        200:
+        201:
           description: successful operation
           content:
             application/json:
@@ -197,7 +197,7 @@ paths:
             schema:
               $ref: "#/components/schemas/APIKey"
       responses:
-        200:
+        201:
           description: successful operation
           content:
             application/json:
