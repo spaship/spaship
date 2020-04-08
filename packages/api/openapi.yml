@@ -218,7 +218,7 @@ paths:
       parameters:
         - name: label
           in: path
-          description: Name of application to use
+          description: Label of API Key to use
           required: true
           schema:
             type: string

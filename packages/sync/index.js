@@ -1,16 +1,16 @@
 const http = require("http");
 const { log } = require("@spaship/common/lib/logging/pino");
 const config = require("./config");
-const Autosync = require("./lib/autoSync");
+const Autosync = require("./lib/autosync");
 
-const autoSync = new Autosync();
+const autosync = new Autosync();
 const port = config.get("port");
 
 const requestListener = function (req, res) {
   if (req.url === "/force" && req.method === "GET") {
-    autoSync.forceSyncAll();
+    autosync.forceSyncAll();
     res.writeHead(200);
-    res.end("Forcing all autoSync targets to sync now");
+    res.end("Forcing all autosync targets to sync now");
     return;
   }
   res.writeHead(200);
@@ -25,8 +25,8 @@ server.listen(port, () => {
 });
 
 if (config.get("autosync:enabled")) {
-  autoSync.start();
+  autosync.start();
   if (config.get("autosync:onstart")) {
-    autoSync.forceSyncAll();
+    autosync.forceSyncAll();
   }
 }
