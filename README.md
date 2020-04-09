@@ -1,4 +1,4 @@
-# SPAship
+# SPAship &middot; [![codecov](https://codecov.io/gh/spaship/spaship/branch/master/graph/badge.svg)](https://codecov.io/gh/spaship/spaship)
 
 SPAship is an early-stages Single-Page App deployment and hosting platform.
 
