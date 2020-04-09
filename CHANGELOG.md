@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.8.0](https://github.com/spaship/spaship/compare/v0.7.0...v0.8.0) (2020-04-09)
+
+### Bug Fixes
+
+- **deps:** update dependency keycloak-js to v9.0.2 ([#276](https://github.com/spaship/spaship/issues/276)) ([bca161b](https://github.com/spaship/spaship/commit/bca161b854186096ad4aeeed1a1f2befca5276ba))
+- **deps:** update dependency pino to v6 ([#277](https://github.com/spaship/spaship/issues/277)) ([5377079](https://github.com/spaship/spaship/commit/53770799dc8b0294297fe731357866b93c125934))
+- **deps:** update dependency validator to v13 ([#278](https://github.com/spaship/spaship/issues/278)) ([f80767c](https://github.com/spaship/spaship/commit/f80767cb72455dadb5001e1e5bb3e4980e4775d3))
+
+### Features
+
+- **manager:** use config file to replace build environment vars ([#258](https://github.com/spaship/spaship/issues/258)) ([405fc0e](https://github.com/spaship/spaship/commit/405fc0e216316d40f8cce508993ec55617706bcc))
+
 # [0.7.0](https://github.com/spaship/spaship/compare/v0.6.0...v0.7.0) (2020-03-27)
 
 ### Features

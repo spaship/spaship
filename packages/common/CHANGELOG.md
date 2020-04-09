@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.8.0](https://github.com/spaship/spaship/compare/v0.7.0...v0.8.0) (2020-04-09)
+
+### Bug Fixes
+
+- **deps:** update dependency pino to v6 ([#277](https://github.com/spaship/spaship/issues/277)) ([5377079](https://github.com/spaship/spaship/commit/53770799dc8b0294297fe731357866b93c125934))
+
 # [0.7.0](https://github.com/spaship/spaship/compare/v0.6.0...v0.7.0) (2020-03-27)
 
 **Note:** Version bump only for package @spaship/common
