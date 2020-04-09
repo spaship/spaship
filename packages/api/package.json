@@ -1,17 +1,18 @@
 {
   "name": "@spaship/api",
   "version": "0.7.0",
-  "description": "The file synchronization service for the SPAship platform.",
+  "description": "The RESTFul API of the SPAship platform.",
   "homepage": "https://github.com/spaship/spaship/tree/master/packages/api#readme",
-  "bugs": {
-    "url": "https://github.com/spaship/api",
-    "email": "mclayton@redhat.com"
-  },
   "repository": {
     "type": "git",
     "url": "git@github.com:spaship/spaship.git",
     "directory": "packages/api"
   },
+  "contributors": [
+    "Michael Clayton <mclayton@redhat.com>",
+    "Kun Yan <kyan@redhat.com>",
+    "Sayak Sarkar <ssarkar@redhat.com >"
+  ],
   "main": "index.js",
   "bin": {
     "spaship-api": "./index.js"
@@ -27,33 +28,28 @@
   "license": "MIT",
   "dependencies": {
     "@spaship/common": "^0.7.0",
-    "axios": "^0.19.0",
     "body-parser": "^1.19.0",
+    "callsites": "^3.1.0",
+    "compression": "^1.7.4",
     "cors": "^2.8.5",
-    "decompress": "^4.2.0",
-    "decompress-bzip2": "^4.0.0",
-    "decompress-tarbz2": "^4.1.1",
-    "decompress-tarxz": "^3.0.0",
+    "decompress": "^4.2.1",
     "express": "^4.17.1",
     "express-jwt": "^5.3.1",
     "express-pino-logger": "^4.0.0",
+    "helmet": "^3.22.0",
     "lodash": "^4.17.15",
-    "mongodb": "^3.5.0",
-    "ms": "^2.1.2",
+    "mongoose": "^5.9.7",
     "multer": "^1.4.2",
-    "mvdir": "^1.0.5",
+    "mvdir": "^1.0.17",
     "nconf": "^0.10.0",
     "pino": "^6.0.0",
-    "sha.js": "^2.4.11",
-    "shortid": "^2.2.15",
-    "tmp-promise": "^2.0.2",
-    "url-join": "^4.0.1",
-    "uuid": "^7.0.2",
-    "uuid-validate": "0.0.3",
-    "validator": "^13.0.0"
+    "swagger-ui-express": "^4.1.4",
+    "uuid": "^7.0.2"
   },
   "devDependencies": {
-    "mongo-mock": "4.0.0"
+    "nodemon": "^2.0.2",
+    "axios": "^0.19.2",
+    "mockingoose": "2.13.2"
   },
   "publishConfig": {
     "access": "public"

@@ -13,36 +13,32 @@ const schema = {
   properties: {
     path: {
       description: "the URL path at which to deploy the SPA",
-      type: "string"
+      type: "string",
     },
     name: {
       description: "the human-readable title of the SPA",
-      type: "string"
+      type: "string",
     },
     single: {
       description:
         "whether to serve $path/index.html for all non-asset routes. use this if you are using HTML5 pushState for client-side routing.",
-      type: "boolean"
+      type: "boolean",
     },
     ref: {
       description: "the git ref (tag, branch, commit hash) tied to this deployment",
-      type: "string"
+      type: "string",
     },
-    deploykey: {
-      description: "a unique key which allows re-deploying over existing bundles.",
-      type: "string"
-    }
   },
-  required: ["path", "name"]
+  required: ["path", "name"],
 };
-const validate = data => {
+const validate = (data) => {
   const validateJSON = ajv.compile(schema);
   const valid = validateJSON(data);
   const errors = validateJSON.errors;
 
   return {
     valid,
-    errors
+    errors,
   };
 };
 

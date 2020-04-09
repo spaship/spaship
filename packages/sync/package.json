@@ -1,0 +1,36 @@
+{
+  "name": "@spaship/sync",
+  "version": "0.7.0",
+  "description": "The RESTFul API of the SPAship platform.",
+  "homepage": "https://github.com/spaship/spaship/tree/master/packages/sync#readme",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:spaship/spaship.git",
+    "directory": "packages/sync"
+  },
+  "contributors": [
+    "Michael Clayton <mclayton@redhat.com>",
+    "Jared Sprague <jsprague@redhat.com>",
+    "Kun Yan <kyan@redhat.com>"
+  ],
+  "main": "index.js",
+  "bin": {
+    "spaship-sync": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "../../node_modules/.bin/jest --restoreMocks"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@spaship/common": "^0.7.0",
+    "axios": "^0.19.2",
+    "ms": "^2.1.2",
+    "nconf": "^0.10.0",
+    "url-join": "^4.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}

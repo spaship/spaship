@@ -1,0 +1,305 @@
+openapi: 3.0.0
+info:
+  title: SPAship API
+  description: The RESTFul API of SPAship
+  termsOfService: http://spaship.io/terms/
+  contact:
+    name: SPAship
+    url: http://github.com/spaship/spaship
+    email: spaship@redhat.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 1.0.0
+servers:
+  - url: https://spaship-api-cpops-dev.ext.us-west.dc.preprod.paas.redhat.com/api/v1
+    description: Development server
+  - url: https://spaship-api-cpops-qa.ext.us-west.dc.preprod.paas.redhat.com/api/v1
+    description: QA server
+  - url: https://spaship-api-cpops-stage.ext.us-west.dc.preprod.paas.redhat.com/api/v1
+    description: Staging server
+  - url: https://spaship-api-cpops-prod.ext.us-west.dc.prod.paas.redhat.com/api/v1
+    description: Production server
+tags:
+  - name: application
+    description: Everything about your SPA
+  - name: apiKey
+    description: Everything about your API Key
+paths:
+  /applications:
+    get:
+      summary: Get all applications
+      tags:
+        - application
+      responses:
+        200:
+          description: A list of applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/APIResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Application"
+      security:
+        - bearerAuth: []
+        - api_key: []
+    post:
+      summary: Create an application entity only
+      tags:
+        - application
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Application"
+      responses:
+        201:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/APIResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Application"
+      security:
+        - bearerAuth: []
+        - api_key: []
+  /applications/deploy:
+    post:
+      summary: Create an application entity and upload file
+      tags:
+        - application
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                path:
+                  type: string
+                ref:
+                  type: string
+                file:
+                  type: string
+                  format: binary
+              required:
+                - name
+                - path
+                - ref
+                - file
+      responses:
+        201:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/APIResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Application"
+      security:
+        - bearerAuth: []
+        - api_key: []
+  /applications/{name}:
+    put:
+      summary: Update an application entity
+      tags:
+        - application
+      parameters:
+        - name: name
+          in: path
+          description: Name of application to use
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Application"
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/APIResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Application"
+      security:
+        - bearerAuth: []
+        - api_key: []
+    delete:
+      summary: Remove an application
+      tags:
+        - application
+      parameters:
+        - name: name
+          in: path
+          description: Name of application to use
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/APIResponse"
+      security:
+        - bearerAuth: []
+        - api_key: []
+  /apiKeys:
+    get:
+      summary: Get all API Keys
+      tags:
+        - apiKey
+      responses:
+        200:
+          description: A list of API Keys.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/APIResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/APIKey"
+      security:
+        - bearerAuth: []
+    post:
+      summary: Create an API Key
+      tags:
+        - apiKey
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/APIKey"
+      responses:
+        201:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/APIResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/APIKey"
+      security:
+        - bearerAuth: []
+  /apiKeys/{label}:
+    delete:
+      summary: Revoke an API Key
+      tags:
+        - apiKey
+      parameters:
+        - name: label
+          in: path
+          description: Label of API Key to use
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/APIResponse"
+      security:
+        - bearerAuth: []
+
+components:
+  schemas:
+    Application:
+      type: object
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+        ref:
+          type: string
+        timestamp:
+          type: string
+          format: date
+          readOnly: true
+      required:
+        - name
+        - path
+        - ref
+    APIKey:
+      type: object
+      properties:
+        label:
+          type: string
+        shortKey:
+          type: string
+          readOnly: true
+        hashKey:
+          type: string
+          readOnly: true
+        expiredDate:
+          type: string
+          format: date
+          nullable: true
+        createdAt:
+          type: string
+          format: date
+          readOnly: true
+      required:
+        - label
+    APIResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - success
+            - fail
+            - error
+        data:
+          oneOf:
+            - $ref: "#/components/schemas/Application"
+            - $ref: "#/components/schemas/APIKey"
+            - type: array
+              items:
+                $ref: "#/components/schemas/Application"
+            - type: array
+              items:
+                $ref: "#/components/schemas/APIKey"
+        message:
+          type: string
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: x-api-key
+      in: header
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

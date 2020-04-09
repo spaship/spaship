@@ -27,26 +27,26 @@ class InitCommand extends Command {
     let responses = {};
     if (!hasOptions) {
       // show questions if there is no existing config, or if overwrite was approved.
-      const showQuestions = r => !existingConfig || (existingConfig && r.overwrite);
+      const showQuestions = (r) => !existingConfig || (existingConfig && r.overwrite);
       const questions = [
         {
           name: "name",
           message: "Name",
           type: "input",
-          when: showQuestions
+          when: showQuestions,
         },
         {
           name: "path",
           message: "Path",
           type: "input",
-          when: showQuestions
+          when: showQuestions,
         },
         {
           name: "single",
           message: "Single page?",
           type: "confirm",
-          when: showQuestions
-        }
+          when: showQuestions,
+        },
       ];
       // if a config file already exists, pre-empt the other questions with one
       // about whether to overwrite or not
@@ -54,17 +54,15 @@ class InitCommand extends Command {
         questions.unshift({
           name: "overwrite",
           message: "A spaship.yaml file already exists, overwrite it?",
-          type: "confirm"
+          type: "confirm",
         });
       }
       responses = await inquirer.prompt(questions);
     }
 
-    const deploykey = { deploykey: config.deploykey.generate() };
-
     // smush cli options, questionnaire answers, and anything extra into a data
     // object to pass into the template
-    const data = assign({}, responses, cmd.flags, deploykey);
+    const data = assign({}, responses, cmd.flags);
 
     try {
       if (!existingConfig || data.overwrite) {
@@ -92,21 +90,21 @@ InitCommand.flags = {
   name: flags.string({
     char: "n",
     description: "a human-friendly title for your app",
-    required: hasOptions // not required for interactive mode
+    required: hasOptions, // not required for interactive mode
   }),
   path: flags.string({
     char: "p",
     description: "the URL path for your app under the SPAship domain. ex: /my/app",
-    required: hasOptions // not required for interactive mode
+    required: hasOptions, // not required for interactive mode
   }),
   single: flags.boolean({
     char: "s",
     description: "route all non-asset requests to index.html",
-    allowNo: true // support --no-single
+    allowNo: true, // support --no-single
   }),
   overwrite: flags.boolean({
-    description: "overwrite existing spaship.yaml"
-  })
+    description: "overwrite existing spaship.yaml",
+  }),
 };
 
 module.exports = InitCommand;

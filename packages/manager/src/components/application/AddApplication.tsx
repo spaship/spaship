@@ -59,12 +59,12 @@ export default withRouter(({ history }) => {
     data.append("ref", form.ref);
     form.upload && data.append("upload", form.upload);
 
-    fetch(`${environment?.api}/deploy`, {
+    fetch(`${environment?.api}/applications/deploy`, {
       method: "POST",
       body: data,
     })
-      .then((res) => res.text())
-      .then((text) => {
+      .then((res) => res.json())
+      .then((json) => {
         setUploading(false);
         history.push("/applications");
       });
