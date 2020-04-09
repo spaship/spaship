@@ -1,6 +1,6 @@
 {
   "name": "@spaship/sync",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "The RESTFul API of the SPAship platform.",
   "homepage": "https://github.com/spaship/spaship/tree/master/packages/sync#readme",
   "repository": {
