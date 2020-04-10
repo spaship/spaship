@@ -1,0 +1,21 @@
+{
+    "reporter": "mochawesome",
+    "reporterOptions": {
+    "reportDir": "cypress/reports",
+    "reportTitle": "E2Etest Test",
+    "reportFilename":"E2E_report",
+    "charts": true,
+    "overwrite": true,
+    "html":true,
+    "json":false
+  },
+    "screenshotsFolder":"cypress/videos",
+    "env":
+    {
+      "username":"", 
+      "passw":"",
+      "host":""
+    }
+       
+}
+
