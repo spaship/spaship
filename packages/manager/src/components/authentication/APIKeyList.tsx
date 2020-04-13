@@ -10,12 +10,15 @@ import { IAPIKey } from "../../models/APIKey";
 
 export default () => {
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   const [apiKeys, setAPIKeys] = useState<IAPIKey[]>([]);
 
   const environments = config.environments;
   useEffect(() => {
+    setLoading(true);
     APIService.getAllEnvironmentAPIKeyList(environments).then((keys) => {
       setAPIKeys(keys);
+      setLoading(false);
     });
   }, [environments]);
 
@@ -35,7 +38,7 @@ export default () => {
   return (
     <Page title="API Key Management" titleToolbar={titleToolbar}>
       <APIKeyCreateModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} afterCreated={afterCreated} />
-      <APIKeyTable apiKeys={apiKeys} afterDelete={afterDelete} />
+      <APIKeyTable apiKeys={apiKeys} afterDelete={afterDelete} isLoading={isLoading} />
     </Page>
   );
 };

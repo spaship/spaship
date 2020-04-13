@@ -66,7 +66,7 @@ export default (props: IProps) => {
     const envName = event.currentTarget.name;
 
     if (!checked) {
-      setSelectedEnvironments(environments.filter((env) => env.name !== envName));
+      setSelectedEnvironments(selectedEnvironments.filter((env) => env.name !== envName));
     } else {
       const environment = environments.find((env) => env.name === envName);
       if (environment) {

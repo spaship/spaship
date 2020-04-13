@@ -1,16 +1,20 @@
 import React, { useCallback, useState, useEffect } from "react";
 import uniqBy from "lodash/uniqBy";
-import { Label } from "@patternfly/react-core";
+import { Label, Bullseye } from "@patternfly/react-core";
 import { Table, TableBody, TableHeader, IRow, IRowCell, compoundExpand } from "@patternfly/react-table";
 import { IAPIKey } from "../../models/APIKey";
 import APIKeySubTable from "./APIKeySubTable";
+import EmptySpinner from "../general/EmptySpinner";
+import EmptyNotFound from "../general/EmptyNotFound";
 
 interface IProps {
+  isLoading: boolean;
   apiKeys: IAPIKey[];
   afterDelete: (apiKey: IAPIKey) => void;
 }
 
 export default (props: IProps) => {
+  const { isLoading } = props;
   const [rows, setRows] = useState<IRow[]>([]);
   const columns = [
     "Label",
@@ -19,9 +23,6 @@ export default (props: IProps) => {
       cellTransforms: [compoundExpand],
     },
   ];
-
-  // const getEnvironmentsByAPIKeyLabel = (apiKeys: IAPIKey[], label: string) =>
-  //   apiKeys.filter((apiKey) => apiKey.label === label).map((apiKey) => apiKey.environment);
 
   const apiKeyToRows = useCallback(
     (apiKeys: IAPIKey[]) => {
@@ -38,7 +39,14 @@ export default (props: IProps) => {
           cells: [
             { title: apiKey.label, props: { component: "th" } },
             {
-              title: environments.map((env) => env && <Label key={`${apiKey.label}-${env.name}`}>{env.name}</Label>),
+              title: environments.map(
+                (env, index) =>
+                  env && (
+                    <span key={`${apiKey.label}-${env.name}-${index}`}>
+                      <Label key={`${apiKey.label}-${env.name}`}>{env.name}</Label>{" "}
+                    </span>
+                  )
+              ),
               props: { isOpen: false },
             },
           ],
@@ -63,8 +71,47 @@ export default (props: IProps) => {
   );
 
   useEffect(() => {
-    setRows(apiKeyToRows(props.apiKeys));
-  }, [props.apiKeys, apiKeyToRows]);
+    if (isLoading) {
+      setRows([
+        {
+          heightAuto: true,
+          cells: [
+            {
+              props: { colSpan: 2 },
+              title: (
+                <Bullseye>
+                  <EmptySpinner />
+                </Bullseye>
+              ),
+            },
+          ],
+        },
+      ]);
+    } else {
+      if (props.apiKeys.length === 0) {
+        setRows([
+          {
+            heightAuto: true,
+            cells: [
+              {
+                props: { colSpan: 2 },
+                title: (
+                  <Bullseye>
+                    <EmptyNotFound
+                      title="No API Key Found"
+                      body="You could create API Key to any of your environment for CI/CD purpose"
+                    />
+                  </Bullseye>
+                ),
+              },
+            ],
+          },
+        ]);
+      } else {
+        setRows(apiKeyToRows(props.apiKeys));
+      }
+    }
+  }, [props.apiKeys, isLoading, apiKeyToRows]);
 
   const onExpand = (event: any, rowIndex: number, colIndex: number, isOpen: boolean) => {
     if (!isOpen) {

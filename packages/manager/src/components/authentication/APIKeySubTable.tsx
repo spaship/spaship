@@ -31,6 +31,7 @@ export default (props: IProps) => {
         {
           title: (
             <ConfirmButton
+              key={`${apiKey.label}-${apiKey.environment?.name}`}
               label="Revoke"
               title={`Revoke API key "${apiKey.label}" on ${apiKey.environment?.name}`}
               variant={ButtonVariant.danger}
