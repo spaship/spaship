@@ -89,14 +89,14 @@ paths:
                   type: string
                 ref:
                   type: string
-                file:
+                upload:
                   type: string
                   format: binary
               required:
                 - name
                 - path
                 - ref
-                - file
+                - upload
       responses:
         201:
           description: successful operation
