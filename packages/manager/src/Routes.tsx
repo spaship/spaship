@@ -8,7 +8,7 @@ import LoginPage from "./components/user/LoginPage";
 import APIKeyList from "./components/authentication/APIKeyList";
 import PrivateRoute from "./PrivateRoute";
 import { useKeycloak } from "@react-keycloak/web";
-import ServerIndex from "./components/server/ServerIndex";
+import EnvironmentList from "./components/environment/EnvironmentList";
 import DashboardIndex from "./components/dashboard/DashboardIndex";
 
 const history = createBrowserHistory();
@@ -31,7 +31,7 @@ export default () => {
         <PrivateRoute path="/applications/new" component={AddApplication} />
         <PrivateRoute path="/applications/:applicationName" component={ApplicationIndex} />
         <PrivateRoute path="/applications" component={ApplicationList} />
-        <PrivateRoute path="/servers" component={ServerIndex} />
+        <PrivateRoute path="/environments" component={EnvironmentList} />
         <PrivateRoute path="/dashboard" component={DashboardIndex} />
       </Switch>
     </Router>
