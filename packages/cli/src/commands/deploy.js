@@ -1,5 +1,6 @@
 const URL = require("url").URL;
 const { Command, flags } = require("@oclif/command");
+const common = require("@spaship/common");
 const execa = require("execa");
 const { assign, get } = require("lodash");
 const commonFlags = require("../common/flags");
@@ -20,7 +21,21 @@ const validEnvName = /^[A-Za-z_]+[A-Za-z_0-9]+$/;
 class DeployCommand extends Command {
   async run() {
     const { args, flags } = this.parse(DeployCommand);
+
     const config = loadRcFile();
+    const yamlConfig = await common.config.read("spaship.yaml");
+    // We need send `name` and `path` to API
+    // so read them from spaship.yaml or other config file
+    // it could be store in package.json
+    const name = yamlConfig ? yamlConfig.name : config.name;
+    const path = yamlConfig ? yamlConfig.path : config.path;
+
+    if (!name) {
+      this.error("Please define your app name in your package.json or use init to create spaship.yaml ");
+    }
+    if (!path) {
+      this.error("Please define your app path in your package.json or use init to create spaship.yaml ");
+    }
 
     // if --env is a properly formatted URL, use it as the SPAship host, otherwise treat is as the name of a SPAship
     // environment.
@@ -60,7 +75,7 @@ class DeployCommand extends Command {
     this.log(`Deploying SPA to ${flags.env}${envIsURL ? "" : ` (${host})`}`);
 
     try {
-      const cmd = `curl ${host}${path} -H 'X-API-Key: ${apikey}' -F upload=@${args.archive} -F ref=${flags.ref}`;
+      const cmd = `curl ${host}${path} -H 'X-API-Key: ${apikey}' -F name=${name} -F path=${path} -F upload=@${args.archive} -F ref=${flags.ref}`;
       const { stdout } = await execa.command(cmd, { shell: true });
       this.log(stdout);
     } catch (e) {
