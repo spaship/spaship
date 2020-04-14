@@ -41,7 +41,7 @@ class DeployCommand extends Command {
     // environment.
     const envIsURL = isURL(flags.env);
     let host;
-    const path = "/api/v1/applications/deploy";
+    const apiPath = "/api/v1/applications/deploy";
 
     // if a url was passed in to --env, use it, otherwise treat it as a name and look up that env's url
     if (envIsURL) {
@@ -75,7 +75,7 @@ class DeployCommand extends Command {
     this.log(`Deploying SPA to ${flags.env}${envIsURL ? "" : ` (${host})`}`);
 
     try {
-      const cmd = `curl ${host}${path} -H 'X-API-Key: ${apikey}' -F name=${name} -F path=${path} -F upload=@${args.archive} -F ref=${flags.ref}`;
+      const cmd = `curl ${host}${apiPath} -H 'X-API-Key: ${apikey}' -F name=${name} -F path=${path} -F upload=@${args.archive} -F ref=${flags.ref}`;
       const { stdout } = await execa.command(cmd, { shell: true });
       this.log(stdout);
     } catch (e) {
