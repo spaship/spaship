@@ -1,60 +1,134 @@
-import React, { useState, useEffect } from "react";
-import { Table, TableBody, TableHeader, TableVariant, IRow } from "@patternfly/react-table";
-import ConfirmButton from "../general/ConfirmButton";
-import { ButtonVariant } from "@patternfly/react-core";
+import React, { useCallback, useState, useEffect } from "react";
+import uniqBy from "lodash/uniqBy";
+import { Label, Bullseye } from "@patternfly/react-core";
+import { Table, TableBody, TableHeader, IRow, IRowCell, compoundExpand } from "@patternfly/react-table";
+import { IAPIKey } from "../../models/APIKey";
+import APIKeySubTable from "./APIKeySubTable";
+import EmptySpinner from "../general/EmptySpinner";
+import EmptyNotFound from "../general/EmptyNotFound";
 
-const apiKeys = [
-  {
-    name: "test-1",
-    createdAt: new Date(),
-    expiredAt: null,
-    scopes: ["Dev"]
-  },
-  {
-    name: "test-2",
-    createdAt: new Date(),
-    expiredAt: null,
-    scopes: ["Dev", "QA", "Stage"]
-  },
-  {
-    name: "test-3",
-    createdAt: new Date(),
-    expiredAt: null,
-    scopes: ["Dev", "QA", "Stage", "Prod"]
-  }
-];
+interface IProps {
+  isLoading: boolean;
+  apiKeys: IAPIKey[];
+  afterDelete: (apiKey: IAPIKey) => void;
+}
 
-export default () => {
+export default (props: IProps) => {
+  const { isLoading } = props;
   const [rows, setRows] = useState<IRow[]>([]);
-  const columns: string[] = ["Name", "Created", "Expires", "Scope", ""];
+  const columns = [
+    "Label",
+    {
+      title: "Scope",
+      cellTransforms: [compoundExpand],
+    },
+  ];
+
+  const apiKeyToRows = useCallback(
+    (apiKeys: IAPIKey[]) => {
+      const allRows: IRow[] = [];
+
+      const uniqAPIKeys = uniqBy(apiKeys, "label");
+
+      uniqAPIKeys.forEach((apiKey, apiKeyIndex) => {
+        const sameLabelAPIKeys = apiKeys.filter((item) => item.label === apiKey.label);
+        const environments = sameLabelAPIKeys.map((item) => item.environment);
+
+        const mainRow: IRow = {
+          isOpen: false,
+          cells: [
+            { title: apiKey.label, props: { component: "th" } },
+            {
+              title: environments.map(
+                (env, index) =>
+                  env && (
+                    <span key={`${apiKey.label}-${env.name}-${index}`}>
+                      <Label key={`${apiKey.label}-${env.name}`}>{env.name}</Label>{" "}
+                    </span>
+                  )
+              ),
+              props: { isOpen: false },
+            },
+          ],
+        };
+
+        const subRow: IRow = {
+          parent: apiKeyIndex * columns.length,
+          compoundParent: 1,
+          cells: [
+            {
+              title: environments ? <APIKeySubTable apiKeys={sameLabelAPIKeys} afterDelete={props.afterDelete} /> : "",
+              props: { colSpan: 2, className: "pf-m-no-padding" },
+            },
+          ],
+        };
+
+        allRows.push.apply(allRows, [mainRow, subRow]);
+      });
+      return allRows;
+    },
+    [columns.length, props.afterDelete]
+  );
 
   useEffect(() => {
-    setRows(
-      apiKeys.map<IRow>(apiKey => ({
-        cells: [
-          apiKey.name,
-          apiKey.createdAt.toDateString(),
-          apiKey.expiredAt || "Never",
-          apiKey.scopes.join(", "),
+    if (isLoading) {
+      setRows([
+        {
+          heightAuto: true,
+          cells: [
+            {
+              props: { colSpan: 2 },
+              title: (
+                <Bullseye>
+                  <EmptySpinner />
+                </Bullseye>
+              ),
+            },
+          ],
+        },
+      ]);
+    } else {
+      if (props.apiKeys.length === 0) {
+        setRows([
           {
-            title: (
-              <ConfirmButton
-                label="Revoke"
-                title={`Revoke API key "${apiKey.name}"`}
-                variant={ButtonVariant.danger}
-                onConfirm={() => {}}
-              >
-                Are you sure revoke this api key ?
-              </ConfirmButton>
-            )
-          }
-        ]
-      }))
-    );
-  }, []);
+            heightAuto: true,
+            cells: [
+              {
+                props: { colSpan: 2 },
+                title: (
+                  <Bullseye>
+                    <EmptyNotFound
+                      title="No API Key Found"
+                      body="You could create API Key to any of your environment for CI/CD purpose"
+                    />
+                  </Bullseye>
+                ),
+              },
+            ],
+          },
+        ]);
+      } else {
+        setRows(apiKeyToRows(props.apiKeys));
+      }
+    }
+  }, [props.apiKeys, isLoading, apiKeyToRows]);
+
+  const onExpand = (event: any, rowIndex: number, colIndex: number, isOpen: boolean) => {
+    if (!isOpen) {
+      (rows[rowIndex].cells as IRowCell[]).forEach((cell) => {
+        if (cell.props) cell.props.isOpen = false;
+      });
+      (rows[rowIndex].cells as IRowCell[])[colIndex].props.isOpen = true;
+      rows[rowIndex].isOpen = true;
+    } else {
+      (rows[rowIndex].cells as IRowCell[])[colIndex].props.isOpen = false;
+      rows[rowIndex].isOpen = (rows[rowIndex].cells as IRowCell[]).some((cell) => cell.props && cell.props.isOpen);
+    }
+    setRows([...rows]);
+  };
 
   return (
-    <Table variant={TableVariant.compact} cells={columns} rows={rows} aria-label="API keys List">
+    <Table cells={columns} rows={rows} onExpand={onExpand} aria-label="API keys List">
       <TableHeader />
       <TableBody />
     </Table>

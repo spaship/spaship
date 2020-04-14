@@ -10,11 +10,11 @@ export interface ISPAshipJWT extends Keycloak.KeycloakTokenParsed {
   role: string[];
 }
 
-// Keycloak.KeycloakInstance<"native">
+// Keycloak.KeycloakInstance
 
 // Setup Keycloak instance as needed
 // Pass initialization options as required or leave blank to load from 'keycloak.json'
-const keycloak = Keycloak<"native">(config?.keycloak);
+const keycloak = Keycloak(config?.keycloak);
 
 function getUserToken() {
   return keycloak.tokenParsed as ISPAshipJWT;

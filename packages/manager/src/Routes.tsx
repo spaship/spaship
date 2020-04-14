@@ -5,7 +5,7 @@ import ApplicationList from "./components/application/ApplicationList";
 import AddApplication from "./components/application/AddApplication";
 import ApplicationIndex from "./components/application/ApplicationIndex";
 import LoginPage from "./components/user/LoginPage";
-import APIKeyIndex from "./components/authentication/APIKeyIndex";
+import APIKeyList from "./components/authentication/APIKeyList";
 import PrivateRoute from "./PrivateRoute";
 import { useKeycloak } from "@react-keycloak/web";
 
@@ -23,9 +23,9 @@ export default () => {
     <Router history={history}>
       <Switch>
         <Redirect exact path="/" to="/applications" />
-        <Redirect exact path="/authentication" to="/authentication/apikey" />
+        <Redirect exact path="/authentication" to="/authentication/apikeys" />
         <Route path="/login" component={LoginPage} />
-        <PrivateRoute path="/authentication/apikey" component={APIKeyIndex} />
+        <PrivateRoute path="/authentication/apikeys" component={APIKeyList} />
         <PrivateRoute path="/applications/new" component={AddApplication} />
         <PrivateRoute path="/applications/:applicationName" component={ApplicationIndex} />
         <PrivateRoute path="/applications" component={ApplicationList} />
