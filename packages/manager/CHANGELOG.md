@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0](https://github.com/spaship/spaship/compare/v0.8.1...v0.9.0) (2020-04-14)
+
+### Bug Fixes
+
+- **manager:** remove mock link, add some information to display ([#322](https://github.com/spaship/spaship/issues/322)) ([1d3a927](https://github.com/spaship/spaship/commit/1d3a9275349218391e48b886590e6e52c3ebce32))
+
+### Features
+
+- **manager:** API Key list/create/revoke ([#315](https://github.com/spaship/spaship/issues/315)) ([b6ee36b](https://github.com/spaship/spaship/commit/b6ee36b8125db4ebc7a505d6495f01ba0d46f93f))
+
 # [0.8.0](https://github.com/spaship/spaship/compare/v0.7.0...v0.8.0) (2020-04-09)
 
 ### Bug Fixes

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0](https://github.com/spaship/spaship/compare/v0.8.1...v0.9.0) (2020-04-14)
+
+### Bug Fixes
+
+- **api:** apiKey label should uniqu by userId ([#321](https://github.com/spaship/spaship/issues/321)) ([7a3d703](https://github.com/spaship/spaship/commit/7a3d703274cef00da41accf96717afb3e13bdf79))
+- **api:** expiredDate should not before today ([#320](https://github.com/spaship/spaship/issues/320)) ([0f9b5ab](https://github.com/spaship/spaship/commit/0f9b5ab275422335d0e363d0eda113e84cf765f1))
+
 # [0.8.0](https://github.com/spaship/spaship/compare/v0.7.0...v0.8.0) (2020-04-09)
 
 ### Bug Fixes

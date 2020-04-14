@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0](https://github.com/spaship/spaship/compare/v0.8.1...v0.9.0) (2020-04-14)
+
+### Bug Fixes
+
+- **cli:** send "name", "path" to API ([#317](https://github.com/spaship/spaship/issues/317)) ([412e145](https://github.com/spaship/spaship/commit/412e14574e3047115b04478125cda2f3eb82c04c)), closes [#316](https://github.com/spaship/spaship/issues/316)
+
 # [0.8.0](https://github.com/spaship/spaship/compare/v0.7.0...v0.8.0) (2020-04-09)
 
 **Note:** Version bump only for package @spaship/cli

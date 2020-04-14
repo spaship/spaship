@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0](https://github.com/spaship/spaship/compare/v0.8.1...v0.9.0) (2020-04-14)
+
+### Bug Fixes
+
+- **api:** apiKey label should uniqu by userId ([#321](https://github.com/spaship/spaship/issues/321)) ([7a3d703](https://github.com/spaship/spaship/commit/7a3d703274cef00da41accf96717afb3e13bdf79))
+- **api:** expiredDate should not before today ([#320](https://github.com/spaship/spaship/issues/320)) ([0f9b5ab](https://github.com/spaship/spaship/commit/0f9b5ab275422335d0e363d0eda113e84cf765f1))
+- **cli:** send "name", "path" to API ([#317](https://github.com/spaship/spaship/issues/317)) ([412e145](https://github.com/spaship/spaship/commit/412e14574e3047115b04478125cda2f3eb82c04c)), closes [#316](https://github.com/spaship/spaship/issues/316)
+- **manager:** remove mock link, add some information to display ([#322](https://github.com/spaship/spaship/issues/322)) ([1d3a927](https://github.com/spaship/spaship/commit/1d3a9275349218391e48b886590e6e52c3ebce32))
+
+### Features
+
+- **manager:** API Key list/create/revoke ([#315](https://github.com/spaship/spaship/issues/315)) ([b6ee36b](https://github.com/spaship/spaship/commit/b6ee36b8125db4ebc7a505d6495f01ba0d46f93f))
+
 ## [0.8.1](https://github.com/spaship/spaship/compare/v0.8.0...v0.8.1) (2020-04-09)
 
 ### Bug Fixes
