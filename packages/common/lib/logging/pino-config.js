@@ -5,19 +5,19 @@ nconf
     whitelist: ["log_level", "log_format"],
     lowerCase: true,
     parseValues: true,
-    transform: obj => {
+    transform: (obj) => {
       // remove the "SPASHIP_" prefix from environment variables
       obj.key = obj.key.replace(/^spaship_/, "");
       return obj;
-    }
+    },
   })
   .argv({
     parseValues: true,
-    transform: obj => {
+    transform: (obj) => {
       // use underscore as delimeter
       obj.key = obj.key.replace(/-/g, "_");
       return obj;
-    }
+    },
   });
 
 const configFile = nconf.get("config_file");
@@ -26,17 +26,17 @@ const configFile = nconf.get("config_file");
 if (configFile) {
   nconf.file({
     file: configFile,
-    transform: obj => {
+    transform: (obj) => {
       // use underscore as delimeter
       obj.key = obj.key.replace(/-/g, "_");
       return obj;
-    }
+    },
   });
 }
 
 nconf.defaults({
   log_level: "info",
-  log_format: "pretty" // 'json' or 'pretty'
+  log_format: "json", // 'json' or 'pretty'
 });
 
 module.exports = nconf;
