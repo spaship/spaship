@@ -24,7 +24,7 @@ router.post("/", application.post);
 /**
  * Deploy a application
  */
-router.post("/deploy", upload.single("file"), application.deploy);
+router.post("/deploy", upload.single("upload"), application.deploy);
 
 /**
  * Delete a application
