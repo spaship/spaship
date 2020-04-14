@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+const getExpiredDateMin = () => {
+  const now = new Date();
+  now.setDate(now.getDate() + 1);
+  return now;
+};
+
 const APIKeySchema = new Schema(
   {
     label: {
@@ -18,7 +24,10 @@ const APIKeySchema = new Schema(
       required: true,
       unique: true,
     },
-    expiredDate: Date,
+    expiredDate: {
+      type: Date,
+      min: getExpiredDateMin(),
+    },
     userId: String,
   },
   {
