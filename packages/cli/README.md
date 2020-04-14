@@ -25,7 +25,7 @@ $ npm install -g @spaship/cli
 $ spaship COMMAND
 running command...
 $ spaship (-v|--version|version)
-@spaship/cli/0.8.0 darwin-x64 node-v13.7.0
+@spaship/cli/0.9.0 darwin-x64 node-v13.7.0
 $ spaship --help [COMMAND]
 USAGE
   $ spaship COMMAND
@@ -38,8 +38,38 @@ USAGE
 
 <!-- commands -->
 
+- [`spaship deploy ARCHIVE`](#spaship-deploy-archive)
 - [`spaship help [COMMAND]`](#spaship-help-command)
 - [`spaship init`](#spaship-init)
+
+## `spaship deploy ARCHIVE`
+
+deploy to a SPAship host
+
+```
+USAGE
+  $ spaship deploy ARCHIVE
+
+ARGUMENTS
+  ARCHIVE  SPA archive file
+
+OPTIONS
+  -e, --env=env    [default: default] either the name of a SPAship environment as defined in your .spashiprc.yml file,
+                   or a URL to a SPAship environment
+
+  -r, --ref=ref    [default: undefined] a version tag, commit hash, or branch to identify this release
+
+  --apikey=apikey  a SPAship API key
+
+DESCRIPTION
+  Send an archive containing a SPA to a SPAship host for deployment.  Supports .tar.gz/.tgz, .zip, and .tar.bz2.
+
+EXAMPLES
+  $ npm pack
+  $ spaship deploy your-app-1.0.0.tgz
+```
+
+_See code: [src/commands/deploy.js](https://github.com/spaship/spaship/blob/v0.9.0/src/commands/deploy.js)_
 
 ## `spaship help [COMMAND]`
 
@@ -77,7 +107,7 @@ DESCRIPTION
   passed in as CLI options.
 ```
 
-_See code: [src/commands/init.js](https://github.com/spaship/spaship/blob/v0.8.0/src/commands/init.js)_
+_See code: [src/commands/init.js](https://github.com/spaship/spaship/blob/v0.9.0/src/commands/init.js)_
 
 <!-- commandsstop -->
 

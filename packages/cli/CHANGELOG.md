@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.9.1](https://github.com/spaship/spaship/compare/v0.9.0...v0.9.1) (2020-04-14)
+
+### Bug Fixes
+
+- **cli:** duplicate path ([#323](https://github.com/spaship/spaship/issues/323)) ([1df100a](https://github.com/spaship/spaship/commit/1df100a07a88cd0462f1d8ea1e2f6b551accfcc9))
+
 # [0.9.0](https://github.com/spaship/spaship/compare/v0.8.1...v0.9.0) (2020-04-14)
 
 ### Bug Fixes
