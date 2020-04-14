@@ -12,8 +12,6 @@ const APIKeySchema = new Schema(
     label: {
       type: String,
       required: true,
-      index: true,
-      unique: true,
     },
     shortKey: {
       type: String,
@@ -34,5 +32,7 @@ const APIKeySchema = new Schema(
     timestamps: true,
   }
 );
+
+APIKeySchema.index({ label: 1, userId: 1 }, { unique: true });
 
 module.exports = mongoose.model("APIKey", APIKeySchema);
