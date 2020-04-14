@@ -62,6 +62,12 @@ export default (props: IProps) => {
     return false;
   };
 
+  const getExpiredMin = () => {
+    const now = new Date();
+    now.setDate(now.getDate() + 1);
+    return now.toISOString().slice(0, 10); //YYYY-MM-DD
+  };
+
   const onChangeEnvironments = (checked: boolean, event: React.FormEvent<HTMLInputElement>) => {
     const envName = event.currentTarget.name;
 
@@ -130,6 +136,7 @@ export default (props: IProps) => {
             id="api-key-expired"
             aria-describedby="api-key-expired-helper"
             name="api-key-expired"
+            min={getExpiredMin()}
             onChange={(value) => setExpiredDate(value)}
           />
         </FormGroup>

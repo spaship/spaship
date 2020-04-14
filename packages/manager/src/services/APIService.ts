@@ -11,11 +11,13 @@ export const getApplicationList = async (environment: IEnvironment) => {
       },
     });
     const json = await response.json();
-    const applications = json.data as Promise<IAPIApplication[]>;
-    return (await applications).map((app) => ({
-      ...app,
-      environments: [environment],
-    }));
+    const applications = json.data as IAPIApplication[];
+    if (applications) {
+      return applications.map((app) => ({
+        ...app,
+        environments: [environment],
+      }));
+    }
   } catch (error) {
     console.error(error);
   }
