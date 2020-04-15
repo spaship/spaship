@@ -32,10 +32,10 @@ export default () => {
                 Authentication
               </Link>
             </NavItem>
-            <NavItem itemId={3} isActive={!!useRouteMatch("/servers")}>
-              <Link to={`/servers`}>
+            <NavItem itemId={3} isActive={!!useRouteMatch("/environments")}>
+              <Link to={`/environments`}>
                 <ServerIcon />
-                Servers
+                Environments
               </Link>
             </NavItem>
           </NavList>
