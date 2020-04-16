@@ -23,7 +23,7 @@ describe("API Key Controller", () => {
     mockingoose.resetAll();
     jest.clearAllMocks();
   });
-  it("should return all apiKeys belong to user", async () => {
+  it("should return all api keys belonging to a user", async () => {
     const mockData = [
       {
         _id: "507f191e810c19729de860ea",
@@ -51,7 +51,7 @@ describe("API Key Controller", () => {
     expect(res.send).toHaveBeenCalledWith(expected);
   });
 
-  it("should add a apiKey for user", async () => {
+  it("should add an api key for a user", async () => {
     const req = mockRequest({ body: { label: "mock" } });
     const res = mockResponse();
 
@@ -59,7 +59,7 @@ describe("API Key Controller", () => {
     expect(res.status).toHaveBeenCalledWith(201);
   });
 
-  it("should remove apiKey by label", async () => {
+  it("should remove an api key by it's label", async () => {
     const mockData = {
       _id: "507f191e810c19729de860ea",
       label: "mock",

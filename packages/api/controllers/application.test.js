@@ -79,7 +79,7 @@ describe("Application Controller", () => {
     mockfs.restore();
   });
 
-  it("should return all applications belong to user", async () => {
+  it("should return all applications belonging to the user", async () => {
     const expected = [
       // some SPAs in the webroot
       {

@@ -54,13 +54,12 @@ module.exports.deploy = async (req, res, next) => {
     await DeployService.deploy({ name, spaArchive, appPath, ref });
 
     const application = await Application.findOne({ name, path: appPath });
-    console.log(application);
     if (application) {
       await Application.updateOne({ name, path: appPath }, { ref });
     } else {
       await Application.create({ name, path: appPath, ref, userId });
     }
-    log.info(`deployed "${name}" to ${appPath}`);
+    log.info(`Deployed "${name}" to ${appPath}`);
     res.status(201).json({
       name,
       path: appPath,
@@ -68,7 +67,7 @@ module.exports.deploy = async (req, res, next) => {
       timestamp: new Date(),
     });
   } catch (err) {
-    log.error(`failed to deploy "${name}" to ${appPath}: ${err}`);
+    log.error(`Failed to deploy "${name}" to ${appPath}: ${err}`);
     next(new DeployError(err));
   }
 };
@@ -78,16 +77,13 @@ module.exports.delete = async (req, res, next) => {
   const { name } = req.params;
   try {
     const result = await Application.findOne({ name, userId });
-    console.log(result);
     const application = await Application.findOneAndDelete({ name, userId });
-    console.log(name);
-    console.log(application);
     if (application) {
       const path = application.path;
       await FileService.remove(path);
-      res.status(200).json({ message: "remove success" });
+      res.status(200).json({ message: "Application removed successfully." });
     } else {
-      next(new NotFoundError(`Can not found application by name:${name}`));
+      next(new NotFoundError(`Application named ${name} not found.`));
     }
   } catch (error) {
     next(error);
