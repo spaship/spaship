@@ -146,10 +146,37 @@ After running the script, a `.key` file will be saved in your current directory.
 
 ### /apikeys
 
-| HTTP Method | Endpoint                     | Description                                                                                                                                              |
-| ----------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `POST`      | `/apikey`                    | Creates and returns an API key object such as `{ key: "ABCD" }`. It expects the body of the request body to contain an user id as `{ user: "babyyoda" }` |
-| `DELETE`    | `/apikey?hashedKey=e12e115a` | Deletes key ABCD (hashed to "e12e115a")                                                                                                                  |
-| `GET`       | `/apikey?user=babyyoda`      | Returns an API key object such as `{ user: "babyyoda", key: "ABCD" }`                                                                                    |
-| `GET`       | `/user?hashedKey=e12e115a`   | Returns an API key object such as `{ user: "babyyoda" }`                                                                                                 |
-| `DELETE`    | `/user?user=babyyoda`        | Deletes all API keys for user `babyyoda`                                                                                                                 |
+| HTTP Method | Endpoint                | Description                                                                                                                                                         |
+| ----------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST`      | `/apiKeys`              | Creates and returns an API key object. It expects the body of the request body to contain an user id and a label name as `{ user: "username", label: "labelname" }` |
+| `GET`       | `/apiKeys`              | Returns a list of API key objects                                                                                                                                   |
+| `DELETE`    | `/apiKeys/<label-name>` | Deletes a key by it's label name                                                                                                                                    |
+
+### cURL Examples
+
+#### Create New API Key
+
+```sh
+curl --location --request POST 'https://<hostname>/api/v1/apiKeys' \
+--header 'Host: <hostname>' \
+--header 'Authorization: Bearer <token>' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'user=<username>' \
+--data-urlencode 'label=<labelname>'
+```
+
+#### List API Keys
+
+```sh
+curl --location --request GET 'https://<hostname>/api/v1/apiKeys' \
+--header 'Host: <hostname>' \
+--header 'Authorization: Bearer <token>'
+```
+
+#### Delete an API Key
+
+```sh
+curl --location --request DELETE 'https://<hostname>/api/v1/apiKeys/curl-test' \
+--header 'Host: <hostname>' \
+--header 'Authorization: Bearer <token>'
+```
