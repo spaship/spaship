@@ -40,8 +40,8 @@ describe("E2E happy test for SPAship manager", function () {
     cy.contains(Cypress.env("app_path")).click();
   });
 
-  //create and delete key
-  it("API key generation -new / show/ delete", function () {
+  //create api key
+  it("API key generation -new", function () {
     var env_list = ["QA"];
     var key_name = "key" + NAME;
     cy.get('a[href*="authentication"]').click();
@@ -55,10 +55,17 @@ describe("E2E happy test for SPAship manager", function () {
       expect($divs).to.contain(env_list[i]);
     });
     cy.get('button[aria-label="Close"]').click();
+  });
+
+  it("API key delete", function () {
+    var key_name = "key" + NAME;
+    cy.get('a[href*="authentication"]').click();
     cy.contains(key_name).should("exist");
     cy.contains(key_name).siblings('td[data-label="Scope"]').children("button").click();
-    cy.contains("Revoke").click();
+    cy.wait(10);
+    cy.contains("Revoke").click({ force: true });
     cy.contains("Confirm").click();
+    cy.reload();
     cy.contains(key_name).should("not.exist");
   });
 });
