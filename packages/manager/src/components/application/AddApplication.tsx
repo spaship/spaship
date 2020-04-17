@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   ActionGroup,
+  Alert,
   Button,
   Form,
   FormGroup,
@@ -76,6 +77,13 @@ export default withRouter(({ history }) => {
 
   return (
     <Page title="Upload to deploy">
+      <Alert variant="warning" isInline title="Warning">
+        This form is not the recommended way of deploying an application. Please go through the SPAship
+        <a href="https://github.com/spaship/spaship/blob/master/packages/cli/README.md"> CLI </a>and
+        <a href="https://github.com/spaship/spaship/blob/master/packages/api/README.md"> API </a> documentation for the
+        recommended method of deploying your application.
+      </Alert>
+
       <Card>
         <CardBody>
           <Form>
