@@ -5,6 +5,7 @@ import { IAPIKey } from "../models/APIKey";
 
 export const getApplicationList = async (environment: IEnvironment) => {
   try {
+    await keycloak.updateToken(30);
     const response = await fetch(`${environment.api}/applications`, {
       headers: {
         Authorization: `Bearer ${keycloak.token}`,
@@ -56,6 +57,7 @@ export const getAllEnvironmentApplicationList = async (environments: IEnvironmen
 
 export const getAPIKeyList = async (environment: IEnvironment) => {
   try {
+    await keycloak.updateToken(30);
     const response = await fetch(`${environment.api}/apiKeys`, {
       headers: {
         Authorization: `Bearer ${keycloak.token}`,
@@ -90,6 +92,7 @@ export const getAllEnvironmentAPIKeyList = async (environments: IEnvironment[]) 
 
 export const createAPIKey = async (apiKey: IAPIKey, environment: IEnvironment) => {
   try {
+    await keycloak.updateToken(30);
     const response = await fetch(`${environment.api}/apiKeys`, {
       method: "POST",
       headers: {
@@ -106,12 +109,10 @@ export const createAPIKey = async (apiKey: IAPIKey, environment: IEnvironment) =
     if (json.status !== "success") {
       console.error(`Create APIKey ${apiKey.label} error`);
     }
-    return (
-      {
-        ...json.data,
-        environment,
-      } as IAPIKey
-    );
+    return {
+      ...json.data,
+      environment,
+    } as IAPIKey;
   } catch (error) {
     console.error(error);
   }
@@ -119,6 +120,7 @@ export const createAPIKey = async (apiKey: IAPIKey, environment: IEnvironment) =
 
 export const deleteAPIKey = async (apiKey: IAPIKey, environment: IEnvironment) => {
   try {
+    await keycloak.updateToken(30);
     const response = await fetch(`${environment.api}/apiKeys/${apiKey.label}`, {
       method: "DELETE",
       headers: {
