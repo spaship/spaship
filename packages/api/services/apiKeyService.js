@@ -15,7 +15,7 @@ const validation = async (apiKey) => {
     }
     return result;
   }
-  throw new APIKeyError("API Key is invalid");
+  throw new APIKeyError("API key is invalid.");
 };
 
 // https://learning.postman.com/docs/postman/sending-api-requests/authorization/#api-key

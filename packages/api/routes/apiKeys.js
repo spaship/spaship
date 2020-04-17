@@ -11,12 +11,12 @@ const router = new Router();
 router.get("/", apiKey.list);
 
 /**
- * Add a apiKey
+ * Add an api key
  */
 router.post("/", apiKey.post);
 
 /**
- * Delete a apiKey
+ * Delete an api key
  */
 router.delete("/:label", apiKey.delete);
 

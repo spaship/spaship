@@ -12,22 +12,22 @@ const router = new Router();
 router.get("/", application.list);
 
 /**
- * Get application
+ * Get application by name
  */
 router.get("/:name", application.get);
 
 /**
- * Add a application
+ * Add an application
  */
 router.post("/", application.post);
 
 /**
- * Deploy a application
+ * Deploy an application
  */
 router.post("/deploy", upload.single("upload"), application.deploy);
 
 /**
- * Delete a application
+ * Update an application by name
  */
 router.put("/:name", application.put);
 

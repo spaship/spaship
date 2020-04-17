@@ -55,9 +55,9 @@ module.exports.delete = async (req, res, next) => {
   try {
     const apiKey = await APIKey.findOneAndDelete({ label, userId });
     if (apiKey) {
-      res.status(200).json({ message: "remove success" });
+      res.status(200).json({ message: "API key removed successfully." });
     } else {
-      next(new NotFoundError(`Can not found APIKey by label:${label}`));
+      next(new NotFoundError(`API key labeled ${label} not found.`));
     }
   } catch (error) {
     next(error);

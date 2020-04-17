@@ -18,7 +18,7 @@ function getResponseJson(res) {
 }
 
 function savePubKey(url) {
-  return function(json) {
+  return function (json) {
     fs.writeFileSync(`${fileName}.key`, PUBKEY_HEADER + "\n" + json.public_key.trim() + "\n" + PUBKEY_FOOTER);
     console.log(`pubkey saved to file ${fileName}`);
   };
@@ -29,10 +29,7 @@ function networkErrorHandler(err) {
 }
 
 function fetchAndSavePubKey(url) {
-  get(url)
-    .then(getResponseJson)
-    .then(savePubKey(url))
-    .catch(networkErrorHandler);
+  get(url).then(getResponseJson).then(savePubKey(url)).catch(networkErrorHandler);
 }
 
 fetchAndSavePubKey(url);

@@ -35,7 +35,7 @@ const getPublicKey = () => {
       log.error(error);
     }
   }
-  throw Error("No Keycloak Public Key can be found!, Please configure it");
+  throw Error("No Keycloak Public Key can be found! Please configure it.");
 };
 
 module.exports = {
