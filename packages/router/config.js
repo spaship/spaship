@@ -7,11 +7,11 @@ nconf
     whitelist,
     lowerCase: true,
     parseValues: true,
-    transform: obj => {
+    transform: (obj) => {
       // remove the "SPASHIP_" prefix from environment variables
       obj.key = obj.key.replace(/^spaship_/, "").replace(/^router_/, "");
       return obj;
-    }
+    },
   })
   .argv();
 
@@ -21,19 +21,18 @@ const configFile = nconf.get("config_file");
 if (configFile) {
   nconf.file({
     file: configFile,
-    transform: obj => {
+    transform: (obj) => {
       // use underscore as delimeter
       obj.key = obj.key.replace(/-/g, "_");
       return obj;
-    }
+    },
   });
 }
 
 nconf.defaults({
   port: 8080,
-  webroot: "/var/www",
+  webroot: "/var/www/html",
   target: "http://localhost:8080",
-  fallback: "https://access.redhat.com"
 });
 
 module.exports = nconf;

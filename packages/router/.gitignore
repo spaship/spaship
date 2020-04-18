@@ -62,3 +62,6 @@ typings/
 
 # WebStorm
 .idea
+
+# SPAship config file
+/config.json
