@@ -60,5 +60,5 @@ typings/
 # next.js build output
 .next
 
-# WebStorm
-.idea
+# SPAship config file
+/config.json
