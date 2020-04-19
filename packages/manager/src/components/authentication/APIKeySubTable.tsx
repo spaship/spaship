@@ -1,54 +1,50 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React from "react";
 import { Label, ButtonVariant } from "@patternfly/react-core";
 import { Table, TableHeader, TableBody, IRow } from "@patternfly/react-table";
-import { IAPIKey } from "../../models/APIKey";
+import { IAPIKeyEnvironment } from "../../models/APIKey";
 import ConfirmButton from "../general/ConfirmButton";
-import * as APIService from "../../services/APIService";
-import { IEnvironment } from "../../config";
+import { deleteAPIKey } from "../../services/APIKeyService";
+import config from "../../config";
 
 interface IProps {
-  apiKeys: IAPIKey[];
-  afterDelete?: (apiKey: IAPIKey) => void;
+  label: string;
+  apiKeyEnvironments: IAPIKeyEnvironment[];
+  afterDelete?: (label: string) => void;
 }
 
 export default (props: IProps) => {
-  const { apiKeys } = props;
-  const [rows, setRows] = useState<IRow[]>([]);
-  const columns = ["Environment", "Short Key", "Expired Date", "Created At", "Actions"];
+  const { label, apiKeyEnvironments } = props;
+  const columns = ["Environment", "Short Key", "Created At", "Actions"];
 
-  const apiKeysToRows = useCallback((apiKeyList: IAPIKey[], props) => {
-    const onClickConfirm = async (apiKey: IAPIKey, environment: IEnvironment) => {
-      await APIService.deleteAPIKey(apiKey, environment);
-      props.afterDelete && props.afterDelete(apiKey);
-    };
-
-    return apiKeyList.map((apiKey) => ({
-      cells: [
-        { title: <Label>{apiKey.environment?.name}</Label> },
-        apiKey.shortKey,
-        apiKey.expiredDate || "Never",
-        apiKey.createdAt,
-        {
-          title: (
-            <ConfirmButton
-              key={`${apiKey.label}-${apiKey.environment?.name}`}
-              label="Delete"
-              title={`Delete API key "${apiKey.label}" on ${apiKey.environment?.name}`}
-              variant={ButtonVariant.danger}
-              onConfirm={() => apiKey.environment && onClickConfirm(apiKey, apiKey.environment)}
-            >
-              Are you sure delete this api key ?
-            </ConfirmButton>
-          ),
-        },
-      ],
-    }));
-  }, []);
-  useEffect(() => {
-    if (apiKeys) {
-      setRows(apiKeysToRows(apiKeys, props));
+  const onClickConfirm = async (label: string, apiKeyEnvironment: IAPIKeyEnvironment) => {
+    const environment = config.environments.find((env) => env.name === apiKeyEnvironment.name);
+    if (environment) {
+      await deleteAPIKey(environment, label);
+      props.afterDelete && props.afterDelete(label);
     }
-  }, [apiKeys, apiKeysToRows, props]);
+  };
+
+  const rows: IRow[] = apiKeyEnvironments.map((apiKeyEnv, index) => ({
+    cells: [
+      { title: <Label>{apiKeyEnv.name}</Label> },
+      apiKeyEnv.shortKey,
+      apiKeyEnv.createdAt,
+      {
+        title: (
+          <ConfirmButton
+            key={`${apiKeyEnv.name}=${index}`}
+            label="Delete"
+            title={`Delete API key "${label}" on ${apiKeyEnv.name}`}
+            variant={ButtonVariant.danger}
+            onConfirm={() => onClickConfirm(label, apiKeyEnv)}
+          >
+            Are you sure delete this api key ?
+          </ConfirmButton>
+        ),
+      },
+    ],
+  }));
+
   return (
     <Table cells={columns} rows={rows} aria-label="APIKey List">
       <TableHeader />

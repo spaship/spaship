@@ -11,13 +11,13 @@ import {
   InputGroupText,
 } from "@patternfly/react-core";
 import config, { IEnvironment } from "../../config";
-import { IAPIKey } from "../../models/APIKey";
-import * as APIService from "../../services/APIService";
+import { IAPIKey, IAPIKeyPayload, IAPIKeyEnvironment } from "../../models/APIKey";
+import { createMultiAPIKeys } from "../../services/APIKeyService";
 
 interface IProps {
   isOpen: boolean;
   onClose: () => void;
-  afterCreated?: (apiKeys: IAPIKey[]) => void;
+  afterCreated?: (apiKey: IAPIKey) => void;
 }
 
 export default (props: IProps) => {
@@ -25,38 +25,31 @@ export default (props: IProps) => {
   const [label, setLabel] = useState("");
   const [expiredDate, setExpiredDate] = useState("");
   const [selectedEnvironments, setSelectedEnvironments] = useState<IEnvironment[]>([]);
-  const [apiKeys, setApiKeys] = useState<IAPIKey[]>([]);
+  const [apiKeyEnvironments, setAPIKeyEnvironments] = useState<IAPIKeyEnvironment[]>([]);
 
   useEffect(() => {
     setLabel("");
     setExpiredDate("");
-    setApiKeys([]);
+    setAPIKeyEnvironments([]);
     setSelectedEnvironments([]);
   }, [isOpen]);
 
   const onSubmit = async () => {
-    // Todo call apiKey api
-    const apiKey: IAPIKey = {
+    const payload: IAPIKeyPayload = {
       label,
     };
 
     if (expiredDate.trim() !== "") {
-      apiKey.expiredDate = expiredDate;
+      payload.expiredDate = expiredDate;
     }
 
-    const result = await Promise.all(selectedEnvironments.map((env) => APIService.createAPIKey(apiKey, env)));
-    const keys: IAPIKey[] = [];
-    result.forEach((r) => {
-      if (r) {
-        keys.push(r);
-      }
-    });
-    setApiKeys(keys);
-    props.afterCreated && props.afterCreated(keys);
+    const apiKey = await createMultiAPIKeys(selectedEnvironments, payload);
+    setAPIKeyEnvironments(apiKey.environments);
+    props.afterCreated && props.afterCreated(apiKey);
   };
 
   const isValid = () => {
-    if (label && label.trim().length > 0 && selectedEnvironments.length > 0 && apiKeys.length === 0) {
+    if (label && label.trim().length > 0 && selectedEnvironments.length > 0 && apiKeyEnvironments.length === 0) {
       return true;
     }
     return false;
@@ -96,12 +89,12 @@ export default (props: IProps) => {
     ));
 
   const renderAPIKeys = () =>
-    apiKeys.map((apiKey) => (
+    apiKeyEnvironments.map((apiKeyEnv) => (
       <InputGroup>
-        <InputGroupText>{apiKey.environment?.name}</InputGroupText>
+        <InputGroupText>{apiKeyEnv.name}</InputGroupText>
         <TextInput
-          key={`api-key-${apiKey.environment?.name}`}
-          value={apiKey.key}
+          key={`api-key-${apiKeyEnv.name}`}
+          value={apiKeyEnv.key}
           type="text"
           readOnly
           aria-describedby="api-key-helper"
@@ -149,7 +142,7 @@ export default (props: IProps) => {
             Create API key
           </Button>
         </ActionGroup>
-        {apiKeys && apiKeys.length > 0 && (
+        {apiKeyEnvironments && apiKeyEnvironments.length > 0 && (
           <FormGroup label="Your New API Key" fieldId="api-key">
             {renderAPIKeys()}
           </FormGroup>

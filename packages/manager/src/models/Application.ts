@@ -1,19 +1,26 @@
-export interface IApplication extends IAPIApplication {
-  upload?: File | string;
-  environments: IEnvironment[];
-}
+import { IEnvironment } from "../config";
 
-export interface IAPIApplication {
+export interface IApplicationBase {
   name: string;
   path: string;
   ref: string;
 }
 
-export interface IDeployHistory {
-  version: string;
-  timestamp: Date;
+export interface IApplicationPayload extends IApplicationBase {
+  upload?: File | string;
 }
-interface IEnvironment {
+
+export interface IApplicationResponse extends IApplicationBase {
+  timestamp: string;
+}
+
+export interface IApplication {
   name: string;
-  deployHistory: IDeployHistory[];
+  path: string;
+  environments: IApplicationEnvironment[];
+}
+
+export interface IApplicationEnvironment extends Partial<IEnvironment> {
+  ref: string;
+  timestamp: string;
 }

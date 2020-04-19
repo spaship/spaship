@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Pagination } from "@patternfly/react-core";
+import { Pagination, Bullseye } from "@patternfly/react-core";
 import { Table, TableHeader, TableBody, IRow, compoundExpand, IRowCell, ICell } from "@patternfly/react-table";
 import { Link } from "react-router-dom";
 import { IApplication } from "../../models/Application";
-import DeploySubTable from "./DeploySubTable";
+import ApplicationEnvironmentColumn from "./ApplicationEnvironmentColumn";
 import { IEnvironment } from "../../config";
+import EmptySpinner from "../general/EmptySpinner";
+import EmptyNotFound from "../general/EmptyNotFound";
 
 interface IProps {
+  isLoading: boolean;
   environments: IEnvironment[];
   applications: IApplication[];
 }
@@ -14,12 +17,15 @@ interface IProps {
 const perPages = [10, 20, 50, 100];
 
 export default (props: IProps) => {
-  const { applications, environments } = props;
+  const { applications, environments, isLoading } = props;
   const [rows, setRows] = useState<IRow[]>([]);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(perPages[0]);
 
   const columns: ICell[] = [
+    {
+      title: "Name",
+    },
     {
       title: "Path",
     },
@@ -27,57 +33,64 @@ export default (props: IProps) => {
 
   const applicationsToRows = useCallback(
     (apps: IApplication[]) => {
-      const allRows: IRow[] = [];
-      apps.forEach((app, appIndex) => {
-        // Setup Main Row
-        const mainRow: IRow = {
-          cells: [
-            {
-              title: <Link to={`/applications${app.path}`}>{app.path}</Link>,
-              props: { component: "th" },
-            },
-          ],
-        };
-
-        const subRows: IRow[] = [];
-
-        environments.forEach((env, envIndex) => {
-          const appEnv = app.environments && app.environments.find((environment) => environment.name === env.name);
-
-          const cell: ICell = {
-            title: appEnv
-              ? appEnv.deployHistory.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())[0].version
-              : "",
-            props: {
-              isOpen: false,
-            },
-          };
-          mainRow.cells?.push(cell);
-
-          const subRow: IRow = {
-            parent: appIndex * columns.length,
-            compoundParent: envIndex + 1,
-            cells: [
-              {
-                title: appEnv ? <DeploySubTable deployHistory={appEnv?.deployHistory} /> : "",
-                props: { colSpan: 6, className: "pf-m-no-padding" },
-              },
-            ],
-          };
-          subRows.push(subRow);
-        });
-
-        allRows.push.apply(allRows, [mainRow].concat(subRows));
-      });
-
-      return allRows;
+      return apps.map((app) => ({
+        cells: [
+          {
+            title: <Link to={`/applications/${app.name}`}>{app.name}</Link>,
+          },
+          app.path,
+        ].concat(
+          environments.map((env) => ({
+            title: <ApplicationEnvironmentColumn application={app} environment={env} />,
+          }))
+        ),
+      }));
     },
-    [columns.length, environments]
+    [environments]
   );
 
   useEffect(() => {
-    setRows(applicationsToRows(applications.slice(0, perPage)));
-  }, [applicationsToRows, applications, perPage]);
+    if (isLoading) {
+      setRows([
+        {
+          heightAuto: true,
+          cells: [
+            {
+              props: { colSpan: 6 },
+              title: (
+                <Bullseye>
+                  <EmptySpinner />
+                </Bullseye>
+              ),
+            },
+          ],
+        },
+      ]);
+    } else {
+      if (applications.length === 0) {
+        setRows([
+          {
+            heightAuto: true,
+            cells: [
+              {
+                props: { colSpan: 2 },
+                title: (
+                  <Bullseye>
+                    <EmptyNotFound
+                      title="No Application Found"
+                      body="Read Document to find how to deploy your SPA into SPAship"
+                    />
+                  </Bullseye>
+                ),
+              },
+            ],
+          },
+        ]);
+      } else {
+        setRows(applicationsToRows(applications.slice(0, perPage)));
+      }
+    }
+  }, [applications, isLoading, applicationsToRows, perPage]);
 
   const onExpand = (event: any, rowIndex: number, colIndex: number, isOpen: boolean) => {
     if (!isOpen) {

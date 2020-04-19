@@ -8,15 +8,32 @@ import {
   TextList,
   TextListItem,
   TextListVariants,
-  TextListItemVariants
+  TextListItemVariants,
 } from "@patternfly/react-core";
 import { IApplication } from "../../models/Application";
+import Spinner from "../general/Spinner";
 
 interface IProps {
   application?: IApplication;
 }
 export default (props: IProps) => {
-  // const { application } = props;
+  const { application } = props;
+
+  const renderBody = () => {
+    if (!application) {
+      return <Spinner />;
+    }
+    return (
+      <TextContent>
+        <TextList component={TextListVariants.dl}>
+          <TextListItem component={TextListItemVariants.dt}>Name:</TextListItem>
+          <TextListItem component={TextListItemVariants.dd}>{application?.name}</TextListItem>
+          <TextListItem component={TextListItemVariants.dt}>Path:</TextListItem>
+          <TextListItem component={TextListItemVariants.dd}>{application?.path}</TextListItem>
+        </TextList>
+      </TextContent>
+    );
+  };
   return (
     <Card isHoverable>
       <CardHeader>
@@ -24,18 +41,7 @@ export default (props: IProps) => {
           <Text component="h3">Primary Details</Text>
         </TextContent>
       </CardHeader>
-      <CardBody>
-        <TextContent>
-          <TextList component={TextListVariants.dl}>
-            <TextListItem component={TextListItemVariants.dt}>Owner</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>Kun Yan</TextListItem>
-            <TextListItem component={TextListItemVariants.dt}>Source:</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>https://github.com/spaship/spaship.git</TextListItem>
-            <TextListItem component={TextListItemVariants.dt}>Latest version:</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>1.3.2</TextListItem>
-          </TextList>
-        </TextContent>
-      </CardBody>
+      <CardBody>{renderBody()}</CardBody>
     </Card>
   );
 };
