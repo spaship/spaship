@@ -33,6 +33,7 @@ nconf.defaults({
   port: 8080,
   webroot: "/var/www/html",
   target: "http://localhost:8080",
+  log_level: "info",
 });
 
 module.exports = nconf;

@@ -63,12 +63,11 @@ const customRouter = function (req) {
   if (!matchFound) {
     // Check if ROOTSPA exists
     if (topLevelDirsCache.indexOf("ROOTSPA") >= 0) {
-      log.debug({ router: "ROOTSPA exists" });
       matchedFlatDir = "/ROOTSPA";
       spaPath = "/";
       routeUrl = matchedFlatDir + url;
 
-      log.debug({ router: {} }, "Found a root spa match");
+      log.debug({ router: { matchedFlatDir: matchedFlatDir, spaPath: spaPath } }, "Found ROOTSPA match");
 
       matchFound = true;
     } else {
@@ -99,7 +98,7 @@ const customRouter = function (req) {
   }
 
   targetUrl = routeHost + req.url;
-  log.info({ router: { incUrl: url, targetUrl } }, `Routing to: ${targetUrl}`);
+  log.info({ router: { incUrl: url, targetUrl } }, `Routing to targetUrl`);
 
   return routeHost;
 };
