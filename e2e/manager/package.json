@@ -13,7 +13,7 @@
     "mocha": "7.1.1",
     "mochawesome": "5.0.0",
     "mochawesome-merge": "4.0.3",
-    "mochawesome-report-generator": "4.1.0"
+    "mochawesome-report-generator": "5.1.0"
   },
   "scripts": {
     "pretest": "",
