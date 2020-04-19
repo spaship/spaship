@@ -160,9 +160,8 @@ After running the script, a `.key` file will be saved in your current directory.
 curl --location --request POST 'https://<hostname>/api/v1/apiKeys' \
 --header 'Host: <hostname>' \
 --header 'Authorization: Bearer <token>' \
---header 'Content-Type: application/x-www-form-urlencoded' \
---data-urlencode 'user=<username>' \
---data-urlencode 'label=<labelname>'
+--header 'Content-Type: application/json' \
+--data '{"label": "<labelname>", "expiredDate": "<expirationDateValue>"}'
 ```
 
 #### List API Keys
@@ -176,7 +175,7 @@ curl --location --request GET 'https://<hostname>/api/v1/apiKeys' \
 #### Delete an API Key
 
 ```sh
-curl --location --request DELETE 'https://<hostname>/api/v1/apiKeys/curl-test' \
+curl --location --request DELETE 'https://<hostname>/api/v1/apiKeys/<apiKey-label>' \
 --header 'Host: <hostname>' \
 --header 'Authorization: Bearer <token>'
 ```
