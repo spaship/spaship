@@ -1,4 +1,5 @@
 const { log } = require("@spaship/common/lib/logging/pino");
+const common = require("@spaship/common");
 const FileService = require("../services/fileService");
 const DeployService = require("../services/deployService");
 const Application = require("../models/application");
@@ -14,9 +15,13 @@ module.exports.list = async (req, res, next) => {
 
 module.exports.get = async (req, res) => {
   const userId = getUserUUID(req);
-  const { name } = req.param;
-  const application = Application.findOne({ name, userId });
-  res.send(application);
+  const { name } = req.params;
+  const application = await Application.findOne({ name, userId });
+  const appPath = application.get("path");
+  const spaDir = common.flatpath.toDir(appPath);
+  console.log(spaDir);
+  const app = await FileService.get(spaDir);
+  res.send(app);
 };
 
 module.exports.post = async (req, res, next) => {
