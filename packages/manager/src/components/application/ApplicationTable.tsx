@@ -73,12 +73,12 @@ export default (props: IProps) => {
             heightAuto: true,
             cells: [
               {
-                props: { colSpan: 2 },
+                props: { colSpan: 6 },
                 title: (
                   <Bullseye>
                     <EmptyNotFound
                       title="No Application Found"
-                      body="Read Document to find how to deploy your SPA into SPAship"
+                      body="To find out how to deploy your SPA please read the SPAship documentation."
                     />
                   </Bullseye>
                 ),
