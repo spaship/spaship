@@ -19,7 +19,6 @@ module.exports.get = async (req, res) => {
   const application = await Application.findOne({ name, userId });
   const appPath = application.get("path");
   const spaDir = common.flatpath.toDir(appPath);
-  console.log(spaDir);
   const app = await FileService.get(spaDir);
   res.send(app);
 };
