@@ -8,32 +8,33 @@ import {
   Title,
   Page,
   PageSection,
-  PageSectionVariants
+  PageSectionVariants,
 } from "@patternfly/react-core";
 import { useHistory } from "react-router-dom";
 import { useKeycloak } from "@react-keycloak/web";
 import { StyleSheet, css } from "@patternfly/react-styles";
 import Header from "../../layout/Header";
 import rocket from "../../static/img/rocket.svg";
+import EmptySpinner from "../general/EmptySpinner";
 
 const styles = StyleSheet.create({
   page: {
-    backgroundColor: "#ffffff"
+    backgroundColor: "#ffffff",
   },
   card: {
     width: "300px",
-    zIndex: 99
+    zIndex: 99,
   },
   img: {
     position: "fixed",
     width: "40em",
     bottom: "-5em",
     right: "-7em",
-    zIndex: 0
+    zIndex: 0,
   },
   button: {
-    backgroundColor: "#fed402"
-  }
+    backgroundColor: "#fed402",
+  },
 });
 
 export default () => {
@@ -41,7 +42,11 @@ export default () => {
   const [keycloak, initialized] = useKeycloak();
 
   if (!initialized) {
-    return <div>Loading...</div>;
+    return (
+      <Bullseye>
+        <EmptySpinner />
+      </Bullseye>
+    );
   }
 
   const onClickLogin = () => {
