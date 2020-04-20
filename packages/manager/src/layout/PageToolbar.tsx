@@ -8,8 +8,8 @@ import accessibleStyles from "@patternfly/react-styles/css/utilities/Accessibili
 
 const styles = StyleSheet.create({
   toolbar: {
-    color: "#000000 !important"
-  }
+    color: "#000000 !important",
+  },
 });
 
 export default () => {
@@ -42,12 +42,26 @@ export default () => {
     <Toolbar>
       <ToolbarGroup className={css(accessibleStyles.screenReader, accessibleStyles.visibleOnLg)}>
         <ToolbarItem>
-          <Button variant="link" icon={<FileAltIcon />} className={css(styles.toolbar)}>
+          <Button
+            component="a"
+            href="https://github.com/spaship/spaship/blob/master/README.md"
+            target="_blank"
+            variant="link"
+            icon={<FileAltIcon />}
+            className={css(styles.toolbar)}
+          >
             Documentation
           </Button>
         </ToolbarItem>
         <ToolbarItem>
-          <Button variant="link" icon={<GithubIcon />} className={css(styles.toolbar)}>
+          <Button
+            component="a"
+            href="https://github.com/spaship/spaship"
+            target="_blank"
+            variant="link"
+            icon={<GithubIcon />}
+            className={css(styles.toolbar)}
+          >
             GitHub
           </Button>
         </ToolbarItem>
