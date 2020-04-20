@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0](https://github.com/spaship/spaship/compare/v0.9.2...v0.10.0) (2020-04-20)
+
+### Bug Fixes
+
+- **#328:** Added warning message to Deploy UI page. ([#339](https://github.com/spaship/spaship/issues/339)) ([60b6082](https://github.com/spaship/spaship/commit/60b60829fc9cfa9bd0d6404fa7b089d419c513f1)), closes [#328](https://github.com/spaship/spaship/issues/328)
+- **#335:** Added catch block to serviceWorker unregister method. ([#336](https://github.com/spaship/spaship/issues/336)) ([893cb96](https://github.com/spaship/spaship/commit/893cb9662fef86e63f3bb1a4748034cba65a2f1e)), closes [#335](https://github.com/spaship/spaship/issues/335)
+- **#359:** Jazzed up the Coming Soon message on the Dashboard page. ([#360](https://github.com/spaship/spaship/issues/360)) ([490cf52](https://github.com/spaship/spaship/commit/490cf5297cb71bdd93fd9ff0c05954da4bb01b14)), closes [#359](https://github.com/spaship/spaship/issues/359)
+- **api:** GET application should return details info ([#357](https://github.com/spaship/spaship/issues/357)) ([025dd32](https://github.com/spaship/spaship/commit/025dd329700d440facced80408bb2b8bd10bb44c))
+- **api:** upload was use wrong name ([#325](https://github.com/spaship/spaship/issues/325)) ([041e9c5](https://github.com/spaship/spaship/commit/041e9c5350a0c0a16d84cae307edaeb736f7ae88))
+- **npm-audit:** Fix npm audit vulnerabilities. ([#334](https://github.com/spaship/spaship/issues/334)) ([594865a](https://github.com/spaship/spaship/commit/594865a9dd8fe0f04fd703c7992178a4bba6b3fe))
+
+### Features
+
+- **#267:** Added JWT refresh to APIService methods. ([#340](https://github.com/spaship/spaship/issues/340)) ([943ee5f](https://github.com/spaship/spaship/commit/943ee5f5a1d5c037cd25005f7da089118ad34e9c)), closes [#267](https://github.com/spaship/spaship/issues/267)
+- **common:** add specific ROOTSPA case ([#361](https://github.com/spaship/spaship/issues/361)) ([0331399](https://github.com/spaship/spaship/commit/0331399ce1968dac5ed1c3819999468038092299))
+- **manager:** show application index in real data ([#355](https://github.com/spaship/spaship/issues/355)) ([1c0934a](https://github.com/spaship/spaship/commit/1c0934a2f5110b6e61074bad10296276fbc90065))
+
 ## [0.9.2](https://github.com/spaship/spaship/compare/v0.9.1...v0.9.2) (2020-04-14)
 
 ### Bug Fixes

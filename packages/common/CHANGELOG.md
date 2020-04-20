@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0](https://github.com/spaship/spaship/compare/v0.9.2...v0.10.0) (2020-04-20)
+
+### Features
+
+- **common:** add specific ROOTSPA case ([#361](https://github.com/spaship/spaship/issues/361)) ([0331399](https://github.com/spaship/spaship/commit/0331399ce1968dac5ed1c3819999468038092299))
+
 ## [0.9.2](https://github.com/spaship/spaship/compare/v0.9.1...v0.9.2) (2020-04-14)
 
 ### Bug Fixes

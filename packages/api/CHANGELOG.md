@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0](https://github.com/spaship/spaship/compare/v0.9.2...v0.10.0) (2020-04-20)
+
+### Bug Fixes
+
+- **api:** GET application should return details info ([#357](https://github.com/spaship/spaship/issues/357)) ([025dd32](https://github.com/spaship/spaship/commit/025dd329700d440facced80408bb2b8bd10bb44c))
+- **api:** upload was use wrong name ([#325](https://github.com/spaship/spaship/issues/325)) ([041e9c5](https://github.com/spaship/spaship/commit/041e9c5350a0c0a16d84cae307edaeb736f7ae88))
+
 ## [0.9.2](https://github.com/spaship/spaship/compare/v0.9.1...v0.9.2) (2020-04-14)
 
 **Note:** Version bump only for package @spaship/api
