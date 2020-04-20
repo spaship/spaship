@@ -37,7 +37,7 @@ export default () => {
         </DataToolbarItem> */}
         <DataToolbarItem>
           <Tooltip content={<div>This feature would be coming soon</div>}>
-            <Button variant="control" title="Will coming soon">
+            <Button variant="control" title="Coming soon">
               Purge Cache
             </Button>
           </Tooltip>
