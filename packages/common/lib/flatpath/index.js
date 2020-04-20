@@ -1,4 +1,11 @@
+const rootSPAPath = "ROOTSPA";
+
 function toDir(urlPath) {
+  // Specific for root path
+  // #329 #350
+  if (urlPath === "/") {
+    return rootSPAPath;
+  }
   return urlPath
     .replace(/^\//, "") // Trim off leading /
     .replace(/_/g, "UNDRSCR") // Escape underscores with UNDRSCR token
@@ -6,6 +13,11 @@ function toDir(urlPath) {
 }
 
 function toUrl(flatDir) {
+  // Specific for root path
+  // #329 #350
+  if (flatDir === rootSPAPath) {
+    return "/";
+  }
   return (
     "/" +
     flatDir
