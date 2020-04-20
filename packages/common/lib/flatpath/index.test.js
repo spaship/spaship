@@ -30,6 +30,10 @@ describe("common/flatpath", () => {
       expect(flatpath.toDir("/_foo_bar/_baz")).toEqual("UNDRSCRfooUNDRSCRbar_UNDRSCRbaz");
       expect(flatpath.toDir("/foo_bar_ba/z_")).toEqual("fooUNDRSCRbarUNDRSCRba_zUNDRSCR");
     });
+
+    test("should handle root path", () => {
+      expect(flatpath.toDir("/")).toEqual("ROOTSPA");
+    });
   });
   describe("map from dir to URL", () => {
     // test("should have a special mapping for root path", () => {
@@ -59,6 +63,10 @@ describe("common/flatpath", () => {
       expect(flatpath.toUrl("fooUNDRSCRbarUNDRSCRbaz")).toEqual("/foo_bar_baz");
       expect(flatpath.toUrl("UNDRSCRfooUNDRSCRbar_UNDRSCRbaz")).toEqual("/_foo_bar/_baz");
       expect(flatpath.toUrl("fooUNDRSCRbarUNDRSCRba_zUNDRSCR")).toEqual("/foo_bar_ba/z_");
+    });
+
+    test("should restore ROOTSPA dir", () => {
+      expect(flatpath.toUrl("ROOTSPA")).toEqual("/");
     });
   });
 });
