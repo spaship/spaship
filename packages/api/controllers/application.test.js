@@ -1,11 +1,9 @@
 const mockingoose = require("mockingoose").default;
+const fs = require("fs");
 const mockfs = require("mock-fs");
 const config = require("../config");
-const clone = require("lodash").clone;
 const controller = require("./application");
 const Application = require("../models/application");
-const fsp = require("fs").promises;
-const fs = require("fs");
 
 global.console = require("../../../__mocks__/console");
 
@@ -136,6 +134,32 @@ describe("Application Controller", () => {
         timestamp: new Date("2020-02-02"),
       })
     );
+  });
+
+  it("should get an application", async () => {
+    expect(fs.existsSync("/fake/webroot/foo")).toBe(true);
+    const mockData = {
+      _id: "507f191e810c19729de860ea",
+      name: "Foo",
+      path: "/foo",
+      userId: "d37763ab-d01c-43f2-8f94-3a6e7ab1d396",
+      createdAt: new Date("2020-02-02"),
+    };
+
+    const expectData = {
+      name: "Foo",
+      path: "/foo",
+      ref: "v1.0.1",
+      timestamp: new Date("2020-02-02"),
+    };
+
+    mockingoose(Application).toReturn(mockData, "findOne");
+
+    const req = mockRequest({ params: { name: "Foo" } });
+    const res = mockResponse();
+    const next = mockNext();
+    await controller.get(req, res, next);
+    expect(res.send).toHaveBeenCalledWith(expect.objectContaining(expectData));
   });
 
   it("should delete an application", async () => {
