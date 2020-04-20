@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
-import isEqual from "lodash/isEqual";
+import React, { useState, useEffect, useCallback } from "react";
 import Page from "../../layout/Page";
 import APIKeyTable from "./APIKeyTable";
 import APIKeyCreateModal from "./APIKeyCreateModal";
 import { Button } from "@patternfly/react-core";
-import config from "../../config";
-import * as APIService from "../../services/APIService";
+import { fetchAPIKeys } from "../../services/APIKeyService";
 import { IAPIKey } from "../../models/APIKey";
 
 export default () => {
@@ -13,21 +11,23 @@ export default () => {
   const [isLoading, setLoading] = useState(false);
   const [apiKeys, setAPIKeys] = useState<IAPIKey[]>([]);
 
-  const environments = config.environments;
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
-    APIService.getAllEnvironmentAPIKeyList(environments).then((keys) => {
-      setAPIKeys(keys);
-      setLoading(false);
-    });
-  }, [environments]);
+    const keys = await fetchAPIKeys();
+    setLoading(false);
+    setAPIKeys(keys);
+  }, []);
 
-  const afterCreated = (newAPIKeys: IAPIKey[]) => {
-    setAPIKeys(apiKeys.concat(newAPIKeys));
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const afterCreated = (newAPIKeys: IAPIKey) => {
+    setAPIKeys([...apiKeys, newAPIKeys]);
   };
 
-  const afterDelete = (oldAPIKey: IAPIKey) => {
-    setAPIKeys(apiKeys.filter((item) => !isEqual(item, oldAPIKey)));
+  const afterDelete = (oldLabel: string) => {
+    setAPIKeys(apiKeys.filter((item) => item.label !== oldLabel));
   };
 
   const titleToolbar = (

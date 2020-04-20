@@ -1,5 +1,4 @@
 import React, { useCallback, useState, useEffect } from "react";
-import uniqBy from "lodash/uniqBy";
 import { Label, Bullseye } from "@patternfly/react-core";
 import { Table, TableBody, TableHeader, IRow, IRowCell, compoundExpand } from "@patternfly/react-table";
 import { IAPIKey } from "../../models/APIKey";
@@ -10,7 +9,7 @@ import EmptyNotFound from "../general/EmptyNotFound";
 interface IProps {
   isLoading: boolean;
   apiKeys: IAPIKey[];
-  afterDelete: (apiKey: IAPIKey) => void;
+  afterDelete: (label: string) => void;
 }
 
 export default (props: IProps) => {
@@ -18,6 +17,7 @@ export default (props: IProps) => {
   const [rows, setRows] = useState<IRow[]>([]);
   const columns = [
     "Label",
+    "Expired At",
     {
       title: "Scope",
       cellTransforms: [compoundExpand],
@@ -28,18 +28,14 @@ export default (props: IProps) => {
     (apiKeys: IAPIKey[]) => {
       const allRows: IRow[] = [];
 
-      const uniqAPIKeys = uniqBy(apiKeys, "label");
-
-      uniqAPIKeys.forEach((apiKey, apiKeyIndex) => {
-        const sameLabelAPIKeys = apiKeys.filter((item) => item.label === apiKey.label);
-        const environments = sameLabelAPIKeys.map((item) => item.environment);
-
+      apiKeys.forEach((apiKey, apiKeyIndex) => {
         const mainRow: IRow = {
           isOpen: false,
           cells: [
             { title: apiKey.label, props: { component: "th" } },
+            { title: apiKey.expiredDate || "Never" },
             {
-              title: environments.map(
+              title: apiKey.environments.map(
                 (env, index) =>
                   env && (
                     <span key={`${apiKey.label}-${env.name}-${index}`}>
@@ -53,21 +49,30 @@ export default (props: IProps) => {
         };
 
         const subRow: IRow = {
-          parent: apiKeyIndex * columns.length,
-          compoundParent: 1,
+          parent: apiKeyIndex * 2,
+          compoundParent: 2,
           cells: [
             {
-              title: environments ? <APIKeySubTable apiKeys={sameLabelAPIKeys} afterDelete={props.afterDelete} /> : "",
-              props: { colSpan: 2, className: "pf-m-no-padding" },
+              title: apiKey.environments ? (
+                <APIKeySubTable
+                  label={apiKey.label}
+                  apiKeyEnvironments={apiKey.environments}
+                  afterDelete={props.afterDelete}
+                />
+              ) : (
+                ""
+              ),
+              props: { colSpan: 3, className: "pf-m-no-padding" },
             },
           ],
         };
 
         allRows.push.apply(allRows, [mainRow, subRow]);
       });
+
       return allRows;
     },
-    [columns.length, props.afterDelete]
+    [props.afterDelete]
   );
 
   useEffect(() => {
@@ -77,7 +82,7 @@ export default (props: IProps) => {
           heightAuto: true,
           cells: [
             {
-              props: { colSpan: 2 },
+              props: { colSpan: 3 },
               title: (
                 <Bullseye>
                   <EmptySpinner />

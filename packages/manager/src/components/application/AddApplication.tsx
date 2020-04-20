@@ -15,65 +15,56 @@ import {
 } from "@patternfly/react-core";
 import { Spinner } from "@patternfly/react-core/dist/js/experimental";
 import { withRouter } from "react-router";
-import { IApplication } from "../../models/Application";
+import { IApplicationPayload } from "../../models/Application";
 import Page from "../../layout/Page";
+import { deployApplication } from "../../services/ApplicationService";
 import config, { IEnvironment } from "../../config";
 
 export default withRouter(({ history }) => {
-  const [form, setForm] = useState<IApplication>({
+  const [form, setForm] = useState<IApplicationPayload>({
     name: "",
     path: "",
     ref: "",
     upload: "",
-    environments: [],
   });
   const [environment, setEnvironment] = useState<IEnvironment>(config.environments[0]);
   const [isUploading, setUploading] = useState(false);
 
-  function handleChange(value: string, event: React.FormEvent<HTMLInputElement>) {
+  const handleChange = (value: string, event: React.FormEvent<HTMLInputElement>) => {
     setForm({
       ...form,
       [event.currentTarget.name]: value,
     });
-  }
+  };
 
-  function handleEnvironmentChange(value: string) {
+  const handleEnvironmentChange = (value: string) => {
     const match = config.environments.find((env) => env.name === value);
     if (match) {
       setEnvironment(match);
     }
-  }
+  };
 
-  function handleFileChange(event: React.FormEvent<HTMLInputElement>) {
+  const handleFileChange = (event: React.FormEvent<HTMLInputElement>) => {
     const upload = (event.currentTarget.files && event.currentTarget.files[0]) || "";
     setForm({
       ...form,
       upload,
     });
-  }
+  };
 
-  function onSubmit() {
+  const onSubmit = async () => {
     setUploading(true);
-    const data = new FormData();
-    data.append("name", form.name);
-    data.append("path", form.path);
-    data.append("ref", form.ref);
-    form.upload && data.append("upload", form.upload);
 
-    fetch(`${environment?.api}/applications/deploy`, {
-      method: "POST",
-      body: data,
-    })
-      .then((res) => res.json())
-      .then((json) => {
-        setUploading(false);
-        history.push("/applications");
-      });
-  }
+    const application = await deployApplication(environment, form);
+    if (application) {
+      setUploading(false);
+      history.push("/applications");
+    }
+  };
 
-  function onCancel() {
+  const onCancel = () => {
     history.goBack();
-  }
+  };
 
   return (
     <Page title="Upload to deploy">
@@ -100,7 +91,7 @@ export default withRouter(({ history }) => {
               />
             </FormGroup>
             <FormGroup label="Environment" isRequired fieldId="environment" helperText="Please provide app name">
-              <FormSelect value={form.environments} onChange={handleEnvironmentChange} aria-label="FormSelect Input">
+              <FormSelect value={environment.name} onChange={handleEnvironmentChange} aria-label="FormSelect Input">
                 {config.environments.map((env, index) => (
                   <FormSelectOption key={index} value={env.name} label={env.name} />
                 ))}
