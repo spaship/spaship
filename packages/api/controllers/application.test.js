@@ -173,7 +173,7 @@ describe("Application Controller", () => {
     const next = mockNext();
     await controller.get(req, res, next);
     expect(next).toHaveBeenCalled();
-    expect(next).toHaveBeenCalledWith(new NotFoundError("Can not found the application you requested"));
+    expect(next).toHaveBeenCalledWith(new NotFoundError("Could not find the application you requested. Application details can only be accessed by the uploader."));
   });
 
   it("should delete an application", async () => {

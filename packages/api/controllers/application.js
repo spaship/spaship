@@ -24,7 +24,7 @@ module.exports.get = async (req, res, next) => {
       const app = await FileService.get(spaDir);
       return res.send(app);
     }
-    next(new NotFoundError("Can not found the application you requested"));
+    next(new NotFoundError("Could not find the application you requested. Application details can only be accessed by the uploader."));
   } catch (error) {
     next(error);
   }
