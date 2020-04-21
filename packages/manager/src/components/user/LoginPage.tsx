@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     fontSize: "0.6rem",
+    height: "6em",
   },
 });
 
@@ -98,22 +99,17 @@ export default () => {
           </CardBody>
         </Card>
       </PageSection>
-      <PageSection
-        className={css(styles.footer)}
-        variant={PageSectionVariants.darker}
-        style={{ height: "6em" }}
-        isFilled={false}
-      >
+      <PageSection className={css(styles.footer)} variant={PageSectionVariants.darker} isFilled={false}>
         Brought to you by the{" "}
-        <a href="https://github.com/spaship/spaship/graphs/contributors" target="_">
+        <a href="https://github.com/spaship/spaship/graphs/contributors" target="_blank" rel="noreferrer noopener">
           Wizards <OptimizeIcon />
         </a>{" "}
         of the{" "}
-        <a href="https://github.com/spaship/spaship" target="_">
+        <a href="https://github.com/spaship/spaship" target="_blank" rel="noreferrer noopener">
           SPAship
         </a>{" "}
         project. <br /> Code licensed under the{" "}
-        <a href="https://github.com/spaship/spaship/blob/master/LICENSE" target="_">
+        <a href="https://github.com/spaship/spaship/blob/master/LICENSE" target="_blank" rel="noreferrer noopener">
           MIT License
         </a>
         .
