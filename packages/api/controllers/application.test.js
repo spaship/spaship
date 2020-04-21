@@ -4,6 +4,7 @@ const mockfs = require("mock-fs");
 const config = require("../config");
 const controller = require("./application");
 const Application = require("../models/application");
+const NotFoundError = require("../utils/errors/NotFoundError");
 
 global.console = require("../../../__mocks__/console");
 
@@ -160,6 +161,19 @@ describe("Application Controller", () => {
     const next = mockNext();
     await controller.get(req, res, next);
     expect(res.send).toHaveBeenCalledWith(expect.objectContaining(expectData));
+  });
+
+  it("should error when get an application not belong to current user", async () => {
+    expect(fs.existsSync("/fake/webroot/foo")).toBe(true);
+
+    mockingoose(Application).toReturn(null, "findOne");
+
+    const req = mockRequest({ params: { name: "Foo" } });
+    const res = mockResponse();
+    const next = mockNext();
+    await controller.get(req, res, next);
+    expect(next).toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith(new NotFoundError("Can not found the application you requested"));
   });
 
   it("should delete an application", async () => {
