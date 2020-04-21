@@ -1,5 +1,5 @@
 describe("E2E happy test for SPAship manager", function () {
-  var NAME;
+  let NAME;
   // SSO login
   before(() => {
     NAME = Cypress.moment().format("x");
@@ -21,8 +21,8 @@ describe("E2E happy test for SPAship manager", function () {
   // });
 
   it("API key generation -new", function () {
-    var env_list = ["QA"];
-    var key_name = "key" + NAME;
+    const env_list = ["QA"];
+    const key_name = "key" + NAME;
     cy.get('a[href*="authentication"]').click();
     cy.contains("Create API Key").click();
     cy.get("#api-key-label").type(key_name);
@@ -37,7 +37,7 @@ describe("E2E happy test for SPAship manager", function () {
   });
 
   it("API key delete", function () {
-    var key_name = "key" + NAME;
+    const key_name = "key" + NAME;
     cy.get('a[href*="authentication"]').click();
     cy.contains(key_name).should("exist");
     cy.contains(key_name).siblings('td[data-label="Scope"]').children("button").click();
@@ -49,12 +49,12 @@ describe("E2E happy test for SPAship manager", function () {
   });
 
   it("new root application and router to display", function () {
-    var deploy_evn = "Dev";
+    const deploy_env = "Dev";
     cy.get("#add-application-button").click();
     var test_name = "name" + NAME;
     var ref = "v_qa_1.0.0";
     cy.get("#name").type(test_name);
-    cy.get("select").select(deploy_evn);
+    cy.get("select").select(deploy_env);
     cy.get("#site-host").invoke("text").as("page1value");
     cy.get("#ref").type(ref);
     cy.get("#upload").attachFile("test.tar");
@@ -66,13 +66,13 @@ describe("E2E happy test for SPAship manager", function () {
   });
 
   it("New a application and list it", function () {
-    var deploy_evn = "Dev";
+    var deploy_env = "Dev";
     cy.get("#add-application-button").click();
-    var test_name = "name" + NAME;
-    var test_path = "/test" + "/" + NAME;
-    var ref = "v_qa_1.0.0";
+    const test_name = "name" + NAME;
+    const test_path = "/test" + "/" + NAME;
+    const ref = "v_qa_1.0.0";
     cy.get("#name").type(test_name);
-    cy.get("select").select(deploy_evn);
+    cy.get("select").select(deploy_env);
     cy.get("#site-host").invoke("text").as("page1value");
     cy.get("#path").type(test_path);
     cy.get("#ref").type(ref);
@@ -83,5 +83,4 @@ describe("E2E happy test for SPAship manager", function () {
     cy.contains(test_name).click();
     cy.get("h2").should("contain", test_name);
   });
-  //
 });
