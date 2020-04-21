@@ -13,14 +13,21 @@ module.exports.list = async (req, res, next) => {
   res.send(list);
 };
 
-module.exports.get = async (req, res) => {
+module.exports.get = async (req, res, next) => {
   const userId = getUserUUID(req);
   const { name } = req.params;
-  const application = await Application.findOne({ name, userId });
-  const appPath = application.get("path");
-  const spaDir = common.flatpath.toDir(appPath);
-  const app = await FileService.get(spaDir);
-  res.send(app);
+  try {
+    const application = await Application.findOne({ name, userId });
+    if (application) {
+      const appPath = application.get("path");
+      const spaDir = common.flatpath.toDir(appPath);
+      const app = await FileService.get(spaDir);
+      return res.send(app);
+    }
+    next(new NotFoundError("Could not find the application you requested. Application details can only be accessed by the uploader."));
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports.post = async (req, res, next) => {

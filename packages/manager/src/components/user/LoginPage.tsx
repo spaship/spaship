@@ -16,6 +16,7 @@ import { useKeycloak } from "@react-keycloak/web";
 import { StyleSheet, css } from "@patternfly/react-styles";
 import Header from "../../layout/Header";
 import rocket from "../../static/img/rocket.svg";
+import EmptySpinner from "../general/EmptySpinner";
 
 const styles = StyleSheet.create({
   h5: {
@@ -67,7 +68,11 @@ export default () => {
   const [keycloak, initialized] = useKeycloak();
 
   if (!initialized) {
-    return <div>Loading...</div>;
+    return (
+      <Bullseye>
+        <EmptySpinner />
+      </Bullseye>
+    );
   }
 
   const onClickLogin = () => {

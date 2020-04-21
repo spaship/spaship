@@ -99,12 +99,12 @@ export default (props: IProps) => {
             heightAuto: true,
             cells: [
               {
-                props: { colSpan: 2 },
+                props: { colSpan: 3 },
                 title: (
                   <Bullseye>
                     <EmptyNotFound
                       title="No API Key Found"
-                      body="You could create API Key to any of your environment for CI/CD purpose"
+                      body="You can create an API Key to any of your environments for CI/CD purposes."
                     />
                   </Bullseye>
                 ),

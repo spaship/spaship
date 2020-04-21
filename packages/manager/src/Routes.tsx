@@ -1,5 +1,6 @@
 import React from "react";
 import { Router, Redirect, Route, Switch } from "react-router-dom";
+import { Bullseye } from "@patternfly/react-core";
 import { createBrowserHistory } from "history";
 import ApplicationList from "./components/application/ApplicationList";
 import AddApplication from "./components/application/AddApplication";
@@ -10,6 +11,7 @@ import PrivateRoute from "./PrivateRoute";
 import { useKeycloak } from "@react-keycloak/web";
 import EnvironmentList from "./components/environment/EnvironmentList";
 import DashboardIndex from "./components/dashboard/DashboardIndex";
+import EmptySpinner from "./components/general/EmptySpinner";
 
 const history = createBrowserHistory();
 
@@ -18,7 +20,11 @@ export default () => {
   const { initialized } = useKeycloak();
 
   if (!initialized) {
-    return <div>Loading...</div>;
+    return (
+      <Bullseye>
+        <EmptySpinner />
+      </Bullseye>
+    );
   }
 
   return (
