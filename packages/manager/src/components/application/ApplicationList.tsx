@@ -29,8 +29,8 @@ export default () => {
     setKeywords(changedKeywords);
   };
 
-  const toolbar = (
-    <Level>
+  const titleToolbar = (
+    <Level gutter="md">
       <LevelItem>
         <ApplicationFilter onChange={handleKeywordChange} />
       </LevelItem>
@@ -45,7 +45,7 @@ export default () => {
   );
 
   return (
-    <Page title="Applications" toolbar={toolbar}>
+    <Page title="Applications" titleToolbar={titleToolbar}>
       <ApplicationTable
         isLoading={isLoading}
         applications={applications.filter((app) => app.path && app.path.indexOf(keywords) !== -1)}

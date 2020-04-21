@@ -30,7 +30,7 @@ export default () => {
             </CardHeader>
             <CardBody>
               Hey there! <OutlinedHandSpockIcon /> <br />
-              The SPAship wiards <HatWizardIcon /> are still hard at work with some cutting edge wizardry{" "}
+              The SPAship wizards <HatWizardIcon /> are still hard at work with some cutting edge wizardry{" "}
               <OptimizeIcon /> to conjure a shiny new Dashboard here. In the meanwhile why don't you check out one of
               the links on the left navigation menu for all your SPA needs.
             </CardBody>
