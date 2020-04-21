@@ -38,9 +38,11 @@ const customRouter = function (req) {
 
   log.debug({ router: { step: "matching", incUrl: url } }, "matching incoming path against spaship directory list");
 
-  // See if this URL is hosted by SPAship
+  // See if this URL is hosted by SPAship at a specific non-root sub-path e.g. /foo
   for (let flatDir of topLevelDirsCache) {
     spaPath = flatpath.toUrl(flatDir);
+    if (spaPath === "/") continue; // Ignore root path spa here we will check that later
+
     let regEx = new RegExp("^" + spaPath + "([/\\?].*)?$");
     regExMatch = url.match(regEx);
     if (regExMatch) {
@@ -61,7 +63,7 @@ const customRouter = function (req) {
   }
 
   if (!matchFound) {
-    // Check if ROOTSPA exists
+    // See if SPAship hosts a spa at the root path "/", check if ROOTSPA exists
     if (topLevelDirsCache.indexOf("ROOTSPA") >= 0) {
       matchedFlatDir = "/ROOTSPA";
       spaPath = "/";
