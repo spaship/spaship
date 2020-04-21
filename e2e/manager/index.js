@@ -5,11 +5,6 @@ const argv = yargs
     description: "the host to test",
     type: "string",
   })
-  .option("app_path", {
-    alias: "a",
-    describe: "the application path",
-    type: "string",
-  })
   .option("username", {
     alias: "u",
     describe: "the login username",
@@ -26,7 +21,6 @@ const argv = yargs
 var test_host = argv.host;
 var test_username = argv.username;
 var test_pass = argv.passw;
-var test_app_path = argv.app_path;
 
 const cypress = require("cypress");
 cypress
@@ -47,7 +41,6 @@ cypress
       host: test_host,
       username: test_username,
       passw: test_pass,
-      app_path: test_app_path,
     },
   })
   .then((results) => {

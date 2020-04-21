@@ -16,7 +16,7 @@
     "mochawesome-report-generator": "4.1.0"
   },
   "scripts": {
-    "pretest": "",
+    "pretest": "tar czvf ./cypress/fixtures/test.tar ./cypress/fixtures/test",
     "test": "node ./index.js",
     "cypress:open": "cypress open"
   },
