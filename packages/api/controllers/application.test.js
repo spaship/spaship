@@ -139,13 +139,6 @@ describe("Application Controller", () => {
 
   it("should get an application", async () => {
     expect(fs.existsSync("/fake/webroot/foo")).toBe(true);
-    const mockData = {
-      _id: "507f191e810c19729de860ea",
-      name: "Foo",
-      path: "/foo",
-      userId: "d37763ab-d01c-43f2-8f94-3a6e7ab1d396",
-      createdAt: new Date("2020-02-02"),
-    };
 
     const expectData = {
       name: "Foo",
@@ -154,8 +147,6 @@ describe("Application Controller", () => {
       timestamp: new Date("2020-02-02"),
     };
 
-    mockingoose(Application).toReturn(mockData, "findOne");
-
     const req = mockRequest({ params: { name: "Foo" } });
     const res = mockResponse();
     const next = mockNext();
@@ -163,17 +154,19 @@ describe("Application Controller", () => {
     expect(res.send).toHaveBeenCalledWith(expect.objectContaining(expectData));
   });
 
-  it("should error when get an application not belong to current user", async () => {
+  it("should error when get an application with no exists name", async () => {
     expect(fs.existsSync("/fake/webroot/foo")).toBe(true);
 
-    mockingoose(Application).toReturn(null, "findOne");
-
-    const req = mockRequest({ params: { name: "Foo" } });
+    const req = mockRequest({ params: { name: "noexist" } });
     const res = mockResponse();
     const next = mockNext();
     await controller.get(req, res, next);
     expect(next).toHaveBeenCalled();
-    expect(next).toHaveBeenCalledWith(new NotFoundError("Could not find the application you requested. Application details can only be accessed by the uploader."));
+    expect(next).toHaveBeenCalledWith(
+      new NotFoundError(
+        "Could not find the application you requested. Application details can only be accessed by the uploader."
+      )
+    );
   });
 
   it("should delete an application", async () => {

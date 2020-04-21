@@ -119,4 +119,18 @@ describe("api.metadata", () => {
       });
     });
   });
+
+  describe("find", () => {
+    test("should retrieve metadata when given a spa's name", async () => {
+      const meta = await fileService.find("Foo");
+
+      expect(meta).toEqual({
+        name: "Foo",
+        path: "/foo",
+        ref: "v1.0.1",
+        single: true,
+        timestamp: new Date("2020-02-02"),
+      });
+    });
+  });
 });

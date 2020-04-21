@@ -17,14 +17,15 @@ module.exports.get = async (req, res, next) => {
   const userId = getUserUUID(req);
   const { name } = req.params;
   try {
-    const application = await Application.findOne({ name, userId });
+    const application = await FileService.find(name);
     if (application) {
-      const appPath = application.get("path");
-      const spaDir = common.flatpath.toDir(appPath);
-      const app = await FileService.get(spaDir);
-      return res.send(app);
+      return res.send(application);
     }
-    next(new NotFoundError("Could not find the application you requested. Application details can only be accessed by the uploader."));
+    next(
+      new NotFoundError(
+        "Could not find the application you requested. Application details can only be accessed by the uploader."
+      )
+    );
   } catch (error) {
     next(error);
   }
