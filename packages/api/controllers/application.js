@@ -21,11 +21,7 @@ module.exports.get = async (req, res, next) => {
     if (application) {
       return res.send(application);
     }
-    next(
-      new NotFoundError(
-        "Could not find the application you requested. Application details can only be accessed by the uploader."
-      )
-    );
+    next(new NotFoundError("Could not find the application you requested."));
   } catch (error) {
     next(error);
   }
