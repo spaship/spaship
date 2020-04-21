@@ -113,6 +113,29 @@ paths:
         - bearerAuth: []
         - api_key: []
   /applications/{name}:
+    get:
+      summary: Get an application details
+      tags:
+        - application
+      parameters:
+        - name: name
+          in: path
+          description: Name of application to use
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/APIResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/Application"
     put:
       summary: Update an application entity
       tags:
