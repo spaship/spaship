@@ -6,6 +6,8 @@ const config = require("../config");
 const controller = require("./application");
 const Application = require("../models/application");
 const NotFoundError = require("../utils/errors/NotFoundError");
+const DeployError = require("../utils/errors/DeployError");
+const NotImplementedError = require("../utils/errors/NotImplementedError");
 
 global.console = require("../../../__mocks__/console");
 
@@ -170,7 +172,18 @@ describe("Application Controller", () => {
     const next = mockNext();
     await controller.get(req, res, next);
     expect(next).toHaveBeenCalled();
-    expect(next).toHaveBeenCalledWith(new NotFoundError("Could not find the application you requested."));
+    expect(next).toHaveBeenCalledWith(expect.objectContaining(new NotFoundError()));
+  });
+
+  it("should error when update an application", async () => {
+    expect(fs.existsSync("/fake/webroot/foo")).toBe(true);
+
+    const req = mockRequest({ params: { name: "noexist" } });
+    const res = mockResponse();
+    const next = mockNext();
+    await controller.put(req, res, next);
+    expect(next).toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith(expect.objectContaining(new NotImplementedError()));
   });
 
   it("should delete an application", async () => {
@@ -260,5 +273,22 @@ describe("Application Controller", () => {
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.send).toHaveBeenCalledWith(expect.objectContaining(expectData));
     expect(fs.existsSync("/fake/webroot/unit_test_without_yaml")).toBe(true);
+  });
+
+  it("should deploy an application and get deploy error", async () => {
+    const req = mockRequest({
+      body: {
+        name: "deploy-error",
+        path: "/deploy/error",
+        ref: "1.0.0",
+      },
+      file: { path: "" },
+    });
+    const res = mockResponse();
+    const next = mockNext();
+    await controller.deploy(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith(expect.objectContaining(new DeployError()));
   });
 });
