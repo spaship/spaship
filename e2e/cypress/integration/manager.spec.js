@@ -50,7 +50,7 @@ describe("E2E happy test for SPAship manager", () => {
     cy.contains(apiKey.label).should("not.exist");
   });
 
-  it("new root application and router to display", function () {
+  it("new root application and router to display", () => {
     const spa = {
       name: `root-${timestamp}`,
       ref: `v1.0.0-${timestamp}`,
@@ -69,7 +69,7 @@ describe("E2E happy test for SPAship manager", () => {
     });
   });
 
-  it("New a application and list it", function () {
+  it("New a application and list it", () => {
     const spa = {
       name: `test-${timestamp}`,
       path: `/test/${timestamp}`,
