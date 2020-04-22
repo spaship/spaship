@@ -74,7 +74,7 @@ export const fetchApplication = async (name: string) => {
 
   environments.forEach((env, index) => {
     const app = results[index];
-    if (app) {
+    if (app && app.name) {
       application.name = app.name;
       application.path = app.path;
       application.environments?.push({
