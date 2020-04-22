@@ -43,7 +43,6 @@ describe("E2E happy test for SPAship manager", () => {
     cy.get('a[href*="authentication"]').click();
     cy.contains(apiKey.label).should("exist");
     cy.contains(apiKey.label).siblings('td[data-label="Scope"]').children("button").click();
-    cy.wait(10);
     cy.contains("Delete").click({ force: true });
     cy.contains("Confirm").click();
     cy.reload();
