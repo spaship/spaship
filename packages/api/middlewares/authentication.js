@@ -10,8 +10,8 @@ module.exports = () => {
   return async (req, res, next) => {
     const apiKey = APIKeyService.getAPIKeyFromRequest(req);
 
-    // Use API key check
-    if (apiKey) {
+    // Use API key check, it should not use apiKey to do validation
+    if (apiKey && req.url.match(/^(?!\/v\d\/apiKeys)/)) {
       log.info("Use API Key validation");
       try {
         const validKey = await APIKeyService.validation(apiKey);
