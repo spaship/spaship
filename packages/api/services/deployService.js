@@ -1,8 +1,9 @@
 const fsp = require("fs").promises;
+const fs = require("fs");
 const path = require("path");
 const mvdir = require("mvdir");
 const common = require("@spaship/common");
-const { log } = require("@spaship/common/lib/logging/pino");
+// const { log } = require("@spaship/common/lib/logging/pino");
 const decompress = require("decompress");
 const config = require("../config");
 const fileService = require("./fileService");
@@ -18,7 +19,7 @@ const isNPMPack = async (dir) => {
     const packageStat = await fsp.lstat(path.join(dir, "package"));
     return packageStat.isDirectory();
   } catch (e) {
-    log.error(e);
+    console.error(e);
   }
   return false;
 };
@@ -45,7 +46,7 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
     spaConfig = await common.config.read(yamlFilePath);
     hasYaml = true;
   } catch (e) {
-    log.warn(e);
+    console.warn(e);
   }
 
   const validation = common.config.validate(spaConfig);
