@@ -1,10 +1,13 @@
 const mockingoose = require("mockingoose").default;
 const fs = require("fs");
 const mockfs = require("mock-fs");
+const tar = require("tar");
 const config = require("../config");
 const controller = require("./application");
 const Application = require("../models/application");
 const NotFoundError = require("../utils/errors/NotFoundError");
+const DeployError = require("../utils/errors/DeployError");
+const NotImplementedError = require("../utils/errors/NotImplementedError");
 
 global.console = require("../../../__mocks__/console");
 
@@ -41,6 +44,13 @@ describe("Application Controller", () => {
     mockingoose.resetAll();
     jest.clearAllMocks();
     mockfs({
+      "/fake/test-spa-with-yaml": {
+        "index.html": "<!doctype html><html>This is a test spa</html>",
+        "spaship.yaml": "name: test-with-yaml\npath: /unit/test/with/yaml\nref: 1.0.0\nsingle: true",
+      },
+      "/fake/test-spa-without-yaml": {
+        "index.html": "<!doctype html><html>This is a test spa</html>",
+      },
       "/fake/webroot": mockfs.directory({
         items: {
           // some SPAs in the webroot
@@ -162,7 +172,18 @@ describe("Application Controller", () => {
     const next = mockNext();
     await controller.get(req, res, next);
     expect(next).toHaveBeenCalled();
-    expect(next).toHaveBeenCalledWith(new NotFoundError("Could not find the application you requested."));
+    expect(next).toHaveBeenCalledWith(expect.objectContaining(new NotFoundError()));
+  });
+
+  it("should error when update an application", async () => {
+    expect(fs.existsSync("/fake/webroot/foo")).toBe(true);
+
+    const req = mockRequest({ params: { name: "noexist" } });
+    const res = mockResponse();
+    const next = mockNext();
+    await controller.put(req, res, next);
+    expect(next).toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith(expect.objectContaining(new NotImplementedError()));
   });
 
   it("should delete an application", async () => {
@@ -188,5 +209,86 @@ describe("Application Controller", () => {
     // issue: https://github.com/tschaub/mock-fs/issues/292
     // the fs.rmdir will only remove empty dir
     // expect(fs.existsSync("/fake/webroot/foo")).toBe(false);
+  });
+
+  it("should deploy an application with spaship.yaml", async () => {
+    expect(fs.existsSync("/fake/test-spa-with-yaml")).toBe(true);
+
+    await tar.create(
+      {
+        gzip: true,
+        file: "/fake/test-spa-with-yaml.tgz",
+      },
+      ["/fake/test-spa-with-yaml"]
+    );
+
+    expect(fs.existsSync("/fake/test-spa-with-yaml.tgz")).toBe(true);
+
+    const expectData = {
+      name: "test-with-yaml",
+      path: "/unit/test/with/yaml",
+      ref: "1.0.0",
+    };
+
+    const req = mockRequest({
+      body: expectData,
+      file: { path: "/fake/test-spa-with-yaml.tgz" },
+    });
+    const res = mockResponse();
+    const next = mockNext();
+    await controller.deploy(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.send).toHaveBeenCalledWith(expect.objectContaining(expectData));
+    expect(fs.existsSync("/fake/webroot/unit_test_with_yaml")).toBe(true);
+  });
+
+  it("should deploy an application without spaship.yaml", async () => {
+    expect(fs.existsSync("/fake/test-spa-without-yaml")).toBe(true);
+
+    await tar.create(
+      {
+        gzip: true,
+        file: "/fake/test-spa-without-yaml.tgz",
+      },
+      ["/fake/test-spa-without-yaml"]
+    );
+
+    expect(fs.existsSync("/fake/test-spa-without-yaml.tgz")).toBe(true);
+
+    const expectData = {
+      name: "test-without-yaml",
+      path: "/unit/test/without/yaml",
+      ref: "1.0.0",
+    };
+
+    const req = mockRequest({
+      body: expectData,
+      file: { path: "/fake/test-spa-without-yaml.tgz" },
+    });
+    const res = mockResponse();
+    const next = mockNext();
+    await controller.deploy(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.send).toHaveBeenCalledWith(expect.objectContaining(expectData));
+    expect(fs.existsSync("/fake/webroot/unit_test_without_yaml")).toBe(true);
+  });
+
+  it("should deploy an application and get deploy error", async () => {
+    const req = mockRequest({
+      body: {
+        name: "deploy-error",
+        path: "/deploy/error",
+        ref: "1.0.0",
+      },
+      file: { path: "" },
+    });
+    const res = mockResponse();
+    const next = mockNext();
+    await controller.deploy(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith(expect.objectContaining(new DeployError()));
   });
 });

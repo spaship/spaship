@@ -67,15 +67,15 @@ module.exports.deploy = async (req, res, next) => {
     } else {
       await Application.create({ name, path: appPath, ref, userId });
     }
-    log.info(`Deployed "${name}" to ${appPath}`);
-    res.status(201).json({
+    console.warn(`Deployed "${name}" to ${appPath}`);
+    res.status(201).send({
       name,
       path: appPath,
       ref,
       timestamp: new Date(),
     });
   } catch (err) {
-    log.error(`Failed to deploy "${name}" to ${appPath}: ${err}`);
+    console.error(`Failed to deploy "${name}" to ${appPath}: ${err}`);
     next(new DeployError(err));
   }
 };
