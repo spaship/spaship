@@ -1,0 +1,24 @@
+{
+  "name": "@spaship/e2e",
+  "version": "1.0.0",
+  "description": "e2e test scripts for SPAship",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "tar czvf ./cypress/fixtures/test-spa.tgz ./cypress/fixtures/test-spa",
+    "test": "node ./index.js",
+    "api-test": "newman run ./cypress/api/collection.json -e ./cypress/api/environment.json --insecure"
+  },
+  "author": "Wei Tan <wetan@redhat.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^4.2.0",
+    "cypress-file-upload": "^4.0.4",
+    "cypress-xpath": "^1.4.0",
+    "mocha": "^7.1.1",
+    "mochawesome": "^5.0.0",
+    "mochawesome-merge": "^4.0.3",
+    "mochawesome-report-generator": "4.1.0",
+    "newman": "^5.0.0",
+    "yargs": "^15.3.1"
+  }
+}
