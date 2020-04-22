@@ -3,7 +3,6 @@ const fs = require("fs");
 const path = require("path");
 const mvdir = require("mvdir");
 const common = require("@spaship/common");
-// const { log } = require("@spaship/common/lib/logging/pino");
 const decompress = require("decompress");
 const config = require("../config");
 const fileService = require("./fileService");

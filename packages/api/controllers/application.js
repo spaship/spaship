@@ -58,8 +58,6 @@ module.exports.deploy = async (req, res, next) => {
   const { name, path: appPath, ref } = req.body;
   const { path: spaArchive } = req.file;
 
-  console.log(spaArchive);
-
   try {
     await DeployService.deploy({ name, spaArchive, appPath, ref });
 
@@ -69,7 +67,7 @@ module.exports.deploy = async (req, res, next) => {
     } else {
       await Application.create({ name, path: appPath, ref, userId });
     }
-    // log.warn(`Deployed "${name}" to ${appPath}`);
+    console.warn(`Deployed "${name}" to ${appPath}`);
     res.status(201).send({
       name,
       path: appPath,
@@ -77,8 +75,7 @@ module.exports.deploy = async (req, res, next) => {
       timestamp: new Date(),
     });
   } catch (err) {
-    console.error(err);
-    // log.error(`Failed to deploy "${name}" to ${appPath}: ${err}`);
+    console.error(`Failed to deploy "${name}" to ${appPath}: ${err}`);
     next(new DeployError(err));
   }
 };
