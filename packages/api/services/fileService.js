@@ -50,4 +50,15 @@ const remove = async (spaPath) => {
   }
 };
 
-module.exports = { write, getAll, get, remove };
+const find = async (name) => {
+  try {
+    const all = await getAll();
+    const match = all.find((spa) => spa.name === name);
+    return match;
+  } catch (error) {
+    console.error(error);
+  }
+  return null;
+};
+
+module.exports = { write, getAll, get, remove, find };
