@@ -1,4 +1,6 @@
 const yargs = require("yargs");
+const cypress = require("cypress");
+
 const argv = yargs
   .option("host", {
     alias: "e",
@@ -18,30 +20,20 @@ const argv = yargs
   .help()
   .alias("help", "h").argv;
 
-var test_host = argv.host;
-var test_username = argv.username;
-var test_pass = argv.passw;
-
-const cypress = require("cypress");
 cypress
   .run({
-    spec: "./cypress/integration/spa_spec.js",
-    screenshotsFolder: "cypress/videos",
+    configFile: false,
     reporter: "mochawesome",
     reporterOptions: {
       reportDir: "cypress/reports",
-      reportTitle: "E2Etest Test",
-      reportFilename: "E2E_report",
+      reportTitle: "SPAship Manager E2E reports",
+      reportFilename: "index",
       charts: true,
       overwrite: true,
       html: true,
       json: false,
     },
-    env: {
-      host: test_host,
-      username: test_username,
-      passw: test_pass,
-    },
+    env: argv,
   })
   .then((results) => {
     console.log(results);
