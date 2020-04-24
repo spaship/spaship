@@ -1,4 +1,5 @@
 const fsp = require("fs").promises;
+const rimraf = require("rimraf");
 const fs = require("fs");
 const path = require("path");
 const mvdir = require("mvdir");
@@ -68,6 +69,10 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
 
   // write htaccess file
   await common.htaccess.write(tmpDir, spaConfig);
+
+  if (fs.existsSync(destDir)) {
+    await rimraf.sync(destDir);
+  }
 
   await mvdir(tmpDir, destDir);
 }

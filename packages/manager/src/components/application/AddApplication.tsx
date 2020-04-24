@@ -12,8 +12,10 @@ import {
   TextInput,
   Card,
   CardBody,
+  Spinner,
+  FileUpload,
 } from "@patternfly/react-core";
-import { Spinner } from "@patternfly/react-core/dist/js/experimental";
+import FileUploadIcon from "@patternfly/react-icons/dist/js/icons/file-upload-icon";
 import { withRouter } from "react-router";
 import { IApplicationPayload } from "../../models/Application";
 import Page from "../../layout/Page";
@@ -44,8 +46,15 @@ export default withRouter(({ history }) => {
     }
   };
 
-  const handleFileChange = (event: React.FormEvent<HTMLInputElement>) => {
-    const upload = (event.currentTarget.files && event.currentTarget.files[0]) || "";
+  const handleFileChange = (
+    value: string | File,
+    filename: string,
+    event:
+      | React.DragEvent<HTMLElement>
+      | React.ChangeEvent<HTMLTextAreaElement>
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    const upload = value;
     setForm({
       ...form,
       upload,
@@ -133,20 +142,14 @@ export default withRouter(({ history }) => {
               fieldId="upload"
               helperText="Supports uploading of .tar,.tar.bz2,.tar.gz, and.zip."
             >
-              <input
-                onChange={handleFileChange}
-                required
-                type="file"
-                id="upload"
-                name="upload"
-                placeholder="Supports uploading of .tar,.tar.bz2,.tar.gz, and.zip."
-                aria-describedby="upload-helper"
-              />
-              <div>
-                <Button component="label" variant="tertiary" htmlFor={`upload`}>
-                  Choose File
-                </Button>
-              </div>
+              <FileUpload id="upload" value={form.upload} onChange={handleFileChange} hideDefaultPreview>
+                {form.upload && (
+                  <div className="pf-u-m-md">
+                    <FileUploadIcon size="lg" />
+                    {(form.upload as File).size}-byte file named {(form.upload as File).name}
+                  </div>
+                )}
+              </FileUpload>
             </FormGroup>
 
             <ActionGroup>

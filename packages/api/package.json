@@ -43,6 +43,7 @@
     "mvdir": "^1.0.17",
     "nconf": "^0.10.0",
     "pino": "^6.0.0",
+    "rimraf": "^3.0.2",
     "swagger-ui-express": "^4.1.4",
     "uuid": "^7.0.2"
   },

@@ -1,16 +1,6 @@
 import React from "react";
 import { useLocation, useParams } from "react-router-dom";
-import {
-  Button,
-  DataToolbar,
-  DataToolbarGroup,
-  DataToolbarItem,
-  Nav,
-  NavList,
-  NavItem,
-  NavVariants,
-  Tooltip,
-} from "@patternfly/react-core";
+import { Button, Nav, NavList, NavItem, NavVariants, Tooltip } from "@patternfly/react-core";
 import { StyleSheet, css } from "@patternfly/react-styles";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Page from "../../layout/Page";
@@ -28,22 +18,14 @@ export default () => {
   const { applicationName } = useParams();
 
   const titleToolbar = (
-    <DataToolbar id="application-toolbar">
-      <DataToolbarGroup breakpointMods={[{ modifier: "spacer-md", breakpoint: "md" }]}>
-        {/* <DataToolbarItem>
-          <Link to={`/applications/new`}>
-            <Button variant="primary">Deploy</Button>
-          </Link>
-        </DataToolbarItem> */}
-        <DataToolbarItem>
-          <Tooltip content={<div>This feature would be coming soon</div>}>
-            <Button variant="control" title="Coming soon">
-              Purge Cache
-            </Button>
-          </Tooltip>
-        </DataToolbarItem>
-      </DataToolbarGroup>
-    </DataToolbar>
+    <Tooltip content={<div>This feature would be coming soon</div>}>
+      <div>
+        {" "}
+        <Button title="Coming soon" isDisabled>
+          Purge Cache
+        </Button>
+      </div>
+    </Tooltip>
   );
 
   return (
