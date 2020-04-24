@@ -4,7 +4,7 @@
   "description": "e2e test scripts for SPAship",
   "main": "index.js",
   "scripts": {
-    "pretest": "tar czvf ./cypress/fixtures/test-spa.tgz ./cypress/fixtures/test-spa",
+    "pretest": "tar czvf ./cypress/fixtures/test-spa.tgz -C ./cypress/fixtures/test-spa ./",
     "test": "node ./index.js",
     "api-test": "newman run ./cypress/api/collection.json -e ./cypress/api/environment.json --insecure"
   },
