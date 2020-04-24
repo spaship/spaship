@@ -67,7 +67,6 @@ module.exports.deploy = async (req, res, next) => {
     } else {
       await Application.create({ name, path: appPath, ref, userId });
     }
-    console.warn(`Deployed "${name}" to ${appPath}`);
     res.status(201).send({
       name,
       path: appPath,

@@ -44,6 +44,9 @@ describe("Application Controller", () => {
     mockingoose.resetAll();
     jest.clearAllMocks();
     mockfs({
+      "/fake/new-app": {
+        "test.txt": "Hello world",
+      },
       "/fake/test-spa-with-yaml": {
         "index.html": "<!doctype html><html>This is a test spa</html>",
         "spaship.yaml": "name: test-with-yaml\npath: /unit/test/with/yaml\nref: 1.0.0\nsingle: true",
@@ -217,9 +220,10 @@ describe("Application Controller", () => {
     await tar.create(
       {
         gzip: true,
+        cwd: "/fake/test-spa-with-yaml/",
         file: "/fake/test-spa-with-yaml.tgz",
       },
-      ["/fake/test-spa-with-yaml"]
+      ["./"]
     );
 
     expect(fs.existsSync("/fake/test-spa-with-yaml.tgz")).toBe(true);
@@ -249,9 +253,10 @@ describe("Application Controller", () => {
     await tar.create(
       {
         gzip: true,
+        cwd: "/fake/test-spa-without-yaml/",
         file: "/fake/test-spa-without-yaml.tgz",
       },
-      ["/fake/test-spa-without-yaml"]
+      ["./"]
     );
 
     expect(fs.existsSync("/fake/test-spa-without-yaml.tgz")).toBe(true);
@@ -290,5 +295,38 @@ describe("Application Controller", () => {
 
     expect(next).toHaveBeenCalled();
     expect(next).toHaveBeenCalledWith(expect.objectContaining(new DeployError()));
+  });
+
+  it("should redeploy an application success", async () => {
+    expect(fs.existsSync("/fake/webroot/foo")).toBe(true);
+    expect(fs.existsSync("/fake/new-app")).toBe(true);
+
+    await tar.create(
+      {
+        gzip: true,
+        cwd: "/fake/new-app/",
+        file: "/fake/new-app.tgz",
+      },
+      ["./"]
+    );
+
+    const expectData = {
+      name: "foo",
+      path: "/foo",
+      ref: "1.0.2",
+    };
+
+    const req = mockRequest({
+      body: expectData,
+      file: { path: "/fake/new-app.tgz" },
+    });
+    const res = mockResponse();
+    const next = mockNext();
+    await controller.deploy(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.send).toHaveBeenCalledWith(expect.objectContaining(expectData));
+    expect(fs.existsSync("/fake/webroot/foo/index.html")).toBe(false);
+    expect(fs.existsSync("/fake/webroot/foo/test.txt")).toBe(true);
   });
 });

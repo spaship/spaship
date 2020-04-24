@@ -53,8 +53,6 @@ export async function post<T>(url: string, data: object): Promise<T> {
 
 export async function upload<T>(url: string, data: FormData): Promise<T> {
   const headers = await getDefaultHeader(false);
-  console.error("#################");
-  console.error(headers);
   const options: RequestInit = {
     method: "POST",
     headers,
