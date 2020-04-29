@@ -1,3 +1,6 @@
+build/
+.docusaurus/
+
 # e2e
 e2e/cypress/reports/
 e2e/cypress/screenshots/
@@ -11,7 +14,6 @@ e2e/cypress/videos/
 
 ### Eclipse ###
 .metadata
-bin/
 tmp/
 *.tmp
 *.bak
