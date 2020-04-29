@@ -4,8 +4,8 @@ module.exports = {
   url: "https://spaship.com",
   baseUrl: "/",
   favicon: "img/favicon.ico",
-  organizationName: "Red Hat", // Usually your GitHub org/user name.
-  projectName: "spaship/spaship", // Usually your repo name.
+  organizationName: "spaship", // Usually your GitHub org/user name.
+  projectName: "spaship", // Usually your repo name.
   themeConfig: {
     navbar: {
       logo: {
@@ -58,11 +58,7 @@ module.exports = {
             },
             {
               label: "Discord",
-              href: "https://discordapp.com/invite/spaship",
-            },
-            {
-              label: "Twitter",
-              href: "https://twitter.com/spaship",
+              href: "https://discord.gg/QVznWBk",
             },
           ],
         },
