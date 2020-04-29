@@ -31,7 +31,7 @@
     "@types/uuid": "7.0.3",
     "@typescript-eslint/eslint-plugin": "2.30.0",
     "@typescript-eslint/parser": "2.30.0",
-    "keycloak-js": "9.0.3",
+    "keycloak-js": "10.0.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-router-dom": "5.1.2",
