@@ -1,4 +1,9 @@
 {
   "extends": ["config:base", ":semanticCommits"],
-  "schedule": "every weekend"
+  "packageRules": [
+    {
+      "updateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    }
+  ]
 }
