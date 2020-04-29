@@ -27,7 +27,7 @@ module.exports = {
           position: "left",
         },
         {
-          href: "/manager",
+          to: "/manager",
           label: "Login",
           position: "right",
         },

@@ -16,7 +16,7 @@ const features = [
     title: <>Injection</>,
     imageUrl: "img/undraw_spaship_injection.svg",
     description: (
-      <>SPAship provide Server Side Injection. you are easy to inject your site head/header/footer into your SPA</>
+      <>SPAship provide Server Side Injection. Inject your site's head/header/footer into the SPA is more easy to do</>
     ),
   },
   {
