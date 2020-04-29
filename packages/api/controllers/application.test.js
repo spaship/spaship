@@ -207,11 +207,7 @@ describe("Application Controller", () => {
     await controller.delete(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(200);
-
-    // mock-fs has a bug. it not support fs.rmdir with option "recursive"
-    // issue: https://github.com/tschaub/mock-fs/issues/292
-    // the fs.rmdir will only remove empty dir
-    // expect(fs.existsSync("/fake/webroot/foo")).toBe(false);
+    expect(fs.existsSync("/fake/webroot/foo")).toBe(false);
   });
 
   it("should deploy an application with spaship.yaml", async () => {

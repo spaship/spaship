@@ -1,5 +1,4 @@
 const fsp = require("fs").promises;
-const rimraf = require("rimraf");
 const fs = require("fs");
 const path = require("path");
 const mvdir = require("mvdir");
@@ -19,7 +18,7 @@ const isNPMPack = async (dir) => {
     const packageStat = await fsp.lstat(path.join(dir, "package"));
     return packageStat.isDirectory();
   } catch (e) {
-    console.error(e);
+    console.warn("Package directory not found");
   }
   return false;
 };
@@ -46,7 +45,7 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
     spaConfig = await common.config.read(yamlFilePath);
     hasYaml = true;
   } catch (e) {
-    console.warn(e);
+    console.warn("SPAship yaml config not found");
   }
 
   const validation = common.config.validate(spaConfig);
@@ -71,7 +70,7 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
   await common.htaccess.write(tmpDir, spaConfig);
 
   if (fs.existsSync(destDir)) {
-    await rimraf.sync(destDir);
+    await fsp.rmdir(destDir, { recursive: true });
   }
 
   await mvdir(tmpDir, destDir);
