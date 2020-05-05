@@ -146,7 +146,7 @@ envs:
 
 Now when you run `spaship` commands, the `--env` flag is optional. When it's omitted, the default environment will be used.
 
-```bash
+```sh
 spaship deploy MyProject-1.0.0.tgz
 ```
 
@@ -176,7 +176,7 @@ When you run `spaship` commands from within `$HOME/projects/MyProject`, _both_ o
 
 Such as:
 
-```bash
+```sh
 cd $HOME/projects/MyProject
 spaship deploy --env prod MyProject-1.0.0.tgz
 ```
