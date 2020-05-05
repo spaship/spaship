@@ -16,6 +16,12 @@ git@github.com:spaship/api.git
 npm install
 ```
 
+Add Keycloak Public Key ( ZSH || BASH ):
+
+```sh
+echo 'export SPASHIP_AUTH__KEYCLOAK__PUBKEY=<Keycloak Public Key>' >> ~/<.zshenv || .bashprofile>
+```
+
 From here, you can `npm start` to launch the service, or `npm run dev` to launch the service with auto-restart when source files are changed.
 
 ## Testing
