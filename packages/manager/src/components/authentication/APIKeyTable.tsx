@@ -9,7 +9,7 @@ import EmptyNotFound from "../general/EmptyNotFound";
 interface IProps {
   isLoading: boolean;
   apiKeys: IAPIKey[];
-  afterDelete: (label: string) => void;
+  afterDelete: (environment: string, label: string) => void;
 }
 
 export default (props: IProps) => {
