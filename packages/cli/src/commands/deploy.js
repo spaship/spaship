@@ -129,6 +129,6 @@ DeployCommand.flags = assign(
   commonFlags.env
 );
 
-DeployCommand.examples = [`$ npm pack`, `$ spaship deploy your-app-1.0.0.tgz`];
+DeployCommand.examples = [`$ npm pack && spaship deploy your-app-1.0.0.tgz`, `$ spaship deploy`];
 
 module.exports = DeployCommand;
