@@ -8,7 +8,7 @@ const archiver = require("archiver");
  * @param {string} directoryPath - Directory to compress
  * @returns {Promise<string>} - Promise with the path of zip file created
  */
-async function zipDirectory(directoryPath) {
+function zipDirectory(directoryPath) {
   const tempDir = os.tmpdir();
   if (!fs.existsSync(tempDir)) {
     fs.mkdirSync(tempDir);
