@@ -29,6 +29,7 @@
     "@oclif/config": "^1.13.3",
     "@oclif/plugin-help": "^3.0.0",
     "@spaship/common": "^0.10.0",
+    "archiver": "^4.0.1",
     "cosmiconfig": "^6.0.0",
     "execa": "^4.0.0",
     "inquirer": "^7.0.0",

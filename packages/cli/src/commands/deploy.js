@@ -5,6 +5,8 @@ const execa = require("execa");
 const { assign, get } = require("lodash");
 const commonFlags = require("../common/flags");
 const { loadRcFile } = require("../common/spashiprc-loader");
+const { zipDirectory } = require("../common/zip");
+const nodePath = require("path");
 
 function isURL(s) {
   try {
@@ -29,6 +31,7 @@ class DeployCommand extends Command {
     // it could be store in package.json
     const name = yamlConfig ? yamlConfig.name : config.name;
     const path = yamlConfig ? yamlConfig.path : config.path;
+    const buildDir = yamlConfig ? yamlConfig.buildDir : config.buildDir;
 
     if (!name) {
       this.error("Please define your app name in your package.json or use init to create spaship.yaml ");
@@ -71,7 +74,22 @@ class DeployCommand extends Command {
     if (!apikey) {
       this.error(`An API key must be provided, either in your spashiprc file or in a --apikey option.`);
     }
-
+    if (!args.archive && buildDir) {
+      // No archive path specified in the commandline as argument and buildDir is specified in the spaship.yaml
+      const buildDirPath = nodePath.join(process.cwd(), buildDir);
+      this.log("Creating a zip archive...");
+      try {
+        args.archive = await zipDirectory(buildDirPath);
+        this.log("Done creating the archive...");
+      } catch (e) {
+        this.error(e);
+      }
+    } else {
+      // No buildDir is specified in the spaship.yaml
+      this.error(
+        "You should specify the build artifact path as `buildDir` in the spaship.yaml to run `spaship deploy` without the archive path."
+      );
+    }
     this.log(`Deploying SPA to ${flags.env}${envIsURL ? "" : ` (${host})`}`);
 
     try {
@@ -91,8 +109,10 @@ Send an archive containing a SPA to a SPAship host for deployment.  Supports .ta
 DeployCommand.args = [
   {
     name: "archive",
-    required: true,
-    description: "SPA archive file",
+    required: false,
+    default: null,
+    description:
+      "SPA archive file. You can omit this if you specify the build artifact path as `buildDir` in the spaship.yaml file.",
   },
 ];
 
