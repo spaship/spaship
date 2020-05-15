@@ -38,35 +38,39 @@ USAGE
 
 <!-- commands -->
 
-- [`spaship deploy ARCHIVE`](#spaship-deploy-archive)
+- [`spaship deploy [ARCHIVE]`](#spaship-deploy-archive)
 - [`spaship help [COMMAND]`](#spaship-help-command)
 - [`spaship init`](#spaship-init)
 
-## `spaship deploy ARCHIVE`
+## `spaship deploy [ARCHIVE]`
 
 deploy to a SPAship host
 
 ```
 USAGE
-  $ spaship deploy ARCHIVE
+  $ spaship deploy [ARCHIVE]
 
 ARGUMENTS
-  ARCHIVE  SPA archive file
+  ARCHIVE  SPA archive file. You can omit this if you specify the build artifact
+           path as `buildDir` in the spaship.yaml file.
 
 OPTIONS
-  -e, --env=env    [default: default] either the name of a SPAship environment as defined in your .spashiprc.yml file,
-                   or a URL to a SPAship environment
+  -e, --env=env    [default: default] either the name of a SPAship environment
+                   as defined in your .spashiprc.yml file, or a URL to a SPAship
+                   environment
 
-  -r, --ref=ref    [default: undefined] a version tag, commit hash, or branch to identify this release
+  -r, --ref=ref    [default: undefined] a version tag, commit hash, or branch to
+                   identify this release
 
   --apikey=apikey  a SPAship API key
 
 DESCRIPTION
-  Send an archive containing a SPA to a SPAship host for deployment.  Supports .tar.gz/.tgz, .zip, and .tar.bz2.
+  Send an archive containing a SPA to a SPAship host for deployment.  Supports
+  .tar.gz/.tgz, .zip, and .tar.bz2.
 
 EXAMPLES
-  $ npm pack
-  $ spaship deploy your-app-1.0.0.tgz
+  $ npm pack && spaship deploy your-app-1.0.0.tgz
+  $ spaship deploy
 ```
 
 _See code: [src/commands/deploy.js](https://github.com/spaship/spaship/blob/v0.10.0/src/commands/deploy.js)_
