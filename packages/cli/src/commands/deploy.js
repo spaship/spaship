@@ -1,10 +1,12 @@
 const URL = require("url").URL;
 const { Command, flags } = require("@oclif/command");
 const common = require("@spaship/common");
-const execa = require("execa");
 const { assign, get } = require("lodash");
 const commonFlags = require("../common/flags");
 const { loadRcFile } = require("../common/spashiprc-loader");
+const FormData = require("form-data");
+const { request } = require("https");
+const { createReadStream } = require("fs");
 
 function isURL(s) {
   try {
@@ -75,9 +77,38 @@ class DeployCommand extends Command {
     this.log(`Deploying SPA to ${flags.env}${envIsURL ? "" : ` (${host})`}`);
 
     try {
-      const cmd = `curl ${host}${apiPath} -H 'X-API-Key: ${apikey}' -F name=${name} -F path=${path} -F upload=@${args.archive} -F ref=${flags.ref}`;
-      const { stdout } = await execa.command(cmd, { shell: true });
-      this.log(stdout);
+      const response = await new Promise((resolve, reject) => {
+        const form = new FormData();
+        const archiveFileStream = createReadStream(args.archive);
+        form.append("name", name);
+        form.append("path", path);
+        form.append("ref", flags.ref);
+        form.append("upload", archiveFileStream);
+        const requestOptions = {
+          host: new URL(host).host, // Parsing host url to get hostname
+          path: apiPath,
+          rejectUnauthorized: false,
+          method: "POST",
+          headers: {
+            ...form.getHeaders(),
+            "X-API-Key": apikey.toString(),
+          },
+        };
+        const req = request(requestOptions, (res) => {
+          let data = "";
+          res.on("data", (chunk) => {
+            data += chunk;
+          });
+          res.on("end", () => {
+            resolve(data);
+          });
+        });
+        req.on("error", (error) => {
+          reject(error);
+        });
+        form.pipe(req);
+      });
+      this.log(response);
     } catch (e) {
       this.error(e);
     }
