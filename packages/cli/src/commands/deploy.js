@@ -36,6 +36,9 @@ class DeployCommand extends Command {
     if (!path) {
       this.error("Please define your app path in your package.json or use init to create spaship.yaml ");
     }
+    if (!path.startsWith("/")) {
+      this.error("Path should be prefixed with `/`, got: " + path);
+    }
 
     // if --env is a properly formatted URL, use it as the SPAship host, otherwise treat is as the name of a SPAship
     // environment.
