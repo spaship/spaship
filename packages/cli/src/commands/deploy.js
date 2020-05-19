@@ -28,7 +28,7 @@ class DeployCommand extends Command {
     // so read them from spaship.yaml or other config file
     // it could be store in package.json
     const name = yamlConfig ? yamlConfig.name : config.name;
-    const path = yamlConfig ? yamlConfig.path : config.path;
+    let path = yamlConfig ? yamlConfig.path : config.path;
 
     if (!name) {
       this.error("Please define your app name in your package.json or use init to create spaship.yaml ");
@@ -37,7 +37,7 @@ class DeployCommand extends Command {
       this.error("Please define your app path in your package.json or use init to create spaship.yaml ");
     }
     if (!path.startsWith("/")) {
-      this.error("Path should be prefixed with `/`, got: " + path);
+      path = "/" + path;
     }
 
     // if --env is a properly formatted URL, use it as the SPAship host, otherwise treat is as the name of a SPAship
