@@ -37,7 +37,7 @@
     "react-router-dom": "5.2.0",
     "react-scripts": "3.4.1",
     "typescript": "3.9.3",
-    "uuid": "8.0.0"
+    "uuid": "8.1.0"
   },
   "eslintConfig": {
     "extends": "react-app"
