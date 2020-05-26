@@ -10,7 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="SPAship, Shipping your SPA" />
-    <script src="%PUBLIC_URL%/config/manager.js"></script>
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -26,6 +25,15 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>SPAship</title>
+    <script>
+      (function () {
+        const head = document.getElementsByTagName("head")[0];
+        const script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "%PUBLIC_URL%/config/manager.js?timestamp=" + new Date().getTime();
+        document.getElementsByTagName("head")[0].appendChild(script);
+      })();
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
