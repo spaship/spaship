@@ -26,8 +26,20 @@ export default () => {
     setAPIKeys([...apiKeys, newAPIKeys]);
   };
 
-  const afterDelete = (oldLabel: string) => {
-    setAPIKeys(apiKeys.filter((item) => item.label !== oldLabel));
+  /**
+   * After an API Key for an environment is deleted update the API Keys list by deleting the environment entry
+   * from the old key by comparing the Label and Environment. In case there is only one environment within the
+   * API Key item, remove the entire item.
+   **/
+
+  const afterDelete = (oldEnvironment: string, oldLabel: string) => {
+    const updatedAPIKeys = apiKeys.filter((item) => {
+      if (item.label === oldLabel) {
+        item.environments = item.environments.filter((env) => env.name !== oldEnvironment);
+        return item.environments.length ? item : false;
+      } else return item;
+    });
+    setAPIKeys(updatedAPIKeys);
   };
 
   const titleToolbar = (

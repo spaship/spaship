@@ -9,7 +9,7 @@ import config from "../../config";
 interface IProps {
   label: string;
   apiKeyEnvironments: IAPIKeyEnvironment[];
-  afterDelete?: (label: string) => void;
+  afterDelete?: (environment: string, label: string) => void;
 }
 
 export default (props: IProps) => {
@@ -20,7 +20,7 @@ export default (props: IProps) => {
     const environment = config.environments.find((env) => env.name === apiKeyEnvironment.name);
     if (environment) {
       await deleteAPIKey(environment, label);
-      props.afterDelete && props.afterDelete(label);
+      props.afterDelete && props.afterDelete(environment.name, label);
     }
   };
 
@@ -38,7 +38,7 @@ export default (props: IProps) => {
             variant={ButtonVariant.danger}
             onConfirm={() => onClickConfirm(label, apiKeyEnv)}
           >
-            Are you sure delete this api key ?
+            Are you sure you want to delete this API Key?
           </ConfirmButton>
         ),
       },
