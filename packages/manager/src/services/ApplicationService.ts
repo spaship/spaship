@@ -1,6 +1,6 @@
 import { IApplicationResponse, IApplicationPayload, IApplication } from "../models/Application";
 import config, { IEnvironment } from "../config";
-import { get, upload } from "../utils/APIUtil";
+import { get, upload, del } from "../utils/APIUtil";
 
 export const getApplication = async (environment: IEnvironment, name: string) => {
   try {
@@ -86,4 +86,12 @@ export const fetchApplication = async (name: string) => {
   });
 
   return application as IApplication;
+};
+
+export const deleteApplication = async (environment: IEnvironment, name: string) => {
+  try {
+    await del(`${environment.api}/applications/${name}`);
+  } catch (error) {
+    console.error(error);
+  }
 };

@@ -1,10 +1,13 @@
-import React from "react";
-import { useLocation, useParams } from "react-router-dom";
-import { Button, Nav, NavList, NavItem, NavVariants, Tooltip } from "@patternfly/react-core";
+import React, { useState } from "react";
+import { useLocation, useParams, withRouter } from "react-router-dom";
+import { Nav, NavList, NavItem, NavVariants, ButtonVariant } from "@patternfly/react-core";
 import { StyleSheet, css } from "@patternfly/react-styles";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Page from "../../layout/Page";
 import ApplicationDetail from "./ApplicationDetail";
+import ConfirmButton from "../general/ConfirmButton";
+import { deleteApplication } from "../../services/ApplicationService";
+import config, { IEnvironment } from "../../config";
 
 const styles = StyleSheet.create({
   tertiary: {
@@ -13,19 +16,25 @@ const styles = StyleSheet.create({
   },
 });
 
-export default () => {
+export default withRouter(({ history }) => {
   const location = useLocation();
   const { applicationName } = useParams();
+  const [environment] = useState<IEnvironment>(config.environments[0]);
+
+  const onClickConfirm = async () => {
+    await deleteApplication(environment, applicationName);
+    history.push("/applications");
+  };
 
   const titleToolbar = (
-    <Tooltip content={<div>This feature would be coming soon</div>}>
-      <div>
-        {" "}
-        <Button title="Coming soon" isDisabled>
-          Purge Cache
-        </Button>
-      </div>
-    </Tooltip>
+    <ConfirmButton
+      label="Delete"
+      title={`Delete Application "${applicationName}"`}
+      variant={ButtonVariant.danger}
+      onConfirm={() => onClickConfirm()}
+    >
+      Are you sure you want to delete this Application?
+    </ConfirmButton>
   );
 
   return (
@@ -44,4 +53,4 @@ export default () => {
       </Switch>
     </Page>
   );
-};
+});
