@@ -17,7 +17,7 @@ export default (props: IProps) => {
   const [rows, setRows] = useState<IRow[]>([]);
   const columns = [
     "Label",
-    "Expired At",
+    "Expires At",
     {
       title: "Scope",
       cellTransforms: [compoundExpand],
@@ -33,7 +33,7 @@ export default (props: IProps) => {
           isOpen: false,
           cells: [
             { title: apiKey.label, props: { component: "th" } },
-            { title: apiKey.expiredDate || "Never" },
+            { title: apiKey.expiredDate ? new Date(apiKey.expiredDate).toDateString() : "" || "Never" },
             {
               title: apiKey.environments.map(
                 (env, index) =>
