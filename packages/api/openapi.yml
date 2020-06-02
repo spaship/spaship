@@ -12,14 +12,8 @@ info:
     url: https://opensource.org/licenses/MIT
   version: 1.0.0
 servers:
-  - url: https://spaship-api-cpops-dev.ext.us-west.dc.preprod.paas.redhat.com/api/v1
-    description: Development server
-  - url: https://spaship-api-cpops-qa.ext.us-west.dc.preprod.paas.redhat.com/api/v1
-    description: QA server
-  - url: https://spaship-api-cpops-stage.ext.us-west.dc.preprod.paas.redhat.com/api/v1
-    description: Staging server
-  - url: https://spaship-api-cpops-prod.ext.us-west.dc.prod.paas.redhat.com/api/v1
-    description: Production server
+  - url:
+    description: Current server
 tags:
   - name: application
     description: Everything about your SPA
