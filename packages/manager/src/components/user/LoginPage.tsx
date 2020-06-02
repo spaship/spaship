@@ -80,6 +80,11 @@ export default () => {
     keycloak.login();
   };
 
+  if (keycloak.authenticated) {
+    history.push("/applications");
+    return <div />;
+  }
+
   return (
     <Page header={<Header />}>
       <PageSection variant={PageSectionVariants.light} isFilled>
