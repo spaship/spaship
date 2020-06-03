@@ -1,7 +1,6 @@
 const URL = require("url").URL;
 const { Command, flags } = require("@oclif/command");
 const common = require("@spaship/common");
-const execa = require("execa");
 const { assign, get } = require("lodash");
 const fs = require("fs");
 const FormData = require("form-data");
@@ -96,11 +95,13 @@ class DeployCommand extends Command {
       data.append("upload", fs.createReadStream(args.archive));
 
       const response = await DeployService.upload(host + apiPath, data, apikey, (progress) => {
-        if (progress.percent !== 1) {
+        if (progress.percent < 1) {
           const percent = Math.round(progress.percent * 100);
           const takenTime = performance.now() - startTime;
           const speed = prettyBytes(progress.transferred / (takenTime / 1000));
-          spinner.text = `${percent}% Uploading SPA...  ${speed}/s`;
+          spinner.text = `Uploading SPA: ${percent}% (${prettyBytes(progress.transferred)}/${prettyBytes(
+            progress.total
+          )}) | ${speed}/s`;
         } else {
           processTime = performance.now();
           spinner.text = `Processing archive file, This will take few minutes`;

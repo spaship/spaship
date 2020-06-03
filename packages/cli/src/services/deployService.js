@@ -1,29 +1,65 @@
-const got = require("got");
 const https = require("https");
 const pkg = require("../../package.json");
 
-const upload = async (url, data, apiKey, onUploadProgress) => {
-  const options = {
-    agent: {
-      https: new https.Agent({
-        rejectUnauthorized: false,
-      }),
-    },
-    headers: {
-      "user-agent": `@spaship/cli@${pkg.version} (https://github.com/spaship/spaship)`,
-      "x-api-key": apiKey,
-      ...data.getHeaders(),
-    },
-    body: data,
-    responseType: "json",
-  };
+const upload = (url, data, apiKey, onUploadProgress) => {
+  return new Promise((resolve, reject) => {
+    let contentLength = null;
+    let bytes = 0;
 
-  try {
-    const response = await got.post(url, options).on("uploadProgress", onUploadProgress);
-    return response.body;
-  } catch (error) {
-    throw error;
-  }
+    data.getLength((err, length) => {
+      if (!err) contentLength = length;
+    });
+
+    data.on("data", (chunk) => {
+      bytes += chunk.length;
+      if (contentLength != null && bytes <= contentLength) {
+        const progress = {
+          percent: bytes / contentLength,
+          transferred: bytes,
+          total: contentLength,
+        };
+        onUploadProgress(progress);
+      }
+    });
+
+    const options = {
+      method: "POST",
+      rejectUnauthorized: false,
+      headers: {
+        "user-agent": `@spaship/cli@${pkg.version} ${pkg.homepage}`,
+        "x-api-key": apiKey,
+        ...data.getHeaders(),
+      },
+    };
+
+    const req = https.request(url, options, (res) => {
+      let rawData = "";
+
+      res.on("data", (chunk) => {
+        rawData += chunk;
+      });
+
+      res.on("end", () => {
+        try {
+          const parsedData = JSON.parse(rawData);
+
+          if (res.statusCode >= 200 && res.statusCode <= 300) {
+            resolve(parsedData);
+          } else {
+            reject(parsedData);
+          }
+        } catch (e) {
+          reject(e);
+        }
+      });
+
+      req.on("error", (e) => {
+        reject(e);
+      });
+      req.end();
+    });
+
+    data.pipe(req);
+  });
 };
-
 module.exports = { upload };
