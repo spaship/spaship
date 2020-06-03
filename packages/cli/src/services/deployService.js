@@ -22,14 +22,15 @@ const upload = (url, data, apiKey, onUploadProgress) => {
       }
     });
 
+    const defaultHeaders = {
+      "user-agent": `@spaship/cli@${pkg.version} ${pkg.homepage}`,
+      "x-api-key": apiKey,
+    };
+
     const options = {
       method: "POST",
       rejectUnauthorized: false,
-      headers: {
-        "user-agent": `@spaship/cli@${pkg.version} ${pkg.homepage}`,
-        "x-api-key": apiKey,
-        ...data.getHeaders(),
-      },
+      headers: Object.assign({}, defaultHeaders, data.getHeaders()),
     };
 
     const req = https.request(url, options, (res) => {
