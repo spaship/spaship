@@ -66,8 +66,16 @@ async function deploy({ name, spaArchive, appPath, ref } = {}) {
     await fileService.write(yamlFilePath, { ref });
   }
 
-  // write htaccess file
-  await common.htaccess.write(tmpDir, spaConfig);
+  try {
+    const htaccessPath = path.join(tmpDir, ".htaccess");
+    if (!fs.existsSync(htaccessPath)) {
+      await common.htaccess.write(tmpDir, spaConfig);
+    } else {
+      console.info("SPA included an .htaccess file, we will not write one");
+    }
+  } catch (error) {
+    console.error("There was an error writing .htaccess file.", error);
+  }
 
   if (fs.existsSync(destDir)) {
     await fsp.rmdir(destDir, { recursive: true });
