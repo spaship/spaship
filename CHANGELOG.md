@@ -3,6 +3,41 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0](https://github.com/spaship/spaship/compare/v0.10.0...v0.11.0) (2020-06-05)
+
+### Bug Fixes
+
+- **#367:** Fixed multiple minor styling issues across Manager components. ([#368](https://github.com/spaship/spaship/issues/368)) ([2bfcc47](https://github.com/spaship/spaship/commit/2bfcc473174b57d74b2bb2b31993cbf586c7d26b))
+- **#435:** Fixed shortKey display issue post new key creation. ([#438](https://github.com/spaship/spaship/issues/438)) ([34f6b7d](https://github.com/spaship/spaship/commit/34f6b7d1b40f2078a70673e453faf6d496c39c63))
+- **#439:** Fixed API Key deletion behaviour. ([#443](https://github.com/spaship/spaship/issues/443)) ([81f3a42](https://github.com/spaship/spaship/commit/81f3a426474f223faa79292b01e01058bb94a8b8))
+- **#475:** Added path validation before publishing ([#477](https://github.com/spaship/spaship/issues/477)) ([ad81b88](https://github.com/spaship/spaship/commit/ad81b8808ddd759939adf72ebfa3b10ba935ed70)), closes [#475](https://github.com/spaship/spaship/issues/475)
+- **api:** ([#392](https://github.com/spaship/spaship/issues/392)) deploy same path again should overwrite the previous one ([#396](https://github.com/spaship/spaship/issues/396)) ([849a64d](https://github.com/spaship/spaship/commit/849a64d839a0b7949d8d2cbde5e06aa2ec502e26))
+- **api:** [#300](https://github.com/spaship/spaship/issues/300) apiKeys endpoint can not auth by apiKey ([#379](https://github.com/spaship/spaship/issues/379)) ([80c0e8b](https://github.com/spaship/spaship/commit/80c0e8bb23585a1db525bc8bfc4bc4b7602c056e))
+- **api:** [#370](https://github.com/spaship/spaship/issues/370) return error if app's user not match ([#371](https://github.com/spaship/spaship/issues/371)) ([6068c28](https://github.com/spaship/spaship/commit/6068c28765ab95f497b843b4d4fd96f2d92ead09))
+- **api:** avoid overwrite exists .htaccess ([#532](https://github.com/spaship/spaship/issues/532)) ([2491479](https://github.com/spaship/spaship/commit/2491479362215cf0ae3b93fac6a3871daa1729e9))
+- **api:** remove hardcode api host in OpenAPI ([#536](https://github.com/spaship/spaship/issues/536)) ([102983c](https://github.com/spaship/spaship/commit/102983cbb7a407e6f670d95069f688a43d4c8e38))
+- **api:** use fileService to find app by name ([#381](https://github.com/spaship/spaship/issues/381)) ([a0a7776](https://github.com/spaship/spaship/commit/a0a7776a782adb8bed3da57665300ee0c11d14a4))
+- **cli:** undefined req issue ([#546](https://github.com/spaship/spaship/issues/546)) ([99611c9](https://github.com/spaship/spaship/commit/99611c96cacbf7776a51cb11e53c3c59c0e3e7d5))
+- **deps:** pin dependencies ([#423](https://github.com/spaship/spaship/issues/423)) ([a796666](https://github.com/spaship/spaship/commit/a7966668af9a961da4a8af121a4fb7f6b4359fc3))
+- **deps:** update dependency @docusaurus/core to v2.0.0-alpha.55 ([5ac6529](https://github.com/spaship/spaship/commit/5ac652913f43cd2abcabbf94ccb3ab1b4d1e8930))
+- **deps:** update dependency @docusaurus/core to v2.0.0-alpha.56 ([#516](https://github.com/spaship/spaship/issues/516)) ([5c96c7e](https://github.com/spaship/spaship/commit/5c96c7ec11c287916cb42a6217a4a37541c52a8b))
+- **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.55 ([07a1a7b](https://github.com/spaship/spaship/commit/07a1a7b433f9fa88c8b8f88b7a834d7ab36a9db6))
+- **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.56 ([#517](https://github.com/spaship/spaship/issues/517)) ([ec86abf](https://github.com/spaship/spaship/commit/ec86abf7e6fa575b74ce24fd3e610544536bffa6))
+- **deps:** update dependency @oclif/plugin-help to v3 ([#429](https://github.com/spaship/spaship/issues/429)) ([8fac4e7](https://github.com/spaship/spaship/commit/8fac4e7308e1241b801e634f54ecc4b42dabebd5))
+- **deps:** update dependency express-pino-logger to v5 ([#430](https://github.com/spaship/spaship/issues/430)) ([1025d63](https://github.com/spaship/spaship/commit/1025d63be4b9f64c3182f878da286985730ba3c7))
+- **manager:** add timestamp for config script tag to avoid cache issue ([#500](https://github.com/spaship/spaship/issues/500)) ([99d1f62](https://github.com/spaship/spaship/commit/99d1f62cd7b71b8fbc0c448d4e879d013a04e0cf))
+- **manager:** Added SPAship definition & Footer info to SPAship login page. ([#366](https://github.com/spaship/spaship/issues/366)) ([fd8d789](https://github.com/spaship/spaship/commit/fd8d789b5e941faccfa377cdca2f2b4a53b36852)), closes [#365](https://github.com/spaship/spaship/issues/365)
+- **manager:** show path error in environment details ([#386](https://github.com/spaship/spaship/issues/386)) ([4ebc6f5](https://github.com/spaship/spaship/commit/4ebc6f5450779eeaa8fcf16c39fc697b31e93aa6))
+- **manager:** user should not redirect to login page if they already login ([#535](https://github.com/spaship/spaship/issues/535)) ([fd3f7ec](https://github.com/spaship/spaship/commit/fd3f7ec5fe70836a9a1855728bbebffdd58db5e8))
+- **manager:** when apiKey generated without any environment name ([#372](https://github.com/spaship/spaship/issues/372)) ([eea19d5](https://github.com/spaship/spaship/commit/eea19d52b10ed0a31646fdc23245e8d1570c60cf))
+- **router:** [#364](https://github.com/spaship/spaship/issues/364) - redirect root at root path spa ([#369](https://github.com/spaship/spaship/issues/369)) ([af8688c](https://github.com/spaship/spaship/commit/af8688cf3aa9fa96e315083b91690b602b08cf90))
+- **test:** rename init.html to init/index.html ([#482](https://github.com/spaship/spaship/issues/482)) ([22deb49](https://github.com/spaship/spaship/commit/22deb49fb8c8252a62eac79b4bd9429723649a54))
+
+### Features
+
+- **#422:** Prettified Timestamp for APIKeys page. ([#426](https://github.com/spaship/spaship/issues/426)) ([0e8b366](https://github.com/spaship/spaship/commit/0e8b366a3292106303c1be6e2f4070e2d49f8e39)), closes [#422](https://github.com/spaship/spaship/issues/422)
+- **cli:** add deploy progress ([#531](https://github.com/spaship/spaship/issues/531)) ([a17ca6b](https://github.com/spaship/spaship/commit/a17ca6b7a709a8b9a055c8b2660797cccf216de1))
+
 # [0.10.0](https://github.com/spaship/spaship/compare/v0.9.2...v0.10.0) (2020-04-20)
 
 ### Bug Fixes

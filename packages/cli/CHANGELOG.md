@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0](https://github.com/spaship/spaship/compare/v0.10.0...v0.11.0) (2020-06-05)
+
+### Bug Fixes
+
+- **#475:** Added path validation before publishing ([#477](https://github.com/spaship/spaship/issues/477)) ([ad81b88](https://github.com/spaship/spaship/commit/ad81b8808ddd759939adf72ebfa3b10ba935ed70)), closes [#475](https://github.com/spaship/spaship/issues/475)
+- **cli:** undefined req issue ([#546](https://github.com/spaship/spaship/issues/546)) ([99611c9](https://github.com/spaship/spaship/commit/99611c96cacbf7776a51cb11e53c3c59c0e3e7d5))
+- **deps:** update dependency @oclif/plugin-help to v3 ([#429](https://github.com/spaship/spaship/issues/429)) ([8fac4e7](https://github.com/spaship/spaship/commit/8fac4e7308e1241b801e634f54ecc4b42dabebd5))
+
+### Features
+
+- **cli:** add deploy progress ([#531](https://github.com/spaship/spaship/issues/531)) ([a17ca6b](https://github.com/spaship/spaship/commit/a17ca6b7a709a8b9a055c8b2660797cccf216de1))
+
 # [0.10.0](https://github.com/spaship/spaship/compare/v0.9.2...v0.10.0) (2020-04-20)
 
 **Note:** Version bump only for package @spaship/cli
