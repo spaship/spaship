@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.11.1](https://github.com/spaship/spaship/compare/v0.11.0...v0.11.1) (2020-06-05)
+
+### Bug Fixes
+
+- **cli:** form-data was missing ([#547](https://github.com/spaship/spaship/issues/547)) ([1b0bc0b](https://github.com/spaship/spaship/commit/1b0bc0b0cebc5f150deeda35130dab6e79d9b9c0))
+
 # [0.11.0](https://github.com/spaship/spaship/compare/v0.10.0...v0.11.0) (2020-06-05)
 
 ### Bug Fixes
