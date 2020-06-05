@@ -53,11 +53,10 @@ const upload = (url, data, apiKey, onUploadProgress) => {
           reject(e);
         }
       });
+    });
 
-      req.on("error", (e) => {
-        reject(e);
-      });
-      req.end();
+    req.on("error", (e) => {
+      reject(e);
     });
 
     data.pipe(req);
