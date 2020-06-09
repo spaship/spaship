@@ -74,10 +74,10 @@ export default () => {
     keycloak.login();
   };
 
-  // if (keycloak.authenticated) {
-  //   history.push("/applications");
-  //   return <div />;
-  // }
+  if (keycloak.authenticated) {
+    history.push("/applications");
+    return <div />;
+  }
 
   return (
     <Page header={<Header />}>

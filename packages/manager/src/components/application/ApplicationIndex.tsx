@@ -1,17 +1,9 @@
 import React from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { Nav, NavList, NavItem } from "@patternfly/react-core";
-// import { css } from "@patternfly/react-styles";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Page from "../../layout/Page";
 import ApplicationDetail from "./ApplicationDetail";
-
-// const styles = StyleSheet.create({
-//   tertiary: {
-//     width: "100%",
-//     borderBottom: "1px solid #DDDDDD",
-//   },
-// });
 
 export default () => {
   const location = useLocation();
