@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0](https://github.com/spaship/spaship/compare/v0.10.0...v0.11.0) (2020-06-05)
+
+### Bug Fixes
+
+- **deps:** update dependency express-pino-logger to v5 ([#430](https://github.com/spaship/spaship/issues/430)) ([1025d63](https://github.com/spaship/spaship/commit/1025d63be4b9f64c3182f878da286985730ba3c7))
+
 # [0.10.0](https://github.com/spaship/spaship/compare/v0.9.2...v0.10.0) (2020-04-20)
 
 ### Features

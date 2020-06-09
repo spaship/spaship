@@ -36,9 +36,8 @@ export default withRouter(({ history }) => {
       Are you sure you want to delete this Application?
     </ConfirmButton>
   );
-
   return (
-    <Page title={applicationName || ""} titleToolbar={titleToolbar}>
+    <Page title={applicationName || ""}>
       <Nav onSelect={() => {}}>
         <NavList variant={NavVariants.tertiary} className={css(styles.tertiary)}>
           <NavItem isActive={location.pathname.endsWith("details")}>Details</NavItem>
