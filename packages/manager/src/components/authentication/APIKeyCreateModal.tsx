@@ -4,6 +4,7 @@ import {
   Button,
   Checkbox,
   Modal,
+  ModalVariant,
   Form,
   FormGroup,
   TextInput,
@@ -104,7 +105,7 @@ export default (props: IProps) => {
     ));
 
   return (
-    <Modal isLarge isOpen={isOpen} title="Create New API Key" ariaDescribedById="apiKey-generation" onClose={onClose}>
+    <Modal variant={ModalVariant.large} isOpen={isOpen} title="Create New API Key" onClose={onClose}>
       <Form isHorizontal>
         <FormGroup
           label="Label"

@@ -39,7 +39,7 @@ export default () => {
     <Accordion>
       <AccordionItem>
         <AccordionToggle id="userInfo" onClick={onToggle} isExpanded={isExpanded}>
-          <Split gutter="md">
+          <Split hasGutter>
             <SplitItem>
               <Avatar id="user-avatar" src={UserAvatar} alt="Avatar image" />
             </SplitItem>

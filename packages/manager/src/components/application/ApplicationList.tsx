@@ -30,7 +30,7 @@ export default () => {
   };
 
   const titleToolbar = (
-    <Level gutter="md">
+    <Level hasGutter>
       <LevelItem>
         <ApplicationFilter onChange={handleKeywordChange} />
       </LevelItem>
