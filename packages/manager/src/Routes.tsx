@@ -25,7 +25,7 @@ export default () => {
   }
 
   return (
-    <BrowserRouter basename="/manager">
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Switch>
         <Redirect exact path="/" to="/applications" />
         <Redirect exact path="/authentication" to="/authentication/apikeys" />
