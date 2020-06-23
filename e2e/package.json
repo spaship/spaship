@@ -11,7 +11,7 @@
   "author": "Wei Tan <wetan@redhat.com>",
   "license": "ISC",
   "devDependencies": {
-    "cypress": "4.8.0",
+    "cypress": "4.9.0",
     "cypress-file-upload": "4.0.7",
     "cypress-xpath": "1.6.0",
     "mocha": "8.0.1",
