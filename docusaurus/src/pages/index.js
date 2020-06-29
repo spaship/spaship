@@ -44,7 +44,7 @@ function Home() {
   const { siteConfig = {} } = context;
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
+      title={`Deploy, Integrate and Manage Single-Page Apps using ${siteConfig.title}`}
       description="SPAship is an open source platform for deploying, integrating, and managing single-page apps (SPAs)."
     >
       <header className={classnames("hero hero--primary", styles.heroBanner)}>
