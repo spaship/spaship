@@ -43,7 +43,10 @@ function Home() {
   const context = useDocusaurusContext();
   const { siteConfig = {} } = context;
   return (
-    <Layout title={`Hello from ${siteConfig.title}`} description="Description will go into a meta tag in <head />">
+    <Layout
+      title={`Hello from ${siteConfig.title}`}
+      description="SPAship is an open source platform for deploying, integrating, and managing single-page apps (SPAs)."
+    >
       <header className={classnames("hero hero--primary", styles.heroBanner)}>
         <div className="container">
           <p className="hero__title">
