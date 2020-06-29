@@ -26,11 +26,6 @@ module.exports = {
           label: "GitHub",
           position: "left",
         },
-        {
-          to: "/manager",
-          label: "Login",
-          position: "right",
-        },
       ],
     },
     footer: {
