@@ -10,19 +10,17 @@ const features = [
   {
     title: <>Bootstrap</>,
     imageUrl: "img/undraw_spaship_bootstrap.svg",
-    description: <>SPAship could help you bootstrap a SPA very fast</>,
+    description: <>Quickly bootstrap new SPAs using SPAship's simple yet effective Command Line Interface.</>,
   },
   {
     title: <>Injection</>,
     imageUrl: "img/undraw_spaship_injection.svg",
-    description: (
-      <>SPAship provide Server Side Injection. Inject your site's head/header/footer into the SPA is more easy to do</>
-    ),
+    description: <>Easily inject common components into SPAs using SPAship's inbuilt Server Side Injection.</>,
   },
   {
     title: <>Routing & Namespace</>,
     imageUrl: "img/undraw_spaship_namespace.svg",
-    description: <>You won't need ask anyone for help to setup a DNS/F5 rule or other stuff to make your SPA live</>,
+    description: <>Simple & clean route management for your SPAs without the hassle of manual DNS configuration.</>,
   },
 ];
 
@@ -45,7 +43,10 @@ function Home() {
   const context = useDocusaurusContext();
   const { siteConfig = {} } = context;
   return (
-    <Layout title={`Hello from ${siteConfig.title}`} description="Description will go into a meta tag in <head />">
+    <Layout
+      title={`Deploy, Integrate and Manage Single-Page Apps using ${siteConfig.title}`}
+      description="SPAship is an open source platform for deploying, integrating, and managing single-page apps (SPAs)."
+    >
       <header className={classnames("hero hero--primary", styles.heroBanner)}>
         <div className="container">
           <p className="hero__title">
