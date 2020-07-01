@@ -5,18 +5,21 @@ import APIKeyCreateModal from "./APIKeyCreateModal";
 import { Button } from "@patternfly/react-core";
 import { fetchAPIKeys } from "../../services/APIKeyService";
 import { IAPIKey } from "../../models/APIKey";
+import useConfig from "../../hooks/useConfig";
 
 export default () => {
+  const { selected } = useConfig();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [apiKeys, setAPIKeys] = useState<IAPIKey[]>([]);
+  const environments = selected?.environments || [];
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    const keys = await fetchAPIKeys();
+    const keys = await fetchAPIKeys(environments);
     setLoading(false);
     setAPIKeys(keys);
-  }, []);
+  }, [environments]);
 
   useEffect(() => {
     fetchData();

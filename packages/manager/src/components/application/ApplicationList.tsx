@@ -2,28 +2,33 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Button, Level, LevelItem } from "@patternfly/react-core";
 import { Link } from "react-router-dom";
 import Page from "../../layout/Page";
-import config from "../../config";
 import ApplicationFilter from "./ApplicationFilter";
 import ApplicationTable from "./ApplicationTable";
 import { IApplication } from "../../models/Application";
 import { fetchApplications } from "../../services/ApplicationService";
+import useConfig from "../../hooks/useConfig";
 
 export default () => {
   const [applications, setApplications] = useState<IApplication[]>([]);
+
   const [keywords, setKeywords] = useState("");
   const [isLoading, setLoading] = useState(false);
-  const environments = config.environments;
+  const { selected } = useConfig();
+  const environments = selected?.environments;
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (environments) => {
     setLoading(true);
-    const apps = await fetchApplications();
+    console.log("Fetch data....");
+    const apps = await fetchApplications(environments);
     setApplications(apps);
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (environments) {
+      fetchData(environments);
+    }
+  }, [fetchData, environments]);
 
   const handleKeywordChange = (changedKeywords: string) => {
     setKeywords(changedKeywords);
@@ -48,8 +53,8 @@ export default () => {
     <Page title="Applications" titleToolbar={titleToolbar}>
       <ApplicationTable
         isLoading={isLoading}
-        applications={applications.filter((app) => app.path && app.path.indexOf(keywords) !== -1)}
         environments={environments}
+        applications={applications.filter((app) => app.path && app.path.indexOf(keywords) !== -1)}
       />
     </Page>
   );

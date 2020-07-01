@@ -20,7 +20,8 @@ import { withRouter } from "react-router";
 import { IApplicationPayload } from "../../models/Application";
 import Page from "../../layout/Page";
 import { deployApplication } from "../../services/ApplicationService";
-import config, { IEnvironment } from "../../config";
+import { IEnvironment } from "../../config";
+import useConfig from "../../hooks/useConfig";
 
 export default withRouter(({ history }) => {
   const [form, setForm] = useState<IApplicationPayload>({
@@ -29,8 +30,11 @@ export default withRouter(({ history }) => {
     ref: "",
     upload: "",
   });
-  const [environment, setEnvironment] = useState<IEnvironment>(config.environments[0]);
+  const { selected } = useConfig();
+  const [environment, setEnvironment] = useState<IEnvironment>();
   const [isUploading, setUploading] = useState(false);
+
+  const environments = selected?.environments || [];
 
   const handleChange = (value: string, event: React.FormEvent<HTMLInputElement>) => {
     setForm({
@@ -40,7 +44,7 @@ export default withRouter(({ history }) => {
   };
 
   const handleEnvironmentChange = (value: string) => {
-    const match = config.environments.find((env) => env.name === value);
+    const match = environments.find((env) => env.name === value);
     if (match) {
       setEnvironment(match);
     }
@@ -63,11 +67,12 @@ export default withRouter(({ history }) => {
 
   const onSubmit = async () => {
     setUploading(true);
-
-    const application = await deployApplication(environment, form);
-    if (application) {
-      setUploading(false);
-      history.push("/applications");
+    if (environment) {
+      const application = await deployApplication(environment, form);
+      if (application) {
+        setUploading(false);
+        history.push("/applications");
+      }
     }
   };
 
@@ -100,8 +105,8 @@ export default withRouter(({ history }) => {
               />
             </FormGroup>
             <FormGroup label="Environment" isRequired fieldId="environment" helperText="Please provide app name">
-              <FormSelect value={environment.name} onChange={handleEnvironmentChange} aria-label="FormSelect Input">
-                {config.environments.map((env, index) => (
+              <FormSelect value={environment?.name} onChange={handleEnvironmentChange} aria-label="FormSelect Input">
+                {environments.map((env, index) => (
                   <FormSelectOption key={index} value={env.name} label={env.name} />
                 ))}
               </FormSelect>

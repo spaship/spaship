@@ -5,17 +5,8 @@ export interface IEnvironment {
 }
 
 export interface IConfig {
+  name: string;
+  selected?: boolean;
+  isPreset?: boolean;
   environments: IEnvironment[];
-  keycloak: {
-    url: string;
-    realm: string;
-    clientId: string;
-  };
 }
-declare global {
-  interface Window {
-    SPAship: IConfig;
-  }
-}
-
-export default window.SPAship;
