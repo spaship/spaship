@@ -18,7 +18,6 @@ export default () => {
 
   const fetchData = useCallback(async (environments) => {
     setLoading(true);
-    console.log("Fetch data....");
     const apps = await fetchApplications(environments);
     setApplications(apps);
     setLoading(false);

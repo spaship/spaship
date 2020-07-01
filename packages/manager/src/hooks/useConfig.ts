@@ -52,33 +52,6 @@ const useConfig = () => {
 
   const selected = configs.find((conf) => conf.selected === true);
 
-  // useEffect(() => {
-  //   se
-  // }, [selected]);
-
-  // useEffect(() => {
-  //   setConfigs(presets);
-  //   setSelected(undefined);
-  // }, []);
-
-  // const environments = selected?.en
-
-  // const storedConfigs = localStorage.getItem(configsKey);
-  // const selectedConfigName = localStorage.getItem(selectedKey);
-
-  // const configs: IConfig[] = !!storedConfigs ? JSON.parse(storedConfigs) : [...presets];
-
-  // const selectedConfig = useCallback(() => configs.find((conf) => conf.name === selectedConfigName), [
-  //   selectedConfigName,
-  // ]);
-  // const environments = useCallback(() => {
-  //   return selectedConfig()?.environments || [];
-  // }, [selectedConfig]);
-
-  // const setSelectedConfigName = useCallback((configName: string) => {
-  //   localStorage.setItem(selectedKey, configName);
-  // }, []);
-
   return {
     configs,
     selected,

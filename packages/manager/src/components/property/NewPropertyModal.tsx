@@ -32,7 +32,7 @@ export default (props: IProps) => {
       onSubmit(conf);
       setSPAshipConfigs([...configs, conf]);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 

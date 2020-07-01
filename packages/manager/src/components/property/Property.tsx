@@ -32,7 +32,6 @@ export default (props: IProps) => {
   };
 
   const handleRemove = () => {
-    console.log("removed");
     onRemove(config);
   };
   const onToggle = () => {

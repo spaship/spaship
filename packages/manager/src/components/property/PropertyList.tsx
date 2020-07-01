@@ -21,10 +21,7 @@ export default () => {
   };
 
   const handleRemove = (conf: IConfig) => {
-    console.log(conf.name);
     const newConfigs = displayConfigs.filter((c) => c.name !== conf.name);
-    console.log(configs);
-    console.log(newConfigs);
     setSPAshipConfigs(newConfigs);
   };
 
