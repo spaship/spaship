@@ -11,9 +11,10 @@ import {
   InputGroup,
   InputGroupText,
 } from "@patternfly/react-core";
-import config, { IEnvironment } from "../../config";
+import { IEnvironment } from "../../config";
 import { IAPIKey, IAPIKeyPayload, IAPIKeyEnvironment } from "../../models/APIKey";
 import { createMultiAPIKeys } from "../../services/APIKeyService";
+import useConfig from "../../hooks/useConfig";
 
 interface IProps {
   isOpen: boolean;
@@ -23,10 +24,12 @@ interface IProps {
 
 export default (props: IProps) => {
   const { isOpen, onClose } = props;
+  const { selected } = useConfig();
   const [label, setLabel] = useState("");
   const [expiredDate, setExpiredDate] = useState("");
   const [selectedEnvironments, setSelectedEnvironments] = useState<IEnvironment[]>([]);
   const [apiKeyEnvironments, setAPIKeyEnvironments] = useState<IAPIKeyEnvironment[]>([]);
+  const environments = selected?.environments || [];
 
   useEffect(() => {
     setLabel("");
@@ -74,8 +77,6 @@ export default (props: IProps) => {
       }
     }
   };
-
-  const environments = config.environments;
 
   const renderEnvironments = () =>
     environments.map((env) => (

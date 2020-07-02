@@ -5,6 +5,7 @@ import { IAPIKey } from "../../models/APIKey";
 import APIKeySubTable from "./APIKeySubTable";
 import EmptySpinner from "../general/EmptySpinner";
 import EmptyNotFound from "../general/EmptyNotFound";
+import useConfig from "../../hooks/useConfig";
 
 interface IProps {
   isLoading: boolean;
@@ -14,6 +15,8 @@ interface IProps {
 
 export default (props: IProps) => {
   const { isLoading } = props;
+  const { selected } = useConfig();
+  const environments = selected?.environments || [];
   const [rows, setRows] = useState<IRow[]>([]);
   const columns = [
     "Label",
@@ -57,6 +60,7 @@ export default (props: IProps) => {
                 <APIKeySubTable
                   label={apiKey.label}
                   apiKeyEnvironments={apiKey.environments}
+                  environments={environments}
                   afterDelete={props.afterDelete}
                 />
               ) : (
@@ -72,7 +76,7 @@ export default (props: IProps) => {
 
       return allRows;
     },
-    [props.afterDelete]
+    [props.afterDelete, environments]
   );
 
   useEffect(() => {

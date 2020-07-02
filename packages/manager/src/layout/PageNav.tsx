@@ -5,12 +5,16 @@ import { ApplicationsIcon, TopologyIcon, ServerIcon, KeyIcon } from "@patternfly
 import { StyledHeader } from "./Header";
 import UserStatus from "./UserStatus";
 import Logo from "../static/img/logo.svg";
+import Namespace from "./Namespace";
 
 export default () => {
   return (
     <Stack height="100%">
       <StackItem>
         <StyledHeader logo={<Brand src={Logo} alt="SPAship Logo" />} />
+      </StackItem>
+      <StackItem>
+        <Namespace />
       </StackItem>
       <StackItem isFilled>
         <Nav aria-label="Nav" theme="light" variant="default">

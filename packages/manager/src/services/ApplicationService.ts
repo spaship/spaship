@@ -1,5 +1,5 @@
 import { IApplicationResponse, IApplicationPayload, IApplication } from "../models/Application";
-import config, { IEnvironment } from "../config";
+import { IEnvironment } from "../config";
 import { get, upload } from "../utils/APIUtil";
 
 export const getApplication = async (environment: IEnvironment, name: string) => {
@@ -38,9 +38,7 @@ export const deployApplication = async (environment: IEnvironment, payload: IApp
   return null;
 };
 
-export const fetchApplications = async () => {
-  const environments = config.environments;
-
+export const fetchApplications = async (environments: IEnvironment[] = []) => {
   const fetchJobs = environments.map((env) => getApplicationList(env));
   const results = await Promise.all(fetchJobs);
   const applications: IApplication[] = [];
@@ -62,9 +60,7 @@ export const fetchApplications = async () => {
   return applications;
 };
 
-export const fetchApplication = async (name: string) => {
-  const environments = config.environments;
-
+export const fetchApplication = async (name: string, environments: IEnvironment[] = []) => {
   const fetchJobs = environments.map((env) => getApplication(env, name));
   const results = await Promise.all(fetchJobs);
 

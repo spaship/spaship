@@ -1,6 +1,7 @@
 import React from "react";
-import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
+import { Router, Redirect, Route, Switch } from "react-router-dom";
 import { Bullseye } from "@patternfly/react-core";
+import { createBrowserHistory } from "history";
 import ApplicationList from "./components/application/ApplicationList";
 import AddApplication from "./components/application/AddApplication";
 import ApplicationIndex from "./components/application/ApplicationIndex";
@@ -11,6 +12,9 @@ import { useKeycloak } from "@react-keycloak/web";
 import EnvironmentList from "./components/environment/EnvironmentList";
 import DashboardIndex from "./components/dashboard/DashboardIndex";
 import EmptySpinner from "./components/general/EmptySpinner";
+import PropertyList from "./components/property/PropertyList";
+
+const history = createBrowserHistory();
 
 // Wrap everything inside KeycloakProvider
 export default () => {
@@ -25,9 +29,9 @@ export default () => {
   }
 
   return (
-    <BrowserRouter basename={process.env.PUBLIC_URL}>
+    <Router history={history}>
       <Switch>
-        <Redirect exact path="/" to="/applications" />
+        <Route exact path="/" component={PropertyList} />
         <Redirect exact path="/authentication" to="/authentication/apikeys" />
         <Route path="/login" component={LoginPage} />
         <PrivateRoute path="/authentication/apikeys" component={APIKeyList} />
@@ -37,6 +41,6 @@ export default () => {
         <PrivateRoute path="/environments" component={EnvironmentList} />
         <PrivateRoute path="/dashboard" component={DashboardIndex} />
       </Switch>
-    </BrowserRouter>
+    </Router>
   );
 };
