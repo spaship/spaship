@@ -145,7 +145,7 @@ export default (props: IProps) => {
           </Button>
         </ActionGroup>
         {apiKeyEnvironments && apiKeyEnvironments.length > 0 && (
-          <FormGroup label="Your New API Key" fieldId="api-key">
+          <FormGroup label="Your New API Key" fieldId="api-key" helperText="Please Note: You can see the API key only once at the time of creation, so please copy them for your reference.">
             {renderAPIKeys()}
           </FormGroup>
         )}
