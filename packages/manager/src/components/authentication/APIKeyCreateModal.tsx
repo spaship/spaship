@@ -38,6 +38,8 @@ export default (props: IProps) => {
   useEffect(() => {
     setLabel("");
     setExpiredDate("");
+    setLabelValidated("default");
+    setLabelInvalidText("");
     setAPIKeyEnvironments([]);
     setSelectedEnvironments([]);
   }, [isOpen]);
@@ -143,6 +145,7 @@ export default (props: IProps) => {
             id="api-key-label"
             aria-describedby="api-key-label-helper"
             name="api-key-label"
+            autoComplete="off"
             onChange={handleLabelChange}
           />
         </FormGroup>
