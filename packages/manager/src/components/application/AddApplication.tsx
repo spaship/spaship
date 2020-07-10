@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ActionGroup,
   Alert,
@@ -22,6 +22,7 @@ import Page from "../../layout/Page";
 import { deployApplication } from "../../services/ApplicationService";
 import { IEnvironment } from "../../config";
 import useConfig from "../../hooks/useConfig";
+import useNotify from "../../hooks/useNotify";
 
 export default withRouter(({ history }) => {
   const [form, setForm] = useState<IApplicationPayload>({
@@ -34,7 +35,15 @@ export default withRouter(({ history }) => {
   const [environment, setEnvironment] = useState<IEnvironment>();
   const [isUploading, setUploading] = useState(false);
 
+  const { send } = useNotify();
+
   const environments = selected?.environments || [];
+
+  useEffect(() => {
+    if (environments && environments.length > 0) {
+      setEnvironment(environments[0]);
+    }
+  }, [environments]);
 
   const handleChange = (value: string, event: React.FormEvent<HTMLInputElement>) => {
     setForm({
@@ -65,13 +74,25 @@ export default withRouter(({ history }) => {
     });
   };
 
+  const isValid = () => {
+    if (form.name !== "" && environment !== null && form.path !== "" && form.upload !== "") {
+      return true;
+    }
+    return false;
+  };
+
   const onSubmit = async () => {
     setUploading(true);
     if (environment) {
       const application = await deployApplication(environment, form);
       if (application) {
         setUploading(false);
-        history.push("/applications");
+        send("success", "Success", <p>Application created</p>, {
+          autoClose: 3000,
+          onClose: () => {
+            history.push("/applications");
+          },
+        });
       }
     }
   };
@@ -88,7 +109,6 @@ export default withRouter(({ history }) => {
         <a href="https://github.com/spaship/spaship/blob/master/packages/api/README.md"> API </a> documentation for the
         recommended method of deploying your application.
       </Alert>
-
       <Card>
         <CardBody>
           <Form>
@@ -158,7 +178,7 @@ export default withRouter(({ history }) => {
             </FormGroup>
 
             <ActionGroup>
-              <Button variant="primary" onClick={onSubmit} isDisabled={isUploading}>
+              <Button variant="primary" onClick={onSubmit} isDisabled={!isValid() || isUploading}>
                 {isUploading && (
                   <>
                     <Spinner size="md" />
