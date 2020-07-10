@@ -52,7 +52,12 @@ export default () => {
   );
   return (
     <Page title="API Key Management" titleToolbar={titleToolbar}>
-      <APIKeyCreateModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} afterCreated={afterCreated} />
+      <APIKeyCreateModal
+        apiKeys={apiKeys}
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        afterCreated={afterCreated}
+      />
       <APIKeyTable apiKeys={apiKeys} afterDelete={afterDelete} isLoading={isLoading} />
     </Page>
   );
