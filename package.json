@@ -4,7 +4,7 @@
   "version": "0.3.3",
   "private": true,
   "devDependencies": {
-    "codecov": "3.7.0",
+    "codecov": "3.7.1",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.11.0",
     "eslint-plugin-prettier": "3.1.4",
