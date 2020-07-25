@@ -1,4 +1,4 @@
-// Read a spaship.yaml file
+// Read a spaship.yaml file and returns raw contents
 const fsp = require("fs").promises;
 
 async function readRaw(filepath) {
