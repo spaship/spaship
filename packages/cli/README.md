@@ -69,8 +69,8 @@ DESCRIPTION
   .tar.gz/.tgz, .zip, and .tar.bz2.
 
 EXAMPLES
-  $ npm pack && spaship deploy your-app-1.0.0.tgz
-  $ spaship deploy
+  $ npm pack && spaship deploy your-app-1.0.0.tgz # deploying an archive created with npm pack
+  $ spaship deploy # deploying a buildDir directory
 ```
 
 _See code: [src/commands/deploy.js](https://github.com/spaship/spaship/blob/v0.10.0/src/commands/deploy.js)_

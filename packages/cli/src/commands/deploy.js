@@ -77,9 +77,10 @@ class DeployCommand extends Command {
     if (!args.archive && buildDir) {
       // No archive path specified in the commandline as argument and buildDir is specified in the spaship.yaml
       const buildDirPath = nodePath.join(process.cwd(), buildDir);
+      const rawSpashipYml = await common.config.readRaw("spaship.yaml");
       this.log("Creating a zip archive...");
       try {
-        args.archive = await zipDirectory(buildDirPath);
+        args.archive = await zipDirectory(buildDirPath, rawSpashipYml);
         this.log("Done creating the archive...");
       } catch (e) {
         this.error(e);
@@ -129,6 +130,9 @@ DeployCommand.flags = assign(
   commonFlags.env
 );
 
-DeployCommand.examples = [`$ npm pack && spaship deploy your-app-1.0.0.tgz`, `$ spaship deploy`];
+DeployCommand.examples = [
+  `$ npm pack && spaship deploy your-app-1.0.0.tgz # deploying an archive created with npm pack`,
+  `$ spaship deploy # deploying a buildDir directory`,
+];
 
 module.exports = DeployCommand;
