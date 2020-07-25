@@ -27,7 +27,16 @@ app
   .use(responseWrapper())
   .get("/liveness", liveness)
   .get("/readiness", readiness)
-  .use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+  .use(
+    "/api-docs",
+    (req, res, next) => {
+      swaggerDocument.servers[0].url = `${req.get("host")}/api/v1`;
+      req.swaggerDoc = swaggerDocument;
+      next();
+    },
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerDocument)
+  )
   .use("/api", authentication(), routes)
   .use(errorHandler());
 

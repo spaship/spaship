@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0](https://github.com/spaship/spaship/compare/v0.10.0...v0.11.0) (2020-06-05)
+
+### Bug Fixes
+
+- **api:** ([#392](https://github.com/spaship/spaship/issues/392)) deploy same path again should overwrite the previous one ([#396](https://github.com/spaship/spaship/issues/396)) ([849a64d](https://github.com/spaship/spaship/commit/849a64d839a0b7949d8d2cbde5e06aa2ec502e26))
+- **api:** [#300](https://github.com/spaship/spaship/issues/300) apiKeys endpoint can not auth by apiKey ([#379](https://github.com/spaship/spaship/issues/379)) ([80c0e8b](https://github.com/spaship/spaship/commit/80c0e8bb23585a1db525bc8bfc4bc4b7602c056e))
+- **api:** [#370](https://github.com/spaship/spaship/issues/370) return error if app's user not match ([#371](https://github.com/spaship/spaship/issues/371)) ([6068c28](https://github.com/spaship/spaship/commit/6068c28765ab95f497b843b4d4fd96f2d92ead09))
+- **api:** avoid overwrite exists .htaccess ([#532](https://github.com/spaship/spaship/issues/532)) ([2491479](https://github.com/spaship/spaship/commit/2491479362215cf0ae3b93fac6a3871daa1729e9))
+- **api:** remove hardcode api host in OpenAPI ([#536](https://github.com/spaship/spaship/issues/536)) ([102983c](https://github.com/spaship/spaship/commit/102983cbb7a407e6f670d95069f688a43d4c8e38))
+- **api:** use fileService to find app by name ([#381](https://github.com/spaship/spaship/issues/381)) ([a0a7776](https://github.com/spaship/spaship/commit/a0a7776a782adb8bed3da57665300ee0c11d14a4))
+- **deps:** update dependency express-pino-logger to v5 ([#430](https://github.com/spaship/spaship/issues/430)) ([1025d63](https://github.com/spaship/spaship/commit/1025d63be4b9f64c3182f878da286985730ba3c7))
+
 # [0.10.0](https://github.com/spaship/spaship/compare/v0.9.2...v0.10.0) (2020-04-20)
 
 ### Bug Fixes

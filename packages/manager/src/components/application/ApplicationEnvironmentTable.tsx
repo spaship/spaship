@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, TableHeader, TableBody, IRow } from "@patternfly/react-table";
 import { IApplication } from "../../models/Application";
-import config from "../../config";
+import useConfig from "../../hooks/useConfig";
 
 interface IProps {
   application: IApplication;
@@ -10,9 +10,11 @@ export default (props: IProps) => {
   const { application } = props;
   const columns: string[] = ["Name", "Url", "Version", "Update"];
   const [rows, setRows] = useState<IRow[]>([]);
+  const { selected } = useConfig();
+  const environments = selected?.environments || [];
   useEffect(() => {
     setRows(
-      config.environments.map((env) => {
+      environments.map((env) => {
         const applicationEnvironment = application.environments.find((appEnv) => appEnv.name === env.name);
         if (applicationEnvironment) {
           return {
@@ -35,7 +37,7 @@ export default (props: IProps) => {
         };
       })
     );
-  }, [application]);
+  }, [application, environments]);
 
   return (
     <Table cells={columns} rows={rows} aria-label="Application Environment List">

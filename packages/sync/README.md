@@ -4,14 +4,14 @@ The sync service of SPAship
 
 ## Global install
 
-```bash
+```sh
 npm install -g @spaship/sync
 spaship-sync
 ```
 
 ## Hacking
 
-```bash
+```sh
 git@github.com:spaship/sync.git
 npm install
 ```

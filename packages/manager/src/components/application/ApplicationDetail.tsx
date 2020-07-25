@@ -21,7 +21,7 @@ export default () => {
   }, [fetchData]);
 
   return (
-    <Stack gutter="md">
+    <Stack hasGutter>
       <StackItem>
         <PrimaryDetails application={application} />
       </StackItem>

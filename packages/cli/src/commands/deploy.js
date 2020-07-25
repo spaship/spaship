@@ -1,8 +1,13 @@
 const URL = require("url").URL;
 const { Command, flags } = require("@oclif/command");
 const common = require("@spaship/common");
-const execa = require("execa");
 const { assign, get } = require("lodash");
+const fs = require("fs");
+const FormData = require("form-data");
+const ora = require("ora");
+const { performance } = require("perf_hooks");
+const prettyBytes = require("pretty-bytes");
+const DeployService = require("../services/deployService");
 const commonFlags = require("../common/flags");
 const { loadRcFile } = require("../common/spashiprc-loader");
 const { zipDirectory } = require("../common/zip");
@@ -30,7 +35,7 @@ class DeployCommand extends Command {
     // so read them from spaship.yaml or other config file
     // it could be store in package.json
     const name = yamlConfig ? yamlConfig.name : config.name;
-    const path = yamlConfig ? yamlConfig.path : config.path;
+    let path = yamlConfig ? yamlConfig.path : config.path;
     const buildDir = yamlConfig ? yamlConfig.buildDir : config.buildDir;
 
     if (!name) {
@@ -38,6 +43,9 @@ class DeployCommand extends Command {
     }
     if (!path) {
       this.error("Please define your app path in your package.json or use init to create spaship.yaml ");
+    }
+    if (!path.startsWith("/")) {
+      path = "/" + path;
     }
 
     // if --env is a properly formatted URL, use it as the SPAship host, otherwise treat is as the name of a SPAship
@@ -74,6 +82,7 @@ class DeployCommand extends Command {
     if (!apikey) {
       this.error(`An API key must be provided, either in your spashiprc file or in a --apikey option.`);
     }
+
     if (!args.archive && buildDir) {
       // No archive path specified in the commandline as argument and buildDir is specified in the spaship.yaml
       const buildDirPath = nodePath.join(process.cwd(), buildDir);
@@ -91,14 +100,42 @@ class DeployCommand extends Command {
         "You should specify the build artifact path as `buildDir` in the spaship.yaml to run `spaship deploy` without the archive path."
       );
     }
+    const spinner = ora(`Start deploying SPA`);
     this.log(`Deploying SPA to ${flags.env}${envIsURL ? "" : ` (${host})`}`);
 
     try {
-      const cmd = `curl ${host}${apiPath} -H 'X-API-Key: ${apikey}' -F name=${name} -F path=${path} -F upload=@${args.archive} -F ref=${flags.ref}`;
-      const { stdout } = await execa.command(cmd, { shell: true });
-      this.log(stdout);
+      spinner.start();
+      const startTime = performance.now();
+      let processTime;
+
+      const data = new FormData();
+      data.append("name", name);
+      data.append("path", path);
+      data.append("ref", flags.ref);
+      data.append("upload", fs.createReadStream(args.archive));
+
+      const response = await DeployService.upload(host + apiPath, data, apikey, (progress) => {
+        if (progress.percent < 1) {
+          const percent = Math.round(progress.percent * 100);
+          const takenTime = performance.now() - startTime;
+          const speed = prettyBytes(progress.transferred / (takenTime / 1000));
+          spinner.text = `Uploading SPA: ${percent}% (${prettyBytes(progress.transferred)}/${prettyBytes(
+            progress.total
+          )}) | ${speed}/s`;
+        } else {
+          processTime = performance.now();
+          spinner.text = `Processing archive file, This will take few minutes`;
+        }
+      });
+      const endTime = performance.now();
+      spinner.succeed(`The file ${args.archive} deployed successfully !`);
+      this.log(`Upload file tooks ${Math.round((processTime - startTime) / 1000)} seconds`);
+      this.log(`Process file tooks ${Math.round((endTime - processTime) / 1000)} seconds`);
+      this.log(`Total: ${Math.round((endTime - startTime) / 1000)} seconds`);
+      this.log(response);
     } catch (e) {
-      this.error(e);
+      spinner.fail(e.message);
+      this.error(e.message);
     }
   }
 }

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Modal, ButtonVariant } from "@patternfly/react-core";
+import { Button, Modal, ButtonVariant, ModalVariant } from "@patternfly/react-core";
 interface IProps {
   title: string;
   label: string;
@@ -28,7 +28,7 @@ export default (props: IProps) => {
         {label}
       </Button>
       <Modal
-        isSmall
+        variant={ModalVariant.small}
         title={title}
         isOpen={isOpen}
         onClose={() => setOpen(false)}

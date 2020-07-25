@@ -4,23 +4,24 @@ import { Table, TableHeader, TableBody, IRow } from "@patternfly/react-table";
 import { IAPIKeyEnvironment } from "../../models/APIKey";
 import ConfirmButton from "../general/ConfirmButton";
 import { deleteAPIKey } from "../../services/APIKeyService";
-import config from "../../config";
+import { IEnvironment } from "../../config";
 
 interface IProps {
   label: string;
+  environments: IEnvironment[];
   apiKeyEnvironments: IAPIKeyEnvironment[];
-  afterDelete?: (label: string) => void;
+  afterDelete?: (environment: string, label: string) => void;
 }
 
 export default (props: IProps) => {
-  const { label, apiKeyEnvironments } = props;
+  const { label, apiKeyEnvironments, environments } = props;
   const columns = ["Environment", "Short Key", "Created At", "Actions"];
 
   const onClickConfirm = async (label: string, apiKeyEnvironment: IAPIKeyEnvironment) => {
-    const environment = config.environments.find((env) => env.name === apiKeyEnvironment.name);
+    const environment = environments.find((env) => env.name === apiKeyEnvironment.name);
     if (environment) {
       await deleteAPIKey(environment, label);
-      props.afterDelete && props.afterDelete(label);
+      props.afterDelete && props.afterDelete(environment.name, label);
     }
   };
 
@@ -38,7 +39,7 @@ export default (props: IProps) => {
             variant={ButtonVariant.danger}
             onConfirm={() => onClickConfirm(label, apiKeyEnv)}
           >
-            Are you sure delete this api key ?
+            Are you sure you want to delete this API Key?
           </ConfirmButton>
         ),
       },

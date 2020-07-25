@@ -1,7 +1,7 @@
 {
   "name": "@spaship/common",
   "description": "A set of common utilities used by other SPAship components.",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "author": "mclayton@redhat.com",
   "homepage": "https://github.com/spaship/spaship/tree/master/packages/common#readme",
   "bugs": "https://github.com/spaship/spaship/issues",
@@ -30,6 +30,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "pino-pretty": "4.0.0"
+    "pino-pretty": "4.1.0"
   }
 }

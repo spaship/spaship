@@ -4,14 +4,14 @@ REST API for deploying SPAs to the SPAship platform.
 
 ## Global install
 
-```bash
+```sh
 npm install -g @spaship/api
 spaship-api
 ```
 
 ## Hacking
 
-```bash
+```sh
 git@github.com:spaship/api.git
 npm install
 ```
@@ -70,7 +70,7 @@ Each deployed SPA gets a hidden directory inside `webroot` which houses two file
 
 For example, a SPA deployed with name "My App", path `/my-app`, and ref `v1.0.0` would result in a webroot that looks like this:
 
-```bash
+```sh
 www
 ├── .my-app
 │   ├── name
@@ -87,7 +87,7 @@ Deploy a SPA to SPAship. A very simple Web UI is provided, or the deployment can
 
 #### With cURL
 
-```bash
+```sh
 NAME="My Awesome Application"
 SPA_PATH="/my-app"
 REF="v1.0.0"
@@ -134,7 +134,7 @@ A few notes about the response.
 
 During development, this repo includes a handy script (`npm run get-pubkey`) for downloading your Keycloak server's public key. It accepts the same `auth:keycloak:url` and `auth:keycloak:realm` options as the API itself. You can run it as follows:
 
-```bash
+```sh
 npm run get-pubkey -- --auth:keycloak:url https://auth.spaship.io --auth:keycloak:realm SPAshipUsers
 ```
 

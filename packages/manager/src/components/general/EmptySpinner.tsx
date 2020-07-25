@@ -13,7 +13,9 @@ export default () => {
   return (
     <EmptyState>
       <EmptyStateIcon variant="container" component={Spinner} />
-      <Title size="lg">Loading</Title>
+      <Title size="lg" headingLevel="h1">
+        Loading
+      </Title>
     </EmptyState>
   );
 };

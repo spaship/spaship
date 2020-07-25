@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0](https://github.com/spaship/spaship/compare/v0.10.0...v0.11.0) (2020-06-05)
+
+### Bug Fixes
+
+- **#367:** Fixed multiple minor styling issues across Manager components. ([#368](https://github.com/spaship/spaship/issues/368)) ([2bfcc47](https://github.com/spaship/spaship/commit/2bfcc473174b57d74b2bb2b31993cbf586c7d26b))
+- **#435:** Fixed shortKey display issue post new key creation. ([#438](https://github.com/spaship/spaship/issues/438)) ([34f6b7d](https://github.com/spaship/spaship/commit/34f6b7d1b40f2078a70673e453faf6d496c39c63))
+- **#439:** Fixed API Key deletion behaviour. ([#443](https://github.com/spaship/spaship/issues/443)) ([81f3a42](https://github.com/spaship/spaship/commit/81f3a426474f223faa79292b01e01058bb94a8b8))
+- **api:** ([#392](https://github.com/spaship/spaship/issues/392)) deploy same path again should overwrite the previous one ([#396](https://github.com/spaship/spaship/issues/396)) ([849a64d](https://github.com/spaship/spaship/commit/849a64d839a0b7949d8d2cbde5e06aa2ec502e26))
+- **manager:** add timestamp for config script tag to avoid cache issue ([#500](https://github.com/spaship/spaship/issues/500)) ([99d1f62](https://github.com/spaship/spaship/commit/99d1f62cd7b71b8fbc0c448d4e879d013a04e0cf))
+- **manager:** Added SPAship definition & Footer info to SPAship login page. ([#366](https://github.com/spaship/spaship/issues/366)) ([fd8d789](https://github.com/spaship/spaship/commit/fd8d789b5e941faccfa377cdca2f2b4a53b36852)), closes [#365](https://github.com/spaship/spaship/issues/365)
+- **manager:** show path error in environment details ([#386](https://github.com/spaship/spaship/issues/386)) ([4ebc6f5](https://github.com/spaship/spaship/commit/4ebc6f5450779eeaa8fcf16c39fc697b31e93aa6))
+- **manager:** user should not redirect to login page if they already login ([#535](https://github.com/spaship/spaship/issues/535)) ([fd3f7ec](https://github.com/spaship/spaship/commit/fd3f7ec5fe70836a9a1855728bbebffdd58db5e8))
+- **manager:** when apiKey generated without any environment name ([#372](https://github.com/spaship/spaship/issues/372)) ([eea19d5](https://github.com/spaship/spaship/commit/eea19d52b10ed0a31646fdc23245e8d1570c60cf))
+
+### Features
+
+- **#422:** Prettified Timestamp for APIKeys page. ([#426](https://github.com/spaship/spaship/issues/426)) ([0e8b366](https://github.com/spaship/spaship/commit/0e8b366a3292106303c1be6e2f4070e2d49f8e39)), closes [#422](https://github.com/spaship/spaship/issues/422)
+
 # [0.10.0](https://github.com/spaship/spaship/compare/v0.9.2...v0.10.0) (2020-04-20)
 
 ### Bug Fixes

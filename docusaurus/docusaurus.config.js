@@ -1,11 +1,11 @@
 module.exports = {
   title: "SPAship",
   tagline: "SPAship is an open source platform for deploying, integrating, and managing single-page apps (SPAs).",
-  url: "https://spaship.com",
+  url: "https://spaship.github.io",
   baseUrl: "/",
   favicon: "img/favicon.ico",
   organizationName: "spaship", // Usually your GitHub org/user name.
-  projectName: "spaship", // Usually your repo name.
+  projectName: "spaship.github.io", // Usually your repo name.
   themeConfig: {
     navbar: {
       logo: {
@@ -26,11 +26,6 @@ module.exports = {
           label: "GitHub",
           position: "left",
         },
-        {
-          to: "/manager",
-          label: "Login",
-          position: "right",
-        },
       ],
     },
     footer: {
@@ -44,7 +39,7 @@ module.exports = {
               to: "docs/introduction",
             },
             {
-              label: "Getting Start",
+              label: "Getting Started",
               to: "docs/installation",
             },
           ],

@@ -4,35 +4,59 @@ import {
   Button,
   Checkbox,
   Modal,
+  ModalVariant,
   Form,
   FormGroup,
   TextInput,
   InputGroup,
   InputGroupText,
 } from "@patternfly/react-core";
-import config, { IEnvironment } from "../../config";
+import { ExclamationCircleIcon } from "@patternfly/react-icons";
+import { IEnvironment } from "../../config";
 import { IAPIKey, IAPIKeyPayload, IAPIKeyEnvironment } from "../../models/APIKey";
 import { createMultiAPIKeys } from "../../services/APIKeyService";
+import useConfig from "../../hooks/useConfig";
 
 interface IProps {
+  apiKeys: IAPIKey[];
   isOpen: boolean;
   onClose: () => void;
   afterCreated?: (apiKey: IAPIKey) => void;
 }
 
 export default (props: IProps) => {
-  const { isOpen, onClose } = props;
+  const { apiKeys, isOpen, onClose } = props;
+  const { selected } = useConfig();
   const [label, setLabel] = useState("");
   const [expiredDate, setExpiredDate] = useState("");
+  const [isLabelValidated, setLabelValidated] = useState<"default" | "success" | "error">("default");
+  const [labelInvalidText, setLabelInvalidText] = useState("");
   const [selectedEnvironments, setSelectedEnvironments] = useState<IEnvironment[]>([]);
   const [apiKeyEnvironments, setAPIKeyEnvironments] = useState<IAPIKeyEnvironment[]>([]);
+  const environments = selected?.environments || [];
 
   useEffect(() => {
     setLabel("");
     setExpiredDate("");
+    setLabelValidated("default");
+    setLabelInvalidText("");
     setAPIKeyEnvironments([]);
     setSelectedEnvironments([]);
   }, [isOpen]);
+
+  const handleLabelChange = (value: string) => {
+    setLabel(value);
+    if (!value || value.trim().length === 0) {
+      setLabelValidated("error");
+      setLabelInvalidText("Label is required");
+    } else if (apiKeys.find((apiKey) => apiKey.label === value)) {
+      setLabelValidated("error");
+      setLabelInvalidText("Duplicate Label");
+    } else {
+      setLabelValidated("success");
+      setLabelInvalidText("");
+    }
+  };
 
   const onSubmit = async () => {
     const payload: IAPIKeyPayload = {
@@ -49,7 +73,7 @@ export default (props: IProps) => {
   };
 
   const isValid = () => {
-    if (label && label.trim().length > 0 && selectedEnvironments.length > 0 && apiKeyEnvironments.length === 0) {
+    if (selectedEnvironments.length > 0 && isLabelValidated === "success") {
       return true;
     }
     return false;
@@ -73,8 +97,6 @@ export default (props: IProps) => {
       }
     }
   };
-
-  const environments = config.environments;
 
   const renderEnvironments = () =>
     environments.map((env) => (
@@ -104,22 +126,27 @@ export default (props: IProps) => {
     ));
 
   return (
-    <Modal isLarge isOpen={isOpen} title="Create New API Key" ariaDescribedById="apiKey-generation" onClose={onClose}>
+    <Modal variant={ModalVariant.large} isOpen={isOpen} title="Create New API Key" onClose={onClose}>
       <Form isHorizontal>
         <FormGroup
           label="Label"
           isRequired
           fieldId="api-key-label"
+          validated={isLabelValidated}
+          helperTextInvalid={labelInvalidText}
+          helperTextInvalidIcon={<ExclamationCircleIcon />}
           helperText="Pick a label for the API Key, and we'll give you a unique personal access token."
         >
           <TextInput
             value={label}
             isRequired
+            validated={isLabelValidated}
             type="text"
             id="api-key-label"
             aria-describedby="api-key-label-helper"
             name="api-key-label"
-            onChange={(value) => setLabel(value)}
+            autoComplete="off"
+            onChange={handleLabelChange}
           />
         </FormGroup>
         <FormGroup label="Expires at" fieldId="api-key-expired">
@@ -133,7 +160,7 @@ export default (props: IProps) => {
             onChange={(value) => setExpiredDate(value)}
           />
         </FormGroup>
-        <FormGroup label="Environments" fieldId="api-key-scope">
+        <FormGroup label="Environments" fieldId="api-key-scope" isRequired>
           {renderEnvironments()}
         </FormGroup>
 
@@ -143,7 +170,11 @@ export default (props: IProps) => {
           </Button>
         </ActionGroup>
         {apiKeyEnvironments && apiKeyEnvironments.length > 0 && (
-          <FormGroup label="Your New API Key" fieldId="api-key">
+          <FormGroup
+            label="Your New API Key"
+            fieldId="api-key"
+            helperText="Please Note: You can see the API key only once at the time of creation, so please copy them for your reference."
+          >
             {renderAPIKeys()}
           </FormGroup>
         )}

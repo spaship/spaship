@@ -4,23 +4,27 @@ import { Table, TableHeader, TableBody, IRow, compoundExpand, IRowCell, ICell } 
 import { Link } from "react-router-dom";
 import { IApplication } from "../../models/Application";
 import ApplicationEnvironmentColumn from "./ApplicationEnvironmentColumn";
-import { IEnvironment } from "../../config";
 import EmptySpinner from "../general/EmptySpinner";
 import EmptyNotFound from "../general/EmptyNotFound";
+import { IEnvironment } from "../../config";
 
 interface IProps {
   isLoading: boolean;
-  environments: IEnvironment[];
+  environments?: IEnvironment[];
   applications: IApplication[];
 }
 
 const perPages = [10, 20, 50, 100];
 
 export default (props: IProps) => {
-  const { applications, environments, isLoading } = props;
+  const { applications, isLoading, environments } = props;
   const [rows, setRows] = useState<IRow[]>([]);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(perPages[0]);
+
+  const envs = environments || [];
+
+  const environmentNames = envs.map((env) => ({ title: env.name, cellTransforms: [compoundExpand] }));
 
   const columns: ICell[] = [
     {
@@ -29,7 +33,7 @@ export default (props: IProps) => {
     {
       title: "Path",
     },
-  ].concat(environments.map((env) => ({ title: env.name, cellTransforms: [compoundExpand] })));
+  ].concat(environmentNames);
 
   const applicationsToRows = useCallback(
     (apps: IApplication[]) => {
@@ -40,13 +44,13 @@ export default (props: IProps) => {
           },
           app.path,
         ].concat(
-          environments.map((env) => ({
+          envs.map((env) => ({
             title: <ApplicationEnvironmentColumn application={app} environment={env} />,
           }))
         ),
       }));
     },
-    [environments]
+    [envs]
   );
 
   useEffect(() => {

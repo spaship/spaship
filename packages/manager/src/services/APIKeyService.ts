@@ -1,4 +1,4 @@
-import config, { IEnvironment } from "../config";
+import { IEnvironment } from "../config";
 import { get, post, del } from "../utils/APIUtil";
 import { IAPIKeyPayload, IAPIKeyResponse, IAPIKey } from "../models/APIKey";
 
@@ -36,7 +36,7 @@ export const createMultiAPIKeys = async (environments: IEnvironment[], payload: 
       apiKey.environments?.push({
         name: env.name,
         key: envKey.key,
-        shortKey: envKey.key,
+        shortKey: envKey.shortKey,
         createdAt: envKey.createdAt,
       });
     }
@@ -53,9 +53,7 @@ export const deleteAPIKey = async (environment: IEnvironment, label: string) => 
   }
 };
 
-export const fetchAPIKeys = async () => {
-  const environments = config.environments;
-
+export const fetchAPIKeys = async (environments: IEnvironment[] = []) => {
   const fetchJobs = environments.map((env) => getAPIKeys(env));
   const results = await Promise.all(fetchJobs);
 
