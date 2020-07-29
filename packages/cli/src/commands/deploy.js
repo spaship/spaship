@@ -10,6 +10,8 @@ const prettyBytes = require("pretty-bytes");
 const DeployService = require("../services/deployService");
 const commonFlags = require("../common/flags");
 const { loadRcFile } = require("../common/spashiprc-loader");
+const { zipDirectory } = require("../common/zip");
+const nodePath = require("path");
 
 function isURL(s) {
   try {
@@ -34,6 +36,7 @@ class DeployCommand extends Command {
     // it could be store in package.json
     const name = yamlConfig ? yamlConfig.name : config.name;
     let path = yamlConfig ? yamlConfig.path : config.path;
+    const buildDir = yamlConfig ? yamlConfig.buildDir : config.buildDir;
 
     if (!name) {
       this.error("Please define your app name in your package.json or use init to create spaship.yaml ");
@@ -80,6 +83,23 @@ class DeployCommand extends Command {
       this.error(`An API key must be provided, either in your spashiprc file or in a --apikey option.`);
     }
 
+    if (!args.archive && buildDir) {
+      // No archive path specified in the commandline as argument and buildDir is specified in the spaship.yaml
+      const buildDirPath = nodePath.join(process.cwd(), buildDir);
+      const rawSpashipYml = await common.config.readRaw("spaship.yaml");
+      this.log("Creating a zip archive...");
+      try {
+        args.archive = await zipDirectory(buildDirPath, rawSpashipYml);
+        this.log("Done creating the archive...");
+      } catch (e) {
+        this.error(e);
+      }
+    } else {
+      // No buildDir is specified in the spaship.yaml
+      this.error(
+        "You should specify the build artifact path as `buildDir` in the spaship.yaml to run `spaship deploy` without the archive path."
+      );
+    }
     const spinner = ora(`Start deploying SPA`);
     this.log(`Deploying SPA to ${flags.env}${envIsURL ? "" : ` (${host})`}`);
 
@@ -127,8 +147,10 @@ Send an archive containing a SPA to a SPAship host for deployment.  Supports .ta
 DeployCommand.args = [
   {
     name: "archive",
-    required: true,
-    description: "SPA archive file",
+    required: false,
+    default: null,
+    description:
+      "SPA archive file. You can omit this if you specify the build artifact path as `buildDir` in the spaship.yaml file.",
   },
 ];
 
@@ -145,6 +167,9 @@ DeployCommand.flags = assign(
   commonFlags.env
 );
 
-DeployCommand.examples = [`$ npm pack`, `$ spaship deploy your-app-1.0.0.tgz`];
+DeployCommand.examples = [
+  `$ npm pack && spaship deploy your-app-1.0.0.tgz # deploying an archive created with npm pack`,
+  `$ spaship deploy # deploying a buildDir directory`,
+];
 
 module.exports = DeployCommand;
