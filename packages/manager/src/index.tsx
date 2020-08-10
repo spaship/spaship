@@ -2,6 +2,7 @@ import React from "react";
 import { render } from "react-dom";
 import * as serviceWorker from "./serviceWorker";
 import "@patternfly/react-core/dist/styles/base.css";
+import "react-toastify/dist/ReactToastify.css";
 import "./static/css/root.css";
 import App from "./App";
 
