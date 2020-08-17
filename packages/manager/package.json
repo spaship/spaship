@@ -17,7 +17,7 @@
     "test": "react-scripts test"
   },
   "devDependencies": {
-    "@patternfly/react-core": "4.40.3",
+    "@patternfly/react-core": "4.40.4",
     "@patternfly/react-icons": "4.7.1",
     "@patternfly/react-styles": "4.7.1",
     "@patternfly/react-table": "4.15.4",
