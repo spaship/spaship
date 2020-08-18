@@ -1,5 +1,5 @@
 const uuidv4 = require("uuid").v4;
-const { encrypt } = require("../utils/cryptoUtil");
+const { hash } = require("../utils/cryptoUtil");
 const { getUserUUID } = require("../utils/requestUtil");
 const NotFoundError = require("../utils/errors/NotFoundError");
 const APIKey = require("../models/apiKey");
@@ -25,7 +25,7 @@ module.exports.post = async (req, res, next) => {
   const { label, expiredDate } = req.body;
   const key = uuidv4();
   const shortKey = key.substring(0, 7);
-  const hashKey = encrypt(key);
+  const hashKey = hash(key);
 
   const data = {
     label,

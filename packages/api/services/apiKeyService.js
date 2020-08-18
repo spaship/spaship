@@ -1,11 +1,11 @@
 const APIKey = require("../models/apiKey");
 const APIKeyError = require("../utils/errors/APIKeyError");
-const { encrypt } = require("../utils/cryptoUtil");
+const { hash } = require("../utils/cryptoUtil");
 
 const getAPIKeysByUser = (userId) => APIKey.find({ userId });
 
 const validation = async (apiKey) => {
-  const hashKey = encrypt(apiKey);
+  const hashKey = hash(apiKey);
   const result = await APIKey.findOne({ hashKey });
 
   if (result) {
