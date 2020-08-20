@@ -1,0 +1,572 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: spaship-template
+objects:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: ${name}-www
+    spec:
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: ${pvc_capacity}
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: ${name}-mongodb
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: ${pvc_capacity}
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: ${name}-mongodb
+    stringData:
+      database-admin-password: "${MONGODB_ADMIN_PASSWORD}"
+      database-name: "${MONGODB_DATABASE}"
+      database-password: "${MONGODB_PASSWORD}"
+      database-user: "${MONGODB_USER}"
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: ${name}-httpd-config
+    data:
+      forbidden.conf: |-
+        <FilesMatch "^spaship\.yaml">
+            Require all denied
+        </FilesMatch>
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: ${name}-httpd-ssi
+    data:
+      index.html: >-
+        <!--#if expr="v('HTTP_COOKIE') =~ /rh_locale=(en|ja|ko|zh_CN)/ && $1 =~
+        /(.*)/" -->
+            <!--#set var="locale" value="$0" -->
+        <!--#else -->
+            <!--#set var="locale" value="en" -->
+        <!--#endif -->
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: ${name}-api-config
+    data:
+      API_PORT: "8080"
+      AUTH__KEYCLOAK__CLIENTID: spaship-reference
+      AUTH__KEYCLOAK__REALM: EmployeeIDP
+      AUTH__KEYCLOAK__URL: https://auth.redhat.com/auth
+      AUTH__KEYCLOAK__ID_PROP: rhatUUID
+      AUTH__KEYCLOAK__PUBKEY: >-
+        MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAtPPUahQ3PJhoCqSsvWTnR/mq4bw4PePpBgjQlRVzUBZwW5scKHbUZxdK9qRhX3fmMOz0VN3H4A+1launCJz56blQFNx9PhZ4vka83qCrNjtlr5lQZsRSuCUO283gJ303fdqQhmrmveVZ34KlUbehcy/m71nP92Aq/inICN5XDmXRDyd/1jDl1oT6XCmEaO67Lv7yPUdfTQR8Dfvw48lnqupFS6dbY3QNO0YHIoanmeX9wao3DLioXBEFY8IsHKim0lAVtlQieWCl5jr9UemrIxzCbIkTwVkjyM4QMocNBhl7zOhfKt8NBBMVAznrdPBX5dUpe96WqCnDUO4UfZY6G6bMux4atI+CJ5NF0fqUlVEE/sgnsjuGmksTnPu+QgM76rzEi61D/lEk9LFvtZr9Iwr1iWm54Ot4rDch8dGi0wvKfTFjsbJDQWenHt/p+9JBpN3DG4b3gAf0YDLNt9l4VCnCQKbLhozy/N74RPZ9t7deSF7r/tl+vBAhrqBluFTauw4qt0KGUhwGtoMGvW3C2EaDoBrVncrEPvipLPl1z4C+FB3CllCyiZczodtCcqYvTdigVOSBnHEb3tYwnyENMNuOmkX07YbFBetrzA+k9vHuVx4owT5TTwAPlcd7ghAmWKQJLJsqivsLlLHDgB9xVtMq20n7UTo8zb3dP8KZ8F0CAwEAAQ==
+      LOG_FORMAT: json
+      WEBROOT: /var/www/html
+      UPLOAD_DIR: /tmp
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: ${name}-router-config
+    data:
+      LOG_FORMAT: json
+      ROUTER_PORT: "8080"
+      webroot: /var/www/html
+      target: http://${name}-httpd:8080
+      FALLBACK: ""
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+        "template.alpha.openshift.io/wait-for-ready": "true"
+      labels:
+        app: ${name}-mongodb
+      name: ${name}-mongodb
+    spec:
+      replicas: 1
+      selector:
+        name: ${name}-mongodb
+      strategy:
+        activeDeadlineSeconds: 21600
+        recreateParams:
+          timeoutSeconds: 600
+        resources: {}
+        type: Recreate
+      template:
+        metadata:
+          labels:
+            name: ${name}-mongodb
+        spec:
+          containers:
+            - env:
+                - name: MONGODB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-user
+                      name: ${name}-mongodb
+                - name: MONGODB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-password
+                      name: ${name}-mongodb
+                - name: MONGODB_ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-admin-password
+                      name: ${name}-mongodb
+                - name: MONGODB_DATABASE
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-name
+                      name: ${name}-mongodb
+              image: registry.access.redhat.com/rhscl/mongodb-32-rhel7:latest
+              imagePullPolicy: IfNotPresent
+              livenessProbe:
+                failureThreshold: 3
+                initialDelaySeconds: 30
+                periodSeconds: 10
+                successThreshold: 1
+                tcpSocket:
+                  port: 27017
+                timeoutSeconds: 1
+              name: ${name}-mongodb
+              ports:
+                - containerPort: 27017
+                  protocol: TCP
+              readinessProbe:
+                exec:
+                  command:
+                    - /bin/sh
+                    - "-i"
+                    - "-c"
+                    - >-
+                      mongo 127.0.0.1:27017/$MONGODB_DATABASE -u $MONGODB_USER -p
+                      $MONGODB_PASSWORD --eval="quit()"
+                failureThreshold: 3
+                initialDelaySeconds: 3
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 1
+              resources:
+                limits:
+                  memory: 512Mi
+              securityContext:
+                capabilities: {}
+                privileged: false
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+              volumeMounts:
+                - mountPath: /var/lib/mongodb/data
+                  name: ${name}-mongodb-data
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          securityContext:
+            supplementalGroups:
+              - 10000003
+          terminationGracePeriodSeconds: 30
+          volumes:
+            - name: ${name}-mongodb-data
+              persistentVolumeClaim:
+                claimName: ${name}-mongodb
+      test: false
+      triggers:
+        - imageChangeParams:
+            automatic: true
+            containerNames:
+              - ${name}-mongodb
+            from:
+              kind: ImageStreamTag
+              name: "mongodb:3.2"
+              namespace: openshift
+          type: ImageChange
+        - type: ConfigChange
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      labels:
+        app: ${name}-httpd
+        tag: ${tag}
+      name: ${name}-httpd
+    spec:
+      replicas: ${replica}
+      selector:
+        app: ${name}-httpd
+        deploymentconfig: ${name}-httpd
+      strategy:
+        activeDeadlineSeconds: 21600
+        resources: {}
+        rollingParams:
+          intervalSeconds: 1
+          maxSurge: 25%
+          maxUnavailable: 25%
+          timeoutSeconds: 600
+          updatePeriodSeconds: 1
+        type: Rolling
+      template:
+        metadata:
+          labels:
+            app: ${name}-httpd
+            deploymentconfig: ${name}-httpd
+            tag: ${tag}
+        spec:
+          volumes:
+            - name: webroot
+              persistentVolumeClaim:
+                claimName: ${name}-www
+            - name: ssi-init
+              configMap:
+                defaultMode: 420
+                items:
+                  - key: index.html
+                    path: index.html
+                name: ${name}-httpd-ssi
+          containers:
+            - image: spaship/httpd:${tag}
+              name: ${name}-httpd
+              ports:
+                - containerPort: 8080
+                  protocol: TCP
+              resources:
+                limits:
+                  cpu: ${cpu_limit}
+                requests:
+                  cpu: ${cpu_request}
+              volumeMounts:
+                - name: webroot
+                  mountPath: /var/www/html
+                - name: ssi-init
+                  mountPath: /var/www/html/.include/init
+              terminationMessagePath: /dev/termination-log
+              imagePullPolicy: Always
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          securityContext:
+            supplementalGroups:
+              - 10000003
+          terminationGracePeriodSeconds: 30
+      test: false
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      labels:
+        app: ${name}-api
+        tag: ${tag}
+      name: ${name}-api
+    spec:
+      replicas: ${replica}
+      selector:
+        app: ${name}-api
+        deploymentconfig: ${name}-api
+      strategy:
+        activeDeadlineSeconds: 21600
+        resources: {}
+        rollingParams:
+          intervalSeconds: 1
+          maxSurge: 25%
+          maxUnavailable: 25%
+          timeoutSeconds: 600
+          updatePeriodSeconds: 1
+        type: Rolling
+      template:
+        metadata:
+          labels:
+            app: ${name}-api
+            deploymentconfig: ${name}-api
+            tag: ${tag}
+        spec:
+          volumes:
+            - name: webroot
+              persistentVolumeClaim:
+                claimName: ${name}-www
+          containers:
+            - image: spaship/api:${tag}
+              name: ${name}-api
+              ports:
+                - containerPort: 8080
+                  protocol: TCP
+              env:
+                - name: SPASHIP_DB__MONGO__USER
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-user
+                      name: ${name}-mongodb
+                - name: SPASHIP_DB__MONGO__PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-password
+                      name: ${name}-mongodb
+                - name: SPASHIP_DB__MONGO__DB_NAME
+                  value: spaship
+                - name: SPASHIP_DB__MONGO__URL
+                  value: ${name}-mongodb:27017
+              envFrom:
+                - configMapRef:
+                    name: ${name}-api-config
+                  prefix: SPASHIP_
+              resources:
+                limits:
+                  cpu: ${cpu_limit}
+                requests:
+                  cpu: ${cpu_request}
+              volumeMounts:
+                - name: webroot
+                  mountPath: /var/www/html
+              terminationMessagePath: /dev/termination-log
+              imagePullPolicy: Always
+              livenessProbe:
+                failureThreshold: 3
+                httpGet:
+                  path: /liveness
+                  port: 8080
+                  scheme: HTTP
+                initialDelaySeconds: 10
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 1
+              readinessProbe:
+                failureThreshold: 3
+                httpGet:
+                  path: /readiness
+                  port: 8080
+                  scheme: HTTP
+                initialDelaySeconds: 10
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 1
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          securityContext:
+            supplementalGroups:
+              - 10000003
+          terminationGracePeriodSeconds: 30
+      test: false
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      labels:
+        app: ${name}-router
+        tag: ${tag}
+      name: ${name}-router
+    spec:
+      replicas: ${{replica}}
+      selector:
+        app: ${name}-router
+        deploymentconfig: ${name}-router
+      strategy:
+        activeDeadlineSeconds: 21600
+        resources: {}
+        rollingParams:
+          intervalSeconds: 1
+          maxSurge: 25%
+          maxUnavailable: 25%
+          timeoutSeconds: 600
+          updatePeriodSeconds: 1
+        type: Rolling
+      template:
+        metadata:
+          labels:
+            app: ${name}-router
+            deploymentconfig: ${name}-router
+            tag: ${tag}
+        spec:
+          volumes:
+            - name: webroot
+              persistentVolumeClaim:
+                claimName: ${name}-www
+          containers:
+            - image: spaship/router:${tag}
+              name: ${name}-router
+              ports:
+                - containerPort: 8080
+                  protocol: TCP
+              envFrom:
+                - configMapRef:
+                    name: ${name}-router-config
+                  prefix: SPASHIP_
+              resources:
+                limits:
+                  cpu: ${cpu_limit}
+                requests:
+                  cpu: ${cpu_request}
+              volumeMounts:
+                - name: webroot
+                  mountPath: /var/www/html
+              terminationMessagePath: /dev/termination-log
+              imagePullPolicy: Always
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          securityContext:
+            supplementalGroups:
+              - 10000003
+          terminationGracePeriodSeconds: 30
+      test: false
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        template.openshift.io/expose-uri: 'mongodb://{.spec.clusterIP}:{.spec.ports[?(.name=="mongo")].port}'
+      labels:
+        app: ${name}-mongodb
+      name: ${name}-mongodb
+    spec:
+      ports:
+        - name: mongo
+          port: 27017
+          protocol: TCP
+          targetPort: 27017
+      selector:
+        name: ${name}-mongodb
+        deploymentconfig: ${name}-mongodb
+      sessionAffinity: None
+      type: ClusterIP
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: ${name}-httpd
+      name: ${name}-httpd
+    spec:
+      ports:
+        - name: 8080-tcp
+          port: 8080
+          protocol: TCP
+          targetPort: 8080
+      selector:
+        app: ${name}-httpd
+        deploymentconfig: ${name}-httpd
+      sessionAffinity: None
+      type: ClusterIP
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: ${name}-api
+      name: ${name}-api
+    spec:
+      ports:
+        - name: 8080-tcp
+          port: 8080
+          protocol: TCP
+          targetPort: 8080
+      selector:
+        app: ${name}-api
+        deploymentconfig: ${name}-api
+      sessionAffinity: None
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: ${name}-router
+      name: ${name}-router
+    spec:
+      ports:
+        - name: 8080-tcp
+          port: 8080
+          protocol: TCP
+          targetPort: 8080
+      selector:
+        app: ${name}-router
+        deploymentconfig: ${name}-router
+      sessionAffinity: None
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: Route
+    metadata:
+      annotations:
+        haproxy.router.openshift.io/disable_cookies: "true"
+        haproxy.router.openshift.io/timeout: "10m"
+      labels:
+        app: ${name}-api
+      name: ${name}-api
+    spec:
+      host: ${name}-api${urlSuffix}
+      port:
+        targetPort: 8080-tcp
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+      to:
+        kind: Service
+        name: ${name}-api
+        weight: 100
+      wildcardPolicy: None
+  - apiVersion: v1
+    kind: Route
+    metadata:
+      annotations:
+        haproxy.router.openshift.io/disable_cookies: "true"
+      labels:
+        app: ${name}-router
+      name: ${name}-router
+    spec:
+      host: ${name}-router${urlSuffix}
+      port:
+        targetPort: 8080-tcp
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+      to:
+        kind: Service
+        name: ${name}-router
+        weight: 100
+      wildcardPolicy: None
+
+parameters:
+  - name: name
+    description: Application name
+    value: spaship
+    required: true
+  - name: tag
+    description: SPAship tag
+    required: true
+    value: latest
+  - name: urlSuffix
+    description: Url Suffix
+    required: true
+    value: .ext.us-west.dc.prod.paas.redhat.com
+  - name: replica
+    description: number of replicas
+    value: "1"
+    required: false
+  - name: cpu_limit
+    description: CPU limit
+    value: "100m"
+  - name: cpu_request
+    description: CPU request
+    value: "25m"
+  - name: pvc_capacity
+    description: Storage Capacity
+    value: "1Gi"
+    required: true
+  - name: MONGODB_USER
+    displayName: MongoDB Connection Username
+    description: Username for MongoDB user that will be used for accessing the database.
+    required: true
+    generate: expression
+    from: "user[A-Z0-9]{3}"
+  - name: MONGODB_PASSWORD
+    displayName: MongoDB Connection Password
+    description: Password for the MongoDB connection user.
+    required: true
+    generate: expression
+    from: "[a-zA-Z0-9]{16}"
+  - name: MONGODB_DATABASE
+    displayName: MongoDB Database Name
+    description: Name of the MongoDB database accessed.
+    required: true
+    value: spaship
+  - name: MONGODB_ADMIN_PASSWORD
+    displayName: MongoDB Database Name
+    description: Password for the database admin user.
+    required: true
+    generate: expression
+    from: "[a-zA-Z0-9]{16}"
