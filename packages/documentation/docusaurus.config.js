@@ -8,6 +8,18 @@ module.exports = {
   organizationName: "spaship", // Usually your GitHub org/user name.
   projectName: "spaship.github.io", // Usually your repo name.
   themeConfig: {
+    colorMode: {
+      // "light" | "dark"
+      defaultMode: "dark",
+
+      // Hides the switch in the navbar
+      // Useful if you want to support a single color mode
+      disableSwitch: false,
+
+      // Should we use the prefers-color-scheme media-query,
+      // using user system preferences, instead of the hardcoded defaultMode
+      respectPrefersColorScheme: false,
+    },
     navbar: {
       logo: {
         alt: "SPAship Logo",
