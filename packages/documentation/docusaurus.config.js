@@ -3,6 +3,7 @@ module.exports = {
   tagline: "SPAship is an open source platform for deploying, integrating, and managing single-page apps (SPAs).",
   url: "https://spaship.github.io",
   baseUrl: "/",
+  onBrokenLinks: "throw",
   favicon: "img/favicon.ico",
   organizationName: "spaship", // Usually your GitHub org/user name.
   projectName: "spaship.github.io", // Usually your repo name.
@@ -13,7 +14,7 @@ module.exports = {
         src: "img/logo.svg",
         srcDark: "img/logo_dark.svg",
       },
-      links: [
+      items: [
         {
           to: "docs/introduction",
           activeBasePath: "docs",
@@ -71,7 +72,7 @@ module.exports = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} SPAship, Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} SPAship.`,
     },
   },
   stylesheets: [
@@ -83,8 +84,16 @@ module.exports = {
       "@docusaurus/preset-classic",
       {
         docs: {
+          // It is recommended to set document id as docs home page (`docs/` path).
+          // homePageId: "doc1",
           sidebarPath: require.resolve("./sidebars.js"),
+          // Please change this to your repo.
           editUrl: "https://github.com/spaship/spaship/tree/master/docusaurus/",
+        },
+        blog: {
+          showReadingTime: true,
+          // Please change this to your repo.
+          editUrl: "https://github.com/spaship/spaship/tree/master/docusaurus/blog/",
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
