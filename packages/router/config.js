@@ -8,6 +8,9 @@ nconf
     lowerCase: true,
     parseValues: true,
     transform: (obj) => {
+      if (obj.key.includes("spaship")) {
+        console.log(obj);
+      }
       // remove the "SPASHIP_" prefix from environment variables
       obj.key = obj.key.replace(/^spaship_/, "").replace(/^router_/, "");
       return obj;
@@ -30,9 +33,9 @@ if (configFile) {
 }
 
 nconf.defaults({
-  port: 8080,
+  port: 8765,
   webroot: "/var/www/html",
-  target: "http://localhost:8080",
+  target: "http://localhost:8765",
   log_level: "info",
 });
 

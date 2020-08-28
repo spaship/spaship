@@ -65,8 +65,12 @@ nconf
     lowerCase: true,
     parseValues: true,
     transform: (obj) => {
+      if (obj.key.includes("auth")) {
+        console.log(obj);
+      }
       // remove the "SPASHIP_" prefix from environment variables
       obj.key = obj.key.replace(/^spaship_/, "").replace(/^api_/, "");
+
       return obj;
     },
   });
@@ -94,6 +98,7 @@ nconf.defaults({
     },
   },
   auth: {
+    disable: false, // auth is enabled by default, but in local dev environments it's disabled via an `npm start` command-line option
     keycloak: {
       jwt_uuid_prop: "sub",
     },
