@@ -18,7 +18,7 @@
     "mochawesome": "5.0.0",
     "mochawesome-merge": "4.1.0",
     "mochawesome-report-generator": "4.1.0",
-    "newman": "5.1.2",
+    "newman": "5.2.0",
     "yargs": "15.4.1"
   }
 }
