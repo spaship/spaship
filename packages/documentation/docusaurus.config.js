@@ -3,17 +3,30 @@ module.exports = {
   tagline: "SPAship is an open source platform for deploying, integrating, and managing single-page apps (SPAs).",
   url: "https://spaship.github.io",
   baseUrl: "/",
+  onBrokenLinks: "throw",
   favicon: "img/favicon.ico",
   organizationName: "spaship", // Usually your GitHub org/user name.
   projectName: "spaship.github.io", // Usually your repo name.
   themeConfig: {
+    colorMode: {
+      // "light" | "dark"
+      defaultMode: "dark",
+
+      // Hides the switch in the navbar
+      // Useful if you want to support a single color mode
+      disableSwitch: false,
+
+      // Should we use the prefers-color-scheme media-query,
+      // using user system preferences, instead of the hardcoded defaultMode
+      respectPrefersColorScheme: false,
+    },
     navbar: {
       logo: {
         alt: "SPAship Logo",
         src: "img/logo.svg",
         srcDark: "img/logo_dark.svg",
       },
-      links: [
+      items: [
         {
           to: "docs/introduction",
           activeBasePath: "docs",
@@ -71,7 +84,7 @@ module.exports = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} SPAship, Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} SPAship.`,
     },
   },
   stylesheets: [
@@ -83,8 +96,16 @@ module.exports = {
       "@docusaurus/preset-classic",
       {
         docs: {
+          // It is recommended to set document id as docs home page (`docs/` path).
+          // homePageId: "doc1",
           sidebarPath: require.resolve("./sidebars.js"),
+          // Please change this to your repo.
           editUrl: "https://github.com/spaship/spaship/tree/master/docusaurus/",
+        },
+        blog: {
+          showReadingTime: true,
+          // Please change this to your repo.
+          editUrl: "https://github.com/spaship/spaship/tree/master/docusaurus/blog/",
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
