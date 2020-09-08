@@ -19,7 +19,7 @@
   "devDependencies": {
     "@patternfly/react-core": "4.47.0",
     "@patternfly/react-icons": "4.7.4",
-    "@patternfly/react-styles": "4.7.2",
+    "@patternfly/react-styles": "4.7.3",
     "@patternfly/react-table": "4.15.5",
     "@react-keycloak/web": "2.1.4",
     "@types/jest": "26.0.13",
