@@ -18,7 +18,7 @@
     "spaship-api": "./index.js"
   },
   "scripts": {
-    "start": "node index.js",
+    "start": "node index.js --config-file config.json",
     "dev": "nodemon index.js",
     "test": "../../node_modules/.bin/jest --restoreMocks",
     "get-pubkey": "node scripts/fetchpk.js"
