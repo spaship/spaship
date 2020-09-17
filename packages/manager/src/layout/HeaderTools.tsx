@@ -4,6 +4,8 @@ import { useKeycloak } from "@react-keycloak/web";
 import { GithubIcon, FileAltIcon, UserIcon } from "@patternfly/react-icons";
 import styled from "styled-components";
 
+import { ISPAshipJWT } from "../keycloak";
+
 const StyledButton = styled(Button)({
   color: "#000000 !important",
 });
@@ -20,7 +22,7 @@ export default () => {
       return (
         <PageHeaderToolsItem>
           <StyledButton variant="link" icon={<UserIcon />}>
-            {(keycloak.tokenParsed as any).name}
+            {(keycloak.tokenParsed as ISPAshipJWT).name}
           </StyledButton>
         </PageHeaderToolsItem>
       );
