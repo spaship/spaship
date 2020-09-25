@@ -1,5 +1,5 @@
 window.SPAship = {
-  environments: [
+  configs: [
     {
       name: "SPAship @ localhost",
       isPreset: true,

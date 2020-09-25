@@ -13,8 +13,6 @@ const { loadRcFile } = require("../common/spashiprc-loader");
 const { zipDirectory } = require("../common/zip");
 const nodePath = require("path");
 
-console.log(common);
-
 function isURL(s) {
   try {
     new URL(s);
@@ -137,8 +135,7 @@ class DeployCommand extends Command {
       this.log(response);
     } catch (e) {
       spinner.fail(e.message);
-      console.log(e);
-      // this.error(e);
+      this.error(e);
     }
   }
 }

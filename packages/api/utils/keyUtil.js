@@ -23,10 +23,8 @@ const formatAsPem = (str) => {
 
 const getPublicKey = () => {
   const publicKey = config.get("auth:keycloak:pubkey");
-  console.log("auth:keycloak:pubkey value is: ", publicKey);
 
   if (publicKey && publicKey.trim().length > 0) {
-    console.log(`pubkey found: `, publicKey.slice(0, 10));
     return formatAsPem(publicKey);
   }
   const publicKeyPath = config.get("auth:keycloak:pubkey_file");

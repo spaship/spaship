@@ -13,7 +13,7 @@ export default () => {
   return (
     <KeycloakProvider
       keycloak={keycloak}
-      // initConfig={{ onLoad: "login-required" }}
+      initConfig={{ onLoad: "login-required" }}
       onTokens={(...tokens) => console.log("KeycloakProvider onToken:", tokens)}
       onEvent={(event, error) => kcLog(event, error)}
     >

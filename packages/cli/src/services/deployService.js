@@ -50,7 +50,6 @@ const upload = (url, data, apiKey, onUploadProgress) => {
             reject(parsedData);
           }
         } catch (e) {
-          console.log(rawData);
           reject(e);
         }
       });

@@ -4,7 +4,7 @@ import { IConfig } from "../config";
 const configsKey = "spaship-configs";
 
 const useConfig = () => {
-  const [environments, setEnvironments] = useState<IConfig[]>((window as any).SPAship.environments);
+  const [configs, setConfigs] = useState<IConfig[]>((window as any).SPAship.configs);
 
   const setConfigsSyncWithLocalStorage = useCallback((newConfigs: IConfig[]) => {
     try {
@@ -16,44 +16,44 @@ const useConfig = () => {
 
   const setSPAshipConfigs = useCallback(
     (newConfigs: IConfig[]) => {
-      setEnvironments(newConfigs);
+      setConfigs(newConfigs);
       setConfigsSyncWithLocalStorage(newConfigs);
     },
-    [setEnvironments, setConfigsSyncWithLocalStorage]
+    [setConfigs, setConfigsSyncWithLocalStorage]
   );
 
   const setSelectedName = useCallback(
     (configName: string) => {
-      const selectedConfig = environments.find((conf) => conf.name === configName);
+      const selectedConfig = configs.find((conf) => conf.name === configName);
       if (selectedConfig) {
         selectedConfig.selected = true;
-        const otherConfigs = environments
+        const otherConfigs = configs
           .filter((conf) => conf.name !== configName)
           .map((conf) => ({ ...conf, selected: false }));
         const newConfigs = [...otherConfigs, selectedConfig];
         setSPAshipConfigs(newConfigs);
       }
     },
-    [environments, setSPAshipConfigs]
+    [configs, setSPAshipConfigs]
   );
 
   useEffect(() => {
     try {
       const localStorageConfigs = localStorage.getItem(configsKey);
       if (localStorageConfigs !== null) {
-        setEnvironments(JSON.parse(localStorageConfigs));
+        setConfigs(JSON.parse(localStorageConfigs));
       }
     } catch (err) {
       console.error(err);
     }
-  }, [setEnvironments]);
+  }, [setConfigs]);
 
   useEffect(() => {});
 
-  const selected = environments.find((conf) => conf.selected === true);
+  const selected = configs.find((conf) => conf.selected === true);
 
   return {
-    configs: environments,
+    configs,
     selected,
     setSPAshipConfigs,
     setSelectedName,
