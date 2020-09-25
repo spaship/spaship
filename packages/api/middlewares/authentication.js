@@ -30,6 +30,7 @@ module.exports = () => {
     log.info("Use JWT validation");
     return jwt({
       secret,
+      algorithms: ["RS256"],
     })(req, res, next);
   };
 };
