@@ -20,7 +20,8 @@
     "pretty-quick": "2.0.2"
   },
   "scripts": {
-    "start": "npm run lerna run start",
+    "start": "bash scripts/start.sh",
+    "old-start": "npm run lerna run start",
     "bootstrap": "npm run lerna bootstrap --hoist",
     "postinstall": "npm run bootstrap",
     "test": "CI=true npm run lerna run test",

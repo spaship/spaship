@@ -8,9 +8,6 @@ nconf
     lowerCase: true,
     parseValues: true,
     transform: (obj) => {
-      if (obj.key.includes("spaship")) {
-        console.log(obj);
-      }
       // remove the "SPASHIP_" prefix from environment variables
       obj.key = obj.key.replace(/^spaship_/, "").replace(/^router_/, "");
       return obj;
