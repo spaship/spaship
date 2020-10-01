@@ -11,6 +11,3 @@ cache:
     - node_modules
 after_success:
   - codecov
-env:
-  - SPASHIP_LOG_LEVEL=debug
-  - SPASHIP_LOG_FORMAT=pretty
