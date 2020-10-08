@@ -293,7 +293,7 @@ describe("Application Controller", () => {
     expect(next).toHaveBeenCalledWith(expect.objectContaining(new DeployError()));
   });
 
-  it("should redeploy an application success", async () => {
+  it("should redeploy an application successfully", async () => {
     expect(fs.existsSync("/fake/webroot/foo")).toBe(true);
     expect(fs.existsSync("/fake/new-app")).toBe(true);
 

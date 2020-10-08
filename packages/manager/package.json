@@ -13,8 +13,7 @@
   "private": true,
   "scripts": {
     "start": "HTTPS=true PORT=2468 react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test"
+    "build": "react-scripts build"
   },
   "devDependencies": {
     "@patternfly/react-core": "4.50.2",
