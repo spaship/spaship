@@ -162,8 +162,10 @@ function stop() {
   clearInterval(intervalId);
   log.debug(`stopping router`);
   return new Promise((resolve) => {
-    server.close(resolve);
-    log.debug(`stopped router`);
+    server.close(() => {
+      log.debug(`stopped router`);
+      resolve();
+    });
   });
 }
 
