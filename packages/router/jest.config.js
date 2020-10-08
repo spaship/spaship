@@ -6,4 +6,5 @@ process.env.SPASHIP_LOG_LEVEL = "debug";
 module.exports = {
   projects: ["<rootDir>"],
   collectCoverage: true,
+  testEnvironment: "node",
 };
