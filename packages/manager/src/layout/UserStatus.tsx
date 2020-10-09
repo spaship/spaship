@@ -14,6 +14,7 @@ import {
 import { useHistory } from "react-router-dom";
 import UserAvatar from "../static/img/avatar.svg";
 import { useKeycloak } from "@react-keycloak/web";
+import { ISPAshipJWT } from "../keycloak";
 
 export default () => {
   const [isExpanded, setExpanded] = useState(false);
@@ -33,7 +34,7 @@ export default () => {
     return <Text component={TextVariants.p}>Not Authenticated</Text>;
   }
 
-  const token = keycloak.tokenParsed as any;
+  const token = keycloak.tokenParsed as ISPAshipJWT;
 
   return (
     <Accordion>

@@ -1,0 +1,11 @@
+{
+  "webroot": "/tmp/spaship",
+  "auth": {
+    "keycloak": {
+      "url": "https://auth.stage.redhat.com",
+      "realm": "EmployeeIDP",
+      "clientid": "spaship-reference",
+      "pubkey": "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAwKVe5MH66uvRvs7NnVNrhlEwd45kJmaen5Digf4PcB8IxY4a9MrXD7xuhTPPZuNX0lLNuWDvBkQNzY0DwsHvLW3mTAZLnQG90EWMFWziQJfSAQ60epGkSlMkd4IL9HUuZa2/tGDy9Bt5pdSfqhrbAA932Zg1BGCL9cY20lfc+4arqY1qUyMkMz210RG3yLWq80dXKD8ziEeRbzGv8V1HBJE0M15GsKxcfD/tzx95E3WTcGxJJhqnFFEEdVgB/yvMM4E2WlyI+XWmHhIe2NCmhofD7wdOokpuAKhgdIUlsKi79o760F123DbzWk7sprErG6p0VkJ+LZESv8/mqtlEXHz8zgzTkDhlUH3IJm829ouGXFSRoRDEea6We8VHJbLODSAlIeAAXylnsg9czVdnkXqBBnnHkeERblpccTfMysTFWYMeTykHIitnINBoTOz/7jLNf/TgvTFwHHL6TvD5TSq5FsID9YJ60kyucqWELEVt18VMgy3O8HA4B4kxL4hpSoO+7a2ahOROTvdDEP2ZyE7jsIL4mmSUrsEthM+9jFIPRjDHJD40uTbHEXhImKFPQ3nqHi8SgI4qSoZ5YE+3RO1ZnqtMoSP1C6TvPKo0ymH9xWXpvAmyX5afcKNXD00wcjgAgRkF0oAbSp4IuAO7Zw6wNCKDuc5HmGgW29FSifECAwEAAQ=="
+    }
+  }
+}

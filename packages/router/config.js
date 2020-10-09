@@ -1,4 +1,5 @@
 const nconf = require("nconf");
+const { log } = require("@spaship/common/lib/logging/pino");
 
 const whitelist = ["config_file", "port", "webroot", "target", "fallback"];
 
@@ -30,9 +31,9 @@ if (configFile) {
 }
 
 nconf.defaults({
-  port: 8080,
+  port: 8765,
   webroot: "/var/www/html",
-  target: "http://localhost:8080",
+  target: "http://localhost:8765",
   log_level: "info",
 });
 

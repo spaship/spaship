@@ -67,6 +67,7 @@ nconf
     transform: (obj) => {
       // remove the "SPASHIP_" prefix from environment variables
       obj.key = obj.key.replace(/^spaship_/, "").replace(/^api_/, "");
+
       return obj;
     },
   });

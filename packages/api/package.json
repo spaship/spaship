@@ -18,7 +18,7 @@
     "spaship-api": "./index.js"
   },
   "scripts": {
-    "start": "node index.js",
+    "start": "source ../../.env; node index.js",
     "dev": "nodemon index.js",
     "test": "../../node_modules/.bin/jest --restoreMocks",
     "get-pubkey": "node scripts/fetchpk.js"
@@ -47,7 +47,7 @@
     "uuid": "^8.0.0"
   },
   "devDependencies": {
-    "axios": "0.19.2",
+    "axios": "0.20.0",
     "mockingoose": "2.13.2",
     "nodemon": "2.0.4",
     "tar": "6.0.5"
