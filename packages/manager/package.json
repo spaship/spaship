@@ -12,7 +12,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "HTTPS=true PORT=2468 react-scripts start",
+    "start": "source ../../.env; HTTPS=true PORT=$SPASHIP_MANAGER_PORT HOST=$SPASHIP_MANAGER_HOST react-scripts start",
     "build": "react-scripts build"
   },
   "devDependencies": {

@@ -5,6 +5,8 @@
   "private": true,
   "devDependencies": {
     "codecov": "3.7.2",
+    "dotenv": "^8.2.0",
+    "dotenv-export": "^2.0.0",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.12.0",
     "eslint-plugin-prettier": "3.1.4",
@@ -17,7 +19,8 @@
     "pretty-quick": "2.0.2"
   },
   "scripts": {
-    "start": "npm run lerna run start",
+    "start": "bash scripts/start.sh",
+    "old-start": "npm run lerna run start",
     "bootstrap": "npm run lerna bootstrap --hoist",
     "postinstall": "npm run bootstrap",
     "test": "CI=true npm run lerna run test",
@@ -30,5 +33,8 @@
     "hooks": {
       "pre-commit": "pretty-quick --staged"
     }
+  },
+  "dependencies": {
+    "dotenv-expand": "^5.1.0"
   }
 }

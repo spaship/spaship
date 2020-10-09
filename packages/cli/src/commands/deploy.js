@@ -114,7 +114,7 @@ class DeployCommand extends Command {
       data.append("ref", flags.ref);
       data.append("upload", fs.createReadStream(args.archive));
 
-      const response = await DeployService.upload(host + apiPath, data, apikey, (progress) => {
+      const response = await DeployService.upload(nodePath.join(host, apiPath), data, apikey, (progress) => {
         if (progress.percent < 1) {
           const percent = Math.round(progress.percent * 100);
           const takenTime = performance.now() - startTime;
@@ -135,7 +135,7 @@ class DeployCommand extends Command {
       this.log(response);
     } catch (e) {
       spinner.fail(e.message);
-      this.error(e.message);
+      this.error(e);
     }
   }
 }
