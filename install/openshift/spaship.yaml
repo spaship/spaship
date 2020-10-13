@@ -22,7 +22,7 @@ objects:
         - ReadWriteMany
       resources:
         requests:
-          storage: ${pvc_capacity}
+          storage: ${WWW_VOLUME_CAPACITY}
   - apiVersion: v1
     kind: Secret
     metadata:
@@ -429,10 +429,10 @@ parameters:
     displayName: CPU request
     description: CPU request
     value: "25m"
-  - name: pvc_capacity
-    displayName: Storage Capacity
-    description: Storage Capacity for Host your apps
-    value: "1Gi"
+  - name: WWW_VOLUME_CAPACITY
+    displayName: "WWW Volume Capacity"
+    description: "Volume space available for www data, e.g. 512Mi, 2Gi."
+    value: "2Gi"
     required: true
   - name: MONGODB_URL
     displayName: MongoDB Connection Url

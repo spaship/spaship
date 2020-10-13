@@ -22,26 +22,19 @@ objects:
         - ReadWriteMany
       resources:
         requests:
-          storage: ${pvc_capacity}
-  - apiVersion: v1
-    kind: PersistentVolumeClaim
-    metadata:
-      name: ${name}-mongodb
-    spec:
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: ${pvc_capacity}
+          storage: ${WWW_VOLUME_CAPACITY}
   - apiVersion: v1
     kind: Secret
     metadata:
-      name: ${name}-mongodb
+      name: ${MONGODB_SERVICE_NAME}
+      labels:
+        name: "${MONGODB_SERVICE_NAME}"
     stringData:
+      database-user: "${MONGODB_USER}"
+      database-password: "${MONGODB_PASSWORD}"
       database-admin-password: "${MONGODB_ADMIN_PASSWORD}"
       database-name: "${MONGODB_DATABASE}"
-      database-password: "${MONGODB_PASSWORD}"
-      database-user: "${MONGODB_USER}"
+      database-replica-name: "${MONGODB_REPLICA_NAME}"
   - apiVersion: v1
     kind: ConfigMap
     metadata:
@@ -88,112 +81,6 @@ objects:
       webroot: /var/www/html
       target: http://${name}-httpd:8080
       FALLBACK: ""
-  - apiVersion: v1
-    kind: DeploymentConfig
-    metadata:
-      annotations:
-        "template.alpha.openshift.io/wait-for-ready": "true"
-      labels:
-        app: ${name}-mongodb
-      name: ${name}-mongodb
-    spec:
-      replicas: 1
-      selector:
-        name: ${name}-mongodb
-      strategy:
-        activeDeadlineSeconds: 21600
-        recreateParams:
-          timeoutSeconds: 600
-        resources: {}
-        type: Recreate
-      template:
-        metadata:
-          labels:
-            name: ${name}-mongodb
-        spec:
-          containers:
-            - env:
-                - name: MONGODB_USER
-                  valueFrom:
-                    secretKeyRef:
-                      key: database-user
-                      name: ${name}-mongodb
-                - name: MONGODB_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      key: database-password
-                      name: ${name}-mongodb
-                - name: MONGODB_ADMIN_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      key: database-admin-password
-                      name: ${name}-mongodb
-                - name: MONGODB_DATABASE
-                  valueFrom:
-                    secretKeyRef:
-                      key: database-name
-                      name: ${name}-mongodb
-              image: registry.access.redhat.com/rhscl/mongodb-32-rhel7:latest
-              imagePullPolicy: IfNotPresent
-              livenessProbe:
-                failureThreshold: 3
-                initialDelaySeconds: 30
-                periodSeconds: 10
-                successThreshold: 1
-                tcpSocket:
-                  port: 27017
-                timeoutSeconds: 1
-              name: ${name}-mongodb
-              ports:
-                - containerPort: 27017
-                  protocol: TCP
-              readinessProbe:
-                exec:
-                  command:
-                    - /bin/sh
-                    - "-i"
-                    - "-c"
-                    - >-
-                      mongo 127.0.0.1:27017/$MONGODB_DATABASE -u $MONGODB_USER -p
-                      $MONGODB_PASSWORD --eval="quit()"
-                failureThreshold: 3
-                initialDelaySeconds: 3
-                periodSeconds: 10
-                successThreshold: 1
-                timeoutSeconds: 1
-              resources:
-                limits:
-                  memory: 512Mi
-              securityContext:
-                capabilities: {}
-                privileged: false
-              terminationMessagePath: /dev/termination-log
-              terminationMessagePolicy: File
-              volumeMounts:
-                - mountPath: /var/lib/mongodb/data
-                  name: ${name}-mongodb-data
-          dnsPolicy: ClusterFirst
-          restartPolicy: Always
-          securityContext:
-            supplementalGroups:
-              - 10000003
-          terminationGracePeriodSeconds: 30
-          volumes:
-            - name: ${name}-mongodb-data
-              persistentVolumeClaim:
-                claimName: ${name}-mongodb
-      test: false
-      triggers:
-        - imageChangeParams:
-            automatic: true
-            containerNames:
-              - ${name}-mongodb
-            from:
-              kind: ImageStreamTag
-              name: "mongodb:3.2"
-              namespace: openshift
-          type: ImageChange
-        - type: ConfigChange
   - apiVersion: v1
     kind: DeploymentConfig
     metadata:
@@ -315,7 +202,7 @@ objects:
                       key: database-name
                       name: ${name}-mongodb
                 - name: SPASHIP_DB__MONGO__URL
-                  value: ${name}-mongodb:27017
+                  value: ${MONGODB_SERVICE_NAME}-0.${MONGODB_SERVICE_NAME}-internal:27017,${MONGODB_SERVICE_NAME}-1.${MONGODB_SERVICE_NAME}-internal:27017,${MONGODB_SERVICE_NAME}-2.${MONGODB_SERVICE_NAME}-internal:27017
               envFrom:
                 - configMapRef:
                     name: ${name}-api-config
@@ -417,25 +304,118 @@ objects:
               - 10000003
           terminationGracePeriodSeconds: 30
       test: false
-  - apiVersion: v1
-    kind: Service
+  # A non-headless service which takes pod readiness into consideration
+  - kind: Service
+    apiVersion: v1
     metadata:
-      annotations:
-        template.openshift.io/expose-uri: 'mongodb://{.spec.clusterIP}:{.spec.ports[?(.name=="mongo")].port}'
+      name: "${MONGODB_SERVICE_NAME}"
       labels:
-        app: ${name}-mongodb
-      name: ${name}-mongodb
+        name: "${MONGODB_SERVICE_NAME}"
     spec:
+      # the list of ports that are exposed by this service
       ports:
-        - name: mongo
+        - name: mongodb
           port: 27017
-          protocol: TCP
-          targetPort: 27017
+      # will route traffic to pods having labels matching this selector
       selector:
-        name: ${name}-mongodb
-        deploymentconfig: ${name}-mongodb
-      sessionAffinity: None
-      type: ClusterIP
+        name: "${MONGODB_SERVICE_NAME}"
+
+  # A headless service to create DNS records
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: "${MONGODB_SERVICE_NAME}-internal"
+      labels:
+        name: "${MONGODB_SERVICE_NAME}"
+      annotations:
+        service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+    spec:
+      clusterIP: None
+      # the list of ports that are exposed by this service
+      ports:
+        - name: mongodb
+          port: 27017
+      # will route traffic to pods having labels matching this selector
+      selector:
+        name: "${MONGODB_SERVICE_NAME}"
+  - kind: StatefulSet
+    apiVersion: apps/v1beta1
+    metadata:
+      name: "${MONGODB_SERVICE_NAME}"
+    spec:
+      # pets get DNS/hostnames that follow the pattern: ${metadata.name}-NUM.${spec.serviceName}.default.svc.cluster.local
+      serviceName: "${MONGODB_SERVICE_NAME}-internal"
+      replicas: 3
+      # describes the pod that will be created if insufficient replicas are detected
+      template:
+        metadata:
+          # this label will be used for count running pods
+          labels:
+            name: "${MONGODB_SERVICE_NAME}"
+        spec:
+          containers:
+            - name: mongo-container
+              image: "${MONGODB_IMAGE}"
+              ports:
+                - containerPort: 27017
+              args:
+                - "run-mongod-pet"
+              volumeMounts:
+                - name: mongo-data
+                  mountPath: "/var/lib/mongodb/data"
+              env:
+                - name: MONGODB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-user
+                      name: "${MONGODB_SERVICE_NAME}"
+                - name: MONGODB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-password
+                      name: "${MONGODB_SERVICE_NAME}"
+                - name: MONGODB_DATABASE
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-name
+                      name: "${MONGODB_SERVICE_NAME}"
+                - name: MONGODB_ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-admin-password
+                      name: "${MONGODB_SERVICE_NAME}"
+                - name: MONGODB_REPLICA_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-replica-name
+                      name: "${MONGODB_SERVICE_NAME}"
+                - name: MONGODB_KEYFILE_VALUE
+                  value: "${MONGODB_KEYFILE_VALUE}"
+                - name: MONGODB_SERVICE_NAME
+                  value: "${MONGODB_SERVICE_NAME}-internal"
+              resources:
+                limits:
+                  memory: "512Mi"
+              readinessProbe:
+                exec:
+                  command:
+                    - stat
+                    - /tmp/initialized
+      volumeClaimTemplates:
+        - metadata:
+            name: mongo-data
+            labels:
+              name: "${MONGODB_SERVICE_NAME}"
+            annotations:
+              # Uncomment this if using dynamic volume provisioning.
+              # https://docs.openshift.org/latest/install_config/persistent_storage/dynamically_provisioning_pvs.html
+              # volume.alpha.kubernetes.io/storage-class: anything
+          spec:
+            # the volume can be mounted as read-write by a single node
+            accessModes: [ ReadWriteOnce ]
+            resources:
+              requests:
+                storage: "${DATABASE_VOLUME_CAPACITY}"
   - apiVersion: v1
     kind: Service
     metadata:
@@ -560,10 +540,15 @@ parameters:
     displayName: CPU request
     description: CPU request
     value: "25m"
-  - name: pvc_capacity
-    displayName: Storage Capacity
-    description: Storage Capacity for Host your apps
-    value: "1Gi"
+  - name: WWW_VOLUME_CAPACITY
+    displayName: "WWW Volume Capacity"
+    description: "Volume space available for www data, e.g. 512Mi, 2Gi."
+    value: "2Gi"
+    required: true
+  - name: DATABASE_VOLUME_CAPACITY
+    displayName: "Database Volume Capacity"
+    description: "Volume space available for database data, e.g. 512Mi, 2Gi."
+    value: "2Gi"
     required: true
   - name: MONGODB_USER
     displayName: MongoDB Connection Username
@@ -588,3 +573,24 @@ parameters:
     required: true
     generate: expression
     from: "[a-zA-Z0-9]{16}"
+  - name: MONGODB_REPLICA_NAME
+    displayName: "Replica Set Name"
+    description: "The name of the replica set."
+    value: rs0
+    required: true
+  - name: MONGODB_KEYFILE_VALUE
+    displayName: "Keyfile Content"
+    description: "The value of the MongoDB keyfile (https://docs.mongodb.com/manual/core/security-internal-authentication/#internal-auth-keyfile)."
+    generate: expression
+    from: "[a-zA-Z0-9]{255}"
+    required: true
+  - name: MONGODB_IMAGE
+    displayName: "MongoDB Docker Image"
+    description: "A reference to a supported MongoDB Docker image."
+    value: "registry.access.redhat.com/rhscl/mongodb-36-rhel7"
+    required: true
+  - name: MONGODB_SERVICE_NAME
+    displayName: "OpenShift Service Name"
+    description: "The name of the OpenShift Service exposed for the database."
+    value: spaship-mongodb
+    required: true
