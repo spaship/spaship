@@ -73,7 +73,7 @@ export const fetchApplication = async (name: string, environments: IEnvironment[
     if (app && app.name) {
       application.name = app.name;
       application.path = app.path;
-      if (!!application.environments) {
+      if (application.environments?.length) {
         application.environments.push({
           name: env.name,
           ref: app.ref,

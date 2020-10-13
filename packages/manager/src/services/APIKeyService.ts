@@ -33,7 +33,7 @@ export const createMultiAPIKeys = async (environments: IEnvironment[], payload: 
     if (envKey) {
       apiKey.label = envKey.label;
       apiKey.expiredDate = envKey.expiredDate;
-      if (!!apiKey.environments) {
+      if (apiKey.environments?.length) {
         apiKey.environments.push({
           name: env.name,
           key: envKey.key,
