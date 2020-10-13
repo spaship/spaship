@@ -8,7 +8,7 @@ import { fetchApplication } from "../../services/ApplicationService";
 import useConfig from "../../hooks/useConfig";
 
 export default () => {
-  const { applicationName } = useParams();
+  const { applicationName } = useParams<{ applicationName: string }>();
   const [application, setApplication] = useState<IApplication>();
   const name = applicationName || "";
   const { selected } = useConfig();

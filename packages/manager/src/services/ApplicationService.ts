@@ -44,8 +44,8 @@ export const fetchApplications = async (environments: IEnvironment[] = []) => {
   const applications: IApplication[] = [];
 
   environments.forEach((env, index) => {
-    const envAppList = results[index];
-    envAppList?.forEach((apiApp: IApplicationResponse) => {
+    const envAppList = results[index] || [];
+    envAppList.forEach((apiApp: IApplicationResponse) => {
       const match = applications.find((app) => app.path === apiApp.path);
       if (match) {
         match.environments = [...match.environments, { name: env.name, ref: apiApp.ref, timestamp: apiApp.timestamp }];
@@ -73,11 +73,13 @@ export const fetchApplication = async (name: string, environments: IEnvironment[
     if (app && app.name) {
       application.name = app.name;
       application.path = app.path;
-      application.environments?.push({
-        name: env.name,
-        ref: app.ref,
-        timestamp: app.timestamp,
-      });
+      if (application.environments?.length) {
+        application.environments.push({
+          name: env.name,
+          ref: app.ref,
+          timestamp: app.timestamp,
+        });
+      }
     }
   });
 

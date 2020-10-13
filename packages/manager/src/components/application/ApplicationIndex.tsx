@@ -7,7 +7,7 @@ import ApplicationDetail from "./ApplicationDetail";
 
 export default () => {
   const location = useLocation();
-  const { applicationName } = useParams();
+  const { applicationName } = useParams<{ applicationName: string }>();
 
   return (
     <Page title={applicationName || ""}>
