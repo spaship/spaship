@@ -8,6 +8,8 @@ const { difference } = require("lodash");
 
 let topLevelDirsCache = [];
 
+log.debug(config.get(), "router configuration");
+
 async function updateDirCache() {
   // Load directory names into memory
   const freshDirs = await fsp.readdir(config.get("webroot"));
@@ -139,8 +141,11 @@ let intervalId;
 let server;
 
 async function start() {
+  log.debug(`starting router`);
+
   // Load the flat directory names into memory and keep them refreshed
   await updateDirCache();
+  log.debug(`router dir cache updated`);
   intervalId = setInterval(updateDirCache, 2000);
 
   // Start proxy server on port
@@ -155,8 +160,12 @@ async function start() {
  */
 function stop() {
   clearInterval(intervalId);
+  log.debug(`stopping router`);
   return new Promise((resolve) => {
-    server.close(resolve);
+    server.close(() => {
+      log.debug(`stopped router`);
+      resolve();
+    });
   });
 }
 

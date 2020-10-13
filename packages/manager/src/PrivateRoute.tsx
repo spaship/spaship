@@ -11,14 +11,14 @@ const PrivateRoute: FunctionComponent<PrivateRouteProps> = ({ component: Compone
   return (
     <Route
       {...rest}
-      render={props =>
+      render={(props) =>
         initialized && keycloak.authenticated ? ( //put your authenticate logic here
           <Component {...props} />
         ) : (
           <Redirect
             to={{
               pathname: "/login",
-              state: { from: props.location }
+              state: { from: props.location },
             }}
           />
         )

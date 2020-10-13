@@ -20,6 +20,8 @@ const options = {
 
 const keycloak = Keycloak(options);
 
+(window as any).kc = keycloak;
+
 function getUserToken() {
   return keycloak.tokenParsed as ISPAshipJWT;
 }

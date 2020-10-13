@@ -4,8 +4,8 @@
   "description": "SPAship path proxy. Proxies paths to the right SPA location or pass to different origin.",
   "main": "index.js",
   "scripts": {
-    "test": "../../node_modules/.bin/jest --restoreMocks --passWithNoTests",
-    "start": "node $NODE_DEBUG_OPTION index.js"
+    "test": "SPASHIP_LOG_LEVEL=debug SPASHIP_LOG_FORMAT=pretty ../../node_modules/.bin/jest --restoreMocks --passWithNoTests",
+    "start": "source ../../.env; node $NODE_DEBUG_OPTION index.js"
   },
   "repository": {
     "type": "git",
@@ -35,6 +35,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "axios": "0.20.0"
+    "axios": "0.20.0",
+    "memfs": "3.2.0"
   }
 }
