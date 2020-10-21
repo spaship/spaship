@@ -62,12 +62,11 @@ objects:
       name: ${name}-api-config
     data:
       API_PORT: "8080"
-      AUTH__KEYCLOAK__CLIENTID: spaship-reference
-      AUTH__KEYCLOAK__REALM: EmployeeIDP
-      AUTH__KEYCLOAK__URL: https://auth.redhat.com/auth
-      AUTH__KEYCLOAK__ID_PROP: rhatUUID
-      AUTH__KEYCLOAK__PUBKEY: >-
-        MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAtPPUahQ3PJhoCqSsvWTnR/mq4bw4PePpBgjQlRVzUBZwW5scKHbUZxdK9qRhX3fmMOz0VN3H4A+1launCJz56blQFNx9PhZ4vka83qCrNjtlr5lQZsRSuCUO283gJ303fdqQhmrmveVZ34KlUbehcy/m71nP92Aq/inICN5XDmXRDyd/1jDl1oT6XCmEaO67Lv7yPUdfTQR8Dfvw48lnqupFS6dbY3QNO0YHIoanmeX9wao3DLioXBEFY8IsHKim0lAVtlQieWCl5jr9UemrIxzCbIkTwVkjyM4QMocNBhl7zOhfKt8NBBMVAznrdPBX5dUpe96WqCnDUO4UfZY6G6bMux4atI+CJ5NF0fqUlVEE/sgnsjuGmksTnPu+QgM76rzEi61D/lEk9LFvtZr9Iwr1iWm54Ot4rDch8dGi0wvKfTFjsbJDQWenHt/p+9JBpN3DG4b3gAf0YDLNt9l4VCnCQKbLhozy/N74RPZ9t7deSF7r/tl+vBAhrqBluFTauw4qt0KGUhwGtoMGvW3C2EaDoBrVncrEPvipLPl1z4C+FB3CllCyiZczodtCcqYvTdigVOSBnHEb3tYwnyENMNuOmkX07YbFBetrzA+k9vHuVx4owT5TTwAPlcd7ghAmWKQJLJsqivsLlLHDgB9xVtMq20n7UTo8zb3dP8KZ8F0CAwEAAQ==
+      AUTH__KEYCLOAK__CLIENTID: ${KEYCLOAK_CLIENTID}
+      AUTH__KEYCLOAK__REALM: ${KEYCLOAK_REALM}
+      AUTH__KEYCLOAK__URL: ${KEYCLOAK_URL}
+      AUTH__KEYCLOAK__ID_PROP: ${KEYCLOAK_ID_PROP}
+      AUTH__KEYCLOAK__PUBKEY: ${KEYCLOAK_PUBKEY}
       LOG_FORMAT: json
       WEBROOT: /var/www/html
       UPLOAD_DIR: /tmp
@@ -527,7 +526,6 @@ parameters:
     displayName: Url Suffix
     description: Router url suffix for spaship-router and spaship-api
     required: true
-    value: .ext.us-west.dc.prod.paas.redhat.com
   - name: replica
     description: number of replicas
     value: "1"
@@ -593,4 +591,24 @@ parameters:
     displayName: "OpenShift Service Name"
     description: "The name of the OpenShift Service exposed for the database."
     value: spaship-mongodb
+    required: true
+  - name: KEYCLOAK_CLIENTID
+    displayName: "Keycloak Client ID"
+    description: "The Keycloak client id for your SPAship Manager instance."
+    required: true
+  - name: KEYCLOAK_REALM
+    displayName: "Keycloak REALM"
+    description: "The Keycloak Realm under which your SPAship Manager client is registered."
+    required: true
+  - name: KEYCLOAK_URL
+    displayName: "Keycloak URL"
+    description: "The URL to a Keycloak instance you wish to use for authentication."
+    required: true
+  - name: KEYCLOAK_ID_PROP
+    displayName: "JWT user UUID prop"
+    description: "The JWT property to treat as a UUID."
+    required: true
+  - name: KEYCLOAK_PUBKEY
+    displayName: "Keycloak public key"
+    description: "Your Keycloak realm's public key."
     required: true
