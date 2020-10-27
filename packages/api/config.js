@@ -37,7 +37,7 @@ let validOptions = [
   "auth:keycloak:id_prop",
 
   //  authorization
-  "auth:role_prop",
+  "auth:prop",
 ];
 const filepathOptions = ["config_file", "upload_dir", "webroot"]; // config options that represent filepaths
 
