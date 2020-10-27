@@ -35,6 +35,9 @@ let validOptions = [
   "auth:keycloak:pubkey_file",
   "auth:keycloak:clientid",
   "auth:keycloak:id_prop",
+
+  //  authorization
+  "auth:role_prop",
 ];
 const filepathOptions = ["config_file", "upload_dir", "webroot"]; // config options that represent filepaths
 
@@ -83,7 +86,7 @@ if (configFile) {
 }
 
 nconf.defaults({
-  port: 8008,
+  port: 2345,
   host: "localhost",
   webroot: "/var/www",
   upload_dir: "/tmp/spaship_uploads",
