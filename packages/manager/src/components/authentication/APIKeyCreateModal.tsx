@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 import {
+  Alert,
   ActionGroup,
   Button,
   Checkbox,
   Modal,
   ModalVariant,
   Form,
+  FormAlert,
   FormGroup,
   TextInput,
   InputGroup,
   InputGroupText,
+  ClipboardCopy,
 } from "@patternfly/react-core";
 import { ExclamationCircleIcon } from "@patternfly/react-icons";
 import { IEnvironment } from "../../config";
@@ -27,6 +30,7 @@ interface IProps {
 export default (props: IProps) => {
   const { apiKeys, isOpen, onClose } = props;
   const { selected } = useConfig();
+  const [isSubmiting, setSubmiting] = useState(false);
   const [label, setLabel] = useState("");
   const [expiredDate, setExpiredDate] = useState("");
   const [isLabelValidated, setLabelValidated] = useState<"default" | "success" | "error">("default");
@@ -59,6 +63,7 @@ export default (props: IProps) => {
   };
 
   const onSubmit = async () => {
+    setSubmiting(true);
     const payload: IAPIKeyPayload = {
       label,
     };
@@ -69,11 +74,17 @@ export default (props: IProps) => {
 
     const apiKey = await createMultiAPIKeys(selectedEnvironments, payload);
     setAPIKeyEnvironments(apiKey.environments);
+    setSubmiting(false);
     props.afterCreated && props.afterCreated(apiKey);
   };
 
   const isValid = () => {
-    if (selectedEnvironments.length > 0 && isLabelValidated === "success") {
+    if (
+      !isSubmiting &&
+      apiKeyEnvironments.length === 0 &&
+      selectedEnvironments.length > 0 &&
+      isLabelValidated === "success"
+    ) {
       return true;
     }
     return false;
@@ -112,16 +123,11 @@ export default (props: IProps) => {
 
   const renderAPIKeys = () =>
     apiKeyEnvironments.map((apiKeyEnv) => (
-      <InputGroup>
+      <InputGroup key={`apiKey-${apiKeyEnv.name}`}>
         <InputGroupText>{apiKeyEnv.name}</InputGroupText>
-        <TextInput
-          key={`api-key-${apiKeyEnv.name}`}
-          value={apiKeyEnv.key}
-          type="text"
-          readOnly
-          aria-describedby="api-key-helper"
-          name="api-key"
-        />
+        <ClipboardCopy isReadOnly style={{ width: "80%" }}>
+          {apiKeyEnv.key}
+        </ClipboardCopy>
       </InputGroup>
     ));
 
@@ -170,11 +176,15 @@ export default (props: IProps) => {
           </Button>
         </ActionGroup>
         {apiKeyEnvironments && apiKeyEnvironments.length > 0 && (
-          <FormGroup
-            label="Your New API Key"
-            fieldId="api-key"
-            helperText="Please Note: You can see the API key only once at the time of creation, so please copy them for your reference."
-          >
+          <FormGroup label="Your New API Key" fieldId="api-key">
+            <FormAlert>
+              <Alert
+                variant="danger"
+                title="Please Note: You can see the API key only once at the time of creation, so please copy them for your reference."
+                aria-live="polite"
+                isInline
+              />
+            </FormAlert>
             {renderAPIKeys()}
           </FormGroup>
         )}
