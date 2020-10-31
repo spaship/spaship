@@ -70,6 +70,12 @@ class DeployCommand extends Command {
       this.error(`The requested environment, "${flags.env}", is not defined in your spashiprc file.`);
     }
 
+    try {
+      host = new URL(host).origin;
+    } catch (error) {
+      this.error(`The API url ${host} is invalid`);
+    }
+
     // look for the API key first in the --apikey option, and next in the spashiprc file.
     let apikey;
     let rc_apikey = get(config, `envs.${flags.env}.apikey`);
