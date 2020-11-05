@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.13.0](https://github.com/spaship/spaship/compare/v0.11.1...v0.13.0) (2020-11-05)
+
+### Bug Fixes
+
+- **deps:** update dependency axios to v0.20.0 ([#731](https://github.com/spaship/spaship/issues/731)) ([c07a1af](https://github.com/spaship/spaship/commit/c07a1af2d1141178f247136e0e6872f6ce541002))
+- **deps:** update dependency axios to v0.21.0 ([dc4b8b9](https://github.com/spaship/spaship/commit/dc4b8b9a61bf5985377aa9768cacd6780af1892d))
+
 # [0.12.0](https://github.com/spaship/spaship/compare/v0.11.1...v0.12.0) (2020-11-05)
 
 ### Bug Fixes

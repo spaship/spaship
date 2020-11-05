@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.13.0](https://github.com/spaship/spaship/compare/v0.11.1...v0.13.0) (2020-11-05)
+
+### Bug Fixes
+
+- **deps:** update dependency lodash to v4.17.19 [security] ([ab8c0eb](https://github.com/spaship/spaship/commit/ab8c0eb602e7d45425a8bc6a44323c1fe3b9518f))
+
 # [0.12.0](https://github.com/spaship/spaship/compare/v0.11.1...v0.12.0) (2020-11-05)
 
 ### Bug Fixes
