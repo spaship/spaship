@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.12.0](https://github.com/spaship/spaship/compare/v0.11.1...v0.12.0) (2020-11-05)
+
+### Bug Fixes
+
+- **api:** [#724](https://github.com/spaship/spaship/issues/724) Error: algorithms should be set ([#725](https://github.com/spaship/spaship/issues/725)) ([d17cbc0](https://github.com/spaship/spaship/commit/d17cbc0722067b8bb37823804b0e8051595a77af))
+- **deps:** update dependency axios to v0.20.0 ([#731](https://github.com/spaship/spaship/issues/731)) ([c07a1af](https://github.com/spaship/spaship/commit/c07a1af2d1141178f247136e0e6872f6ce541002))
+- **deps:** update dependency axios to v0.21.0 ([dc4b8b9](https://github.com/spaship/spaship/commit/dc4b8b9a61bf5985377aa9768cacd6780af1892d))
+- **deps:** update dependency express-jwt to v6 [security] ([#623](https://github.com/spaship/spaship/issues/623)) ([71e905a](https://github.com/spaship/spaship/commit/71e905ab51356c1b382f5379424fc6efeb0b6cec))
+- **deps:** update dependency helmet to v4 ([#691](https://github.com/spaship/spaship/issues/691)) ([d80ce1f](https://github.com/spaship/spaship/commit/d80ce1f440c3df565bea6553504e644c75db8b37))
+- **deps:** update dependency lodash to v4.17.19 [security] ([ab8c0eb](https://github.com/spaship/spaship/commit/ab8c0eb602e7d45425a8bc6a44323c1fe3b9518f))
+
 # [0.11.0](https://github.com/spaship/spaship/compare/v0.10.0...v0.11.0) (2020-06-05)
 
 ### Bug Fixes

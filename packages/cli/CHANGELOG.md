@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.12.0](https://github.com/spaship/spaship/compare/v0.11.1...v0.12.0) (2020-11-05)
+
+### Bug Fixes
+
+- **deps:** update dependency cosmiconfig to v7 ([#690](https://github.com/spaship/spaship/issues/690)) ([6538984](https://github.com/spaship/spaship/commit/65389844c9257023413ed8242bf1d181e589c2d4))
+- **deps:** update dependency lodash to v4.17.19 [security] ([ab8c0eb](https://github.com/spaship/spaship/commit/ab8c0eb602e7d45425a8bc6a44323c1fe3b9518f))
+- **deps:** update dependency ora to v5 ([#700](https://github.com/spaship/spaship/issues/700)) ([289aabe](https://github.com/spaship/spaship/commit/289aabeba35e8679ead471bd700f511058c9fb75))
+
+### Features
+
+- add better error messages to the cli ([#885](https://github.com/spaship/spaship/issues/885)) ([3b477ca](https://github.com/spaship/spaship/commit/3b477ca646844ed6527a8e950ad15f86612f2b88))
+- **cli:** using api url origin ([#879](https://github.com/spaship/spaship/issues/879)) ([8137917](https://github.com/spaship/spaship/commit/8137917c3d76b0233578ee5250a881cd302c3f5c))
+
 ## [0.11.1](https://github.com/spaship/spaship/compare/v0.11.0...v0.11.1) (2020-06-05)
 
 ### Bug Fixes
