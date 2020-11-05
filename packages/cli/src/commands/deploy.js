@@ -156,7 +156,7 @@ DeployCommand.args = [
     required: false,
     default: null,
     description:
-      "SPA archive file. You can omit this if you specify the build artifact path as `buildDir` in the spaship.yaml file.",
+      "An archive (zip, tarball, or bzip2) file containing SPA static assets and a spaship.yaml file. You can omit this if you specify the build artifact path as `buildDir` in the spaship.yaml file.",
   },
 ];
 
