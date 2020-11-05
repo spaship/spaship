@@ -25,7 +25,7 @@ $ npm install -g @spaship/cli
 $ spaship COMMAND
 running command...
 $ spaship (-v|--version|version)
-@spaship/cli/0.13.0 linux-x64 node-v12.18.3
+@spaship/cli/0.13.1 linux-x64 node-v12.18.3
 $ spaship --help [COMMAND]
 USAGE
   $ spaship COMMAND
@@ -70,7 +70,7 @@ EXAMPLES
   $ spaship deploy # deploying a buildDir directory
 ```
 
-_See code: [src/commands/deploy.js](https://github.com/spaship/spaship/blob/v0.13.0/src/commands/deploy.js)_
+_See code: [src/commands/deploy.js](https://github.com/spaship/spaship/blob/v0.13.1/src/commands/deploy.js)_
 
 ## `spaship help [COMMAND]`
 
@@ -108,7 +108,7 @@ DESCRIPTION
   passed in as CLI options.
 ```
 
-_See code: [src/commands/init.js](https://github.com/spaship/spaship/blob/v0.13.0/src/commands/init.js)_
+_See code: [src/commands/init.js](https://github.com/spaship/spaship/blob/v0.13.1/src/commands/init.js)_
 
 <!-- commandsstop -->
 
