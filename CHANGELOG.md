@@ -3,6 +3,59 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.12.0](https://github.com/spaship/spaship/compare/v0.11.1...v0.12.0) (2020-11-05)
+
+### Bug Fixes
+
+- **manager:** the api key created but not show up ([#877](https://github.com/spaship/spaship/issues/877)) ([9f9f234](https://github.com/spaship/spaship/commit/9f9f234b1dad93640a0c661531040e76e1a78121))
+- resolve noFallthroughCasesInSwitch typescript error ([#869](https://github.com/spaship/spaship/issues/869)) ([2f54164](https://github.com/spaship/spaship/commit/2f54164acddbcf670be0a25c84c8f8be5cd3dbfd))
+- **api:** [#724](https://github.com/spaship/spaship/issues/724) Error: algorithms should be set ([#725](https://github.com/spaship/spaship/issues/725)) ([d17cbc0](https://github.com/spaship/spaship/commit/d17cbc0722067b8bb37823804b0e8051595a77af))
+- **deps:** downgrade docusaurus/core and docusaurus/preset-classic from 2.0.0-alpha.66 to 2.0.0-alpha.65 ([#863](https://github.com/spaship/spaship/issues/863)) ([9d41b17](https://github.com/spaship/spaship/commit/9d41b17e51864cb6aefe43fdeca90bba767eb6b0))
+- **deps:** pin dependencies ([d61232d](https://github.com/spaship/spaship/commit/d61232deea629aab2daedc8bf5475cb9f4a3f258))
+- **deps:** update dependency @docusaurus/core to v2.0.0-alpha.58 ([#577](https://github.com/spaship/spaship/issues/577)) ([5694c16](https://github.com/spaship/spaship/commit/5694c16755626a8546dc5816666fe746e7e7ae73))
+- **deps:** update dependency @docusaurus/core to v2.0.0-alpha.59 ([f8ebad1](https://github.com/spaship/spaship/commit/f8ebad121b153556e33a3e3fbd16a8e3aa02a5f2))
+- **deps:** update dependency @docusaurus/core to v2.0.0-alpha.60 ([698f13f](https://github.com/spaship/spaship/commit/698f13facebeceae56b7262485e3d1af740c4c44))
+- **deps:** update dependency @docusaurus/core to v2.0.0-alpha.61 ([7dfdd7a](https://github.com/spaship/spaship/commit/7dfdd7add3d692f66003f977ca3e40e8ff7e14d3))
+- **deps:** update dependency @docusaurus/core to v2.0.0-alpha.62 ([a36fdd2](https://github.com/spaship/spaship/commit/a36fdd209229e4834778fa3448703f7118654766))
+- **deps:** update dependency @docusaurus/core to v2.0.0-alpha.63 ([640f111](https://github.com/spaship/spaship/commit/640f111d3fd21227a85a1d8a38503ddbbe9ed500))
+- **deps:** update dependency @docusaurus/core to v2.0.0-alpha.64 ([#781](https://github.com/spaship/spaship/issues/781)) ([ad50c16](https://github.com/spaship/spaship/commit/ad50c1630f8ff13de4587ebc2642b55974c45bde))
+- **deps:** update dependency @docusaurus/core to v2.0.0-alpha.65 ([#807](https://github.com/spaship/spaship/issues/807)) ([011658a](https://github.com/spaship/spaship/commit/011658acc0f316ff742afac4104cf40adae8646e))
+- **deps:** update dependency @docusaurus/core to v2.0.0-alpha.66 ([66f4a06](https://github.com/spaship/spaship/commit/66f4a062e1273026098d3835a6e16fb32bb67e4d))
+- **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.58 ([#578](https://github.com/spaship/spaship/issues/578)) ([6c02950](https://github.com/spaship/spaship/commit/6c02950b3dc920b9314cab1420336ce0320b0f87))
+- **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.59 ([a96a706](https://github.com/spaship/spaship/commit/a96a7065cfff2c65d7c3de6b493359f480481324))
+- **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.60 ([5d1e4d1](https://github.com/spaship/spaship/commit/5d1e4d1c9be22ab77439462ad861458f3356dfcb))
+- **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.61 ([3af3395](https://github.com/spaship/spaship/commit/3af339551757513f7fa0a3bd496ffa351f164b9c))
+- **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.62 ([f4e5191](https://github.com/spaship/spaship/commit/f4e5191f6bebf248af25a66cc045a85fda72f148))
+- **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.63 ([4db96d8](https://github.com/spaship/spaship/commit/4db96d80de6d8167df36eeaac271e6063fb0d156))
+- **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.64 ([#782](https://github.com/spaship/spaship/issues/782)) ([fca86de](https://github.com/spaship/spaship/commit/fca86dece6056d5cac61718186e9c715448af3c0))
+- **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.65 ([#808](https://github.com/spaship/spaship/issues/808)) ([229eeeb](https://github.com/spaship/spaship/commit/229eeebd96fb5ccc7578a3cdf136a23b96057c20))
+- **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.66 ([20a705d](https://github.com/spaship/spaship/commit/20a705dafc1fb1fa69528498fefae95f7003fcd9))
+- **deps:** update dependency @mdx-js/react to v1.6.18 ([#784](https://github.com/spaship/spaship/issues/784)) ([10840f3](https://github.com/spaship/spaship/commit/10840f389288d96e81d5a7eae55b5dff22149675))
+- **deps:** update dependency @mdx-js/react to v1.6.19 ([ac19780](https://github.com/spaship/spaship/commit/ac19780d92a2b820e2d00596dc284d8277dbb9e0))
+- **deps:** update dependency axios to v0.20.0 ([#731](https://github.com/spaship/spaship/issues/731)) ([c07a1af](https://github.com/spaship/spaship/commit/c07a1af2d1141178f247136e0e6872f6ce541002))
+- **deps:** update dependency axios to v0.21.0 ([dc4b8b9](https://github.com/spaship/spaship/commit/dc4b8b9a61bf5985377aa9768cacd6780af1892d))
+- **deps:** update dependency cosmiconfig to v7 ([#690](https://github.com/spaship/spaship/issues/690)) ([6538984](https://github.com/spaship/spaship/commit/65389844c9257023413ed8242bf1d181e589c2d4))
+- **deps:** update dependency express-jwt to v6 [security] ([#623](https://github.com/spaship/spaship/issues/623)) ([71e905a](https://github.com/spaship/spaship/commit/71e905ab51356c1b382f5379424fc6efeb0b6cec))
+- **deps:** update dependency helmet to v4 ([#691](https://github.com/spaship/spaship/issues/691)) ([d80ce1f](https://github.com/spaship/spaship/commit/d80ce1f440c3df565bea6553504e644c75db8b37))
+- **deps:** update dependency lodash to v4.17.19 [security] ([ab8c0eb](https://github.com/spaship/spaship/commit/ab8c0eb602e7d45425a8bc6a44323c1fe3b9518f))
+- **deps:** update dependency ora to v5 ([#700](https://github.com/spaship/spaship/issues/700)) ([289aabe](https://github.com/spaship/spaship/commit/289aabeba35e8679ead471bd700f511058c9fb75))
+- **manager:** [#318](https://github.com/spaship/spaship/issues/318) disable submit button if use duplicate label ([#637](https://github.com/spaship/spaship/issues/637)) ([2528c6f](https://github.com/spaship/spaship/commit/2528c6f55010e620c40dba70b74b578603533ae8))
+- **manager:** can not fetch application details ([d9a329d](https://github.com/spaship/spaship/commit/d9a329db0387d3be6561a9a34cd3810b21a41ddd))
+
+### Features
+
+- add better error messages to the cli ([#885](https://github.com/spaship/spaship/issues/885)) ([3b477ca](https://github.com/spaship/spaship/commit/3b477ca646844ed6527a8e950ad15f86612f2b88))
+- **#513:** Added warning message to the New API Key modal. ([#634](https://github.com/spaship/spaship/issues/634)) ([64c3505](https://github.com/spaship/spaship/commit/64c3505324f808395637bfdabd4f6db7d4840c6f)), closes [#513](https://github.com/spaship/spaship/issues/513)
+- **#616:** Updated Docusaurus pages and deployment configuration ([#619](https://github.com/spaship/spaship/issues/619)) ([9016d28](https://github.com/spaship/spaship/commit/9016d28e34d0032edb999d5c3cca510c7c96c3e8)), closes [#616](https://github.com/spaship/spaship/issues/616)
+- **cli:** using api url origin ([#879](https://github.com/spaship/spaship/issues/879)) ([8137917](https://github.com/spaship/spaship/commit/8137917c3d76b0233578ee5250a881cd302c3f5c))
+- **manager:** [#502](https://github.com/spaship/spaship/issues/502) enhance manager to be multi-tenant ([#625](https://github.com/spaship/spaship/issues/625)) ([0a257ea](https://github.com/spaship/spaship/commit/0a257ea1a689dff9f98d2ef1941954d2edd4d2a4)), closes [#570](https://github.com/spaship/spaship/issues/570)
+- **manager:** display notification when after deploying a new spa ([#639](https://github.com/spaship/spaship/issues/639)) ([9b0fdfe](https://github.com/spaship/spaship/commit/9b0fdfe13f1f33e3060969d67657c388286092a9))
+
+### Reverts
+
+- Revert "chore(deps): update dependency @patternfly/react-table to v4 (#554)" (#561) ([fa8bb2e](https://github.com/spaship/spaship/commit/fa8bb2e38cc9097b4ed4c2dd6f10b8c60cb0eb10)), closes [#554](https://github.com/spaship/spaship/issues/554) [#561](https://github.com/spaship/spaship/issues/561)
+- Revert "chore(deps): update dependency @patternfly/react-icons to v4 (#552)" (#560) ([9821532](https://github.com/spaship/spaship/commit/98215322adbc3901b99aa1fa8e985d05e45c0021)), closes [#552](https://github.com/spaship/spaship/issues/552) [#560](https://github.com/spaship/spaship/issues/560)
+
 ## [0.11.1](https://github.com/spaship/spaship/compare/v0.11.0...v0.11.1) (2020-06-05)
 
 ### Bug Fixes
