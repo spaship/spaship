@@ -25,15 +25,11 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>SPAship</title>
-    <script>
-      (function () {
-        const head = document.getElementsByTagName("head")[0];
-        const script = document.createElement("script");
-        script.type = "text/javascript";
-        script.src = "%PUBLIC_URL%/config/manager.js?timestamp=" + new Date().getTime();
-        document.getElementsByTagName("head")[0].appendChild(script);
-      })();
-    </script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+      integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -48,5 +44,14 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script>
+      (function () {
+        const head = document.getElementsByTagName("head")[0];
+        const script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "%PUBLIC_URL%/config/manager.js?timestamp=" + new Date().getTime();
+        document.getElementsByTagName("head")[0].appendChild(script);
+      })();
+    </script>
   </body>
 </html>

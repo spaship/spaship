@@ -3,6 +3,10 @@
   --pf-c-page__sidebar--BoxShadow: 0;
 }
 
+#atlwdg-trigger {
+  z-index: 9999;
+}
+
 input[type="file"] {
   opacity: 0;
   position: absolute;
