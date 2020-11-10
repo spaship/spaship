@@ -7,10 +7,13 @@ module.exports = () => {
       user: "spaship-users",
     };
     try {
-      const propName = config.get("auth:prop");
-      if (propName) {
-        roles.admin = "spaship-" + propName + "-admins";
-        roles.user = "spaship-" + propName + "-users";
+      const adminGroup = config.get("auth:ldap:admin_group");
+      const userGroup = config.get("auth:ldap:user_group");
+      if (adminGroup) {
+        roles.admin = adminGroup;
+      }
+      if (userGroup) {
+        roles.user = userGroup;
       }
       const hasAdminAccess = req.user.role.indexOf(roles.admin) >= 0;
       const hasUserAccess = req.user.role.indexOf(roles.user) >= 0;
