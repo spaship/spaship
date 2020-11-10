@@ -23,7 +23,7 @@ module.exports = () => {
       } else {
         res
           .status(401)
-          .json({ error: true, status: 401, message: "Access denied, not a member of the required LDAP group(s)." });
+          .json({ error: true, status: "fail", message: "Access denied, not a member of the required LDAP group(s)." });
       }
     } catch (error) {
       return next(error);
