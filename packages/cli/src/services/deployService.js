@@ -24,7 +24,7 @@ const upload = (url, data, apiKey, onUploadProgress) => {
 
     const defaultHeaders = {
       "user-agent": `@spaship/cli@${pkg.version} ${pkg.homepage}`,
-      "x-api-key": apiKey,
+      authorization: `APIKey ${apiKey}`,
     };
 
     const options = {

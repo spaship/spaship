@@ -20,9 +20,10 @@ const validation = async (apiKey) => {
 
 // https://learning.postman.com/docs/postman/sending-api-requests/authorization/#api-key
 const getAPIKeyFromRequest = (req) => {
-  const header = req.headers["x-api-key"];
+  const header = req.headers["authorization"];
+  const headerKey = header && header.replace(/^apikey\s/i, "");
   const query = req.query["api_key"];
-  return header || query;
+  return query || headerKey;
 };
 
 module.exports = {
