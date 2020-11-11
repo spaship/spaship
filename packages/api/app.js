@@ -9,6 +9,7 @@ const fs = require("fs");
 const yaml = require("js-yaml");
 const { pinoExpress } = require("@spaship/common/lib/logging/pino");
 const authentication = require("./middlewares/authentication");
+const checkAccess = require("./middlewares/checkAccess");
 const responseWrapper = require("./middlewares/responseWrapper");
 const errorHandler = require("./middlewares/errorHandler");
 const { liveness, readiness } = require("./health");
@@ -37,7 +38,7 @@ app
     swaggerUi.serve,
     swaggerUi.setup(swaggerDocument)
   )
-  .use("/api", authentication(), routes)
+  .use("/api", [authentication(), checkAccess()], routes)
   .use(errorHandler());
 
 module.exports = app;

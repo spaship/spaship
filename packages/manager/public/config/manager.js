@@ -6,7 +6,7 @@ window.SPAship = {
       environments: [
         {
           name: "Dev",
-          api: "http://localhost:8008/api/v1",
+          api: "http://localhost:2345/api/v1",
           domain: "http://localhost:8765",
         },
       ],
