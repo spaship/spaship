@@ -1,6 +1,6 @@
 {
   "name": "@spaship/manager",
-  "version": "0.11.0",
+  "version": "0.13.0",
   "description": "The SPAship UI.",
   "main": "index.js",
   "repository": {
@@ -16,29 +16,29 @@
     "build": "react-scripts build"
   },
   "devDependencies": {
-    "@patternfly/react-core": "4.63.3",
-    "@patternfly/react-icons": "4.7.11",
-    "@patternfly/react-styles": "4.7.8",
-    "@patternfly/react-table": "4.18.14",
+    "@patternfly/react-core": "4.75.2",
+    "@patternfly/react-icons": "4.7.16",
+    "@patternfly/react-styles": "4.7.12",
+    "@patternfly/react-table": "4.19.5",
     "@react-keycloak/web": "2.1.4",
     "@types/jest": "26.0.15",
-    "@types/lodash": "4.14.162",
-    "@types/node": "12.12.70",
-    "@types/react": "16.9.53",
-    "@types/react-dom": "16.9.8",
+    "@types/lodash": "4.14.165",
+    "@types/node": "12.19.4",
+    "@types/react": "16.9.56",
+    "@types/react-dom": "16.9.9",
     "@types/react-router-dom": "5.1.6",
     "@types/styled-components": "5.1.4",
     "@types/uuid": "8.3.0",
-    "@typescript-eslint/eslint-plugin": "4.5.0",
-    "@typescript-eslint/parser": "4.5.0",
+    "@typescript-eslint/eslint-plugin": "4.7.0",
+    "@typescript-eslint/parser": "4.7.0",
     "keycloak-js": "10.0.2",
-    "react": "16.14.0",
-    "react-dom": "16.14.0",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
     "react-router-dom": "5.2.0",
-    "react-scripts": "3.4.4",
-    "react-toastify": "6.0.9",
-    "styled-components": "5.2.0",
-    "typescript": "4.0.3"
+    "react-scripts": "4.0.0",
+    "react-toastify": "6.1.0",
+    "styled-components": "5.2.1",
+    "typescript": "4.0.5"
   },
   "eslintConfig": {
     "extends": "react-app"

@@ -3,6 +3,46 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.13.0](https://github.com/spaship/spaship/compare/v0.11.1...v0.13.0) (2020-11-05)
+
+### Bug Fixes
+
+- **manager:** the api key created but not show up ([#877](https://github.com/spaship/spaship/issues/877)) ([9f9f234](https://github.com/spaship/spaship/commit/9f9f234b1dad93640a0c661531040e76e1a78121))
+- resolve noFallthroughCasesInSwitch typescript error ([#869](https://github.com/spaship/spaship/issues/869)) ([2f54164](https://github.com/spaship/spaship/commit/2f54164acddbcf670be0a25c84c8f8be5cd3dbfd))
+- **manager:** [#318](https://github.com/spaship/spaship/issues/318) disable submit button if use duplicate label ([#637](https://github.com/spaship/spaship/issues/637)) ([2528c6f](https://github.com/spaship/spaship/commit/2528c6f55010e620c40dba70b74b578603533ae8))
+- **manager:** can not fetch application details ([d9a329d](https://github.com/spaship/spaship/commit/d9a329db0387d3be6561a9a34cd3810b21a41ddd))
+
+### Features
+
+- **#513:** Added warning message to the New API Key modal. ([#634](https://github.com/spaship/spaship/issues/634)) ([64c3505](https://github.com/spaship/spaship/commit/64c3505324f808395637bfdabd4f6db7d4840c6f)), closes [#513](https://github.com/spaship/spaship/issues/513)
+- **manager:** [#502](https://github.com/spaship/spaship/issues/502) enhance manager to be multi-tenant ([#625](https://github.com/spaship/spaship/issues/625)) ([0a257ea](https://github.com/spaship/spaship/commit/0a257ea1a689dff9f98d2ef1941954d2edd4d2a4)), closes [#570](https://github.com/spaship/spaship/issues/570)
+- **manager:** display notification when after deploying a new spa ([#639](https://github.com/spaship/spaship/issues/639)) ([9b0fdfe](https://github.com/spaship/spaship/commit/9b0fdfe13f1f33e3060969d67657c388286092a9))
+
+### Reverts
+
+- Revert "chore(deps): update dependency @patternfly/react-table to v4 (#554)" (#561) ([fa8bb2e](https://github.com/spaship/spaship/commit/fa8bb2e38cc9097b4ed4c2dd6f10b8c60cb0eb10)), closes [#554](https://github.com/spaship/spaship/issues/554) [#561](https://github.com/spaship/spaship/issues/561)
+- Revert "chore(deps): update dependency @patternfly/react-icons to v4 (#552)" (#560) ([9821532](https://github.com/spaship/spaship/commit/98215322adbc3901b99aa1fa8e985d05e45c0021)), closes [#552](https://github.com/spaship/spaship/issues/552) [#560](https://github.com/spaship/spaship/issues/560)
+
+# [0.12.0](https://github.com/spaship/spaship/compare/v0.11.1...v0.12.0) (2020-11-05)
+
+### Bug Fixes
+
+- **manager:** the api key created but not show up ([#877](https://github.com/spaship/spaship/issues/877)) ([9f9f234](https://github.com/spaship/spaship/commit/9f9f234b1dad93640a0c661531040e76e1a78121))
+- resolve noFallthroughCasesInSwitch typescript error ([#869](https://github.com/spaship/spaship/issues/869)) ([2f54164](https://github.com/spaship/spaship/commit/2f54164acddbcf670be0a25c84c8f8be5cd3dbfd))
+- **manager:** [#318](https://github.com/spaship/spaship/issues/318) disable submit button if use duplicate label ([#637](https://github.com/spaship/spaship/issues/637)) ([2528c6f](https://github.com/spaship/spaship/commit/2528c6f55010e620c40dba70b74b578603533ae8))
+- **manager:** can not fetch application details ([d9a329d](https://github.com/spaship/spaship/commit/d9a329db0387d3be6561a9a34cd3810b21a41ddd))
+
+### Features
+
+- **#513:** Added warning message to the New API Key modal. ([#634](https://github.com/spaship/spaship/issues/634)) ([64c3505](https://github.com/spaship/spaship/commit/64c3505324f808395637bfdabd4f6db7d4840c6f)), closes [#513](https://github.com/spaship/spaship/issues/513)
+- **manager:** [#502](https://github.com/spaship/spaship/issues/502) enhance manager to be multi-tenant ([#625](https://github.com/spaship/spaship/issues/625)) ([0a257ea](https://github.com/spaship/spaship/commit/0a257ea1a689dff9f98d2ef1941954d2edd4d2a4)), closes [#570](https://github.com/spaship/spaship/issues/570)
+- **manager:** display notification when after deploying a new spa ([#639](https://github.com/spaship/spaship/issues/639)) ([9b0fdfe](https://github.com/spaship/spaship/commit/9b0fdfe13f1f33e3060969d67657c388286092a9))
+
+### Reverts
+
+- Revert "chore(deps): update dependency @patternfly/react-table to v4 (#554)" (#561) ([fa8bb2e](https://github.com/spaship/spaship/commit/fa8bb2e38cc9097b4ed4c2dd6f10b8c60cb0eb10)), closes [#554](https://github.com/spaship/spaship/issues/554) [#561](https://github.com/spaship/spaship/issues/561)
+- Revert "chore(deps): update dependency @patternfly/react-icons to v4 (#552)" (#560) ([9821532](https://github.com/spaship/spaship/commit/98215322adbc3901b99aa1fa8e985d05e45c0021)), closes [#552](https://github.com/spaship/spaship/issues/552) [#560](https://github.com/spaship/spaship/issues/560)
+
 # [0.11.0](https://github.com/spaship/spaship/compare/v0.10.0...v0.11.0) (2020-06-05)
 
 ### Bug Fixes

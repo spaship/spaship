@@ -11,14 +11,14 @@
   "author": "Wei Tan <wetan@redhat.com>",
   "license": "ISC",
   "devDependencies": {
-    "cypress": "5.4.0",
+    "cypress": "5.6.0",
     "cypress-file-upload": "4.1.1",
-    "cypress-xpath": "1.6.0",
-    "mocha": "8.2.0",
+    "cypress-xpath": "1.6.1",
+    "mocha": "8.2.1",
     "mochawesome": "5.0.0",
     "mochawesome-merge": "4.2.0",
     "mochawesome-report-generator": "4.1.0",
-    "newman": "5.2.0",
+    "newman": "5.2.1",
     "yargs": "15.4.1"
   }
 }

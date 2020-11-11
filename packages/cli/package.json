@@ -1,7 +1,7 @@
 {
   "name": "@spaship/cli",
   "description": "A command line interface for SPAship!",
-  "version": "0.11.1",
+  "version": "0.13.2",
   "author": "mclayton@redhat.com",
   "bin": {
     "spaship": "./bin/run"
@@ -28,7 +28,7 @@
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.13.3",
     "@oclif/plugin-help": "^3.0.0",
-    "@spaship/common": "^0.11.0",
+    "@spaship/common": "^0.13.0",
     "archiver": "^5.0.0",
     "cosmiconfig": "^7.0.0",
     "form-data": "^3.0.0",
@@ -45,8 +45,8 @@
     "chai": "4.2.0",
     "eslint-config-oclif": "3.1.0",
     "globby": "11.0.1",
-    "mocha": "8.2.0",
-    "nock": "13.0.4",
+    "mocha": "8.2.1",
+    "nock": "13.0.5",
     "nyc": "15.1.0",
     "shortid": "2.2.16",
     "temp-dir": "2.0.0"

@@ -30,6 +30,10 @@ const upload = (url, data, apiKey, onUploadProgress) => {
     const options = {
       method: "POST",
       rejectUnauthorized: false,
+      agentOptions: {
+        ciphers: "ALL",
+        secureProtocol: "TLSv1_1_method",
+      },
       headers: Object.assign({}, defaultHeaders, data.getHeaders()),
     };
 
@@ -44,19 +48,47 @@ const upload = (url, data, apiKey, onUploadProgress) => {
         try {
           const parsedData = JSON.parse(rawData);
 
-          if (res.statusCode >= 200 && res.statusCode <= 300) {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
             resolve(parsedData);
+          } else if (res.statusCode >= 300 && res.statusCode < 400) {
+            reject(`The server attempted an unsupported redirect. [${res.statusCode}]`);
+          } else if (res.statusCode >= 400 && res.statusCode < 500) {
+            switch (res.statusCode) {
+              case 400:
+                reject("Error: Failed to deploy. [400]");
+                break;
+              case 401:
+                reject(`Error: The API key was not accepted by ${url} [401]`);
+              default:
+                reject(`Error: Failed to deploy with an unknown error. [${res.statusCode}]`);
+            }
+          } else if (res.statusCode >= 500 && res.statusCode < 600) {
+            switch (res.statusCode) {
+              case 500:
+                reject(
+                  `Error: The SPAship server has encountered a mysterious problem; someone call Richard Feynman! [500]`
+                );
+                break;
+              case 501:
+                reject(
+                  `Error: The spaship CLI attempted an action not supported by the server, possible version mismatch. [501]`
+                );
+                break;
+              default:
+                reject(`Error: Unknown. [${res.statusCode}]`);
+            }
           } else {
-            reject(parsedData);
           }
         } catch (e) {
-          reject(e);
+          reject(
+            "Error: the server returned an invalid message.  The server may be down, or your .spashiprc.yml may be pointing at the wrong server."
+          );
         }
       });
     });
 
     req.on("error", (e) => {
-      reject(e);
+      reject(e.message);
     });
 
     data.pipe(req);

@@ -1,6 +1,6 @@
 {
   "name": "@spaship/api",
-  "version": "0.11.0",
+  "version": "0.13.0",
   "description": "The RESTFul API of the SPAship platform.",
   "homepage": "https://github.com/spaship/spaship/tree/master/packages/api#readme",
   "repository": {
@@ -27,7 +27,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@spaship/common": "^0.11.0",
+    "@spaship/common": "^0.13.0",
     "body-parser": "^1.19.0",
     "callsites": "^3.1.0",
     "compression": "^1.7.4",
@@ -47,7 +47,7 @@
     "uuid": "^8.0.0"
   },
   "devDependencies": {
-    "axios": "0.20.0",
+    "axios": "0.21.0",
     "mockingoose": "2.13.2",
     "nodemon": "2.0.6",
     "tar": "6.0.5"

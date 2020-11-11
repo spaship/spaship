@@ -70,6 +70,12 @@ class DeployCommand extends Command {
       this.error(`The requested environment, "${flags.env}", is not defined in your spashiprc file.`);
     }
 
+    try {
+      host = new URL(host).origin;
+    } catch (error) {
+      this.error(`The API url ${host} is invalid`);
+    }
+
     // look for the API key first in the --apikey option, and next in the spashiprc file.
     let apikey;
     let rc_apikey = get(config, `envs.${flags.env}.apikey`);
@@ -83,22 +89,24 @@ class DeployCommand extends Command {
       this.error(`An API key must be provided, either in your spashiprc file or in a --apikey option.`);
     }
 
-    if (!args.archive && buildDir) {
-      // No archive path specified in the commandline as argument and buildDir is specified in the spaship.yaml
-      const buildDirPath = nodePath.join(process.cwd(), buildDir);
-      const rawSpashipYml = await common.config.readRaw("spaship.yaml");
-      this.log("Creating a zip archive...");
-      try {
-        args.archive = await zipDirectory(buildDirPath, rawSpashipYml);
-        this.log("Done creating the archive...");
-      } catch (e) {
-        this.error(e);
+    if (!args.archive) {
+      if (buildDir) {
+        // No archive path specified in the commandline as argument and buildDir is specified in the spaship.yaml
+        const buildDirPath = nodePath.join(process.cwd(), buildDir);
+        const rawSpashipYml = await common.config.readRaw("spaship.yaml");
+        this.log("Creating a zip archive...");
+        try {
+          args.archive = await zipDirectory(buildDirPath, rawSpashipYml);
+          this.log("Done creating the archive...");
+        } catch (e) {
+          this.error(e);
+        }
+      } else {
+        // No buildDir is specified in the spaship.yaml
+        this.error(
+          "You should specify the build artifact path as `buildDir` in the spaship.yaml to run `spaship deploy` without the archive path."
+        );
       }
-    } else {
-      // No buildDir is specified in the spaship.yaml
-      this.error(
-        "You should specify the build artifact path as `buildDir` in the spaship.yaml to run `spaship deploy` without the archive path."
-      );
     }
     const spinner = ora(`Start deploying SPA`);
     this.log(`Deploying SPA to ${flags.env}${envIsURL ? "" : ` (${host})`}`);
@@ -150,7 +158,7 @@ DeployCommand.args = [
     required: false,
     default: null,
     description:
-      "SPA archive file. You can omit this if you specify the build artifact path as `buildDir` in the spaship.yaml file.",
+      "An archive (zip, tarball, or bzip2) file containing SPA static assets and a spaship.yaml file. You can omit this if you specify the build artifact path as `buildDir` in the spaship.yaml file.",
   },
 ];
 
