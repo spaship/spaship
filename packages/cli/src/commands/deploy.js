@@ -143,7 +143,7 @@ class DeployCommand extends Command {
       this.log(response);
     } catch (e) {
       spinner.fail(e.message);
-      this.error(e);
+      this.error(e, { exit: 1 });
     }
   }
 }
