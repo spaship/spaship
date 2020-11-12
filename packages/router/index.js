@@ -145,9 +145,9 @@ const pathProxy = (req, res, next) => {
    * If x-forwared-host has some different value. will use it as host
    */
   if (forwardedHost) {
-    req.headers["host"] = forwardedHost;
+    options.hostRewrite = forwardedHost;
   } else if (xForwaredHost !== host) {
-    req.headers["host"] = xForwaredHost;
+    options.hostRewrite = xForwaredHost;
   }
 
   return createProxyMiddleware(options)(req, res, next);
