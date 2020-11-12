@@ -1,7 +1,7 @@
 const nconf = require("nconf");
 const { log } = require("@spaship/common/lib/logging/pino");
 
-const whitelist = ["config_file", "port", "webroot", "target", "fallback"];
+const whitelist = ["config_file", "port", "webroot", "target", "fallback", "forwarded_host"];
 
 nconf
   .env({

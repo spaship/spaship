@@ -135,7 +135,7 @@ let options = {
 };
 
 const pathProxy = (req, res, next) => {
-  const forwardedHost = config.get("forwared_host");
+  const forwardedHost = config.get("forwarded_host");
   const xForwaredHost = req.headers["x-forwarded-host"];
   const host = req.headers["host"];
 
