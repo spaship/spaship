@@ -31,11 +31,12 @@ class DeployCommand extends Command {
 
     const config = loadRcFile();
     const yamlConfig = await common.config.read("spaship.yaml");
+    const yamlPath = yamlConfig && yamlConfig.path;
     // We need send `name` and `path` to API
     // so read them from spaship.yaml or other config file
     // it could be store in package.json
     const name = yamlConfig ? yamlConfig.name : config.name;
-    let path = yamlConfig ? yamlConfig.path : config.path;
+    let path = flags.path || yamlPath;
     const buildDir = yamlConfig ? yamlConfig.buildDir : config.buildDir;
 
     if (!name) {
@@ -169,6 +170,13 @@ DeployCommand.flags = assign(
       description: "a version tag, commit hash, or branch to identify this release",
       required: false,
       default: "undefined",
+    }),
+  },
+  {
+    path: flags.string({
+      char: "p",
+      description:
+        "a custom URL path for your app under the SPAship domain. Defaults to the 'path' in your spaship.yaml. ex: /my/app",
     }),
   },
   commonFlags.apikey,
