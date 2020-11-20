@@ -25,7 +25,7 @@ $ npm install -g @spaship/cli
 $ spaship COMMAND
 running command...
 $ spaship (-v|--version|version)
-@spaship/cli/0.13.1 linux-x64 node-v12.18.3
+@spaship/cli/0.13.2 linux-x64 node-v12.9.1
 $ spaship --help [COMMAND]
 USAGE
   $ spaship COMMAND
@@ -51,12 +51,15 @@ USAGE
   $ spaship deploy [ARCHIVE]
 
 ARGUMENTS
-  ARCHIVE  SPA archive file. You can omit this if you specify the build artifact path as `buildDir` in the spaship.yaml
-           file.
+  ARCHIVE  An archive (zip, tarball, or bzip2) file containing SPA static assets and a spaship.yaml file. You can omit
+           this if you specify the build artifact path as `buildDir` in the spaship.yaml file.
 
 OPTIONS
   -e, --env=env    [default: default] either the name of a SPAship environment as defined in your .spashiprc.yml file,
                    or a URL to a SPAship environment
+
+  -p, --path=path  a custom URL path for your app under the SPAship domain. Defaults to the 'path' in your spaship.yaml.
+                   ex: /my/app
 
   -r, --ref=ref    [default: undefined] a version tag, commit hash, or branch to identify this release
 
@@ -70,7 +73,7 @@ EXAMPLES
   $ spaship deploy # deploying a buildDir directory
 ```
 
-_See code: [src/commands/deploy.js](https://github.com/spaship/spaship/blob/v0.13.1/src/commands/deploy.js)_
+_See code: [src/commands/deploy.js](https://github.com/spaship/spaship/blob/v0.13.2/src/commands/deploy.js)_
 
 ## `spaship help [COMMAND]`
 
@@ -108,7 +111,7 @@ DESCRIPTION
   passed in as CLI options.
 ```
 
-_See code: [src/commands/init.js](https://github.com/spaship/spaship/blob/v0.13.1/src/commands/init.js)_
+_See code: [src/commands/init.js](https://github.com/spaship/spaship/blob/v0.13.2/src/commands/init.js)_
 
 <!-- commandsstop -->
 
