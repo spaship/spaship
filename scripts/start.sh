@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
 
-source .env
+if [[ -f ".env" ]]; then
+  source .env
+fi
+
 npm run lerna run start
