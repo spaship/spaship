@@ -27,7 +27,9 @@ function zipDirectory(directoryPath, rawSpashipYml) {
     pkgData && pkgData.packageJson && pkgData.packageJson["name"] ? pkgData.packageJson["name"] : "SPAShipArchive";
   const pkgVersion =
     pkgData && pkgData.packageJson && pkgData.packageJson["version"] ? pkgData.packageJson["version"] : "";
-  const zipPath = path.join(tempDir, `${pkgName}${pkgVersion ? "-" + pkgVersion : ""}.zip`);
+  // create an absolute path to the zip file.  replace any '/' with '_' in the pkgName (forward slashes are used in
+  // organization-scoped npm package names, such as: @spaship/cli
+  const zipPath = path.join(tempDir, `${pkgName.replace(/\//g, "_")}${pkgVersion ? "-" + pkgVersion : ""}.zip`);
   return zipUtil(directoryPath, zipPath);
 }
 
