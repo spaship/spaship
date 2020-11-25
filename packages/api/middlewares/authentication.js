@@ -19,6 +19,7 @@ module.exports = () => {
           const propName = config.get("auth:keycloak:id_prop");
           req.user = {
             [propName]: validKey.get("userId"),
+            authType: "apikey",
           };
           return next();
         }
