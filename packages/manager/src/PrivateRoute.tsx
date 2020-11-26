@@ -7,7 +7,7 @@ interface PrivateRouteProps extends RouteProps {
 }
 
 const PrivateRoute: FunctionComponent<PrivateRouteProps> = ({ component: Component, ...rest }) => {
-  const [keycloak, initialized] = useKeycloak();
+  const { keycloak, initialized } = useKeycloak();
   return (
     <Route
       {...rest}

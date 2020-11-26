@@ -59,7 +59,7 @@ const StyledCard = styled(Card)({
 
 export default () => {
   const history = useHistory();
-  const [keycloak, initialized] = useKeycloak();
+  const { keycloak, initialized } = useKeycloak();
 
   if (!initialized) {
     return (
