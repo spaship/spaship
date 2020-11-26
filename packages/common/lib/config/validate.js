@@ -28,6 +28,10 @@ const schema = {
       description: "the git ref (tag, branch, commit hash) tied to this deployment",
       type: "string",
     },
+    buildDir: {
+      description: "a directory to package and deploy (can be used instead of uploading a zip file)",
+      type: "string",
+    },
   },
   required: ["path", "name"],
 };
