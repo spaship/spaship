@@ -11,7 +11,7 @@ const StyledButton = styled(Button)({
 });
 
 export default () => {
-  const [keycloak, initialized] = useKeycloak();
+  const { keycloak, initialized } = useKeycloak();
 
   const renderLoginButton = () => {
     if (!initialized) {

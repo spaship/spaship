@@ -19,7 +19,7 @@ import { ISPAshipJWT } from "../keycloak";
 export default () => {
   const [isExpanded, setExpanded] = useState(false);
   const history = useHistory();
-  const [keycloak, initialized] = useKeycloak();
+  const { keycloak, initialized } = useKeycloak();
 
   const onToggle = () => {
     setExpanded(!isExpanded);
