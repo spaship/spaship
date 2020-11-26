@@ -1,4 +1,5 @@
 const config = require("../config");
+const get = require("lodash/get");
 
 module.exports = () => {
   return async (req, res, next) => {
@@ -15,10 +16,10 @@ module.exports = () => {
       if (userGroup) {
         roles.user = userGroup;
       }
-      const hasAdminAccess = req.user.role.indexOf(roles.admin) >= 0;
-      const hasUserAccess = req.user.role.indexOf(roles.user) >= 0;
-      console.log({ roles: req.user.role, hasAdminAccess, hasUserAccess });
-      if (hasAdminAccess || hasUserAccess) {
+      const usedApiKey = req.user.authType === "apikey" ? true : false;
+      const hasAdminAccess = req.user.role && req.user.role.indexOf(roles.admin) >= 0;
+      const hasUserAccess = req.user.role && req.user.role.indexOf(roles.user) >= 0;
+      if (usedApiKey || hasAdminAccess || hasUserAccess) {
         return next();
       } else {
         res
