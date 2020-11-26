@@ -40,7 +40,7 @@ export default (props: IProps) => {
       return apps.map((app) => ({
         cells: [
           {
-            title: <Link to={`/applications/${app.name}`}>{app.name}</Link>,
+            title: <Link to={`/applications/${encodeURIComponent(app.name)}`}>{app.name}</Link>,
           },
           app.path,
         ].concat(
