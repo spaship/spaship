@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Pagination, Bullseye } from "@patternfly/react-core";
 import { Table, TableHeader, TableBody, IRow, compoundExpand, IRowCell, ICell } from "@patternfly/react-table";
 import { Link } from "react-router-dom";
@@ -22,7 +22,7 @@ export default (props: IProps) => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(perPages[0]);
 
-  const envs = environments || [];
+  const envs = useMemo(() => environments || [], [environments]);
 
   const environmentNames = envs.map((env) => ({ title: env.name, cellTransforms: [compoundExpand] }));
 

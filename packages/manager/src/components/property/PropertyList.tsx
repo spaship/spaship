@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Page, PageSection, Gallery, PageSectionVariants, GalleryItem, Title } from "@patternfly/react-core";
 import { useHistory } from "react-router-dom";
 import Header from "../../layout/Header";
@@ -8,29 +8,26 @@ import useConfig from "../../hooks/useConfig";
 import { IConfig } from "../../config";
 
 export default () => {
-  const { configs, setSPAshipConfigs, setSelectedName } = useConfig();
-  const [displayConfigs, setDisplayConfigs] = useState<IConfig[]>([]);
+  const { configs, selected, setSelectedConfig, addConfig, removeConfig } = useConfig();
+
   const history = useHistory();
 
-  useEffect(() => {
-    setDisplayConfigs(configs);
-  }, [configs]);
-
   const handleSubmit = (conf: IConfig) => {
-    setDisplayConfigs([...configs, conf]);
+    addConfig(conf);
   };
 
   const handleRemove = (conf: IConfig) => {
-    const newConfigs = displayConfigs.filter((c) => c.name !== conf.name);
-    setSPAshipConfigs(newConfigs);
+    removeConfig(conf.name);
   };
 
-  const onSelect = (name: string) => {
-    setSelectedName(name);
+  const onSelect = async (conf: IConfig) => {
+    console.log("Selected !");
+    await setSelectedConfig(conf);
+
     history.push("/applications");
   };
 
-  const sortConfigs = displayConfigs.sort((a, b) => {
+  const sortConfigs = configs.sort((a, b) => {
     if (a.name < b.name) {
       return -1;
     } else if (a.name > b.name) {
@@ -39,6 +36,9 @@ export default () => {
       return 0;
     }
   });
+
+  console.log(sortConfigs);
+  console.log(selected);
 
   return (
     <Page header={<Header />}>
@@ -49,7 +49,7 @@ export default () => {
         <Gallery hasGutter style={{ width: "70%" }}>
           {sortConfigs.map((config) => (
             <GalleryItem key={`property-${config.name}`}>
-              <Property config={config} onSelect={onSelect} onRemove={handleRemove} />
+              <Property config={config} selectedName={selected?.name} onSelect={onSelect} onRemove={handleRemove} />
             </GalleryItem>
           ))}
           <NewProperty onSubmit={handleSubmit} />

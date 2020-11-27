@@ -1,17 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { OptionsMenu, OptionsMenuItem, OptionsMenuToggle } from "@patternfly/react-core";
 import useConfig from "../hooks/useConfig";
 import { useHistory } from "react-router-dom";
 
 export default () => {
-  const { selected } = useConfig();
   const [isOpen, setOpen] = useState(false);
-  const [text, setText] = useState(selected?.name);
   const history = useHistory();
-
-  useEffect(() => {
-    setText(selected?.name);
-  }, [selected]);
+  const { selected } = useConfig();
 
   const onToggle = () => {
     setOpen(!isOpen);
@@ -28,8 +23,10 @@ export default () => {
   ];
 
   const toggle = (
-    <OptionsMenuToggle toggleTemplate={text} onToggle={onToggle} style={{ width: "100%", height: "50px" }} />
+    <OptionsMenuToggle toggleTemplate={selected?.name} onToggle={onToggle} style={{ width: "100%", height: "50px" }} />
   );
+
+  console.log(selected);
 
   return (
     <OptionsMenu
