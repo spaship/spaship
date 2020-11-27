@@ -46,7 +46,6 @@ export default (props: IProps) => {
 
   const onEnvironmentRemove = (index: number) => {
     const newConfig = { ...config };
-    console.log(index);
     newConfig.environments.splice(index, 1);
     setConfig(newConfig);
   };

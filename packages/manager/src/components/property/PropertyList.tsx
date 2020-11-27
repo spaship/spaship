@@ -21,9 +21,7 @@ export default () => {
   };
 
   const onSelect = async (conf: IConfig) => {
-    console.log("Selected !");
     await setSelectedConfig(conf);
-
     history.push("/applications");
   };
 
@@ -36,9 +34,6 @@ export default () => {
       return 0;
     }
   });
-
-  console.log(sortConfigs);
-  console.log(selected);
 
   return (
     <Page header={<Header />}>

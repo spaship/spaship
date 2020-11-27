@@ -26,8 +26,6 @@ export default () => {
     <OptionsMenuToggle toggleTemplate={selected?.name} onToggle={onToggle} style={{ width: "100%", height: "50px" }} />
   );
 
-  console.log(selected);
-
   return (
     <OptionsMenu
       id="property-select"
