@@ -12,8 +12,8 @@
     "test": "docusaurus build"
   },
   "dependencies": {
-    "@docusaurus/core": "2.0.0-alpha.e90749c6f",
-    "@docusaurus/preset-classic": "2.0.0-alpha.e90749c6f",
+    "@docusaurus/core": "2.0.0-alpha.f37987f32",
+    "@docusaurus/preset-classic": "2.0.0-alpha.f37987f32",
     "@mdx-js/react": "1.6.22",
     "clsx": "1.1.1",
     "react": "17.0.1",
