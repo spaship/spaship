@@ -19,7 +19,7 @@
     "@patternfly/react-core": "4.84.3",
     "@patternfly/react-icons": "4.7.22",
     "@patternfly/react-styles": "4.7.22",
-    "@patternfly/react-table": "4.19.24",
+    "@patternfly/react-table": "4.19.44",
     "@react-keycloak/web": "3.4.0",
     "@types/jest": "26.0.19",
     "@types/lodash": "4.14.165",
