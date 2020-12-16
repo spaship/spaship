@@ -141,8 +141,8 @@ const pathProxy = (req, res, next) => {
 
   //
   /**
-   * If we fount forwared_host in config, will use it as host
-   * If x-forwared-host has some different value. will use it as host
+   * If forwarded_host is found in config, use it as host
+   * If x-forwarded-host has some different value, use it as host
    */
   if (forwardedHost) {
     options.hostRewrite = forwardedHost;
