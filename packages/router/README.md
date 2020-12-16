@@ -30,7 +30,7 @@ Configuration can be provided by CLI flags, environment variables, or a configur
 | **target**         | Proxy target, httpd location                                                                                       | `--target`         | `SPASHIP_TARGET`             | `"target"`         | `http://localhost:8080` |
 | **port**           | Port to run on.                                                                                                    | `--port`           | `SPASHIP_ROUTER_PORT`        | `"port"`           | `8080`                  |
 | **fallback**       | Optional fallback target if no spa route found                                                                     | `--fallback`       | `SPASHIP_FALLBACK`           | `"fallback"`       | none                    |
-| **forwarded_host** | Optional forwarded host if router behind a proxy found                                                             | `--forwarded_host` | `SPASHIP_FORWARDED_HOST`     | `"forwarded_host"` | none                    |
+| **forwarded_host** | Optional forwarded host if the router is behind a proxy                                                              | `--forwarded_host` | `SPASHIP_FORWARDED_HOST`     | `"forwarded_host"` | none                    |
 | **log-level**      | Granularity of log messages to print. Options are: `fatal`, `error`, `warn`, `info`, `debug`, `trace` or `silent`. | `--log-level`      | `SPASHIP_LOG_LEVEL`          | `"log_level"`      | `info`                  |
 | **log-format**     | `pretty` for human-friendly logs, `json` for machine-friendly logs.                                                | `--log-format`     | `SPASHIP_LOG_FORMAT`         | `"log_format"`     | `pretty`                |
 
