@@ -134,8 +134,24 @@ let options = {
   },
 };
 
-// create the proxy
-let pathProxy = createProxyMiddleware(options);
+const pathProxy = (req, res, next) => {
+  const forwardedHost = config.get("forwarded_host");
+  const xForwaredHost = req.headers["x-forwarded-host"];
+  const host = req.headers["host"];
+
+  //
+  /**
+   * If forwarded_host is found in config, use it as host
+   * If x-forwarded-host has some different value, use it as host
+   */
+  if (forwardedHost) {
+    options.hostRewrite = forwardedHost;
+  } else if (xForwaredHost !== host) {
+    options.hostRewrite = xForwaredHost;
+  }
+
+  return createProxyMiddleware(options)(req, res, next);
+};
 
 let intervalId;
 let server;
@@ -150,7 +166,7 @@ async function start() {
 
   // Start proxy server on port
   let app = express();
-  app.use("/", pathProxy);
+  app.use(pathProxy);
   server = app.listen(config.get("port"));
 }
 
