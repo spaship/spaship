@@ -50,7 +50,7 @@
     "axios": "0.21.1",
     "mockingoose": "2.13.2",
     "nodemon": "2.0.7",
-    "tar": "6.0.5"
+    "tar": "6.1.0"
   },
   "publishConfig": {
     "access": "public"
