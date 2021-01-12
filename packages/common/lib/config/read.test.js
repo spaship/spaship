@@ -1,17 +1,9 @@
-const fs = require("fs");
 const read = require("./read");
 
 describe("common.config.read", () => {
   test("should read configuration data from a spaship.yaml file", async () => {
-    const fsPromisesRef = fs.promises.readFile;
-    fs.promises.readFile = jest.fn();
-    const mockFileContent = "name: Foo\npath: /foo\nref: v1.0.1\nsingle: true\ndeploykey: sehvgqrnyre";
-    fs.promises.readFile.mockResolvedValue(mockFileContent);
-
-    const data = await read("./spaship.yaml");
-    expect(data).toEqual({ name: "Foo", path: "/foo", deploykey: "sehvgqrnyre", single: true, ref: "v1.0.1" });
-    await fs.promises.readFile.mockRestore();
-    fs.promises.readFile = fsPromisesRef;
+    const data = await read(__dirname + "/mockDataTests/common.config.read/spaship.yaml");
+    expect(data).toEqual({ name: "Bar", path: "/bar", deploykey: "sehvgqrnyre", single: true, ref: "v1.0.1" });
   });
 
   test("should read configuration data from a spaship.yaml file when input filename is spaship.yml OR spaship.YAML OR spaship.YML and checkExtensionVariations flag is true", async () => {
@@ -41,12 +33,12 @@ describe("common.config.read", () => {
 
   test("should throw file doesn't exist", async () => {
     try {
-      await read(__dirname + "/WRONG_PATH");
+      await read(__dirname + "/WRONG_PATH", { checkExtensionVariations: false });
     } catch (err) {
       expect(err.message).toMatch(/no such file or directory/);
     }
     try {
-      await read(__dirname + "/mockDataTests/common.config.read/spaship.yml");
+      await read(__dirname + "/mockDataTests/common.config.read/spaship.yml", { checkExtensionVariations: false });
     } catch (err) {
       expect(err.message).toMatch(/no such file or directory/);
     }

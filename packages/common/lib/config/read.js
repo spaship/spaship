@@ -12,7 +12,7 @@ async function findAsync(arr, asyncPredicate) {
   }
 }
 
-async function read(_filepath, options = {}) {
+async function read(_filepath, options = { checkExtensionVariations: true }) {
   let filepath = _filepath;
   if (options.checkExtensionVariations) {
     const dotSplit = _filepath.split(".");
