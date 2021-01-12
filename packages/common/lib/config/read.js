@@ -22,7 +22,7 @@ async function read(_filepath, options = { checkExtensionVariations: true }) {
       [ext, "yml", "yaml", "YML", "YAML"].map((x) => `${filePrefix}.${x}`),
       isReadable
     );
-    filepath = readableFileName;
+    filepath = readableFileName || filepath;
   }
   const rawYaml = await fsp.readFile(filepath);
   return yaml.safeLoad(rawYaml, filepath);
