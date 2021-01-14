@@ -16,7 +16,8 @@ describe("common.config.append", () => {
       fileData[filename] = content;
     });
 
-    fs.promises.readFile = jest.fn(filename => fileData[filename]);
+    fs.promises.readFile = jest.fn((filename) => fileData[filename]);
+    fs.promises.access = jest.fn((filename) => true);
   });
   afterAll(() => {
     fs.promises.writeFile.mockRestore();
@@ -41,7 +42,7 @@ describe("common.config.append", () => {
     const data = { name: "Foo", path: "/foo", ref: "v1.0.0" };
 
     // make readFile throw an error to simulate a nonexistant file
-    fs.promises.readFile = jest.fn(async function() {
+    fs.promises.readFile = jest.fn(async function () {
       throw new Error();
     });
 
