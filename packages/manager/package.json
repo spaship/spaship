@@ -16,7 +16,7 @@
     "build": "react-scripts build"
   },
   "devDependencies": {
-    "@patternfly/react-core": "4.90.1",
+    "@patternfly/react-core": "4.90.2",
     "@patternfly/react-icons": "4.7.22",
     "@patternfly/react-styles": "4.7.28",
     "@patternfly/react-table": "4.19.45",
