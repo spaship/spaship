@@ -46,7 +46,7 @@
     "eslint-config-oclif": "3.1.0",
     "globby": "11.0.2",
     "mocha": "8.2.1",
-    "nock": "13.0.6",
+    "nock": "13.0.7",
     "nyc": "15.1.0",
     "shortid": "2.2.16",
     "temp-dir": "2.0.0"
