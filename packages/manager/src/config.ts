@@ -6,7 +6,6 @@ export interface IEnvironment {
 
 export interface IConfig {
   name: string;
-  selected?: boolean;
   isPreset?: boolean;
   environments: IEnvironment[];
 }

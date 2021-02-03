@@ -1,8 +1,7 @@
-import React, { useState } from "react";
-import { Button, Form, FormHelperText, Modal, FormGroup, TextArea } from "@patternfly/react-core";
-import { ExclamationCircleIcon } from "@patternfly/react-icons";
-import { IConfig } from "../../config";
-import useConfig from "../../hooks/useConfig";
+import React, { useEffect, useState } from "react";
+import { ActionGroup, Button, Form, FormGroup, Modal, TextInput } from "@patternfly/react-core";
+import { IConfig, IEnvironment } from "../../config";
+import NewPropertyEnvironment from "./NewPropertyEnvironment";
 interface IProps {
   isModalOpen: boolean;
   onClose: () => void;
@@ -21,44 +20,69 @@ const configTemplate: IConfig = {
 };
 export default (props: IProps) => {
   const { isModalOpen, onClose, onSubmit } = props;
-  const [config, setConfig] = useState(JSON.stringify(configTemplate, null, 2));
+  const [config, setConfig] = useState<IConfig>(configTemplate);
   const [validated, setValidated] = useState<"success" | "error" | "default">("default");
   const [invalidText, setInvalidText] = useState("Invalid config");
-  const { configs, setSPAshipConfigs } = useConfig();
 
+  const addEnvironment = () => {
+    setConfig({
+      ...config,
+      environments: [
+        ...config.environments,
+        {
+          name: "",
+          api: "",
+          domain: "",
+        },
+      ],
+    });
+  };
+
+  const onEnvironmentChange = (index: number, environment: IEnvironment) => {
+    const newConfig = { ...config };
+    newConfig.environments[index] = environment;
+    setConfig(newConfig);
+  };
+
+  const onEnvironmentRemove = (index: number) => {
+    const newConfig = { ...config };
+    newConfig.environments.splice(index, 1);
+    setConfig(newConfig);
+  };
+
+  const handleNameChange = (value: string) => {
+    const conf = {
+      ...config,
+      name: value,
+    };
+    setConfig(conf);
+  };
   const handleConfirm = () => {
     try {
-      const conf = JSON.parse(config) as IConfig;
-      onSubmit(conf);
-      setSPAshipConfigs([...configs, conf]);
+      onSubmit(config);
+      setConfig(configTemplate);
     } catch (err) {
       console.error(err);
     }
   };
 
   const handleClose = () => {
-    setConfig(JSON.stringify(configTemplate, null, 2));
+    setConfig(configTemplate);
     onClose();
   };
 
-  const handleConfigChange = (value: string, event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    try {
-      const conf = JSON.parse(value) as IConfig;
-      if (!conf.name || typeof conf.name !== "string") {
-        setValidated("error");
-        setInvalidText("Property name is invalid");
-      } else if (!Array.isArray(conf.environments)) {
-        setValidated("error");
-        setInvalidText("environments is invalid");
-      } else {
-        setValidated("success");
-      }
-    } catch (error) {
-      setValidated("error");
-      setInvalidText("Invalid config, it should be a JSON string");
-    }
-    setConfig(value);
+  const isValidEnvironments = () => {
+    return !config.environments.find((env) => env.name == "" || env.api == "" || env.domain == "");
   };
+
+  useEffect(() => {
+    if (!config.name || typeof config.name !== "string" || !isValidEnvironments()) {
+      setValidated("error");
+    } else {
+      setValidated("success");
+    }
+  }, [config]);
+
   return (
     <Modal
       variant="large"
@@ -74,27 +98,41 @@ export default (props: IProps) => {
         </Button>,
       ]}
     >
-      <Form>
+      <Form isHorizontal>
         <FormGroup
-          label="Config"
-          fieldId="config-textarea"
-          validated={validated}
-          helperText={
-            <FormHelperText icon={<ExclamationCircleIcon />} isHidden={validated !== "default"}>
-              Please enter your config
-            </FormHelperText>
-          }
-          helperTextInvalid={invalidText}
-          helperTextInvalidIcon={<ExclamationCircleIcon />}
+          label="Name"
+          isRequired
+          fieldId="horizontal-form-name"
+          helperText="Please provide your property name"
         >
-          <TextArea
-            validated={validated}
-            rows={10}
-            value={config}
-            onChange={handleConfigChange}
-            name="config-textarea"
-            id="config-textarea"
+          <TextInput
+            value={config.name}
+            isRequired
+            type="text"
+            id="horizontal-form-name"
+            aria-describedby="horizontal-form-name-helper"
+            name="horizontal-form-name"
+            onChange={handleNameChange}
           />
+        </FormGroup>
+        <FormGroup label="Envrionments" fieldId="horizontal-form-exp">
+          <ul>
+            {config.environments.map((env, index) => (
+              <li key={`env-${index}`}>
+                <NewPropertyEnvironment
+                  index={index}
+                  environment={env}
+                  onChange={onEnvironmentChange}
+                  onRemove={onEnvironmentRemove}
+                />
+              </li>
+            ))}
+          </ul>
+          <ActionGroup>
+            <Button variant="primary" onClick={addEnvironment}>
+              Add Environment
+            </Button>
+          </ActionGroup>
         </FormGroup>
       </Form>
     </Modal>

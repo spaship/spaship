@@ -18,17 +18,18 @@ import { IConfig } from "../../config";
 
 interface IProps {
   config: IConfig;
-  onSelect: (name: string) => void;
+  selectedName?: string;
+  onSelect: (conf: IConfig) => void;
   onRemove: (conf: IConfig) => void;
 }
 export default (props: IProps) => {
-  const { config, onSelect, onRemove } = props;
+  const { config, selectedName, onSelect, onRemove } = props;
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const environments = config.environments;
   const footer = config.isPreset ? "Preset" : "Customize";
 
   const onClick = () => {
-    onSelect(config.name);
+    onSelect(config);
   };
 
   const handleRemove = () => {
@@ -59,7 +60,7 @@ export default (props: IProps) => {
     }
   };
   return (
-    <Card isFlat isHoverable isSelected={config.selected} isSelectable={true}>
+    <Card isFlat isHoverable isSelected={config.name === selectedName} isSelectable={true}>
       <CardHeader>
         {renderCardActions()}
         <CardTitle onClick={onClick}>
