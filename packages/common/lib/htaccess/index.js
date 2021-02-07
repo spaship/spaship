@@ -3,7 +3,7 @@ const fsp = require("fs").promises;
 const validate = require("../config/validate");
 
 const template = ({ name, single }) => {
-  let templateString = `Header set X-Spaship-Name ${name}`;
+  let templateString = `Header set X-Spaship-Name "${name}"`;
 
   if (single) {
     templateString += `
