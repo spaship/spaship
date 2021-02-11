@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.14.0](https://github.com/spaship/spaship/compare/v0.13.2...v0.14.0) (2021-02-11)
+
+### Bug Fixes
+
+- **api:** accept buildDir in spaship.yaml ([#952](https://github.com/spaship/spaship/issues/952)) ([c813b5b](https://github.com/spaship/spaship/commit/c813b5bc94e09dbab9d779407a620a72add163b0))
+- **auth:** restore JWT authentication ([#970](https://github.com/spaship/spaship/issues/970)) ([cc31eb0](https://github.com/spaship/spaship/commit/cc31eb091af6f39b1452f3e646b4c93fd0a25e16))
+- **cli:** add exit code when cli error ([#917](https://github.com/spaship/spaship/issues/917)) ([e58b998](https://github.com/spaship/spaship/commit/e58b998193e5f5a09f5735eb803d7a3720d43be3))
+- **cli:** allow using buildDir for [@org](https://github.com/org) pkgs ([#953](https://github.com/spaship/spaship/issues/953)) ([ae3b697](https://github.com/spaship/spaship/commit/ae3b6971ec201a13073608ee46d039027e63e137))
+- **common:** name with whitespace will broke htaccess ([#1073](https://github.com/spaship/spaship/issues/1073)) ([555c2fc](https://github.com/spaship/spaship/commit/555c2fc29b6819fdb5176ad7bcd496dc7a252ee7))
+- **deps:** update dependency @mdx-js/react to v1.6.21 ([1ee0c4b](https://github.com/spaship/spaship/commit/1ee0c4b0bde43cd7de9c28e18b1794cd87a2d62b))
+- **deps:** update dependency @mdx-js/react to v1.6.22 ([5fb0cf4](https://github.com/spaship/spaship/commit/5fb0cf4d3971c7c886f97ce04b57a9d93a0bb58b))
+- **deps:** update dependency axios to v0.21.1 [security] ([3a33535](https://github.com/spaship/spaship/commit/3a335355c54ae1f0c532e4f3c5d2354f090d9204))
+- **deps:** update dependency nconf to ^0.11.0 ([9eef0e4](https://github.com/spaship/spaship/commit/9eef0e42b201ffefdee681a0ada7de2346dc0a5f))
+- **deps:** update docusaurus monorepo to v2.0.0-alpha.68 ([7a6d722](https://github.com/spaship/spaship/commit/7a6d7229075f32f50d2157ec936b08baeda312b8))
+- **deps:** update docusaurus monorepo to v2.0.0-alpha.69 ([b0bd4d0](https://github.com/spaship/spaship/commit/b0bd4d01c9fb97931cde6c0019500fd53256a219))
+- **deps:** update docusaurus monorepo to v2.0.0-alpha.bd62be93d ([cdd7434](https://github.com/spaship/spaship/commit/cdd7434c4c130d57332a85f605e6f5b3c2d152e2))
+- **deps:** update docusaurus monorepo to v2.0.0-alpha.e90749c6f ([6d4786d](https://github.com/spaship/spaship/commit/6d4786d5a53aab3d37971a8a4b86ef7980fc04bd))
+- **deps:** update docusaurus monorepo to v2.0.0-alpha.f37987f32 ([7e57f33](https://github.com/spaship/spaship/commit/7e57f331f7446f8879de7319a12ace6c8ce2aadc))
+- **deps:** update docusaurus monorepo to v2.0.0-alpha.f48d435ce ([c67c95f](https://github.com/spaship/spaship/commit/c67c95f62e0c4df9a23d9716adb8e595a23959c5))
+- **deps:** update docusaurus monorepo to v2.0.0-alpha.fd17476c3 ([cd6d322](https://github.com/spaship/spaship/commit/cd6d3222e71527898f3a7421c162670ddd9ed5a2))
+- make the .env file optional for npm start ([#947](https://github.com/spaship/spaship/issues/947)) ([fb45b9b](https://github.com/spaship/spaship/commit/fb45b9b14c877955a3799863760e53848eade06a))
+- repair regression causing API key auth to be unusable ([#951](https://github.com/spaship/spaship/issues/951)) ([f1b541c](https://github.com/spaship/spaship/commit/f1b541c2e2825d4494da1c1578d0e5caacc1e44d))
+
+### Features
+
+- **cli:** add --path flag ([#935](https://github.com/spaship/spaship/issues/935)) ([aff31fe](https://github.com/spaship/spaship/commit/aff31fe14899c4aef1b675e4aa0d3b5ef1af2a00))
+- **common:** support (yaml, yml, YAML, YML) config files ([#873](https://github.com/spaship/spaship/issues/873)) ([#1040](https://github.com/spaship/spaship/issues/1040)) ([68dcb12](https://github.com/spaship/spaship/commit/68dcb12c520bce4ab455223d6e44af4f236fc739))
+- **manager:** add easy ui to add new property ([#957](https://github.com/spaship/spaship/issues/957)) ([b986d14](https://github.com/spaship/spaship/commit/b986d140819aff9ca064a4761710ea0299ba7d75))
+- **router:** add forwarded_host options to support router behind a proxy ([#916](https://github.com/spaship/spaship/issues/916)) ([83dde52](https://github.com/spaship/spaship/commit/83dde520feca1eeb3ba765788040b5e672763880))
+
 ## [0.13.2](https://github.com/spaship/spaship/compare/v0.13.0...v0.13.2) (2020-11-05)
 
 ### Bug Fixes

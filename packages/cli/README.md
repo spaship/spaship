@@ -25,7 +25,7 @@ $ npm install -g @spaship/cli
 $ spaship COMMAND
 running command...
 $ spaship (-v|--version|version)
-@spaship/cli/0.13.2 linux-x64 node-v12.9.1
+@spaship/cli/0.13.2 linux-x64 node-v12.18.3
 $ spaship --help [COMMAND]
 USAGE
   $ spaship COMMAND
@@ -90,7 +90,7 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.0.0/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.0/src/commands/help.ts)_
 
 ## `spaship init`
 

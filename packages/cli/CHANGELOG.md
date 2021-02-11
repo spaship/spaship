@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.14.0](https://github.com/spaship/spaship/compare/v0.13.2...v0.14.0) (2021-02-11)
+
+### Bug Fixes
+
+- **cli:** add exit code when cli error ([#917](https://github.com/spaship/spaship/issues/917)) ([e58b998](https://github.com/spaship/spaship/commit/e58b998193e5f5a09f5735eb803d7a3720d43be3))
+- **cli:** allow using buildDir for [@org](https://github.com/org) pkgs ([#953](https://github.com/spaship/spaship/issues/953)) ([ae3b697](https://github.com/spaship/spaship/commit/ae3b6971ec201a13073608ee46d039027e63e137))
+- **deps:** update dependency nconf to ^0.11.0 ([9eef0e4](https://github.com/spaship/spaship/commit/9eef0e42b201ffefdee681a0ada7de2346dc0a5f))
+- **deps:** update docusaurus monorepo to v2.0.0-alpha.bd62be93d ([cdd7434](https://github.com/spaship/spaship/commit/cdd7434c4c130d57332a85f605e6f5b3c2d152e2))
+
+### Features
+
+- **cli:** add --path flag ([#935](https://github.com/spaship/spaship/issues/935)) ([aff31fe](https://github.com/spaship/spaship/commit/aff31fe14899c4aef1b675e4aa0d3b5ef1af2a00))
+
 ## [0.13.2](https://github.com/spaship/spaship/compare/v0.13.0...v0.13.2) (2020-11-05)
 
 ### Bug Fixes

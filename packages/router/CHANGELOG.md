@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.14.0](https://github.com/spaship/spaship/compare/v0.13.2...v0.14.0) (2021-02-11)
+
+### Bug Fixes
+
+- **deps:** update dependency nconf to ^0.11.0 ([9eef0e4](https://github.com/spaship/spaship/commit/9eef0e42b201ffefdee681a0ada7de2346dc0a5f))
+- **deps:** update docusaurus monorepo to v2.0.0-alpha.bd62be93d ([cdd7434](https://github.com/spaship/spaship/commit/cdd7434c4c130d57332a85f605e6f5b3c2d152e2))
+- make the .env file optional for npm start ([#947](https://github.com/spaship/spaship/issues/947)) ([fb45b9b](https://github.com/spaship/spaship/commit/fb45b9b14c877955a3799863760e53848eade06a))
+
+### Features
+
+- **router:** add forwarded_host options to support router behind a proxy ([#916](https://github.com/spaship/spaship/issues/916)) ([83dde52](https://github.com/spaship/spaship/commit/83dde520feca1eeb3ba765788040b5e672763880))
+
 # [0.13.0](https://github.com/spaship/spaship/compare/v0.11.1...v0.13.0) (2020-11-05)
 
 ### Bug Fixes

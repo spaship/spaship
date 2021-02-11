@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.14.0](https://github.com/spaship/spaship/compare/v0.13.2...v0.14.0) (2021-02-11)
+
+### Bug Fixes
+
+- **api:** accept buildDir in spaship.yaml ([#952](https://github.com/spaship/spaship/issues/952)) ([c813b5b](https://github.com/spaship/spaship/commit/c813b5bc94e09dbab9d779407a620a72add163b0))
+- **common:** name with whitespace will broke htaccess ([#1073](https://github.com/spaship/spaship/issues/1073)) ([555c2fc](https://github.com/spaship/spaship/commit/555c2fc29b6819fdb5176ad7bcd496dc7a252ee7))
+- **deps:** update dependency nconf to ^0.11.0 ([9eef0e4](https://github.com/spaship/spaship/commit/9eef0e42b201ffefdee681a0ada7de2346dc0a5f))
+- **deps:** update docusaurus monorepo to v2.0.0-alpha.bd62be93d ([cdd7434](https://github.com/spaship/spaship/commit/cdd7434c4c130d57332a85f605e6f5b3c2d152e2))
+
+### Features
+
+- **common:** support (yaml, yml, YAML, YML) config files ([#873](https://github.com/spaship/spaship/issues/873)) ([#1040](https://github.com/spaship/spaship/issues/1040)) ([68dcb12](https://github.com/spaship/spaship/commit/68dcb12c520bce4ab455223d6e44af4f236fc739))
+
 # [0.13.0](https://github.com/spaship/spaship/compare/v0.11.1...v0.13.0) (2020-11-05)
 
 ### Bug Fixes
