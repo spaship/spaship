@@ -16,7 +16,7 @@
     "test": "../../node_modules/.bin/jest --restoreMocks"
   },
   "dependencies": {
-    "ajv": "^6.10.2",
+    "ajv": "^7.0.0",
     "express-pino-logger": "^5.0.0",
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.15",
