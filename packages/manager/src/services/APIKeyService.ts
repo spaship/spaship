@@ -58,26 +58,33 @@ export const fetchAPIKeys = async (environments: IEnvironment[] = []) => {
   const results = await Promise.all(fetchJobs);
 
   const apiKeys: IAPIKey[] = [];
+  let  accessError;
 
   environments.forEach((env, index) => {
-    const envAPIKeys = results[index];
-    if (envAPIKeys) {
-      envAPIKeys.forEach((envKey: IAPIKeyResponse) => {
-        const match = apiKeys.find((key) => key.label === envKey.label);
-        if (match) {
-          match.environments = [
-            ...match.environments,
-            { name: env.name, shortKey: envKey.shortKey, createdAt: envKey.createdAt },
-          ];
-        } else {
-          apiKeys.push({
-            ...envKey,
-            environments: [{ name: env.name, shortKey: envKey.shortKey, createdAt: envKey.createdAt }],
-          });
-        }
-      });
-    }
+    const hasAccess = Array.isArray(results[index]);
+    if (hasAccess) {
+      const envAPIKeys = results[index];
+      if (envAPIKeys) {
+        envAPIKeys.forEach((envKey: IAPIKeyResponse) => {
+          const match = apiKeys.find((key) => key.label === envKey.label);
+          if (match) {
+            match.environments = [
+              ...match.environments,
+              { name: env.name, shortKey: envKey.shortKey, createdAt: envKey.createdAt },
+            ];
+          } else {
+            apiKeys.push({
+              ...envKey,
+              environments: [{ name: env.name, shortKey: envKey.shortKey, createdAt: envKey.createdAt }],
+            });
+          }
+        });
+        accessError = false;
+      }
+    } else {
+      accessError = results[index];
+   }
   });
 
-  return apiKeys;
+  return [apiKeys, accessError];
 };

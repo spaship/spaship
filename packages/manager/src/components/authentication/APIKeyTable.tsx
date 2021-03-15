@@ -6,15 +6,18 @@ import APIKeySubTable from "./APIKeySubTable";
 import EmptySpinner from "../general/EmptySpinner";
 import EmptyNotFound from "../general/EmptyNotFound";
 import useConfig from "../../hooks/useConfig";
+import EmptyAccessDenied from "../general/EmptyAccessDenied";
 
 interface IProps {
   isLoading: boolean;
+  hasAccess: boolean;
   apiKeys: IAPIKey[];
   afterDelete: (environment: string, label: string) => void;
 }
 
 export default (props: IProps) => {
   const { isLoading } = props;
+  const { hasAccess } = props || true;
   const { selected } = useConfig();
   const environments = selected?.environments || [];
   const [rows, setRows] = useState<IRow[]>([]);
@@ -97,12 +100,25 @@ export default (props: IProps) => {
         },
       ]);
     } else {
-      if (props.apiKeys.length === 0) {
-        setRows([
-          {
+      if (!hasAccess) {
+        setRows([{
+          heightAuto: true,
+          cells: [{
+            props: { colSpan: 3 },
+            title: (
+              <Bullseye>
+                <EmptyAccessDenied
+                  title="Access Denied"
+                  body="You are not authorized to access this page! If you think this is a mistake or you need to have access to this page, please contact a SPAship admin to add you to the spaship-users LDAP group(s) for this property."
+                />
+              </Bullseye>
+            ),
+          }]
+        }]);
+      } else if (props.apiKeys.length === 0) {
+        setRows([{
             heightAuto: true,
-            cells: [
-              {
+            cells: [{
                 props: { colSpan: 3 },
                 title: (
                   <Bullseye>
@@ -112,10 +128,8 @@ export default (props: IProps) => {
                     />
                   </Bullseye>
                 ),
-              },
-            ],
-          },
-        ]);
+              }],
+          }]);
       } else {
         setRows(apiKeyToRows(props.apiKeys));
       }
