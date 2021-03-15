@@ -42,22 +42,28 @@ export const fetchApplications = async (environments: IEnvironment[] = []) => {
   const fetchJobs = environments.map((env) => getApplicationList(env));
   const results = await Promise.all(fetchJobs);
   const applications: IApplication[] = [];
+  let accessError;
 
   environments.forEach((env, index) => {
-    const envAppList = results[index] || [];
-    envAppList.forEach((apiApp: IApplicationResponse) => {
-      const match = applications.find((app) => app.path === apiApp.path);
-      if (match) {
-        match.environments = [...match.environments, { name: env.name, ref: apiApp.ref, timestamp: apiApp.timestamp }];
-      } else {
-        applications.push({
-          ...apiApp,
-          environments: [{ name: env.name, ref: apiApp.ref, timestamp: apiApp.timestamp }],
-        });
-      }
-    });
+    const hasAccess = Array.isArray(results[index]);
+    if (hasAccess) {
+      const envAppList = results[index] || [];
+      envAppList.forEach((apiApp: IApplicationResponse) => {
+        const match = applications.find((app) => app.path === apiApp.path);
+        if (match) {
+          match.environments = [...match.environments, { name: env.name, ref: apiApp.ref, timestamp: apiApp.timestamp }];
+        } else {
+          applications.push({
+            ...apiApp,
+            environments: [{ name: env.name, ref: apiApp.ref, timestamp: apiApp.timestamp }],
+          });
+        }
+      });
+    } else {
+      accessError = results[index];
+    }
   });
-  return applications;
+  return [applications, accessError];
 };
 
 export const fetchApplication = async (name: string, environments: IEnvironment[] = []) => {
