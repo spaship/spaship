@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Table, TableHeader, TableBody, IRow } from "@patternfly/react-table";
 import { IApplication } from "../../models/Application";
 import useConfig from "../../hooks/useConfig";
@@ -11,7 +11,8 @@ export default (props: IProps) => {
   const columns: string[] = ["Name", "Url", "Version", "Update"];
   const [rows, setRows] = useState<IRow[]>([]);
   const { selected } = useConfig();
-  const environments = selected?.environments || [];
+  const selectedEnvs = selected?.environments || [];
+  const environments = selectedEnvs;
   useEffect(() => {
     setRows(
       environments.map((env) => {

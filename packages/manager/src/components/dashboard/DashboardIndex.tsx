@@ -1,4 +1,3 @@
-import React from "react";
 import Page from "../../layout/Page";
 import { Bullseye, Card, CardHeader, CardBody, Title, PageSection, PageSectionVariants } from "@patternfly/react-core";
 import styled from "styled-components";

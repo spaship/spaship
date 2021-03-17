@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import { Page, PageSection, PageSectionVariants } from "@patternfly/react-core";
 import { ToastContainer } from "react-toastify";
 import PageHeader from "./PageHeader";

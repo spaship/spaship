@@ -1,4 +1,3 @@
-import React from "react";
 import { Alert, AlertActionCloseButton } from "@patternfly/react-core";
 import { ToastOptions, Slide } from "react-toastify";
 

@@ -108,7 +108,7 @@ export default (props: IProps) => {
         setRows(applicationsToRows(applications.slice(0, perPage)));
       }
     }
-  }, [applications, isLoading, applicationsToRows, perPage]);
+  }, [applications, isLoading, applicationsToRows, perPage, hasAccess]);
 
   const onExpand = (event: any, rowIndex: number, colIndex: number, isOpen: boolean) => {
     if (!isOpen) {

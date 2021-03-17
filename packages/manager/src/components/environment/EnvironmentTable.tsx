@@ -1,4 +1,3 @@
-import React from "react";
 import { IRow, Table, TableHeader, TableBody } from "@patternfly/react-table";
 import useConfig from "../../hooks/useConfig";
 

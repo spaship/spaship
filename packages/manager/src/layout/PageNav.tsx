@@ -1,4 +1,3 @@
-import React from "react";
 import { useRouteMatch, Link } from "react-router-dom";
 import { Brand, Nav, NavItem, NavList, Stack, StackItem } from "@patternfly/react-core";
 import { ApplicationsIcon, TopologyIcon, ServerIcon, KeyIcon } from "@patternfly/react-icons";
