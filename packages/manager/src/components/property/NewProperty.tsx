@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { GalleryItem, Card, CardHeader, CardBody } from "@patternfly/react-core";
 import { AddCircleOIcon } from "@patternfly/react-icons";
 import NewPropertyModal from "./NewPropertyModal";

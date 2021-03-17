@@ -13,7 +13,8 @@ export default () => {
   const [isLoading, setLoading] = useState(false);
   const [apiKeys, setAPIKeys] = useState<IAPIKey[]>([]);
   const [hasAccess, setAccess] = useState(true)
-  const environments = selected?.environments || [];
+  const selectedEnvs = selected?.environments || [];
+  const environments = selectedEnvs;
 
   const fetchData = useCallback(async () => {
     setLoading(true);

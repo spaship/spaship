@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Label, Bullseye } from "@patternfly/react-core";
 import { Table, TableBody, TableHeader, IRow, IRowCell, compoundExpand } from "@patternfly/react-table";
 import { IAPIKey } from "../../models/APIKey";
@@ -19,7 +19,8 @@ export default (props: IProps) => {
   const { isLoading } = props;
   const { hasAccess } = props || true;
   const { selected } = useConfig();
-  const environments = selected?.environments || [];
+  const selectedEnvs = selected?.environments || [];
+  const environments = selectedEnvs;
   const [rows, setRows] = useState<IRow[]>([]);
   const columns = [
     "Label",
@@ -134,7 +135,7 @@ export default (props: IProps) => {
         setRows(apiKeyToRows(props.apiKeys));
       }
     }
-  }, [props.apiKeys, isLoading, apiKeyToRows]);
+  }, [props.apiKeys, isLoading, apiKeyToRows, hasAccess]);
 
   const onExpand = (event: any, rowIndex: number, colIndex: number, isOpen: boolean) => {
     if (!isOpen) {

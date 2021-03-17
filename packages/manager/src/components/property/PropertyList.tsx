@@ -1,4 +1,3 @@
-import React, { useEffect, useState, useRef } from "react";
 import { Page, PageSection, Gallery, PageSectionVariants, GalleryItem, Title } from "@patternfly/react-core";
 import { useHistory } from "react-router-dom";
 import Header from "../../layout/Header";

@@ -1,4 +1,3 @@
-import React from "react";
 import { IApplication } from "../../models/Application";
 import { IEnvironment } from "../../config";
 import { Label } from "@patternfly/react-core";

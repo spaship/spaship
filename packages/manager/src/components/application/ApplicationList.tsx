@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button, Level, LevelItem } from "@patternfly/react-core";
 import { Link } from "react-router-dom";
 import Page from "../../layout/Page";

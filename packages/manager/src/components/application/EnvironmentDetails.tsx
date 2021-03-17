@@ -1,4 +1,3 @@
-import React from "react";
 import { TextContent, Text, Card, CardHeader, CardBody } from "@patternfly/react-core";
 import ApplicationEnvironmentTable from "./ApplicationEnvironmentTable";
 import { IApplication } from "../../models/Application";

@@ -37,7 +37,8 @@ export default withRouter(({ history }) => {
 
   const { send } = useNotify();
 
-  const environments = selected?.environments || [];
+  const selectedEnvs = selected?.environments || [];
+  const environments = selectedEnvs;
 
   useEffect(() => {
     if (environments && environments.length > 0) {

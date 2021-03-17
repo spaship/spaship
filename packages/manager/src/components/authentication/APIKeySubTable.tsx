@@ -1,4 +1,3 @@
-import React from "react";
 import { Label, ButtonVariant } from "@patternfly/react-core";
 import { Table, TableHeader, TableBody, IRow } from "@patternfly/react-table";
 import { IAPIKeyEnvironment } from "../../models/APIKey";

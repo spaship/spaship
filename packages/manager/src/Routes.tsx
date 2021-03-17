@@ -1,4 +1,3 @@
-import React from "react";
 import { Router, Redirect, Route, Switch } from "react-router-dom";
 import { Bullseye } from "@patternfly/react-core";
 import { createBrowserHistory } from "history";

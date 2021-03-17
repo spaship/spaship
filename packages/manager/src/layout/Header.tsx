@@ -1,4 +1,3 @@
-import React from "react";
 import { Brand, PageHeader } from "@patternfly/react-core";
 import styled from "styled-components";
 import HeaderTools from "./HeaderTools";

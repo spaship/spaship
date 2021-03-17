@@ -1,4 +1,3 @@
-import React from "react";
 import { Button, PageHeaderTools, PageHeaderToolsGroup, PageHeaderToolsItem } from "@patternfly/react-core";
 import { useKeycloak } from "@react-keycloak/web";
 import { GithubIcon, FileAltIcon, UserIcon } from "@patternfly/react-icons";
