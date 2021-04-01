@@ -26,7 +26,9 @@ Configuration:`
 
 (async () => {
   await db.connect();
-  app.listen(config.get("port"), () => {
+  let server = app.listen(config.get("port"), () => {
     log.info("Server started !");
   });
+
+  server.keepAliveTimeout = 300000;
 })();
