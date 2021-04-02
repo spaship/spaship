@@ -4,6 +4,7 @@
   "version": "0.3.3",
   "private": true,
   "devDependencies": {
+    "babel-jest": "26.6.3",
     "codecov": "3.8.1",
     "dotenv": "8.2.0",
     "dotenv-export": "2.0.0",
@@ -16,8 +17,7 @@
     "mock-fs": "4.13.0",
     "pino-pretty": "4.5.0",
     "prettier": "2.2.1",
-    "pretty-quick": "3.1.0",
-    "babel-jest": "26.6.3"
+    "pretty-quick": "3.1.0"
   },
   "scripts": {
     "start": "bash scripts/start.sh",
