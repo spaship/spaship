@@ -55,7 +55,7 @@ const useConfig = () => {
       });
       setConfigs(all);
     }
-  }, []);
+  }, [configs]);
 
   useEffect(() => {
     const selectedName = localStorage.getItem(selectedKey);

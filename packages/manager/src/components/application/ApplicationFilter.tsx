@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { InputGroup, InputGroupText, TextInput } from "@patternfly/react-core";
 import { SearchIcon } from "@patternfly/react-icons";
 

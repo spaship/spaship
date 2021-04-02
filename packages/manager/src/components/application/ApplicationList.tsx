@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button, Level, LevelItem } from "@patternfly/react-core";
 import { Link } from "react-router-dom";
 import Page from "../../layout/Page";
@@ -13,13 +13,17 @@ export default () => {
 
   const [keywords, setKeywords] = useState("");
   const [isLoading, setLoading] = useState(false);
+  const [hasAccess, setAccess] = useState(true);
   const { selected } = useConfig();
   const environments = selected?.environments;
 
   const fetchData = useCallback(async (environments) => {
     setLoading(true);
-    const apps = await fetchApplications(environments);
-    setApplications(apps);
+    const results = await fetchApplications(environments);
+    const apps = results[0];
+    const accessErr = results[1];
+    if (apps) {setApplications(apps)};
+    if (accessErr) {setAccess(false)};
     setLoading(false);
   }, []);
 
@@ -40,7 +44,7 @@ export default () => {
       </LevelItem>
       <LevelItem>
         <Link to={`/applications/new`}>
-          <Button id="add-application-button" variant="primary">
+          <Button isDisabled={!hasAccess} id="add-application-button" variant="primary">
             New Application
           </Button>
         </Link>
@@ -52,6 +56,7 @@ export default () => {
     <Page title="Applications" titleToolbar={titleToolbar}>
       <ApplicationTable
         isLoading={isLoading}
+        hasAccess={hasAccess}
         environments={environments}
         applications={applications.filter((app) => app.path && app.path.indexOf(keywords) !== -1)}
       />

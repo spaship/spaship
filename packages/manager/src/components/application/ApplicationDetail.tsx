@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import PrimaryDetails from "./PrimaryDetails";
 import EnvironmentDetails from "./EnvironmentDetails";

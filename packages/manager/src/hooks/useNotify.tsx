@@ -1,4 +1,3 @@
-import React from "react";
 import { toast, ToastOptions } from "react-toastify";
 import ToastUI, { toastOptions } from "../components/general/Toast";
 

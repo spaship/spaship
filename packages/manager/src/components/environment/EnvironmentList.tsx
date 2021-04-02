@@ -1,4 +1,3 @@
-import React from "react";
 import Page from "../../layout/Page";
 import EnvironmentTable from "./EnvironmentTable";
 

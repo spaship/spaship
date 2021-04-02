@@ -7,9 +7,11 @@ import ApplicationEnvironmentColumn from "./ApplicationEnvironmentColumn";
 import EmptySpinner from "../general/EmptySpinner";
 import EmptyNotFound from "../general/EmptyNotFound";
 import { IEnvironment } from "../../config";
+import EmptyAccessDenied from "../general/EmptyAccessDenied";
 
 interface IProps {
   isLoading: boolean;
+  hasAccess: boolean;
   environments?: IEnvironment[];
   applications: IApplication[];
 }
@@ -18,6 +20,7 @@ const perPages = [10, 20, 50, 100];
 
 export default (props: IProps) => {
   const { applications, isLoading, environments } = props;
+  const { hasAccess } = props || true;
   const [rows, setRows] = useState<IRow[]>([]);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(perPages[0]);
@@ -71,30 +74,41 @@ export default (props: IProps) => {
         },
       ]);
     } else {
-      if (applications.length === 0) {
-        setRows([
-          {
-            heightAuto: true,
-            cells: [
-              {
-                props: { colSpan: 6 },
-                title: (
-                  <Bullseye>
-                    <EmptyNotFound
-                      title="No Application Found"
-                      body="To find out how to deploy your SPA please read the SPAship documentation."
-                    />
-                  </Bullseye>
-                ),
-              },
-            ],
-          },
-        ]);
+      if (!hasAccess) {
+        setRows([{
+          heightAuto: true,
+          cells: [{
+            props: { colSpan: 6 },
+            title: (
+              <Bullseye>
+                <EmptyAccessDenied
+                  title="Access Denied"
+                  body="You are not authorized to access this page! If you think this is a mistake or you need to have access to this page, please contact a SPAship admin to add you to the spaship-users LDAP group(s) for this property."
+                />
+              </Bullseye>
+            ),
+          }],
+        }]);
+      } else if (applications.length === 0) {
+        setRows([{
+          heightAuto: true,
+          cells: [{
+            props: { colSpan: 6 },
+            title: (
+              <Bullseye>
+                <EmptyNotFound
+                  title="No Application Found"
+                  body="To find out how to deploy your SPA please read the SPAship documentation."
+                />
+              </Bullseye>
+            ),
+          }],
+        }]);
       } else {
         setRows(applicationsToRows(applications.slice(0, perPage)));
       }
     }
-  }, [applications, isLoading, applicationsToRows, perPage]);
+  }, [applications, isLoading, applicationsToRows, perPage, hasAccess]);
 
   const onExpand = (event: any, rowIndex: number, colIndex: number, isOpen: boolean) => {
     if (!isOpen) {

@@ -12,13 +12,18 @@ export default () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [apiKeys, setAPIKeys] = useState<IAPIKey[]>([]);
-  const environments = selected?.environments || [];
+  const [hasAccess, setAccess] = useState(true)
+  const selectedEnvs = selected?.environments || [];
+  const environments = selectedEnvs;
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    const keys = await fetchAPIKeys(environments);
+    const results = await fetchAPIKeys(environments);
+    const keys = results[0];
+    const accessErr = results[1]; 
     setLoading(false);
-    setAPIKeys(keys);
+    if (keys) {setAPIKeys(keys)} ;
+    if (accessErr) {setAccess(false)} ;
   }, [environments]);
 
   useEffect(() => {
@@ -46,7 +51,7 @@ export default () => {
   };
 
   const titleToolbar = (
-    <Button id="add-apikey-button" onClick={() => setModalOpen(true)}>
+    <Button isDisabled={!hasAccess} id="add-apikey-button" onClick={() => setModalOpen(true)} disabled>
       Create API Key
     </Button>
   );
@@ -58,7 +63,7 @@ export default () => {
         onClose={() => setModalOpen(false)}
         afterCreated={afterCreated}
       />
-      <APIKeyTable apiKeys={apiKeys} afterDelete={afterDelete} isLoading={isLoading} />
+      <APIKeyTable apiKeys={apiKeys} afterDelete={afterDelete} isLoading={isLoading} hasAccess={hasAccess}/>
     </Page>
   );
 };

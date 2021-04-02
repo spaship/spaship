@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   Button,
   Card,
@@ -20,7 +19,6 @@ interface IProps {
 }
 export default (props: IProps) => {
   const { index, environment, onChange, onRemove } = props;
-  const [validated, setValidated] = useState<"success" | "error" | "default">("default");
 
   const handleRemove = () => {
     onRemove(index);

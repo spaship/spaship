@@ -1,6 +1,4 @@
-import React from "react";
-
-import { Button, Form, FormGroup, TextInput, Bullseye } from "@patternfly/react-core";
+import { Button, Form, Bullseye } from "@patternfly/react-core";
 import { useHistory } from "react-router-dom";
 import { useKeycloak } from "@react-keycloak/web";
 import EmptySpinner from "../general/EmptySpinner";

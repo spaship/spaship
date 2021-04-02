@@ -1,4 +1,3 @@
-import React from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { Nav, NavList, NavItem } from "@patternfly/react-core";
 import { Redirect, Route, Switch } from "react-router-dom";

@@ -22,7 +22,6 @@ export default (props: IProps) => {
   const { isModalOpen, onClose, onSubmit } = props;
   const [config, setConfig] = useState<IConfig>(configTemplate);
   const [validated, setValidated] = useState<"success" | "error" | "default">("default");
-  const [invalidText, setInvalidText] = useState("Invalid config");
 
   const addEnvironment = () => {
     setConfig({
@@ -71,11 +70,11 @@ export default (props: IProps) => {
     onClose();
   };
 
-  const isValidEnvironments = () => {
-    return !config.environments.find((env) => env.name == "" || env.api == "" || env.domain == "");
-  };
-
   useEffect(() => {
+    const isValidEnvironments = () => {
+      return !config.environments.find((env) => env.name === "" || env.api === "" || env.domain === "");
+    };
+
     if (!config.name || typeof config.name !== "string" || !isValidEnvironments()) {
       setValidated("error");
     } else {
