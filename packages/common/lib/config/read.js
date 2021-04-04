@@ -25,7 +25,7 @@ async function read(_filepath, options = { checkExtensionVariations: true }) {
     filepath = readableFileName || filepath;
   }
   const rawYaml = await fsp.readFile(filepath);
-  return yaml.safeLoad(rawYaml, filepath);
+  return yaml.load(rawYaml, filepath);
 }
 
 async function isReadable(filepath) {
