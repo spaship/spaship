@@ -31,7 +31,7 @@
     "@spaship/common": "^0.14.0",
     "archiver": "^5.0.0",
     "cosmiconfig": "^7.0.0",
-    "form-data": "^3.0.0",
+    "form-data": "^4.0.0",
     "inquirer": "^8.0.0",
     "lodash": "^4.17.15",
     "nconf": "^0.11.0",
@@ -42,11 +42,11 @@
   "devDependencies": {
     "@oclif/dev-cli": "1.26.0",
     "@oclif/test": "1.2.8",
-    "chai": "4.3.0",
+    "chai": "4.3.4",
     "eslint-config-oclif": "3.1.0",
     "globby": "11.0.2",
     "mocha": "8.3.0",
-    "nock": "13.0.7",
+    "nock": "13.0.11",
     "nyc": "15.1.0",
     "shortid": "2.2.16",
     "temp-dir": "2.0.0"
