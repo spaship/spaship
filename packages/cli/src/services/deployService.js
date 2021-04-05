@@ -1,7 +1,9 @@
 const https = require("https");
+const http = require("http");
 const pkg = require("../../package.json");
 
 const upload = (url, data, apiKey, onUploadProgress) => {
+  let protocol = url.startsWith("https://") ? https : http;
   return new Promise((resolve, reject) => {
     let contentLength = null;
     let bytes = 0;
@@ -38,7 +40,7 @@ const upload = (url, data, apiKey, onUploadProgress) => {
       headers: Object.assign({}, defaultHeaders, data.getHeaders()),
     };
 
-    const req = https.request(url, options, (res) => {
+    const req = protocol.request(url, options, (res) => {
       let rawData = "";
 
       res.on("data", (chunk) => {
