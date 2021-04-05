@@ -33,7 +33,7 @@ describe("deployService", () => {
       mockData.apiKey,
       () => {}
     );
-    assert.deepEqual(response, mockData.response);
+    assert.deepStrictEqual(response, mockData.response);
   });
 
   it("https: upload success", async () => {
@@ -65,7 +65,7 @@ describe("deployService", () => {
       mockData.apiKey,
       () => {}
     );
-    assert.deepEqual(response, mockData.response);
+    assert.deepStrictEqual(response, mockData.response);
   });
 
   it("https: upload failed", async () => {
