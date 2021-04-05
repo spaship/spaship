@@ -2,7 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const os = require("os");
 const archiver = require("archiver");
-import { readPackageUpAsync } from "read-pkg-up";
+const readPackageUpAsync = require("read-pkg-up").readPackageUpAsync;
 
 /**
  * Compress the directory contents of `directoryPath` and creates a zip archive in the os temp dir
