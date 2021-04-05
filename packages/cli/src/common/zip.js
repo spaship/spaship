@@ -2,7 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const os = require("os");
 const archiver = require("archiver");
-const readPkgUp = require("read-pkg-up");
+import { readPackageUpAsync } from "read-pkg-up";
 
 /**
  * Compress the directory contents of `directoryPath` and creates a zip archive in the os temp dir
@@ -22,7 +22,7 @@ function zipDirectory(directoryPath, rawSpashipYml) {
   } catch (e) {
     // Do nothing
   }
-  const pkgData = readPkgUp.sync();
+  const pkgData = readPackageUpAsync();
   const pkgName =
     pkgData && pkgData.packageJson && pkgData.packageJson["name"] ? pkgData.packageJson["name"] : "SPAShipArchive";
   const pkgVersion =
