@@ -30,5 +30,6 @@ Configuration:`
     log.info("Server started !");
   });
 
-  server.keepAliveTimeout = 300000;
+  server.timeout = 0; // no timeout
+  // server.keepAliveTimeout = 300000;
 })();

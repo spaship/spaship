@@ -34,6 +34,7 @@ const upload = (url, data, apiKey, onUploadProgress) => {
         ciphers: "ALL",
         secureProtocol: "TLSv1_1_method",
       },
+      agent: new https.Agent({ keepAlive: true, keepAliveMsecs: 1000 }),
       headers: Object.assign({}, defaultHeaders, data.getHeaders()),
     };
 
