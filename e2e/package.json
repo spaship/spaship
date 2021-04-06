@@ -12,7 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "cypress": "7.0.0",
-    "cypress-file-upload": "5.0.3",
+    "cypress-file-upload": "5.0.4",
     "cypress-xpath": "1.6.2",
     "mocha": "8.3.2",
     "mochawesome": "5.0.0",
