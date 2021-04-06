@@ -16,9 +16,9 @@
     "test": "../../node_modules/.bin/jest --restoreMocks"
   },
   "dependencies": {
-    "ajv": "^6.10.2",
-    "express-pino-logger": "^5.0.0",
-    "js-yaml": "^3.13.1",
+    "ajv": "^8.0.0",
+    "express-pino-logger": "^6.0.0",
+    "js-yaml": "^4.0.0",
     "lodash": "^4.17.15",
     "nconf": "^0.11.0",
     "pino": "^6.0.0"
@@ -30,6 +30,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "pino-pretty": "4.5.0"
+    "pino-pretty": "4.7.1"
   }
 }
