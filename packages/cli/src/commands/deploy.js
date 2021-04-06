@@ -112,6 +112,8 @@ class DeployCommand extends Command {
     const spinner = ora(`Start deploying SPA`);
     this.log(`Deploying SPA to ${flags.env}${envIsURL ? "" : ` (${host})`}`);
 
+    let step = "uploading";
+
     try {
       spinner.start();
       const startTime = performance.now();
@@ -132,19 +134,27 @@ class DeployCommand extends Command {
             progress.total
           )}) | ${speed}/s`;
         } else {
+          step = "processing";
           processTime = performance.now();
-          spinner.text = `Processing archive file, This will take few minutes`;
+          spinner.text = `Processing archive file, this may take a while.`;
         }
       });
       const endTime = performance.now();
       spinner.succeed(`The file ${args.archive} deployed successfully !`);
-      this.log(`Upload file tooks ${Math.round((processTime - startTime) / 1000)} seconds`);
-      this.log(`Process file tooks ${Math.round((endTime - processTime) / 1000)} seconds`);
+      this.log(`Upload file took ${Math.round((processTime - startTime) / 1000)} seconds`);
+      this.log(`Process file took ${Math.round((endTime - processTime) / 1000)} seconds`);
       this.log(`Total: ${Math.round((endTime - startTime) / 1000)} seconds`);
       this.log(response);
     } catch (e) {
-      spinner.fail(e.message);
-      this.error(e, { exit: 1 });
+      if (step === "processing") {
+        spinner.info("Lost connection with SPAship server during processing.");
+        this.log(
+          `Lost connections usually still result in successful deployments, and are caused by a simple network timeout during archive processing.  Please confirm your deployment succeeded by checking the SPAship UI, and checking your application in the environment you deployed to.  To avoid timeouts, reduce the size of your application to help speed up processing.`
+        );
+      } else {
+        spinner.fail(e.message);
+        this.error(e, { exit: 1 });
+      }
     }
   }
 }

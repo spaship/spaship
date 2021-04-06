@@ -59,7 +59,12 @@ module.exports.deploy = async (req, res, next) => {
   const { path: spaArchive } = req.file;
 
   try {
-    await DeployService.deploy({ name, spaArchive, appPath, ref });
+    await DeployService.deploy({
+      name,
+      spaArchive,
+      appPath,
+      ref,
+    });
 
     const application = await Application.findOne({ name, path: appPath });
     if (application) {
