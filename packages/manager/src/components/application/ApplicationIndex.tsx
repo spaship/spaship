@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useLocation, useParams, withRouter } from "react-router-dom";
-import { Nav, NavList, NavItem, NavVariants, ButtonVariant } from "@patternfly/react-core";
-import { StyleSheet, css } from "@patternfly/react-styles";
+import { Nav, NavList, NavItem, ButtonVariant } from "@patternfly/react-core";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Page from "../../layout/Page";
 import ApplicationDetail from "./ApplicationDetail";
@@ -9,16 +8,9 @@ import ConfirmButton from "../general/ConfirmButton";
 import { deleteApplication } from "../../services/ApplicationService";
 import config, { IEnvironment } from "../../config";
 
-const styles = StyleSheet.create({
-  tertiary: {
-    width: "100%",
-    borderBottom: "1px solid #DDDDDD",
-  },
-});
-
-export default withRouter(({ history }) => {
+export default withRouter(({ history })  () => {
   const location = useLocation();
-  const { applicationName } = useParams();
+  const { applicationName } = useParams<{ applicationName: string }>();
   const [environment] = useState<IEnvironment>(config.environments[0]);
 
   const onClickConfirm = async () => {
@@ -38,8 +30,8 @@ export default withRouter(({ history }) => {
   );
   return (
     <Page title={applicationName || ""}>
-      <Nav onSelect={() => {}}>
-        <NavList variant={NavVariants.tertiary} className={css(styles.tertiary)}>
+      <Nav variant="tertiary">
+        <NavList>
           <NavItem isActive={location.pathname.endsWith("details")}>Details</NavItem>
           {/* <NavItem isActive={location.pathname.endsWith("pipelines")}>Pipelines</NavItem> */}
         </NavList>

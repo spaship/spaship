@@ -1,11 +1,13 @@
 const APIKey = require("../models/apiKey");
 const APIKeyError = require("../utils/errors/APIKeyError");
-const { encrypt } = require("../utils/cryptoUtil");
+const { hash } = require("../utils/cryptoUtil");
 
 const getAPIKeysByUser = (userId) => APIKey.find({ userId });
 
+const apiKeyTokenRegex = /^apikey\s/i;
+
 const validation = async (apiKey) => {
-  const hashKey = encrypt(apiKey);
+  const hashKey = hash(apiKey);
   const result = await APIKey.findOne({ hashKey });
 
   if (result) {
@@ -20,9 +22,16 @@ const validation = async (apiKey) => {
 
 // https://learning.postman.com/docs/postman/sending-api-requests/authorization/#api-key
 const getAPIKeyFromRequest = (req) => {
-  const header = req.headers["x-api-key"];
-  const query = req.query["api_key"];
-  return header || query;
+  const header = req.headers["authorization"];
+  let headerKey;
+
+  // retrieve api key from header and from querystring
+  if (header && apiKeyTokenRegex.test(header)) {
+    headerKey = header.replace(apiKeyTokenRegex, "").trim();
+  }
+  const queryKey = req.query["api_key"] && req.query["api_key"].trim();
+
+  return headerKey || queryKey;
 };
 
 module.exports = {

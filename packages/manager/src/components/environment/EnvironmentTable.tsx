@@ -1,9 +1,9 @@
-import React from "react";
-import config from "../../config";
 import { IRow, Table, TableHeader, TableBody } from "@patternfly/react-table";
+import useConfig from "../../hooks/useConfig";
 
 export default () => {
-  const environments = config.environments;
+  const { selected } = useConfig();
+  const environments = selected?.environments || [];
   const columns = ["Name", "API", "Publish Domain"];
 
   const rows: IRow[] = environments.map((env) => ({

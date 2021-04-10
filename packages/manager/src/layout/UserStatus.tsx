@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Accordion,
   AccordionItem,
@@ -14,11 +14,12 @@ import {
 import { useHistory } from "react-router-dom";
 import UserAvatar from "../static/img/avatar.svg";
 import { useKeycloak } from "@react-keycloak/web";
+import { ISPAshipJWT } from "../keycloak";
 
 export default () => {
   const [isExpanded, setExpanded] = useState(false);
   const history = useHistory();
-  const [keycloak, initialized] = useKeycloak();
+  const { keycloak, initialized } = useKeycloak();
 
   const onToggle = () => {
     setExpanded(!isExpanded);
@@ -33,13 +34,13 @@ export default () => {
     return <Text component={TextVariants.p}>Not Authenticated</Text>;
   }
 
-  const token = keycloak.tokenParsed as any;
+  const token = keycloak.tokenParsed as ISPAshipJWT;
 
   return (
     <Accordion>
       <AccordionItem>
         <AccordionToggle id="userInfo" onClick={onToggle} isExpanded={isExpanded}>
-          <Split gutter="md">
+          <Split hasGutter>
             <SplitItem>
               <Avatar id="user-avatar" src={UserAvatar} alt="Avatar image" />
             </SplitItem>

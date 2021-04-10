@@ -35,6 +35,5 @@ Projects: ""
 
 - [ ] Expected files: all files in this pull request are related to one feature request or issue (no stragglers)?
 - [ ] Does the change have appropriate unit tests?
-- [ ] Did tests pass?
 - [ ] Did you update or add any necessary documentation (README.md, WHY.md, etc.)?
 - [ ] Was this feature demo'd and the design review approved?

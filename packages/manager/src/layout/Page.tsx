@@ -1,5 +1,6 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import { Page, PageSection, PageSectionVariants } from "@patternfly/react-core";
+import { ToastContainer } from "react-toastify";
 import PageHeader from "./PageHeader";
 import Sidebar from "./Sidebar";
 import PageBreadcrumb from "./PageBreadcrumb";
@@ -21,6 +22,7 @@ export default (props: IProps) => {
         <PageHeader title={title} subTitle={subTitle} titleToolbar={titleToolbar} toolbar={toolbar} />
       </PageSection>
       <PageSection variant={PageSectionVariants.light}>{children}</PageSection>
+      <ToastContainer />
     </Page>
   );
 };

@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.14.0](https://github.com/spaship/spaship/compare/v0.13.2...v0.14.0) (2021-02-11)
+
+### Bug Fixes
+
+- **auth:** restore JWT authentication ([#970](https://github.com/spaship/spaship/issues/970)) ([cc31eb0](https://github.com/spaship/spaship/commit/cc31eb091af6f39b1452f3e646b4c93fd0a25e16))
+- **deps:** update dependency nconf to ^0.11.0 ([9eef0e4](https://github.com/spaship/spaship/commit/9eef0e42b201ffefdee681a0ada7de2346dc0a5f))
+- **deps:** update docusaurus monorepo to v2.0.0-alpha.bd62be93d ([cdd7434](https://github.com/spaship/spaship/commit/cdd7434c4c130d57332a85f605e6f5b3c2d152e2))
+- make the .env file optional for npm start ([#947](https://github.com/spaship/spaship/issues/947)) ([fb45b9b](https://github.com/spaship/spaship/commit/fb45b9b14c877955a3799863760e53848eade06a))
+- repair regression causing API key auth to be unusable ([#951](https://github.com/spaship/spaship/issues/951)) ([f1b541c](https://github.com/spaship/spaship/commit/f1b541c2e2825d4494da1c1578d0e5caacc1e44d))
+
+# [0.13.0](https://github.com/spaship/spaship/compare/v0.11.1...v0.13.0) (2020-11-05)
+
+### Bug Fixes
+
+- **api:** [#724](https://github.com/spaship/spaship/issues/724) Error: algorithms should be set ([#725](https://github.com/spaship/spaship/issues/725)) ([d17cbc0](https://github.com/spaship/spaship/commit/d17cbc0722067b8bb37823804b0e8051595a77af))
+- **deps:** update dependency axios to v0.20.0 ([#731](https://github.com/spaship/spaship/issues/731)) ([c07a1af](https://github.com/spaship/spaship/commit/c07a1af2d1141178f247136e0e6872f6ce541002))
+- **deps:** update dependency axios to v0.21.0 ([dc4b8b9](https://github.com/spaship/spaship/commit/dc4b8b9a61bf5985377aa9768cacd6780af1892d))
+- **deps:** update dependency express-jwt to v6 [security] ([#623](https://github.com/spaship/spaship/issues/623)) ([71e905a](https://github.com/spaship/spaship/commit/71e905ab51356c1b382f5379424fc6efeb0b6cec))
+- **deps:** update dependency helmet to v4 ([#691](https://github.com/spaship/spaship/issues/691)) ([d80ce1f](https://github.com/spaship/spaship/commit/d80ce1f440c3df565bea6553504e644c75db8b37))
+- **deps:** update dependency lodash to v4.17.19 [security] ([ab8c0eb](https://github.com/spaship/spaship/commit/ab8c0eb602e7d45425a8bc6a44323c1fe3b9518f))
+
+# [0.12.0](https://github.com/spaship/spaship/compare/v0.11.1...v0.12.0) (2020-11-05)
+
+### Bug Fixes
+
+- **api:** [#724](https://github.com/spaship/spaship/issues/724) Error: algorithms should be set ([#725](https://github.com/spaship/spaship/issues/725)) ([d17cbc0](https://github.com/spaship/spaship/commit/d17cbc0722067b8bb37823804b0e8051595a77af))
+- **deps:** update dependency axios to v0.20.0 ([#731](https://github.com/spaship/spaship/issues/731)) ([c07a1af](https://github.com/spaship/spaship/commit/c07a1af2d1141178f247136e0e6872f6ce541002))
+- **deps:** update dependency axios to v0.21.0 ([dc4b8b9](https://github.com/spaship/spaship/commit/dc4b8b9a61bf5985377aa9768cacd6780af1892d))
+- **deps:** update dependency express-jwt to v6 [security] ([#623](https://github.com/spaship/spaship/issues/623)) ([71e905a](https://github.com/spaship/spaship/commit/71e905ab51356c1b382f5379424fc6efeb0b6cec))
+- **deps:** update dependency helmet to v4 ([#691](https://github.com/spaship/spaship/issues/691)) ([d80ce1f](https://github.com/spaship/spaship/commit/d80ce1f440c3df565bea6553504e644c75db8b37))
+- **deps:** update dependency lodash to v4.17.19 [security] ([ab8c0eb](https://github.com/spaship/spaship/commit/ab8c0eb602e7d45425a8bc6a44323c1fe3b9518f))
+
 # [0.11.0](https://github.com/spaship/spaship/compare/v0.10.0...v0.11.0) (2020-06-05)
 
 ### Bug Fixes

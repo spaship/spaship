@@ -1,4 +1,3 @@
-import React from "react";
 import { Bullseye, Spinner, SpinnerProps } from "@patternfly/react-core";
 
 export default (props: SpinnerProps) => {

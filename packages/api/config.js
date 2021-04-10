@@ -35,6 +35,10 @@ let validOptions = [
   "auth:keycloak:pubkey_file",
   "auth:keycloak:clientid",
   "auth:keycloak:id_prop",
+
+  //  authorization
+  "auth:ldap:admin_group",
+  "auth:ldap:user_group",
 ];
 const filepathOptions = ["config_file", "upload_dir", "webroot"]; // config options that represent filepaths
 
@@ -67,6 +71,7 @@ nconf
     transform: (obj) => {
       // remove the "SPASHIP_" prefix from environment variables
       obj.key = obj.key.replace(/^spaship_/, "").replace(/^api_/, "");
+
       return obj;
     },
   });
@@ -82,7 +87,7 @@ if (configFile) {
 }
 
 nconf.defaults({
-  port: 8008,
+  port: 2345,
   host: "localhost",
   webroot: "/var/www",
   upload_dir: "/tmp/spaship_uploads",

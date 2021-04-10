@@ -5,18 +5,26 @@ import APIKeyCreateModal from "./APIKeyCreateModal";
 import { Button } from "@patternfly/react-core";
 import { fetchAPIKeys } from "../../services/APIKeyService";
 import { IAPIKey } from "../../models/APIKey";
+import useConfig from "../../hooks/useConfig";
 
 export default () => {
+  const { selected } = useConfig();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [apiKeys, setAPIKeys] = useState<IAPIKey[]>([]);
+  const [hasAccess, setAccess] = useState(true)
+  const selectedEnvs = selected?.environments || [];
+  const environments = selectedEnvs;
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    const keys = await fetchAPIKeys();
+    const results = await fetchAPIKeys(environments);
+    const keys = results[0];
+    const accessErr = results[1]; 
     setLoading(false);
-    setAPIKeys(keys);
-  }, []);
+    if (keys) {setAPIKeys(keys)} ;
+    if (accessErr) {setAccess(false)} ;
+  }, [environments]);
 
   useEffect(() => {
     fetchData();
@@ -43,14 +51,19 @@ export default () => {
   };
 
   const titleToolbar = (
-    <Button id="add-apikey-button" onClick={() => setModalOpen(true)}>
+    <Button isDisabled={!hasAccess} id="add-apikey-button" onClick={() => setModalOpen(true)} disabled>
       Create API Key
     </Button>
   );
   return (
     <Page title="API Key Management" titleToolbar={titleToolbar}>
-      <APIKeyCreateModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} afterCreated={afterCreated} />
-      <APIKeyTable apiKeys={apiKeys} afterDelete={afterDelete} isLoading={isLoading} />
+      <APIKeyCreateModal
+        apiKeys={apiKeys}
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        afterCreated={afterCreated}
+      />
+      <APIKeyTable apiKeys={apiKeys} afterDelete={afterDelete} isLoading={isLoading} hasAccess={hasAccess}/>
     </Page>
   );
 };

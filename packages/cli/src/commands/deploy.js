@@ -10,6 +10,8 @@ const prettyBytes = require("pretty-bytes");
 const DeployService = require("../services/deployService");
 const commonFlags = require("../common/flags");
 const { loadRcFile } = require("../common/spashiprc-loader");
+const { zipDirectory } = require("../common/zip");
+const nodePath = require("path");
 
 function isURL(s) {
   try {
@@ -29,11 +31,13 @@ class DeployCommand extends Command {
 
     const config = loadRcFile();
     const yamlConfig = await common.config.read("spaship.yaml");
+    const yamlPath = yamlConfig && yamlConfig.path;
     // We need send `name` and `path` to API
     // so read them from spaship.yaml or other config file
     // it could be store in package.json
     const name = yamlConfig ? yamlConfig.name : config.name;
-    let path = yamlConfig ? yamlConfig.path : config.path;
+    let path = flags.path || yamlPath;
+    const buildDir = yamlConfig ? yamlConfig.buildDir : config.buildDir;
 
     if (!name) {
       this.error("Please define your app name in your package.json or use init to create spaship.yaml ");
@@ -67,6 +71,12 @@ class DeployCommand extends Command {
       this.error(`The requested environment, "${flags.env}", is not defined in your spashiprc file.`);
     }
 
+    try {
+      host = new URL(host).origin;
+    } catch (error) {
+      this.error(`The API url ${host} is invalid`);
+    }
+
     // look for the API key first in the --apikey option, and next in the spashiprc file.
     let apikey;
     let rc_apikey = get(config, `envs.${flags.env}.apikey`);
@@ -80,8 +90,29 @@ class DeployCommand extends Command {
       this.error(`An API key must be provided, either in your spashiprc file or in a --apikey option.`);
     }
 
+    if (!args.archive) {
+      if (buildDir) {
+        // No archive path specified in the commandline as argument and buildDir is specified in the spaship.yaml
+        const buildDirPath = nodePath.join(process.cwd(), buildDir);
+        const rawSpashipYml = await common.config.readRaw("spaship.yaml");
+        this.log("Creating a zip archive...");
+        try {
+          args.archive = await zipDirectory(buildDirPath, rawSpashipYml);
+          this.log("Done creating the archive...");
+        } catch (e) {
+          this.error(e);
+        }
+      } else {
+        // No buildDir is specified in the spaship.yaml
+        this.error(
+          "You should specify the build artifact path as `buildDir` in the spaship.yaml to run `spaship deploy` without the archive path."
+        );
+      }
+    }
     const spinner = ora(`Start deploying SPA`);
     this.log(`Deploying SPA to ${flags.env}${envIsURL ? "" : ` (${host})`}`);
+
+    let step = "uploading";
 
     try {
       spinner.start();
@@ -94,7 +125,7 @@ class DeployCommand extends Command {
       data.append("ref", flags.ref);
       data.append("upload", fs.createReadStream(args.archive));
 
-      const response = await DeployService.upload(host + apiPath, data, apikey, (progress) => {
+      const response = await DeployService.upload(nodePath.join(host, apiPath), data, apikey, (progress) => {
         if (progress.percent < 1) {
           const percent = Math.round(progress.percent * 100);
           const takenTime = performance.now() - startTime;
@@ -103,19 +134,27 @@ class DeployCommand extends Command {
             progress.total
           )}) | ${speed}/s`;
         } else {
+          step = "processing";
           processTime = performance.now();
-          spinner.text = `Processing archive file, This will take few minutes`;
+          spinner.text = `Processing archive file, this may take a while.`;
         }
       });
       const endTime = performance.now();
       spinner.succeed(`The file ${args.archive} deployed successfully !`);
-      this.log(`Upload file tooks ${Math.round((processTime - startTime) / 1000)} seconds`);
-      this.log(`Process file tooks ${Math.round((endTime - processTime) / 1000)} seconds`);
+      this.log(`Upload file took ${Math.round((processTime - startTime) / 1000)} seconds`);
+      this.log(`Process file took ${Math.round((endTime - processTime) / 1000)} seconds`);
       this.log(`Total: ${Math.round((endTime - startTime) / 1000)} seconds`);
       this.log(response);
     } catch (e) {
-      spinner.fail(e.message);
-      this.error(e.message);
+      if (step === "processing") {
+        spinner.info("Lost connection with SPAship server during processing.");
+        this.log(
+          `Lost connections usually still result in successful deployments, and are caused by a simple network timeout during archive processing.  Please confirm your deployment succeeded by checking the SPAship UI, and checking your application in the environment you deployed to.  To avoid timeouts, reduce the size of your application to help speed up processing.`
+        );
+      } else {
+        spinner.fail(e.message);
+        this.error(e, { exit: 1 });
+      }
     }
   }
 }
@@ -127,8 +166,10 @@ Send an archive containing a SPA to a SPAship host for deployment.  Supports .ta
 DeployCommand.args = [
   {
     name: "archive",
-    required: true,
-    description: "SPA archive file",
+    required: false,
+    default: null,
+    description:
+      "An archive (zip, tarball, or bzip2) file containing SPA static assets and a spaship.yaml file. You can omit this if you specify the build artifact path as `buildDir` in the spaship.yaml file.",
   },
 ];
 
@@ -141,10 +182,20 @@ DeployCommand.flags = assign(
       default: "undefined",
     }),
   },
+  {
+    path: flags.string({
+      char: "p",
+      description:
+        "a custom URL path for your app under the SPAship domain. Defaults to the 'path' in your spaship.yaml. ex: /my/app",
+    }),
+  },
   commonFlags.apikey,
   commonFlags.env
 );
 
-DeployCommand.examples = [`$ npm pack`, `$ spaship deploy your-app-1.0.0.tgz`];
+DeployCommand.examples = [
+  `$ npm pack && spaship deploy your-app-1.0.0.tgz # deploying an archive created with npm pack`,
+  `$ spaship deploy # deploying a buildDir directory`,
+];
 
 module.exports = DeployCommand;

@@ -7,18 +7,18 @@ interface PrivateRouteProps extends RouteProps {
 }
 
 const PrivateRoute: FunctionComponent<PrivateRouteProps> = ({ component: Component, ...rest }) => {
-  const [keycloak, initialized] = useKeycloak();
+  const { keycloak, initialized } = useKeycloak();
   return (
     <Route
       {...rest}
-      render={props =>
+      render={(props) =>
         initialized && keycloak.authenticated ? ( //put your authenticate logic here
           <Component {...props} />
         ) : (
           <Redirect
             to={{
               pathname: "/login",
-              state: { from: props.location }
+              state: { from: props.location },
             }}
           />
         )

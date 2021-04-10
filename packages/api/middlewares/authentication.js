@@ -10,7 +10,8 @@ module.exports = () => {
   return async (req, res, next) => {
     const apiKey = APIKeyService.getAPIKeyFromRequest(req);
 
-    // Use API key check, it should not use apiKey to do validation
+    // If an API key was provided, try to validate it.  Except on the /apiKeys endpoint.  API keys cannot be used to
+    // create more API keys.
     if (apiKey && req.url.match(/^(?!\/v\d\/apiKeys)/)) {
       log.info("Use API Key validation");
       try {
@@ -19,6 +20,7 @@ module.exports = () => {
           const propName = config.get("auth:keycloak:id_prop");
           req.user = {
             [propName]: validKey.get("userId"),
+            authType: "apikey",
           };
           return next();
         }
@@ -30,6 +32,7 @@ module.exports = () => {
     log.info("Use JWT validation");
     return jwt({
       secret,
+      algorithms: ["RS256"],
     })(req, res, next);
   };
 };

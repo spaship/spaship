@@ -19,7 +19,7 @@ async function write(filename, data) {
     log.warn(`WARNING: configuration is invalid, `, data);
   }
 
-  const content = heading + yaml.safeDump(data);
+  const content = heading + yaml.dump(data);
   await fsp.writeFile(filename, content);
   return data;
 }

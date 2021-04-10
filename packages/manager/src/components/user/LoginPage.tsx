@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Bullseye,
   Button,
@@ -13,59 +12,53 @@ import {
 import { OptimizeIcon } from "@patternfly/react-icons";
 import { useHistory } from "react-router-dom";
 import { useKeycloak } from "@react-keycloak/web";
-import { StyleSheet, css } from "@patternfly/react-styles";
+import styled from "styled-components";
 import Header from "../../layout/Header";
 import rocket from "../../static/img/rocket.svg";
 import EmptySpinner from "../general/EmptySpinner";
 
-const styles = StyleSheet.create({
-  h5: {
-    fontSize: "1.2rem",
-    width: "300px",
-  },
-  defcard: {
-    width: "300px",
-  },
-  definition: {
-    color: "#72767b",
-    fontSize: "0.8rem",
-  },
-  yellow: {
-    color: "#fdb716",
-  },
-  page: {
-    backgroundColor: "#ffffff",
-  },
-  card: {
-    position: "absolute",
-    top: "0",
-    bottom: "0",
-    left: "0",
-    right: "0",
-    margin: "auto",
-    height: "124px",
-    width: "300px",
-    zIndex: 99,
-  },
-  img: {
-    position: "fixed",
-    width: "40em",
-    bottom: "-5em",
-    right: "-7em",
-    zIndex: 0,
-  },
-  button: {
-    backgroundColor: "#fed402",
-  },
-  footer: {
-    fontSize: "0.6rem",
-    height: "6em",
-  },
+const Slogan = styled.h5({
+  fontSize: "1.2rem",
+  width: "300px",
+});
+
+const Defcard = styled.div({
+  width: "300px",
+});
+
+const Description = styled.div({
+  color: "#72767b",
+  fontSize: "0.8rem",
+});
+
+const BackgroundImage = styled.img({
+  position: "fixed",
+  width: "40em",
+  bottom: "-5em",
+  right: "-7em",
+  zIndex: 0,
+});
+
+const Footer = styled(PageSection)({
+  fontSize: "0.6rem",
+  height: "6em",
+});
+
+const StyledCard = styled(Card)({
+  position: "absolute",
+  top: "0",
+  bottom: "0",
+  left: "0",
+  right: "0",
+  margin: "auto",
+  height: "124px",
+  width: "300px",
+  zIndex: 99,
 });
 
 export default () => {
   const history = useHistory();
-  const [keycloak, initialized] = useKeycloak();
+  const { keycloak, initialized } = useKeycloak();
 
   if (!initialized) {
     return (
@@ -88,15 +81,15 @@ export default () => {
   return (
     <Page header={<Header />}>
       <PageSection variant={PageSectionVariants.light} isFilled>
-        <div className={css(styles.defcard)}>
-          <h5 className={css(styles.h5)}>
-            develop fast · <span className={css(styles.yellow)}>deploy faster</span>
-          </h5>
-          <div className={css(styles.definition)}>
+        <Defcard>
+          <Slogan>
+            develop fast · <span style={{ color: "#fdb716" }}>deploy faster</span>
+          </Slogan>
+          <Description>
             SPAship is a open source platform for deploying, integrating, and managing single-page apps (SPAs).
-          </div>
-        </div>
-        <Card className={css(styles.card)}>
+          </Description>
+        </Defcard>
+        <StyledCard>
           <CardHeader>
             <Title headingLevel="h6" size="md">
               Sign in with
@@ -107,9 +100,9 @@ export default () => {
               Red Hat SSO
             </Button>
           </CardBody>
-        </Card>
+        </StyledCard>
       </PageSection>
-      <PageSection className={css(styles.footer)} variant={PageSectionVariants.darker} isFilled={false}>
+      <Footer variant={PageSectionVariants.darker} isFilled={false}>
         Brought to you by the{" "}
         <a href="https://github.com/spaship/spaship/graphs/contributors" target="_blank" rel="noreferrer noopener">
           Wizards <OptimizeIcon />
@@ -123,8 +116,8 @@ export default () => {
           MIT License
         </a>
         .
-      </PageSection>
-      <img src={rocket} className={css(styles.img)} alt="Rocket" />
+      </Footer>
+      <BackgroundImage src={rocket} alt="Rocket" />
     </Page>
   );
 };

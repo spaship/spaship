@@ -1,6 +1,6 @@
 {
   "name": "@spaship/sync",
-  "version": "0.11.0",
+  "version": "0.14.0",
   "description": "The RESTFul API of the SPAship platform.",
   "homepage": "https://github.com/spaship/spaship/tree/master/packages/sync#readme",
   "repository": {
@@ -18,20 +18,20 @@
     "spaship-sync": "./index.js"
   },
   "scripts": {
-    "start": "node index.js",
+    "start": "[ -f ../../.env ] && source ../../.env; node index.js",
     "dev": "nodemon index.js",
     "test": "../../node_modules/.bin/jest --restoreMocks"
   },
   "license": "MIT",
   "dependencies": {
-    "@spaship/common": "^0.11.0",
-    "axios": "^0.19.2",
+    "@spaship/common": "^0.14.0",
+    "axios": "^0.21.0",
     "ms": "^2.1.2",
-    "nconf": "^0.10.0",
+    "nconf": "^0.11.0",
     "url-join": "^4.0.1"
   },
   "devDependencies": {
-    "nodemon": "2.0.4"
+    "nodemon": "2.0.7"
   },
   "publishConfig": {
     "access": "public"

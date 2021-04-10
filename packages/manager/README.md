@@ -15,7 +15,7 @@ Configuration can be provided by environment variables at build time.
 
 | Option                 | Description                                                                                        | Env                                | Default                         |
 | ---------------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------- | ------------------------------- |
-| **SPAship API(s)**     | One or more SPAship APIs that this Manager connects to.<sup>1</sup> Ex: dev, qa, stage, production | `REACT_APP_SPASHIP_URLS`           | `"local@http://localhost:8008"` |
+| **SPAship API(s)**     | One or more SPAship APIs that this Manager connects to.<sup>1</sup> Ex: dev, qa, stage, production | `REACT_APP_SPASHIP_URLS`           | `"local@http://localhost:2345"` |
 | **Keycloak URL**       | The URL to a Keycloak instance you wish to use for authentication.<sup>2</sup>                     | `REACT_APP_KEYCLOAK_URL`           | none                            |
 | **Keycloak REALM**     | The Keycloak Realm under which your SPAship Manager client is registered.                          | `REACT_APP_KEYCLOAK_REALM`         | none                            |
 | **Keycloak client id** | The Keycloak client id for your SPAship Manager instance.                                          | `REACT_APP_KEYCLOAK_CLIENT_ID`     | none                            |

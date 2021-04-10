@@ -16,7 +16,8 @@ describe("common.config.append", () => {
       fileData[filename] = content;
     });
 
-    fs.promises.readFile = jest.fn(filename => fileData[filename]);
+    fs.promises.readFile = jest.fn((filename) => fileData[filename]);
+    fs.promises.access = jest.fn((filename) => true);
   });
   afterAll(() => {
     fs.promises.writeFile.mockRestore();
@@ -26,14 +27,14 @@ describe("common.config.append", () => {
     const filename = "spaship.yaml";
     fileData[filename] = "name: Foo\npath: /foo";
     await append(filename, { ref: "v1.0.0" });
-    const appended = yaml.safeLoad(fileData[filename]);
+    const appended = yaml.load(fileData[filename]);
     expect(appended).toEqual({ name: "Foo", path: "/foo", ref: "v1.0.0" });
   });
   test("should be able to append existing properties to update them", async () => {
     const filename = "spaship.yaml";
     fileData[filename] = "name: Foo\npath: /foo";
     await append(filename, { path: "/bar" });
-    const appended = yaml.safeLoad(fileData[filename]);
+    const appended = yaml.load(fileData[filename]);
     expect(appended).toEqual({ name: "Foo", path: "/bar" });
   });
   test("should be able to create file if a file by the given name doesn't already exist", async () => {
@@ -41,12 +42,12 @@ describe("common.config.append", () => {
     const data = { name: "Foo", path: "/foo", ref: "v1.0.0" };
 
     // make readFile throw an error to simulate a nonexistant file
-    fs.promises.readFile = jest.fn(async function() {
+    fs.promises.readFile = jest.fn(async function () {
       throw new Error();
     });
 
     await append(filename, data);
-    const appended = yaml.safeLoad(fileData[filename]);
+    const appended = yaml.load(fileData[filename]);
     expect(appended).toEqual(data);
 
     fs.promises.readFile.mockRestore();

@@ -1,0 +1,5 @@
+name: Bar
+path: /bar
+ref: v1.0.1
+single: true
+deploykey: sehvgqrnyre
