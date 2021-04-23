@@ -14,7 +14,7 @@
     "husky": "6.0.0",
     "jest": "26.6.0",
     "lerna": "4.0.0",
-    "mock-fs": "4.13.0",
+    "mock-fs": "4.14.0",
     "pino-pretty": "4.7.1",
     "prettier": "2.2.1",
     "pretty-quick": "3.1.0"
