@@ -22,7 +22,7 @@
     "@patternfly/react-table": "4.26.6",
     "@react-keycloak/web": "3.4.0",
     "@types/jest": "26.0.22",
-    "@types/lodash": "4.14.168",
+    "@types/lodash": "4.14.169",
     "@types/node": "12.20.10",
     "@types/react": "17.0.3",
     "@types/react-dom": "17.0.3",
