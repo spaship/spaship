@@ -1,4 +1,4 @@
-const mockingoose = require("mockingoose").default;
+const mockingoose = require("mockingoose");
 const clone = require("lodash").clone;
 const controller = require("./apiKey");
 const APIKey = require("../models/apiKey");

@@ -1,4 +1,4 @@
-const mockingoose = require("mockingoose").default;
+const mockingoose = require("mockingoose");
 const fs = require("fs");
 const mockfs = require("mock-fs");
 const tar = require("tar");
