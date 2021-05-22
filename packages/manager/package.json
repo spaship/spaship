@@ -23,7 +23,7 @@
     "@react-keycloak/web": "3.4.0",
     "@types/jest": "26.0.23",
     "@types/lodash": "4.14.170",
-    "@types/node": "12.20.13",
+    "@types/node": "14.17.0",
     "@types/react": "17.0.6",
     "@types/react-dom": "17.0.5",
     "@types/react-router-dom": "5.1.7",
