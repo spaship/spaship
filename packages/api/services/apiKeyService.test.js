@@ -9,7 +9,6 @@ describe("api.apiKey", () => {
         },
         query: {},
       };
-      console.log(req.headers["authorization"]);
       const result = apiKeyService.getAPIKeyFromRequest(req);
 
       expect(result).toMatch(apiKey);
