@@ -20,9 +20,9 @@ describe("router", () => {
   // Testing basic HTTP responses for these URL and message combos.  Doesn't test for any particular response, just that
   // it responds.  Should add a bunch of these.
   [
-    { msg: "should respond to requests", url: "http://localhost:8084/foo/" },
-    { msg: "should respond to requests with duplicate slash", url: "http://localhost:8084//foo/" },
-    { msg: "should respond to root path spa request", url: "http://localhost:8084/" },
+    { msg: "should respond to requests", url: "http://localhost:8086/foo/" },
+    { msg: "should respond to requests with duplicate slash", url: "http://localhost:8086//foo/" },
+    { msg: "should respond to root path spa request", url: "http://localhost:8086/" },
   ].forEach((target) => {
     test(target.msg, async () => {
       await pathProxy.start();
