@@ -4,7 +4,7 @@
   "version": "0.3.3",
   "private": true,
   "devDependencies": {
-    "babel-jest": "27.0.5",
+    "babel-jest": "27.0.6",
     "codecov": "3.8.2",
     "dotenv": "10.0.0",
     "dotenv-export": "2.0.0",
@@ -12,7 +12,7 @@
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-prettier": "3.4.0",
     "husky": "6.0.0",
-    "jest": "27.0.5",
+    "jest": "27.0.6",
     "lerna": "4.0.0",
     "mock-fs": "5.0.0",
     "pino-pretty": "5.1.0",
