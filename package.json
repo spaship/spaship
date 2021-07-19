@@ -15,7 +15,7 @@
     "jest": "27.0.6",
     "lerna": "4.0.0",
     "mock-fs": "5.0.0",
-    "pino-pretty": "5.1.1",
+    "pino-pretty": "5.1.2",
     "prettier": "2.3.2",
     "pretty-quick": "3.1.1"
   },
