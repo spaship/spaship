@@ -5,7 +5,7 @@
   "private": true,
   "devDependencies": {
     "babel-jest": "27.0.6",
-    "codecov": "3.8.2",
+    "codecov": "3.8.3",
     "dotenv": "10.0.0",
     "dotenv-export": "2.0.0",
     "eslint": "7.31.0",
