@@ -17,6 +17,8 @@ const routes = require("./routes");
 
 const swaggerDocument = yaml.safeLoad(fs.readFileSync(path.join(__dirname, "openapi.yml"), "utf8"));
 
+const sse = require("./controllers/metric/sse.js")
+
 const app = new express();
 app
   .use(bodyParser.json())

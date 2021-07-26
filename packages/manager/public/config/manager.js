@@ -1,7 +1,7 @@
 window.SPAship = {
   configs: [
     {
-      name: "SPAship @ localhost",
+      name: "one.redhat.com",
       isPreset: true,
       environments: [
         {
