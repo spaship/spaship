@@ -8,7 +8,7 @@ function capitalizeFirstLetter(str: string) {
 export default () => {
   const location = useLocation();
   const paths = location.pathname.replace(/^\//i, "").split("/");
-
+  
   return (
     <Breadcrumb>
       <BreadcrumbItem>
@@ -22,7 +22,7 @@ export default () => {
               {isActive ? (
                 capitalizeFirstLetter(path)
               ) : (
-                <Link to={`/${paths.slice(0, index + 1).join("/")}`}>{capitalizeFirstLetter(path)}</Link>
+                <Link to={getPath(paths, index, location.pathname)}>{capitalizeFirstLetter(path)}</Link>
               )}
             </BreadcrumbItem>
           );
@@ -30,3 +30,18 @@ export default () => {
     </Breadcrumb>
   );
 };
+function getPath(paths: string[], index: number, location : string) {
+    const path = `/${paths.slice(0, index + 1).join("/")}`;
+
+    if (path.includes("spaName")) {
+      return path + location.slice(location.lastIndexOf("/"),location.length);
+    }
+
+    if (path.includes("property")) {
+      return path + location.slice(location.lastIndexOf("/"),location.length);
+    }
+
+    return path;
+  }
+
+

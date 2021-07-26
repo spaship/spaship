@@ -19,14 +19,21 @@ import { IConfig } from "../../config";
 interface IProps {
   config: IConfig;
   selectedName?: string;
+  event: any[];
   onSelect: (conf: IConfig) => void;
   onRemove: (conf: IConfig) => void;
 }
 export default (props: IProps) => {
-  const { config, selectedName, onSelect, onRemove } = props;
+
+  const { config, selectedName, onSelect, onRemove, event } = props;
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const environments = config.environments;
   const footer = config.isPreset ? "Preset" : "Customize";
+
+  var map = new Map();
+  event.forEach((item) => {
+    map.set(item.propertyName, item.count);
+  });
 
   const onClick = () => {
     onSelect(config);
@@ -64,17 +71,26 @@ export default (props: IProps) => {
       <CardHeader>
         {renderCardActions()}
         <CardTitle onClick={onClick}>
-          <ScreenIcon /> {config.name}
+          <ScreenIcon /> {selectedName}
         </CardTitle>
       </CardHeader>
 
       <CardBody onClick={onClick}>
+
+
+
+        <Text component={TextVariants.h4}>Deployment Count : <b>{map.get(selectedName)}</b></Text>
+
+        <br></br>
         {environments?.map((env) => (
           <Label variant="outline" key={`${config.name}-env-${env.name}`}>
             {env.name}
           </Label>
         ))}
+
       </CardBody>
+
+
       <CardFooter onClick={onClick}>
         <Text component={TextVariants.small}>{footer}</Text>
       </CardFooter>

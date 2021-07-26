@@ -5,8 +5,10 @@ import { StyledHeader } from "./Header";
 import UserStatus from "./UserStatus";
 import Logo from "../static/img/logo.svg";
 import Namespace from "./Namespace";
+import useConfig from "../hooks/useConfig";
 
 export default () => {
+  const { configs, selected, setSelectedConfig, addConfig, removeConfig } = useConfig();
   return (
     <Stack height="100%">
       <StackItem>
@@ -18,8 +20,8 @@ export default () => {
       <StackItem isFilled>
         <Nav aria-label="Nav" theme="light" variant="default">
           <NavList>
-            <NavItem itemId={0} isActive={!!useRouteMatch("/dashboard")} disabled={true}>
-              <Link to={`/dashboard`}>
+            <NavItem itemId={0} isActive={!!useRouteMatch(`/dashboard/property/${selected?.name}`)} disabled={true}>
+              <Link to={`/dashboard/property/${selected?.name}`}>
                 <TopologyIcon />
                 Dashboard
               </Link>

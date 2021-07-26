@@ -12,13 +12,13 @@ import EnvironmentList from "./components/environment/EnvironmentList";
 import DashboardIndex from "./components/dashboard/DashboardIndex";
 import EmptySpinner from "./components/general/EmptySpinner";
 import PropertyList from "./components/property/PropertyList";
+import DashboardSPAPage from "./components/dashboard/spa/DashboardSPAPage";
 
 const history = createBrowserHistory();
 
 // Wrap everything inside KeycloakProvider
 export default () => {
   const { initialized } = useKeycloak();
-
   if (!initialized) {
     return (
       <Bullseye>
@@ -38,7 +38,11 @@ export default () => {
         <PrivateRoute path="/applications/:applicationName" component={ApplicationIndex} />
         <PrivateRoute path="/applications" component={ApplicationList} />
         <PrivateRoute path="/environments" component={EnvironmentList} />
-        <PrivateRoute path="/dashboard" component={DashboardIndex} />
+        <PrivateRoute path="/dashboard/property/:propertyName" component={DashboardIndex} />
+        <PrivateRoute path="/dashboard/spaName/:spaName" component={DashboardSPAPage} />
+        <Route exact path="/dashboard">
+          <Redirect to={history.location.pathname} /> : <DashboardIndex />
+        </Route>
       </Switch>
     </Router>
   );
