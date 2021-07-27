@@ -11,7 +11,7 @@ export default () => {
   const { spaName } = useParams();
   const query = spaName;
   const getEventData = fetchEventData(selected, query, setEvent);
-  
+
   useEffect(() => {
     getEventData();
   }, [selected]);
@@ -115,25 +115,27 @@ function getAxis(maxCount) {
 }
 
 function getChartRange(event, maxCount, minCount, prod, i, dev, qa, stage) {
-  for (let item of event) {
-    for (let element of item) {
-      maxCount = Math.max(maxCount, element.count);
-      if (Math.min(minCount, element.count) != 0)
-        minCount = Math.min(minCount, element.count);
-      if (element.envs === "Prod") {
-        prod.set(i, element.count);
+  if (event) {
+    for (let item of event) {
+      for (let element of item) {
+        maxCount = Math.max(maxCount, element.count);
+        if (Math.min(minCount, element.count) != 0)
+          minCount = Math.min(minCount, element.count);
+        if (element.envs === "Prod") {
+          prod.set(i, element.count);
+        }
+        if (element.envs === "Dev") {
+          dev.set(i, element.count);
+        }
+        if (element.envs === "QA") {
+          qa.set(i, element.count);
+        }
+        if (element.envs === "Stage") {
+          stage.set(i, element.count);
+        }
       }
-      if (element.envs === "Dev") {
-        dev.set(i, element.count);
-      }
-      if (element.envs === "QA") {
-        qa.set(i, element.count);
-      }
-      if (element.envs === "Stage") {
-        stage.set(i, element.count);
-      }
+      i += 1;
     }
-    i += 1;
   }
   return { maxCount, minCount, i };
 }

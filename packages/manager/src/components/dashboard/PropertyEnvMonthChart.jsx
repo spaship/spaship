@@ -97,6 +97,7 @@ function fetchEventData(selected, query, setEvent) {
   return async () => {
     try {
       const url = selected?.environments[0].api + `/event/get/chart/month/property/env/${query}`;
+      setEvent([]);
       if (selected) {
         const data = await get(url);
         setEvent(data);
@@ -133,25 +134,27 @@ function getAxis(maxCount) {
 }
 
 function getChartRange(event, maxCount, minCount, prod, i, dev, qa, stage) {
-  for (let item of event) {
-    for (let element of item) {
-      maxCount = Math.max(maxCount, element.count);
-      if (Math.min(minCount, element.count) != 0)
-        minCount = Math.min(minCount, element.count);
-      if (element.envs === "Prod") {
-        prod.set(i, element.count);
+  if (event) {
+    for (let item of event) {
+      for (let element of item) {
+        maxCount = Math.max(maxCount, element.count);
+        if (Math.min(minCount, element.count) != 0)
+          minCount = Math.min(minCount, element.count);
+        if (element.envs === "Prod") {
+          prod.set(i, element.count);
+        }
+        if (element.envs === "Dev") {
+          dev.set(i, element.count);
+        }
+        if (element.envs === "QA") {
+          qa.set(i, element.count);
+        }
+        if (element.envs === "Stage") {
+          stage.set(i, element.count);
+        }
       }
-      if (element.envs === "Dev") {
-        dev.set(i, element.count);
-      }
-      if (element.envs === "QA") {
-        qa.set(i, element.count);
-      }
-      if (element.envs === "Stage") {
-        stage.set(i, element.count);
-      }
+      i += 1;
     }
-    i += 1;
   }
   return { maxCount, minCount, i };
 }

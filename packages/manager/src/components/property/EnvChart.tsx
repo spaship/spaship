@@ -66,6 +66,7 @@ function fetchEventData(selected: IConfig | undefined, setEvent: any) {
         try {
 
             const url = selected?.environments[0].api + "/event/get/chart/all/property/env";
+            setEvent([]);
             if (selected) {
                 console.log("Enviournment URL 0: " + url);
                 const data = await get<any>(url);

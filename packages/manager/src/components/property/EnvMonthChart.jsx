@@ -137,6 +137,7 @@ function fetchEventData(selected, setEvent) {
   return async () => {
     try {
       const url = selected?.environments[0].api + "/event/get/chart/all/env";
+      setEvent([]);
       if (selected) {
         const data = await get(url);
         setEvent(data);

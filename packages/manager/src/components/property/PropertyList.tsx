@@ -93,6 +93,7 @@ function fetchEventData(selected: IConfig | undefined, setEvent : any) {
   return async () => {
     try {
       const url = selected?.environments[0].api + "/event/get/all/property/count";
+      setEvent([]);
       if (selected) {
         const data = await get<any>(url);
         setEvent(data);

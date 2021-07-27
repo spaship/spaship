@@ -75,9 +75,11 @@ function fetchColorCode() {
 
 function fetchEventResponse(event: never[]) {
     const eventResponse = [];
-    for (let item of event) {
-        const value = JSON.parse(JSON.stringify(item));
-        eventResponse.push(value);
+    if (event) {
+        for (let item of event) {
+            const value = JSON.parse(JSON.stringify(item));
+            eventResponse.push(value);
+        }
     }
     return eventResponse;
 }
@@ -86,6 +88,7 @@ function fetchEventData(selected: IConfig | undefined, query: string, setEvent: 
     return async () => {
         try {
             const url = selected?.environments[0].api + `/event/get/latest/activities/${query}`;
+            setEvent([]);
             if (selected) {
                 const data = await get<any>(url);
                 setEvent(data);

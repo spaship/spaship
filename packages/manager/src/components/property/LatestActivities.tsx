@@ -30,10 +30,11 @@ export default () => {
   }, [selected]);
 
   const eventResponse = [];
-  
-  for (let item of event) {
-    const value = JSON.parse(JSON.stringify(item));
-    eventResponse.push(value);
+  if (event) {
+    for (let item of event) {
+      const value = JSON.parse(JSON.stringify(item));
+      eventResponse.push(value);
+    }
   }
 
   const getColorCode = (code: string) => {
@@ -72,9 +73,11 @@ export default () => {
   );
 };
 
-function fetchEventData(selected: IConfig | undefined, setEvent : any) {  return async () => {
+function fetchEventData(selected: IConfig | undefined, setEvent: any) {
+  return async () => {
     try {
       const url = selected?.environments[0].api + "/event/get/latest/activities";
+      setEvent([]);
       if (selected) {
         const data = await get<any>(url);
         setEvent(data);

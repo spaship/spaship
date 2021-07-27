@@ -22,7 +22,7 @@ export default () => {
   }, [selected]);
 
   const eventResponse = getEventResponse(event);
-  
+
   return (
     <Page title="Dashboard - SPA Deployment Analysis">
       <PageSection variant={PageSectionVariants.light} isFilled>
@@ -56,10 +56,12 @@ export default () => {
 function getEventResponse(event: never[]) {
   const eventResponse = [];
   let propertyName = '';
-  for (let item of event) {
-    const value = JSON.parse(JSON.stringify(item));
-    eventResponse.push(value);
-    propertyName = value.propertyName;
+  if (event) {
+    for (let item of event) {
+      const value = JSON.parse(JSON.stringify(item));
+      eventResponse.push(value);
+      propertyName = value.propertyName;
+    }
   }
   return eventResponse;
 }

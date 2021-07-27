@@ -28,20 +28,21 @@ export default (props: IProps) => {
     const chartData = [];
     const labelData = [];
     let count = 0;
-    for (let item of event) {
-        const value = JSON.parse(JSON.stringify(item));
-        count += value.count;
-        const dataPoint = {
-            x: value.envs,
-            y: value.count
+    if (event) {
+        for (let item of event) {
+            const value = JSON.parse(JSON.stringify(item));
+            count += value.count;
+            const dataPoint = {
+                x: value.envs,
+                y: value.count
+            }
+            chartData.push(dataPoint);
+            const label = {
+                name: value.envs + " : " + value.count
+            }
+            labelData.push(label);
         }
-        chartData.push(dataPoint);
-        const label = {
-            name: value.envs + " : " + value.count
-        }
-        labelData.push(label);
     }
-
 
     return (
 

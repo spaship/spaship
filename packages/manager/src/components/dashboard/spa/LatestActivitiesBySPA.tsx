@@ -24,7 +24,7 @@ export default () => {
         getEventData();
     }, [selected]);
 
- 
+
 
     const getSPALink = (spaName: string) => {
         return `/dashboard/spaName/${spaName}/${query}`;
@@ -62,9 +62,11 @@ export default () => {
 
 function getEventResponse(event: never[]) {
     const eventResponse = [];
-    for (let item of event) {
-        const value = JSON.parse(JSON.stringify(item));
-        eventResponse.push(value);
+    if (event) {
+        for (let item of event) {
+            const value = JSON.parse(JSON.stringify(item));
+            eventResponse.push(value);
+        }
     }
     return eventResponse;
 }
