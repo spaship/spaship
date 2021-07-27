@@ -30,7 +30,6 @@ describe("router", () => {
       try {
         response = await axios.get(target.url);
       } catch (e) {
-        // console.log(e);
         // errors are fine; this test is only looking for a response
         response = e.response;
       }

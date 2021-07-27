@@ -12,8 +12,6 @@ source.onmessage = function (event) {
     Promise.all([createEventRequest(response, envRandom, branchRandom), createEventTimeTraceRequest(response, envRandom)]);
 };
 
-const branch = ["dev", "master", "spaship"];
-const env = ["Dev", "QA", "Stage", "Prod"]
 
 async function createEventRequest(response, envRandomRequest, branchRandomRequest) {
     const currentTime = new Date();
@@ -35,7 +33,6 @@ async function createEventRequest(response, envRandomRequest, branchRandomReques
         traceId: response.payload.TraceId
     });
     const saveResponse = await eventData.save();
-    console.log(saveResponse);
 }
 
 async function createEventTimeTraceRequest(response, envRandomRequest) {
@@ -43,11 +40,8 @@ async function createEventTimeTraceRequest(response, envRandomRequest) {
     const envRandom = envRandomRequest;
 
     const checkTraceId = await eventTimeTrace.findOne({ traceId: response.payload.TraceId });
-    console.log("Result");
-    console.log(checkTraceId);
 
     if (checkTraceId == null) {
-        console.log("Executing If");
         const eventTimeTraceData = new eventTimeTrace({
             id: uuid(),
             traceId: response.payload.TraceId,
@@ -62,15 +56,12 @@ async function createEventTimeTraceRequest(response, envRandomRequest) {
             consumedTime: 0
         });
         const saveResponse = await eventTimeTraceData.save();
-        console.log(saveResponse);
     }
     else {
-        console.log("Executing Else (Updating Data)");
 
         let diff = (checkTraceId.createdAt.getTime() - new Date(response.time).getTime()) / 1000;
         diff /= 60;
         const consumedTime = Math.abs(Math.round(diff));
-        console.log("Diffrence : " + consumedTime);
 
         const updated = await eventTimeTrace.findOneAndUpdate({
             traceId: response.payload.TraceId,
@@ -80,8 +71,6 @@ async function createEventTimeTraceRequest(response, envRandomRequest) {
                     console.log("error");
                 }
             });
-        console.log(" UPDATED");
-        console.log(updated);
     }
 }
 

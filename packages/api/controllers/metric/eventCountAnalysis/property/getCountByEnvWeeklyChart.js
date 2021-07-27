@@ -37,7 +37,6 @@ async function fetchResponse(dateFrame) {
       item.endDate = element.endDate;
     });
     response.push(responseChart);
-    console.log(response);
   }
   return response;
 }

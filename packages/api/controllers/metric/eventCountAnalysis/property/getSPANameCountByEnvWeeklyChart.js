@@ -38,7 +38,6 @@ async function fetchResponse(dateFrame, spaName) {
       item.endDate = element.endDate;
     });
     response.push(responseChart);
-    console.log(response);
   }
   return response;
 }

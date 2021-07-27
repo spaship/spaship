@@ -5,25 +5,6 @@ module.exports = async function getPropertyCountByEnvWeeklyChart(req, res) {
     const propertyName = req.params.propertyName;
     const dateFrame = createDateFrame();
     const response = await fetchResponse(dateFrame, propertyName);
-    // const dto = [];
-
-    // const dev = [];
-    // const prod = [];
-    // const stage = [];
-    // const qa = [];
-
-    // for(let i=0;i<response.length;i++){
-
-    //   if(response[i].length != 0){
-
-    //     for(let i=0;i<response[i].length;i++){
-    //       if(response[i].envs =='Dev'){
-    //         dev.push({ envs: "Dev", count: response})
-    //       }
-    //     }
-    //   }
-
-    // }
 
     res.send(response);
   } catch (e) {
@@ -57,7 +38,6 @@ async function fetchResponse(dateFrame, propertyName) {
       item.endDate = element.endDate;
     });
     response.push(responseChart);
-    console.log(response);
   }
   return response;
 }

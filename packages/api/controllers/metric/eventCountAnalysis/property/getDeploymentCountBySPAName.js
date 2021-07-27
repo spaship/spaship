@@ -2,7 +2,6 @@ const chart = require('../../../../models/event')
 
 module.exports = async function getDeploymentCountBySPAName(req, res) {
   try {
-    console.log(req);
     const response = await chart.aggregate([
       {
         '$match': {
