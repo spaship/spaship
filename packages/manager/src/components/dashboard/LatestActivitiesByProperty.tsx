@@ -1,25 +1,21 @@
-import React, { useEffect, useState } from 'react';
 import {
-    List, ListItem, TextContent,
-    Text,
-    TextVariants,
-    TextList,
-    Label, LabelGroup,
-    TextListVariants,
-    TextListItem,
-    TextListItemVariants
+    Label, List, ListItem, Text,
+    TextVariants
 } from '@patternfly/react-core';
-import axios from 'axios';
-
+import React, { useEffect, useState } from 'react';
 import {
     Link, useParams
 } from "react-router-dom";
+import useConfig from '../../hooks/useConfig';
+import { get } from '../../utils/APIUtil';
+
 
 interface IProps {
     propertyNameRequest?: string;
 }
 
-export default (props : IProps) => {
+export default (props: IProps) => {
+    const { selected, setSelectedConfig } = useConfig();
     const { propertyNameRequest } = props;
     const [event, setEvent] = useState([]);
     const { propertyName } = useParams<{ propertyName: string }>();
@@ -27,9 +23,11 @@ export default (props : IProps) => {
 
     const getEventData = async () => {
         try {
-            const data = await axios.get(
-                `http://localhost:2345/api/v1/event/get/latest/activities/${query}`);
-            setEvent(data.data.data);
+            const url = selected?.environments[0].api + `/event/get/latest/activities/${query}`;
+            if (selected) {
+                const data = await get<any>(url);
+                setEvent(data);
+            }
         } catch (e) {
             console.log(e);
         }
@@ -37,7 +35,7 @@ export default (props : IProps) => {
 
     useEffect(() => {
         getEventData();
-    }, []);
+    }, [selected]);
 
 
     const eventResponse = [];
@@ -71,14 +69,14 @@ export default (props : IProps) => {
 
                 <ListItem>
                     <Text component={TextVariants.h1}>
-                        <Link to={getSPALink(e.spaName)} style={{ textDecoration: 'none' }}>     
-                            <Label color={getColorCode(e.code)}>    
-                                {e.spaName} 
-                            </Label> 
+                        <Link to={getSPALink(e.spaName)} style={{ textDecoration: 'none' }}>
+                            <Label color={getColorCode(e.code)}>
+                                {e.spaName}
+                            </Label>
                         </Link>
                         {e.latestActivityHead}
-                        <Link to={getPropertyLink(e.propertyName)} style={{ textDecoration: 'none' }}>     
-                           <Label color={getColorCode(e.code)}>  
+                        <Link to={getPropertyLink(e.propertyName)} style={{ textDecoration: 'none' }}>
+                            <Label color={getColorCode(e.code)}>
                                 {e.propertyName}
                             </Label>
                         </Link>

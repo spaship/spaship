@@ -1,10 +1,12 @@
 import { Chart, ChartAxis, ChartGroup, ChartLine, ChartThemeColor, ChartVoronoiContainer } from '@patternfly/react-charts';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import useConfig from "../../hooks/useConfig";
+import { get } from '../../utils/APIUtil';
 
 
 export default (props) => {
+  const { selected, setSelectedConfig } = useConfig();
   const { propertyNameRequest } = props;
   const [event, setEvent] = useState([]);
   const { propertyName } = useParams();
@@ -12,9 +14,11 @@ export default (props) => {
 
   const getEventData = async () => {
     try {
-      const data = await axios.get(
-        `http://localhost:2345/api/v1/event/get/chart/month/property/env/${query}`);
-      setEvent(data.data.data);
+      const url = selected?.environments[0].api + `/event/get/chart/month/property/env/${query}`;
+      if (selected) {
+        const data = await get(url);
+        setEvent(data);
+      }
     } catch (e) {
       console.log(e);
     }
@@ -22,7 +26,7 @@ export default (props) => {
 
   useEffect(() => {
     getEventData();
-  }, []);
+  }, [selected]);
 
 
   let count = 0;
@@ -34,12 +38,12 @@ export default (props) => {
   let maxCount = Number.MIN_VALUE;
   let minCount = Number.MAX_VALUE;
   let i = 1;
-  
+
   for (let item of event) {
     for (let element of item) {
-      maxCount =  Math.max(maxCount, element.count);
-      if(Math.min(minCount, element.count) != 0)
-         minCount =  Math.min(minCount, element.count);
+      maxCount = Math.max(maxCount, element.count);
+      if (Math.min(minCount, element.count) != 0)
+        minCount = Math.min(minCount, element.count);
       if (element.envs === "Prod") {
         prod.set(i, element.count);
       }
@@ -56,19 +60,6 @@ export default (props) => {
     i += 1;
   }
 
-  // console.log("Max count Time : ",maxCount);
-  // console.log("Min count Time : ",minCount);
-
-  // console.log(prod);
-  // console.log(dev);
-  // console.log(qa);
-  // console.log(stage);
-
-  // console.log(prod.get(1));
-  // console.log(dev.get(1));
-  // console.log(qa.get(1) || 0);
-  // console.log(stage.get(1));
-
   const firstAxis = Math.floor((maxCount) / 4);
 
   const secondAxis = Math.floor((maxCount + firstAxis) / 3);
@@ -79,23 +70,20 @@ export default (props) => {
 
   const maxY = maxCount + secondAxis;
 
-  // console.log("MaxY " + maxY);
-  // console.log(axisValues);
-
   return (
     <div style={{ height: '255px', width: '550px' }}>
       <Chart
         ariaDesc="Monthly Chart for Deployment"
         ariaTitle="Monthly Chart for Deployment"
         containerComponent={<ChartVoronoiContainer labels={({ datum }) => `${datum.name}: ${datum.y}`} constrainToVisibleArea />}
-        legendData={[{ name: 'Prod' }, { name: 'Dev'}, { name: 'QA' }, { name: 'Stage' }]}
+        legendData={[{ name: 'Prod' }, { name: 'Dev' }, { name: 'QA' }, { name: 'Stage' }]}
         legendPosition="bottom"
         title="Deployed Env"
         height={275}
         maxDomain={{ y: maxY }}
         minDomain={{ y: minCount }}
         padding={{
-          bottom: 75, 
+          bottom: 75,
           left: 0,
           right: 50,
           top: 10
@@ -113,7 +101,7 @@ export default (props) => {
               { name: 'Prod', x: '3rd Week', y: prod.get(2) || 0 },
               { name: 'Prod', x: 'Current Week', y: prod.get(1) || 0 }
             ]}
-         
+
           />
           <ChartLine
             data={[
@@ -122,7 +110,7 @@ export default (props) => {
               { name: 'Dev', x: '3rd Week', y: dev.get(2) || 0 },
               { name: 'Dev', x: 'Current Week', y: dev.get(1) || 0 }
             ]}
-         
+
           />
           <ChartLine
             data={[

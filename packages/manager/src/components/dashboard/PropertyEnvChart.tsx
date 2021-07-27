@@ -1,7 +1,8 @@
 import { ChartDonut, ChartThemeColor } from '@patternfly/react-charts';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import useConfig from '../../hooks/useConfig';
+import { get } from '../../utils/APIUtil';
 
 
 
@@ -10,6 +11,7 @@ interface IProps {
 }
 
 export default (props: IProps) => {
+    const { selected, setSelectedConfig } = useConfig();
     const { propertyNameRequest } = props;
     const [event, setEvent] = useState([]);
     const { propertyName } = useParams<{ propertyName: string }>();
@@ -17,9 +19,11 @@ export default (props: IProps) => {
 
     const getEventData = async () => {
         try {
-            const data = await axios.get(
-                `http://localhost:2345/api/v1/event/get/chart/property/env/${query}`);
-            setEvent(data.data.data);
+            const url = selected?.environments[0].api + `/event/get/chart/property/env/${query}`;
+            if (selected) {
+                const data = await get<any>(url);
+                setEvent(data);
+            }
         } catch (e) {
             console.log(e);
         }
@@ -27,7 +31,7 @@ export default (props: IProps) => {
 
     useEffect(() => {
         getEventData();
-    }, []);
+    }, [selected]);
 
 
     const chartData = [];
@@ -47,8 +51,6 @@ export default (props: IProps) => {
         labelData.push(label);
     }
 
-    // console.log(chartData);
-    // console.log(labelData);
 
     return (
 
