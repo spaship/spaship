@@ -1,14 +1,10 @@
-import { Card, Gallery, GalleryItem, PageSection, PageSectionVariants, Title } from "@patternfly/react-core";
-import axios from "axios";
+import { Gallery, GalleryItem, PageSection, PageSectionVariants, Title } from "@patternfly/react-core";
 import { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import styled from "styled-components";
 import { IConfig } from "../../../config";
 import useConfig from "../../../hooks/useConfig";
 import Page from "../../../layout/Page";
-import LatestActivitiesByProperty from "../LatestActivitiesByProperty";
-import PropertyEnvChart from "../PropertyEnvChart";
-import PropertyEnvMonthChart from "../PropertyEnvMonthChart";
+import { get } from "../../../utils/APIUtil";
 import DashboardProperty from "./DashboardSPAProperty";
 import LatestActivitiesBySPA from "./LatestActivitiesBySPA";
 import SPAEnvChart from "./SPAEnvChart";
@@ -18,30 +14,15 @@ export default () => {
   const { configs, selected, setSelectedConfig, addConfig, removeConfig } = useConfig();
   const { spaName } = useParams<{ spaName: string }>();
   const [event, setEvent] = useState([]);
-  const history = useHistory();
 
-  const getEventData = async () => {
-    try {
-      const data = await axios.get(
-        `http://localhost:2345/api/v1/event/get/property/spaname/count/${spaName}`);
-      setEvent(data.data.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  const getEventData = fetchEventData(selected, spaName, setEvent);
 
   useEffect(() => {
     getEventData();
-  }, []);
+  }, [selected]);
 
-  const eventResponse = [];
-  let propertyName = '';
-  for (let item of event) {
-    const value = JSON.parse(JSON.stringify(item));
-    eventResponse.push(value);
-    propertyName = value.propertyName;
-  }
- // console.log(eventResponse);
+  const eventResponse = getEventResponse(event);
+  
   return (
     <Page title="Dashboard - SPA Deployment Analysis">
       <PageSection variant={PageSectionVariants.light} isFilled>
@@ -71,3 +52,29 @@ export default () => {
     </Page>
   );
 };
+
+function getEventResponse(event: never[]) {
+  const eventResponse = [];
+  let propertyName = '';
+  for (let item of event) {
+    const value = JSON.parse(JSON.stringify(item));
+    eventResponse.push(value);
+    propertyName = value.propertyName;
+  }
+  return eventResponse;
+}
+
+function fetchEventData(selected: IConfig | undefined, spaName: string, setEvent: any) {
+  return async () => {
+    try {
+      const url = selected?.environments[0].api + `/event/get/property/spaname/count/${spaName}`;
+      if (selected) {
+        const data = await get<any>(url);
+        setEvent(data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+}
+

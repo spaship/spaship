@@ -1,27 +1,15 @@
-import { Card, Gallery, GalleryItem, PageSection, PageSectionVariants, Title } from "@patternfly/react-core";
-import axios from "axios";
+import { Gallery, GalleryItem, PageSection, PageSectionVariants, Title } from "@patternfly/react-core";
 import { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import styled from "styled-components";
 import { IConfig } from "../../config";
 import useConfig from "../../hooks/useConfig";
 import Page from "../../layout/Page";
+import { get } from "../../utils/APIUtil";
 import DashboardProperty from "./DashboardIndexProperty";
 import LatestActivitiesByProperty from "./LatestActivitiesByProperty";
-import { Label, LabelGroup } from '@patternfly/react-core';
-import InfoCircleIcon from '@patternfly/react-icons/dist/js/icons/info-circle-icon';
 import PropertyEnvChart from "./PropertyEnvChart";
 import PropertyEnvMonthChart from "./PropertyEnvMonthChart.jsx";
 import PropertyTimeToDeployChart from "./PropertyTimeToDeployChart";
-
-
-interface Event {
-  propertyName?: string;
-  spaName?: string;
-  code?: string;
-  count?: number;
-  id?: number;
-};
 
 export default () => {
   const { configs, selected, setSelectedConfig, addConfig, removeConfig } = useConfig();
@@ -37,19 +25,11 @@ export default () => {
     history.push(`/dashboard/spaName/${spaName}`);
   };
 
-  const getEventData = async () => {
-    try {
-      const data = await axios.get(
-        `http://localhost:2345/api/v1/event/get/${propertyName}/count/property/spaname`);
-      setEvent(data.data.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  const getEventData = fetchEventData(selected, propertyName, setEvent);
 
   useEffect(() => {
     getEventData();
-  }, []);
+  }, [selected]);
 
   const eventResponse = [];
   for (let item of event) {
@@ -72,7 +52,7 @@ export default () => {
       </PageSection>
 
       <PageSection variant={PageSectionVariants.light} isFilled>
-        <Title headingLevel="h1">Property Analysis</Title>
+        <Title headingLevel="h1">Deployment Metrics</Title>
         <Gallery hasGutter style={{ width: "90%" }}>
           <GalleryItem >
             <PropertyEnvChart propertyNameRequest={propertyName}></PropertyEnvChart>
@@ -82,7 +62,8 @@ export default () => {
           </GalleryItem>
         </Gallery>
 
-        <Title headingLevel="h1"> Time to Deploy (Min) </Title>
+
+        <Title headingLevel="h1">Time to Deploy Metrics</Title>
         <Gallery hasGutter style={{ width: "90%" }}>
           <GalleryItem >
             <PropertyTimeToDeployChart propertyNameRequest={propertyName}></PropertyTimeToDeployChart>
@@ -100,3 +81,17 @@ export default () => {
     </Page>
   );
 };
+
+function fetchEventData(selected: IConfig | undefined, propertyName: string, setEvent: any) {
+  return async () => {
+    try {
+      const url = selected?.environments[0].api + `/event/get/${propertyName}/count/property/spaname`;
+      if (selected) {
+        const data = await get<any>(url);
+        setEvent(data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+}

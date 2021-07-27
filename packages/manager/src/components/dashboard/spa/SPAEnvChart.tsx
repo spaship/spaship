@@ -1,29 +1,24 @@
 import { ChartDonut, ChartThemeColor } from '@patternfly/react-charts';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { IConfig } from '../../../config';
+import useConfig from '../../../hooks/useConfig';
+import { get } from '../../../utils/APIUtil';
 
 
 
 
 export default () => {
     const [event, setEvent] = useState([]);
+    const { selected, setSelectedConfig } = useConfig();
     const { spaName } = useParams<{ spaName: string }>();
     const query = spaName;
 
-    const getEventData = async () => {
-        try {
-            const data = await axios.get(
-                `http://localhost:2345/api/v1/event/get/chart/spaName/env/${query}`);
-            setEvent(data.data.data);
-        } catch (e) {
-            console.log(e);
-        }
-    };
+    const getEventData = fetchEventData(selected, query, setEvent);
 
     useEffect(() => {
         getEventData();
-    }, []);
+    }, [selected]);
 
 
     const chartData = [];
@@ -31,21 +26,17 @@ export default () => {
     let count = 0;
     for (let item of event) {
         const value = JSON.parse(JSON.stringify(item));
-        count+=value.count;
+        count += value.count;
         const dataPoint = {
             x: value.envs,
             y: value.count
         }
         chartData.push(dataPoint);
         const label = {
-            name : value.envs+" : "+value.count
+            name: value.envs + " : " + value.count
         }
         labelData.push(label);
     }
-
-    // console.log(chartData);
-    // console.log(labelData);
-
     return (
 
         <div style={{ height: '230px', width: '350px' }}>
@@ -71,3 +62,17 @@ export default () => {
         </div>
     );
 };
+
+function fetchEventData(selected: IConfig | undefined, query: string, setEvent: any) {
+    return async () => {
+        try {
+            const url = selected?.environments[0].api + `/event/get/chart/spaName/env/${query}`;
+            if (selected) {
+                const data = await get<any>(url);
+                setEvent(data);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    };
+}

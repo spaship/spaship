@@ -1,71 +1,25 @@
 import { Chart, ChartAxis, ChartGroup, ChartLine, ChartThemeColor, ChartVoronoiContainer } from '@patternfly/react-charts';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import useConfig from '../../../hooks/useConfig';
+import { get } from '../../../utils/APIUtil';
 
 
 export default () => {
+  const { selected, setSelectedConfig } = useConfig();
   const [event, setEvent] = useState([]);
   const { spaName } = useParams();
   const query = spaName;
-
-  const getEventData = async () => {
-    try {
-      const data = await axios.get(
-        `http://localhost:2345/api/v1/event/get/chart/month/spaName/env/${query}`);
-      setEvent(data.data.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
+  const getEventData = fetchEventData(selected, query, setEvent);
+  
   useEffect(() => {
     getEventData();
-  }, []);
+  }, [selected]);
 
-
-  let count = 0;
-
-  const prod = new Map();
-  const dev = new Map();
-  const qa = new Map();
-  const stage = new Map();
-
-  let maxCount = Number.MIN_VALUE;
-  let minCount = Number.MAX_VALUE;
-
-
-  let i = 1;
-  for (let item of event) {
-    for (let element of item) {
-      maxCount = Math.max(maxCount, element.count);
-      if (Math.min(minCount, element.count) != 0)
-        minCount = Math.min(minCount, element.count);
-      if (element.envs === "Prod") {
-        prod.set(i, element.count);
-      }
-      if (element.envs === "Dev") {
-        dev.set(i, element.count);
-      }
-      if (element.envs === "QA") {
-        qa.set(i, element.count);
-      }
-      if (element.envs === "Stage") {
-        stage.set(i, element.count);
-      }
-    }
-    i += 1;
-  }
-
-  const firstAxis = Math.floor((maxCount) / 4);
-
-  const secondAxis = Math.floor((maxCount + firstAxis) / 3);
-
-  const thirdAxis = Math.floor((maxCount + secondAxis) / 2);
-
-  const axisValues = [firstAxis, secondAxis, thirdAxis, maxCount]
-
-  const maxY = maxCount + secondAxis;
+  const { prod, dev, qa, stage } = getEnvMaps();
+  let { maxCount, minCount, i } = getVars();
+  ({ maxCount, minCount, i } = getChartRange(event, maxCount, minCount, prod, i, dev, qa, stage));
+  const { maxY, axisValues } = getAxis(maxCount);
 
   return (
     <div style={{ height: '255px', width: '550px' }}>
@@ -135,3 +89,66 @@ export default () => {
     </div>
   );
 };
+
+function getVars() {
+  let maxCount = Number.MIN_VALUE;
+  let minCount = Number.MAX_VALUE;
+  let i = 1;
+  return { maxCount, minCount, i };
+}
+
+function getEnvMaps() {
+  const prod = new Map();
+  const dev = new Map();
+  const qa = new Map();
+  const stage = new Map();
+  return { prod, dev, qa, stage };
+}
+
+function getAxis(maxCount) {
+  const firstAxis = Math.floor((maxCount) / 4);
+  const secondAxis = Math.floor((maxCount + firstAxis) / 3);
+  const thirdAxis = Math.floor((maxCount + secondAxis) / 2);
+  const axisValues = [firstAxis, secondAxis, thirdAxis, maxCount];
+  const maxY = maxCount + secondAxis;
+  return { maxY, axisValues };
+}
+
+function getChartRange(event, maxCount, minCount, prod, i, dev, qa, stage) {
+  for (let item of event) {
+    for (let element of item) {
+      maxCount = Math.max(maxCount, element.count);
+      if (Math.min(minCount, element.count) != 0)
+        minCount = Math.min(minCount, element.count);
+      if (element.envs === "Prod") {
+        prod.set(i, element.count);
+      }
+      if (element.envs === "Dev") {
+        dev.set(i, element.count);
+      }
+      if (element.envs === "QA") {
+        qa.set(i, element.count);
+      }
+      if (element.envs === "Stage") {
+        stage.set(i, element.count);
+      }
+    }
+    i += 1;
+  }
+  return { maxCount, minCount, i };
+}
+
+
+function fetchEventData(selected, query, setEvent) {
+  return async () => {
+    try {
+      const url = selected?.environments[0].api + `/event/get/chart/month/spaName/env/${query}`;
+      if (selected) {
+        const data = await get(url);
+        setEvent(data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+}

@@ -1,86 +1,26 @@
 import { Chart, ChartAxis, ChartGroup, ChartLine, ChartThemeColor, ChartVoronoiContainer } from '@patternfly/react-charts';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import useConfig from '../../hooks/useConfig';
+import { get } from '../../utils/APIUtil';
 
 
 export default (props) => {
+  const { selected, setSelectedConfig } = useConfig();
   const { propertyNameRequest } = props;
   const [event, setEvent] = useState([]);
   const { propertyName } = useParams();
   const query = propertyNameRequest || propertyName;
-
-  const getEventData = async () => {
-    try {
-      const data = await axios.get(
-        `http://localhost:2345/api/v1/event/get/timeFrame/month/property/env/${query}`);
-      setEvent(data.data.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  const getEventData = fetchEventData(selected, query, setEvent);
 
   useEffect(() => {
     getEventData();
-  }, []);
+  }, [selected]);
 
-
-  let count = 0;
-
-  const prod = new Map();
-  const dev = new Map();
-  const qa = new Map();
-  const stage = new Map();
-
-  let maxCount = Number.MIN_VALUE;
-  let minCount = Number.MAX_VALUE;
-  let i = 1;
-  
-  for (let item of event) {
-    for (let element of item) {
-      maxCount =  Math.max(maxCount, Math.floor(element.avg));
-      if(Math.min(minCount, Math.floor(element.avg)) != 0){
-        minCount =  Math.min(minCount, Math.floor(element.avg));
-      }
-       
-      if (element.envs === "Prod") {
-        prod.set(i, element.avg);
-      }
-      if (element.envs === "Dev") {
-        dev.set(i, element.avg);
-      }
-      if (element.envs === "QA") {
-        qa.set(i, element.avg);
-      }
-      if (element.envs === "Stage") {
-        stage.set(i, element.avg);
-      }
-    }
-    i += 1;
-  }
-
-  // console.log(prod);
-  // console.log(dev);
-  // console.log(qa);
-  // console.log(stage);
-
-  // console.log(prod.get(1));
-  // console.log(dev.get(1));
-  // console.log(qa.get(1) || 0);
-  // console.log(stage.get(1));
-
-  const firstAxis = Math.floor((maxCount) / 4);
-
-  const secondAxis = Math.floor((maxCount + firstAxis) / 3);
-
-  const thirdAxis = Math.floor((maxCount + secondAxis) / 2);
-
-  const axisValues = [firstAxis, secondAxis, thirdAxis, maxCount]
-
-  const maxY = maxCount + secondAxis;
-
-  // console.log("for Time MaxY " + maxY);
-  // console.log(axisValues);
+  const { prod, dev, qa, stage } = getEnvMaps();
+  let { maxCount, minCount, i } = getVars();
+  ({ maxCount, minCount, i } = getChartRange(event, maxCount, minCount, prod, i, dev, qa, stage));
+  const { maxY, axisValues } = getAxis(maxCount);
 
   return (
     <div style={{ height: '255px', width: '550px' }}>
@@ -88,16 +28,16 @@ export default (props) => {
         ariaDesc="Time to Deployment"
         ariaTitle="Time to Deployment"
         containerComponent={<ChartVoronoiContainer labels={({ datum }) => `${datum.name}: ${datum.y}`} constrainToVisibleArea />}
-        legendData={[{ name: 'Prod' }, { name: 'Dev'}, { name: 'QA' }, { name: 'Stage' }]}
+        legendData={[{ name: 'Prod' }, { name: 'Dev' }, { name: 'QA' }, { name: 'Stage' }]}
         legendPosition="bottom"
         title="Deployed Env"
         height={275}
         maxDomain={{ y: maxY }}
         minDomain={{ y: 0 }}
         padding={{
-          bottom: 75, 
+          bottom: 75,
           left: 0,
-          right: 50,
+          right: 0,
           top: 10
         }}
         themeColor={ChartThemeColor.multiUnordered}
@@ -113,7 +53,7 @@ export default (props) => {
               { name: 'Prod', x: '3rd Week', y: prod.get(2) || 0 },
               { name: 'Prod', x: 'Current Week', y: prod.get(1) || 0 }
             ]}
-         
+
           />
           <ChartLine
             data={[
@@ -122,7 +62,7 @@ export default (props) => {
               { name: 'Dev', x: '3rd Week', y: dev.get(2) || 0 },
               { name: 'Dev', x: 'Current Week', y: dev.get(1) || 0 }
             ]}
-         
+
           />
           <ChartLine
             data={[
@@ -150,3 +90,66 @@ export default (props) => {
     </div>
   );
 };
+
+function fetchEventData(selected, query, setEvent) {
+  return async () => {
+    try {
+      const url = selected?.environments[0].api + `/event/get/timeFrame/month/property/env/${query}`;
+      if (selected) {
+        const data = await get(url);
+        setEvent(data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+}
+
+
+function getVars() {
+  let maxCount = Number.MIN_VALUE;
+  let minCount = Number.MAX_VALUE;
+  let i = 1;
+  return { maxCount, minCount, i };
+}
+
+function getEnvMaps() {
+  const prod = new Map();
+  const dev = new Map();
+  const qa = new Map();
+  const stage = new Map();
+  return { prod, dev, qa, stage };
+}
+
+function getAxis(maxCount) {
+  const firstAxis = Math.floor((maxCount) / 4);
+  const secondAxis = Math.floor((maxCount + firstAxis) / 3);
+  const thirdAxis = Math.floor((maxCount + secondAxis) / 2);
+  const axisValues = [firstAxis, secondAxis, thirdAxis, maxCount];
+  const maxY = maxCount + secondAxis;
+  return { maxY, axisValues };
+}
+
+function getChartRange(event, maxCount, minCount, prod, i, dev, qa, stage) {
+  for (let item of event) {
+    for (let element of item) {
+      maxCount = Math.max(maxCount, element.count);
+      if (Math.min(minCount, element.count) != 0)
+        minCount = Math.min(minCount, element.count);
+      if (element.envs === "Prod") {
+        prod.set(i, element.count);
+      }
+      if (element.envs === "Dev") {
+        dev.set(i, element.count);
+      }
+      if (element.envs === "QA") {
+        qa.set(i, element.count);
+      }
+      if (element.envs === "Stage") {
+        stage.set(i, element.count);
+      }
+    }
+    i += 1;
+  }
+  return { maxCount, minCount, i };
+}

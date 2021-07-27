@@ -1,18 +1,9 @@
 import {
-  Card,
-  CardTitle,
-  CardBody,
-  CardFooter,
-  Text,
-  TextVariants,
-  Label,
-  DropdownItem,
-  CardHeader,
-  CardActions,
-  Dropdown,
-  KebabToggle,
+  Card, CardActions, CardBody,
+  CardFooter, CardHeader, CardTitle, Label, Text,
+  TextVariants
 } from "@patternfly/react-core";
-import { InfoCircleIcon, InfoCircleIconConfig, ScreenIcon } from "@patternfly/react-icons";
+import { InfoCircleIcon, ScreenIcon } from "@patternfly/react-icons";
 import { useState } from "react";
 
 interface IProps {
@@ -26,7 +17,6 @@ export default (props: IProps) => {
   const renderCardActions = () => {
     return (
       <CardActions>
-
       </CardActions>
     );
   };
@@ -39,12 +29,9 @@ export default (props: IProps) => {
           <ScreenIcon /> {selectedName}
         </CardTitle>
       </CardHeader>
-
       <CardBody >
         {/* <Text component={TextVariants.h4}>Deployment Counts : {config.count}</Text> */}
-
         <Label icon={<InfoCircleIcon />} color="blue">Deployment Counts : &nbsp;  <Text component={TextVariants.h1}><b>{config.count}</b></Text>  </Label>
-
       </CardBody>
       <CardFooter >
         <Text component={TextVariants.small}>{ }</Text>

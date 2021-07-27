@@ -2,48 +2,29 @@ import {
     Label, List, ListItem, Text,
     TextVariants
 } from '@patternfly/react-core';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import {
     Link, useParams
 } from "react-router-dom";
+import { IConfig } from '../../../config';
+import useConfig from '../../../hooks/useConfig';
+import { get } from '../../../utils/APIUtil';
 
 
 export default () => {
     const [event, setEvent] = useState([]);
+    const { selected, setSelectedConfig } = useConfig();
     const { spaName } = useParams<{ spaName: string }>();
     const query = spaName;
-
-    const getEventData = async () => {
-        try {
-            const data = await axios.get(
-                `http://localhost:2345/api/v1/event/get/spaName/latest/activities/${query}`);
-            setEvent(data.data.data);
-        } catch (e) {
-            console.log(e);
-        }
-    };
+    const getEventData = fetchEventData(selected, query, setEvent);
+    const eventResponse = getEventResponse(event);
+    const getColorCode = fetchColorCode()
 
     useEffect(() => {
         getEventData();
-    }, []);
+    }, [selected]);
 
-
-    const eventResponse = [];
-    for (let item of event) {
-        const value = JSON.parse(JSON.stringify(item));
-        eventResponse.push(value);
-    }
-
-
-    const getColorCode = (code: string) => {
-        if (code == 'WEBSITE_DELETE')
-            return 'red';
-        if (code == 'WEBSITE_UPDATE')
-            return 'blue';
-        return 'green';
-    }
-
+ 
 
     const getSPALink = (spaName: string) => {
         return `/dashboard/spaName/${spaName}/${query}`;
@@ -60,14 +41,14 @@ export default () => {
 
                 <ListItem>
                     <Text component={TextVariants.h1}>
-                        <Link to={getSPALink(e.spaName)} style={{ textDecoration: 'none' }}>     
-                            <Label color={getColorCode(e.code)}>    
-                                {e.spaName} 
-                            </Label> 
+                        <Link to={getSPALink(e.spaName)} style={{ textDecoration: 'none' }}>
+                            <Label color={getColorCode(e.code)}>
+                                {e.spaName}
+                            </Label>
                         </Link>
                         {e.latestActivityHead}
-                        <Link to={getPropertyLink(e.propertyName)} style={{ textDecoration: 'none' }}>     
-                           <Label color={getColorCode(e.code)}>  
+                        <Link to={getPropertyLink(e.propertyName)} style={{ textDecoration: 'none' }}>
+                            <Label color={getColorCode(e.code)}>
                                 {e.propertyName}
                             </Label>
                         </Link>
@@ -78,3 +59,36 @@ export default () => {
         </List>
     );
 };
+
+function getEventResponse(event: never[]) {
+    const eventResponse = [];
+    for (let item of event) {
+        const value = JSON.parse(JSON.stringify(item));
+        eventResponse.push(value);
+    }
+    return eventResponse;
+}
+
+function fetchColorCode() {
+    return (code: string) => {
+        if (code == 'WEBSITE_DELETE')
+            return 'red';
+        if (code == 'WEBSITE_UPDATE')
+            return 'blue';
+        return 'green';
+    };
+}
+
+function fetchEventData(selected: IConfig | undefined, query: string, setEvent: any) {
+    return async () => {
+        try {
+            const url = selected?.environments[0].api + `/event/get/spaName/latest/activities/${query}`;
+            if (selected) {
+                const data = await get<any>(url);
+                setEvent(data);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    };
+}

@@ -15,7 +15,9 @@ const getDefaultHeader = async (useJSON = true) => {
 };
 
 function handleResponse<T>(res: Response): Promise<T> {
+
   return new Promise((resolve, reject) => {
+
     if (res.status === 200 || res.status === 201) {
       res
         .json()
@@ -85,3 +87,4 @@ export async function del<T>(url: string, data?: object) {
   const res = await fetch(url, options);
   return handleResponse<T>(res);
 }
+ 

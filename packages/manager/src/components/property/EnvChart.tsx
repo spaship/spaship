@@ -12,7 +12,7 @@ export default () => {
     const { spaName } = useParams<{ spaName: string }>();
 
     const getEventData = fetchEventData(selected, setEvent);
-
+    
     useEffect(() => {
         getEventData();
     }, [selected]);
@@ -20,7 +20,7 @@ export default () => {
     const chartData = [];
     const labelData = [];
     let count = 0;
-    
+
     for (let item of event) {
         const value = JSON.parse(JSON.stringify(item));
         count += value.count;

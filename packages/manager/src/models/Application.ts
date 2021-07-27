@@ -24,3 +24,8 @@ export interface IApplicationEnvironment extends Partial<IEnvironment> {
   ref: string;
   timestamp: string;
 }
+
+
+export interface IApplicationChartResponse extends IApplicationBase {
+  data: any;
+}

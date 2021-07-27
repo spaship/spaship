@@ -1,20 +1,10 @@
-import { useState } from "react";
 import {
-  Card,
-  CardTitle,
-  CardBody,
-  CardFooter,
-  Text,
-  TextVariants,
-  Label,
-  DropdownItem,
-  CardHeader,
-  CardActions,
-  Dropdown,
-  KebabToggle,
+  Card, CardActions, CardBody,
+  CardFooter, CardHeader, CardTitle, Label, Text,
+  TextVariants
 } from "@patternfly/react-core";
 import { InfoCircleIcon, ScreenIcon } from "@patternfly/react-icons";
-import { IConfig } from "../../config";
+import { useState } from "react";
 
 interface IProps {
   config?: any;
@@ -31,19 +21,10 @@ export default (props: IProps) => {
 
   const renderCardActions = () => {
       return (
-        <CardActions>
-        
+        <CardActions>  
         </CardActions>
       );
   };
-
-
-  const getRandomColor = () => {
-    const colors = ["blue" , "cyan" , "green" , "orange" , "purple" , "red" , "grey" ]
-    const index = Math.floor(Math.random() * (6 - 0 + 1)) + 0;
-    return 'red';
-  }
-
   
   return (
     <Card isFlat isHoverable isSelected={selectedName === selectedName} isSelectable={true}>
@@ -53,13 +34,9 @@ export default (props: IProps) => {
           <ScreenIcon /> {selectedName}
         </CardTitle>
       </CardHeader>
-
       <CardBody onClick={onClick}>
       {/* <Text component={TextVariants.h4}>Deployment Counts : {config.count}</Text> */}
-
       <Label icon={<InfoCircleIcon />} color="green">Deployment Counts : &nbsp;  <Text component={TextVariants.h1}><b>{config.count}</b></Text>  </Label>
-
-      
       </CardBody>
       <CardFooter onClick={onClick}>
         <Text component={TextVariants.small}>{}</Text>
