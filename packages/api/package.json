@@ -52,8 +52,8 @@
   "devDependencies": {
     "axios": "0.21.1",
     "mockingoose": "2.15.2",
-    "nodemon": "2.0.9",
-    "tar": "6.1.0"
+    "nodemon": "2.0.12",
+    "tar": "6.1.2"
   },
   "publishConfig": {
     "access": "public"
