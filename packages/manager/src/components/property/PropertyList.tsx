@@ -1,15 +1,16 @@
-import { Page, PageSection, Gallery, PageSectionVariants, GalleryItem, Title } from "@patternfly/react-core";
-import { useHistory } from "react-router-dom";
-import Header from "../../layout/Header";
-import Property from "./Property";
-import NewProperty from "./NewProperty";
-import useConfig from "../../hooks/useConfig";
-import { IConfig } from "../../config";
+import { Gallery, GalleryItem, Page, PageSection, PageSectionVariants, Title } from "@patternfly/react-core";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import LatestActivities from "./LatestActivities";
+import { useHistory } from "react-router-dom";
+import { IConfig } from "../../config";
+import useConfig from "../../hooks/useConfig";
+import Header from "../../layout/Header";
+import { get } from "../../utils/APIUtil";
 import EnvChart from "./EnvChart";
 import EnvMonthChart from "./EnvMonthChart";
+import LatestActivities from "./LatestActivities";
+import NewProperty from "./NewProperty";
+import Property from "./Property";
+
 export default () => {
   const { configs, selected, setSelectedConfig, addConfig, removeConfig } = useConfig();
   const [event, setEvent] = useState([]);
@@ -28,40 +29,16 @@ export default () => {
     history.push("/applications");
   };
 
-  const getEventData = async () => {
-    try {
-      const data = await axios.get(
-        `http://localhost:2345/api/v1/event/get/all/property/count`);
-      // const map = new Map(Object.entries(data.data.data));
-      // map.forEach(function (value, key) {
-      //   console.log(key + " = " + value + "");
-      //   event.set(key, value + "");
-      // })
-      // console.log(event);
-      setEvent(data.data.data);
-      //   console.log(event);
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  const getEventData = fetchEventData(selected, setEvent);
 
   useEffect(() => {
     getEventData();
-  }, []);
+  }, [selected]);
 
-
-  const sortConfigs = configs.sort((a, b) => {
-    if (a.name < b.name) {
-      return -1;
-    } else if (a.name > b.name) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
+  const sortConfigs = getSortConfigs(configs);
 
   return (
-    <Page header={<Header />}  >
+    <Page header={<Header />}>
       <PageSection variant={PageSectionVariants.darker}>
         <Title headingLevel="h1">Choose a property</Title>
       </PageSection>
@@ -69,7 +46,13 @@ export default () => {
         <Gallery hasGutter style={{ width: "70%" }}>
           {sortConfigs.map((config) => (
             <GalleryItem key={`property-${config.name}`}>
-              <Property config={config} selectedName={selected?.name} event={event} onSelect={onSelect} onRemove={handleRemove} />
+              <Property
+                config={config}
+                selectedName={selected?.name}
+                event={event}
+                onSelect={onSelect}
+                onRemove={handleRemove}
+              />
             </GalleryItem>
           ))}
           <NewProperty onSubmit={handleSubmit} />
@@ -79,11 +62,11 @@ export default () => {
       <PageSection variant={PageSectionVariants.default}>
         <Title headingLevel="h1">Environment Analysis</Title>
         <Gallery hasGutter style={{ width: "90%" }}>
-          <GalleryItem >
+          <GalleryItem>
             <EnvChart ></EnvChart>
           </GalleryItem>
-          <GalleryItem >
-            <EnvMonthChart ></EnvMonthChart>
+          <GalleryItem>
+            <EnvMonthChart></EnvMonthChart>
           </GalleryItem>
         </Gallery>
         <Title headingLevel="h1">Latest Activites</Title>
@@ -93,3 +76,31 @@ export default () => {
     </Page>
   );
 };
+
+function getSortConfigs(configs: IConfig[]) {
+  return configs.sort((a, b) => {
+    if (a.name < b.name) {
+      return -1;
+    } else if (a.name > b.name) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+}
+
+function fetchEventData(selected: IConfig | undefined, setEvent : any) {
+  return async () => {
+    try {
+      const url = selected?.environments[0].api + "/event/get/all/property/count";
+      if (selected) {
+        const data = await get<any>(url);
+        setEvent(data);
+      }
+
+    } catch (e) {
+      console.log(e);
+    }
+  };
+}
+
