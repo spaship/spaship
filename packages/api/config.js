@@ -39,6 +39,10 @@ let validOptions = [
   //  authorization
   "auth:ldap:admin_group",
   "auth:ldap:user_group",
+
+    //  sse event
+    "sse",
+
 ];
 const filepathOptions = ["config_file", "upload_dir", "webroot"]; // config options that represent filepaths
 
@@ -71,7 +75,6 @@ nconf
     transform: (obj) => {
       // remove the "SPASHIP_" prefix from environment variables
       obj.key = obj.key.replace(/^spaship_/, "").replace(/^api_/, "");
-
       return obj;
     },
   });
@@ -91,6 +94,7 @@ nconf.defaults({
   host: "localhost",
   webroot: "/var/www",
   upload_dir: "/tmp/spaship_uploads",
+  sse: "http://localhost:5000/sse/80",
   db: {
     mongo: {
       url: "localhost:27017",
