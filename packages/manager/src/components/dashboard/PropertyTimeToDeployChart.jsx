@@ -138,16 +138,16 @@ function getChartRange(event, maxCount, minCount, prod, i, dev, qa, stage) {
         maxCount = Math.max(maxCount, element.avg);
         if (Math.min(minCount, element.avg) != 0)
           minCount = Math.min(minCount, element.avg);
-        if (element.envs === "Prod") {
+        if (element.envs.toLowerCase() === "prod") {
           prod.set(i, element.avg);
         }
-        if (element.envs === "Dev") {
+        if (element.envs.toLowerCase() === "dev") {
           dev.set(i, element.avg);
         }
-        if (element.envs === "QA") {
+        if (element.envs.toLowerCase() === "qa") {
           qa.set(i, element.avg);
         }
-        if (element.envs === "Stage") {
+        if (element.envs.toLowerCase() === "stage") {
           stage.set(i, element.avg);
         }
       }

@@ -39,7 +39,7 @@ export default () => {
         <PrivateRoute path="/applications" component={ApplicationList} />
         <PrivateRoute path="/environments" component={EnvironmentList} />
         <PrivateRoute path="/dashboard/property/:propertyName" component={DashboardIndex} />
-        <PrivateRoute path="/dashboard/spaName/:spaName" component={DashboardSPAPage} />
+        <PrivateRoute path="/dashboard/:propertyName/spaName/:spaName" component={DashboardSPAPage} />
         <Route exact path="/dashboard">
           <Redirect to={history.location.pathname} /> : <DashboardIndex />
         </Route>

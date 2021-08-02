@@ -39,16 +39,16 @@ export default () => {
     for (let element of item) {
       maxCount = Math.max(maxCount, element.count);
       if (Math.min(minCount, element.count) != 0) minCount = Math.min(minCount, element.count);
-      if (element.envs === "Prod") {
+      if (element.envs.toLowerCase() === "prod") {
         prod.set(i, element.count);
       }
-      if (element.envs === "Dev") {
+      if (element.envs.toLowerCase() === "dev") {
         dev.set(i, element.count);
       }
-      if (element.envs === "QA") {
+      if (element.envs.toLowerCase() === "qa") {
         qa.set(i, element.count);
       }
-      if (element.envs === "Stage") {
+      if (element.envs.toLowerCase() === "stage") {
         stage.set(i, element.count);
       }
     }

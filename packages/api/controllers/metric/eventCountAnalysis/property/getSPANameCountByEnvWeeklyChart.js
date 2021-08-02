@@ -3,8 +3,9 @@ const chart = require('../../../../models/event')
 module.exports = async function getSPANameCountByEnvWeeklyChart(req, res) {
   try {
     const spaName = req.params.spaName;
+    const propertyName = req.params.propertyName;
     const dateFrame = createDateFrame();
-    const response = await fetchResponse(dateFrame, spaName);
+    const response = await fetchResponse(dateFrame, spaName, propertyName);
 
     res.send(response);
   } catch (e) {
@@ -25,14 +26,14 @@ function createDateFrame() {
   return dateFrame;
 }
 
-async function fetchResponse(dateFrame, spaName) {
+async function fetchResponse(dateFrame, spaName, propertyName) {
   const response = [];
   for (let i = 0; i < await dateFrame.length; i++) {
     const element = {
       startDate: dateFrame[i].startDate,
       endDate: dateFrame[i].endDate,
     };
-    const responseChart = await getWeeklyReport(element.startDate, element.endDate, spaName);
+    const responseChart = await getWeeklyReport(element.startDate, element.endDate, spaName, propertyName);
     responseChart.forEach((item) => {
       item.startDate = element.startDate;
       item.endDate = element.endDate;
@@ -42,7 +43,7 @@ async function fetchResponse(dateFrame, spaName) {
   return response;
 }
 
-async function getWeeklyReport(startDate, endDate, spaName) {
+async function getWeeklyReport(startDate, endDate, spaName, propertyName ) {
   return await chart.aggregate([
     {
       '$match': {
@@ -53,6 +54,7 @@ async function getWeeklyReport(startDate, endDate, spaName) {
       }
     }, {
       '$match': {
+        'propertyName': propertyName,
         'spaName': spaName,
         'code': 'WEBSITE_CREATE'
       }

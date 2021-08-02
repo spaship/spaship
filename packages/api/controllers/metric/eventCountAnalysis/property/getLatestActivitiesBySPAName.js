@@ -5,6 +5,7 @@ module.exports = async function getLatestActivitiesBySPAName(req, res) {
     const response = await chart.aggregate([
       {
         '$match': {
+          'propertyName':  req.params.propertyName,
           'spaName': req.params.spaName
         }
       }, {

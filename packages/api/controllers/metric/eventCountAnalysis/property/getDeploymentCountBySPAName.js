@@ -5,6 +5,7 @@ module.exports = async function getDeploymentCountBySPAName(req, res) {
     const response = await chart.aggregate([
       {
         '$match': {
+          'propertyName':  req.params.propertyName,
           'spaName': req.params.spaName,
           'code': 'WEBSITE_CREATE'
         }

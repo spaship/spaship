@@ -9,14 +9,15 @@ import { useState } from "react";
 interface IProps {
   config?: any;
   selectedName?: string;
-  onSelect: (conf: any) => void;
+  propertyName?: string;
+  onSelect: (conf: any, propertyName: any) => void;
 }
 export default (props: IProps) => {
-  const { config, selectedName, onSelect } = props;
+  const { config, selectedName, onSelect, propertyName } = props;
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   const onClick = () => {
-    onSelect(config.spaName);
+    onSelect(config.spaName, propertyName);
   };
 
   const renderCardActions = () => {

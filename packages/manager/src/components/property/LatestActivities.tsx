@@ -44,7 +44,7 @@ export default () => {
   };
 
   const getSPALink = (spaName: string, property: string) => {
-    return `/dashboard/spaName/${spaName}/${property}`;
+    return `/dashboard/${property}/spaName/${spaName}`;
   };
 
   const getPropertyLink = (property: string) => {

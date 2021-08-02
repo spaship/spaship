@@ -8,9 +8,9 @@ import { get } from '../../../utils/APIUtil';
 export default () => {
   const { selected, setSelectedConfig } = useConfig();
   const [event, setEvent] = useState([]);
-  const { spaName } = useParams();
+  const { spaName, propertyName } = useParams();
   const query = spaName;
-  const getEventData = fetchEventData(selected, query, setEvent);
+  const getEventData = fetchEventData(selected, query, setEvent, propertyName);
 
   useEffect(() => {
     getEventData();
@@ -121,16 +121,16 @@ function getChartRange(event, maxCount, minCount, prod, i, dev, qa, stage) {
         maxCount = Math.max(maxCount, element.count);
         if (Math.min(minCount, element.count) != 0)
           minCount = Math.min(minCount, element.count);
-        if (element.envs === "Prod") {
+        if (element.envs.toLowerCase() === "prod") {
           prod.set(i, element.count);
         }
-        if (element.envs === "Dev") {
+        if (element.envs.toLowerCase() === "dev") {
           dev.set(i, element.count);
         }
-        if (element.envs === "QA") {
+        if (element.envs.toLowerCase() === "qa") {
           qa.set(i, element.count);
         }
-        if (element.envs === "Stage") {
+        if (element.envs.toLowerCase() === "stage") {
           stage.set(i, element.count);
         }
       }
@@ -141,10 +141,10 @@ function getChartRange(event, maxCount, minCount, prod, i, dev, qa, stage) {
 }
 
 
-function fetchEventData(selected, query, setEvent) {
+function fetchEventData(selected, query, setEvent, propertyName) {
   return async () => {
     try {
-      const url = selected?.environments[0].api + `/event/get/chart/month/spaName/env/${query}`;
+      const url = selected?.environments[0].api + `/event/get/chart/month/spaName/env/${query}/${propertyName}`;
       if (selected) {
         const data = await get(url);
         setEvent(data);

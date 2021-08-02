@@ -3,12 +3,12 @@ const mongoose = require('mongoose')
 const eventTimeTrace = new mongoose.Schema({
     id: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     traceId: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     propertyName: {
         type: String,

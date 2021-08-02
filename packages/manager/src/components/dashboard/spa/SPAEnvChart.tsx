@@ -11,10 +11,10 @@ import { get } from '../../../utils/APIUtil';
 export default () => {
     const [event, setEvent] = useState([]);
     const { selected, setSelectedConfig } = useConfig();
-    const { spaName } = useParams<{ spaName: string }>();
+    const { spaName, propertyName } = useParams<{ spaName: string, propertyName: string }>();
     const query = spaName;
 
-    const getEventData = fetchEventData(selected, query, setEvent);
+    const getEventData = fetchEventData(selected, query, setEvent, propertyName);
 
     useEffect(() => {
         getEventData();
@@ -63,10 +63,10 @@ export default () => {
     );
 };
 
-function fetchEventData(selected: IConfig | undefined, query: string, setEvent: any) {
+function fetchEventData(selected: IConfig | undefined, query: string, setEvent: any, propertyName: any) {
     return async () => {
         try {
-            const url = selected?.environments[0].api + `/event/get/chart/spaName/env/${query}`;
+            const url = selected?.environments[0].api + `/event/get/chart/spaName/env/${query}/${propertyName}`;
             if (selected) {
                 const data = await get<any>(url);
                 setEvent(data);

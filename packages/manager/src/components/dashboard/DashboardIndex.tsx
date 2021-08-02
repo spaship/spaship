@@ -20,9 +20,9 @@ export default () => {
     removeConfig(conf.name);
   };
 
-  const onSelect = async (spaName: string) => {
+  const onSelect = async (spaName: string, propertyName: string) => {
     // await setSelectedConfig(conf);
-    history.push(`/dashboard/spaName/${spaName}`);
+    history.push(`/dashboard/${propertyName}/spaName/${spaName}`);
   };
 
   const getEventData = fetchEventData(selected, propertyName, setEvent);
@@ -46,7 +46,7 @@ export default () => {
         <Gallery hasGutter style={{ width: "90%" }}>
           {eventResponse.map((e) => (
             <GalleryItem key={e.id} >
-              <DashboardProperty config={e} selectedName={e.spaName} onSelect={onSelect} />
+              <DashboardProperty config={e} selectedName={e.spaName}  propertyName={propertyName} onSelect={onSelect} />
             </GalleryItem>
           ))}
         </Gallery>

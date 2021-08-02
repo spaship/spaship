@@ -29,8 +29,8 @@ export default (props: IProps) => {
     const eventResponse = fetchEventResponse(event);
     const getColorCode = fetchColorCode()
 
-    const getSPALink = (spaName: string) => {
-        return `/dashboard/spaName/${spaName}`;
+    const getSPALink = (spaName: string, property: string) => {
+        return `/dashboard/${property}/spaName/${spaName}`;
     }
 
     const getPropertyLink = (property: string) => {
@@ -44,7 +44,7 @@ export default (props: IProps) => {
 
                 <ListItem>
                     <Text component={TextVariants.h1}>
-                        <Link to={getSPALink(e.spaName)} style={{ textDecoration: 'none' }}>
+                        <Link to={getSPALink(e.spaName, e.propertyName)} style={{ textDecoration: 'none' }}>
                             <Label color={getColorCode(e.code)}>
                                 {e.spaName}
                             </Label>

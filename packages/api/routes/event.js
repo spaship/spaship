@@ -43,7 +43,7 @@ router.get("/get/latest/activities", getLatestActivities);
 
 router.get("/get/:propertyName/count/property/spaname", getDeploymentCountByPropertyName);
 
-router.get("/get/property/spaname/count/:spaName", getDeploymentCountBySPAName);
+router.get("/get/property/spaname/count/:spaName/:propertyName", getDeploymentCountBySPAName);
 
 router.get("/get/all/property/count", getDeploymentCountForAllProperty);
 
@@ -52,18 +52,18 @@ router.get("/get/all/property/count", getDeploymentCountForAllProperty);
 
 router.get("/get/latest/activities/:propertyName", getLatestActivitiesByProperty);
 
-router.get("/get/spaName/latest/activities/:spaName", getLatestActivitiesBySPAName);
+router.get("/get/spaName/latest/activities/:spaName/:propertyName", getLatestActivitiesBySPAName);
 
 
 router.get("/get/chart/property/env/:propertyName", getPropertyCountByEnvChart);
 
-router.get("/get/chart/spaName/env/:spaName", getSPANameCountByEnvChart);
+router.get("/get/chart/spaName/env/:spaName/:propertyName", getSPANameCountByEnvChart);
 
 
 
 router.get("/get/chart/month/property/env/:propertyName", getPropertyCountByEnvWeeklyChart);
 
-router.get("/get/chart/month/spaName/env/:spaName", getSPANameCountByEnvWeeklyChart);
+router.get("/get/chart/month/spaName/env/:spaName/:propertyName", getSPANameCountByEnvWeeklyChart);
 
 
 
