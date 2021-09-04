@@ -47,7 +47,7 @@
     "uuid": "^8.0.0"
   },
   "devDependencies": {
-    "axios": "0.21.1",
+    "axios": "0.21.2",
     "mockingoose": "2.15.2",
     "nodemon": "2.0.12",
     "tar": "6.1.11"
