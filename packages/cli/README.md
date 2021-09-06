@@ -55,6 +55,7 @@ ARGUMENTS
            this if you specify the build artifact path as `buildDir` in the spaship.yaml file.
 
 OPTIONS
+  -b, --builddir=builddir  path of your SPAs artifact. Defaults to 'buildDir' if specified in the spaship.yaml.
   -e, --env=env    [default: default] either the name of a SPAship environment as defined in your .spashiprc.yml file,
                    or a URL to a SPAship environment
 

@@ -37,7 +37,8 @@ class DeployCommand extends Command {
     // it could be store in package.json
     const name = yamlConfig ? yamlConfig.name : config.name;
     let path = flags.path || yamlPath;
-    const buildDir = yamlConfig ? yamlConfig.buildDir : config.buildDir;
+    const configBuildDir = yamlConfig ? yamlConfig.buildDir : config.buildDir; // buildDIr from config
+    const buildDir = flags.builddir ? flags.builddir : configBuildDir; // uses command line arg if present
 
     if (!name) {
       this.error("Please define your app name in your package.json or use init to create spaship.yaml ");
@@ -187,6 +188,14 @@ DeployCommand.flags = assign(
       char: "p",
       description:
         "a custom URL path for your app under the SPAship domain. Defaults to the 'path' in your spaship.yaml. ex: /my/app",
+    }),
+  },
+  {
+    builddir: flags.string({
+      char: "b",
+      required: false,
+      description:
+        "path of your SPAs artifact. Defaults to 'buildDir' if specified in the spaship.yaml.",
     }),
   },
   commonFlags.apikey,
