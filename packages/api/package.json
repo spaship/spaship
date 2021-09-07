@@ -38,7 +38,7 @@
     "express-pino-logger": "^6.0.0",
     "helmet": "^4.0.0",
     "lodash": "^4.17.15",
-    "mongoose": "^5.12.3",
+    "mongoose": "^6.0.0",
     "multer": "^1.4.2",
     "mvdir": "^1.0.17",
     "nconf": "^0.11.0",
