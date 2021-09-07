@@ -11,7 +11,7 @@ SPAship is a platform for **deploying**, **integrating**, and **managing** singl
 SPAship is an open source project. It is optimized to deploy and host SPAs in a very efficient and performant way. 
 
 ### Confused ... :confused: Let me break it down for you :smiley: 
-SPAship as a product abstracts the underlying deployment infrastructure through a management portal(SPAship manager or CLI) and cloud-native deployment engine so that the developers can focus on developing SPAS rather than dealing with deployment/delivery and CI configurations. SPAship focuses on improving the deployment experience for the developers by integrating with existing CI and the deployment platform.
+SPAship as a product abstracts the underlying deployment infrastructure through a management portal (SPAship manager or CLI) and cloud-native deployment engine so that the developers can focus on developing SPAs rather than dealing with deployment/delivery and CI configurations. SPAship focuses on improving the deployment experience for developers by providing an easy to use CLI tool, an interactive user interface for web property management  and with  the ability to be integrated with existing CI based deployment platforms.
 
 In short, SPAship is designed to make it simple for developers to deploy their SPAs on any *Kubernetes* Platform without having to know the details of infrastructure.The application setup and website registration are just a one-time configuration, do it once and then forget. Focus on what you care about the most! The end goal of SPAship is to take out the following pains off developers
 * Dealing with Infrastructure
