@@ -26,7 +26,7 @@ SPAs are all about serving an outstanding UX by trying to imitate a â€œnaturalâ€
 
 :::info
 
-So the mission of SPAship is delightful Single-Page App Deployment and Hosting.
+So the mission of SPAship is to provide delightful Single-Page App Deployment and Hosting.
 
 :::
 
