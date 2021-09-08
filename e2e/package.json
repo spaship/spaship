@@ -14,7 +14,7 @@
     "cypress": "8.3.1",
     "cypress-file-upload": "5.0.8",
     "cypress-xpath": "1.6.2",
-    "mocha": "8.4.0",
+    "mocha": "9.1.1",
     "mochawesome": "5.0.0",
     "mochawesome-merge": "4.2.0",
     "mochawesome-report-generator": "4.1.0",
