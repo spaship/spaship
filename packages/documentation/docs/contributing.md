@@ -3,16 +3,17 @@ id: contributing
 title: Contributing
 ---
 
-## What is Open Source?
+## What is Open Source? :trophy:
 
 >If you're a developer, you've probably come across the term **"open source."** If you've ever wondered what it's all about and how to contribute, you are in exactly the right place.
 
 Open source refers to source code that is made available to the public to view, use, modify, and distribute under a permissive license.
 Contributing to open source can be a rewarding way to learn, teach, and build experience in just about any skill you can imagine.
 The main point of  open source projects is to create valuable and accessible open source software, individual contributors can get plenty of personal benefit from contributing to them.
+
 Some popular Open-Source Software are the Linux Operating System, Android, Mozilla Firefox, Chromium (which powers Google Chrome and Microsoft Edge), VSCode IDE, VLC Media Player, WordPress Content Manager System, etc. 
 
-## Why contribute to open source?
+## Why contribute to open source? :mag_right:
 Contributing to open source projects can be a rewarding way to learn, teach, share, and build experience. There are plenty of reasons why you should contribute to an open source project, such as:
 * To improve the software you rely on daily
 * To find a mentor if you need one
@@ -29,7 +30,7 @@ As SPAship is Opensource , SPAship team is on a mission to make *[SPAship](https
 
 :::
 
-## What to Know Before You Contribute to an Open Source Project ?
+## What to Know Before You Contribute to an Open Source Project ? :bookmark_tabs:
 Every open source community is different. Each community has different people in it with different roles and rewards offered. 
 ### A typical open source project will have these people :
 - **Author** - This is the person who created the project. They have the power to assign new roles to other members to help with the project's maintenance.
@@ -38,7 +39,7 @@ Every open source community is different. Each community has different people in
 - **Contributors** - Contributors add to the project in one way or another. They follow the same code review process, are subject to the same requirements on code style, and so on.
 Community Members/Users - These valuable members of the community can provide feedback about features, bug reports, and more.
 
-## How to submit a contribution ?
+## How to submit a contribution ? :bulb:
 Contributing to open source project can be intimidating and confusing at beginner level. To add to that, most large open source projects have a steep learning curve .
 So Don't worry :innocent: 
 
@@ -64,7 +65,7 @@ Incase you found an issue in SPAship project and capable of resolving it pls fol
 
 ### **Step 3 : Fork the project repository**
 Fork the SPAship monorepo - <https://github.com/spaship/spaship>. At the top right corner, you will see the term "fork". All you need to do is click it and you will have created a copy of the same project in your account. The URL will change to:
-<https://github.com/<YourUserName>/spaship>
+<https://github.com/YourUserName/spaship>
 
 # ![image alt text](fork.png)
 
@@ -139,9 +140,9 @@ Click the green Compare & pull request button to begin the pull request.
 ### **Step 14 : Create the pull request**
 When opening a "pull request", you are making a "request" that the project repository "pull" changes from your fork. You will see that the project repository is listed as the "base repository", and your fork is listed as the "head repository".
 
-Before submitting the pull request, you first need to describe the changes you made (rather than asking the project maintainers to figure them out on their own). You should write a descriptive title for your pull request, and then include more details in the body of the pull request. If there are any related GitHub issues, make sure to mention those by number. The body can include Markdown formatting, and you can click the Preview tab to see how it will look.
+# ![image alt text](pullreqcreate.png)
 
-On the right side, you may see a link to the project's Contributing guidelines. This is primarily worth reading through if you are submitting substantial code (rather than just fixing a typo), but it may still be worth scanning through at this point.
+Before submitting the pull request, you first need to describe the changes you made (rather than asking the project maintainers to figure them out on their own). You should write a descriptive title for your pull request, and then include more details in the body of the pull request. If there are any related GitHub issues, make sure to mention those by number. The body can include Markdown formatting, and you can click the Preview tab to see how it will look.
 
 Below the pull request form, you will see a list of the commits you made in your branch, as well as the "diffs" for all of the files you changed.
 
