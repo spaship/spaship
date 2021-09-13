@@ -1,12 +1,8 @@
 const { Router } = require("express");
-const findAllEvents = require("../controllers/reports/deprecatedServices/findAllEvents");
-const findEventById = require("../controllers/reports/deprecatedServices/findEventById");
-const findEventByProperty = require("../controllers/reports/deprecatedServices/findEventByProperty");
 const getDeploymentPerProperty = require("../controllers/reports/propertyServices/allProperyServices/getAllDeploymentPropertyAnalysis");
 const getPropertyCountByCode  = require("../controllers/reports/propertyServices/allProperyServices/getPropertyCountByCode");
 const getPropertyCountBySpanameAndCode  = require("../controllers/reports/propertyServices/allProperyServices/getPropertyCountBySpanameAndCode");
 const getPropertyCountBySpaname  = require("../controllers/reports/propertyServices/allProperyServices/getPropertyCountBySpaname");
-const getLatestActivities = require("../controllers/reports/deprecatedServices/getLatestActivities");
 const getDeploymentCountByPropertyName = require("../controllers/reports/propertyServices/perPropertyServices/getDeploymentCountByPropertyName");
 const getDeploymentCountBySPAName = require("../controllers/reports/spaServices/getDeploymentCountBySPAName");
 const getDeploymentCountForAllProperty = require("../controllers/reports/propertyServices/allProperyServices/getDeploymentCountForAllProperty");
@@ -23,12 +19,6 @@ const getSearchResultForSPA = require("../controllers/reports/spaServices/getSea
 
 const router = new Router();
 
-router.get("/", findAllEvents);
-
-router.get("/find/property/:propertyName", findEventByProperty);
-
-router.get("/find/id/:id", findEventById);
-
 router.get("/get/count/property/all", getDeploymentPerProperty);
 
 router.get("/get/count/property/code", getPropertyCountByCode);
@@ -36,8 +26,6 @@ router.get("/get/count/property/code", getPropertyCountByCode);
 router.get("/get/count/property/spaname", getPropertyCountBySpaname);
 
 router.get("/get/count/property/spaname/code", getPropertyCountBySpanameAndCode);
-
-router.get("/get/latest/activities", getLatestActivities);
 
 router.get("/get/:propertyName/count/property/spaname", getDeploymentCountByPropertyName);
 
