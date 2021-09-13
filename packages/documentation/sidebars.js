@@ -1,7 +1,7 @@
 module.exports = {
   someSidebar: {
     SPAship: ["introduction", "contributing"],
-    "Getting Started": ["architecture","installation", "configuration", "user-guide/user-guide"],
+    "Getting Started": ["architecture",'spaship-manager',"installation", "configuration", "user-guide/user-guide"],
     Features: ["injection"],
   },
 };
