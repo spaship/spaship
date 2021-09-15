@@ -14,7 +14,7 @@ const delay = millis => new Promise((resolve, reject) => {
 
 module.exports = async function gitOperations(req, res) {
 
-    const directoryName = `${req.body.websiteName}_temp_${uuid()}`;
+    const directoryName = `${getWebsiteName(req)}_temp_${uuid()}`;
     const pathClone =  path.resolve(__dirname, `./../../../root/${directoryName}`);
     const basePath = config.get("directoryBasePath");
     const resolvePathCreateBranch = `../../../${basePath}/${directoryName}/.git`;
@@ -38,6 +38,10 @@ module.exports = async function gitOperations(req, res) {
     res.send({ analyzedFiles : responseFiles });
 }
 
+
+function getWebsiteName(req) {
+    return req?.body?.websiteName || '';
+}
 
 async function getAnalyzedFiles(filepaths, responseFiles, analyzePath) {
     for (let analyzeScript of filepaths) {
@@ -85,7 +89,7 @@ async function walk(analyzePath, filepaths) {
 
         }
     }
-    return filepaths;
+    return filepaths || [];
 }
 
 
@@ -136,7 +140,7 @@ async function createSPAShipTemplateRequest(req, pathFile) {
 
         const spaShipFile = {
             websiteVersion: "v1",
-            websiteName: req.body.websiteName,
+            websiteName: getWebsiteName(req),
             environments: spa.envs,
             branch: req.body.repositoryConfigs[0].branch,
             name: spa.spaName,
