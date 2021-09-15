@@ -40,7 +40,8 @@ function createWebsiteRequest(id, req) {
 }
 
 async function updateWebsite(req) {
-    const updateResponse = await website.findOneAndUpdate({ websiteId: getWebsiteId(req) },
+    const requestWebsiteId=getWebsiteId(req);
+    const updateResponse = await website.findOneAndUpdate({ websiteId: requestWebsiteId },
         updateWebsiteRequest(req),
         (error, data) => {
             if (error) {
@@ -82,17 +83,17 @@ function getRepositoryConfigs(req) {
 }
 
 function getWebsiteId(req) {
-    return req.body?.websiteId;
+    return req?.body?.websiteId || 0;
 }
 
 function getGitToken(req) {
-    return req.body?.gitToken;
+    return req.body?.gitToken || '';
 }
 
 function getWebsiteName(req) {
-    return req.body?.websiteName;
+    return req?.body?.websiteName || '';
 }
 
 function getIsActive(req) {
-    return req.body?.isActive;
+    return req?.body?.isActive || false;
 }

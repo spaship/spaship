@@ -14,7 +14,7 @@ const delay = millis => new Promise((resolve, reject) => {
 module.exports = async function gitOperations(req, res) {
 
     let repository;
-    const directoryName = `${getWebsiteName(req)}_temp_${uuid()}`;
+    const directoryName = `spaship_temp_${uuid()}`;
     const pathClone =  path.resolve(__dirname, `./../../../root/${directoryName}`);
     const basePath = config.get("directoryBasePath");
     const resolvePathCreateBranch = `../../../${basePath}/${directoryName}/.git`;
