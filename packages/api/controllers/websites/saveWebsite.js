@@ -83,7 +83,8 @@ function getRepositoryConfigs(req) {
 }
 
 function getWebsiteId(req) {
-    return req?.body?.websiteId || 0;
+    const requestWebsiteId = req?.body?.websiteId || ''
+    return requestWebsiteId.toString();
 }
 
 function getGitToken(req) {
