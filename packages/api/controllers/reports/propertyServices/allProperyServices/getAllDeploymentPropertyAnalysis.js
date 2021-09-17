@@ -1,19 +1,20 @@
 const chart = require('../../../../models/event')
 
-module.exports = async function getAllDeploymentPropertyAnalysis(req, res) {
+const getAllDeploymentPropertyAnalysis = async (req, res) =>  {
   try {
+    res.status(200).json(await getAllDeploymentPropertyAnalysisService());
+  } catch (e) {
+    return { "Error": e };
+  }
+}
 
+const getAllDeploymentPropertyAnalysisService = async () =>  {
+  try {
     const propertyCountResponse = await getPropertyCountResponse();
-
     const propertyCountByCodeResponse = await getPropertyCountByCodeResponse();
-
     const propertyCountBySpanameAndCodeResponse = await getPropertyCountBySpanameAndCodeResponse();
-
     const propertyCountBySpanameResponse = await getPropertyCountBySpanameResponse();
-
-
-    res.status(200).json([propertyCountResponse, propertyCountByCodeResponse, propertyCountBySpanameResponse, propertyCountBySpanameAndCodeResponse]);
-
+    return [propertyCountResponse, propertyCountByCodeResponse, propertyCountBySpanameResponse, propertyCountBySpanameAndCodeResponse];
   } catch (e) {
     return { "Error": e };
   }
@@ -117,3 +118,5 @@ async function getPropertyCountResponse() {
     }
   ]);
 }
+
+module.exports = { getAllDeploymentPropertyAnalysis, getAllDeploymentPropertyAnalysisService };

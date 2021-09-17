@@ -8,9 +8,9 @@ const router = new Router();
 
 router.post("/", gitOperations);
 
-router.get("/list", getWebsiteList);
+router.get("/list", getWebsiteList.getWebsiteList);
 
-router.get("/getSpaList/:websiteName", getSPAList);
+router.get("/getSpaList/:websiteName", getSPAList.getSPAList);
 
 router.post("/analyze/repository", analyzeRepository);
 

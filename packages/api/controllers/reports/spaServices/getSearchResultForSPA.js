@@ -1,11 +1,18 @@
 const chart = require('../../../models/event')
 
-module.exports = async function getSearchResultForSPA(req, res) {
+const getSearchResultForSPA = async (req, res) =>  {
   try {
-    const response = await fetchSearchResultForSPA(req);
-    bindResponse(response);
-    res.status(200).json(response);
+    res.status(200).json(await getSearchResultForSPAService(req.params.searchQuery));
+  } catch (e) {
+    return { "Error": e };
+  }
+}
 
+const getSearchResultForSPAService = async (searchQuery) =>  {
+  try {
+    const response = await fetchSearchResultForSPA(searchQuery);
+    bindResponse(response);
+    return response;
   } catch (e) {
     return { "Error": e };
   }
@@ -18,7 +25,7 @@ function bindResponse(response) {
   });
 }
 
-async function fetchSearchResultForSPA(req) {
+async function fetchSearchResultForSPA(searchQuery) {
   return await chart.aggregate([
     {
       '$group': {
@@ -36,7 +43,7 @@ async function fetchSearchResultForSPA(req) {
     }, {
       '$match': {
         'spaName': {
-          '$regex': req.params.searchQuery,
+          '$regex': searchQuery,
           '$options': 'i'
         }
       }
@@ -46,3 +53,5 @@ async function fetchSearchResultForSPA(req) {
     }
   ]);
 }
+
+module.exports = { getSearchResultForSPA, getSearchResultForSPAService };

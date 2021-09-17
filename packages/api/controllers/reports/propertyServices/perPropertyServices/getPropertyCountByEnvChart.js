@@ -1,21 +1,27 @@
 const chart = require('../../../../models/event')
 
-module.exports = async function getPropertyCountByEnvChart(req, res) {
+const getPropertyCountByEnvChart = async (req, res) => {
   try {
-    
-    const response = await getGetPropertyCountByEnvChart(req);
-    res.status(200).json(response);
-
+    res.status(200).json(await getPropertyCountByEnvChartService(req.params.propertyName));
   } catch (e) {
     return { "Error": e };
   }
 }
 
-async function getGetPropertyCountByEnvChart(req) {
+const getPropertyCountByEnvChartService = async (propertyName) => {
+  try {
+    const response = await getGetPropertyCountByEnvChart(propertyName);
+    return response;
+  } catch (e) {
+    return { "Error": e };
+  }
+}
+
+async function getGetPropertyCountByEnvChart(propertyName) {
   return await chart.aggregate([
     {
       '$match': {
-        'propertyName': req.params.propertyName,
+        'propertyName': propertyName,
         'code': 'WEBSITE_CREATE'
       }
     }, {
@@ -41,3 +47,5 @@ async function getGetPropertyCountByEnvChart(req) {
     }
   ]);
 }
+
+module.exports = { getPropertyCountByEnvChart, getPropertyCountByEnvChartService };

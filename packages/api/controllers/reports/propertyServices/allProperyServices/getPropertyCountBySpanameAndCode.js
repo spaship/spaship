@@ -1,16 +1,23 @@
 const chart = require('../../../../models/event')
 
-module.exports = async function getPropertyCountBySpanameAndCode(req, res) {
+const getPropertyCountBySpanameAndCode = async (req, res) => {
   try {
-
-    const propertyCountBySpanameAndCodeResponse = await fetchPropertyCountBySpanameAndCodeResponse();
-    bindResponse(propertyCountBySpanameAndCodeResponse);
-    res.status(200).json(propertyCountBySpanameAndCodeResponse);
-
+    res.status(200).json(await getPropertyCountBySpanameAndCodeService());
   } catch (e) {
     return { "Error": e };
   }
 }
+
+const getPropertyCountBySpanameAndCodeService = async (req, res) => {
+  try {
+    const propertyCountBySpanameAndCodeResponse = await fetchPropertyCountBySpanameAndCodeResponse();
+    bindResponse(propertyCountBySpanameAndCodeResponse);
+    return propertyCountBySpanameAndCodeResponse;
+  } catch (e) {
+    return { "Error": e };
+  }
+}
+
 
 function bindResponse(propertyCountBySpanameAndCodeResponse) {
   let i = 1;
@@ -47,3 +54,5 @@ async function fetchPropertyCountBySpanameAndCodeResponse() {
     }
   ]);
 }
+
+module.exports = { getPropertyCountBySpanameAndCode, getPropertyCountBySpanameAndCodeService };

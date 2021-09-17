@@ -1,13 +1,20 @@
 const chart = require('../../../../models/event')
 
-module.exports = async function getLatestActivitiesByProperty(req, res) {
+const getLatestActivitiesByProperty = async (req, res) => {
   try {
-    const response = await fetchLatestActivitiesByProperty(req);
-
+    const response = await fetchLatestActivitiesByProperty(req.params.propertyName);
     bindResponse(response);
-
     res.status(200).json(response);
+  } catch (e) {
+    return { "Error": e };
+  }
+}
 
+const getLatestActivitiesByPropertyService = async (propertyName) => {
+  try {
+    const response = await fetchLatestActivitiesByProperty(propertyName);
+    bindResponse(response);
+    res.status(200).json(response);
   } catch (e) {
     return { "Error": e };
   }
@@ -24,11 +31,11 @@ function bindResponse(response) {
   });
 }
 
-async function fetchLatestActivitiesByProperty(req) {
+async function fetchLatestActivitiesByProperty(propertyName) {
   return await chart.aggregate([
     {
       '$match': {
-        'propertyName': req.params.propertyName
+        'propertyName': propertyName
       }
     }, {
       '$sort': {
@@ -55,3 +62,5 @@ function actvitiesText(item, codeMap) {
   item.latestActivityTail = " at "
     + item.createdAt.toString().slice(0, 24) + " in " + item.envs;
 }
+
+module.exports = { getLatestActivitiesByProperty, getLatestActivitiesByPropertyService };

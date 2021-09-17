@@ -1,15 +1,23 @@
 const chart = require('../../../models/event')
 
-module.exports = async function getDeploymentCountBySPAName(req, res) {
+const getDeploymentCountBySPAName = async (req, res) => {
   try {
-    const response = await fetchDeploymentCountBySPAName(req);
-    bindResponse(response);
-    res.status(200).json(response);
-
+    res.status(200).json(await getDeploymentCountBySPANameService(req.params.propertyName, req.params.spaName,));
   } catch (e) {
     return { "Error": e };
   }
 }
+
+const getDeploymentCountBySPANameService = async (propertyName, spaName) => {
+  try {
+    const response = await fetchDeploymentCountBySPAName(propertyName, spaName);
+    bindResponse(response);
+    return response;
+  } catch (e) {
+    return { "Error": e };
+  }
+}
+
 
 function bindResponse(response) {
   let i = 1;
@@ -18,12 +26,12 @@ function bindResponse(response) {
   });
 }
 
-async function fetchDeploymentCountBySPAName(req) {
+async function fetchDeploymentCountBySPAName(propertyName, spaName) {
   return await chart.aggregate([
     {
       '$match': {
-        'propertyName': req.params.propertyName,
-        'spaName': req.params.spaName,
+        'propertyName': propertyName,
+        'spaName': spaName,
         'code': 'WEBSITE_CREATE'
       }
     }, {
@@ -53,3 +61,5 @@ async function fetchDeploymentCountBySPAName(req) {
     }
   ]);
 }
+
+module.exports = { getDeploymentCountBySPAName, getDeploymentCountBySPANameService };

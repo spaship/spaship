@@ -1,13 +1,18 @@
 const chart = require('../../../models/event')
 
-module.exports = async function getSPANameCountByEnvWeeklyChart(req, res) {
+const getSPANameCountByEnvWeeklyChart = async (req, res) =>  {
   try {
-    const spaName = req.params.spaName;
-    const propertyName = req.params.propertyName;
+    res.send(await getSPANameCountByEnvWeeklyChartService(req.params.propertyName, req.params.spaName));
+  } catch (e) {
+    return { "Error": e };
+  }
+}
+
+const getSPANameCountByEnvWeeklyChartService = async (propertyName, spaName) =>  {
+  try {
     const dateFrame = createDateFrame();
     const response = await fetchResponse(dateFrame, spaName, propertyName);
-
-    res.send(response);
+    return response;
   } catch (e) {
     return { "Error": e };
   }
@@ -81,3 +86,5 @@ async function getWeeklyReport(startDate, endDate, spaName, propertyName ) {
     }
   ]);
 }
+
+module.exports = { getSPANameCountByEnvWeeklyChart, getSPANameCountByEnvWeeklyChartService };

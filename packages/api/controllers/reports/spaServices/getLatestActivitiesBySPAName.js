@@ -1,32 +1,36 @@
 const chart = require('../../../models/event')
 
-module.exports = async function getLatestActivitiesBySPAName(req, res) {
+const getLatestActivitiesBySPAName = async (req, res) => {
   try {
-    const response = await fetchLatestActivitiesBySPAName(req);
-
-    var codeMap = {
-      "WEBSITE_CREATE": "deployed over", "WEBSITE_DELETE": "deleted from", "WEBSITE_UPDATE": "updated from"
-    };
-    let i = 1;
-
-    response.forEach((item) => {
-      item.id = i++;
-      actvitiesText(item, codeMap);
-    });
-
-    res.status(200).json(response);
-
+    res.status(200).json(await getLatestActivitiesBySPANameService(req.params.propertyName, req.params.spaName));
   } catch (e) {
     return { "Error": e };
   }
 }
 
-async function fetchLatestActivitiesBySPAName(req) {
+const getLatestActivitiesBySPANameService = async (propertyName, spaName) => {
+  try {
+    const response = await fetchLatestActivitiesBySPAName(propertyName, spaName);
+    var codeMap = {
+      "WEBSITE_CREATE": "deployed over", "WEBSITE_DELETE": "deleted from", "WEBSITE_UPDATE": "updated from"
+    };
+    let i = 1;
+    response.forEach((item) => {
+      item.id = i++;
+      actvitiesText(item, codeMap);
+    });
+    return response;
+  } catch (e) {
+    return { "Error": e };
+  }
+}
+
+async function fetchLatestActivitiesBySPAName(propertyName, spaName) {
   return await chart.aggregate([
     {
       '$match': {
-        'propertyName': req.params.propertyName,
-        'spaName': req.params.spaName
+        'propertyName': propertyName,
+        'spaName': spaName
       }
     }, {
       '$sort': {
@@ -53,3 +57,5 @@ function actvitiesText(item, codeMap) {
   item.latestActivityTail = " at "
     + item.createdAt.toString().slice(0, 24) + " in " + item.envs;
 }
+
+module.exports = { getLatestActivitiesBySPAName, getLatestActivitiesBySPANameService };

@@ -1,21 +1,28 @@
 const chart = require('../../../models/event')
 
-module.exports = async function getSPANameCountByEnvChart(req, res) {
+const getSPANameCountByEnvChart = async (req, res) => {
   try {
-    const response = await fetchSPANameCountByEnvChart(req);
-    res.status(200).json(response);
-
+    res.status(200).json(await getSPANameCountByEnvChartService(req.params.propertyName, req.params.spaName));
   } catch (e) {
     return { "Error": e };
   }
 }
 
-async function fetchSPANameCountByEnvChart(req) {
+const getSPANameCountByEnvChartService = async (propertyName,spaName) => {
+  try {
+    const response = await fetchSPANameCountByEnvChart(propertyName,spaName);
+    return response;
+  } catch (e) {
+    return { "Error": e };
+  }
+}
+
+async function fetchSPANameCountByEnvChart(propertyName,spaName) {
   return await chart.aggregate([
     {
       '$match': {
-        'propertyName': req.params.propertyName,
-        'spaName': req.params.spaName,
+        'propertyName': propertyName,
+        'spaName': spaName,
         'code': 'WEBSITE_CREATE'
       }
     }, {
@@ -41,3 +48,5 @@ async function fetchSPANameCountByEnvChart(req) {
     }
   ]);
 }
+
+module.exports = { getSPANameCountByEnvChart, getSPANameCountByEnvChartService };

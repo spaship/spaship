@@ -1,25 +1,31 @@
 const website = require('../../models/website')
 
-module.exports = async function getSPAList(req, res) {
+const getSPAList = async (req, res) =>  {
   try {
-    const getSPAListResponse = await fetchSPAList(req);
-
-    let i = 1;
-    getSPAListResponse.forEach((item) => {
-      item.id = i++;
-    });
-
-    res.status(200).json(getSPAListResponse);
-
+    res.status(200).json(await getSPAListService(req.params.websiteName));
   } catch (e) {
     return { "Error": e };
   }
 }
-async function fetchSPAList(req) {
+
+const getSPAListService = async (websiteName) =>  {
+  try {
+    const getSPAListResponse = await fetchSPAList(websiteName);
+    let i = 1;
+    getSPAListResponse.forEach((item) => {
+      item.id = i++;
+    });
+    return getSPAListResponse;
+  } catch (e) {
+    return { "Error": e };
+  }
+}
+
+async function fetchSPAList(websiteName) {
   return await website.aggregate([
     {
       '$match': {
-        'websiteName': req.params.websiteName
+        'websiteName': websiteName
       }
     }, {
       '$project': {
@@ -43,3 +49,4 @@ async function fetchSPAList(req) {
   ]);
 }
 
+module.exports = { getSPAList, getSPAListService };

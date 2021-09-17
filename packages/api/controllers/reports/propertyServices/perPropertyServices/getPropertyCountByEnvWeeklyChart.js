@@ -1,15 +1,24 @@
 const chart = require('../../../../models/event')
 
-module.exports = async function getPropertyCountByEnvWeeklyChart(req, res) {
+const getPropertyCountByEnvWeeklyChart = async (req, res) => {
   try {
-    const propertyName = req.params.propertyName;
-    const dateFrame = createDateFrame();
-    const response = await fetchResponse(dateFrame, propertyName);
-    res.send(response);
+    res.send(await getPropertyCountByEnvWeeklyChartService(res.params.propertyName));
   } catch (e) {
     return { "Error": e };
   }
 }
+
+const getPropertyCountByEnvWeeklyChartService = async (propertyName) => {
+  try {
+    const propertyName = propertyName;
+    const dateFrame = createDateFrame();
+    const response = await fetchResponse(dateFrame, propertyName);
+    return response;
+  } catch (e) {
+    return { "Error": e };
+  }
+}
+
 
 function createDateFrame() {
   const dateFrame = [];
@@ -78,3 +87,5 @@ async function getWeeklyReport(startDate, endDate, propertyName) {
     }
   ]);
 }
+
+module.exports = { getPropertyCountByEnvWeeklyChart, getPropertyCountByEnvWeeklyChartService };

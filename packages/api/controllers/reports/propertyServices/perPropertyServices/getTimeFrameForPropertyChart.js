@@ -1,12 +1,18 @@
 const chart = require('../../../../models/eventTimeTrace')
 
-module.exports = async function getTimeFrameForPropertyChart(req, res) {
+const getTimeFrameForPropertyChart = async (req, res) =>  {
   try {
-    const spaName = req.params.propertyName;
-    const dateFrame = createDateFrame();
-    const response = await fetchResponse(dateFrame, spaName);
+    res.send(await getTimeFrameForPropertyChartService(req.params.propertyName));
+  } catch (e) {
+    return { "Error": e };
+  }
+}
 
-    res.send(response);
+const getTimeFrameForPropertyChartService = async (propertyName) =>  {
+  try {
+    const dateFrame = createDateFrame();
+    const response = await fetchResponse(dateFrame, propertyName);
+    return response;
   } catch (e) {
     return { "Error": e };
   }
@@ -95,3 +101,5 @@ async function getWeeklyReport(startDate, endDate, propertyName) {
   }
   ]);
 }
+
+module.exports = { getTimeFrameForPropertyChart, getTimeFrameForPropertyChartService };

@@ -1,13 +1,22 @@
 const chart = require('../../../../models/event')
 
-module.exports = async function getCountByEnvChart(req, res) {
+const getCountByEnvChart = async (req, res) =>  {
   try {
-    const response = await fetchCountByEnv();
-    res.status(200).json(response);
+    res.status(200).json(await getCountByEnvChartService());
   } catch (e) {
     return { "Error": e };
   }
 }
+
+const getCountByEnvChartService = async () =>  {
+  try {
+    const response = await fetchCountByEnv();
+    return response;
+  } catch (e) {
+    return { "Error": e };
+  }
+}
+
 
 async function fetchCountByEnv() {
   return await chart.aggregate([
@@ -36,3 +45,5 @@ async function fetchCountByEnv() {
     }
   ]);
 }
+
+module.exports = { getCountByEnvChart, getCountByEnvChartService };

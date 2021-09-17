@@ -1,11 +1,18 @@
 const website = require('../../models/website')
 
-module.exports = async function getWebsiteList(req, res) {
+const getWebsiteList = async (req, res) =>  {
   try {
-    console.log(res);
+    res.send(await getWebsiteListService());
+  } catch (e) {
+    return { "Error": e }; zz
+  }
+}
+
+const getWebsiteListService = async (req, res) =>  {
+  try {
     const response = await fetchResponse();
     bindResponse(response);
-    res.send(response);
+    return response;
   } catch (e) {
     return { "Error": e }; zz
   }
@@ -36,3 +43,5 @@ async function fetchResponse() {
     }
   ]);
 }
+
+module.exports = { getWebsiteList, getWebsiteListService };

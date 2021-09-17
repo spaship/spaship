@@ -1,26 +1,33 @@
 const chart = require('../../../../models/event')
 
-module.exports = async function getDeploymentCountByPropertyName(req, res) {
+const getDeploymentCountByPropertyName = async (req, res) => {
   try {
-    const response = await fetchDeploymentCountByPropertyName(req);
-    
-    let i = 1;
-    response.forEach((item) => {
-      item.id = i++;
-    });
-
-    res.status(200).json(response);
-
+   
+    res.status(200).json(await getDeploymentCountByPropertyNameService(req.params.propertyName));
   } catch (e) {
     return { "Error": e };
   }
 }
 
-async function fetchDeploymentCountByPropertyName(req) {
+const getDeploymentCountByPropertyNameService = async (propertyName) => {
+  try {
+    const response = await fetchDeploymentCountByPropertyName(propertyName);
+    let i = 1;
+    response.forEach((item) => {
+      item.id = i++;
+    });
+    return response;
+  } catch (e) {
+    return { "Error": e };
+  }
+}
+
+
+async function fetchDeploymentCountByPropertyName(propertyName) {
   return await chart.aggregate([
     {
       '$match': {
-        'propertyName': req.params.propertyName,
+        'propertyName': propertyName,
         'code': 'WEBSITE_CREATE'
       }
     }, {
@@ -48,3 +55,5 @@ async function fetchDeploymentCountByPropertyName(req) {
     }
   ]);
 }
+
+module.exports = { getDeploymentCountByPropertyName, getDeploymentCountByPropertyNameService };

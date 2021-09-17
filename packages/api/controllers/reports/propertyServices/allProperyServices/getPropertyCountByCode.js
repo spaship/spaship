@@ -1,14 +1,23 @@
 const chart = require('../../../../models/event')
 
-module.exports = async function getPropertyCountByCode(req, res) {
+const getPropertyCountByCode = async (req, res) => {
   try {
-    const propertyCountByCodeResponse = await fetchPropertyCountByCodeResponse();
-    bindResponse(propertyCountByCodeResponse);
-    res.status(200).json(propertyCountByCodeResponse);
+    res.status(200).json(await getPropertyCountByCodeService());
   } catch (e) {
     return { "Error": e };
   }
 }
+
+const getPropertyCountByCodeService = async () => {
+  try {
+    const propertyCountByCodeResponse = await fetchPropertyCountByCodeResponse();
+    bindResponse(propertyCountByCodeResponse);
+    return propertyCountByCodeResponse;
+  } catch (e) {
+    return { "Error": e };
+  }
+}
+
 
 function bindResponse(propertyCountByCodeResponse) {
   let i = 1;
@@ -43,3 +52,5 @@ async function fetchPropertyCountByCodeResponse() {
     }
   ]);
 }
+
+module.exports = { getPropertyCountByCode, getPropertyCountByCodeService };

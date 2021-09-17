@@ -19,47 +19,40 @@ const getSearchResultForSPA = require("../controllers/reports/spaServices/getSea
 
 const router = new Router();
 
-router.get("/get/count/property/all", getDeploymentPerProperty);
+router.get("/get/count/property/all", getDeploymentPerProperty.getAllDeploymentPropertyAnalysis);
 
-router.get("/get/count/property/code", getPropertyCountByCode);
+router.get("/get/count/property/code", getPropertyCountByCode.getPropertyCountByCode);
 
-router.get("/get/count/property/spaname", getPropertyCountBySpaname);
+router.get("/get/count/property/spaname", getPropertyCountBySpaname.getPropertyCountBySpaname);
 
-router.get("/get/count/property/spaname/code", getPropertyCountBySpanameAndCode);
+router.get("/get/count/property/spaname/code", getPropertyCountBySpanameAndCode.getPropertyCountBySpanameAndCode);
 
-router.get("/get/:propertyName/count/property/spaname", getDeploymentCountByPropertyName);
+router.get("/get/:propertyName/count/property/spaname", getDeploymentCountByPropertyName.getDeploymentCountByPropertyName);
 
-router.get("/get/property/spaname/count/:spaName/:propertyName", getDeploymentCountBySPAName);
+router.get("/get/property/spaname/count/:spaName/:propertyName", getDeploymentCountBySPAName.getDeploymentCountBySPAName);
 
-router.get("/get/all/property/count", getDeploymentCountForAllProperty);
+router.get("/get/all/property/count", getDeploymentCountForAllProperty.getDeploymentCountForAllProperty);
 
+router.get("/get/latest/activities/:propertyName", getLatestActivitiesByProperty.getLatestActivitiesByProperty);
 
-
-router.get("/get/latest/activities/:propertyName", getLatestActivitiesByProperty);
-
-router.get("/get/spaName/latest/activities/:spaName/:propertyName", getLatestActivitiesBySPAName);
+router.get("/get/spaName/latest/activities/:spaName/:propertyName", getLatestActivitiesBySPAName.getLatestActivitiesBySPAName);
 
 
-router.get("/get/chart/property/env/:propertyName", getPropertyCountByEnvChart);
+router.get("/get/chart/property/env/:propertyName", getPropertyCountByEnvChart.getPropertyCountByEnvChart);
 
-router.get("/get/chart/spaName/env/:spaName/:propertyName", getSPANameCountByEnvChart);
+router.get("/get/chart/spaName/env/:spaName/:propertyName", getSPANameCountByEnvChart.getSPANameCountByEnvChart);
 
+router.get("/get/chart/month/property/env/:propertyName", getPropertyCountByEnvWeeklyChart.getPropertyCountByEnvWeeklyChart);
 
-
-router.get("/get/chart/month/property/env/:propertyName", getPropertyCountByEnvWeeklyChart);
-
-router.get("/get/chart/month/spaName/env/:spaName/:propertyName", getSPANameCountByEnvWeeklyChart);
+router.get("/get/chart/month/spaName/env/:spaName/:propertyName", getSPANameCountByEnvWeeklyChart.getSPANameCountByEnvWeeklyChart);
 
 
+router.get("/get/chart/all/property/env", getCountByEnvChart.getCountByEnvChart);
 
-router.get("/get/chart/all/property/env", getCountByEnvChart);
+router.get("/get/chart/all/env", getCountByEnvWeeklyChart.getCountByEnvWeeklyChart);
 
-router.get("/get/chart/all/env", getCountByEnvWeeklyChart);
+router.get("/get/timeFrame/month/property/env/:propertyName", getTimeFrameForPropertyChart.getTimeFrameForPropertyChart);
 
-
-router.get("/get/timeFrame/month/property/env/:propertyName", getTimeFrameForPropertyChart);
-
-router.get("/get/search/spaName/:searchQuery", getSearchResultForSPA);
-
+router.get("/get/search/spaName/:searchQuery", getSearchResultForSPA.getSearchResultForSPA);
 
 module.exports = router;
