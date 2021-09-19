@@ -1,11 +1,7 @@
 const chart = require('../../../models/event')
 
 const getDeploymentCountBySPAName = async (req, res) => {
-  try {
     res.status(200).json(await getDeploymentCountBySPANameService(req.params.propertyName, req.params.spaName,));
-  } catch (e) {
-    return { "Error": e };
-  }
 }
 
 const getDeploymentCountBySPANameService = async (propertyName, spaName) => {

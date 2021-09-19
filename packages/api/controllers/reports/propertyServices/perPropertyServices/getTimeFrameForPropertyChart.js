@@ -1,11 +1,7 @@
 const chart = require('../../../../models/eventTimeTrace')
 
 const getTimeFrameForPropertyChart = async (req, res) =>  {
-  try {
     res.send(await getTimeFrameForPropertyChartService(req.params.propertyName));
-  } catch (e) {
-    return { "Error": e };
-  }
 }
 
 const getTimeFrameForPropertyChartService = async (propertyName) =>  {

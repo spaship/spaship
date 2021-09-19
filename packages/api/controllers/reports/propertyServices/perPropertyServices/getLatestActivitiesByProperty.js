@@ -1,20 +1,14 @@
 const chart = require('../../../../models/event')
 
 const getLatestActivitiesByProperty = async (req, res) => {
-  try {
-    const response = await fetchLatestActivitiesByProperty(req.params.propertyName);
-    bindResponse(response);
-    res.status(200).json(response);
-  } catch (e) {
-    return { "Error": e };
-  }
+  res.status(200).json(await getLatestActivitiesByPropertyService(req.params.propertyName));
 }
 
 const getLatestActivitiesByPropertyService = async (propertyName) => {
   try {
     const response = await fetchLatestActivitiesByProperty(propertyName);
     bindResponse(response);
-    res.status(200).json(response);
+    return response;
   } catch (e) {
     return { "Error": e };
   }

@@ -1,11 +1,7 @@
 const chart = require('../../../models/event')
 
 const getSearchResultForSPA = async (req, res) =>  {
-  try {
     res.status(200).json(await getSearchResultForSPAService(req.params.searchQuery));
-  } catch (e) {
-    return { "Error": e };
-  }
 }
 
 const getSearchResultForSPAService = async (searchQuery) =>  {

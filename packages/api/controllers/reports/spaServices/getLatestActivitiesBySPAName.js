@@ -1,11 +1,7 @@
 const chart = require('../../../models/event')
 
 const getLatestActivitiesBySPAName = async (req, res) => {
-  try {
     res.status(200).json(await getLatestActivitiesBySPANameService(req.params.propertyName, req.params.spaName));
-  } catch (e) {
-    return { "Error": e };
-  }
 }
 
 const getLatestActivitiesBySPANameService = async (propertyName, spaName) => {

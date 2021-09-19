@@ -1,11 +1,7 @@
 const chart = require('../../../../models/event')
 
 const getPropertyCountByEnvChart = async (req, res) => {
-  try {
     res.status(200).json(await getPropertyCountByEnvChartService(req.params.propertyName));
-  } catch (e) {
-    return { "Error": e };
-  }
 }
 
 const getPropertyCountByEnvChartService = async (propertyName) => {

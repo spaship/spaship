@@ -1,11 +1,7 @@
 const chart = require('../../../../models/event')
 
 const getAllDeploymentPropertyAnalysis = async (req, res) =>  {
-  try {
     res.status(200).json(await getAllDeploymentPropertyAnalysisService());
-  } catch (e) {
-    return { "Error": e };
-  }
 }
 
 const getAllDeploymentPropertyAnalysisService = async () =>  {

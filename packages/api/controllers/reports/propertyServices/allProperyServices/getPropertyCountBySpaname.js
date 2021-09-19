@@ -1,11 +1,7 @@
 const chart = require('../../../../models/event')
 
 const getPropertyCountBySpaname = async (req, res) => {
-  try {
     res.status(200).json(await getPropertyCountBySpanameService());
-  } catch (e) {
-    return { "Error": e };
-  }
 }
 
 const getPropertyCountBySpanameService = async (req, res) => {

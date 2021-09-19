@@ -1,11 +1,7 @@
 const chart = require('../../../../models/event')
 
 const getCountByEnvChart = async (req, res) =>  {
-  try {
     res.status(200).json(await getCountByEnvChartService());
-  } catch (e) {
-    return { "Error": e };
-  }
 }
 
 const getCountByEnvChartService = async () =>  {

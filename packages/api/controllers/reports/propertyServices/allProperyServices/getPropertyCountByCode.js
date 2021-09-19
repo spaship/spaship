@@ -1,11 +1,7 @@
 const chart = require('../../../../models/event')
 
 const getPropertyCountByCode = async (req, res) => {
-  try {
     res.status(200).json(await getPropertyCountByCodeService());
-  } catch (e) {
-    return { "Error": e };
-  }
 }
 
 const getPropertyCountByCodeService = async () => {
