@@ -8,6 +8,10 @@ function rel2abs(p) {
   return path.resolve(process.cwd(), p);
 }
 
+const getSseBasePath = (sse) => {
+  return `${sse.protocol+sse.domain+sse.path}`;
+};
+
 let validOptions = [
   // filesystem related
   "config_file",
@@ -36,12 +40,16 @@ let validOptions = [
   "auth:keycloak:clientid",
   "auth:keycloak:id_prop",
 
-  //  authorization
+  //  authorizationß
   "auth:ldap:admin_group",
   "auth:ldap:user_group",
 
-  //  sse event
-  "sse",
+  //  server side envents credentials
+  "sseBasePath",
+  "sse:protocol",
+  "sse:domain",
+  "sse:path"
+
 
 ];
 const filepathOptions = ["config_file", "upload_dir", "webroot"]; // config options that represent filepaths
@@ -89,16 +97,22 @@ if (configFile) {
   });
 }
 
+const sse = {
+    protocol: "http://",
+    domain: "localhost:5000",
+    path : "/sse/80"
+}
+
 nconf.defaults({
-  port: 2345,
+  port: 3000,
   host: "localhost",
   webroot: "/var/www",
   upload_dir: "/tmp/spaship_uploads",
-  sse: "http://localhost:5000/sse/80",
-  directoryBasePath : 'root',
+  sseBasePath :  process.env.SSE_CON || getSseBasePath(sse),
+  directoryBasePath : "root",
   db: {
     mongo: {
-      url: 'localhost:27017',
+      url: process.env.DB_CON || "localhost:27017",
       db_name: "spaship",
       mock: process.env.NODE_ENV !== "production", // use a mock database by default in dev environments
     },

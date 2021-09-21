@@ -4,13 +4,12 @@ const website = require('../../../models/website')
 const EventSource = require("eventsource");
 const { uuid } = require('uuidv4');
 const config = require('../../../config');
-
-var source = new EventSource(config.get("sse"));
+var source = new EventSource(config.get("sseBasePath"));
 
 source.onmessage = function (eventRequest) {
     const response = JSON.parse(eventRequest.data);
     console.log(response);
-    const spaList = response?.payload?.message?.Website?.config?.WebsiteConfig?.components;
+    const spaList = getSpaListRequest(response);
     
     const envsList = response?.payload?.message?.Website?.enabledEnvs;
     const currentTime = new Date();
@@ -34,7 +33,6 @@ source.onmessage = function (eventRequest) {
                     traceId: response?.payload.traceId
                 });
                  createEventRequest(eventBody);
-  //             console.log(eventBody);
             }
         }
     }
@@ -42,6 +40,10 @@ source.onmessage = function (eventRequest) {
     createEventTimeTraceRequest(response);
 };
 
+
+function getSpaListRequest(response) {
+    return response?.payload?.message?.Website?.config?.WebsiteConfig?.components || [];
+}
 
 function getSPAName(item) {
     const contextName = item?.context.replace(/[\/\\]/g, '');
