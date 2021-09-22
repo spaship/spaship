@@ -8,8 +8,8 @@ function rel2abs(p) {
   return path.resolve(process.cwd(), p);
 }
 
-const getSseBasePath = (sse) => {
-  return `${sse.protocol+sse.domain+sse.path}`;
+const generateSseBasePath = (sse) => {
+  return `${sse.protocol+sse.domain+sse.path+sse.id}`;
 };
 
 let validOptions = [
@@ -40,15 +40,16 @@ let validOptions = [
   "auth:keycloak:clientid",
   "auth:keycloak:id_prop",
 
-  //  authorizationß
+  //  authorization
   "auth:ldap:admin_group",
   "auth:ldap:user_group",
 
   //  server side envents credentials
-  "sseBasePath",
+  "sse:base_path",
   "sse:protocol",
   "sse:domain",
-  "sse:path"
+  "sse:path",
+  "sse:id"
 
 
 ];
@@ -100,7 +101,8 @@ if (configFile) {
 const sse = {
     protocol: "http://",
     domain: "localhost:5000",
-    path : "/sse/80"
+    path : "/sse/",
+    id: "80"
 }
 
 nconf.defaults({
@@ -108,7 +110,9 @@ nconf.defaults({
   host: "localhost",
   webroot: "/var/www",
   upload_dir: "/tmp/spaship_uploads",
-  sseBasePath :  process.env.SSE_CON || getSseBasePath(sse),
+  sse : {
+   base_path :  process.env.SSE_CON || generateSseBasePath(sse),
+  },
   directoryBasePath : "root",
   db: {
     mongo: {

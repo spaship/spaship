@@ -4,7 +4,7 @@ const website = require('../../../models/website')
 const EventSource = require("eventsource");
 const { uuid } = require('uuidv4');
 const config = require('../../../config');
-var source = new EventSource(config.get("sseBasePath"));
+var source = new EventSource(config.get("sse:base_path"));
 
 source.onmessage = function (eventRequest) {
     const response = JSON.parse(eventRequest.data);

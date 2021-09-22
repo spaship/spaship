@@ -14,10 +14,11 @@ const responseWrapper = require("./middlewares/responseWrapper");
 const errorHandler = require("./middlewares/errorHandler");
 const { liveness, readiness } = require("./health");
 const routes = require("./routes");
+const sse = require("./controllers/reports/operatorServices/consumeSSE.js")
 
 const swaggerDocument = yaml.safeLoad(fs.readFileSync(path.join(__dirname, "openapi.yml"), "utf8"));
 
-const sse = require("./controllers/reports/operatorServices/sse.js")
+
 
 const app = new express();
 app
