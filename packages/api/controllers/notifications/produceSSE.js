@@ -29,7 +29,7 @@ app.get('/sse/:id', function (req, res) {
 });
 
 function getEventId(req) {
-    return req.params.id;
+    return req?.params?.id || '';
 }
 
 app.listen(5000);

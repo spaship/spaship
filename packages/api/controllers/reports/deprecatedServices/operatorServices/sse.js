@@ -8,7 +8,6 @@ var source = new EventSource(config.get("sse"));
 
 source.onmessage = function (eventRequest) {
     const response = JSON.parse(eventRequest.data);
-    console.log(response);
     const spaList = response?.payload?.message?.Website?.config?.WebsiteConfig?.components;
     
     const envsList = response?.payload?.message?.Website?.enabledEnvs;
@@ -32,8 +31,7 @@ source.onmessage = function (eventRequest) {
                     updatedAt: response?.time || currentTime,
                     traceId: response?.payload.traceId
                 });
-                 createEventRequest(eventBody);
-  //             console.log(eventBody);
+                 createEventRequest(eventBody)
             }
         }
     }
@@ -57,7 +55,7 @@ async function createEventTimeTraceRequest(response) {
     const envsList = response?.payload?.message?.Website?.enabledEnvs;
     for (let env of envsList) {
         const currentTime = new Date();
-        const checkTraceId = await eventTimeTrace.findOne({ traceId: response.payload.traceId, envs: env });
+        const checkTraceId = await eventTimeTrace.findOne({ traceId:  getTraceId(), envs: env });
         if (checkTraceId == null) {
             const eventTimeTraceData = new eventTimeTrace({
                 id: uuid(),
@@ -78,13 +76,25 @@ async function createEventTimeTraceRequest(response) {
             diff /= 60;
             const consumedTime = Math.abs(Math.round(diff));
             const updated = await eventTimeTrace.findOneAndUpdate({
-                traceId: response.payload.traceId, envs: env 
-            }, { $set: { finalCode: response?.payload?.CODE, completedAt: response?.time, consumedTime: consumedTime, failure: false } },
+                traceId: getTraceId(), envs: env 
+            }, { $set: { finalCode: getFinalCode(), completedAt: getCompletedAt(), consumedTime: consumedTime, failure: false } },
                 function (err, data) {
                     if (err) {
                         console.log("error");
                     }
                 });
         }
+    }
+
+    function getTraceId() {
+        return response?.payload?.traceId || null;
+    }
+
+    function getCompletedAt() {
+        return response?.time || '';
+    }
+
+    function getFinalCode() {
+        return response?.payload?.CODE || '';
     }
 }

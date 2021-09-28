@@ -10,10 +10,8 @@ source.onmessage = function (eventRequest) {
     const response = JSON.parse(eventRequest.data);
     console.log(response);
     const spaList = getSpaListRequest(response);
-    
     const envsList = response?.payload?.message?.Website?.enabledEnvs;
     const currentTime = new Date();
-
     for (let env of envsList) {
         for (let item of spaList) {
             if (item?.kind == 'git') {
@@ -32,11 +30,10 @@ source.onmessage = function (eventRequest) {
                     updatedAt: response?.time || currentTime,
                     traceId: response?.payload.traceId
                 });
-                 createEventRequest(eventBody);
+                createEventRequest(eventBody);
             }
         }
     }
-
     createEventTimeTraceRequest(response);
 };
 
@@ -47,8 +44,7 @@ function getSpaListRequest(response) {
 
 function getSPAName(item) {
     const contextName = item?.context.replace(/[\/\\]/g, '');
-    if (contextName.length > 0)
-        return contextName;
+    if (contextName.length > 0) { return contextName; }
     return item.spec.dir.slice(item.spec.dir.lastIndexOf("/") + 1, item.spec.dir.length);
 }
 
@@ -74,14 +70,14 @@ async function createEventTimeTraceRequest(response) {
                 completedAt: null,
                 consumedTime: 0
             });
-          const saveResponse = await eventTimeTraceData.save();
+            const saveResponse = await eventTimeTraceData.save();
         }
         else {
             let diff = (checkTraceId.createdAt.getTime() - new Date(response.time).getTime()) / 1000;
             diff /= 60;
             const consumedTime = Math.abs(Math.round(diff));
             const updated = await eventTimeTrace.findOneAndUpdate({
-                traceId: response.payload.traceId, envs: env 
+                traceId: response.payload.traceId, envs: env
             }, { $set: { finalCode: response?.payload?.CODE, completedAt: response?.time, consumedTime: consumedTime, failure: false } },
                 function (err, data) {
                     if (err) {
