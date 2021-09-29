@@ -18,7 +18,7 @@ export default () => {
       <StackItem isFilled>
         <Nav aria-label="Nav" theme="light" variant="default">
           <NavList>
-            <NavItem itemId={0} isActive={!!useRouteMatch("/dashboard")} disabled={true}>
+            <NavItem itemId={0} isActive={!!useRouteMatch("/dashboard")} disabled>
               <Link to={`/dashboard`}>
                 <TopologyIcon />
                 Dashboard
