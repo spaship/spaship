@@ -14,7 +14,7 @@ const upload = (url, data, apiKey, onUploadProgress) => {
 
     data.on("data", (chunk) => {
       bytes += chunk.length;
-      if (contentLength != null && bytes <= contentLength) {
+      if (contentLength !== null && bytes <= contentLength) {
         const progress = {
           percent: bytes / contentLength,
           transferred: bytes,
