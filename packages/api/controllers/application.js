@@ -67,7 +67,11 @@ module.exports.deploy = async (req, res, next) => {
     });
 
     const application = await Application.findOne({ name, path: appPath });
-    await (application ? Application.updateOne({ name, path: appPath }, { ref }) : Application.create({ name, path: appPath, ref, userId }));
+    if (application) {
+      await Application.updateOne({ name, path: appPath }, { ref });
+    } else {
+      await Application.create({ name, path: appPath, ref, userId });
+    }
     res.status(201).send({
       name,
       path: appPath,
