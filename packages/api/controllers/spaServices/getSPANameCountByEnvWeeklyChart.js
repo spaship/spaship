@@ -1,7 +1,12 @@
 const chart = require("../../models/event");
 
 const getSPANameCountByEnvWeeklyChart = async (req, res) => {
-  res.send(await getSPANameCountByEnvWeeklyChartService(req.sanitize(req.params.propertyName), req.sanitize(req.params.spaName)));
+  res.send(
+    await getSPANameCountByEnvWeeklyChartService(
+      req.sanitize(req.params.propertyName),
+      req.sanitize(req.params.spaName)
+    )
+  );
 };
 
 const getSPANameCountByEnvWeeklyChartService = async (propertyName, spaName) => {

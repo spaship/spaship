@@ -1,7 +1,11 @@
 const chart = require("../../models/event");
 
 const getLatestActivitiesBySPAName = async (req, res) => {
-  res.status(200).json(await getLatestActivitiesBySPANameService(req.sanitize(req.params.propertyName), req.sanitize(req.params.spaName)));
+  res
+    .status(200)
+    .json(
+      await getLatestActivitiesBySPANameService(req.sanitize(req.params.propertyName), req.sanitize(req.params.spaName))
+    );
 };
 
 const getLatestActivitiesBySPANameService = async (propertyName, spaName) => {
