@@ -12,7 +12,7 @@ import io.fabric8.openshift.client.OpenShiftClient;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.infrastructure.Infrastructure;
 import io.spaship.operator.business.EventManager;
-import io.spaship.operator.exception.FeatureNotImplemented;
+import io.spaship.operator.exception.FeatureNotImplementedException;
 import io.spaship.operator.exception.ResourceNotFoundException;
 import io.spaship.operator.service.Operations;
 import io.spaship.operator.type.Environment;
@@ -79,7 +79,7 @@ public class Operator implements Operations {
     }
 
     public OperationResponse removeSPA(Environment env) {
-        throw new FeatureNotImplemented();
+        throw new FeatureNotImplementedException();
     }
 
     public Uni<OperationResponse> deleteEnvironment(Environment environment) {
