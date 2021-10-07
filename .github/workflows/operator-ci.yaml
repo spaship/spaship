@@ -55,7 +55,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./packages/operator
-          file: ./src/main/docker/Dockerfile.jvm
+          file: ./packages/operator/src/main/docker/Dockerfile.jvm
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{env.GITHUB_REF_SLUG}}
