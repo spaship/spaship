@@ -23,13 +23,6 @@ class SPAUploadHandlerTest {
     private static final Logger LOG = LoggerFactory.getLogger(SPAUploadHandlerTest.class);
     String absolutePathOfTestFile = "/home/arkaprovo/IdeaProjects/spa-deployment-operator/src/test/resources/large-dir.zip";
 
-    //@BeforeEach
-    void setUp() {
-    }
-
-    //@AfterEach
-    void tearDown() {
-    }
 
     private void pathToFileWayOne() throws URISyntaxException, IOException {
 
@@ -108,12 +101,10 @@ class SPAUploadHandlerTest {
     //@Test
     void readZipFileOne() throws URISyntaxException, IOException {
         pathToFileWayOne();
-        assert true == true;
     }
 
     //@Test
     void readZipFileTwo() throws URISyntaxException, IOException {
         pathToFileWayTwo();
-        assert true == true;
     }
 }
