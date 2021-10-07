@@ -18,7 +18,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    name: SPAship sidecar container
+    name: SPAship operator build
     env:
       IMAGE_NAME: "operator"
       REGISTRY_NAMESPACE: "arbhatta"
@@ -35,7 +35,7 @@ jobs:
           java-version: 11
 
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn -B package --file packages/operator/pom.xml
 
       #      - name: Build Naive
       #        run: ./mvnw package -Pnative
