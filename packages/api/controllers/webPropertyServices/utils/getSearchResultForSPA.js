@@ -1,4 +1,4 @@
-const chart = require("../../models/event");
+const chart = require("../../../models/event");
 
 const getSearchResultForSPA = async (req, res) => {
   res.status(200).json(await getSearchResultForSPAService(req.sanitize(req.params.searchQuery)));

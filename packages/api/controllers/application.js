@@ -102,14 +102,13 @@ module.exports.delete = async (req, res, next) => {
   }
 };
 function getName(req) {
-  return req.sanitize(req.params) || '';
+  return req?.params || "";
 }
 
 function getRequestBody(req) {
-  return req.sanitize(req.body) || {};
+  return req?.body || {};
 }
 
 function getPath(req) {
-  return req.sanitize(req.file) || '';
+  return req?.file || "";
 }
-
