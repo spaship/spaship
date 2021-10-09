@@ -1,0 +1,67 @@
+name: spaship operator build and push into container repo
+
+on:
+  push:
+    branches:
+      - 'master'
+      - 'dev'
+      - 'test'
+      - 'qa'
+    tags:
+      - '*'
+    paths:
+      - '*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Bump Version
+        default: v1.0.0
+        required: true
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    name: SPAship sidecar container
+    env:
+      IMAGE_NAME: "operator"
+      REGISTRY_NAMESPACE: "arbhatta"
+
+    steps:
+
+      - uses: actions/checkout@v2
+        name: Checkout action
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: 11
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      #      - name: Build Naive
+      #        run: ./mvnw package -Pnative
+
+      - name: Inject slug/short variables
+        uses: rlespinasse/github-slug-action@v3.x
+
+      - name: Login to Quay.io
+        uses: docker/login-action@v1
+        with:
+          registry: quay.io
+          username: ${{ secrets.CI_QUAY_USERNAME }}
+          password: ${{ secrets.CI_QUAY_TOKEN }}
+
+      - name: Build and push into repository
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./src/main/docker/Dockerfile.jvm
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: |
+            quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{env.GITHUB_REF_SLUG}}
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}

@@ -1,0 +1,13 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: config-{{ include "spa-deployment-operator.fullname" . }}
+  labels:
+  {{- include "spa-deployment-operator.labels" . | nindent 4 }}
+  {{- with .Values.serviceAccount.annotations }}
+  annotations:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  OPERATOR_EVENT_BUS_ADDRESS: {{ .Values.app.ec }}
+  OPERATOR_DOMAIN_NAME: {{ .Values.app.domain }}
