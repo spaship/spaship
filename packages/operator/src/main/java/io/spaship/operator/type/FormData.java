@@ -51,6 +51,8 @@ public class FormData {
     }
 
     public boolean isFileValid(){
+      Objects.requireNonNull(file,FILE_NOT_FOUND_MESSAGE);
+      Objects.requireNonNull(file.contentType(),"no content found!");
       return this.file.contentType().contains("zip");
     }
 
