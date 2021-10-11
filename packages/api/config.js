@@ -114,7 +114,7 @@ nconf.defaults({
   directoryBasePath: "root",
   db: {
     mongo: {
-      url: process.env.DB_CON || "localhost:27017",
+      url: "localhost:27017",
       db_name: "spaship",
       mock: process.env.NODE_ENV !== "production", // use a mock database by default in dev environments
     },

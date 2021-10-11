@@ -15,7 +15,6 @@ module.exports = async function saveWebProperty(req, res) {
 async function createWebProperty(webPropertyRequest) {
     try {
         const saveResponse = await webPropertyRequest.save();
-        console.log(saveResponse)
         return saveResponse;
     } catch (e) {
         return { "Error": e };

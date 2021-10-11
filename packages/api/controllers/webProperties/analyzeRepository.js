@@ -1,12 +1,8 @@
-var Git = require("nodegit");
-var path = require("path");
+const Git = require("nodegit");
+const path = require("path");
 const fs = require('fs');
 const { uuid } = require("uuidv4");
-const zip = require('zip-a-folder').zip;
-const saveWebProperty = require("./saveWebProperty");
 const config = require('../../config')
-const glob = require('glob');
-const { default: strictTransportSecurity } = require("helmet/dist/middlewares/strict-transport-security");
 
 const delay = millis => new Promise((resolve, reject) => {
     setTimeout(_ => resolve(), millis)
@@ -15,11 +11,11 @@ const delay = millis => new Promise((resolve, reject) => {
 module.exports = async function gitOperations(req, res) {
 
     const directoryName = `spaship_temp_${uuid()}`;
-    const pathClone =  path.resolve(__dirname, `./../../../root/${directoryName}`);
     const basePath = config.get("directoryBasePath");
+    const pathClone =  path.resolve(__dirname, `./../../../${basePath}/${directoryName}`);
     const resolvePathCreateBranch = `../../../${basePath}/${directoryName}/.git`;
     const analyzePath = `../../../${basePath}/${directoryName}`;
-    const pathFile = `root/${directoryName}/`;
+    const pathFile = `${basePath}/${directoryName}/`;
     await cloneGitRepository(req.body.repositoryLink, pathClone);
     await checkoutRemoteBranch(req.body.branch, resolvePathCreateBranch);
 
@@ -28,7 +24,7 @@ module.exports = async function gitOperations(req, res) {
     console.log(`Path Clone : ${pathClone}`);
     console.log(`Eesolve Path Create Branch : ${resolvePathCreateBranch}`);
     console.log(`Path File : ${pathFile}`);
-    console.log(`Resolved Path : `, path.resolve(__dirname, `./../../../root/${directoryName}.zip`));
+    console.log(`Resolved Path : `, path.resolve(__dirname, `./../../../${basePath}/${directoryName}.zip`));
     console.log(`System Dir Name : ${__dirname}`);
 
     let filepaths = [];

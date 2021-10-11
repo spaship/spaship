@@ -1,5 +1,4 @@
 const event = require("../../models/event");
-const mongoose = require("mongoose");
 
 const eventDataDump = async (req, res) => {
   res.status(200).json(await eventDataDumpService(req.sanitize(getDocument(req))));
@@ -7,7 +6,7 @@ const eventDataDump = async (req, res) => {
 
 const eventDataDumpService = async (docs) => {
   try {
-    var bulk = event.collection.initializeUnorderedBulkOp();
+    const bulk = await event.collection.initializeUnorderedBulkOp();
     const currentDate = new Date();
     createBulkData(docs, currentDate, bulk);
     bulk.execute();

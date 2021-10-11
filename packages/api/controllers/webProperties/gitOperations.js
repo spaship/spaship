@@ -1,5 +1,5 @@
-var Git = require("nodegit");
-var path = require("path");
+const Git = require("nodegit");
+const path = require("path");
 const fs = require("fs");
 const { uuid } = require("uuidv4");
 const zip = require("zip-a-folder").zip;
@@ -14,10 +14,11 @@ const delay = (millis) =>
 module.exports = async function gitOperations(req, res) {
   let repository;
   const directoryName = `spaship_temp_${uuid()}`;
-  const pathClone = path.resolve(__dirname, `./../../root/${directoryName}`);
   const basePath = config.get("directoryBasePath");
+  const pathClone = path.resolve(__dirname, `./../../${basePath}/${directoryName}`);
+  
   const resolvePathCreateBranch = `../../${basePath}/${directoryName}/.git`;
-  const pathFile = `root/${directoryName}/`;
+  const pathFile = `${basePath}/${directoryName}/`;
   const localBranch = `${req.body.webPropertyName}_spaship_${uuid()}`;
   const gitToken = req.body.repositoryConfigs[0].gitToken;
   let signature = createSignature(localBranch);
@@ -27,7 +28,7 @@ module.exports = async function gitOperations(req, res) {
   console.log(`Eesolve Path Create Branch : ${resolvePathCreateBranch}`);
   console.log(`Path File : ${pathFile}`);
   console.log(`Local Branch : ${localBranch}`);
-  console.log(`Resolved Path : `, path.resolve(__dirname, `./../../../root/${directoryName}.zip`));
+  console.log(`Resolved Path : `, path.resolve(__dirname, `./../../../${basePath}/${directoryName}.zip`));
   console.log(`System Dir Name : ${__dirname}`);
 
   await cloneGitRepository(req.body.repositoryConfigs[0].repositoryLink, pathClone);
@@ -40,15 +41,15 @@ module.exports = async function gitOperations(req, res) {
   const webPropertyResponse = await saveWebProperty(req, res);
   res.send({
     actionStatus: "Git Actions Performed Successfully",
-    path: path.resolve(__dirname, `./../../../root/${directoryName}.zip`),
+    path: path.resolve(__dirname, `./../../../${basePath}/${directoryName}.zip`),
     webPropertyResponse: webPropertyResponse,
   });
 };
 
 async function zipFiles(directoryName) {
   await zip(
-    path.resolve(__dirname, `./../../../root/${directoryName}`),
-    path.resolve(__dirname, `./../../../root/${directoryName}.zip`)
+    path.resolve(__dirname, `./../../../${basePath}/${directoryName}`),
+    path.resolve(__dirname, `./../../../${basePath}/${directoryName}.zip`)
   );
 }
 
@@ -141,7 +142,7 @@ async function gitOperationsCommit(repository, signature, resolvePathCreateBranc
       index = indexResult;
     })
     .then(function () {
-      console.log("4: Add Index By Path " + path.resolve(__dirname, "../../../root/tempWebpackDevelop/"));
+      console.log("4: Add Index By Path " + path.resolve(__dirname, `../../../${basePath}/tempWebpackDevelop/`));
       return index.addAll();
     })
     .then(function () {

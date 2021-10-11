@@ -11,7 +11,7 @@ const getLatestActivitiesService = async (request) => {
 };
 
 function bindResponse(response) {
-  var codeMap = {
+  const codeMap = {
     WEBSITE_CREATE: "deployed over",
     WEBSITE_DELETE: "deleted from",
     WEBSITE_UPDATE: "updated from",

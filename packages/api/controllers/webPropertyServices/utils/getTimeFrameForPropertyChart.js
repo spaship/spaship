@@ -4,9 +4,9 @@ const getTimeFrameForPropertyChart = async (req, res) => {
   res.send(await getTimeFrameForPropertyChartService(req.sanitize(req.params.propertyName)));
 };
 
-const getTimeFrameForPropertyChartService = async (propertyName) => {
+const getTimeFrameForPropertyChartService = async (propertyName, weekRange) => {
   try {
-    const dateFrame = createDateFrame();
+    const dateFrame = createDateFrame(weekRange);
     const response = await fetchResponse(dateFrame, propertyName);
     return response;
   } catch (e) {
@@ -14,10 +14,10 @@ const getTimeFrameForPropertyChartService = async (propertyName) => {
   }
 };
 
-function createDateFrame() {
+function createDateFrame(weekRange) {
   const dateFrame = [];
   let recentDate = new Date();
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= weekRange; i++) {
     const endDate = recentDate;
     const startDate = new Date(recentDate);
     startDate.setDate(recentDate.getDate() - 7);

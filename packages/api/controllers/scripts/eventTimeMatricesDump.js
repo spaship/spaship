@@ -1,21 +1,20 @@
-const eventTimeTrace = require('../../models/eventTimeTrace');
+const eventTimeTrace = require("../../models/eventTimeTrace");
 
 const eventTimeMatricesDump = async (req, res) => {
   res.status(200).json(await eventTimeMatricesDumpService(req.sanitize(getDocument(req))));
 };
 
-
 const eventTimeMatricesDumpService = async (docs) => {
   try {
-    var bulk = eventTimeTrace.collection.initializeUnorderedBulkOp();
+    const bulk = await eventTimeTrace.collection.initializeUnorderedBulkOp();
     const currentDate = new Date();
     createBulkRequest(docs, currentDate, bulk);
     bulk.execute();
-    return { "Success": "All data successfully updated", "Records Number": getDocumentCounts(docs) };
+    return { Success: "All data successfully updated", "Records Number": getDocumentCounts(docs) };
   } catch (e) {
     console.log(e);
-  };
-}
+  }
+};
 
 function getDocumentCounts(docs) {
   return docs?.length || 0;
