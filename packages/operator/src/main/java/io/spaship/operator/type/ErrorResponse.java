@@ -13,4 +13,13 @@ public class ErrorResponse {
     String errorMessage;
     String errorCode;
     String documentationLink;
+
+  @Override
+  public String toString() {
+    return "{"
+      + "\"errorMessage\":\"" + errorMessage + "\""
+      + ", \"errorCode\":\"" + errorCode + "\""
+      + ", \"documentationLink\":\"" + documentationLink + "\""
+      + "}";
+  }
 }
