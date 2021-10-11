@@ -50,4 +50,8 @@ public class FormData {
         return this.file.uploadedFile().toAbsolutePath();
     }
 
+    public boolean isFileValid(){
+      return this.file.contentType().contains("zip");
+    }
+
 }

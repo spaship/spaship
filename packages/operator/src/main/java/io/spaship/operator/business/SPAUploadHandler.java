@@ -3,6 +3,7 @@ package io.spaship.operator.business;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.infrastructure.Infrastructure;
+import io.spaship.operator.exception.ZipFileProcessException;
 import io.spaship.operator.service.k8s.Operator;
 import io.spaship.operator.service.k8s.SideCarOperations;
 import io.spaship.operator.type.Environment;
@@ -122,7 +123,15 @@ public class SPAUploadHandler {
                 spaMappingReference = IOUtils.toString(inputStream, Charset.defaultCharset());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            eventManager.queue(
+              EventStructure.builder()
+                .websiteName(input.getValue2())
+                .environmentName("NA")
+                .uuid(input.getValue1())
+                .state("failed to process zip file due to ".concat(e.getMessage()))
+                .build()
+            );
+            throw new ZipFileProcessException(e);
         }
         eventManager.queue(
                 EventStructure.builder()

@@ -2,6 +2,7 @@ package io.spaship.operator.api;
 
 
 import io.spaship.operator.business.SPAUploadHandler;
+import io.spaship.operator.exception.ZipFileProcessException;
 import io.spaship.operator.repo.SharedRepository;
 import io.spaship.operator.type.FormData;
 import org.javatuples.Pair;
@@ -60,6 +61,10 @@ public class SpaDeploymentController {
 
 
     private Pair<String, UUID> sanity(FormData formData) {
+
+        if(!formData.isFileValid())
+          throw new ZipFileProcessException("invalid file type");
+
         String description = formData.description;
         String fileName = formData.fileName();
         Long fileSize = formData.fileSize();
