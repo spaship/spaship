@@ -15,7 +15,7 @@ module.exports.list = async (req, res, next) => {
 
 module.exports.get = async (req, res, next) => {
   const userId = getUserUUID(req);
-  const { name } = req.params;
+  const { name } = getName(req);
   try {
     const application = await FileService.find(name);
     if (application) {
@@ -29,7 +29,7 @@ module.exports.get = async (req, res, next) => {
 
 module.exports.post = async (req, res, next) => {
   const userId = getUserUUID(req);
-  const { name, path } = req.body;
+  const { name, path } = getRequestBody(req);
   const data = {
     name,
     path,
@@ -55,8 +55,8 @@ module.exports.put = async (req, res, next) => {
 
 module.exports.deploy = async (req, res, next) => {
   const userId = getUserUUID(req);
-  const { name, path: appPath, ref } = req.body;
-  const { path: spaArchive } = req.file;
+  const { name, path: appPath, ref } = getRequestBody(req);
+  const { path: spaArchive } = getPath(req);
 
   try {
     await DeployService.deploy({
@@ -67,7 +67,11 @@ module.exports.deploy = async (req, res, next) => {
     });
 
     const application = await Application.findOne({ name, path: appPath });
-    await (application ? Application.updateOne({ name, path: appPath }, { ref }) : Application.create({ name, path: appPath, ref, userId }));
+    if (application) {
+      await Application.updateOne({ name, path: appPath }, { ref });
+    } else {
+      await Application.create({ name, path: appPath, ref, userId });
+    }
     res.status(201).send({
       name,
       path: appPath,
@@ -97,3 +101,17 @@ module.exports.delete = async (req, res, next) => {
     next(error);
   }
 };
+function getName(req) {
+  const requestParams = req.sanitize(req?.params) || {}
+  return requestParams;
+}
+
+function getRequestBody(req) {
+  const requestBody = req.sanitize(req?.body) || {}
+  return requestBody;
+}
+
+function getPath(req) {
+  const requestFile = req.sanitize(req?.file) || {}
+  return requestFile;
+}
