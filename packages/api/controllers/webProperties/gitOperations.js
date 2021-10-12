@@ -35,7 +35,7 @@ module.exports = async function gitOperations(req, res) {
   await checkoutRemoteBranch(req.body.repositoryConfigs[0].branch, resolvePathCreateBranch);
   await gitCreateBranch(resolvePathCreateBranch, localBranch);
   repository = await gitCheckout(repository, resolvePathCreateBranch, localBranch);
-  await createSPAShipTemplateRequest(req, pathFile);
+  await createSPAshipTemplateRequest(req, pathFile);
   await gitOperationsCommit(repository, signature, resolvePathCreateBranch, localBranch, gitToken);
   await zipFiles(directoryName);
   const webPropertyResponse = await saveWebProperty(req, res);
@@ -84,7 +84,7 @@ async function checkoutRemoteBranch(remoteBranch, resolvePathCreateBranch) {
   await delay(100);
 }
 
-async function createSPAShipTemplateRequest(req, pathFile) {
+async function createSPAshipTemplateRequest(req, pathFile) {
   await delay(100);
   const spashipTemplate = [];
   const envs = new Set();
