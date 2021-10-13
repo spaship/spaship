@@ -21,7 +21,7 @@ jobs:
     name: SPAship operator build
     env:
       IMAGE_NAME: "operator"
-      REGISTRY_NAMESPACE: "arbhatta"
+      REGISTRY_NAMESPACE: "spaship"
 
     steps:
 
