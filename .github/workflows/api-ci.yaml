@@ -2,11 +2,19 @@ name: SPAship api build and push into container repo
 
 on:
   push:
-    branches: [ * ]
-    tags: [ * ]
-    paths: [ * ]
+    branches:
+      - '*'
+    tags:
+      - '*'
+    paths:
+      - '*'
   pull_request:
-    branches: [ * ]
+    branches:
+      - '*'
+    tags:
+      - '*'
+    paths:
+      - '*'
   workflow_dispatch:
     inputs:
       version:
