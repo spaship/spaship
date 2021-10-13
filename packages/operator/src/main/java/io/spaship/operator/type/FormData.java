@@ -26,34 +26,38 @@ public class FormData {
     public FileUpload file;
 
     public String fileName() {
-        Objects.requireNonNull(file,FILE_NOT_FOUND_MESSAGE);
+        validateFileUpload();
         return this.file.fileName();
     }
 
     public Long fileSize() {
-        Objects.requireNonNull(file,FILE_NOT_FOUND_MESSAGE);
+        validateFileUpload();
         return this.file.size();
     }
 
     public String fileLocation() {
-        Objects.requireNonNull(file,FILE_NOT_FOUND_MESSAGE);
+        validateFileUpload();
         return this.file.uploadedFile().toString();
     }
 
     public URI getFileURI() {
-        Objects.requireNonNull(file,FILE_NOT_FOUND_MESSAGE);
+        validateFileUpload();
         return this.file.uploadedFile().toUri();
     }
 
     public Path getfilePath() {
-        Objects.requireNonNull(file,FILE_NOT_FOUND_MESSAGE);
+        validateFileUpload();
         return this.file.uploadedFile().toAbsolutePath();
     }
 
     public boolean isFileValid(){
-      Objects.requireNonNull(file,FILE_NOT_FOUND_MESSAGE);
+      validateFileUpload();
       Objects.requireNonNull(file.contentType(),"no content found!");
       return this.file.contentType().contains("zip");
+    }
+
+    private void validateFileUpload(){
+      Objects.requireNonNull(file,FILE_NOT_FOUND_MESSAGE);
     }
 
 }
