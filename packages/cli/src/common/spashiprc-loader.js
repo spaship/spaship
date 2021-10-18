@@ -21,11 +21,7 @@ function loadRcFile() {
   // cosmiconfig has a built-in cache so we don't need to worry about reading the same file multiple times per CLI run.
   const loadedFile = explorerSync.search();
 
-  if (loadedFile) {
-    return loadedFile.config;
-  } else {
-    return {};
-  }
+  return loadedFile ? loadedFile.config : {};
 }
 
 module.exports = { loadRcFile };

@@ -35,7 +35,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "axios": "0.21.1",
-    "memfs": "3.2.3"
+    "axios": "0.22.0",
+    "memfs": "3.3.0"
   }
 }

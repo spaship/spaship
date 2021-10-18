@@ -60,7 +60,7 @@ export default (props: IProps) => {
     }
   };
   return (
-    <Card isFlat isHoverable isSelected={config.name === selectedName} isSelectable={true}>
+    <Card isFlat isHoverable isSelected={config.name === selectedName} isSelectable>
       <CardHeader>
         {renderCardActions()}
         <CardTitle onClick={onClick}>

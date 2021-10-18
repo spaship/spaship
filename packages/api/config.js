@@ -8,6 +8,10 @@ function rel2abs(p) {
   return path.resolve(process.cwd(), p);
 }
 
+const generateSseBasePath = (sse) => {
+  return `${sse.protocol + sse.domain + sse.path + sse.id}`;
+};
+
 let validOptions = [
   // filesystem related
   "config_file",
@@ -39,6 +43,13 @@ let validOptions = [
   //  authorization
   "auth:ldap:admin_group",
   "auth:ldap:user_group",
+
+  //  server side envents credentials
+  "sse:base_path",
+  "sse:protocol",
+  "sse:domain",
+  "sse:path",
+  "sse:id",
 ];
 const filepathOptions = ["config_file", "upload_dir", "webroot"]; // config options that represent filepaths
 
@@ -71,7 +82,6 @@ nconf
     transform: (obj) => {
       // remove the "SPASHIP_" prefix from environment variables
       obj.key = obj.key.replace(/^spaship_/, "").replace(/^api_/, "");
-
       return obj;
     },
   });
@@ -86,11 +96,22 @@ if (configFile) {
   });
 }
 
+const sse = {
+  protocol: "http://",
+  domain: "localhost:5000",
+  path: "/sse/",
+  id: "80",
+};
+
 nconf.defaults({
   port: 2345,
   host: "localhost",
   webroot: "/var/www",
   upload_dir: "/tmp/spaship_uploads",
+  sse: {
+    base_path: process.env.SSE_CON || generateSseBasePath(sse),
+  },
+  directoryBasePath: "root",
   db: {
     mongo: {
       url: "localhost:27017",

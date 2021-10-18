@@ -5,7 +5,7 @@ title: A Beginner’s Guide to the SPAship Universe
 
 ---
 
-# ![image alt text](image_0.png)
+<!-- # ![image alt text](image_0.png) -->
 
 So you have a new SPAship instance up and running for deploying your awesome SPAs to your web portal. However, you are new to SPAship and wondering how to get started? Worry not, for this guide is here to help you launch your SPAs in no time.
 
