@@ -25,13 +25,13 @@
   "license": "MIT",
   "dependencies": {
     "@spaship/common": "^0.14.0",
-    "axios": "^0.21.0",
+    "axios": "^0.22.0",
     "ms": "^2.1.2",
     "nconf": "^0.11.0",
     "url-join": "^4.0.1"
   },
   "devDependencies": {
-    "nodemon": "2.0.12"
+    "nodemon": "2.0.13"
   },
   "publishConfig": {
     "access": "public"

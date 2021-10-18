@@ -24,7 +24,7 @@ export default (props: IProps) => {
   return (
     <>
       <GalleryItem>
-        <Card isHoverable isSelectable={true} onClick={handleClick}>
+        <Card isHoverable isSelectable onClick={handleClick}>
           <CardHeader>Add new property</CardHeader>
           <CardBody>
             <AddCircleOIcon size="lg" />

@@ -1,0 +1,176 @@
+kind: "Template"
+apiVersion: "v1"
+metadata:
+  name: "environment-template"
+labels:
+  template: "environment-template"
+parameters:
+  - name: "ENV"
+    description: "Environment of the website"
+    required: true
+  - name: "WEBSITE"
+    description: "Name of website"
+    required: true
+  - name: "WEBSITE_VERSION"
+    description: "Version of website"
+    required: true
+  #  - name: "TRACE_ID"
+  #    description: "tracing UUID from operator during creation"
+  #    required: true
+  - name: "IMAGE_HTTPD"
+    value: "quay.io/spaship/httpd"
+    required: false
+  - name: "IMAGE_API"
+    value: "quay.io/arbhatta/sidecar"
+    required: false
+  - name: "IMAGE_HTTPD_VERSION"
+    value: "1.3.6"
+    required: false
+  - name: "IMAGE_API_VERSION"
+    value: "master"
+    required: false
+  - name: "DOMAIN"
+    required: true
+objects:
+  - kind: ConfigMap
+    apiVersion: v1
+    metadata:
+      name: sidecar-config-${WEBSITE}-${ENV}
+      labels:
+        website: ${WEBSITE}
+        managedBy: spaship
+        environment: ${ENV}
+        websiteVersion: ${WEBSITE_VERSION}
+    data:
+      SIDECAR_SPADIR: "/app/data"
+      SIDECAR_WEBSITENAME: ${WEBSITE}
+      SIDECAR_ENVIRONMENTNAME: ${ENV}
+      SIDECAR_WEBSITE_VERSION: ${WEBSITE_VERSION}
+      SPASHIP_MAPPING_FILE: ".spaship"
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: svc-${WEBSITE}-${ENV}
+      labels:
+        website: ${WEBSITE}
+        managedBy: spaship
+        environment: ${ENV}
+        #tracing: ${TRACE_ID}
+        websiteVersion: ${WEBSITE_VERSION}
+    spec:
+      #      type: NodePort
+      ports:
+        # Expose main container
+        - port: 80
+          targetPort: 8080
+          name: http
+        # Expose rest api
+        - port: 8081
+          targetPort: 8081
+          name: http-api
+      selector:
+        managedBy: spaship
+        website: ${WEBSITE}
+        environment: ${ENV}
+        websiteVersion: ${WEBSITE_VERSION}
+  - kind: Deployment
+    apiVersion: apps/v1
+    metadata:
+      name: ${WEBSITE}-${ENV}
+      website: ${WEBSITE}
+      labels:
+        website: ${WEBSITE}
+        managedBy: spaship
+        environment: ${ENV}
+        #tracing: ${TRACE_ID}
+        websiteVersion: ${WEBSITE_VERSION}
+    spec:
+      selector:
+        matchLabels:
+          managedBy: spaship
+          website: ${WEBSITE}
+          environment: ${ENV}
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            website: ${WEBSITE}
+            managedBy: spaship
+            environment: ${ENV}
+            #tracing: ${TRACE_ID}
+            websiteVersion: ${WEBSITE_VERSION}
+        spec:
+          containers:
+            # Main container to serve data
+            - name: httpd-server
+              image: "${IMAGE_HTTPD}:${IMAGE_HTTPD_VERSION}"
+              imagePullPolicy: IfNotPresent
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 100Mi
+                limits:
+                  cpu: 500m
+                  memory: 250Mi
+              ports:
+                - containerPort: 8080
+              volumeMounts:
+                - mountPath: "/var/www/html/"
+                  name: data
+                  subpath: html
+            - name: sidecar
+              image: "${IMAGE_API}:${IMAGE_API_VERSION}"
+              imagePullPolicy: Always     # Always / IfNotPresent
+              livenessProbe:
+                httpGet:
+                  path: "/api/upload"
+                  port: 8081
+                initialDelaySeconds: 2
+                failureThreshold: 10
+                periodSeconds: 10
+              readinessProbe:
+                httpGet:
+                  path: "/api/upload"
+                  port: 8081
+                initialDelaySeconds: 2
+                failureThreshold: 5
+                periodSeconds: 10
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 50Mi
+                limits:
+                  cpu: 100m
+                  memory: 100Mi
+              ports:
+                - containerPort: 8081
+              env:
+                - name: APP_DATA_DIR
+                  value: "/app/data/"
+              volumeMounts:
+                - mountPath: "/app/data/"
+                  name: data
+                  subpath: data
+              envFrom:
+                - configMapRef:
+                    name: sidecar-config-${WEBSITE}-${ENV}
+
+          volumes:
+            - name: data
+              emptyDir: { }
+  - kind: Ingress
+    apiVersion: networking.k8s.io/v1
+    metadata:
+      name: ing-${WEBSITE}-${ENV}
+    spec:
+      rules:
+        - host: ${WEBSITE}.${ENV}.${DOMAIN}
+          http:
+            paths:
+              - path: /
+                pathType: Prefix
+                backend:
+                  service:
+                    name: svc-${WEBSITE}-${ENV}
+                    port:
+                      number: 80
