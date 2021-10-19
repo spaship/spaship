@@ -28,4 +28,6 @@ WORKDIR /app
 RUN find . -name "node_modules" -exec rm -rf '{}' +
 RUN ls && npm install
 
-EXPOSE 3000
+EXPOSE 2345
+
+CMD [ "npm", "run", "start"]
