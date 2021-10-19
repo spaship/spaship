@@ -2,15 +2,15 @@
 id: manager-workflow
 title: SPAship Manager Workflow
 ---
-## SPAShip Manager - A New Way to managing your SPAs 🙌
+## SPAship Manager - A New Way to managing your SPAs 🙌
 
-### **What is SPAShip Manager?**
+### **What is SPAship Manager?**
 
-SPAShip Manager is a platform that will help you to deploy and manage your SPA's in a single place, and you can accelerate your deployment time. 
+SPAship Manager is a platform that will help you to deploy and manage your SPA's in a single place, and you can accelerate your deployment time. 
 
-SPAShip Manager is a new product (web application) that comes under SPAShip, and communicates with SPAShip Operator for managing and deploying SPAs (Single Page Applications). We have developed this application which will not only provide you the deployment features, also provide you the **real-time** updates and **analytics** for better managing your SPAs. SPAShip manager also overcomes many deployment-related problems.
+SPAship Manager is a new product (web application) that comes under SPAship, and communicates with SPAship Operator for managing and deploying SPAs (Single Page Applications). We have developed this application which will not only provide you the deployment features, also provide you the **real-time** updates and **analytics** for better managing your SPAs. SPAship manager also overcomes many deployment-related problems.
 
-### **Key Features of SPAShip manager:**
+### **Key Features of SPAship manager:**
 - Fewer clicks for SPA deployment
 - Add as many websites (properties) as you want 
 - Versioning for the Website along with the SPAs
@@ -20,12 +20,12 @@ SPAShip Manager is a new product (web application) that comes under SPAShip, an
 - Dashboard for all the deployment metrics based on website, SPA, and activity status
 - No Code & Command for Deployment (CI-CD integration with Gitlab and Github, which will automatically deploy the SPAs)
 
-### **New Architecture of SPAShip Manager :**
+### **New Architecture of SPAship Manager :**
 ![SPAship workflow Architecture](workflow.jpeg)
 
-### **Why you should start with SPAShip Manager?**
+### **Why you should start with SPAship Manager?**
 
-- Using SPAShip manager you can deploy your application without executing a single line of command. You just need to give the required inputs
+- Using SPAship manager you can deploy your application without executing a single line of command. You just need to give the required inputs
     1. Provide Repository URL with the Access token (Developer's token)
     2. Select the Working branch, it will list all the directories for your spas
     3. Select your SPAs and you can also provide the expected context name along with the SPAs
