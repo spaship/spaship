@@ -41,6 +41,7 @@ objects:
         managedBy: spaship
         environment: ${ENV}
         websiteVersion: ${WEBSITE_VERSION}
+        app.kubernetes.io/managed-by: spaship
     data:
       SIDECAR_SPADIR: "/app/data"
       SIDECAR_WEBSITENAME: ${WEBSITE}
@@ -57,6 +58,7 @@ objects:
         environment: ${ENV}
         #tracing: ${TRACE_ID}
         websiteVersion: ${WEBSITE_VERSION}
+        app.kubernetes.io/managed-by: spaship
     spec:
       #      type: NodePort
       ports:
@@ -84,6 +86,7 @@ objects:
         environment: ${ENV}
         #tracing: ${TRACE_ID}
         websiteVersion: ${WEBSITE_VERSION}
+        app.kubernetes.io/managed-by: spaship
     spec:
       selector:
         matchLabels:
@@ -162,6 +165,8 @@ objects:
     apiVersion: networking.k8s.io/v1
     metadata:
       name: ing-${WEBSITE}-${ENV}
+      labels:
+        app.kubernetes.io/managed-by: spaship
     spec:
       rules:
         - host: ${WEBSITE}.${ENV}.${DOMAIN}
