@@ -102,16 +102,16 @@ module.exports.delete = async (req, res, next) => {
   }
 };
 function getName(req) {
-  const requestParams = req.sanitize(req?.params) || {}
+  const requestParams = req?.params || {}
   return requestParams;
 }
 
 function getRequestBody(req) {
-  const requestBody = req.sanitize(req?.body) || {}
+  const requestBody = req?.body || {}
   return requestBody;
 }
 
 function getPath(req) {
-  const requestFile = req.sanitize(req?.file) || {}
+  const requestFile = req?.file || {}
   return requestFile;
 }
