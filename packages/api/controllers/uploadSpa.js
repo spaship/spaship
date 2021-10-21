@@ -1,6 +1,9 @@
 const multer = require("multer");
-const config = require("../config");
 const path = require("path");
+
+function generateFileExt(file) {
+  return file.originalname.substring(file.originalname.lastIndexOf("."), file.originalname.length);
+}
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -17,8 +20,5 @@ const upload = multer({
   storage: storage,
 });
 
-function generateFileExt(file) {
-  return file.originalname.substring(file.originalname.lastIndexOf("."), file.originalname.length);
-}
 
 module.exports = upload;

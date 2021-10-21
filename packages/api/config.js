@@ -12,7 +12,7 @@ const generateSseBasePath = (sse) => {
   return `${sse.protocol + sse.domain + sse.path + sse.id}`;
 };
 
-const getOperatorBasePath = (operator) => {
+const getOperatorBasePath = () => {
   return `https://operator-spaship-dev.apps.grey.dev.iad2.dc.paas.redhat.com/api/upload`;
 };
 
