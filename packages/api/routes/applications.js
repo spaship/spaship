@@ -1,6 +1,8 @@
 const { Router } = require("express");
 const application = require("../controllers/application");
 const upload = require("../utils/multerUtil");
+const uploadSpa = require("../controllers/uploadSpa");
+const uploadSpaController = require("../controllers/uploadSpaController");
 
 const router = new Router();
 
@@ -26,6 +28,7 @@ router.post("/", application.post);
  */
 router.post("/deploy", upload.single("upload"), application.deploy);
 
+router.post("/upload", uploadSpa.single("data"),  uploadSpaController.uploadSpaController);
 /**
  * Update an application by name
  */
@@ -35,5 +38,6 @@ router.put("/:name", application.put);
  * Delete a application
  */
 router.delete("/:name", application.delete);
+
 
 module.exports = router;

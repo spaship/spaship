@@ -107,7 +107,7 @@ function getName(req) {
 }
 
 function getRequestBody(req) {
-  const requestBody = req.sanitize(req?.body) || {}
+  const requestBody = req?.body || {}
   return requestBody;
 }
 
