@@ -9,7 +9,6 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     let ext = ".zip";
     if (file.originalname.split(".").length > 1) ext = generateFileExt(file);
-    console.log(Date.now() + ext);
     cb(null, Date.now() + ext);
   },
 });

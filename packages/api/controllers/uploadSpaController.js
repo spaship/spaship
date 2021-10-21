@@ -5,9 +5,7 @@ const path = require("path");
 const config = require("../config");
 
 const uploadSpaController = async (req, res) => {
-  console.log(req.file);
   const uploadBasePath = path.resolve(__dirname, `../${config.get("cli:dir_path")}`);
-  console.log(uploadBasePath);
 
   const formData = new FormData();
   formData.append("website", getWebsite(req));
@@ -25,9 +23,7 @@ const uploadSpaController = async (req, res) => {
   try {
     const response = await axios(options);
     res.send(response.config);
-  } catch (err) {
-    console.log("Error", err);
-  }
+  } catch (err) {}
 };
 
 function getFile(req) {
