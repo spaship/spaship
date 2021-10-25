@@ -12,9 +12,6 @@ const generateSseBasePath = (sse) => {
   return `${sse.protocol + sse.domain + sse.path + sse.id}`;
 };
 
-const getOperatorBasePath = () => {
-  return `https://operator-spaship-dev.apps.grey.dev.iad2.dc.paas.redhat.com/api/upload`;
-};
 
 let validOptions = [
   // filesystem related
@@ -133,7 +130,7 @@ nconf.defaults({
     },
   },
   cli: {
-    base_path : process.env.OPERATOR_BASEPATH || getOperatorBasePath(),
+    base_path : process.env.OPERATOR_BASEPATH,
     dir_path : "uploads",
   },
 });
