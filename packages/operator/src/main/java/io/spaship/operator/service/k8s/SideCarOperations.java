@@ -26,9 +26,15 @@ public class SideCarOperations {
     private final EventManager eventManager;
     private final ExecutorService executor
             = Executors.newFixedThreadPool(10); //TODO smartly handle this thread as it will only support 10 environments at a time
+    private final Operator k8sOperator;
 
-    public SideCarOperations(Vertx vertx, EventManager eventManager) {
-        WebClientOptions options = new WebClientOptions()
+
+
+    public SideCarOperations(Vertx vertx,
+                             EventManager eventManager,
+                             Operator k8sOperator) {
+      this.k8sOperator = k8sOperator;
+      WebClientOptions options = new WebClientOptions()
                 .setUserAgent("spaship-operator/0.0.1");
         this.client = WebClient.create(vertx, options);
 
@@ -40,18 +46,11 @@ public class SideCarOperations {
     public void asyncCreateOrUpdateSPDirectory(OperationResponse operationResponse) {
         executor.submit(() -> {
             var envName = operationResponse.getEnvironmentName();
-            if (operationResponse.getStatus() == 1) {
-                LOG.info("env {} is a new environment hence blocking sidecar ops for 60s", envName);
-                blockFor(60000);
-            }
+            if (operationResponse.getStatus() == 1)
+                LOG.info("env {} is a new environment", envName);
             var res = createOrUpdateSPDirectory(operationResponse);
             LOG.info("sidecar ops completed with following response {}", res);
         });
-    }
-
-    @SneakyThrows
-    private void blockFor(int timeInMillis) {
-        Thread.sleep(timeInMillis);
     }
 
 
@@ -78,7 +77,9 @@ public class SideCarOperations {
         var requestUri = host.concat(":").concat(port).concat("/api/upload");
         LOG.info("sidecar env {} url, {}", operationResponse.getEnvironmentName(), requestUri);
 
-        var opResp = client.requestAbs(HttpMethod.POST, requestUri).sendMultipartForm(form)
+      waitForReadiness(operationResponse);
+
+      var opResp = client.requestAbs(HttpMethod.POST, requestUri).sendMultipartForm(form)
                 .map(item -> apply(responseOnFailure, item))
                 .onFailure()
                 .recoverWithItem(e -> fallbackResponse(responseOnFailure, e))
@@ -97,7 +98,24 @@ public class SideCarOperations {
         return opResp;
     }
 
-    private OperationResponse fallbackResponse(OperationResponse.OperationResponseBuilder responseOnFailure, Throwable e) {
+  private void waitForReadiness(OperationResponse operationResponse) throws InterruptedException {
+      int attempt = 0;
+      var env = operationResponse.getEnvironment();
+      while(!k8sOperator.isEnvironmentAvailable(env)){
+        if(attempt==0)
+          LOG.info("waiting for readiness of {}.{} ",env.getName(),env.getWebsiteName());
+        Thread.sleep(4000);
+        if(attempt>150){
+          LOG.warn("environment {}.{} still not ready, releasing the block to prevent from infinite looping "
+            ,env.getName(),env.getWebsiteName());
+          break;
+        }
+        attempt++;
+      }
+    LOG.info("environment {}.{} is ready, total no retry attempt is {}",env.getName(),env.getWebsiteName(),attempt);
+  }
+
+  private OperationResponse fallbackResponse(OperationResponse.OperationResponseBuilder responseOnFailure, Throwable e) {
         LOG.error("sidecar upload ops failed due to {}", e.getMessage());
         return responseOnFailure.errorMessage(e.getMessage()).build();
     }
