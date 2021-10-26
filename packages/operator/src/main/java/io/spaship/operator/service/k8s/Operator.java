@@ -7,6 +7,7 @@ import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.networking.v1.Ingress;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.internal.readiness.Readiness;
 import io.fabric8.openshift.api.model.Route;
 import io.fabric8.openshift.client.OpenShiftClient;
 import io.smallrye.mutiny.Uni;
@@ -35,6 +36,12 @@ public class Operator implements Operations {
     private final KubernetesClient k8sClient;
     private final EventManager eventManager;
     private final String domain;
+
+
+    private static final String MANAGED_BY = "managedBy";
+    private static final String WEBSITE = "website";
+    private static final String ENVIRONMENT = "environment";
+    private static final String SPASHIP = "spaship";
 
     public Operator(KubernetesClient k8sClient, EventManager eventManager) {
         this.k8sClient = k8sClient;
@@ -119,9 +126,9 @@ public class Operator implements Operations {
     }
 
     Map<String, String> searchCriteriaLabel(Environment environment) {
-        return Map.of("managedBy", "spaship",
-                "website", environment.getWebsiteName().toLowerCase(),
-                "environment", environment.getName().toLowerCase(),
+        return Map.of(MANAGED_BY, SPASHIP,
+                WEBSITE, environment.getWebsiteName().toLowerCase(),
+                ENVIRONMENT, environment.getName().toLowerCase(),
                 "websiteVersion", environment.getWebsiteVersion().toLowerCase()
         );
     }
@@ -156,6 +163,41 @@ public class Operator implements Operations {
                 .processLocally(templateParameters);
     }
 
+
+    public boolean isEnvironmentAvailable(Environment environment){
+      boolean isAvailable = false;
+
+      Objects.requireNonNull(environment.getName(),"environment name not fond in env object");
+      Objects.requireNonNull(environment.getWebsiteName(),"website name not found in env object");
+      Objects.requireNonNull(environment.getNameSpace(),"website namespace not found in env object");
+      Map<String,String> labels = Map.of(
+        MANAGED_BY,SPASHIP,
+        WEBSITE,environment.getWebsiteName(),
+        ENVIRONMENT,environment.getName()
+      );
+      var pods = k8sClient.pods()
+        .inNamespace(environment.getNameSpace()).withLabels(labels).list().getItems();
+
+      if(Objects.isNull(pods)){
+        LOG.warn("List<Pod> is null");
+        return isAvailable;
+      }
+      if(pods.isEmpty()){
+        LOG.info("no pod found with the following details {}",labels);
+        return isAvailable;
+      }
+      if(pods.size()>1)
+        LOG.warn("more than one pod found with the same criteria");
+
+
+      var pod0 = pods.get(0);
+      var phase = pod0.getStatus().getPhase();
+      var readiness = Readiness.isPodReady(pod0);
+      LOG.debug("pod phase is {} ", phase);
+      return phase.equalsIgnoreCase("Running") && readiness;
+
+    }
+
     //TODO remove if blocks
     private void processK8sList(KubernetesList result, UUID tracing, String nameSpace) {
 
@@ -165,29 +207,29 @@ public class Operator implements Operations {
             if (item instanceof Service) {
                 LOG.debug("creating new Service in K8s, tracing = {}", tracing);
                 k8sClient.services().inNamespace(nameSpace).createOrReplace((Service) item);
-                eb.websiteName(item.getMetadata().getLabels().get("website"))
-                        .environmentName(item.getMetadata().getLabels().get("environment"))
+                eb.websiteName(item.getMetadata().getLabels().get(WEBSITE))
+                        .environmentName(item.getMetadata().getLabels().get(ENVIRONMENT))
                         .state("service created");
             }
             if (item instanceof Deployment) {
                 LOG.debug("creating new Deployment in K8s, tracing = {}", tracing);
                 k8sClient.apps().deployments().inNamespace(nameSpace).createOrReplace((Deployment) item);
-                eb.websiteName(item.getMetadata().getLabels().get("website"))
-                        .environmentName(item.getMetadata().getLabels().get("environment"))
+                eb.websiteName(item.getMetadata().getLabels().get(WEBSITE))
+                        .environmentName(item.getMetadata().getLabels().get(ENVIRONMENT))
                         .state("deployment created");
             }
             if (item instanceof Route) {
                 LOG.debug("creating new Route in K8s, tracing = {}", tracing);
                 ((OpenShiftClient) k8sClient).routes().inNamespace(nameSpace).createOrReplace((Route) item);
-                eb.websiteName(item.getMetadata().getLabels().get("website"))
-                        .environmentName(item.getMetadata().getLabels().get("environment"))
+                eb.websiteName(item.getMetadata().getLabels().get(WEBSITE))
+                        .environmentName(item.getMetadata().getLabels().get(ENVIRONMENT))
                         .state("route created");
             }
             if (item instanceof ConfigMap) {
                 LOG.debug("creating new ConfigMap in K8s, tracing = {}", tracing);
                 k8sClient.configMaps().inNamespace(nameSpace).createOrReplace((ConfigMap) item);
-                eb.websiteName(item.getMetadata().getLabels().get("website"))
-                        .environmentName(item.getMetadata().getLabels().get("environment"))
+                eb.websiteName(item.getMetadata().getLabels().get(WEBSITE))
+                        .environmentName(item.getMetadata().getLabels().get(ENVIRONMENT))
                         .state("configmap created");
             }
             if (item instanceof Ingress) {
