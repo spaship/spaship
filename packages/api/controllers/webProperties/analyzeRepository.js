@@ -33,10 +33,6 @@ module.exports = async function gitOperations(req, res) {
   res.send({ analyzedFiles: responseFiles });
 };
 
-function getWebPropertyName(req) {
-  return req?.body?.webPropertyName || "";
-}
-
 async function getAnalyzedFiles(filepaths, responseFiles, analyzePath) {
   for (let analyzeScript of filepaths) {
     await readFileAnalyze(analyzeScript, responseFiles, analyzePath);
