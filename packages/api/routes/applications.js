@@ -1,8 +1,8 @@
 const { Router } = require("express");
 const application = require("../controllers/application");
 const upload = require("../utils/multerUtil");
-const uploadSpa = require("../controllers/uploadSpa");
-const uploadSpaController = require("../controllers/uploadSpaController");
+const uploadSpa = require("../controllers/webPropertyServices/uploadSpa");
+const uploadSpaController = require("../controllers/webPropertyServices/uploadSpaService");
 
 const router = new Router();
 

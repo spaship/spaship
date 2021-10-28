@@ -2,7 +2,7 @@ const axios = require("axios");
 const FormData = require("form-data");
 const fs = require("fs");
 const path = require("path");
-const config = require("../config");
+const config = require("../../config");
 const { log } = require("@spaship/common/lib/logging/pino");
 
 function getFile(req) {
