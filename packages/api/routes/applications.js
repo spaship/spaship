@@ -36,5 +36,4 @@ router.put("/:name", application.put);
  */
 router.delete("/:name", application.delete);
 
-
 module.exports = router;

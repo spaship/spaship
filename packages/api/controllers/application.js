@@ -62,10 +62,10 @@ module.exports.put = async (req, res, next) => {
 
 module.exports.deploy = async (req, res, next) => {
 
-  if (getWebsite(req)) {
+  if (getWebPropertyName(req)) {
     const uploadBasePath = path.resolve(__dirname, `../${config.get("cli:dir_path")}`);
     const formData = new FormData();
-    formData.append("website", getWebsite(req));
+    formData.append("webproperty", getWebPropertyName(req));
     formData.append("description", getDescription(req));
     formData.append("zipfile", fs.createReadStream(`${uploadBasePath}/${getFile(req)}`));
 
@@ -172,6 +172,6 @@ function getDescription(req) {
   return req.sanitize(req?.body?.description) || "";
 }
 
-function getWebsite(req) {
-  return req.sanitize(req?.body?.websiteName);
+function getWebPropertyName(req) {
+  return req.sanitize(req?.body?.webPropertyName);
 }
