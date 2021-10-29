@@ -8,6 +8,12 @@ const NotFoundError = require("../utils/errors/NotFoundError");
 const NotImplementedError = require("../utils/errors/NotImplementedError");
 const { getUserUUID } = require("../utils/requestUtil");
 
+const axios = require("axios");
+const FormData = require("form-data");
+const fs = require("fs");
+const path = require("path");
+const config = require("../config");
+
 module.exports.list = async (req, res, next) => {
   const list = await FileService.getAll();
   res.send(list);
@@ -15,7 +21,7 @@ module.exports.list = async (req, res, next) => {
 
 module.exports.get = async (req, res, next) => {
   const userId = getUserUUID(req);
-  const { name } = getName(req);
+  const name = getName(req);
   try {
     const application = await FileService.find(name);
     if (application) {
@@ -29,7 +35,8 @@ module.exports.get = async (req, res, next) => {
 
 module.exports.post = async (req, res, next) => {
   const userId = getUserUUID(req);
-  const { name, path } = getRequestBody(req);
+  const name = getNameRequest(req);
+  const path = getPathRequest(req);
   const data = {
     name,
     path,
@@ -49,13 +56,39 @@ module.exports.post = async (req, res, next) => {
 
 module.exports.put = async (req, res, next) => {
   const userId = getUserUUID(req);
-  const { name } = req.params;
+  const name = getName(req);
   next(new NotImplementedError());
 };
 
 module.exports.deploy = async (req, res, next) => {
+
+  if (getWebPropertyName(req)) {
+    const uploadBasePath = path.resolve(__dirname, `../${config.get("cli:dir_path")}`);
+    const formData = new FormData();
+    formData.append("webproperty", getWebPropertyName(req));
+    formData.append("description", getDescription(req));
+    formData.append("zipfile", fs.createReadStream(`${uploadBasePath}/${getFile(req)}`));
+
+    const options = {
+      method: "POST",
+      url: config.get("cli:base_path"),
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
+    try {
+      const response = await axios(options);
+      res.send(response.config);
+    } catch (err) {
+      log.error(err);
+    }
+  }
+
   const userId = getUserUUID(req);
-  const { name, path: appPath, ref } = getRequestBody(req);
+  const name = getNameRequest(req);
+  const ref = getRefRequest(req);
+  const { path: appPath } = getRequestBody(req);
   const { path: spaArchive } = getPath(req);
 
   try {
@@ -102,16 +135,43 @@ module.exports.delete = async (req, res, next) => {
   }
 };
 function getName(req) {
-  const requestParams = req.sanitize(req?.params) || {}
+  const requestParams = req.sanitize(req?.params?.name) || {};
   return requestParams;
 }
 
 function getRequestBody(req) {
-  const requestBody = req.sanitize(req?.body) || {}
+  const requestBody = req.sanitize(req?.body) || {};
+  return requestBody;
+}
+
+function getNameRequest(req) {
+  const requestName = req.sanitize(req?.body?.name) || "";
+  return requestName;
+}
+
+function getPathRequest(req) {
+  const requestPath = req.sanitize(req?.body?.path) || "";
+  return requestPath;
+}
+
+function getRefRequest(req) {
+  const requestBody = req.sanitize(req?.body?.ref) || {};
   return requestBody;
 }
 
 function getPath(req) {
-  const requestFile = req.sanitize(req?.file) || {}
+  const requestFile = req.sanitize(req?.file) || {};
   return requestFile;
+}
+
+function getFile(req) {
+  return req.sanitize(req?.file?.filename) || [];
+}
+
+function getDescription(req) {
+  return req.sanitize(req?.body?.description) || "";
+}
+
+function getWebPropertyName(req) {
+  return req.sanitize(req?.body?.webPropertyName);
 }

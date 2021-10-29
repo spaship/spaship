@@ -12,6 +12,7 @@ const generateSseBasePath = (sse) => {
   return `${sse.protocol + sse.domain + sse.path + sse.id}`;
 };
 
+
 let validOptions = [
   // filesystem related
   "config_file",
@@ -50,6 +51,10 @@ let validOptions = [
   "sse:domain",
   "sse:path",
   "sse:id",
+
+  //  cli credentials
+  "cli:base_path",
+  "cli:dir_path",
 ];
 const filepathOptions = ["config_file", "upload_dir", "webroot"]; // config options that represent filepaths
 
@@ -123,6 +128,10 @@ nconf.defaults({
     keycloak: {
       jwt_uuid_prop: "sub",
     },
+  },
+  cli: {
+    base_path : process.env.OPERATOR_BASEPATH,
+    dir_path : "uploads",
   },
 });
 
