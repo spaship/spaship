@@ -181,3 +181,14 @@ curl --location --request DELETE 'https://<hostname>/api/v1/apiKeys/<apiKey-labe
 --header 'Host: <hostname>' \
 --header 'Authorization: Bearer <token>'
 ```
+
+#### Upload a SPA
+
+```sh
+curl --location --request POST 'https://<hostname>/api/v1/applications/upload' \
+--header 'Host: <hostname>' \
+--header 'Authorization: Bearer <token>'
+--form 'data= <spafile>' \
+--form 'websiteName= <websitename' \
+--form 'description= <description>'
+```
