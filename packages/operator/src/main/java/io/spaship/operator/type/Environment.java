@@ -23,7 +23,7 @@ public class Environment {
     public Environment(String name, String websiteName, UUID traceID, String nameSpace, boolean updateRestriction,
                        Path zipFileLocation, String websiteVersion, String spaName, String spaContextPath,
                        String branch, boolean excludeFromEnvironment, boolean operationPerformed) {
-        this.name = name;
+        this.name = replaceSpecialCharacters(name);
         this.websiteName = websiteName;
         this.traceID = traceID;
         this.nameSpace = nameSpace;
@@ -39,13 +39,19 @@ public class Environment {
     }
 
     public String getName() {
-        return this.name;
+        return replaceSpecialCharacters(this.name);
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = replaceSpecialCharacters(name);
     }
 
+    private String replaceSpecialCharacters(String entry){
+      var refactoredVariable = entry.replace("_","-");
+      refactoredVariable = refactoredVariable.replace(".", "-");
+      refactoredVariable = refactoredVariable.replace("@","-");
+      return refactoredVariable;
+    }
     public String getWebsiteName() {
         this.websiteName = websiteName.replace(".", "-");
         this.websiteName = websiteName.replace("_", "-");
