@@ -50,11 +50,11 @@ public class SpashipMapping extends JsonObject {
     }
 
     public String getWebsiteName() {
-        return websiteName;
+      return websiteNameSanity(websiteName);
     }
 
     public void setWebsiteName() {
-        this.websiteName = this.getString("websiteName");
+        this.websiteName = websiteNameSanity(this.getString("websiteName"));
     }
 
     public List<HashMap<String, Object>> getEnvironments() {
@@ -106,5 +106,13 @@ public class SpashipMapping extends JsonObject {
     @Override
     public int hashCode() {
         return super.hashCode();
+    }
+
+    private String websiteNameSanity(String websiteName) {
+      var name = websiteName;
+      if (Objects.isNull(name) || name.isEmpty() || name.isBlank())
+        throw new NullPointerException("website name not found!");
+      name = name.replaceAll(" ", "");
+      return name;
     }
 }

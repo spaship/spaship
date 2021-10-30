@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -81,6 +82,10 @@ public class SideCarOperations {
 
       var opResp = client.requestAbs(HttpMethod.POST, requestUri).sendMultipartForm(form)
                 .map(item -> apply(responseOnFailure, item))
+                .onFailure()
+                .retry()
+                .withBackOff(Duration.ofSeconds(2), Duration.ofSeconds(4))
+                .atMost(30)
                 .onFailure()
                 .recoverWithItem(e -> fallbackResponse(responseOnFailure, e))
                 .subscribeAsCompletionStage()
