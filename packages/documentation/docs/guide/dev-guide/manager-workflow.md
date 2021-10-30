@@ -6,14 +6,15 @@ title: SPAship Manager Workflow
 
 ### **What is SPAship Manager?**
 
-SPAship Manager is a platform that will help you to deploy and manage your SPA's in a single place, and you can accelerate your deployment time. 
+SPAship Manager is an easy to use web application (GUI) to manage a group of SPA's from a single place, and you can accelerate your deployment time. 
 
-SPAship Manager is a new product (web application) that comes under SPAship, and communicates with SPAship Operator for managing and deploying SPAs (Single Page Applications). We have developed this application which will not only provide you the deployment features, also provide you the **real-time** updates and **analytics** for better managing your SPAs. SPAship manager also overcomes many deployment-related problems.
+SPAship Manager is a front-end app (web application) that comes under SPAship, and communicates with  Orchestrator for managing and deploying SPAs (Single Page Applications). We have developed this application which will not only provide you the deployment features, also provide you the **real-time** updates and **analytics** for better managing your SPAs. 
+
+We can add web Property to SPAship Manager. It is nothing but a group of related SPAs.
 
 ### **Key Features of SPAship manager:**
 - Fewer clicks for SPA deployment
-- Add as many websites (properties) as you want 
-- Versioning for the Website along with the SPAs
+- Add as many websites (properties) as you want
 - Add flat and multiple repositories for your website
 - Real-time alerts of SPA deployment in the activity stream
 - Manage all the deployed SPAs and multiple websites in a single place
@@ -25,7 +26,7 @@ SPAship Manager is a new product (web application) that comes under SPAship, an
 
 ### **Why you should start with SPAship Manager?**
 
-- Using SPAship manager you can deploy your application without executing a single line of command. You just need to give the required inputs
+- Using SPAship manager you can deploy your application without executing a single line of command just few clicks. You just need to give the required inputs
     1. Provide Repository URL with the Access token (Developer's token)
     2. Select the Working branch, it will list all the directories for your spas
     3. Select your SPAs and you can also provide the expected context name along with the SPAs
