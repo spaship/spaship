@@ -50,6 +50,7 @@ public class Environment {
       var refactoredVariable = entry.replace("_","-");
       refactoredVariable = refactoredVariable.replace(".", "-");
       refactoredVariable = refactoredVariable.replace("@","-");
+      refactoredVariable = refactoredVariable.replaceAll(" ", "");
       return refactoredVariable;
     }
     public String getWebsiteName() {

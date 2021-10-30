@@ -192,7 +192,8 @@ public class SPAUploadHandler {
     private Environment constructEnvironmentObject(Triplet<String, UUID, Path> input, SpashipMapping spaMapping,
                                                    HashMap<String, Object> environmentMapping) {
         var envName = environmentMapping.get("name").toString();
-        var websiteName = spaMapping.getString("websiteName");
+        var websiteName =  Objects.isNull(spaMapping.getWebsiteName())?
+          spaMapping.getString("websiteName"):spaMapping.getWebsiteName();
         var traceID = input.getValue1();
         var updateRestriction = (boolean) environmentMapping.get("updateRestriction");
         var zipFileLocation = input.getValue2();
