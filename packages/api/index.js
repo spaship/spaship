@@ -27,7 +27,7 @@ Configuration:`
 (async () => {
   await db.connect();
   let server = app.listen(config.get("port"), () => {
-    log.info("Server started !");
+    log.info("Server started ! - Docker Test module");
   });
 
   server.timeout = 0; // no timeout
