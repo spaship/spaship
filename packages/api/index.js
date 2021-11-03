@@ -3,7 +3,6 @@ const app = require("./app");
 const db = require("./db");
 const config = require("./config");
 const pkgJSON = require("./package.json");
-const path = require("path");
 
 if (process.env.NODE_ENV === "production") {
   log.info(config.toObject(), `Starting SPAship ${pkgJSON.version} with the following settings`);
@@ -29,7 +28,6 @@ Configuration:`
   await db.connect();
   let server = app.listen(config.get("port"), () => {
     log.info("Server started ! - Docker Test module");
-    log.info(path.resolve(__dirname));
   });
 
   server.timeout = 0; // no timeout
