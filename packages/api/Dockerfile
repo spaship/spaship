@@ -30,10 +30,10 @@ ADD . /app
 WORKDIR /app
 
 RUN find . -name "node_modules" -exec rm -rf '{}' +
+RUN npm install -g npm
 RUN sudo chmod -R 777 /app
 RUN ls && npm install
 RUN sudo chmod -R 777 /app
-RUN npm audit fix -f
 
 EXPOSE 2345
 
