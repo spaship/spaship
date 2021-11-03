@@ -31,7 +31,6 @@ WORKDIR /app
 
 RUN find . -name "node_modules" -exec rm -rf '{}' +
 RUN rm -rf '/app/package-lock.json'
-RUN npm install -g npm
 RUN npm cache clean --force
 RUN sudo chmod -R 777 /app
 RUN ls && npm install
