@@ -2,7 +2,6 @@ const ms = require("ms");
 const axios = require("axios");
 const fsp = require("fs").promises;
 const path = require("path");
-const urljoin = require("url-join");
 const { keyBy, mapValues, find } = require("lodash");
 const config = require("../config");
 const { log } = require("@spaship/common/lib/logging/pino");
@@ -90,7 +89,10 @@ class Autosync {
     // If there are sub-paths defined get them
     if (target.source.sub_paths) {
       for (let subPath of target.source.sub_paths) {
-        url = urljoin(target.source.url, subPath);
+        url = new URL(target.source.url);
+        // add subPath to URL
+        url.pathname += subPath;
+        url = url.href;
         destPath = path.join(target.dest.path, subPath);
         file = path.join(destPath, target.dest.filename);
 
