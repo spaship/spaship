@@ -40,8 +40,6 @@ RUN sudo npm install -g npm-check-updates
 RUN npm cache clean --force
 RUN sudo chmod -R 777 /app
 RUN ls && npm install
-RUN sudo chmod -R 777 /app
-RUN sudo npm install -g npm-check-updates
 
 EXPOSE 2345
 
