@@ -148,12 +148,14 @@ public class Operator implements Operations {
 
 
     private KubernetesList buildK8sResourceList(Environment environment) {
+        var appInstanceIdentifier = ConfigProvider.getConfig().getValue("app.instace", String.class);
         Map<String, String> templateParameters = Map.of(
                 "WEBSITE", environment.getWebsiteName().toLowerCase(),
                 //"TRACE_ID", environment.getTraceID().toString().toLowerCase(),
                 "ENV", environment.getName().toLowerCase(),
                 "WEBSITE_VERSION", environment.getWebsiteVersion().toLowerCase(),
-                "DOMAIN", domain
+                "DOMAIN", domain,
+                "APP_INSTANCE_PREFIX",appInstanceIdentifier
         );
         LOG.debug("building KubernetesList, templateParameters are as follows {}", templateParameters);
         return ((OpenShiftClient) k8sClient)
