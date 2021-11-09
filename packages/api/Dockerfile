@@ -23,16 +23,23 @@ RUN sudo apt-get --force-yes install -y libstdc++6:i386 libgcc1:i386 libcurl4-gn
 RUN node -v
 
 RUN mkdir app
-RUN chown -Rh $user:$user /app
-USER $user
+RUN sudo chown -R $USER:$(id -gn $USER) /app
+USER $USER
+
+RUN sudo mkdir ~/.config
+RUN sudo chown -R $USER:$(id -gn $USER) ~/.config
 
 ADD . /app
 WORKDIR /app
 
 RUN find . -name "node_modules" -exec rm -rf '{}' +
+RUN rm -rf '/app/package-lock.json'
+
+RUN sudo apt-get install nodejs
+RUN sudo npm install -g npm-check-updates
+RUN npm cache clean --force
 RUN sudo chmod -R 777 /app
 RUN ls && npm install
-RUN sudo chmod -R 777 /app
 
 EXPOSE 2345
 
