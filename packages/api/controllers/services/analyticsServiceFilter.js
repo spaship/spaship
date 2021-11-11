@@ -52,7 +52,7 @@ const analyticsOperations = async (request) => {
       );
     }
   } else if (request?.activities) {
-    if (getPropertyName(request?.chart) && getSpaName(request?.activities)) {
+    if (getPropertyName(request?.activities) && getSpaName(request?.activities)) {
       return await getLatestActivities.getLatestActivitiesService({
         propertyName: getPropertyName(request?.activities),
         spaName: getSpaName(request?.activities),
@@ -99,7 +99,7 @@ const analyticsOperations = async (request) => {
         }
       );
     } else if (getPropertyName(request?.chart) && getSpaName(request?.chart)) {
-      return await getCounts.getCountByEnvChartService(
+      return await getCounts.getCountService(
         {
           code: "WEBSITE_CREATE",
           propertyName: getPropertyName(request?.chart),
@@ -117,7 +117,7 @@ const analyticsOperations = async (request) => {
         }
       );
     } else if (getPropertyName(request?.chart)) {
-      return await getCounts.getCountByEnvChartService(
+      return await getCounts.getCountService(
         {
           propertyName: getPropertyName(request?.chart),
         },
