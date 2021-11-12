@@ -134,6 +134,11 @@ module.exports.delete = async (req, res, next) => {
     next(error);
   }
 };
+
+module.exports.validate = async (req, res, next) => {
+  res.status(200).json({ message: "Validation is successful." });
+};
+
 function getName(req) {
   const requestParams = req.sanitize(req?.params?.name) || {};
   return requestParams;
