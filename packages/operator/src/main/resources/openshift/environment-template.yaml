@@ -31,6 +31,9 @@ parameters:
     required: false
   - name: "DOMAIN"
     required: true
+  - name: "APP_INSTANCE_PREFIX"
+    description: "application instance prefix"
+    required: true
 objects:
   - kind: ConfigMap
     apiVersion: v1
@@ -51,7 +54,7 @@ objects:
   - kind: Service
     apiVersion: v1
     metadata:
-      name: svc-${WEBSITE}-${ENV}
+      name: svc-${APP_INSTANCE_PREFIX}-${WEBSITE}-${ENV}
       labels:
         website: ${WEBSITE}
         managedBy: spaship
@@ -169,13 +172,13 @@ objects:
         app.kubernetes.io/managed-by: spaship
     spec:
       rules:
-        - host: ${WEBSITE}.${ENV}.${DOMAIN}
+        - host: ${APP_INSTANCE_PREFIX}.${WEBSITE}.${ENV}.${DOMAIN}
           http:
             paths:
               - path: /
                 pathType: Prefix
                 backend:
                   service:
-                    name: svc-${WEBSITE}-${ENV}
+                    name: svc-${APP_INSTANCE_PREFIX}-${WEBSITE}-${ENV}
                     port:
                       number: 80

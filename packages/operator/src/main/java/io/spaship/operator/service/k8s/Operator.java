@@ -36,6 +36,7 @@ public class Operator implements Operations {
     private final KubernetesClient k8sClient;
     private final EventManager eventManager;
     private final String domain;
+    private final String appInstance;
 
 
     private static final String MANAGED_BY = "managedBy";
@@ -47,10 +48,20 @@ public class Operator implements Operations {
         this.k8sClient = k8sClient;
         this.eventManager = eventManager;
         domain = ConfigProvider.getConfig().getValue("operator.domain.name", String.class);
+        appInstance = setAppInstanceValue();
+    }
+
+    private String setAppInstanceValue() {
+        var propertyValue = ConfigProvider.getConfig().getValue("app.instance", String.class);
+        if(Objects.isNull(propertyValue) || propertyValue.isEmpty() || propertyValue.isBlank()){
+          LOG.warn("property app.instance is not set, going with the default value");
+          propertyValue = "default";
+        }
+        return propertyValue;
     }
 
 
-    public OperationResponse createOrUpdateEnvironment(Environment environment) {
+  public OperationResponse createOrUpdateEnvironment(Environment environment) {
 
         domainValidation(domain);
 
@@ -113,6 +124,8 @@ public class Operator implements Operations {
     String environmentSidecarUrl(Environment environment) {
         String serviceName = "svc"
                 .concat("-")
+                .concat(appInstance)
+                .concat("-")
                 .concat(environment.getWebsiteName().toLowerCase())
                 .concat("-")
                 .concat(environment.getName().toLowerCase());
@@ -153,7 +166,8 @@ public class Operator implements Operations {
                 //"TRACE_ID", environment.getTraceID().toString().toLowerCase(),
                 "ENV", environment.getName().toLowerCase(),
                 "WEBSITE_VERSION", environment.getWebsiteVersion().toLowerCase(),
-                "DOMAIN", domain
+                "DOMAIN", domain,
+                "APP_INSTANCE_PREFIX",appInstance
         );
         LOG.debug("building KubernetesList, templateParameters are as follows {}", templateParameters);
         return ((OpenShiftClient) k8sClient)
