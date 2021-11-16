@@ -130,7 +130,7 @@ nconf.defaults({
     },
   },
   cli: {
-    base_path : process.env.OPERATOR_BASEPATH,
+    base_path : process.env.OPERATOR_BASEPATH || getCliBasePath(),
     dir_path : "uploads",
   },
 });
@@ -151,3 +151,7 @@ module.exports.toObject = () => {
     mapValues((opt) => nconf.get(opt))
   )(validOptions);
 };
+function getCliBasePath() {
+  return 'http://dev.operator.apps.grey.dev.iad2.dc.paas.redhat.com/api/upload';
+}
+

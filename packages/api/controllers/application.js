@@ -61,27 +61,24 @@ module.exports.put = async (req, res, next) => {
 };
 
 module.exports.deploy = async (req, res, next) => {
-
   if (getWebPropertyName(req)) {
-    const uploadBasePath = path.resolve(__dirname, `../${config.get("cli:dir_path")}`);
+    const uploadBasePath = path.resolve(__dirname, `../${config.get("upload_dir")}`);
+    const fileStream = await fs.createReadStream(`${uploadBasePath}/${getFile(req)}`);
     const formData = new FormData();
-    formData.append("webproperty", getWebPropertyName(req));
+    formData.append("spa", fileStream);
+    formData.append("website", getWebPropertyName(req));
     formData.append("description", getDescription(req));
-    formData.append("zipfile", fs.createReadStream(`${uploadBasePath}/${getFile(req)}`));
-
-    const options = {
-      method: "POST",
-      url: config.get("cli:base_path"),
-      data: formData,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    };
+    
     try {
-      const response = await axios(options);
-      res.send(response.config);
+      const response = await axios.post(config.get("cli:base_path"), formData, {
+        headers: formData.getHeaders(),
+      });
+      res.send({ status: "SPA deployement process started into operator.", credentials: response.data });
+      return;
     } catch (err) {
       log.error(err);
+      res.send({ status: JSON.stringify(err) });
+      return;
     }
   }
 
@@ -140,43 +137,43 @@ module.exports.validate = async (req, res, next) => {
 };
 
 function getName(req) {
-  const requestParams = req.sanitize(req?.params?.name) || {};
+  const requestParams = req?.params?.name || {};
   return requestParams;
 }
 
 function getRequestBody(req) {
-  const requestBody = req.sanitize(req?.body) || {};
+  const requestBody = req?.body || {};
   return requestBody;
 }
 
 function getNameRequest(req) {
-  const requestName = req.sanitize(req?.body?.name) || "";
+  const requestName = req?.body?.name || "";
   return requestName;
 }
 
 function getPathRequest(req) {
-  const requestPath = req.sanitize(req?.body?.path) || "";
+  const requestPath = req?.body?.path || "";
   return requestPath;
 }
 
 function getRefRequest(req) {
-  const requestBody = req.sanitize(req?.body?.ref) || {};
+  const requestBody = req?.body?.ref || {};
   return requestBody;
 }
 
 function getPath(req) {
-  const requestFile = req.sanitize(req?.file) || {};
+  const requestFile = req?.file || {};
   return requestFile;
 }
 
 function getFile(req) {
-  return req.sanitize(req?.file?.filename) || [];
+  return req?.file?.filename || [];
 }
 
 function getDescription(req) {
-  return req.sanitize(req?.body?.description) || "";
+  return req?.body?.description || "";
 }
 
 function getWebPropertyName(req) {
-  return req.sanitize(req?.body?.webPropertyName);
+  return req?.body?.webPropertyName;
 }
