@@ -6,7 +6,7 @@ title: Introduction
 ---
 
 ## What is SPAship?
-# ![image alt text](image_0.png)
+# ![image alt text](doc-images/image_0.png)
 SPAship is a platform for **deploying**, **integrating**, and **managing** single-page apps (SPAs).
 SPAship is an open source project. It is optimized to deploy and host SPAs in a very efficient and performant way. 
 
