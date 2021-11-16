@@ -23,6 +23,7 @@ RUN sudo apt-get --force-yes install -y libstdc++6:i386 libgcc1:i386 libcurl4-gn
 RUN node -v
 
 RUN mkdir app
+RUN mkdir app/tmp && mkdir app/tmp/spaship_uploads
 RUN sudo chown -R $USER:$(id -gn $USER) /app
 USER $USER
 
