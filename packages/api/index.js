@@ -4,6 +4,7 @@ const db = require("./db");
 const config = require("./config");
 const pkgJSON = require("./package.json");
 
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 if (process.env.NODE_ENV === "production") {
   log.info(config.toObject(), `Starting SPAship ${pkgJSON.version} with the following settings`);
 } else {
