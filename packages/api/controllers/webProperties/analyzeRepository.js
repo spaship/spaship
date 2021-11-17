@@ -13,7 +13,7 @@ module.exports = async function gitOperations(req, res) {
   const directoryName = `spaship_temp_${uuid()}`;
   const basePath = config.get("directoryBasePath");
   const pathClone = path.resolve(__dirname, `../../${basePath}/${directoryName}`);
-  const resolvePathCreateBranch = `.../../${basePath}/${directoryName}/.git`;
+  const resolvePathCreateBranch = `../../${basePath}/${directoryName}/.git`;
   const analyzePath = `../../${basePath}/${directoryName}`;
   const pathFile = `${basePath}/${directoryName}/`;
   await cloneGitRepository(req.body.repositoryLink, pathClone);
@@ -82,7 +82,7 @@ async function walk(analyzePath, filepaths) {
 
 async function checkoutRemoteBranch(remoteBranch, resolvePathCreateBranch) {
   await delay(100);
-  console.log("checkoutRemoteBranch : ", path.resolve(__dirname, resolvePathCreateBranch))
+  console.log("checkoutRemoteBranch : ", path.resolve(__dirname, resolvePathCreateBranch));
   Git.Repository.open(path.resolve(__dirname, resolvePathCreateBranch))
     .then((repo) => {
       return repo
