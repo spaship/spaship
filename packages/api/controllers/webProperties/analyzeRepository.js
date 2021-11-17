@@ -12,16 +12,16 @@ const delay = (millis) =>
 module.exports = async function gitOperations(req, res) {
   const directoryName = `spaship_temp_${uuid()}`;
   const basePath = config.get("directoryBasePath");
-  const pathClone = path.resolve(__dirname, `./../../../${basePath}/${directoryName}`);
-  const resolvePathCreateBranch = `../../../${basePath}/${directoryName}/.git`;
-  const analyzePath = `../../../${basePath}/${directoryName}`;
+  const pathClone = path.resolve(__dirname, `../../${basePath}/${directoryName}`);
+  const resolvePathCreateBranch = `.../../${basePath}/${directoryName}/.git`;
+  const analyzePath = `../../${basePath}/${directoryName}`;
   const pathFile = `${basePath}/${directoryName}/`;
   await cloneGitRepository(req.body.repositoryLink, pathClone);
   await checkoutRemoteBranch(req.body.branch, resolvePathCreateBranch);
 
   console.log(`Directory name : ${directoryName}`);
   console.log(`Path Clone : ${pathClone}`);
-  console.log(`Eesolve Path Create Branch : ${resolvePathCreateBranch}`);
+  console.log(`Resolve Path Create Branch : ${resolvePathCreateBranch}`);
   console.log(`Path File : ${pathFile}`);
   console.log(`Resolved Path : `, path.resolve(__dirname, `./../../../${basePath}/${directoryName}.zip`));
   console.log(`System Dir Name : ${__dirname}`);
@@ -59,6 +59,7 @@ async function readFileAnalyze(analyzeScript, responseFiles, analyzePath) {
 }
 
 async function walk(analyzePath, filepaths) {
+  console.log(path.resolve(__dirname, analyzePath));
   const files = fs.readdirSync(path.resolve(__dirname, analyzePath));
   for (let filename of files) {
     if (filename == ".git") continue;
@@ -81,6 +82,7 @@ async function walk(analyzePath, filepaths) {
 
 async function checkoutRemoteBranch(remoteBranch, resolvePathCreateBranch) {
   await delay(100);
+  console.log("checkoutRemoteBranch : ", path.resolve(__dirname, resolvePathCreateBranch))
   Git.Repository.open(path.resolve(__dirname, resolvePathCreateBranch))
     .then((repo) => {
       return repo
