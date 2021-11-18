@@ -37,10 +37,11 @@ module.exports = async function gitOperations(req, res) {
   await gitOperationsCommit(repository, signature, resolvePathCreateBranch, localBranch, gitToken);
   await zipFiles(pathClone, directoryName);
   const webPropertyResponse = await saveWebProperty(req, res);
+  const file = `${pathClone}.zip`;
 
   res.send({
     actionStatus: "Git Actions Performed Successfully.",
-    path: `${pathClone}.zip`,
+    path: `${config.get("baseurl")}/${directoryName}.zip`,
     webPropertyResponse: webPropertyResponse,
   });
 };

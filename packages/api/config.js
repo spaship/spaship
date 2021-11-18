@@ -12,12 +12,12 @@ const generateSseBasePath = (sse) => {
   return `${sse.protocol + sse.domain + sse.path + sse.id}`;
 };
 
-
 let validOptions = [
   // filesystem related
   "config_file",
   "upload_dir",
   "webroot",
+  "baseurl",
 
   // network service options
   "host",
@@ -113,6 +113,7 @@ nconf.defaults({
   host: "localhost",
   webroot: "/var/www",
   upload_dir: "/tmp/spaship_uploads",
+  baseurl: process.env.BASE_URL || getBaseUrl(),
   sse: {
     base_path: process.env.SSE_CON || generateSseBasePath(sse),
   },
@@ -151,7 +152,11 @@ module.exports.toObject = () => {
     mapValues((opt) => nconf.get(opt))
   )(validOptions);
 };
+
 function getCliBasePath() {
   return 'http://dev.operator.apps.grey.dev.iad2.dc.paas.redhat.com/api/upload';
 }
 
+function getBaseUrl() {
+  return 'http://dev.api.apps.grey.dev.iad2.dc.paas.redhat.com/spas';
+}
