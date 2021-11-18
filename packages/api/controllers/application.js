@@ -73,7 +73,7 @@ module.exports.deploy = async (req, res, next) => {
       const response = await axios.post(config.get("cli:base_path"), formData, {
         headers: formData.getHeaders(),
       });
-      res.send({ status: "SPA deployement process started into operator.", credentials: response.data });
+      res.send({ status: "SPA deployement process started into operator.", message: response.data });
       return;
     } catch (err) {
       log.error(err);
