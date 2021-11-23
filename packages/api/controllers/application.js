@@ -63,12 +63,19 @@ module.exports.put = async (req, res, next) => {
 module.exports.deploy = async (req, res, next) => {
   if (getWebPropertyName(req)) {
     const uploadBasePath = path.resolve(__dirname, `../${config.get("upload_dir")}`);
-    const fileStream = await fs.createReadStream(`${uploadBasePath}/${getFile(req)}`);
     const formData = new FormData();
-    formData.append("spa", fileStream);
+
+    try {
+      const fileStream = await fs.createReadStream(`${uploadBasePath}/${getFile(req)}`);
+      formData.append("spa", fileStream);
+      formData.append("description", getDescription(req));
+    } catch (err) {
+      log.error(err);
+      res.status(400).send(err);
+      return;
+    }
     formData.append("website", getWebPropertyName(req));
-    formData.append("description", getDescription(req));
-    
+
     try {
       const response = await axios.post(config.get("cli:base_path"), formData, {
         headers: formData.getHeaders(),
@@ -77,7 +84,7 @@ module.exports.deploy = async (req, res, next) => {
       return;
     } catch (err) {
       log.error(err);
-      res.send({ status: JSON.stringify(err) });
+      res.send(err);
       return;
     }
   }
@@ -167,11 +174,13 @@ function getPath(req) {
 }
 
 function getFile(req) {
-  return req?.file?.filename || [];
+  if (req?.file?.filename) return req?.body?.description;
+  throw new Error("File missing in the request body !");
 }
 
 function getDescription(req) {
-  return req?.body?.description || "";
+  if (req?.body?.description) return req?.body?.description;
+  throw new Error("Description missing in the request body !");
 }
 
 function getWebPropertyName(req) {
