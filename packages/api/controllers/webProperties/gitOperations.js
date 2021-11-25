@@ -28,17 +28,22 @@ module.exports = async function gitOperations(req, res) {
   console.log(`Local Branch : ${localBranch}`);
   console.log(`Resolved Path (zip) : ${pathClone}.zip`);
   console.log(`System Dir Name : ${__dirname}`);
-
-  await cloneGitRepository(req.body.repositoryConfigs[0].repositoryLink, pathClone);
-  await checkoutRemoteBranch(req.body.repositoryConfigs[0].branch, resolvePathCreateBranch);
-  await gitCreateBranch(resolvePathCreateBranch, localBranch);
-  repository = await gitCheckout(repository, resolvePathCreateBranch, localBranch);
-  await createSPAshipTemplateRequest(req, pathClone);
-  await gitOperationsCommit(repository, signature, resolvePathCreateBranch, localBranch, gitToken);
-  await zipFiles(pathClone, directoryName);
-  const webPropertyResponse = await saveWebProperty(req, res);
-  const file = `${pathClone}.zip`;
-
+  let webPropertyResponse;
+  try {
+    await cloneGitRepository(req.body.repositoryConfigs[0].repositoryLink, pathClone);
+    await checkoutRemoteBranch(req.body.repositoryConfigs[0].branch, resolvePathCreateBranch);
+    await gitCreateBranch(resolvePathCreateBranch, localBranch);
+    repository = await gitCheckout(repository, resolvePathCreateBranch, localBranch);
+    await createSPAshipTemplateRequest(req, pathClone);
+    await gitOperationsCommit(repository, signature, resolvePathCreateBranch, localBranch, gitToken);
+    await zipFiles(pathClone, directoryName);
+    webPropertyResponse = await saveWebProperty(req, res);
+  //  const file = `${pathClone}.zip`;
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err);
+    return;
+  }
   res.send({
     actionStatus: "Git Actions Performed Successfully.",
     path: `${config.get("baseurl")}/${directoryName}.zip`,
@@ -78,6 +83,7 @@ async function checkoutRemoteBranch(remoteBranch, resolvePathCreateBranch) {
     })
     .catch((err) => {
       console.log(err);
+      throw new Error("Issue with Git Reposity !");
     });
   await delay(100);
 }
@@ -107,7 +113,12 @@ async function createSPAshipTemplateRequest(req, pathFile) {
       excludeFromEnvs: spa.envs,
     };
     console.log(spaShipFile);
+    try{
     fs.writeFileSync(`${pathFile}${spa.spaName.trim()}/.spaship`, JSON.stringify(spaShipFile, null, "\t"));
+    }catch(err){
+      console.log(err);
+      throw new Error("Invalid SPA Path in request body.");
+    }
     console.log(`.spaship added at ${pathFile}${spa.spaName.trim()}`);
   }
 }
@@ -126,6 +137,7 @@ async function gitOperationsCommit(repository, signature, resolvePathCreateBranc
         })
         .catch(function (e) {
           console.log("Error :" + e);
+          throw new Error("Git Repository Open Issue !");
         });
     })
     .then(function (repo) {
@@ -180,6 +192,7 @@ async function gitOperationsCommit(repository, signature, resolvePathCreateBranc
     })
     .catch(function (err) {
       console.log(err.toString());
+      throw new Error(err.toString());
     });
   return repository;
 }
@@ -218,6 +231,7 @@ async function cloneGitRepository(repositoryLink, pathClone) {
   console.log("Cloning Repository " + repositoryLink);
   return Git.Clone(repositoryLink, pathClone).catch(function (err) {
     console.log(err);
+    throw new Error("Invalid Repository URL !");
   });
 }
 
