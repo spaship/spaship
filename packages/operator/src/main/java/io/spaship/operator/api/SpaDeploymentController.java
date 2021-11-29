@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -74,6 +75,9 @@ public class SpaDeploymentController {
         Objects.requireNonNull(fileName, "file name not found");
         Objects.requireNonNull(fileSize, "file size cannot be null");
         Objects.requireNonNull(path, "unable to store the file");
+
+        if(description.isEmpty() || description.isBlank() || description.equals(" "))
+          description = String.valueOf(LocalDateTime.now());
 
         LOG.debug("file received description {} , name is {} , size {}, location {} \n",
                 description, fileName, fileSize, path);
