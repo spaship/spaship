@@ -1,4 +1,0 @@
----
-id: injection
-title: Injection
----

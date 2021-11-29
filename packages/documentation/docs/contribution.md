@@ -1,6 +1,6 @@
 ---
-id: contributing
-title: Contributing
+id: contribution
+title: Contribution
 ---
 
 ## What is Open Source? :trophy:
@@ -67,12 +67,12 @@ Incase you found an issue in SPAship project and capable of resolving it pls fol
 Fork the SPAship monorepo - <https://github.com/spaship/spaship>. At the top right corner, you will see the term "fork". All you need to do is click it and you will have created a copy of the same project in your account. The URL will change to:
 <https://github.com/YourUserName/spaship>
 
-# ![image alt text](fork.png)
+# ![image alt text](doc-images/fork.png)
 
 ### **Step 4 : Clone your fork**
 While still in your repository, click the green Clone or download button and then copy the HTTPS URL:
 
-# ![image alt text](clone.png)
+# ![image alt text](doc-images/clone.png)
 Using Git on your local machine, clone your fork using the URL you just copied: git clone URL_OF_FORK.
 
 For example, I used git clone <https://github.com/shruticode81/spaship>.
@@ -95,7 +95,7 @@ If you don't see an "origin" remote, you can add it using: git remote add origin
 Go to your fork on GitHub, and click the "forked from" link to return to the project repository: 
 <https://github.com/spaship/spaship>
 While in the project repository, click the green Clone or download button and then copy the HTTPS URL:
-# ![image alt text](upstream.png)
+# ![image alt text](doc-images/upstream.png)
 Add the project repository as the "upstream" remote using: git remote add upstream URL_OF_PROJECT.
 
 For example, I used git remote add upstream https://github.com/spaship/spaship.git.
@@ -119,7 +119,7 @@ Use git branch to show your local branches. You should see your new branch as we
 Use a text editor or IDE to make the changes you planned to the files in your local repository. Because you checked out a branch in the previous step, any edits you make will only affect that branch.
 
 ### **Step 11 : Commit your changes**
-After you make a set of changes, use git add -A to stage your changes and git commit -m "DESCRIPTION OF CHANGES" to commit them.
+After you make a set of changes, use ***git add -A*** to stage your changes and ***git commit -m "DESCRIPTION OF CHANGES"*** to commit them.
 
 For example, I used git commit -m "fix typos in set_config docstring" for one of my commits.
 
@@ -132,7 +132,7 @@ For example, I used git push origin doc-fixes.
 
 ### **Step 13 : Begin the pull request**
 Return to your fork on GitHub, and refresh the page. You may see a highlighted area that displays your recently pushed branch:
-# ![image alt text](pullrequest.png)
+# ![image alt text](doc-images/pullrequest.png)
 Click the green Compare & pull request button to begin the pull request.
 
 (Alternatively, if you don't see this highlighted area, you can switch to your branch using the Branch button and then click the New pull request button.)
@@ -140,7 +140,7 @@ Click the green Compare & pull request button to begin the pull request.
 ### **Step 14 : Create the pull request**
 When opening a "pull request", you are making a "request" that the project repository "pull" changes from your fork. You will see that the project repository is listed as the "base repository", and your fork is listed as the "head repository".
 
-# ![image alt text](pullreqcreate.png)
+# ![image alt text](doc-images/createPR.png)
 
 Before submitting the pull request, you first need to describe the changes you made (rather than asking the project maintainers to figure them out on their own). You should write a descriptive title for your pull request, and then include more details in the body of the pull request. If there are any related GitHub issues, make sure to mention those by number. The body can include Markdown formatting, and you can click the Preview tab to see how it will look.
 
