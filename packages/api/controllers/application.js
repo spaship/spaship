@@ -174,7 +174,7 @@ function getPath(req) {
 }
 
 function getFile(req) {
-  if (req?.file?.filename) return req?.body?.description;
+  if (req?.file?.filename) return req?.file?.filename;
   throw new Error("File missing in the request body !");
 }
 
