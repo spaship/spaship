@@ -1,6 +1,7 @@
 ---
 id: test-process
-title: QA Process for SPAship
+title: QA Process
+sidebar_label: Quality Assurance
 ---
 
 # Quality Assurance Process for SPAship
@@ -15,7 +16,8 @@ To have a Quality assurance process in place for testing the SPAship Manager and
 ## Need
 
 ---
-To have an automation testing framework setup for testing the SPAship Manager and SPAship Operator functionalities
+* To have an automation testing framework setup for testing the SPAship Manager and SPAship Operator functionalities. 
+* To have a process documentation of manual testing 
 
 ## Tools & Technologies Used
 
@@ -112,13 +114,19 @@ Deactivate virtualenv:
 ## Bots in place
 A google chatbot has been configured that triggers notification whenever any push is made to the QA repository and upon change in the status of Pipeline configured
 
+## Manual Testing Process
+* Developer is supposed to move the issues to on QA in Jira
+* Weekly once QA-dev sync up call to let the QA know what all tickets are planned for testing
+* After the QA has completed testing, he/she would be moving it to the next stage as per workflow and giving a comment
+* QA should be mentioning issues/bugs if found in testing in comments
+
 ## Application URLs to be Used by QA
 * [SPAship Operator](http://qa.operator.apps.grey.dev.iad2.dc.paas.redhat.com)
 * [SPAship Backend](http://qa.api.apps.grey.dev.iad2.dc.paas.redhat.com)
 * [SPAship UI](http://qa.manager.apps.grey.dev.iad2.dc.paas.redhat.com/)
 
 
+
 ## Supporting Documents and URLs
 * [TestPlan](https://docs.google.com/document/d/1FUED1-6cH6gZLJehQfQx74_6KpUcLA5u6tpjOl8xG5Q/edit "Test Plan Document") 
-* [TestCases](https://docs.google.c/om/spreadsheets/d/1RUkeRaOO0PsKfUS0FoKcuRnE4Vv1O-CptZ5SurdUzzk/edit#gid=0 "Test Cases" ) 
-* [TestingGitLabRepo](https://gitlab.cee.redhat.com/spaship/spaship-3.0-qa "Gitlab Repo Link")
+* [TestCases](https://docs.google.com/spreadsheets/d/1RUkeRaOO0PsKfUS0FoKcuRnE4Vv1O-CptZ5SurdUzzk/edit?hl=en&forcehl=1#gid=0 "Test Cases" ) 

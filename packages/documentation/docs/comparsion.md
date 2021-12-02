@@ -1,6 +1,7 @@
 ---
 id: comparsion
 title: Spaship vs Other CD tools
+sidebar_label: Comparsion
 ---
 
 **Comparsion between some of the most popular SPA deployment platforms in the market VS. SPAship : :point_down: ** 

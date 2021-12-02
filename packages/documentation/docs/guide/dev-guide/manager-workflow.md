@@ -2,6 +2,7 @@
 id: manager-workflow
 title: SPAship Manager Workflow
 ---
+
 ## SPAship Manager - A New Way to managing your SPAs 🙌
 
 ### **What is SPAship Manager?**

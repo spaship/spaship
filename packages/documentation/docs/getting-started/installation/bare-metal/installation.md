@@ -1,6 +1,7 @@
 ---
 id: installation
 title: Installation & getting acquainted with the CLI
+sidebar_label: CLI
 
 ---
 One of the most handy tools of the SPAship toolchain is the [**SPAship CLI**](https://github.com/spaship/spaship/tree/master/packages/cli). 
@@ -25,14 +26,14 @@ The  -g  flag installs the CLI globally (accessible from any directory via the c
 
 Once you have the SPAship CLI installed you would be one step closer to SPA Deployment. Let have a look at CLI commands to help you get started :
 - To see an overview of the SPAship CLI run: **$ spaship**
-# ![image alt text](baremetal-images/image_9.png)
+# ![image alt text](bare-metal-images/image_9.png)
 
 - To check which version of the SPAship CLI is currently running: **$ spaship (-v|--version|version)**
-# ![image alt text](baremetal-images/image_10.png)
+# ![image alt text](bare-metal-images/image_10.png)
 
 - To see detailed information about any command: **$ spaship --help [COMMAND]**
-# ![image alt text](baremetal-images/image_11.png)
-# ![image alt text](baremetal-images/image_12.png)
+# ![image alt text](bare-metal-images/image_11.png)
+# ![image alt text](bare-metal-images/image_12.png)
 
 
 ## SPA initialization :
@@ -41,23 +42,23 @@ Getting Started:
 For this demo, let’s consider the example of an open source NodeJS project consisting of a demo single page application which we would be initializing and deploying via SPAship. 
 We would be using a generic SPA repository for this example with the following directory structure. If you are interested in learning how we scaffolded it you can check the document linked [here](https://docs.google.com/document/d/1MsHp8runNJbSNiame8Za5NccEVG9M8jGnh7MydPqR-0/edit).
 
-# ![image alt text](baremetal-images/image_13.png)
+# ![image alt text](bare-metal-images/image_13.png)
 
 
 If we want to deploy the above SPA at a particular path (/demo) within an existing portal.We have to init the spaship.Now this path for SPA doesn't exists.
 ### spaship init:
 The first step to getting started with SPAship is the **spaship init** command. Executing it without any arguments invokes an interactive prompt which will ask you a few questions and generate a spaship.yaml config file. This command must be executed within the SPA folder using cli . The answers to these questions can also be passed in as CLI arguments while executing the command. Here’s a screenshot of the command’s help description:
 
-# ![image alt text](baremetal-images/image_14.png)
+# ![image alt text](bare-metal-images/image_14.png)
 
 There are 3 ways to use the SPAship CLI to initialize a new SPA with the **spaship init** command, these are:
 
 - Using the interactive mode:
-# ![image alt text](baremetal-images/image_15.png)
+# ![image alt text](bare-metal-images/image_15.png)
 - Using long parameters: 
-# ![image alt text](baremetal-images/image_16.png)
+# ![image alt text](bare-metal-images/image_16.png)
 - Using short parameters:
-# ![image alt text](baremetal-images/image_17.png)
+# ![image alt text](bare-metal-images/image_17.png)
 
 **Note** -  The --overwrite flag used in the last two examples is used only when your project already has an existing spaship.yaml file, which we want to overwrite.
 Run ***cat spaship.yaml*** command to view the content . spaship.yaml file contains the info which developer entered about the SPA in spaship init command.
@@ -66,7 +67,7 @@ Run ***cat spaship.yaml*** command to view the content . spaship.yaml file conta
 Before using the deploy command the first thing that you need is a package containing your SPA. We can use **npm pack** command.
 npm pack is built into npm , all it does is it pacakges up your spa and make it ready for deployment.
 
-# ![image alt text](baremetal-images/image_18.png)
+# ![image alt text](bare-metal-images/image_18.png)
 
 This command will return an archive file with extension  .tar.gz/.tgz 
 
@@ -82,7 +83,7 @@ Internally, this command translates to:
 
 **curl `<hostname>`/api/v1/applications/deploy -H 'X-API-Key: `<API-Key>`' -F name=Demo SPA -F path=demo -F upload=@demo-spa-1.0.0.tgz -F ref=v1.0**
 
-# ![image alt text](baremetal-images/image_19.png)
+# ![image alt text](bare-metal-images/image_19.png)
 
 ## Setting up spashiprc.yml
 spashiprc is a yaml dot file in your **$HOME** directory that is used by SPAship to provide an alternative to typing out **--apikey `<KEY>`** and **--env `<URL>`** arguments every time you run spaship commands. You can use a spashiprc file to define an environment name (like **qa,dev,prod**) along with its URL and API key, after which you can run ***spaship deploy --env qa***. The URL and API key will be read from your spashiprc file.
