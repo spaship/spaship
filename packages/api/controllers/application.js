@@ -65,7 +65,6 @@ module.exports.deploy = async (req, res, next) => {
     if (getWebPropertyName(req)) {
       const uploadBasePath = path.resolve(__dirname, `../${config.get("upload_dir")}`);
       const formData = new FormData();
-
       try {
         const fileStream = await fs.createReadStream(`${uploadBasePath}/${getFile(req)}`);
         formData.append("spa", fileStream);
@@ -144,7 +143,7 @@ module.exports.delete = async (req, res, next) => {
 };
 
 module.exports.validate = async (req, res, next) => {
-  res.status(200).json({ message: "Validation is successful." });
+  res.status(200).json({ message: "Request is authenticated" });
 };
 
 function getName(req) {
