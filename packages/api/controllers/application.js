@@ -66,7 +66,7 @@ module.exports.deploy = async (req, res, next) => {
   if (getWebPropertyName(req)) {
     const uploadBasePath = path.resolve(__dirname, `../${config.get("upload_dir")}`);
     const formData = new FormData();
-
+    log.info(req);
     try {
       const fileStream = await fs.createReadStream(`${uploadBasePath}/${getFile(req)}`);
       formData.append("spa", fileStream);
@@ -93,8 +93,12 @@ module.exports.deploy = async (req, res, next) => {
         updatedAt: currentTime,
       });
       const cliActivitiesResponse = await cliActivitiesRequest.save();
-      res.send({ status: "SPA deployement process started into operator.", message: cliActivitiesResponse });
-      return;   
+      res.send({
+        status: "SPA deployement process started into operator.",
+        message: response.data,
+        cliData: cliActivitiesResponse,
+      });
+      return;
     } catch (err) {
       log.error(err);
       res.send(err);
