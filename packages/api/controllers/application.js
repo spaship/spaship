@@ -6,7 +6,9 @@ const Application = require("../models/application");
 const DeployError = require("../utils/errors/DeployError");
 const NotFoundError = require("../utils/errors/NotFoundError");
 const NotImplementedError = require("../utils/errors/NotImplementedError");
+const cliActivities = require("../models/cliActivities");
 const { getUserUUID } = require("../utils/requestUtil");
+const { uuid } = require("uuidv4");
 
 const axios = require("axios");
 const FormData = require("form-data");
@@ -64,7 +66,7 @@ module.exports.deploy = async (req, res, next) => {
   if (getWebPropertyName(req)) {
     const uploadBasePath = path.resolve(__dirname, `../${config.get("upload_dir")}`);
     const formData = new FormData();
-
+    log.info(req);
     try {
       const fileStream = await fs.createReadStream(`${uploadBasePath}/${getFile(req)}`);
       formData.append("spa", fileStream);
@@ -80,7 +82,22 @@ module.exports.deploy = async (req, res, next) => {
       const response = await axios.post(config.get("cli:base_path"), formData, {
         headers: formData.getHeaders(),
       });
-      res.send({ status: "SPA deployement process started into operator.", message: response.data });
+      const currentTime = new Date();
+      const cliActivitiesRequest = new cliActivities({
+        id: uuid(),
+        fileName: req?.file?.filename,
+        webProperty: getWebPropertyName(req),
+        description: getDescription(req),
+        isActive: true,
+        createdAt: currentTime,
+        updatedAt: currentTime,
+      });
+      const cliActivitiesResponse = await cliActivitiesRequest.save();
+      res.send({
+        status: "SPA deployement process started into operator.",
+        message: response.data,
+        cliData: cliActivitiesResponse,
+      });
       return;
     } catch (err) {
       log.error(err);

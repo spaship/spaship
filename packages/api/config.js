@@ -103,7 +103,7 @@ if (configFile) {
 
 const sse = {
   protocol: "http://",
-  domain: "localhost:5000",
+  domain: "localhost:4000",
   path: "/sse/",
   id: "80",
 };
@@ -115,7 +115,7 @@ nconf.defaults({
   upload_dir: "/tmp/spaship_uploads",
   baseurl: process.env.BASE_URL || getBaseUrl(),
   sse: {
-    base_path: process.env.SSE_CON || generateSseBasePath(sse),
+    base_path: process.env.SSE_CON || getSsePath(),
   },
   directoryBasePath: "root",
   db: {
@@ -155,6 +155,9 @@ module.exports.toObject = () => {
 
 function getCliBasePath() {
   return 'http://dev.operator.apps.grey.dev.iad2.dc.paas.redhat.com/api/upload';
+}
+function getSsePath() {
+  return 'http://dev.operator.apps.grey.dev.iad2.dc.paas.redhat.com/api/event';
 }
 
 function getBaseUrl() {
