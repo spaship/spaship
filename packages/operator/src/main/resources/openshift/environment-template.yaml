@@ -170,6 +170,7 @@ objects:
       name: ing-${WEBSITE}-${ENV}
       labels:
         app.kubernetes.io/managed-by: spaship
+        shard: internal
     spec:
       rules:
         - host: ${APP_INSTANCE_PREFIX}.${WEBSITE}.${ENV}.${DOMAIN}
