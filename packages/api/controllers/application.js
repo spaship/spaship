@@ -196,7 +196,7 @@ function getFile(req) {
 }
 
 function getDescription(req) {
-  if (req?.body?.description) return req?.body?.description;
+  if (req?.body?.description && req?.body?.description.length>0) return req?.body?.description;
   throw new Error("Description missing in the request body !");
 }
 
