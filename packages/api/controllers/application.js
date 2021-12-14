@@ -80,6 +80,7 @@ module.exports.deploy = async (req, res, next) => {
 
     try {
       const response = await axios.post(config.get("cli:base_path"), formData, {
+        maxBodyLength: Infinity,
         headers: formData.getHeaders(),
       });
       const currentTime = new Date();
@@ -196,7 +197,7 @@ function getFile(req) {
 }
 
 function getDescription(req) {
-  if (req?.body?.description && req?.body?.description.length>0) return req?.body?.description;
+  if (req?.body?.description && req?.body?.description.trim().length>0) return req?.body?.description;
   throw new Error("Description missing in the request body !");
 }
 

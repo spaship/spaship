@@ -115,7 +115,7 @@ nconf.defaults({
   upload_dir: "/tmp/spaship_uploads",
   baseurl: process.env.BASE_URL || getBaseUrl(),
   sse: {
-    base_path: process.env.SSE_CON || generateSseBasePath(sse),
+    base_path: process.env.SSE_CON || getSsePath(),
   },
   directoryBasePath: "root",
   db: {
@@ -154,12 +154,12 @@ module.exports.toObject = () => {
 };
 
 function getCliBasePath() {
-  return 'http://dev.api.apps.int.spoke.preprod.us-west-2.aws.paas.redhat.com/api/upload';
+  return 'http://dev.operator.apps.int.spoke.preprod.us-west-2.aws.paas.redhat.com/api/upload';
 }
 function getSsePath() {
-  return 'http://dev.api.apps.int.spoke.preprod.us-west-2.aws.paas.redhat.com/api/event';
+  return 'http://dev.operator.apps.int.spoke.preprod.us-west-2.aws.paas.redhat.com/api/event';
 }
 
 function getBaseUrl() {
-  return 'http://dev.api.apps.int.spoke.preprod.us-west-2.aws.paas.redhat.com/spas';
+  return 'http://dev.operator.apps.int.spoke.preprod.us-west-2.aws.paas.redhat.com/spas';
 }
