@@ -16,7 +16,7 @@ To have a Quality assurance process in place for testing the SPAship Manager and
 ## Need
 
 ---
-* To have an automation testing framework setup for testing the SPAship Manager and SPAship Operator functionalities. 
+* To have an automation testing framework setup for testing the SPAship Manager and SPAship Operator functionalities
 * To have a process documentation of manual testing 
 
 ## Tools & Technologies Used
