@@ -113,9 +113,9 @@ nconf.defaults({
   host: "localhost",
   webroot: "/var/www",
   upload_dir: "/tmp/spaship_uploads",
-  baseurl: process.env.BASE_URL || getBaseUrl(),
+  baseurl: `${process.env.OPERATOR_BASEPATH}/api/upload`  || getBaseUrl(),
   sse: {
-    base_path: process.env.SSE_CON || getSsePath(),
+    base_path: `${process.env.OPERATOR_BASEPATH}/api/event` || getSsePath(),
   },
   directoryBasePath: "root",
   db: {
@@ -131,7 +131,7 @@ nconf.defaults({
     },
   },
   cli: {
-    base_path : process.env.OPERATOR_BASEPATH || getCliBasePath(),
+    base_path : `${process.env.OPERATOR_BASEPATH}/api/upload` || getCliBasePath(),
     dir_path : "uploads",
   },
 });
