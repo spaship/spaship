@@ -38,7 +38,7 @@ module.exports = async function gitOperations(req, res) {
     await gitOperationsCommit(repository, signature, resolvePathCreateBranch, localBranch, gitToken);
     await zipFiles(pathClone, directoryName);
     webPropertyResponse = await saveWebProperty(req, res);
-  //  const file = `${pathClone}.zip`;
+    //  const file = `${pathClone}.zip`;
   } catch (err) {
     console.log(err);
     res.status(400).send(err);
@@ -95,7 +95,7 @@ async function createSPAshipTemplateRequest(req, pathFile) {
 
   for (let spa of req.body.repositoryConfigs[0].spas) {
     const spaTemplate = {
-      name: spa.spaName,
+      name: spa.webPropertyName,
       mapping: spa.contextPath,
       excludeFromEnvs: [],
     };
@@ -104,22 +104,28 @@ async function createSPAshipTemplateRequest(req, pathFile) {
     spashipTemplate.push(spaTemplate);
 
     const spaShipFile = {
-      webPropertyVersion: "v1",
-      webPropertyName: req.body.webPropertyName,
-      environments: spa.envs,
-      branch: req.body.repositoryConfigs[0].branch,
+      websiteVersion: "v2",
+      websiteName: req.body.webPropertyName.trim(),
+      environments: getEnviournments(spa),
       name: spa.spaName.trim(),
-      mapping: spa.contextPath,
-      excludeFromEnvs: spa.envs,
+      mapping: spa.contextPath.trim(),
     };
     console.log(spaShipFile);
-    try{
-    fs.writeFileSync(`${pathFile}${spa.spaName.trim()}/.spaship`, JSON.stringify(spaShipFile, null, "\t"));
-    }catch(err){
+    try {
+      fs.writeFileSync(`${pathFile+spa.spaName.trim()}/.spaship`, JSON.stringify(spaShipFile, null, "\t"));
+    } catch (err) {
       console.log(err);
       throw new Error("Invalid SPA Path in request body.");
     }
-    console.log(`.spaship added at ${pathFile}${spa.spaName.trim()}`);
+    console.log(`.spaship added at ${pathFile}${spa.webPropertyName}`);
+  }
+
+  function getEnviournments(spa) {
+    const spashipTemplate = [];
+    for (let env of spa.envs) {
+      spashipTemplate.push({ name: env, updateRestriction: true, exclude: false });
+    }
+    return spashipTemplate;
   }
 }
 
