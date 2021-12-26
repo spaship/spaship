@@ -64,7 +64,7 @@ function updateWebPropertyRequest(req) {
 function getSpas(req, reqBody) {
     return req.map((each) => ({
         repositoryLink: each?.repositoryLink,
-        spaName: each?.spaName,
+        spaName: each?.webPropertyName,
         contextPath: each?.contextPath,
         envs: each?.envs,
         ownerEmail : reqBody.body?.ownerEmail,
