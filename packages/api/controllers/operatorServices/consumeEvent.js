@@ -15,7 +15,7 @@ source.onmessage = function (eventRequest) {
     id: uuid(),
     eventId: response?.uuid,
     propertyName: response?.websiteName,
-    spaName: "SPASHIP",
+    spaName: response?.spaName || 'NA',
     version: 1,
     envs: response.environmentName,
     branch: "main",
@@ -26,6 +26,7 @@ source.onmessage = function (eventRequest) {
     updatedAt: currentTime,
     traceId: response?.uuid,
   });
+  console.log(eventBody);
   Promise.all([createEventRequest(eventBody), createEventTimeTraceRequest(response)]);
 };
 
