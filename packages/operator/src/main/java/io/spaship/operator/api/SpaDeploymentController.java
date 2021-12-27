@@ -40,7 +40,7 @@ public class SpaDeploymentController {
         //[0]description[1]unique-trace-id
         var response = sanity(formData);
         //[0]file-path[1]unique-trace-id[2]website-name
-        var fileUploadParams = new Triplet<>(formData.getfilePath(), response.getValue1(), formData.website);
+        var fileUploadParams = new Triplet<>(formData.getfilePath(), response, formData.website);
         spaUploadHandlerService.handleFileUpload(fileUploadParams);
         return response.toString();
     }
