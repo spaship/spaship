@@ -12,6 +12,7 @@ import io.spaship.operator.type.OperationResponse;
 import io.spaship.operator.type.SpashipMapping;
 import io.spaship.operator.util.ReUsableItems;
 import org.apache.commons.io.IOUtils;
+import org.javatuples.Pair;
 import org.javatuples.Triplet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,7 @@ public class SPAUploadHandler {
 
     //[0]file-store-path[1]ops-tracing-id[2]website-name
     //TODO : simplify map blocks
-    public void handleFileUpload(Triplet<Path, UUID, String> input) {
+    public void handleFileUpload(Triplet<Path, Pair<String, UUID>, String> input) {
         LOG.debug("     deployment process initiated with details {}", input);
 
         Uni.createFrom()
@@ -108,7 +109,7 @@ public class SPAUploadHandler {
 
     }
 
-    private Triplet<String, UUID, Path> spaMappingIntoMemory(Triplet<Path, UUID, String> input) {
+    private Triplet<String, UUID, Path> spaMappingIntoMemory(Triplet<Path, Pair<String, UUID>, String> input) {
         Path absoluteFilePath = input.getValue0();
         LOG.debug("absolute absoluteFilePath is {}", absoluteFilePath);
 
@@ -127,8 +128,9 @@ public class SPAUploadHandler {
               EventStructure.builder()
                 .websiteName(input.getValue2())
                 .environmentName("NA")
-                .uuid(input.getValue1())
+                .uuid(input.getValue1().getValue1())
                 .state("failed to process zip file due to ".concat(e.getMessage()))
+                .spaName(input.getValue1().getValue0())
                 .build()
             );
             throw new ZipFileProcessException(e);
@@ -137,10 +139,11 @@ public class SPAUploadHandler {
                 EventStructure.builder()
                         .websiteName(input.getValue2())
                         .environmentName("NA")
-                        .uuid(input.getValue1())
+                        .uuid(input.getValue1().getValue1())
                         .state("mapping file loaded into memory")
+                        .spaName(input.getValue1().getValue0())
                         .build());
-        var output = new Triplet<>(spaMappingReference, input.getValue1(), input.getValue0());
+        var output = new Triplet<>(spaMappingReference, input.getValue1().getValue1(), input.getValue0());
         LOG.debug("output of spaMappingIntoMemory  {} ", output);
         return output;
     }
