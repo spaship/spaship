@@ -5,12 +5,14 @@ public class EventStructure {
     private String websiteName;
     private String environmentName;
     private String state;
+    private String spaName;
 
-    EventStructure(String uuid, String websiteName, String environmentName, String state) {
+    EventStructure(String uuid, String websiteName, String environmentName, String state,String spaName) {
         this.uuid = uuid;
         this.websiteName = websiteName;
         this.environmentName = environmentName;
         this.state = state;
+        this.spaName = spaName;
     }
 
     public static EventStructureBuilder builder() {
@@ -49,21 +51,31 @@ public class EventStructure {
         this.state = state;
     }
 
-    @Override
-    public String toString() {
-        return "{"
-                + "\"UUID\":\"" + uuid + "\""
-                + ", \"websiteName\":\"" + websiteName + "\""
-                + ", \"environmentName\":\"" + environmentName + "\""
-                + ", \"state\":\"" + state + "\""
-                + "}";
-    }
+  public String getSpaName() {
+    return spaName;
+  }
 
-    public static class EventStructureBuilder {
+  public void setSpaName(String spaName) {
+    this.spaName = spaName;
+  }
+
+  @Override
+  public String toString() {
+    return "{"
+      + "\"uuid\":\"" + uuid + "\""
+      + ", \"websiteName\":\"" + websiteName + "\""
+      + ", \"environmentName\":\"" + environmentName + "\""
+      + ", \"state\":\"" + state + "\""
+      + ", \"spaName\":\"" + spaName + "\""
+      + "}";
+  }
+
+  public static class EventStructureBuilder {
         private String uuid;
         private String websiteName;
         private String environmentName;
         private String state;
+        private String spaName;
 
         EventStructureBuilder() {
         }
@@ -88,18 +100,24 @@ public class EventStructure {
             return this;
         }
 
+        public EventStructureBuilder spaName(String spaName) {
+          this.spaName = spaName;
+          return this;
+        }
+
         public EventStructure build() {
-            return new EventStructure(uuid, websiteName, environmentName, state);
+            return new EventStructure(uuid, websiteName, environmentName, state,spaName);
         }
 
         @Override
         public String toString() {
-            return "{"
-                    + "\"UUID\":\"" + uuid + "\""
-                    + ", \"websiteName\":\"" + websiteName + "\""
-                    + ", \"environmentName\":\"" + environmentName + "\""
-                    + ", \"state\":\"" + state + "\""
-                    + "}";
+          return "{"
+            + "\"uuid\":\"" + uuid + "\""
+            + ", \"websiteName\":\"" + websiteName + "\""
+            + ", \"environmentName\":\"" + environmentName + "\""
+            + ", \"state\":\"" + state + "\""
+            + ", \"spaName\":\"" + spaName + "\""
+            + "}";
         }
-    }
+  }
 }
