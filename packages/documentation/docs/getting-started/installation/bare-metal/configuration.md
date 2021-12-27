@@ -1,6 +1,7 @@
 ---
 id: configuration
 title: Setup SPAship Engine
+sidebar_label: Configuration
 ---
 
 ## Configuring SPAship for local development :

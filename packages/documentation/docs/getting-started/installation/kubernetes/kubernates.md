@@ -1,4 +1,4 @@
 ---
-id: kubernates
+id: kubernetes
 title: SPAship in minikube
 ---
