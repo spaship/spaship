@@ -113,7 +113,7 @@ nconf.defaults({
   host: "localhost",
   webroot: "/var/www",
   upload_dir: "/tmp/spaship_uploads",
-  baseurl: `${process.env.OPERATOR_BASEPATH}/api/upload`  || getBaseUrl(),
+  baseurl: getBaseUrl(),
   sse: {
     base_path: `${process.env.OPERATOR_BASEPATH}/api/event` || getSsePath(),
   },
@@ -131,7 +131,7 @@ nconf.defaults({
     },
   },
   cli: {
-    base_path : `${process.env.OPERATOR_BASEPATH}/api/upload` || getCliBasePath(),
+    base_path : `${process.env.OPERATOR_BASEPATH}/api/upload`  || getCliBasePath(),
     dir_path : "uploads",
   },
 });
@@ -161,5 +161,5 @@ function getSsePath() {
 }
 
 function getBaseUrl() {
-  return 'http://dev.operator.apps.int.spoke.preprod.us-west-2.aws.paas.redhat.com/spas';
+  return 'http://dev.api.apps.int.spoke.preprod.us-west-2.aws.paas.redhat.com/spas';
 }
