@@ -105,14 +105,14 @@ async function createSPAshipTemplateRequest(req, pathFile) {
 
     const spaShipFile = {
       websiteVersion: "v2",
-      websiteName: req.body.webPropertyName.trim(),
+      websiteName: req.body.webPropertyName.toString().trim(),
       environments: getEnviournments(spa),
-      name: spa.spaName.trim(),
-      mapping: spa.contextPath.trim(),
+      name: spa.spaName.toString().trim(),
+      mapping: spa.contextPath.toString().trim(),
     };
     console.log(spaShipFile);
     try {
-      fs.writeFileSync(`${pathFile+spa.spaName.trim()}/.spaship`, JSON.stringify(spaShipFile, null, "\t"));
+      fs.writeFileSync(`${pathFile+spa.spaName.toString().trim()}/.spaship`, JSON.stringify(spaShipFile, null, "\t"));
     } catch (err) {
       console.log(err);
       throw new Error("Invalid SPA Path in request body.");
@@ -123,7 +123,7 @@ async function createSPAshipTemplateRequest(req, pathFile) {
   function getEnviournments(spa) {
     const spashipTemplate = [];
     for (let env of spa.envs) {
-      spashipTemplate.push({ name: env, updateRestriction: true, exclude: false });
+      spashipTemplate.push({ name: env.toString().trim(), updateRestriction: true, exclude: false });
     }
     return spashipTemplate;
   }

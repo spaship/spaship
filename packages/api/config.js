@@ -113,7 +113,7 @@ nconf.defaults({
   host: "localhost",
   webroot: "/var/www",
   upload_dir: "/tmp/spaship_uploads",
-  baseurl: getBaseUrl(),
+  baseurl: `${process.env.ORCHESTRATOR_BASEPATH}/spas` || getBaseUrl(),
   sse: {
     base_path: `${process.env.OPERATOR_BASEPATH}/api/event` || getSsePath(),
   },
