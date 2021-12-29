@@ -26,7 +26,8 @@ module.exports = async function produceEvent(req, res) {
           id: uuid(),
           webProperty: parsedEventRequest.websiteName,
           environment: parsedEventRequest.environmentName,
-          message: parsedEventRequest?.spaName || "NA",
+          message: parsedEventRequest.state,
+          spaName: parsedEventRequest.spaName || "NA",
         };
         res.write(`data: ${JSON.stringify(response)}\n\n`);
         res.flush();
