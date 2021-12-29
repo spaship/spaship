@@ -26,11 +26,11 @@ module.exports = async function produceEvent(req, res) {
           id: uuid(),
           webProperty: parsedEventRequest.websiteName,
           environment: parsedEventRequest.environmentName,
-          message: parsedEventRequest.state,
+          message: parsedEventRequest?.spaName || "NA",
         };
         res.write(`data: ${JSON.stringify(response)}\n\n`);
+        res.flush();
       };
-      res.flush();
     } catch (err) {
       log.error(err);
     }
