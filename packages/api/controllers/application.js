@@ -9,6 +9,7 @@ const NotImplementedError = require("../utils/errors/NotImplementedError");
 const cliActivities = require("../models/cliActivities");
 const { getUserUUID } = require("../utils/requestUtil");
 const { uuid } = require("uuidv4");
+const jwt = require("jsonwebtoken");
 
 const axios = require("axios");
 const FormData = require("form-data");
@@ -158,7 +159,12 @@ module.exports.delete = async (req, res, next) => {
 };
 
 module.exports.validate = async (req, res, next) => {
-  res.status(200).json({ message: "Validation is successful." });
+  const expiration = config.get("token:expiration");
+  const secret = config.get("token:secret");
+  const token = jwt.sign({ createdAt: new Date(), expiresIn: expiration }, secret, {
+    expiresIn: expiration,
+  });
+  res.status(200).json({ message: "Validation is successful.", token: token });
 };
 
 function getName(req) {
@@ -197,7 +203,7 @@ function getFile(req) {
 }
 
 function getDescription(req) {
-  if (req?.body?.description && req?.body?.description.trim().length>0) return req?.body?.description;
+  if (req?.body?.description && req?.body?.description.trim().length > 0) return req?.body?.description;
   throw new Error("Description missing in the request body !");
 }
 
