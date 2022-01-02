@@ -113,9 +113,13 @@ nconf.defaults({
   host: "localhost",
   webroot: "/var/www",
   upload_dir: "/tmp/spaship_uploads",
-  baseurl: `${process.env.ORCHESTRATOR_BASEPATH}/spas` || getBaseUrl(),
+  token: {
+    secret : process.env.TOKEN_SECRET || 'spaship',
+    expiration : process.env.TOKEN_EXPIRATION || '10h'
+  },
+  baseurl: `${process.env.ORCHESTRATOR_BASEPATH}/spas`,
   sse: {
-    base_path: `${process.env.OPERATOR_BASEPATH}/api/event` || getSsePath(),
+    base_path: `${process.env.OPERATOR_BASEPATH}/api/event`,
   },
   directoryBasePath: "root",
   db: {
@@ -131,7 +135,7 @@ nconf.defaults({
     },
   },
   cli: {
-    base_path : `${process.env.OPERATOR_BASEPATH}/api/upload`  || getCliBasePath(),
+    base_path : `${process.env.OPERATOR_BASEPATH}/api/upload`,
     dir_path : "uploads",
   },
 });
@@ -152,14 +156,3 @@ module.exports.toObject = () => {
     mapValues((opt) => nconf.get(opt))
   )(validOptions);
 };
-
-function getCliBasePath() {
-  return 'http://dev.operator.apps.int.spoke.preprod.us-west-2.aws.paas.redhat.com/api/upload';
-}
-function getSsePath() {
-  return 'http://dev.operator.apps.int.spoke.preprod.us-west-2.aws.paas.redhat.com/api/event';
-}
-
-function getBaseUrl() {
-  return 'http://dev.api.apps.int.spoke.preprod.us-west-2.aws.paas.redhat.com/spas';
-}
