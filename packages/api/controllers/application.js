@@ -96,7 +96,7 @@ module.exports.deploy = async (req, res, next) => {
       });
       const cliActivitiesResponse = await cliActivitiesRequest.save();
       res.send({
-        status: "SPA deployement process started into operator.",
+        status: "SPA deployment process started into operator.",
         message: response.data,
         cliData: cliActivitiesResponse,
       });
@@ -198,15 +198,21 @@ function getPath(req) {
 }
 
 function getFile(req) {
-  if (req?.file?.filename) return req?.file?.filename;
+  if (req?.file?.filename) {
+    const processedFile = req.file.originalname.split(".");
+    if (processedFile[processedFile.length - 1] != "zip") {
+      throw new Error("Uploaded file format is invalid.");
+    }
+    return req?.file?.filename;
+  }
   throw new Error("File missing in the request body !");
 }
 
 function getDescription(req) {
-  if (req?.body?.description && req?.body?.description.trim().length > 0) return req?.body?.description;
+  if (req?.body?.description && req?.body?.description.trim().length > 0) return req?.body?.description.trim();
   throw new Error("Description missing in the request body !");
 }
 
 function getWebPropertyName(req) {
-  return req?.body?.webPropertyName;
+  return req?.body?.webPropertyName.trim();
 }
