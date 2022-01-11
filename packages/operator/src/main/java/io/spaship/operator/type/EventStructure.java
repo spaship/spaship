@@ -1,11 +1,14 @@
 package io.spaship.operator.type;
 
+import java.time.LocalDateTime;
+
 public class EventStructure {
     private String uuid;
     private String websiteName;
     private String environmentName;
     private String state;
     private String spaName;
+    private final LocalDateTime dateTime;
 
     EventStructure(String uuid, String websiteName, String environmentName, String state,String spaName) {
         this.uuid = uuid;
@@ -13,6 +16,7 @@ public class EventStructure {
         this.environmentName = environmentName;
         this.state = state;
         this.spaName = spaName;
+        this.dateTime = LocalDateTime.now();
     }
 
     public static EventStructureBuilder builder() {
@@ -58,6 +62,11 @@ public class EventStructure {
   public void setSpaName(String spaName) {
     this.spaName = spaName;
   }
+
+  public LocalDateTime getDateTime() {
+    return dateTime;
+  }
+
 
   @Override
   public String toString() {
