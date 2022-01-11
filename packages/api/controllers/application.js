@@ -201,7 +201,7 @@ function getFile(req) {
   if (req?.file?.filename) {
     const processedFile = req.file.originalname.split(".");
     if (processedFile[processedFile.length - 1] != "zip") {
-      throw new Error("Uploaded file format is invalid.");
+      throw new Error("Uploaded file format is invalid (Expected format : zip).");
     }
     return req?.file?.filename;
   }
