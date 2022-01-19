@@ -40,7 +40,7 @@
     "read-pkg-up": "^7.0.1"
   },
   "devDependencies": {
-    "@oclif/dev-cli": "1.26.0",
+    "@oclif/dev-cli": "1.26.10",
     "@oclif/test": "1.2.9",
     "chai": "4.3.4",
     "eslint-config-oclif": "4.0.0",
