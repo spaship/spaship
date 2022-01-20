@@ -122,6 +122,6 @@ async function cloneGitRepository(repositoryLink, pathClone) {
   console.log("Cloning at path : ", pathClone);
   return Git.Clone(repositoryLink, pathClone).catch(function (err) {
     console.log(err);
-    throw new Error("Invalid Repository URL !");
+    throw new Error("Invalid Repository URL!");
   });
 }

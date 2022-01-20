@@ -4,7 +4,13 @@ const getCountByEnvWeeklyChart = require("../webPropertyServices/getCountByEnvWe
 const getCounts = require("../webPropertyServices/getCountDeployments");
 
 const analyticsServiceFilter = async (req, res) => {
-  res.status(200).json(await analyticsOperations(req.body));
+  try {
+    const response = await analyticsOperations(req.body);
+    if (response.length === 0) return res.status(200).json({ message: "No data avaliable." });
+    res.status(200).json(response);
+  } catch (err) {
+    next(err);
+  }
 };
 
 const analyticsOperations = async (request) => {
@@ -64,7 +70,7 @@ const analyticsOperations = async (request) => {
     }
   } else if (request?.chart) {
     if (getMonth(request) == true && getPropertyName(request?.chart) && getSpaName(request?.chart)) {
-      return await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
+      let response = await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
         {
           code: "WEBSITE_CREATE",
           propertyName: getPropertyName(request?.chart),
@@ -81,8 +87,10 @@ const analyticsOperations = async (request) => {
           count: "$count",
         }
       );
+      response = response.filter((data) => data.length > 0);
+      return response;
     } else if (request?.chart.month == true && getPropertyName(request?.chart)) {
-      return await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
+      let response = await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
         {
           code: "WEBSITE_CREATE",
           propertyName: getPropertyName(request?.chart),
@@ -98,6 +106,8 @@ const analyticsOperations = async (request) => {
           count: "$count",
         }
       );
+      response = response.filter((data) => data.length > 0);
+      return response;
     } else if (getPropertyName(request?.chart) && getSpaName(request?.chart)) {
       return await getCounts.getCountService(
         {
