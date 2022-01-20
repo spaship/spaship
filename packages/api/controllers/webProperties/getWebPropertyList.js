@@ -2,7 +2,9 @@ const webProperty = require("../../models/webProperty");
 
 const getWebPropertyList = async (req, res, next) => {
   try {
-    res.send(await getWebPropertyListService());
+    const response = await getWebPropertyListService();
+    if (response.length === 0) return res.status(200).json({ message: "No data avaliable." });
+    res.status(200).json(response);
   } catch (e) {
     next(err);
   }
