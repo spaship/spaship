@@ -5,6 +5,7 @@ import io.fabric8.kubernetes.api.model.KubernetesList;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import io.fabric8.kubernetes.api.model.networking.v1.Ingress;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.internal.readiness.Readiness;
@@ -167,7 +168,8 @@ public class Operator implements Operations {
                 "ENV", environment.getName().toLowerCase(),
                 "WEBSITE_VERSION", environment.getWebsiteVersion().toLowerCase(),
                 "DOMAIN", domain,
-                "APP_INSTANCE_PREFIX",appInstance
+                "APP_INSTANCE_PREFIX",appInstance,
+                "STORAGE_CLASS",ConfigProvider.getConfig().getValue("storage.class", String.class)
         );
         LOG.debug("building KubernetesList, templateParameters are as follows {}", templateParameters);
         return ((OpenShiftClient) k8sClient)
@@ -231,6 +233,14 @@ public class Operator implements Operations {
                 eb.websiteName(item.getMetadata().getLabels().get(WEBSITE))
                         .environmentName(item.getMetadata().getLabels().get(ENVIRONMENT))
                         .state("deployment created");
+            }
+            if(item instanceof StatefulSet){
+              LOG.debug("creating new Deployment in K8s, tracing = {}", tracing);
+              k8sClient.apps().statefulSets().inNamespace(nameSpace).createOrReplace((StatefulSet)item);
+              eb.websiteName(item.getMetadata().getLabels().get(WEBSITE))
+                .environmentName(item.getMetadata().getLabels().get(ENVIRONMENT))
+                .state("StatefulSet created");
+
             }
             if (item instanceof Route) {
                 LOG.debug("creating new Route in K8s, tracing = {}", tracing);
