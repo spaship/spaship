@@ -74,7 +74,7 @@ module.exports.deploy = async (req, res, next) => {
       formData.append("description", getDescription(req));
     } catch (err) {
       log.error(err);
-      res.status(400).send(err);
+      next(err);
       return;
     }
     formData.append("website", getWebPropertyName(req));
@@ -103,7 +103,7 @@ module.exports.deploy = async (req, res, next) => {
       return;
     } catch (err) {
       log.error(err);
-      res.send(err);
+      next(err);
       return;
     }
   }

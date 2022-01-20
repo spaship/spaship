@@ -4,10 +4,11 @@ const APIKeyService = require("../services/apiKeyService");
 const config = require("../config");
 const keyUtil = require("../utils/keyUtil");
 const jwtAuth = require("jsonwebtoken");
+const Unauthorized = require("../utils/errors/Unauthorized");
 
 module.exports = () => {
   return async (req, res, next) => {
-    
+    //return next();
     const apiKey = APIKeyService.getAPIKeyFromRequest(req);
 
     // If an API key was provided, try to validate it.  Except on the /apiKeys endpoint.  API keys cannot be used to
@@ -31,11 +32,15 @@ module.exports = () => {
 
     const extractToken = (req) => {
       const bearerHeader = req.headers["authorization"];
-      if (typeof bearerHeader !== "undifined") {
-        const bearer = bearerHeader.split(" ");
-        const bearerToken = bearer[1];
-        req.token = bearerToken;
-        return bearerToken;
+      try {
+        if (typeof bearerHeader !== "undifined") {
+          const bearer = bearerHeader.split(" ");
+          const bearerToken = bearer[1];
+          req.token = bearerToken;
+          return bearerToken;
+        }
+      } catch (err) {
+        next(new Unauthorized(`Authorization header missing.`));
       }
     };
 
