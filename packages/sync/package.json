@@ -25,7 +25,7 @@
   "license": "MIT",
   "dependencies": {
     "@spaship/common": "^0.14.0",
-    "axios": "^0.22.0",
+    "axios": "^0.25.0",
     "ms": "^2.1.2",
     "nconf": "^0.11.0"
   },
