@@ -1,20 +1,20 @@
 const webProperty = require("../../models/webProperty");
 
-const getWebPropertyList = async (req, res) => {
+const getWebPropertyList = async (req, res, next) => {
   try {
     res.send(await getWebPropertyListService());
   } catch (e) {
-    return { Error: e };
+    next(err);
   }
 };
 
-const getWebPropertyListService = async (req, res) => {
+const getWebPropertyListService = async (req, res, next) => {
   try {
     const response = await fetchResponse();
     bindResponse(response);
     return response;
   } catch (e) {
-    return { Error: e };
+    next(err);
   }
 };
 

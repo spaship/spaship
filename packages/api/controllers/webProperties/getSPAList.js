@@ -1,10 +1,10 @@
 const webProperty = require("../../models/webProperty");
 
-const getSPAList = async (req, res) => {
+const getSPAList = async (req, res, next) => {
   try {
     res.status(200).json(await getSPAListService(req.params.webPropertyName));
-  } catch (e) {
-    return { Error: e };
+  } catch (err) {
+    next(err)
   }
 };
 

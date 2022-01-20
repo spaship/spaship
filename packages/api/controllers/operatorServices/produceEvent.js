@@ -10,7 +10,7 @@ const SSE_RESPONSE_HEADER = {
   "X-Accel-Buffering": "no",
 };
 
-module.exports = async function produceEvent(req, res) {
+module.exports = async function produceEvent(req, res, next) {
   let events = {};
   const source = new EventSource(config.get("sse:base_path"));
   log.info(`connection established for activity stream : "${req.params.id}"`);
@@ -34,6 +34,7 @@ module.exports = async function produceEvent(req, res) {
       };
     } catch (err) {
       log.error(err);
+      next(err);
     }
   }, 500);
 

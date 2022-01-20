@@ -11,7 +11,7 @@ const delay = (millis) =>
     setTimeout((_) => resolve(), millis);
   });
 
-module.exports = async function gitOperations(req, res) {
+module.exports = async function gitOperations(req, res, next) {
   let repository;
   const directoryName = `spaship_temp_${uuid()}`;
   const basePath = config.get("directoryBasePath");
@@ -41,7 +41,7 @@ module.exports = async function gitOperations(req, res) {
     //  const file = `${pathClone}.zip`;
   } catch (err) {
     console.log(err);
-    res.status(400).send(err);
+    next(err);
     return;
   }
   res.send({
@@ -76,6 +76,7 @@ async function checkoutRemoteBranch(remoteBranch, resolvePathCreateBranch) {
         })
         .catch((err) => {
           console.log(err);
+          throw new Error("Issue in Git Operation !");
         });
     })
     .then(() => {
@@ -239,8 +240,4 @@ async function cloneGitRepository(repositoryLink, pathClone) {
     console.log(err);
     throw new Error("Invalid Repository URL !");
   });
-}
-
-function error() {
-  res.send(JSON.stringify({ repo: "Error" }));
 }
