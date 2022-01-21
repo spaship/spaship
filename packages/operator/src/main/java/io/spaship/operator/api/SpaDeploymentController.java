@@ -5,6 +5,8 @@ import io.spaship.operator.business.SPAUploadHandler;
 import io.spaship.operator.exception.ZipFileProcessException;
 import io.spaship.operator.repo.SharedRepository;
 import io.spaship.operator.type.FormData;
+import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
 import org.jboss.resteasy.reactive.MultipartForm;
@@ -34,7 +36,7 @@ public class SpaDeploymentController {
     }
 
     @POST
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public String uploadSPA(@MultipartForm FormData formData) {
         //[0]description[1]unique-trace-id
@@ -42,7 +44,10 @@ public class SpaDeploymentController {
         //[0]file-path[1]unique-trace-id[2]website-name
         var fileUploadParams = new Triplet<>(formData.getfilePath(), response, formData.website);
         spaUploadHandlerService.handleFileUpload(fileUploadParams);
-        return response.toString();
+        JsonObject object = new JsonObject();
+        object.put("description",response.getValue0());
+        object.put("traceId",response.getValue1());
+        return object.toString();
     }
 
     @GET
