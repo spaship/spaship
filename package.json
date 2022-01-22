@@ -36,6 +36,6 @@
     }
   },
   "dependencies": {
-    "dotenv-expand": "5.1.0"
+    "dotenv-expand": "6.0.1"
   }
 }
