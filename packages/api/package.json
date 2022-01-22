@@ -46,7 +46,7 @@
     "express-validator": "^6.12.2",
     "fs": "0.0.1-security",
     "glob": "^7.1.7",
-    "helmet": "^4.0.0",
+    "helmet": "^5.0.0",
     "jest": "^27.1.1",
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.15",
