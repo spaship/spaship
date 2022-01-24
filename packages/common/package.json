@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "ajv": "^8.6.3",
-    "express-pino-logger": "^6.0.0",
+    "express-pino-logger": "^7.0.0",
     "js-yaml": "^4.0.0",
     "lodash": "^4.17.15",
     "nconf": "^0.11.0",
