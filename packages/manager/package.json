@@ -23,11 +23,11 @@
     "@react-keycloak/web": "3.4.0",
     "@types/jest": "27.4.0",
     "@types/lodash": "4.14.178",
-    "@types/node": "14.18.9",
+    "@types/node": "16.11.21",
     "@types/react": "17.0.38",
     "@types/react-dom": "17.0.11",
     "@types/react-router-dom": "5.3.3",
-    "@types/styled-components": "5.1.20",
+    "@types/styled-components": "5.1.21",
     "@types/uuid": "8.3.4",
     "@typescript-eslint/eslint-plugin": "4.33.0",
     "@typescript-eslint/parser": "4.33.0",
@@ -38,7 +38,7 @@
     "react-scripts": "4.0.3",
     "react-toastify": "8.1.0",
     "styled-components": "5.3.3",
-    "typescript": "4.4.3"
+    "typescript": "4.5.5"
   },
   "eslintConfig": {
     "extends": "react-app",
