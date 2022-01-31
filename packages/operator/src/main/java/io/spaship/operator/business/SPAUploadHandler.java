@@ -123,7 +123,7 @@ public class SPAUploadHandler {
             try (inputStream) {
                 spaMappingReference = IOUtils.toString(inputStream, Charset.defaultCharset());
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             eventManager.queue(
               EventStructure.builder()
                 .websiteName(input.getValue2())
