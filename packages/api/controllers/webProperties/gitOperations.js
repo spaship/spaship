@@ -11,51 +11,54 @@ const delay = (millis) =>
     setTimeout((_) => resolve(), millis);
   });
 
-module.exports = async function gitOperations(req, res) {
+module.exports = async function gitOperations(req, res, next) {
   let repository;
   const directoryName = `spaship_temp_${uuid()}`;
   const basePath = config.get("directoryBasePath");
-  const pathClone = path.resolve(__dirname, `./../../${basePath}/${directoryName}`);
-  
-  const resolvePathCreateBranch = `../../${basePath}/${directoryName}/.git`;
-  const pathFile = `${basePath}/${directoryName}/`;
+  const delimiter = "../..";
+  const pathClone = path.resolve(__dirname, `${delimiter}/${basePath}/${directoryName}`).trim();
+  const resolvePathCreateBranch = path.resolve(__dirname, `${delimiter}/${basePath}/${directoryName}/.git`).trim();
   const localBranch = `${req.body.webPropertyName}_spaship_${uuid()}`;
   const gitToken = req.body.repositoryConfigs[0].gitToken;
   let signature = createSignature(localBranch);
 
   console.log(`Directory name : ${directoryName}`);
   console.log(`Path Clone : ${pathClone}`);
-  console.log(`Eesolve Path Create Branch : ${resolvePathCreateBranch}`);
-  console.log(`Path File : ${pathFile}`);
+  console.log(`Resolve Path Create Branch : ${resolvePathCreateBranch}`);
   console.log(`Local Branch : ${localBranch}`);
-  console.log(`Resolved Path : `, path.resolve(__dirname, `./../../../${basePath}/${directoryName}.zip`));
+  console.log(`Resolved Path (zip) : ${pathClone}.zip`);
   console.log(`System Dir Name : ${__dirname}`);
-
-  await cloneGitRepository(req.body.repositoryConfigs[0].repositoryLink, pathClone);
-  await checkoutRemoteBranch(req.body.repositoryConfigs[0].branch, resolvePathCreateBranch);
-  await gitCreateBranch(resolvePathCreateBranch, localBranch);
-  repository = await gitCheckout(repository, resolvePathCreateBranch, localBranch);
-  await createSPAshipTemplateRequest(req, pathFile);
-  await gitOperationsCommit(repository, signature, resolvePathCreateBranch, localBranch, gitToken);
-  await zipFiles(directoryName);
-  const webPropertyResponse = await saveWebProperty(req, res);
+  let webPropertyResponse;
+  try {
+    await cloneGitRepository(req.body.repositoryConfigs[0].repositoryLink, pathClone);
+    await checkoutRemoteBranch(req.body.repositoryConfigs[0].branch, resolvePathCreateBranch);
+    await gitCreateBranch(resolvePathCreateBranch, localBranch);
+    repository = await gitCheckout(repository, resolvePathCreateBranch, localBranch);
+    await createSPAshipTemplateRequest(req, pathClone);
+    await gitOperationsCommit(repository, signature, resolvePathCreateBranch, localBranch, gitToken);
+    await zipFiles(pathClone, directoryName);
+    webPropertyResponse = await saveWebProperty(req, res);
+    //  const file = `${pathClone}.zip`;
+  } catch (err) {
+    console.log(err);
+    next(err);
+    return;
+  }
   res.send({
-    actionStatus: "Git Actions Performed Successfully",
-    path: path.resolve(__dirname, `./../../../${basePath}/${directoryName}.zip`),
+    actionStatus: "Git Actions Performed Successfully.",
+    path: `${config.get("baseurl")}/${directoryName}.zip`,
     webPropertyResponse: webPropertyResponse,
   });
 };
 
-async function zipFiles(directoryName) {
-  await zip(
-    path.resolve(__dirname, `./../../../${basePath}/${directoryName}`),
-    path.resolve(__dirname, `./../../../${basePath}/${directoryName}.zip`)
-  );
+async function zipFiles(pathClone, directoryName) {
+  console.log(pathClone);
+  await zip(pathClone, `${pathClone}.zip`);
 }
 
 async function checkoutRemoteBranch(remoteBranch, resolvePathCreateBranch) {
   await delay(100);
-  Git.Repository.open(path.resolve(__dirname, resolvePathCreateBranch))
+  Git.Repository.open(resolvePathCreateBranch)
     .then((repo) => {
       return repo
         .getHeadCommit()
@@ -73,6 +76,7 @@ async function checkoutRemoteBranch(remoteBranch, resolvePathCreateBranch) {
         })
         .catch((err) => {
           console.log(err);
+          throw new Error("Issue in Git Operation !");
         });
     })
     .then(() => {
@@ -80,6 +84,7 @@ async function checkoutRemoteBranch(remoteBranch, resolvePathCreateBranch) {
     })
     .catch((err) => {
       console.log(err);
+      throw new Error("Issue with Git Reposity !");
     });
   await delay(100);
 }
@@ -91,7 +96,7 @@ async function createSPAshipTemplateRequest(req, pathFile) {
 
   for (let spa of req.body.repositoryConfigs[0].spas) {
     const spaTemplate = {
-      name: spa.spaName,
+      name: spa.webPropertyName,
       mapping: spa.contextPath,
       excludeFromEnvs: [],
     };
@@ -100,17 +105,28 @@ async function createSPAshipTemplateRequest(req, pathFile) {
     spashipTemplate.push(spaTemplate);
 
     const spaShipFile = {
-      webPropertyVersion: "v1",
-      webPropertyName: req.body.webPropertyName,
-      environments: spa.envs,
-      branch: req.body.repositoryConfigs[0].branch,
-      name: spa.spaName,
-      mapping: spa.contextPath,
-      excludeFromEnvs: spa.envs,
+      websiteVersion: "v2",
+      websiteName: req.body.webPropertyName.toString().trim(),
+      environments: getEnviournments(spa),
+      name: spa.spaName.toString().trim(),
+      mapping: spa.contextPath.toString().trim(),
     };
     console.log(spaShipFile);
-    fs.writeFileSync(`${pathFile}${spa.spaName}/.spaship`, JSON.stringify(spaShipFile, null, "\t"));
-    console.log(`./spaship added at ${pathFile}${spa.spaName}`);
+    try {
+      fs.writeFileSync(`${pathFile+spa.spaName.toString().trim()}/.spaship`, JSON.stringify(spaShipFile, null, "\t"));
+    } catch (err) {
+      console.log(err);
+      throw new Error("Invalid SPA Path in request body.");
+    }
+    console.log(`.spaship added at ${pathFile}${spa.webPropertyName}`);
+  }
+
+  function getEnviournments(spa) {
+    const spashipTemplate = [];
+    for (let env of spa.envs) {
+      spashipTemplate.push({ name: env.toString().trim(), updateRestriction: true, exclude: false });
+    }
+    return spashipTemplate;
   }
 }
 
@@ -118,7 +134,7 @@ async function gitOperationsCommit(repository, signature, resolvePathCreateBranc
   let index;
   let oid;
 
-  Git.Repository.open(path.resolve(__dirname, resolvePathCreateBranch))
+  Git.Repository.open(resolvePathCreateBranch)
     .then(function (repo) {
       repository = repo;
       repo
@@ -128,6 +144,7 @@ async function gitOperationsCommit(repository, signature, resolvePathCreateBranc
         })
         .catch(function (e) {
           console.log("Error :" + e);
+          throw new Error("Git Repository Open Issue !");
         });
     })
     .then(function (repo) {
@@ -142,7 +159,7 @@ async function gitOperationsCommit(repository, signature, resolvePathCreateBranc
       index = indexResult;
     })
     .then(function () {
-      console.log("4: Add Index By Path " + path.resolve(__dirname, `../../../${basePath}/tempWebpackDevelop/`));
+      console.log("4: Add Index By Path " + resolvePathCreateBranch);
       return index.addAll();
     })
     .then(function () {
@@ -154,16 +171,16 @@ async function gitOperationsCommit(repository, signature, resolvePathCreateBranc
       return index.writeTree();
     })
     .then(function (oidResult) {
-      console.log("7 : Oid Result " + oidResult);
+      console.log("7: Oid Result " + oidResult);
       oid = oidResult;
       return Git.Reference.nameToId(repository, "HEAD");
     })
     .then(function (head) {
-      console.log("8 : Head Commit Hash " + head);
+      console.log("8: Head Commit Hash " + head);
       return repository.getCommit(head);
     })
     .then(function (parent) {
-      console.log("9 : Parent Commit Hash " + parent);
+      console.log("9: Parent Commit Hash " + parent);
       return repository.createCommit("HEAD", signature, signature, "Commit with Date : " + new Date(), oid, [parent]);
     })
     .then(function () {
@@ -182,12 +199,13 @@ async function gitOperationsCommit(repository, signature, resolvePathCreateBranc
     })
     .catch(function (err) {
       console.log(err.toString());
+      throw new Error(err.toString());
     });
   return repository;
 }
 
 async function gitCheckout(repository, resolvePathCreateBranch, localBranch) {
-  Git.Repository.open(path.resolve(__dirname, resolvePathCreateBranch)).then(function (repo) {
+  Git.Repository.open(resolvePathCreateBranch).then(function (repo) {
     repository = repo;
     repo
       .getBranch("refs/heads/" + localBranch)
@@ -197,14 +215,14 @@ async function gitCheckout(repository, resolvePathCreateBranch, localBranch) {
         return repo.checkoutRef(reference);
       })
       .catch(function (e) {
-        console.log("Error 1:" + e);
+        console.log("Error :" + e);
       });
   });
   return repository;
 }
 
 async function gitCreateBranch(resolvePathCreateBranch, localBranch) {
-  Git.Repository.open(path.resolve(__dirname, resolvePathCreateBranch)).then(function (repo) {
+  Git.Repository.open(resolvePathCreateBranch).then(function (repo) {
     return repo.getHeadCommit().then(function (commit) {
       return repo.createBranch(localBranch, commit, 0, repo.defaultSignature(), "Created new-branch on HEAD");
     });
@@ -220,9 +238,6 @@ async function cloneGitRepository(repositoryLink, pathClone) {
   console.log("Cloning Repository " + repositoryLink);
   return Git.Clone(repositoryLink, pathClone).catch(function (err) {
     console.log(err);
+    throw new Error("Invalid Repository URL!");
   });
-}
-
-function error() {
-  res.send(JSON.stringify({ repo: "Error" }));
 }

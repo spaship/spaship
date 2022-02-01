@@ -1,10 +1,12 @@
 const webProperty = require("../../models/webProperty");
 
-const getSPAList = async (req, res) => {
+const getSPAList = async (req, res, next) => {
   try {
-    res.status(200).json(await getSPAListService(req.params.webPropertyName));
-  } catch (e) {
-    return { Error: e };
+    const response = await getSPAListService(req.params.webPropertyName);
+    if (response.length === 0) return res.status(200).json({ message: "No data avaliable." });
+    res.status(200).json(response);
+  } catch (err) {
+    next(err);
   }
 };
 

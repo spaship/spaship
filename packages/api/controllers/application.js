@@ -6,7 +6,10 @@ const Application = require("../models/application");
 const DeployError = require("../utils/errors/DeployError");
 const NotFoundError = require("../utils/errors/NotFoundError");
 const NotImplementedError = require("../utils/errors/NotImplementedError");
+const cliActivities = require("../models/cliActivities");
 const { getUserUUID } = require("../utils/requestUtil");
+const { uuid } = require("uuidv4");
+const jwt = require("jsonwebtoken");
 
 const axios = require("axios");
 const FormData = require("form-data");

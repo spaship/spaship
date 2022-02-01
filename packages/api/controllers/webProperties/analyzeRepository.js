@@ -9,47 +9,50 @@ const delay = (millis) =>
     setTimeout((_) => resolve(), millis);
   });
 
-module.exports = async function gitOperations(req, res) {
-  const directoryName = `spaship_temp_${uuid()}`;
-  const basePath = config.get("directoryBasePath");
-  const pathClone = path.resolve(__dirname, `./../../../${basePath}/${directoryName}`);
-  const resolvePathCreateBranch = `../../../${basePath}/${directoryName}/.git`;
-  const analyzePath = `../../../${basePath}/${directoryName}`;
-  const pathFile = `${basePath}/${directoryName}/`;
-  await cloneGitRepository(req.body.repositoryLink, pathClone);
-  await checkoutRemoteBranch(req.body.branch, resolvePathCreateBranch);
+module.exports = async function gitOperations(req, res, next) {
+  try {
+    const directoryName = `spaship_temp_${uuid()}`;
+    const basePath = config.get("directoryBasePath");
+    const delimiter = "../..";
+    const pathClone = path.resolve(__dirname, `${delimiter}/${basePath}/${directoryName}`).trim();
+    const resolvePathCreateBranch = path.resolve(__dirname, `${delimiter}/${basePath}/${directoryName}/.git`).trim();
+    await cloneGitRepository(req.body.repositoryLink, pathClone);
+    await checkoutRemoteBranch(req.body.branch, resolvePathCreateBranch);
 
-  console.log(`Directory name : ${directoryName}`);
-  console.log(`Path Clone : ${pathClone}`);
-  console.log(`Eesolve Path Create Branch : ${resolvePathCreateBranch}`);
-  console.log(`Path File : ${pathFile}`);
-  console.log(`Resolved Path : `, path.resolve(__dirname, `./../../../${basePath}/${directoryName}.zip`));
-  console.log(`System Dir Name : ${__dirname}`);
+    console.log(`Directory name : ${directoryName}`);
+    console.log(`Path Clone : ${pathClone}`);
+    console.log(`Resolve Path Create Branch : ${resolvePathCreateBranch}`);
+    console.log(`System Dir Name : ${__dirname}`);
 
-  let filepaths = [];
-  let responseFiles = [];
-  filepaths = await walk(analyzePath, filepaths);
-  responseFiles = await getAnalyzedFiles(filepaths, responseFiles, analyzePath);
-  res.send({ analyzedFiles: responseFiles });
+    let filepaths = [];
+    let responseFiles = [];
+    filepaths = await walk(pathClone, filepaths);
+    responseFiles = await getAnalyzedFiles(filepaths, responseFiles, pathClone);
+    res.send({ analyzedFiles: responseFiles });
+  } catch (err) {
+    next(err);
+    return;
+  }
 };
 
-async function getAnalyzedFiles(filepaths, responseFiles, analyzePath) {
+async function getAnalyzedFiles(filepaths, responseFiles, pathClone) {
   for (let analyzeScript of filepaths) {
-    await readFileAnalyze(analyzeScript, responseFiles, analyzePath);
+    await readFileAnalyze(analyzeScript, responseFiles, pathClone);
   }
   return responseFiles;
 }
 
-async function readFileAnalyze(analyzeScript, responseFiles, analyzePath) {
+async function readFileAnalyze(analyzeScript, responseFiles, pathClone) {
   return new Promise((resolve, reject) => {
     fs.readFile(analyzeScript, "utf8", function (err, data) {
       if (err) {
         reject(err);
+        throw new Error("Issue in git repository!");
       }
       if (data.includes("react") || data.includes("vue") || data.includes("angular")) {
-        console.log(path.resolve(__dirname, analyzePath));
+        console.log(pathClone);
         console.log(analyzeScript);
-        analyzeScript = analyzeScript.replace(path.resolve(__dirname, analyzePath), "");
+        analyzeScript = analyzeScript.replace(pathClone, "");
         analyzeScript = analyzeScript.replace("/package.json", "");
         responseFiles.push(analyzeScript);
       }
@@ -58,17 +61,18 @@ async function readFileAnalyze(analyzeScript, responseFiles, analyzePath) {
   });
 }
 
-async function walk(analyzePath, filepaths) {
-  const files = fs.readdirSync(path.resolve(__dirname, analyzePath));
+async function walk(pathClone, filepaths) {
+  console.log(pathClone);
+  const files = fs.readdirSync(pathClone);
   for (let filename of files) {
     if (filename == ".git") continue;
-    const filepath = path.join(path.resolve(__dirname, analyzePath), filename);
+    const filepath = path.join(pathClone, filename);
     if (fs.statSync(filepath).isDirectory()) {
       try {
         walk(filepath, filepaths);
       } catch (err) {
-        console.log("e");
         console.log(err);
+        throw new Error("SPA Path is not valid !");
       }
     } else if (path.extname(filename) === ".json") {
       if (filepath.includes("package.json")) {
@@ -81,7 +85,8 @@ async function walk(analyzePath, filepaths) {
 
 async function checkoutRemoteBranch(remoteBranch, resolvePathCreateBranch) {
   await delay(100);
-  Git.Repository.open(path.resolve(__dirname, resolvePathCreateBranch))
+  console.log("checkoutRemoteBranch : ", resolvePathCreateBranch);
+  Git.Repository.open(resolvePathCreateBranch)
     .then((repo) => {
       return repo
         .getHeadCommit()
@@ -99,6 +104,7 @@ async function checkoutRemoteBranch(remoteBranch, resolvePathCreateBranch) {
         })
         .catch((err) => {
           console.log(err);
+          throw new Error("Git Operations Issue!");
         });
     })
     .then(() => {
@@ -106,12 +112,9 @@ async function checkoutRemoteBranch(remoteBranch, resolvePathCreateBranch) {
     })
     .catch((err) => {
       console.log(err);
+      throw new Error("Git Operations Issue!");
     });
   await delay(100);
-}
-
-function createSignature(localBranch) {
-  return Git.Signature.now("spaship-deployment", localBranch);
 }
 
 async function cloneGitRepository(repositoryLink, pathClone) {
@@ -119,5 +122,6 @@ async function cloneGitRepository(repositoryLink, pathClone) {
   console.log("Cloning at path : ", pathClone);
   return Git.Clone(repositoryLink, pathClone).catch(function (err) {
     console.log(err);
+    throw new Error("Invalid Repository URL!");
   });
 }

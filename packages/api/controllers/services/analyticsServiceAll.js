@@ -2,7 +2,13 @@ const getCounts = require("../webPropertyServices/getCountDeployments");
 const getCountByEnvWeeklyChart = require("../webPropertyServices/getCountByEnvWeeklyChart");
 
 const analyticsServiceAll = async (req, res) => {
-  res.status(200).json(await propertyFilteration(req.body));
+  try {
+    const response = await propertyFilteration(req.body);
+    if (response.length === 0) return res.status(200).json({ message: "No data avaliable." });
+    res.status(200).json(response);
+  } catch (err) {
+    next(err);
+  }
 };
 
 const propertyFilteration = async (request) => {
