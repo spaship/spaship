@@ -81,3 +81,4 @@ affinity: { }
 app:
   domain: apps.crc.testing
   ec: spa-ops-event-channel
+  instance: dev

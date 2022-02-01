@@ -67,9 +67,9 @@
     "zip-a-folder": "^1.1.0"
   },
   "devDependencies": {
-    "axios": "0.22.0",
+    "axios": "0.25.0",
     "mockingoose": "2.15.2",
-    "nodemon": "2.0.12",
+    "nodemon": "2.0.15",
     "tar": "6.1.11"
   },
   "publishConfig": {

@@ -64,48 +64,35 @@ module.exports.put = async (req, res, next) => {
 };
 
 module.exports.deploy = async (req, res, next) => {
-  if (getWebPropertyName(req)) {
-    const uploadBasePath = path.resolve(__dirname, `../${config.get("upload_dir")}`);
-    const formData = new FormData();
-    log.info(req);
-    try {
-      const fileStream = await fs.createReadStream(`${uploadBasePath}/${getFile(req)}`);
-      formData.append("spa", fileStream);
-      formData.append("description", getDescription(req));
-    } catch (err) {
-      log.error(err);
-      next(err);
-      return;
-    }
-    formData.append("website", getWebPropertyName(req));
+  try {
+    if (getWebPropertyName(req)) {
+      const uploadBasePath = path.resolve(__dirname, `../${config.get("upload_dir")}`);
+      const formData = new FormData();
+      try {
+        const fileStream = await fs.createReadStream(`${uploadBasePath}/${getFile(req)}`);
+        formData.append("spa", fileStream);
+        formData.append("description", getDescription(req));
+      } catch (err) {
+        log.error(err);
+        res.status(400).send(err);
+        return;
+      }
+      formData.append("website", getWebPropertyName(req));
 
-    try {
-      const response = await axios.post(config.get("cli:base_path"), formData, {
-        maxBodyLength: Infinity,
-        headers: formData.getHeaders(),
-      });
-      const currentTime = new Date();
-      const cliActivitiesRequest = new cliActivities({
-        id: uuid(),
-        fileName: req?.file?.filename,
-        webProperty: getWebPropertyName(req),
-        description: getDescription(req),
-        isActive: true,
-        createdAt: currentTime,
-        updatedAt: currentTime,
-      });
-      const cliActivitiesResponse = await cliActivitiesRequest.save();
-      res.send({
-        status: "SPA deployment process started into operator.",
-        message: response.data,
-        cliData: cliActivitiesResponse,
-      });
-      return;
-    } catch (err) {
-      log.error(err);
-      next(err);
-      return;
+      try {
+        const response = await axios.post(config.get("cli:base_path"), formData, {
+          headers: formData.getHeaders(),
+        });
+        res.send({ status: "SPA deployement process started into operator.", message: response.data });
+        return;
+      } catch (err) {
+        log.error(err);
+        res.send(err);
+        return;
+      }
     }
+  } catch (err) {
+    log.error(err);
   }
 
   const userId = getUserUUID(req);
@@ -159,12 +146,7 @@ module.exports.delete = async (req, res, next) => {
 };
 
 module.exports.validate = async (req, res, next) => {
-  const expiration = config.get("token:expiration");
-  const secret = config.get("token:secret");
-  const token = jwt.sign({ createdAt: new Date(), expiresIn: expiration }, secret, {
-    expiresIn: expiration,
-  });
-  res.status(200).json({ message: "Validation is successful.", token: token });
+  res.status(200).json({ message: "Request is authenticated" });
 };
 
 function getName(req) {
@@ -198,21 +180,15 @@ function getPath(req) {
 }
 
 function getFile(req) {
-  if (req?.file?.filename) {
-    const processedFile = req.file.originalname.split(".");
-    if (processedFile[processedFile.length - 1] != "zip") {
-      throw new Error("Uploaded file format is invalid (Expected format : zip).");
-    }
-    return req?.file?.filename;
-  }
+  if (req?.file?.filename) return req?.file?.filename;
   throw new Error("File missing in the request body !");
 }
 
 function getDescription(req) {
-  if (req?.body?.description && req?.body?.description.trim().length > 0) return req?.body?.description.trim();
+  if (req?.body?.description) return req?.body?.description;
   throw new Error("Description missing in the request body !");
 }
 
 function getWebPropertyName(req) {
-  return req?.body?.webPropertyName.trim();
+  return req?.body?.webPropertyName;
 }

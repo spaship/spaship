@@ -53,7 +53,7 @@ module.exports = {
             },
             {
               label: "Getting Started",
-              to: "docs/installation",
+              to: "docs/contribution",
             },
           ],
         },

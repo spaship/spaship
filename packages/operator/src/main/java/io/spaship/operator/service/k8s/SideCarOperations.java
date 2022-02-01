@@ -98,6 +98,7 @@ public class SideCarOperations {
                         .uuid(operationResponse.getEnvironment().getTraceID())
                         .state(opResp.getErrorMessage() == null ?
                                 "spa deployment ops performed" : "spa deployment ops failed")
+                        .spaName(operationResponse.getSpaName())
                         .build());
 
         return opResp;

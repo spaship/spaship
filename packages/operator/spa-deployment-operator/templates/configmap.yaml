@@ -11,3 +11,4 @@ metadata:
 data:
   OPERATOR_EVENT_BUS_ADDRESS: {{ .Values.app.ec }}
   OPERATOR_DOMAIN_NAME: {{ .Values.app.domain }}
+  APP_INSTANCE: {{ .Values.app.instance }}
