@@ -14,10 +14,11 @@ const checkAccess = require("./middlewares/checkAccess");
 const responseWrapper = require("./middlewares/responseWrapper");
 const errorHandler = require("./middlewares/errorHandler");
 const { liveness, readiness } = require("./health");
+const config = require("./config");
 const routes = require("./routes");
 const swaggerDocument = yaml.safeLoad(fs.readFileSync(path.join(__dirname, "openapi.yml"), "utf8"));
 const app = new express();
-
+const consumeSSE = require("./controllers/operatorServices/consumeEvent.js")
 app
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
@@ -29,6 +30,7 @@ app
   .use(responseWrapper())
   .get("/liveness", liveness)
   .get("/readiness", readiness)
+  .use('/spas', express.static(path.join(__dirname, config.get("directoryBasePath"))) )
   .use(
     "/api-docs",
     (req, res, next) => {

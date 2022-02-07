@@ -36,4 +36,9 @@ router.put("/:name", application.put);
  */
 router.delete("/:name", application.delete);
 
+/**
+ * Deploy an application
+ */
+router.post("/validate",  application.validate);
+
 module.exports = router;
