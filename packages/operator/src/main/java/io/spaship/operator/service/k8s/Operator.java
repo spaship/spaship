@@ -149,6 +149,7 @@ public class Operator implements Operations {
 
     private OperationResponse applyDeleteResourceList(Environment environment, KubernetesList resourceList) {
         LOG.debug("applying delete on resources");
+        //Should we delete the pvs as well? will that be a good idea?
         boolean isDeleted = k8sClient.resourceList(resourceList).inNamespace(environment.getNameSpace()).delete();
         environment.setOperationPerformed(true);
         var or = OperationResponse.builder().environment(environment)

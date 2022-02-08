@@ -149,7 +149,19 @@ public class SPAUploadHandler {
     }
 
     private List<Environment> buildEnvironmentList(Triplet<String, UUID, Path> input) {
-        SpashipMapping spaMapping = new SpashipMapping(input.getValue0());
+        SpashipMapping spaMapping;
+        try{
+          spaMapping = new SpashipMapping(input.getValue0());
+        }catch(Exception e){
+          eventManager.queue(
+            EventStructure.builder()
+              .websiteName("NF")
+              .environmentName("NA")
+              .uuid(input.getValue1())
+              .state("failed to parse .spaship file")
+              .build());
+          return Collections.emptyList();
+        }
 
         var environments = spaMapping.getEnvironments();
         var environmentSize = environments.size();
