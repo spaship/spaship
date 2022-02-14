@@ -10,6 +10,8 @@ const cliActivities = require("../models/cliActivities");
 const { getUserUUID } = require("../utils/requestUtil");
 const { uuid } = require("uuidv4");
 const jwt = require("jsonwebtoken");
+const alias = require("../models/alias");
+const _ = require("lodash");
 
 const axios = require("axios");
 const FormData = require("form-data");
@@ -64,70 +66,31 @@ module.exports.put = async (req, res, next) => {
 };
 
 module.exports.deploy = async (req, res, next) => {
-  if (getWebPropertyName(req)) {
-    const uploadBasePath = path.resolve(__dirname, `../${config.get("upload_dir")}`);
-    const formData = new FormData();
-    log.info(req);
-    try {
-      const fileStream = await fs.createReadStream(`${uploadBasePath}/${getFile(req)}`);
-      formData.append("spa", fileStream);
-      formData.append("description", getDescription(req));
-    } catch (err) {
-      log.error(err);
-      next(err);
-      return;
-    }
-    formData.append("website", getWebPropertyName(req));
-
-    try {
-      const response = await axios.post(config.get("cli:base_path"), formData, {
-        maxBodyLength: Infinity,
-        headers: formData.getHeaders(),
-      });
-      const currentTime = new Date();
-      const cliActivitiesRequest = new cliActivities({
-        id: uuid(),
-        fileName: req?.file?.filename,
-        webProperty: getWebPropertyName(req),
-        description: getDescription(req),
-        isActive: true,
-        createdAt: currentTime,
-        updatedAt: currentTime,
-      });
-      const cliActivitiesResponse = await cliActivitiesRequest.save();
-      res.send({
-        status: "SPA deployment process started into operator.",
-        message: response.data,
-        cliData: cliActivitiesResponse,
-      });
-      return;
-    } catch (err) {
-      log.error(err);
-      next(err);
-      return;
-    }
-  }
-
   const userId = getUserUUID(req);
   const name = getNameRequest(req);
-  const ref = getRefRequest(req);
+  const ref = getRefRequest(req) ;
   const { path: appPath } = getRequestBody(req);
   const { path: spaArchive } = getPath(req);
-
+  const property = req.params.propertyName;
+  const env = req.params.env;
+  
   try {
     await DeployService.deploy({
       name,
       spaArchive,
       appPath,
       ref,
+      property,
+      env,
     });
 
     const application = await Application.findOne({ name, path: appPath });
     if (application) {
-      await Application.updateOne({ name, path: appPath }, { ref });
+      await Application.updateOne({ name: name, path: appPath }, { ref });
     } else {
-      await Application.create({ name, path: appPath, ref, userId });
+      await Application.create({ name: name, path: appPath, ref, userId });
     }
+
     res.status(201).send({
       name,
       path: appPath,
@@ -188,7 +151,8 @@ function getPathRequest(req) {
 }
 
 function getRefRequest(req) {
-  const requestBody = req?.body?.ref || {};
+  if (req?.body?.ref == "undefined") return req.params.env;
+  const requestBody = req?.body?.ref;
   return requestBody;
 }
 
@@ -214,5 +178,5 @@ function getDescription(req) {
 }
 
 function getWebPropertyName(req) {
-  return req?.body?.webPropertyName.trim();
+  return req?.body?.webPropertyName || false;
 }

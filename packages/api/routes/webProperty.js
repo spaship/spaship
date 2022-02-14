@@ -4,8 +4,12 @@ const analyzeRepository = require("../controllers/webProperties/analyzeRepositor
 const getSPAList = require("../controllers/webProperties/getSPAList");
 const getWebPropertyList = require("../controllers/webProperties/getWebPropertyList");
 const gitOperations = require("../controllers/webProperties/gitOperations");
+const saveAlias = require("../controllers/operatorServices/saveAlias");
 
 const router = new Router();
+
+
+router.post("/alias", saveAlias);
 
 router.post("/", gitOperations);
 
