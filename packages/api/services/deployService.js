@@ -46,8 +46,12 @@ async function deploy({ name, spaArchive, appPath, ref, property, env } = {}) {
 
   //to check operator
   const responseAlias = await alias.find({ property: property, env: env });
+  console.log(await alias.find());
+  console.log("Checking the property is Operator or Baremetal");
+  console.log(responseAlias);
   if (responseAlias?.length > 0) {
     const operatorAlias = responseAlias[0]._doc;
+    console.log(operatorAlias);
     if (operatorAlias?.type === "operator") {
       const zipPath = await createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir);
 
