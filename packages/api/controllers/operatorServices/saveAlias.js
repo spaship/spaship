@@ -29,7 +29,7 @@ async function createAliasRequest(id, req) {
     const currentTime = getCurrentTime();
     return new alias({
         id: id ,
-        propertyName: getPropertyName(req) ,
+        property: getPropertyName(req) ,
         spaName: getName(req) ,
         env: getEnv(req),
         namespace: getNameSpace(req) ,
@@ -53,7 +53,7 @@ async function updateAlias(req) {
 
 async function updateAliasRequest(req) {
     const updateRequest = {
-        propertyName: getPropertyName(req) ,
+        property: getPropertyName(req) ,
         spaName: getName(req) ,
         env: getEnv(req),
         namespace: getNameSpace(req) ,
@@ -68,7 +68,7 @@ function getCurrentTime() {
 }
 
 function getPropertyName(req) {
-    return req.body?.propertyName;
+    return req.body?.property;
 }
 
 function getName(req) {
