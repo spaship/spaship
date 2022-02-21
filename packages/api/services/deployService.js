@@ -34,8 +34,7 @@ async function deploy({ name, spaArchive, appPath, ref, property, env } = {}) {
   // create a dir in the tmp_dir location, but keep the random archive name
   let tmpDir = `${spaArchive}-extracted`;
   await fsp.mkdir(tmpDir);
-
-  console.log("Deployment Started");
+  console.log("Deployment Started  : ");
   console.log(tmpDir);
   // extract the archive
   await decompress(spaArchive, tmpDir);
@@ -47,9 +46,8 @@ async function deploy({ name, spaArchive, appPath, ref, property, env } = {}) {
   }
 
   //to check operator
-  console.log("Checking the property is Operator or Baremetal");
+  console.log("Checking the property is Operator or Baremetal : ");
   const responseAlias = await alias.find({ property: property, env: env });
-  console.log(responseAlias);
   if (responseAlias?.length > 0) {
     const operatorAlias = responseAlias[0]._doc;
     console.log(operatorAlias);
@@ -72,7 +70,7 @@ async function deploy({ name, spaArchive, appPath, ref, property, env } = {}) {
           maxBodyLength: Infinity,
           headers: formData.getHeaders(),
         });
-        console.log(response);
+        console.log(response?.data);
         return;
       } catch (err) {
         console.log(err);
@@ -131,7 +129,8 @@ async function deploy({ name, spaArchive, appPath, ref, property, env } = {}) {
 module.exports = { deploy };
 
 async function createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir) {
-  if (appPath.charAt(0) == "/") appPath = appPath.substr(1);
+  if (appPath.charAt(0) == "/" && appPath.length === 1) appPath = ".";
+  else if (appPath.charAt(0) == "/") appPath = appPath.substr(1);
   const spaShipFile = {
     websiteVersion: "v1",
     websiteName: operatorAlias.property,
@@ -139,15 +138,15 @@ async function createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir
     mapping: appPath,
     environments: [{ name: operatorAlias.namespace, updateRestriction: false, exclude: false }],
   };
+  console.log("Operator Config : ");
   console.log(spaShipFile);
   try {
     let zipPath;
-    if(await fileExists(path.join(tmpDir, "dist"))){
+    if (await fileExists(path.join(tmpDir, "dist"))) {
       await fs.writeFileSync(path.join(tmpDir, "dist/.spaship"), JSON.stringify(spaShipFile, null, "\t"));
       zipPath = path.join(tmpDir, "../SPAship" + uuid() + ".zip");
       await zip(path.join(tmpDir, "dist"), zipPath);
-    }
-    else{
+    } else {
       await fs.writeFileSync(path.join(tmpDir, ".spaship"), JSON.stringify(spaShipFile, null, "\t"));
       zipPath = path.join(tmpDir, "../SPAship" + uuid() + ".zip");
       await zip(tmpDir, zipPath);

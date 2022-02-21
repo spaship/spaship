@@ -30,7 +30,6 @@ async function createAliasRequest(id, req) {
     return new alias({
         id: id ,
         property: getPropertyName(req) ,
-        spaName: getName(req) ,
         env: getEnv(req),
         namespace: getNameSpace(req) ,
         type: getType(req),
@@ -54,7 +53,6 @@ async function updateAlias(req) {
 async function updateAliasRequest(req) {
     const updateRequest = {
         property: getPropertyName(req) ,
-        spaName: getName(req) ,
         env: getEnv(req),
         namespace: getNameSpace(req) ,
         type: getType(req),
