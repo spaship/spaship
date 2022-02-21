@@ -68,12 +68,12 @@ module.exports.put = async (req, res, next) => {
 module.exports.deploy = async (req, res, next) => {
   const userId = getUserUUID(req);
   const name = getNameRequest(req);
-  const ref = getRefRequest(req) ;
+  const ref = getRefRequest(req);
   const { path: appPath } = getRequestBody(req);
   const { path: spaArchive } = getPath(req);
   const property = req.params.propertyName;
   const env = req.params.env;
-  
+
   try {
     await DeployService.deploy({
       name,
@@ -85,10 +85,14 @@ module.exports.deploy = async (req, res, next) => {
     });
 
     const application = await Application.findOne({ name, path: appPath });
-    if (application) {
-      await Application.updateOne({ name: name, path: appPath }, { ref });
-    } else {
-      await Application.create({ name: name, path: appPath, ref, userId });
+    try {
+      if (application) {
+        await Application.updateOne({ name: name, path: appPath }, { ref });
+      } else {
+        await Application.create({ name: name, path: appPath, ref, userId });
+      }
+    } catch (e) {
+      console.log(e);
     }
 
     res.status(201).send({
