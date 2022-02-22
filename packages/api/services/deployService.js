@@ -146,7 +146,13 @@ async function createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir
       await fs.writeFileSync(path.join(tmpDir, "dist/.spaship"), JSON.stringify(spaShipFile, null, "\t"));
       zipPath = path.join(tmpDir, "../SPAship" + uuid() + ".zip");
       await zip(path.join(tmpDir, "dist"), zipPath);
-    } else {
+    } 
+    else if (await fileExists(path.join(tmpDir, "build"))) {
+      await fs.writeFileSync(path.join(tmpDir, "build/.spaship"), JSON.stringify(spaShipFile, null, "\t"));
+      zipPath = path.join(tmpDir, "../SPAship" + uuid() + ".zip");
+      await zip(path.join(tmpDir, "build"), zipPath);
+    } 
+    else {
       await fs.writeFileSync(path.join(tmpDir, ".spaship"), JSON.stringify(spaShipFile, null, "\t"));
       zipPath = path.join(tmpDir, "../SPAship" + uuid() + ".zip");
       await zip(tmpDir, zipPath);
