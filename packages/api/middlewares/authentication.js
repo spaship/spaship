@@ -8,7 +8,7 @@ const Unauthorized = require("../utils/errors/Unauthorized");
 
 module.exports = () => {
   return async (req, res, next) => {
-    //return next();
+    return next();
     const apiKey = APIKeyService.getAPIKeyFromRequest(req);
 
     // If an API key was provided, try to validate it.  Except on the /apiKeys endpoint.  API keys cannot be used to
