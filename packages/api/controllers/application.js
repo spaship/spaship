@@ -73,37 +73,41 @@ module.exports.deploy = async (req, res, next) => {
   const { path: spaArchive } = getPath(req);
   const property = req.params.propertyName;
   const env = req.params.env;
-
-  try {
-    await DeployService.deploy({
-      name,
-      spaArchive,
-      appPath,
-      ref,
-      property,
-      env,
-    });
-
-    const application = await Application.findOne({ name, path: appPath });
+  const validateFileType = req.file.originalname.split(".").pop();
+  if (validateFileType === "zip" || validateFileType === "tgz") {
     try {
-      if (application) {
-        await Application.updateOne({ name: name, path: appPath }, { ref });
-      } else {
-        await Application.create({ name: name, path: appPath, ref, userId });
-      }
-    } catch (e) {
-      console.log(e);
-    }
+      await DeployService.deploy({
+        name,
+        spaArchive,
+        appPath,
+        ref,
+        property,
+        env,
+      });
 
-    res.status(201).send({
-      name,
-      path: appPath,
-      ref,
-      timestamp: new Date(),
-    });
-  } catch (err) {
-    console.error(`Failed to deploy "${name}" to ${appPath}: ${err}`);
-    next(new DeployError(err));
+      const application = await Application.findOne({ name, path: appPath });
+      try {
+        if (application) {
+          await Application.updateOne({ name: name, path: appPath }, { ref });
+        } else {
+          await Application.create({ name: name, path: appPath, ref, userId });
+        }
+      } catch (e) {
+        console.log(e);
+      }
+
+      res.status(201).send({
+        name,
+        path: appPath,
+        ref,
+        timestamp: new Date(),
+      });
+    } catch (err) {
+      console.error(`Failed to deploy "${name}" to ${appPath}: ${err}`);
+      next(new DeployError(err));
+    }
+  } else {
+    next(new Error("Invalid File Type"));
   }
 };
 
