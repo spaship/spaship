@@ -107,7 +107,7 @@ module.exports.deploy = async (req, res, next) => {
       next(new DeployError(err));
     }
   } else {
-    next(new Error("Invalid File Type"));
+    next(new DeployError("Invalid File Type"));
   }
 };
 
