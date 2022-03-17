@@ -2,8 +2,10 @@ package io.spaship.operator.api;
 
 import io.smallrye.mutiny.Uni;
 import io.spaship.operator.service.k8s.Operator;
+import io.spaship.operator.service.k8s.SideCarOperations;
 import io.spaship.operator.type.Environment;
 import io.spaship.operator.type.OperationResponse;
+import io.spaship.operator.type.SyncRequest;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -17,9 +19,11 @@ public class EnvironmentController {
 
 
     private final Operator k8sOperator;
+    private final SideCarOperations sidecarOps;
 
-    public EnvironmentController(Operator k8sOperator) {
+    public EnvironmentController(Operator k8sOperator, SideCarOperations sidecarOps) {
         this.k8sOperator = k8sOperator;
+      this.sidecarOps = sidecarOps;
     }
 
 
@@ -33,6 +37,18 @@ public class EnvironmentController {
         Objects.requireNonNull(environment.getNameSpace());
         Objects.requireNonNull(environment.getWebsiteVersion());
         return k8sOperator.deleteEnvironment(environment);
+    }
+
+
+    @POST
+    @Path("/sync")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String scheduleSync(SyncRequest syncRequest){
+
+      String sideCarServiceUrl = k8sOperator.environmentSidecarUrl(syncRequest.getEnvironment());
+      return sidecarOps.triggerSync(sideCarServiceUrl,syncRequest.getSyncConfiguration(),syncRequest.getEnvironment());
+
     }
 
 
