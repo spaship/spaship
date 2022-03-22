@@ -1,14 +1,66 @@
+:root {
+  --spaship-global--Color--spaship-gray: #333333;
+  --spaship-global--Color--sonic-silver: #72767B;
+  --spaship-global--Color--solar-orange: #FDB716;
+  --spaship-global--Color--amarillo-flare: #FED402;
+  --spaship-global--Color--munsell-yellow: #F1C904;
+  --spaship-global--Color--text-black: #151515;
+  --spaship-global--Color--ui-blue: #0066CC;
+  --spaship-global--Font-Family: RedHatDisplay, Overpass, Roboto, Cantarell, helvetica, arial, sans-serif;
+}
+
+.spaship-gray {
+  color: var(--spaship-global--Color--spaship-gray);
+}
+
+.sonic-silver {
+  color: var(--spaship-global--Color--sonic-silver);
+}
+
+.solar-orange {
+  color: var(--spaship-global--Color--solar-orange);
+}
+
+.amarillo-flare {
+  color: var(--spaship-global--Color--amarillo-flare);
+}
+
+.munsell-yellow {
+  color: var(--spaship-global--Color--munsell-yellow);
+}
+
+.text-black {
+  color: var(--spaship-global--Color--text-black);
+}
+
+.ui-blue {
+  color: var(--spaship-global--Color--ui-blue);
+}
+
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family:  var(--spaship-global--Font-Family);
 }
 
 a {
-  color: inherit;
+  color: var(--spaship-global--Color--ui-blue);
   text-decoration: none;
+}
+
+button.spaship_btn {
+  --pf-c-button--m-primary--BackgroundColor: var(--spaship-global--Color--amarillo-flare);
+  --pf-c-button--m-primary--Color: var(--spaship-global--Color--text-black) !important;
+  outline: none;
+}
+
+.spaship_btn:hover {
+  --pf-c-button--m-primary--hover--BackgroundColor: var(--spaship-global--Color--munsell-yellow) !important;
+}
+
+.spaship_btn:focus {
+  --pf-c-button--m-primary--focus--BackgroundColor: var(--spaship-global--Color--munsell-yellow) !important;
 }
 
 * {
