@@ -1,7 +1,33 @@
 {
-  "name": "spaship-manager",
-  "version": "0.1.0",
+  "name": "@spaship/manager",
+  "version": "0.15.0",
   "private": true,
+  "description": "The SPAship UI.",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:spaship/spaship.git",
+    "directory": "packages/manager"
+  },
+  "author": {
+    "name": "Sayak Sarkar",
+    "email": "sayak.bugsmith@gmail.com",
+    "url": "https://sayak.in"
+  },
+  "contributors": [
+    {
+      "name": "Kun Yan",
+      "email": "kyan@redhat.com"
+    },
+    {
+      "name": "Michael Clayton",
+      "email": "mclayton@redhat.com"
+    },
+    {
+      "name": "Soumyadip Chowdhury",
+      "email": "soumyadip.note@gmail.com"
+    }
+  ],
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -19,5 +45,8 @@
     "eslint": "8.11.0",
     "eslint-config-next": "12.1.0",
     "typescript": "4.6.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
