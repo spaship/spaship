@@ -122,7 +122,7 @@ public class Operator implements Operations {
         processK8sList(result, environment.getTraceID(), environment.getNameSpace());
     }
 
-    String environmentSidecarUrl(Environment environment) {
+    public String environmentSidecarUrl(Environment environment) {
         String serviceName = "svc"
                 .concat("-")
                 .concat(appInstance)
