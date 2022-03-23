@@ -60,7 +60,11 @@ button.spaship_btn {
 }
 
 .spaship_btn:focus {
-  --pf-c-button--m-primary--focus--BackgroundColor: var(--spaship-global--Color--munsell-yellow) !important;
+  --pf-c-button--m-primary--focus--BackgroundColor: var(--spaship-global--Color--solar-orange) !important;
+}
+
+.spaship_btn:active {
+  --pf-c-button--m-primary--active--BackgroundColor: var(--spaship-global--Color--munsell-yellow) !important;
 }
 
 * {
