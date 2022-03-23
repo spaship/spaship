@@ -2,8 +2,11 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link';
-import { Button, Card, CardBody, CardHeader, Page, PageHeader, PageHeaderTools, PageHeaderToolsGroup, PageHeaderToolsItem, PageSection, PageSectionVariants, Title } from '@patternfly/react-core';
-import { FileAltIcon, GithubIcon, OptimizeIcon } from '@patternfly/react-icons';
+import { useSession, signIn, signOut } from "next-auth/react";
+import { FileAltIcon, GithubIcon, OptimizeIcon, UserIcon } from '@patternfly/react-icons';
+import { Bullseye, Button, Card, CardBody, CardHeader, Page, PageHeader, PageHeaderTools, PageHeaderToolsGroup, PageHeaderToolsItem, PageSection, PageSectionVariants, Title } from '@patternfly/react-core';
+import EmptySpinner from '../components/general/EmptySpinner';
+
 import styled from 'styled-components';
 import rocket from '../public/images/rocket.svg';
 import darkLogo from '../public/images/logo/spaship-logo-dark-vector.svg';
@@ -62,8 +65,26 @@ const Rocket = styled.div({
 });
 
 const HeaderTools = () => {
+  const { data: session } = useSession();
   const renderLoginButton = () => {
-    return <></>;
+    if (session?.user) {
+      return (
+        <PageHeaderToolsItem>
+          <StyledButton variant="link" icon={<UserIcon />}>
+            {session.user.name}
+          </StyledButton>
+          {/* <button onClick={() => signOut()}>Sign out</button> */}
+        </PageHeaderToolsItem>
+      )
+    }
+    else 
+    return (
+      <PageHeaderToolsItem>
+        <StyledButton onClick={() => signIn()} variant="link" icon={<UserIcon />}>
+          Sign In
+        </StyledButton>
+      </PageHeaderToolsItem>
+    )
   }
   return (
     <PageHeaderTools>
@@ -97,6 +118,14 @@ const HeaderTools = () => {
 }
 
 const Home: NextPage = () => {
+  const { data: session, status: authStatus} = useSession();
+  if (authStatus === "loading") {
+    return (
+      <Bullseye>
+        <EmptySpinner />
+      </Bullseye>
+    );
+  }
   const onClickLogin = () => {
     alert("Login")
   }
