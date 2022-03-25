@@ -2,7 +2,7 @@ import { FunctionComponent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Brand, Nav, NavItem, NavList, Stack, StackItem } from "@patternfly/react-core";
-import { FlagIcon, KeyIcon, NetworkIcon, OutlinedQuestionCircleIcon, TachometerAltIcon } from "@patternfly/react-icons";
+import { FlagIcon, LockOpenIcon, NetworkIcon, OutlinedQuestionCircleIcon, TrendUpIcon } from "@patternfly/react-icons";
 import styled from "styled-components";
 
 interface SidebarProps {}
@@ -11,8 +11,8 @@ const StyledStack = styled(Stack) ({
   position: "fixed",
   width: "250px",
   height: "100%",
-  background: "#000000",
-  color: "#ffffff"
+  background: "black",
+  color: "#white"
 });
 
 const BrandItem = styled(StackItem) `
@@ -30,13 +30,10 @@ const StyledNavList = styled(NavList) `
 
 const StyledNavItem = styled(NavItem) `
   font-weight: 100;
-  line-height: 4rem;
-  padding-left: 1.5em;
-
-  :hover, :active {
-    background: var(--spaship-global--Color--spaship-gray);
-    border-left: 4px solid var(--spaship-global--Color--amarillo-flare);
-  }
+  --pf-c-nav__link--m-current--after--BorderLeftWidth: var(--spaship-global--Color--amarillo-flare);
+  --pf-c-nav__link--m-current--after--BorderColor: var(--spaship-global--Color--amarillo-flare);
+  --pf-c-nav__link--m-current--Color:  var(--spaship-global--Color--amarillo-flare);
+  --pf-c-nav__link--before--BorderColor:  black;
 `
 
 const NavButton = styled.a`
@@ -56,55 +53,30 @@ const NavButton = styled.a`
 
 const Sidebar: FunctionComponent<SidebarProps> = () => {
   const router = useRouter();
-  console.log(router.pathname)
-
+  const path = router.pathname;
+  console.log(path);
   return (
     <StyledStack>
       <BrandItem>
-      <Link href="/" passHref><StyledBrand src="/images/logo/spaship-logo-light-transparent.png" alt="SPAship Logo" /></Link>
+        <Link href="/" passHref><StyledBrand src="/images/logo/spaship-logo-light-transparent.png" alt="SPAship Logo" /></Link>
       </BrandItem>
       <StackItem isFilled>
         <Nav aria-label="Nav">
           <StyledNavList>
-            <StyledNavItem itemId={0} isActive={router.pathname === "/"} disabled>
-              <Link href="/" passHref>
-                <NavButton>
-                  <NetworkIcon />
-                  Web Properties
-                </NavButton>
-              </Link>
+            <StyledNavItem itemId={0} isActive={path === "/"} onClick={()=>{router.push("/")}}>
+              <NavButton><NetworkIcon />Web Properties</NavButton>
             </StyledNavItem>
-            <StyledNavItem itemId={1} isActive={router.pathname == "/dashboard"} disabled>
-              <Link href="/dashboard" passHref>
-                <NavButton>
-                  <TachometerAltIcon />
-                  Dashboard
-                </NavButton>
-              </Link>
+            <StyledNavItem itemId={1} isActive={path === "/dashboard"} onClick={()=>{router.push("/dashboard")}}>
+                <NavButton><TrendUpIcon />Dashboard</NavButton>
             </StyledNavItem>
-            <StyledNavItem itemId={2} isActive={router.pathname == "/authentication"}>
-              <Link href="/authentication" passHref>
-                <NavButton>
-                  <KeyIcon />
-                  Authentication
-                </NavButton>
-              </Link>
+            <StyledNavItem itemId={2} isActive={path === "/authentication"} onClick={()=>{router.push("/authentication")}}>
+                <NavButton><LockOpenIcon />Authentication</NavButton>
             </StyledNavItem>
-            <StyledNavItem itemId={3} isActive={router.pathname == "/faqs"}>
-              <Link href="/faqs" passHref>
-                <NavButton>
-                  <OutlinedQuestionCircleIcon />
-                  FAQs
-                </NavButton>
-              </Link>
+            <StyledNavItem itemId={3} isActive={path === "/faqs"} onClick={()=>{router.push("/faqs")}}>
+                <NavButton><OutlinedQuestionCircleIcon />FAQs</NavButton>
             </StyledNavItem>
-            <StyledNavItem itemId={4} isActive={router.pathname == "/feedback"}>
-              <Link href="/feedback" passHref>
-                <NavButton>
-                  <FlagIcon />
-                  Feedback
-                </NavButton>
-              </Link>
+            <StyledNavItem itemId={4} isActive={path === "/feedback"} onClick={()=>{router.push("/feedback")}}>
+                <NavButton><FlagIcon />Feedback</NavButton>
             </StyledNavItem>
           </StyledNavList>
         </Nav>
