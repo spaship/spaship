@@ -1,10 +1,9 @@
-import { SessionProvider } from "next-auth/react";
 import Head from 'next/head'
+import type { AppProps } from 'next/app'
+import { SessionProvider } from "next-auth/react";
 import "@patternfly/react-core/dist/styles/base.css";
 import '../styles/globals.css';
-
-import type { AppProps } from 'next/app'
-import Footer from "../layout/footer";
+import Layout from '../components/Layout';
 
 function SPAshipManager({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
@@ -14,8 +13,9 @@ function SPAshipManager({ Component, pageProps: { session, ...pageProps } }: App
         <meta name="description" content="The SPAship User Interface for managing your SPAship properties." />
         <link rel="icon" href="images/icons/favicon.ico" />
       </Head>
-      <Component {...pageProps} />
-      <Footer></Footer>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </SessionProvider>
   )
 }
