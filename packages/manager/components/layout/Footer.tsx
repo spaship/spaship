@@ -4,25 +4,24 @@ import { GithubIcon } from '@patternfly/react-icons';
 import Link from "next/link";
 import styled from "styled-components";
 
-const StyledGridItem = styled(GridItem) ({
-    padding: "1rem 0",
-    borderTop: "1px solid #eaeaea"
-});
+const StyledFooter = styled.footer `
+  border-top: 1px solid var(--spaship-global--Color--bright-gray);
+  width: 60vw;
+`;
 
-const StyledButton = styled(Button)({
-  color: "var(--spaship-global--Color--text-black) !important"
-});
+const StyledButton = styled(Button) `
+  color: var(--spaship-global--Color--text-black) !important;
+`;
 
 interface FooterProps {}
 
 const Footer: FunctionComponent<FooterProps> = () => {
   return (
-    <nav>
-      <Grid>
-        <StyledGridItem span={10} >
+
+        <StyledFooter >
           <Flex>
             <FlexItem align={{ default: 'alignRight' }}>
-              <Link href="/contact-us">Contact Us</Link>
+              <StyledButton component="a"  href="/contact-us" variant="link" >Contact Us</StyledButton>
             </FlexItem>
             <FlexItem>
                 <StyledButton component="a" href="https://github.com/spaship/spaship" 
@@ -31,10 +30,7 @@ const Footer: FunctionComponent<FooterProps> = () => {
                 </StyledButton>
             </FlexItem>
           </Flex>
-        </StyledGridItem>
-        <GridItem span={2}></GridItem>
-      </Grid>
-    </nav>
+        </StyledFooter>
   );
 };
 
