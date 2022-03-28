@@ -1,9 +1,10 @@
-import { FunctionComponent } from "react";
-import Link from "next/link";
+import { FunctionComponent, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { Brand, Nav, NavItem, NavList, Stack, StackItem } from "@patternfly/react-core";
 import { FlagIcon, LockOpenIcon, NetworkIcon, OutlinedQuestionCircleIcon, TrendUpIcon } from "@patternfly/react-icons";
 import styled from "styled-components";
+import UserStatus from "./user-status";
 
 interface SidebarProps {}
 
@@ -54,16 +55,15 @@ const NavButton = styled.a`
 const Sidebar: FunctionComponent<SidebarProps> = () => {
   const router = useRouter();
   const path = router.pathname;
-  console.log(path);
   return (
     <StyledStack>
       <BrandItem>
-        <Link href="/" passHref><StyledBrand src="/images/logo/spaship-logo-light-transparent.png" alt="SPAship Logo" /></Link>
+        <Link href="/" passHref><a><StyledBrand src="/images/logo/spaship-logo-light-transparent.png" alt="SPAship Logo" /></a></Link>
       </BrandItem>
       <StackItem isFilled>
         <Nav aria-label="Nav">
           <StyledNavList>
-            <StyledNavItem itemId={0} isActive={path === "/"} onClick={()=>{router.push("/")}}>
+            <StyledNavItem itemId={0} isActive={path === "/properties"} onClick={()=>{router.push("/properties")}}>
               <NavButton><NetworkIcon />Web Properties</NavButton>
             </StyledNavItem>
             <StyledNavItem itemId={1} isActive={path === "/dashboard"} onClick={()=>{router.push("/dashboard")}}>
@@ -81,7 +81,7 @@ const Sidebar: FunctionComponent<SidebarProps> = () => {
           </StyledNavList>
         </Nav>
       </StackItem>
-      <StackItem>{/* <UserStatus /> */}</StackItem>
+      <StackItem><UserStatus /></StackItem>
     </StyledStack>
   );
 };
