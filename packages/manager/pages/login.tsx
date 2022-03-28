@@ -1,12 +1,12 @@
 import type { NextPage } from 'next'
 import Image from 'next/image'
 import Link from 'next/link';
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { FileAltIcon, GithubIcon, OptimizeIcon, UserIcon } from '@patternfly/react-icons';
 import { Bullseye, Button, Card, CardBody, CardHeader, Page, PageHeader, PageHeaderTools, PageHeaderToolsGroup, PageHeaderToolsItem, PageSection, PageSectionVariants, Title } from '@patternfly/react-core';
-import EmptySpinner from '../components/general/EmptySpinner';
+import EmptySpinner from '../components/general/empty-spinner';
 import styled from 'styled-components';
-import rocket from '../public/images/rocket.svg';
+import rocket from '../public/images/illustrations/rocket.svg';
 import darkLogo from '../public/images/logo/spaship-logo-dark-vector.svg';
 
 const Header = styled(PageHeader)({
@@ -115,7 +115,7 @@ const HeaderTools = () => {
 }
 
 const Login: NextPage = () => {
-  const { data: session, status: authStatus} = useSession();
+  const { status: authStatus} = useSession();
   if (authStatus === "loading") {
     return (
       <Bullseye>
@@ -171,4 +171,4 @@ const Login: NextPage = () => {
   )
 }
 
-export default Login
+export default Login;

@@ -1,21 +1,33 @@
+import React from 'react';
 import Head from 'next/head'
+import { useRouter } from 'next/router';
 import type { AppProps } from 'next/app'
 import { SessionProvider } from "next-auth/react";
 import "@patternfly/react-core/dist/styles/base.css";
 import '../styles/globals.css';
-import Layout from '../components/Layout';
+import LayoutComponent from '../components/layout';
+import { NextComponentType, NextPageContext } from 'next';
+import { AuthEnabledComponentConfig } from '../utils/auth.utils';
+import Auth from '../components/auth';
 
-function SPAshipManager({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+type AppAuthProps = AppProps & {
+  Component: NextComponentType<NextPageContext, any, {}> & Partial<AuthEnabledComponentConfig>;
+};
+
+function SPAshipManager({ Component, pageProps: { session, ...pageProps } }: AppAuthProps) {
+  const router = useRouter();
+  const layoutLessPages = [`/login`];
+  const skipLayout = layoutLessPages.includes(router.pathname);
   return (
-    <SessionProvider session={session}>
+    <SessionProvider session={pageProps.session}>
       <Head>
         <title>SPAship Manager</title>
-        <meta name="description" content="The SPAship User Interface for managing your SPAship properties." />
-        <link rel="icon" href="images/icons/favicon.ico" />
       </Head>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      {Component.authenticationEnabled ? (
+        <Auth><LayoutComponent skipLayout={skipLayout}><Component {...pageProps} /></LayoutComponent></Auth>
+      ) : (
+        <LayoutComponent skipLayout={skipLayout}><Component {...pageProps} /></LayoutComponent>
+      )}
     </SessionProvider>
   )
 }
