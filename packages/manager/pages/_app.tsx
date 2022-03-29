@@ -8,7 +8,7 @@ import '../styles/globals.css';
 import Layout from '../components/layout';
 import { NextComponentType, NextPageContext } from 'next';
 import { AuthEnabledComponentConfig } from '../utils/auth.utils';
-import Auth from '../components/auth';
+import Auth from '../components/auth/auth';
 
 type AppAuthProps = AppProps & {
   Component: NextComponentType<NextPageContext, any, {}> & Partial<AuthEnabledComponentConfig>;
