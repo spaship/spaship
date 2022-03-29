@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link';
 import { useSession, signIn } from "next-auth/react";
 import { FileAltIcon, GithubIcon, OptimizeIcon, UserIcon } from '@patternfly/react-icons';
-import { Bullseye, Button, Card, CardBody, CardHeader, Page, PageHeader, PageHeaderTools, PageHeaderToolsGroup, PageHeaderToolsItem, PageSection, PageSectionVariants, Title } from '@patternfly/react-core';
+import { Bullseye, Button, Card, CardBody, CardHeader, Flex, FlexItem, Page, PageHeader, PageHeaderTools, PageHeaderToolsGroup, PageHeaderToolsItem, PageSection, PageSectionVariants, Title } from '@patternfly/react-core';
 import EmptySpinner from '../components/general/empty-spinner';
 import styled from 'styled-components';
 import rocket from '../public/images/illustrations/rocket.svg';
@@ -15,10 +15,9 @@ const Header = styled(PageHeader)({
 });
 
 const Defcard = styled.div({
-  margin: "auto",
-  textAlign: "center",
-  padding: "15vh 0 0 0",  //TODO: Remove after adding OAuth options.
-  width: "25vw"
+  padding: "15vh 0 5vh 0",  //TODO: Remove after adding OAuth options.
+  width: "500px",
+  margin: "0 5vw 0 15vw"
 });
 
 const Slogan = styled.h1({
@@ -26,7 +25,7 @@ const Slogan = styled.h1({
 });
 
 const Description = styled.div({
-  fontSize: "0.9rem"
+  fontSize: "1rem"
 });
 
 const Body = styled(PageSection)({
@@ -34,14 +33,12 @@ const Body = styled(PageSection)({
 });
 
 const StyledCard = styled(Card)({
-  position: "absolute",
   top: "0",
   bottom: "0",
   left: "0",
   right: "0",
-  margin: "auto",
   height: "124px",
-  width: "300px",
+  width: "500px",
   zIndex: 99
 });
 
@@ -126,26 +123,36 @@ const Login: NextPage = () => {
   return (
     <Page header={<Header logo={<Image src={darkLogo} alt="SPAship Logo" height={"40rem"} width={"200rem"}/>} headerTools={<HeaderTools />} />}>
       <Body variant={PageSectionVariants.light} isFilled>
-        <Defcard>
-          <Slogan>
-            develop fast · <span className='solar-orange'>deploy faster</span>
-          </Slogan>
-          <Description className='sonic-silver'>
-            SPAship is a open source platform for deploying, integrating, and managing single-page apps (SPAs).
-          </Description>
-        </Defcard>
-        <StyledCard>
-          <CardHeader>
-            <Title headingLevel="h6" size="md">
-              Sign in with
-            </Title>
-          </CardHeader>
-          <CardBody>
-            <Button isBlock variant="primary" onClick={() => signIn('keycloak')} className="spaship_btn">
-              Red Hat SSO
-            </Button>
-          </CardBody>
-        </StyledCard>
+      <Flex>
+        <Flex>
+          <FlexItem>
+            <Defcard>
+              <Slogan>
+                develop fast · <span className='solar-orange'>deploy faster</span>
+              </Slogan>
+              <Description className='sonic-silver'>
+                SPAship is a open source platform for deploying, integrating, and managing single-page apps (SPAs).
+              </Description>
+            </Defcard>
+          </FlexItem>
+        </Flex>
+        <Flex>
+          <FlexItem>
+            <StyledCard>
+              <CardHeader>
+                <Title headingLevel="h6" size="md">
+                  Sign in with
+                </Title>
+              </CardHeader>
+              <CardBody>
+                <Button isBlock variant="primary" onClick={() => signIn('keycloak')} className="spaship_btn">
+                  Red Hat SSO
+                </Button>
+              </CardBody>
+            </StyledCard>
+          </FlexItem>
+        </Flex>
+        </Flex>
       </Body>
       <Footer variant={PageSectionVariants.darker} isFilled={false}>
         Brought to you by the{" "}
