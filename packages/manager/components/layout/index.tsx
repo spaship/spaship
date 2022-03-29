@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import { Split, SplitItem, Stack, StackItem } from '@patternfly/react-core';
-import Footer from "./layout/footer";
-import Sidebar from "./layout/sidebar";
+import Footer from "./footer";
+import Sidebar from "./sidebar";
 import styled from "styled-components";
 import React from "react";
 
@@ -18,7 +18,7 @@ const ContentArea = styled(SplitItem) `
     width: 60vw;
 `
 
-const Layout: FunctionComponent<{}> = ({ children }) => {
+const LayoutDefinition: FunctionComponent<{}> = ({ children }) => {
   return (
     <>
       <Split>
@@ -34,9 +34,9 @@ const Layout: FunctionComponent<{}> = ({ children }) => {
   );
 };
 
-const LayoutComponent: FunctionComponent<LayoutProps> = ({ skipLayout, children }) => {
-  const Wrapper:FunctionComponent = skipLayout ? React.Fragment : Layout;
+const Layout: FunctionComponent<LayoutProps> = ({ skipLayout, children }) => {
+  const Wrapper:FunctionComponent = skipLayout ? React.Fragment : LayoutDefinition;
   return <Wrapper>{children}</Wrapper>
 };
 
-export default LayoutComponent;
+export default Layout;

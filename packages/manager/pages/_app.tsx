@@ -5,7 +5,7 @@ import type { AppProps } from 'next/app'
 import { SessionProvider } from "next-auth/react";
 import "@patternfly/react-core/dist/styles/base.css";
 import '../styles/globals.css';
-import LayoutComponent from '../components/layout';
+import Layout from '../components/layout';
 import { NextComponentType, NextPageContext } from 'next';
 import { AuthEnabledComponentConfig } from '../utils/auth.utils';
 import Auth from '../components/auth';
@@ -24,9 +24,9 @@ function SPAshipManager({ Component, pageProps: { session, ...pageProps } }: App
         <title>SPAship Manager</title>
       </Head>
       {Component.authenticationEnabled ? (
-        <Auth><LayoutComponent skipLayout={skipLayout}><Component {...pageProps} /></LayoutComponent></Auth>
+        <Auth><Layout skipLayout={skipLayout}><Component {...pageProps} /></Layout></Auth>
       ) : (
-        <LayoutComponent skipLayout={skipLayout}><Component {...pageProps} /></LayoutComponent>
+        <Layout skipLayout={skipLayout}><Component {...pageProps} /></Layout>
       )}
     </SessionProvider>
   )
