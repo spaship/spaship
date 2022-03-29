@@ -4,18 +4,34 @@ import Footer from "./footer";
 import Sidebar from "./sidebar";
 import styled from "styled-components";
 import React from "react";
+import Header from "./header";
 
 interface LayoutProps {
   skipLayout: boolean
 }
 
 const SidebarArea = styled(SplitItem) `
-    width: 20vw;
+    width: 250px;
 `
 
 const ContentArea = styled(SplitItem) `
     min-height: 80vh;
-    width: 60vw;
+`
+
+const HeaderArea = styled(StackItem)`
+  min-height: 100px;
+`
+
+const BodyArea = styled(StackItem)`
+  padding: 1vw 10vw;
+  min-height: 85vh;
+  width: 60vw;
+`
+
+const FooterArea = styled(StackItem)`
+  padding: 0 5vw;
+  min-height: 5vh;
+  width: 60vw;
 `
 
 const LayoutDefinition: FunctionComponent<{}> = ({ children }) => {
@@ -25,8 +41,9 @@ const LayoutDefinition: FunctionComponent<{}> = ({ children }) => {
         <SidebarArea><Sidebar></Sidebar></SidebarArea>
         <ContentArea isFilled>
           <Stack>
-            <StackItem isFilled>{children}</StackItem>
-            <StackItem><Footer></Footer></StackItem>
+            <HeaderArea><Header></Header></HeaderArea>
+            <BodyArea isFilled>{children}</BodyArea>
+            <FooterArea><Footer></Footer></FooterArea>
           </Stack>
         </ContentArea>
       </Split>

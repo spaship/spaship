@@ -12,8 +12,7 @@ const StyledStack = styled(Stack) ({
   position: "fixed",
   width: "250px",
   height: "100%",
-  background: "black",
-  color: "#white"
+  background: "black",  
 });
 
 const BrandItem = styled(StackItem) `
