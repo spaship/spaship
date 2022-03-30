@@ -15,7 +15,7 @@ router.post("/", gitOperations);
 
 router.get("/list", getWebPropertyList.getWebPropertyList);
 
-router.get("/getspalist/:webPropertyPropertyName", getSPAList.getSPAList);
+router.get("/getspalist/:webPropertyName", getSPAList.getSPAList);
 
 router.post("/analyze/repository", analyzeRepository);
 
