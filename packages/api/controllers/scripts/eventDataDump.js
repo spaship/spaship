@@ -1,7 +1,7 @@
 const event = require("../../models/event");
 
 const eventDataDump = async (req, res) => {
-  res.status(200).json(await eventDataDumpService(req.sanitize(getDocument(req))));
+  res.status(200).json(await eventDataDumpService(getDocument(req)));
 };
 
 const eventDataDumpService = async (docs) => {
@@ -29,7 +29,6 @@ function createBulkData(docs, currentDate, bulk) {
     docs[i]._id = null;
     if (docs[i].createdAt) {
       docs[i].createdAt = new Date(docs[i].createdAt.$date);
-      console.log(docs[i]);
       bulk.insert(docs[i]);
     }
   }
