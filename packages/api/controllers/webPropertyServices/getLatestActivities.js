@@ -45,13 +45,13 @@ async function fetchLatestActivitiesByProperty(matchRequest) {
       },
     },
     {
-      $limit: 10,
+      $limit: 15,
     },
   ]);
 }
 
 function actvitiesText(item, codeMap) {
-  item.latestActivityHead = " has been " + codeMap[item.code] + " ";
+  item.latestActivityHead = " has been " + item.code + " ";
   item.latestActivityTail = " at " + item.createdAt.toString().slice(0, 24) + " in " + item.envs;
 }
 
