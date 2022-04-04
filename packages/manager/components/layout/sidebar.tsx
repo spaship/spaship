@@ -8,12 +8,12 @@ import UserStatus from "./user-status";
 
 interface SidebarProps {}
 
-const StyledStack = styled(Stack) ({
-  background: "black",  
-  height: "100%",
-  position: "fixed",
-  width: "250px",
-});
+const StyledStack = styled(Stack) `
+  background: black;
+  height: 100%;
+  position: fixed;
+  width: 250px;
+`;
 
 const BrandItem = styled(StackItem) `
   margin: auto;
@@ -32,7 +32,7 @@ const StyledNavItem = styled(NavItem) `
   --pf-c-nav__link--m-current--after--BorderLeftWidth: var(--spaship-global--Color--amarillo-flare);
   --pf-c-nav__link--m-current--after--BorderColor: var(--spaship-global--Color--amarillo-flare);
   --pf-c-nav__link--m-current--Color:  var(--spaship-global--Color--amarillo-flare);
-  --pf-c-nav__link--before--BorderColor:  black;
+  --pf-c-nav__link--before--BorderColor:  var(--spaship-global--Color--spaship-gray);
 `
 
 const NavButton = styled.a`

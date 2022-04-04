@@ -157,15 +157,15 @@ const Login: NextPage = () => {
       <Footer variant={PageSectionVariants.darker} isFilled={false}>
         Brought to you by the{" "}
         <Link href="https://github.com/spaship/spaship/graphs/contributors" passHref>
-          <a className='amarillo-flare' target="_blank" rel="noreferrer noopener">Wizards <OptimizeIcon /></a>
+          <a className='solar-orange' target="_blank" rel="noreferrer noopener">Wizards <OptimizeIcon /></a>
         </Link>{" "}
         of the{" "}
         <Link href="https://github.com/spaship/spaship">
-          <a className='amarillo-flare' target="_blank" rel="noreferrer noopener">SPAship</a>
+          <a className='solar-orange' target="_blank" rel="noreferrer noopener">SPAship</a>
         </Link>{" "}
         project. <br /> Code licensed under the{" "}
         <Link href="https://github.com/spaship/spaship/blob/master/LICENSE">
-          <a className='amarillo-flare' target="_blank" rel="noreferrer noopener">
+          <a className='solar-orange' target="_blank" rel="noreferrer noopener">
             MIT License
           </a>
         </Link>

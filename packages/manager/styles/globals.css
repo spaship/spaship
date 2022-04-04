@@ -57,7 +57,7 @@ button.spaship_btn {
 }
 
 .spaship_btn:hover {
-  --pf-c-button--m-primary--hover--BackgroundColor: var(--spaship-global--Color--munsell-yellow) !important;
+  --pf-c-button--m-primary--hover--BackgroundColor: var(--spaship-global--Color--solar-orange) !important;
 }
 
 .spaship_btn:focus {
