@@ -63,27 +63,27 @@ const UserStatus: FunctionComponent<UserStatusProps> = () => {
   }
 
    return ( 
-        <StyledAccordion>
-            <AccordionItem>
-                <AccordionToggle id="userInfo" onClick={onToggle} isExpanded={isExpanded}>
-                <Split hasGutter>
-                    <SplitItem>
-                    <Avatar id="user-avatar" src="/images/illustrations/avatar.svg" alt="Avatar image" />
-                    </SplitItem>
-                    <SplitItem isFilled>{session?.user?.name}</SplitItem>
-                </Split>
-                </AccordionToggle>
-                <AccordionContent isHidden={!isExpanded}>
-                <Text id="user-email" component={TextVariants.p}>
-                    {session?.user?.email}
-                </Text>
-                <Button id="logout-button" isBlock className="spaship_btn" onClick={onClickLogout}>
-                    Logout
-                </Button>
-                </AccordionContent>
-            </AccordionItem>
-        </StyledAccordion>
-     );
+    <StyledAccordion>
+        <AccordionItem>
+            <AccordionToggle id="userInfo" onClick={onToggle} isExpanded={isExpanded}>
+            <Split hasGutter>
+                <SplitItem>
+                <Avatar id="user-avatar" src="/images/illustrations/avatar.svg" alt="Avatar image" />
+                </SplitItem>
+                <SplitItem isFilled>{session?.user?.name}</SplitItem>
+            </Split>
+            </AccordionToggle>
+            <AccordionContent isHidden={!isExpanded}>
+            <Text id="user-email" component={TextVariants.p}>
+                {session?.user?.email}
+            </Text>
+            <Button id="logout-button" isBlock className="spaship_btn" onClick={onClickLogout}>
+                Logout
+            </Button>
+            </AccordionContent>
+        </AccordionItem>
+    </StyledAccordion>
+    );
 }
 
 export default UserStatus;

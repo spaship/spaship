@@ -9,10 +9,10 @@ import UserStatus from "./user-status";
 interface SidebarProps {}
 
 const StyledStack = styled(Stack) ({
+  background: "black",  
+  height: "100%",
   position: "fixed",
   width: "250px",
-  height: "100%",
-  background: "black",  
 });
 
 const BrandItem = styled(StackItem) `
@@ -29,7 +29,6 @@ const StyledNavList = styled(NavList) `
 `
 
 const StyledNavItem = styled(NavItem) `
-  font-weight: 100;
   --pf-c-nav__link--m-current--after--BorderLeftWidth: var(--spaship-global--Color--amarillo-flare);
   --pf-c-nav__link--m-current--after--BorderColor: var(--spaship-global--Color--amarillo-flare);
   --pf-c-nav__link--m-current--Color:  var(--spaship-global--Color--amarillo-flare);
@@ -37,18 +36,19 @@ const StyledNavItem = styled(NavItem) `
 `
 
 const NavButton = styled.a`
-    color: var(--spaship-global--Color--bright-gray);
-    display: block;
-    font-size: 1.2em;
+  color: var(--spaship-global--Color--bright-gray);
+  display: block;
+  font-size: 1.2em;
+  font-weight: var(--pf-global--FontWeight--light);
 
   :hover, :active {
     background: var(--spaship-global--Color--spaship-gray);
     color: var(--spaship-global--Color--amarillo-flare);
   }
 
-    > svg {
-      margin-right: 1em;
-    }
+  > svg {
+    margin-right: 1em;
+  }
 `
 
 const Sidebar: FunctionComponent<SidebarProps> = () => {
