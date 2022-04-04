@@ -4,7 +4,6 @@ import Footer from "./footer";
 import Sidebar from "./sidebar";
 import styled from "styled-components";
 import React from "react";
-import Header from "./header";
 
 interface LayoutProps {
   skipLayout: boolean
@@ -37,7 +36,6 @@ const LayoutDefinition: FunctionComponent<{}> = ({ children }) => {
         <SidebarArea><Sidebar></Sidebar></SidebarArea>
         <ContentArea isFilled>
           <Stack>
-            <Header breadcrumbs={[{title: "test1", path: "/test1"},{title: "test2", path: "/test2"}]} buttons={[{title: "test1", path: "/test1"},{title: "test2", path: "/test2"}]} previous={"/prev"} settings={"/settings"} title="test"></Header>
             <BodyArea isFilled>{children}</BodyArea>
             <FooterArea><Footer></Footer></FooterArea>
           </Stack>
