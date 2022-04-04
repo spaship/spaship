@@ -18,13 +18,9 @@ const ContentArea = styled(SplitItem) `
     min-height: 80vh;
 `
 
-const HeaderArea = styled(StackItem)`
-  min-height: 100px;
-`
-
 const BodyArea = styled(StackItem)`
   padding: 1vw 10vw;
-  min-height: 85vh;
+  min-height: 80vh;
   width: 60vw;
 `
 
@@ -41,7 +37,7 @@ const LayoutDefinition: FunctionComponent<{}> = ({ children }) => {
         <SidebarArea><Sidebar></Sidebar></SidebarArea>
         <ContentArea isFilled>
           <Stack>
-            <HeaderArea><Header></Header></HeaderArea>
+            <Header breadcrumbs={[{title: "test1", path: "/test1"},{title: "test2", path: "/test2"}]} buttons={[{title: "test1", path: "/test1"},{title: "test2", path: "/test2"}]} previous={"/prev"} settings={"/settings"} title="test"></Header>
             <BodyArea isFilled>{children}</BodyArea>
             <FooterArea><Footer></Footer></FooterArea>
           </Stack>

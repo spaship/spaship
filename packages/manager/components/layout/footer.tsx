@@ -17,20 +17,19 @@ interface FooterProps {}
 
 const Footer: FunctionComponent<FooterProps> = () => {
   return (
-
-        <StyledFooter >
-          <Flex>
-            <FlexItem align={{ default: 'alignRight' }}>
-              <StyledButton component="a"  href="/contact-us" variant="link" >Contact Us</StyledButton>
-            </FlexItem>
-            <FlexItem>
-                <StyledButton component="a" href="https://github.com/spaship/spaship" 
-                target="_blank" variant="link" icon={<GithubIcon />}>
-                    GitHub
-                </StyledButton>
-            </FlexItem>
-          </Flex>
-        </StyledFooter>
+    <StyledFooter >
+      <Flex>
+        <FlexItem align={{ default: 'alignRight' }}>
+          <StyledButton component="a"  href="/contact-us" variant="link" >Contact Us</StyledButton>
+        </FlexItem>
+        <FlexItem>
+            <StyledButton component="a" href="https://github.com/spaship/spaship" 
+            target="_blank" variant="link" icon={<GithubIcon />}>
+                GitHub
+            </StyledButton>
+        </FlexItem>
+      </Flex>
+    </StyledFooter>
   );
 };
 
