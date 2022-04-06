@@ -19,6 +19,7 @@ function bindResponse(response) {
   let i = 1;
   response.forEach((item) => {
     item.id = i++;
+    item.createdAt = item.createdAt.toTimeString().substring(0, 8) + " " + item.createdAt.toDateString();
     actvitiesText(item, codeMap);
   });
 }
