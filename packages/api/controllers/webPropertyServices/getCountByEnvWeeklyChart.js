@@ -43,7 +43,17 @@ async function fetchResponse(dateFrame, matchRequest, groupRequest, projectReque
     });
     response.push(responseChart);
   }
-  return response;
+  const mappedResponse = {};
+  for (item of response) {
+    for (obj of item) {
+      if (mappedResponse[obj.envs]) {
+        mappedResponse[obj.envs].push(obj);
+      } else {
+        mappedResponse[obj.envs] = [obj];
+      }
+    }
+  }
+  return mappedResponse;
 }
 
 async function getWeeklyReport(startDate, endDate, matchRequest, groupRequest, projectRequest) {
