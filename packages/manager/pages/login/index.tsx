@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useSession, signIn } from "next-auth/react";
 import { FileAltIcon, GithubIcon, OptimizeIcon, UserIcon } from '@patternfly/react-icons';
 import { Bullseye, Button, Card, CardBody, CardHeader, Flex, FlexItem, Page, PageHeader, PageHeaderTools, PageHeaderToolsGroup, PageHeaderToolsItem, PageSection, PageSectionVariants, Title } from '@patternfly/react-core';
-import EmptySpinner from '../components/general/empty-spinner';
+import EmptySpinner from '../../components/general/empty-spinner';
 import styled from 'styled-components';
 import rocket from '../public/images/illustrations/rocket.svg';
 import darkLogo from '../public/images/logo/spaship-logo-dark-vector.svg';
