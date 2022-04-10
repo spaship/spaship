@@ -16,6 +16,7 @@ interface BodyProps {
 
 const BodyContainer = styled.div`
   margin: auto;
+  padding: 1rem 0;
   width: 67vw;
 `
  
