@@ -1,8 +1,11 @@
+import Body from "../components/layout/body";
 import { ComponentWithAuth } from "../utils/auth.utils";
 
 const Home: ComponentWithAuth = () => {
     return ( 
-        <div>To get started select an option from the left Sidebar!</div>
+        <Body title={"Welcome to SPAship! 👋 "} breadcrumbs={[{path: "/", title:'Home'}]}>
+            <div className="page-body">To get started select an option from the left sidebar!</div>
+        </Body>
      );
 }
 
