@@ -1,26 +1,3 @@
-/**
- * Header Component
- * ---------------------
- * Default header component for SPAship Manager pages.
- * 
- * Atrributes:
- * -----------
- * - breadcrumbs: (Optional) | Default Value: [] | Type: Array | Array Object Properties: {  title: <string>, path: <string> }
- * - buttons: (Optional) | Default Value: [] | Type: Array | Array Object Properties: {  title: <string>, path: <string> }
- * - previous: (Optional) | Default Value: N/A | Type: String | String containing path of any previous route path to route to
- * - settings: (Optional) | Default Value: N/A | Type: String | String containing path of the settings route path
- * - title: (Mandatory) | Default Value: N/A | Type: String | String containing page title
- * 
- * Component Syntax Example: 
- * ------------------------------
- * <Header 
- *   breadcrumbs={[{title: "link1", path: "/link1"},{title: "link2", path: "/path2"}]} 
- *   buttons={[{title: "link", path: "/path"}]} 
- *   previous={"/prev"} 
- *   settings={"/settings"} 
- *   title="test">
- * </Header>
- */
 import { FunctionComponent } from "react";
 import { Breadcrumb, BreadcrumbItem, Button, Flex, FlexItem, Title } from '@patternfly/react-core';
 import styled from "styled-components";
@@ -36,7 +13,7 @@ interface HeaderProps {
     buttons?: LinkProps[],
     previous?: string,
     settings?: string,
-    title: string,
+    title?: string,
 }
  
 const StyledHeader = styled.header`
@@ -69,7 +46,7 @@ const StyledBreadcrumb = styled(Breadcrumb)`
     --pf-c-breadcrumb__link--m-current--Color:  var(--spaship-global--Color--amarillo-flare);
 `;
 
-const Header: FunctionComponent<HeaderProps> = ({breadcrumbs=[], buttons=[], previous, settings, title}) => {
+const Header: FunctionComponent<HeaderProps> = ({breadcrumbs=[], buttons=[], previous, settings, title=''}) => {
     return ( 
         <StyledHeader>
             <Flex alignSelf={{ default: 'alignSelfFlexEnd' }}  direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsSm' }}>
@@ -77,7 +54,7 @@ const Header: FunctionComponent<HeaderProps> = ({breadcrumbs=[], buttons=[], pre
                     <Flex spaceItems={{ default: 'spaceItemsMd' }}>
                         { previous ?
                             <FlexItem>
-                                <Link href={previous} passHref><a><ArrowLeftIcon></ArrowLeftIcon></a></Link>
+                                <Link href={previous} passHref><a><ArrowLeftIcon /></a></Link>
                             </FlexItem>
                         : ''}
                         <FlexItem>
@@ -85,25 +62,35 @@ const Header: FunctionComponent<HeaderProps> = ({breadcrumbs=[], buttons=[], pre
                         </FlexItem>
                             { settings ? 
                                 <FlexItem>
-                                        <Link href={settings} passHref><a><CogIcon></CogIcon></a></Link>
+                                        <Link href={settings} passHref><a><CogIcon /></a></Link>
                                 </FlexItem>
                              : ''}
                     </Flex>
                 </Title>
                 <FlexItem>
                     <Flex spaceItems={{ default: 'spaceItemsMd' }}>
-                        {breadcrumbs.length ?
+                        { breadcrumbs.length ?
                             <FlexItem>
                                 <StyledBreadcrumb>
                                     { breadcrumbs.map((breadcrumb, index) => {
-                                        return <BreadcrumbItem key={index} to={breadcrumb.path}>{breadcrumb.title}</BreadcrumbItem>
+                                        return (
+                                            <BreadcrumbItem key={index} to={breadcrumb.path}>
+                                                {breadcrumb.title}
+                                            </BreadcrumbItem>
+                                        );
                                     })}
                                 </StyledBreadcrumb>
                             </FlexItem>
                         : ''}
                         { buttons.length ?
                             buttons.map((button, index) => {
-                                return <FlexItem key={index}><StyledButton className="spaship_btn" href={button.path} variant="primary">{button.title}</StyledButton></FlexItem>
+                                return (
+                                    <FlexItem key={index}>
+                                        <StyledButton className="spaship_btn" href={button.path} variant="primary">
+                                            {button.title}
+                                        </StyledButton>
+                                    </FlexItem>
+                                );
                             })
                         : ''}
                     </Flex>

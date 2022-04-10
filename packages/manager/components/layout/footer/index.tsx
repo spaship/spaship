@@ -1,12 +1,12 @@
 import { FunctionComponent } from "react";
-import { Button, Flex, FlexItem, Grid, GridItem } from '@patternfly/react-core';
+import { Button, Flex, FlexItem } from '@patternfly/react-core';
 import { GithubIcon } from '@patternfly/react-icons';
-import Link from "next/link";
 import styled from "styled-components";
 
 const StyledFooter = styled.footer `
   border-top: 1px solid var(--spaship-global--Color--bright-gray);
-  width: 60vw;
+  width: 67vw;
+  margin: auto;
 `;
 
 const StyledButton = styled(Button) `

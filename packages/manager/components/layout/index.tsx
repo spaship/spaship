@@ -18,26 +18,18 @@ const ContentArea = styled(SplitItem) `
 `
 
 const BodyArea = styled(StackItem)`
-  padding: 1vw 10vw;
-  min-height: 80vh;
-  width: 60vw;
-`
-
-const FooterArea = styled(StackItem)`
-  padding: 0 5vw;
-  min-height: 5vh;
-  width: 60vw;
+  min-height: 94vh;
 `
 
 const LayoutDefinition: FunctionComponent<{}> = ({ children }) => {
   return (
     <>
       <Split>
-        <SidebarArea><Sidebar></Sidebar></SidebarArea>
+        <SidebarArea><Sidebar /></SidebarArea>
         <ContentArea isFilled>
           <Stack>
             <BodyArea isFilled>{children}</BodyArea>
-            <FooterArea><Footer></Footer></FooterArea>
+            <Footer/>
           </Stack>
         </ContentArea>
       </Split>
