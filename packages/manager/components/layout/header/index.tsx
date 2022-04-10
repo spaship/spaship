@@ -3,6 +3,7 @@ import { Breadcrumb, BreadcrumbItem, Button, Flex, FlexItem, Title } from '@patt
 import styled from "styled-components";
 import { ArrowLeftIcon, CogIcon } from "@patternfly/react-icons";
 import Link from "next/link";
+import router from "next/router";
 
 interface LinkProps {
     title: string,
@@ -54,7 +55,7 @@ const Header: FunctionComponent<HeaderProps> = ({breadcrumbs=[], buttons=[], pre
                     <Flex spaceItems={{ default: 'spaceItemsMd' }}>
                         { previous ?
                             <FlexItem>
-                                <Link href={previous} passHref><a><ArrowLeftIcon /></a></Link>
+                                <a onClick={()=>{router.push(previous)}}><ArrowLeftIcon /></a>
                             </FlexItem>
                         : ''}
                         <FlexItem>
@@ -62,7 +63,7 @@ const Header: FunctionComponent<HeaderProps> = ({breadcrumbs=[], buttons=[], pre
                         </FlexItem>
                             { settings ? 
                                 <FlexItem>
-                                        <Link href={settings} passHref><a><CogIcon /></a></Link>
+                                    <a onClick={()=>{router.push(settings)}}><CogIcon /></a>
                                 </FlexItem>
                              : ''}
                     </Flex>
@@ -74,8 +75,8 @@ const Header: FunctionComponent<HeaderProps> = ({breadcrumbs=[], buttons=[], pre
                                 <StyledBreadcrumb>
                                     { breadcrumbs.map((breadcrumb, index) => {
                                         return (
-                                            <BreadcrumbItem key={index} to={breadcrumb.path}>
-                                                {breadcrumb.title}
+                                            <BreadcrumbItem key={index} onClick={()=>{router.push(breadcrumb.path)}}>
+                                                <a>{breadcrumb.title}</a>
                                             </BreadcrumbItem>
                                         );
                                     })}
@@ -86,7 +87,7 @@ const Header: FunctionComponent<HeaderProps> = ({breadcrumbs=[], buttons=[], pre
                             buttons.map((button, index) => {
                                 return (
                                     <FlexItem key={index}>
-                                        <StyledButton className="spaship_btn" href={button.path} variant="primary">
+                                        <StyledButton className="spaship_btn" onClick={()=>{router.push(button.path)}} variant="primary">
                                             {button.title}
                                         </StyledButton>
                                     </FlexItem>

@@ -2,6 +2,7 @@ import { FunctionComponent } from "react";
 import { Button, Flex, FlexItem } from '@patternfly/react-core';
 import { GithubIcon } from '@patternfly/react-icons';
 import styled from "styled-components";
+import router from "next/router";
 
 const StyledFooter = styled.footer `
   border-top: 1px solid var(--spaship-global--Color--bright-gray);
@@ -20,7 +21,7 @@ const Footer: FunctionComponent<FooterProps> = () => {
     <StyledFooter >
       <Flex>
         <FlexItem align={{ default: 'alignRight' }}>
-          <StyledButton component="a"  href="/contact-us" variant="link" >Contact Us</StyledButton>
+          <StyledButton component="a"   onClick={()=>{router.push("/contact-us")}} variant="link" >Contact Us</StyledButton>
         </FlexItem>
         <FlexItem>
             <StyledButton component="a" href="https://github.com/spaship/spaship" 
