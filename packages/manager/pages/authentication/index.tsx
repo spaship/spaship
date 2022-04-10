@@ -1,13 +1,22 @@
 import { FunctionComponent } from "react";
 import Link from "next/link";
+import Body from "../../components/layout/body";
 
 interface AuthConsoleProps {}
 
+const meta = {
+  title: "Authentication ",
+  breadcrumbs: [
+    {path: "/", title:'Home'},
+    {path: "/authentication", title:'Authentication'}
+  ]
+}
+
 const AuthConsole: FunctionComponent<AuthConsoleProps> = () => {
   return (
-    <div className="authConsole">
+    <Body {...meta}>
       <Link href="/authentication/api-keys">API Key Management</Link>
-    </div>
+    </Body>
   );
 };
 
