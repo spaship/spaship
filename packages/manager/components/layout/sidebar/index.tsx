@@ -1,10 +1,10 @@
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Brand, Nav, NavItem, NavList, Stack, StackItem } from "@patternfly/react-core";
 import { FlagIcon, LockOpenIcon, NetworkIcon, OutlinedQuestionCircleIcon, TrendUpIcon } from "@patternfly/react-icons";
 import styled from "styled-components";
-import UserStatus from "./user-status";
+import User from "./user";
 
 interface SidebarProps {}
 
@@ -80,7 +80,7 @@ const Sidebar: FunctionComponent<SidebarProps> = () => {
           </StyledNavList>
         </Nav>
       </StackItem>
-      <StackItem><UserStatus /></StackItem>
+      <StackItem><User /></StackItem>
     </StyledStack>
   );
 };

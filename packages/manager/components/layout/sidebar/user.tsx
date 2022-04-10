@@ -4,7 +4,7 @@ import router from "next/router";
 import { FunctionComponent, useState } from "react";
 import styled from "styled-components";
 
-interface UserStatusProps {}
+interface UserProps {}
 
 const StyledAccordion = styled(Accordion) `
 --pf-c-accordion--BackgroundColor: var(--spaship-global--Color--spaship-gray);
@@ -53,7 +53,7 @@ const StyledAccordion = styled(Accordion) `
 }
 `
 
-const UserStatus: FunctionComponent<UserStatusProps> = () => {
+const User: FunctionComponent<UserProps> = () => {
 
   const [isExpanded, setExpanded] = useState(false);
   const { data: session} = useSession();
@@ -95,4 +95,4 @@ const UserStatus: FunctionComponent<UserStatusProps> = () => {
     );
 }
 
-export default UserStatus;
+export default User;
