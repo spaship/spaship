@@ -1,8 +1,5 @@
 {
-  "packages": [
-    "packages/*",
-    "packages/manager"
-  ],
+  "packages": ["packages/*"],
   "version": "0.14.0",
   "ignoreChanges": ["package-lock.json"]
 }
