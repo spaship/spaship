@@ -414,3 +414,4 @@ $RECYCLE.BIN/
 
 /packages/packages.iml
 packages/operator/local-build.sh
+packages/operator/operator.iml
