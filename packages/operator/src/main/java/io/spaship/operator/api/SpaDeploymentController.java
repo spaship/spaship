@@ -5,6 +5,8 @@ import io.spaship.operator.business.SPAUploadHandler;
 import io.spaship.operator.exception.ZipFileProcessException;
 import io.spaship.operator.repo.SharedRepository;
 import io.spaship.operator.type.FormData;
+import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
 import org.jboss.resteasy.reactive.MultipartForm;
@@ -13,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -33,15 +36,18 @@ public class SpaDeploymentController {
     }
 
     @POST
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public String uploadSPA(@MultipartForm FormData formData) {
         //[0]description[1]unique-trace-id
         var response = sanity(formData);
         //[0]file-path[1]unique-trace-id[2]website-name
-        var fileUploadParams = new Triplet<>(formData.getfilePath(), response.getValue1(), formData.website);
+        var fileUploadParams = new Triplet<>(formData.getfilePath(), response, formData.website);
         spaUploadHandlerService.handleFileUpload(fileUploadParams);
-        return response.toString();
+        JsonObject object = new JsonObject();
+        object.put("description",response.getValue0());
+        object.put("traceId",response.getValue1());
+        return object.toString();
     }
 
     @GET
@@ -74,6 +80,9 @@ public class SpaDeploymentController {
         Objects.requireNonNull(fileName, "file name not found");
         Objects.requireNonNull(fileSize, "file size cannot be null");
         Objects.requireNonNull(path, "unable to store the file");
+
+        if(description.isEmpty() || description.isBlank() || description.equals(" "))
+          description = String.valueOf(LocalDateTime.now());
 
         LOG.debug("file received description {} , name is {} , size {}, location {} \n",
                 description, fileName, fileSize, path);

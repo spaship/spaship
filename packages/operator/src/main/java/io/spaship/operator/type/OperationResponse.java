@@ -30,6 +30,12 @@ public class OperationResponse {
         return this.environment;
     }
 
+    public String getSpaName(){
+      if(Objects.isNull(this.environment))
+        return "NF";
+      return this.environment.getSpaName();
+    }
+
     public String getEnvironmentName() {
         return environment.getName();
     }

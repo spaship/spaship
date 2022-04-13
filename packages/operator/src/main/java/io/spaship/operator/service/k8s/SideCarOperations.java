@@ -1,9 +1,11 @@
 package io.spaship.operator.service.k8s;
 
 import io.spaship.operator.business.EventManager;
+import io.spaship.operator.type.Environment;
 import io.spaship.operator.type.EventStructure;
 import io.spaship.operator.type.OperationResponse;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.mutiny.core.Vertx;
 import io.vertx.mutiny.core.buffer.Buffer;
@@ -56,6 +58,31 @@ public class SideCarOperations {
 
 
     @SneakyThrows
+    public String triggerSync(String sidecarUrl, String syncConfig,Environment environment){
+
+      sidecarUrl = sidecarUrl.replace("tcp", "http");
+      LOG.debug("sidecar url {} syncConfig details {}", sidecarUrl, syncConfig);
+      var sideCarUrlPart = sidecarUrl.split(":");
+      var host = "http://".concat(sideCarUrlPart[1].replace("//", ""));
+      var port = sideCarUrlPart[2];
+      var requestUri = host.concat(":").concat(port).concat("/api/sync");
+      LOG.info("sidecar env {} url, {}", environment, requestUri);
+
+      waitForReadiness(environment,15);
+
+      return  client.requestAbs(HttpMethod.POST, requestUri)
+        .sendJson(syncConfig)
+        .map(HttpResponse::bodyAsString)
+        .onFailure()
+        .retry()
+        .withBackOff(Duration.ofSeconds(2), Duration.ofSeconds(4))
+        .atMost(30).onFailure()
+        .recoverWithItem(e -> new JsonObject().put("status","failed to communicate due to "+e.getMessage()).encodePrettily())
+        .subscribeAsCompletionStage().get();
+
+    }
+
+    @SneakyThrows
     //TODO break into multiple methods
     private OperationResponse createOrUpdateSPDirectory(OperationResponse operationResponse) {
         var sideCarUrl = operationResponse.getSideCarServiceUrl().replace("tcp", "http");
@@ -78,7 +105,7 @@ public class SideCarOperations {
         var requestUri = host.concat(":").concat(port).concat("/api/upload");
         LOG.info("sidecar env {} url, {}", operationResponse.getEnvironmentName(), requestUri);
 
-      waitForReadiness(operationResponse);
+      waitForReadiness(operationResponse.getEnvironment());
 
       var opResp = client.requestAbs(HttpMethod.POST, requestUri).sendMultipartForm(form)
                 .map(item -> apply(responseOnFailure, item))
@@ -98,19 +125,23 @@ public class SideCarOperations {
                         .uuid(operationResponse.getEnvironment().getTraceID())
                         .state(opResp.getErrorMessage() == null ?
                                 "spa deployment ops performed" : "spa deployment ops failed")
+                        .spaName(operationResponse.getSpaName())
                         .build());
 
         return opResp;
     }
 
-  private void waitForReadiness(OperationResponse operationResponse) throws InterruptedException {
+    private void waitForReadiness(Environment env) throws InterruptedException {
+      waitForReadiness(env,150);
+    }
+
+    private void waitForReadiness(Environment env, int threshold) throws InterruptedException {
       int attempt = 0;
-      var env = operationResponse.getEnvironment();
       while(!k8sOperator.isEnvironmentAvailable(env)){
         if(attempt==0)
           LOG.info("waiting for readiness of {}.{} ",env.getName(),env.getWebsiteName());
         Thread.sleep(4000);
-        if(attempt>150){
+        if(attempt>threshold){
           LOG.warn("environment {}.{} still not ready, releasing the block to prevent from infinite looping "
             ,env.getName(),env.getWebsiteName());
           break;

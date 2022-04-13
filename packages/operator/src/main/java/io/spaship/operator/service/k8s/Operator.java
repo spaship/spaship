@@ -5,6 +5,7 @@ import io.fabric8.kubernetes.api.model.KubernetesList;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import io.fabric8.kubernetes.api.model.networking.v1.Ingress;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.internal.readiness.Readiness;
@@ -36,6 +37,7 @@ public class Operator implements Operations {
     private final KubernetesClient k8sClient;
     private final EventManager eventManager;
     private final String domain;
+    private final String appInstance;
 
 
     private static final String MANAGED_BY = "managedBy";
@@ -47,10 +49,20 @@ public class Operator implements Operations {
         this.k8sClient = k8sClient;
         this.eventManager = eventManager;
         domain = ConfigProvider.getConfig().getValue("operator.domain.name", String.class);
+        appInstance = setAppInstanceValue();
+    }
+
+    private String setAppInstanceValue() {
+        var propertyValue = ConfigProvider.getConfig().getValue("app.instance", String.class);
+        if(Objects.isNull(propertyValue) || propertyValue.isEmpty() || propertyValue.isBlank()){
+          LOG.warn("property app.instance is not set, going with the default value");
+          propertyValue = "default";
+        }
+        return propertyValue;
     }
 
 
-    public OperationResponse createOrUpdateEnvironment(Environment environment) {
+  public OperationResponse createOrUpdateEnvironment(Environment environment) {
 
         domainValidation(domain);
 
@@ -110,8 +122,10 @@ public class Operator implements Operations {
         processK8sList(result, environment.getTraceID(), environment.getNameSpace());
     }
 
-    String environmentSidecarUrl(Environment environment) {
+    public String environmentSidecarUrl(Environment environment) {
         String serviceName = "svc"
+                .concat("-")
+                .concat(appInstance)
                 .concat("-")
                 .concat(environment.getWebsiteName().toLowerCase())
                 .concat("-")
@@ -135,6 +149,7 @@ public class Operator implements Operations {
 
     private OperationResponse applyDeleteResourceList(Environment environment, KubernetesList resourceList) {
         LOG.debug("applying delete on resources");
+        //Should we delete the pvs as well? will that be a good idea?
         boolean isDeleted = k8sClient.resourceList(resourceList).inNamespace(environment.getNameSpace()).delete();
         environment.setOperationPerformed(true);
         var or = OperationResponse.builder().environment(environment)
@@ -153,7 +168,9 @@ public class Operator implements Operations {
                 //"TRACE_ID", environment.getTraceID().toString().toLowerCase(),
                 "ENV", environment.getName().toLowerCase(),
                 "WEBSITE_VERSION", environment.getWebsiteVersion().toLowerCase(),
-                "DOMAIN", domain
+                "DOMAIN", domain,
+                "APP_INSTANCE_PREFIX",appInstance,
+                "STORAGE_CLASS",ConfigProvider.getConfig().getValue("storage.class", String.class)
         );
         LOG.debug("building KubernetesList, templateParameters are as follows {}", templateParameters);
         return ((OpenShiftClient) k8sClient)
@@ -217,6 +234,14 @@ public class Operator implements Operations {
                 eb.websiteName(item.getMetadata().getLabels().get(WEBSITE))
                         .environmentName(item.getMetadata().getLabels().get(ENVIRONMENT))
                         .state("deployment created");
+            }
+            if(item instanceof StatefulSet){
+              LOG.debug("creating new Deployment in K8s, tracing = {}", tracing);
+              k8sClient.apps().statefulSets().inNamespace(nameSpace).createOrReplace((StatefulSet)item);
+              eb.websiteName(item.getMetadata().getLabels().get(WEBSITE))
+                .environmentName(item.getMetadata().getLabels().get(ENVIRONMENT))
+                .state("StatefulSet created");
+
             }
             if (item instanceof Route) {
                 LOG.debug("creating new Route in K8s, tracing = {}", tracing);
