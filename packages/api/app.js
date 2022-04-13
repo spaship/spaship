@@ -20,8 +20,8 @@ const swaggerDocument = yaml.safeLoad(fs.readFileSync(path.join(__dirname, "open
 const app = new express();
 const consumeSSE = require("./controllers/operatorServices/consumeEvent.js")
 app
-  .use(bodyParser.json())
-  .use(bodyParser.urlencoded({ extended: true }))
+  .use(bodyParser.json({limit: "50mb"}))
+  .use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}))
   .use(expressSanitizer())
   .use(cors())
   .use(helmet())

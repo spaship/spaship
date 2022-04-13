@@ -19,6 +19,7 @@ function bindResponse(response) {
   let i = 1;
   response.forEach((item) => {
     item.id = i++;
+    item.createdAt = item.createdAt.toTimeString().substring(0, 8) + " " + item.createdAt.toDateString();
     actvitiesText(item, codeMap);
   });
 }
@@ -45,13 +46,13 @@ async function fetchLatestActivitiesByProperty(matchRequest) {
       },
     },
     {
-      $limit: 10,
+      $limit: 15,
     },
   ]);
 }
 
 function actvitiesText(item, codeMap) {
-  item.latestActivityHead = " has been " + codeMap[item.code] + " ";
+  item.latestActivityHead = " has been " + item.code + " ";
   item.latestActivityTail = " at " + item.createdAt.toString().slice(0, 24) + " in " + item.envs;
 }
 

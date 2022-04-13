@@ -87,7 +87,6 @@ const analyticsOperations = async (request) => {
           count: "$count",
         }
       );
-      response = response.filter((data) => data.length > 0);
       return response;
     } else if (request?.chart.month == true && getPropertyName(request?.chart)) {
       let response = await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
@@ -106,7 +105,6 @@ const analyticsOperations = async (request) => {
           count: "$count",
         }
       );
-      response = response.filter((data) => data.length > 0);
       return response;
     } else if (getPropertyName(request?.chart) && getSpaName(request?.chart)) {
       return await getCounts.getCountService(
