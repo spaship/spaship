@@ -42,6 +42,7 @@ const PropertiesList: FunctionComponent<PropertiesListProps> = ({ webprop, activ
         <AddProperty></AddProperty>
         <WebProperty webprop={webprop}></WebProperty>
       </Gallery>
+      <br />
       <DividerComp />
     </Body>
   );

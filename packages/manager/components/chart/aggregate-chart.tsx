@@ -9,9 +9,13 @@ import React, { FunctionComponent } from "react";
 import { AnyProps } from "../models/props";
 
 const AggregateChart: FunctionComponent<AnyProps> = ({ type, props }: AnyProps) => {
-  if (type === "donut")
+  const chartType = {
+    donut: "donut",
+    month: "month"
+  };
+  if (type === chartType.donut)
     return (<ChartDonut {...props} />);
-  else if (type === "month")
+  else if (type === chartType.month)
     return (<Chart {...props.chartConfig} containerComponent={
       <ChartVoronoiContainer
         labels={({ datum }) => `${datum.name}: ${datum.y}`}

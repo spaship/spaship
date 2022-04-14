@@ -52,7 +52,6 @@ export const getStaticProps = async (context: ContextProps) => {
         processedListResponse[i].count = obj?.count || 0;
     }
 
-
     return {
         props: { webprop: processedListResponse, activites: activitesResponse },
     };
@@ -65,7 +64,7 @@ const WebPropertyPage: FunctionComponent<WebPropertyPageProps> = ({ webprop, act
     return (
         <Body {...meta}>
             <SPAProperty webprop={webprop}></SPAProperty>
-            <br />
+            <br />   
             <DividerComp />
             <br />
             <ActivityStream webprop={activites}></ActivityStream>

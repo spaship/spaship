@@ -8,7 +8,7 @@ import Body from "../../../../components/layout/body";
 import { AnyProps, ContextProps, Properties, SPAIndexProps } from "../../../../components/models/props";
 import ActivityStream from "../../../../components/web-property/activityStream";
 import { post } from "../../../../utils/api.utils";
-import { getEventAnalyticsUrl } from "../../../../utils/endpoint.utils";
+import { getAllEventCountUrl, getEventAnalyticsUrl } from "../../../../utils/endpoint.utils";
 
 export const DividerComp = styled.hr`
   border-top: 1px solid var(--spaship-global--Color--bright-gray);
@@ -16,7 +16,7 @@ export const DividerComp = styled.hr`
 `;
 
 export const getStaticPaths = async () => {
-    const url = getEventAnalyticsUrl();
+    const url = getAllEventCountUrl();
     const payload = {
         "count": {
             "spa": true
