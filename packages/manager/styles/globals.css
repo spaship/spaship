@@ -74,7 +74,7 @@ button.spaship_btn {
 }
 
 .spaship-circle {
-  border-radius: 999px;
+  border-radius: 50%;
   width: 70px;
   height: 70px;
   margin-top: 25px;
@@ -83,7 +83,8 @@ button.spaship_btn {
   color: var(--spaship-global--Color--spaship-gray);
   text-align: center;
   transition: color 0.2s linear;
-  font: 70px arial, sans-serif;
+  font-size: 70px;
+  font-family: arial, sans-serif;
 }
 
 .spaship-circle:hover {
