@@ -15,74 +15,82 @@ export const DividerComp = styled.hr`
   width: 60vw;
 `;
 
-export const getStaticPaths = async () => {
-    const url = getAllEventCountUrl();
-    const payload = {
-        "count": {
-            "spa": true
+export const getServerSidePaths = async () => {
+    try {
+        const url = getAllEventCountUrl();
+        const payload = {
+            "count": {
+                "spa": true
+            }
         }
+        const response = await post<AnyProps>(url, payload);
+        const paths: AnyProps = [];
+        for (let prop of response) {
+            if (prop?.propertyName && prop?.spaName)
+                paths.push({ params: { propertyName: prop?.propertyName, spaName: prop?.spaName } });
+        }
+        return { paths, fallback: false }
+    } catch (error) {
+        return { props: {} };
     }
-    const response = await post<AnyProps>(url, payload);
-    const paths: AnyProps = [];
-    for (let prop of response) {
-        if (prop?.propertyName && prop?.spaName)
-            paths.push({ params: { propertyName: prop?.propertyName, spaName: prop?.spaName } });
-    }
-    return { paths, fallback: false }
 }
 
-export const getStaticProps = async (context: ContextProps) => {
-    const propertyReq = getPropertyReq(context);
-    const spaReq = getSpaReq(context);
-    const url = getEventAnalyticsUrl();
-    const payloadActivites = {
-        "activities": {
-            "propertyName": propertyReq,
-            "spaName": spaReq,
+export const getServerSideProps = async (context: ContextProps) => {
+    try {
+        const propertyReq = getPropertyReq(context);
+        const spaReq = getSpaReq(context);
+        const url = getEventAnalyticsUrl();
+        const payloadActivites = {
+            "activities": {
+                "propertyName": propertyReq,
+                "spaName": spaReq,
+            }
+        };
+        const payloadTotalDeploymenets = {
+            "count": {
+                "propertyName": propertyReq,
+                "spaName": spaReq,
+            }
+        };
+        const payloadMonthlyDeploymenets = {
+            "chart": {
+                "month": true,
+                "propertyName": propertyReq,
+                "spaName": spaReq,
+            }
+        };
+        const response = await Promise.all([await post<Properties>(url, payloadActivites), await post<Properties>(url, payloadTotalDeploymenets), await post<Properties>(url, payloadMonthlyDeploymenets)]);
+        const [activitesResponse, totalDeploymentsResponse, monthlyDeploymentResponse]: AnyProps = response;
+        let chartData: AnyProps = [];
+        let labelData: AnyProps = [];
+        let count = 0;
+        if (totalDeploymentsResponse) {
+            for (let item of totalDeploymentsResponse) {
+                count = processTotalDeployments(item, count, chartData, labelData);
+            }
         }
-    };
-    const payloadTotalDeploymenets = {
-        "count": {
-            "propertyName": propertyReq,
-            "spaName": spaReq,
+        const processedMonthlyDeployments = [];
+        const legendData = [];
+        let tempLegendData: AnyProps = new Set;
+        for (const item in monthlyDeploymentResponse) {
+            const data = monthlyDeploymentResponse[item];
+            const temp = [];
+            let i = 1;
+            for (const prop of data) {
+                tempLegendData.add(prop.envs);
+                temp.push({ name: prop.envs, x: `week ${i++}`, y: prop?.count })
+            }
+            processedMonthlyDeployments.push(temp);
         }
-    };
-    const payloadMonthlyDeploymenets = {
-        "chart": {
-            "month": true,
-            "propertyName": propertyReq,
-            "spaName": spaReq,
+        for (let env of tempLegendData) {
+            legendData.push({ name: env })
         }
-    };
-    const response = await Promise.all([await post<Properties>(url, payloadActivites), await post<Properties>(url, payloadTotalDeploymenets), await post<Properties>(url, payloadMonthlyDeploymenets)]);
-    const [activitesResponse, totalDeploymentsResponse, monthlyDeploymentResponse]: AnyProps = response;
-    let chartData: AnyProps = [];
-    let labelData: AnyProps = [];
-    let count = 0;
-    if (totalDeploymentsResponse) {
-        for (let item of totalDeploymentsResponse) {
-            count = processTotalDeployments(item, count, chartData, labelData);
-        }
+        return {
+            props: { activites: activitesResponse, totalDeployments: { chartData: chartData, labelData: labelData, count: count }, monthlyDeployments: { processedMonthlyDeployments: processedMonthlyDeployments, legendData: legendData } },
+        };
+    } catch (error) {
+        return { props: {} };
     }
-    const processedMonthlyDeployments = [];
-    const legendData = [];
-    let tempLegendData: AnyProps = new Set;
-    for (const item in monthlyDeploymentResponse) {
-        const data = monthlyDeploymentResponse[item];
-        const temp = [];
-        let i = 1;
-        for (const prop of data) {
-            tempLegendData.add(prop.envs);
-            temp.push({ name: prop.envs, x: `week ${i++}`, y: prop?.count })
-        }
-        processedMonthlyDeployments.push(temp);
-    }
-    for (let env of tempLegendData) {
-        legendData.push({ name: env })
-    }
-    return {
-        props: { activites: activitesResponse, totalDeployments: { chartData: chartData, labelData: labelData, count: count }, monthlyDeployments: { processedMonthlyDeployments: processedMonthlyDeployments, legendData: legendData } },
-    };
 };
 
 const SPAProperties: FunctionComponent<SPAIndexProps> = ({ activites, totalDeployments, monthlyDeployments }: SPAIndexProps) => {

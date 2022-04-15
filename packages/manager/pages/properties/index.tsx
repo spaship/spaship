@@ -24,13 +24,17 @@ const meta = {
   ]
 }
 
-export const getStaticProps = async () => {
-  const urlCount = getAllEventCountUrl();
-  const response = await Promise.all([await post<Properties>(urlCount, payload)]);
-  const [deploymentCountResponse]: AnyProps = response;
-  return {
-    props: { webprop: deploymentCountResponse },
-  };
+export const getServerSideProps = async () => {
+  try {
+    const urlCount = getAllEventCountUrl();
+    const response = await Promise.all([await post<Properties>(urlCount, payload)]);
+    const [deploymentCountResponse]: AnyProps = response;
+    return {
+      props: { webprop: deploymentCountResponse },
+    };
+  } catch (error) {
+    return { props: {} };
+  }
 };
 
 const PropertiesList: FunctionComponent<PropertiesListProps> = ({ webprop }: AnyProps) => {
