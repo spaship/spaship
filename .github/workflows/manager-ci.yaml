@@ -20,7 +20,7 @@ jobs:
   push_to_registry:
     name: Push Docker image to Registries
     env:
-      IMAGE_NAME: "spaship-manager"
+      IMAGE_NAME: "manager"
       REGISTRY_NAMESPACE: "spaship"
     runs-on: ubuntu-latest
     steps:
