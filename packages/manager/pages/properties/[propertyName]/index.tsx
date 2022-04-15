@@ -15,40 +15,48 @@ export const DividerComp = styled.hr`
   width: 60vw;
 `;
 
-export const getStaticPaths = async () => {
-    const url = getAllEventCountUrl();
-    const payload = {
-        "count": {
-            "spa": true
+export const getServerSidePaths = async () => {
+    try {
+        const url = getAllEventCountUrl();
+        const payload = {
+            "count": {
+                "spa": true
+            }
         }
+        const response = await post<AnyProps>(url, payload);
+        const paths: AnyProps = [];
+        for (let prop of response) {
+            if (prop?.propertyName)
+                paths.push({ params: { propertyName: prop?.propertyName } });
+        }
+        return { paths, fallback: false }
+    } catch (error) {
+        return { props: {} };
     }
-    const response = await post<AnyProps>(url, payload);
-    const paths: AnyProps = [];
-    for (let prop of response) {
-        if (prop?.propertyName)
-            paths.push({ params: { propertyName: prop?.propertyName } });
-    }
-    return { paths, fallback: false }
 }
 
-export const getStaticProps = async (context: ContextProps) => {
-    const propertyReq = getPropertyRequest(context);
-    const urlEvent = getEventAnalyticsUrl();
-    const payloadActivites = {
-        "activities": {
-            "propertyName": propertyReq
-        }
-    };
-    const payloadCount = {
-        "count": {
-            "propertyName": propertyReq
-        }
-    };
-    const response = await Promise.all([await post<Properties>(urlEvent, payloadActivites), await post<Properties>(urlEvent, payloadCount)]);
-    const [activitesResponse, countResponse]: AnyProps = response;
-    return {
-        props: { webprop: countResponse, activites: activitesResponse },
-    };
+export const getServerSideProps = async (context: ContextProps) => {
+    try {
+        const propertyReq = getPropertyRequest(context);
+        const urlEvent = getEventAnalyticsUrl();
+        const payloadActivites = {
+            "activities": {
+                "propertyName": propertyReq
+            }
+        };
+        const payloadCount = {
+            "count": {
+                "propertyName": propertyReq
+            }
+        };
+        const response = await Promise.all([await post<Properties>(urlEvent, payloadActivites), await post<Properties>(urlEvent, payloadCount)]);
+        const [activitesResponse, countResponse]: AnyProps = response;
+        return {
+            props: { webprop: countResponse, activites: activitesResponse },
+        };
+    } catch (error) {
+        return { props: {} };
+    }
 };
 
 const WebPropertyPage: FunctionComponent<WebPropertyPageProps> = ({ webprop, activites }: AnyProps) => {
