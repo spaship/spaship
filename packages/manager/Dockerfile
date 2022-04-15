@@ -26,7 +26,6 @@ RUN find . -name "node_modules" -exec rm -rf '{}' +
 RUN find . -name ".next" -exec rm -rf '{}' +
 RUN sudo chmod -R 777 /app
 RUN ls && npm install
-RUN ls && npm run build
 EXPOSE 3000
 
 CMD [ "npm", "run", "start"]
