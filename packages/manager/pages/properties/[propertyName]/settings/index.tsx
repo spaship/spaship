@@ -1,35 +1,40 @@
 import { useRouter } from "next/router";
 import React, { FunctionComponent } from "react";
 import Body from "../../../../components/layout/body";
-import { DataPoint } from "../../../../components/models/chart";
 import { AnyProps, ContextProps, Properties } from "../../../../components/models/props";
 import ApiKey from "../../../../components/settings/apiKey";
 import DeleteSpa from "../../../../components/settings/deleteSpa";
 import ManageSpa from "../../../../components/settings/manageSpa";
-import { get } from "../../../../utils/api.utils";
-import { getSpaListUrl, getWebPropertyListUrl } from "../../../../utils/endpoint.utils";
+import { post } from "../../../../utils/api.utils";
+import { getAllEventCountUrl, getEventAnalyticsUrl } from "../../../../utils/endpoint.utils";
 
 export const getStaticPaths = async () => {
-    const url = getWebPropertyListUrl();
-    const propertyListResponse = await get<AnyProps>(url);
-    const paths = propertyListResponse.map((property: AnyProps) => ({
-        params: { propertyName: property.webPropertyName },
-    }))
+    const url = getAllEventCountUrl();
+    const payload = {
+        "count": {
+            "spa": true
+        }
+    }
+    const response = await post<AnyProps>(url, payload);
+    const paths: AnyProps = [];
+    for (let prop of response) {
+        if (prop?.propertyName)
+            paths.push({ params: { propertyName: prop?.propertyName } });
+    }
     return { paths, fallback: false }
 }
 
 export const getStaticProps = async (context: ContextProps) => {
     const propertyReq = getPropertyRequest(context);
-    const urlList = getSpaListUrl(propertyReq);
-    const response = await get<Properties>(urlList);
-    let listResponse: DataPoint[] = [];
-    const checkSpa = new Set();
-    if (response) {
-        const data = await response;
-        listResponse = processProperties(data, checkSpa, listResponse);
-    }
+    const urlEvent = getEventAnalyticsUrl();
+    const payloadCount = {
+        "count": {
+            "propertyName": propertyReq
+        }
+    };
+    const response = await post<Properties>(urlEvent, payloadCount);
     return {
-        props: { webprop: listResponse },
+        props: { webprop: response },
     };
 };
 
@@ -64,30 +69,3 @@ function getHeaderData(propertyName: string | string[]) {
 function getPropertyRequest(context: AnyProps) {
     return context.params.propertyName;
 }
-
-function getSpaName(eachSpa: AnyProps): string {
-    if (!eachSpa.spaName) return '';
-    return eachSpa?.spaName.trim().replace(/^\/|\/$/g, '') || null;
-}
-
-function processProperties(data: AnyProps, checkSpa: Set<AnyProps>, response: AnyProps) {
-    for (let item of data) {
-        let spas = item?.spa;
-        for (let eachSpa of spas) {
-            const reqSpaName = getSpaName(eachSpa);
-            if (eachSpa?.spaName && reqSpaName.length > 0 && !checkSpa.has(reqSpaName)) {
-                checkSpa.add(reqSpaName);
-                response.push({
-                    spaName: reqSpaName,
-                    envs: eachSpa.envs,
-                    contextPath: eachSpa.contextPath,
-                    propertyName: item.webPropertyName,
-                    createdAt: item.createdAt
-                });
-            }
-        }
-    }
-    return response;
-}
-
-

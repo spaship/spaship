@@ -8,7 +8,7 @@ export interface ContextProps {
 
 export interface WebProps {
     id: string;
-    webPropertyName: string;
+    propertyName?: string;
     count: string;
 }
 
@@ -17,7 +17,7 @@ export interface SPAProps {
     count: string;
     spaName: string;
     propertyName: string;
-    contextPath: string;
+    contextPath?: string;
 }
 
 export interface ActivityProps {

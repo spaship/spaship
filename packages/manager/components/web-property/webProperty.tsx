@@ -23,10 +23,10 @@ const WebProperty: FunctionComponent<Properties> = ({ webprop }: Properties) => 
           isCompact
           key={prop.id}
           isRounded
-          onClick={() => router.push(`properties/${prop.webPropertyName}`)}
+          onClick={() => router.push(`properties/${prop.propertyName}`)}
         >
           <CardStyle>
-            <CardTitle>{prop.webPropertyName}</CardTitle>
+            <CardTitle>{prop.propertyName}</CardTitle>
             <CardBody>Deployed</CardBody>
             <CardFooter>{prop.count} Deployments</CardFooter>
           </CardStyle>
