@@ -45,7 +45,7 @@ const ManageSpa: FunctionComponent<Properties> = ({ webprop }: Properties) => {
             {webprop.map((spa: SPAProps) => (
               <Tr key={spa.spaName}>
                 <Td dataLabel={spa.spaName}>{spa.spaName}</Td>
-                <Td dataLabel={spa.propertyName}>/{spa.contextPath}</Td>
+                <Td dataLabel={spa.propertyName}>/{spa.spaName}</Td>
                 <Td dataLabel={spa.spaName}>
                   <Switch
                     id="spaship-switch"
