@@ -16,8 +16,11 @@ RUN apt-get install --only-upgrade bash
 RUN node -v
 
 RUN mkdir app
-RUN chown -Rh $user:$user /app
-USER $user
+RUN sudo chown -R $USER:$(id -gn $USER) /app
+USER $USER
+
+RUN sudo mkdir ~/.config
+RUN sudo chown -R $USER:$(id -gn $USER) ~/.config
 
 ADD  . /app
 WORKDIR /app
