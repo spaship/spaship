@@ -85,8 +85,6 @@ export const getStaticProps = async (context: ContextProps) => {
     };
 };
 
-
-
 const SPAProperties: FunctionComponent<SPAIndexProps> = ({ activites, totalDeployments, monthlyDeployments }: SPAIndexProps) => {
     const maxWidths = {
         'md': '780px',
@@ -150,4 +148,3 @@ function processTotalDeployments(item: AnyProps, count: number, chartData: AnyPr
     labelData.push(label);
     return count;
 }
-
