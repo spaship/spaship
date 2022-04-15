@@ -8,34 +8,42 @@ import ManageSpa from "../../../../components/settings/manageSpa";
 import { post } from "../../../../utils/api.utils";
 import { getAllEventCountUrl, getEventAnalyticsUrl } from "../../../../utils/endpoint.utils";
 
-export const getStaticPaths = async () => {
-    const url = getAllEventCountUrl();
-    const payload = {
-        "count": {
-            "spa": true
+export const getServerSidePaths = async () => {
+    try {
+        const url = getAllEventCountUrl();
+        const payload = {
+            "count": {
+                "spa": true
+            }
         }
+        const response = await post<AnyProps>(url, payload);
+        const paths: AnyProps = [];
+        for (let prop of response) {
+            if (prop?.propertyName)
+                paths.push({ params: { propertyName: prop?.propertyName } });
+        }
+        return { paths, fallback: false }
+    } catch (error) {
+        return { props: {} };
     }
-    const response = await post<AnyProps>(url, payload);
-    const paths: AnyProps = [];
-    for (let prop of response) {
-        if (prop?.propertyName)
-            paths.push({ params: { propertyName: prop?.propertyName } });
-    }
-    return { paths, fallback: false }
 }
 
-export const getStaticProps = async (context: ContextProps) => {
-    const propertyReq = getPropertyRequest(context);
-    const urlEvent = getEventAnalyticsUrl();
-    const payloadCount = {
-        "count": {
-            "propertyName": propertyReq
-        }
-    };
-    const response = await post<Properties>(urlEvent, payloadCount);
-    return {
-        props: { webprop: response },
-    };
+export const getServerSideProps = async (context: ContextProps) => {
+    try {
+        const propertyReq = getPropertyRequest(context);
+        const urlEvent = getEventAnalyticsUrl();
+        const payloadCount = {
+            "count": {
+                "propertyName": propertyReq
+            }
+        };
+        const response = await post<Properties>(urlEvent, payloadCount);
+        return {
+            props: { webprop: response },
+        };
+    } catch (error) {
+        return { props: {} };
+    }
 };
 
 const SettingsPage: FunctionComponent<Properties> = ({ webprop }: Properties) => {
