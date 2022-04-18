@@ -22,7 +22,7 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop }: Properties) => 
       <PageSection isFilled>
         <br />
         <Gallery hasGutter>
-          {webprop.map((prop: SPAProps) => (
+          {webprop?.map((prop: SPAProps) => (
             <Card
               isSelectable
               isCompact

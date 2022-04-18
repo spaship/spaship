@@ -1,6 +1,6 @@
 {
   "name": "@spaship/manager",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "private": true,
   "description": "The SPAship UI.",
   "repository": {
@@ -25,6 +25,10 @@
     {
       "name": "Soumyadip Chowdhury",
       "email": "soumyadip.note@gmail.com"
+    },
+    {
+      "name": "Deepesh Nair",
+      "email": "hybridx18+spaship@gmail.com"
     }
   ],
   "license": "MIT",

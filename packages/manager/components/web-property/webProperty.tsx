@@ -17,7 +17,7 @@ const WebProperty: FunctionComponent<Properties> = ({ webprop }: Properties) => 
   const router = useRouter();
   return (
     <>
-      {webprop.map((prop: WebProps) => (
+      {webprop?.map((prop: WebProps) => (
         <Card
           isSelectable
           isCompact
