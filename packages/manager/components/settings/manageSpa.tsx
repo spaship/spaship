@@ -11,7 +11,7 @@ import { Properties, SPAProps } from "../models/props";
 
 const ListBox = styled.div`
   width: 1041px;
-  height: 180px;
+  height: fit-content;
   background: var(---ffffff) 0% 0% no-repeat padding-box;
   border: 1px solid #D2D2D2;
   border-radius: 8px;
