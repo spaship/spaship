@@ -31,6 +31,6 @@ RUN sudo chmod -R 777 /app
 RUN sudo ls && npm install
 RUN sudo ls && npm run build
 RUN sudo chmod -R 777 /app
-EXPOSE 3000
+EXPOSE 2468
 
 CMD [ "npm", "run", "start"]

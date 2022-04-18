@@ -29,9 +29,9 @@
   ],
   "license": "MIT",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 2468",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 2468",
     "lint": "next lint"
   },
   "dependencies": {
