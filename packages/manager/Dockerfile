@@ -16,8 +16,11 @@ RUN apt-get install --only-upgrade bash
 RUN node -v
 
 RUN mkdir app
-RUN chown -Rh $user:$user /app
-USER $user
+RUN sudo chown -R $USER:$(id -gn $USER) /app
+USER $USER
+
+RUN sudo mkdir ~/.config
+RUN sudo chown -R $USER:$(id -gn $USER) ~/.config
 
 ADD  . /app
 WORKDIR /app
@@ -25,7 +28,9 @@ WORKDIR /app
 RUN find . -name "node_modules" -exec rm -rf '{}' +
 RUN find . -name ".next" -exec rm -rf '{}' +
 RUN sudo chmod -R 777 /app
-RUN ls && npm install
+RUN sudo ls && npm install
+RUN sudo ls && npm run build
+RUN sudo chmod -R 777 /app
 EXPOSE 3000
 
 CMD [ "npm", "run", "start"]
