@@ -40,7 +40,7 @@ const ActivityStream: FunctionComponent<Properties>  = ({ webprop }: Properties)
                 description={
                 <TextContent>
                   <Text component={TextVariants.small}>
-                    <Label color="green"> {activity.spaName}</Label> has been deployed over <Label color="green"> {activity.propertyName}</Label> on {activity.envs}<br />
+                    <Label color="green"> {activity.spaName}</Label> has been deployed for <Label color="green"> {activity.propertyName}</Label> on {activity.envs}<br />
                   </Text>
                 </TextContent> as unknown as string}>
                 <TextContent>
