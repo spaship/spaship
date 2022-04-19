@@ -13,8 +13,8 @@ const ChartBorder = styled.div`
   opacity: 1;
 `;
 
-const chartAxisTickValues = [50, 150, 250];
-const dependentAxisTickValues = [50, 150, 250];
+const dependentAxisTickValues = [10, 30, 50];
+const chartAxisTickValues = ['week 1', 'week 2', 'week 3', 'week 4'];
 
 const DeploymentWeek: FunctionComponent<Properties> = ({ webprop }: Properties) => {
   const chartData = webprop.processedMonthlyDeployments;
@@ -27,17 +27,15 @@ const DeploymentWeek: FunctionComponent<Properties> = ({ webprop }: Properties) 
     top: 50,
   };
   const areaConfig = {
-    ariaDesc: "Deployment/Week",
-    ariaTitle: "Deployment/Week",
+    ariaTitle: "Deployments/Week",
     legendOrientation: "vertical",
     legendPosition: "right",
-    maxDomain: { y: 300 },
+    maxDomain: { y: 60 },
     minDomain: { y: 0 },
     height: 250,
     width: 600
   };
   const chartConfig = {
-    ariaDesc: areaConfig.ariaDesc,
     ariaTitle: areaConfig.ariaTitle,
     legendData: legendData,
     legendOrientation: areaConfig.legendOrientation,
@@ -54,7 +52,7 @@ const DeploymentWeek: FunctionComponent<Properties> = ({ webprop }: Properties) 
   return (
     <>
       <TextContent>
-        <Text component={TextVariants.h1}> Deployment/Week </Text>
+        <Text component={TextVariants.h1}> Deployments/Week </Text>
       </TextContent><br />
       <ChartBorder>
         <div>
