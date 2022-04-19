@@ -129,7 +129,7 @@ function getHeaderData(propertyName: string | string[], spaName: string | string
             { path: `/properties/${propertyName}`, title: `${propertyName}` },
             { path: `/properties/${propertyName}/spa/${spaName}`, title: `${spaName}` },
         ],
-        previous: `/properties`,
+        previous: `/properties/${propertyName}`,
         settings: `/properties/${propertyName}/settings`
     };
 }
