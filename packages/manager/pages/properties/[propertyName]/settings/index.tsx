@@ -1,5 +1,13 @@
+import {
+  Card, 
+  CardBody, 
+  CardTitle, 
+  List, 
+  ListItem 
+} from "@patternfly/react-core";
 import { useRouter } from "next/router";
 import React, { FunctionComponent } from "react";
+import styled from "styled-components";
 import Body from "../../../../components/layout/body";
 import { AnyProps, ContextProps, Properties } from "../../../../components/models/props";
 import ApiKey from "../../../../components/settings/apiKey";
@@ -46,16 +54,31 @@ export const getServerSideProps = async (context: ContextProps) => {
     }
 };
 
+const StyledList = styled(List)`
+  --pf-c-list--li--MarginTop: 1.5rem;
+`;
+
+const StyledCard = styled(Card)`
+  max-width: var(--spaship-table-container-max-width);
+`;
+
 const SettingsPage: FunctionComponent<Properties> = ({ webprop }: Properties) => {
     const router = useRouter();
     const propertyName = router.query.propertyName || '';
     const meta = getHeaderData(propertyName)
     return (
-        <Body {...meta}>
-            <ManageSpa webprop={webprop}></ManageSpa>
-            <ApiKey></ApiKey>
-            <DeleteSpa></DeleteSpa>
-        </Body>
+      <Body {...meta}>
+        <ManageSpa webprop={webprop} />
+        <StyledCard>
+          <CardTitle>Settings - Here be dragons!</CardTitle>
+          <CardBody>
+            <StyledList isPlain>
+              <ListItem> <ApiKey /> </ListItem>
+              <ListItem><DeleteSpa /> </ListItem>
+            </StyledList>
+          </CardBody>
+        </StyledCard>
+      </Body>
     );
 };
 
