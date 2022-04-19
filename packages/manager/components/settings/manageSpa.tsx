@@ -10,11 +10,9 @@ import styled from "styled-components";
 import { Properties, SPAProps } from "../models/props";
 
 const ListBox = styled.div`
-  width: 1041px;
+  max-width: var(--spaship-table-container-max-width);
   height: fit-content;
-  background: var(---ffffff) 0% 0% no-repeat padding-box;
-  border: 1px solid #D2D2D2;
-  border-radius: 8px;
+  border: 1px solid var(--spaship-global--Color--light-gray);
   opacity: 1;
 `;
 
