@@ -18,10 +18,9 @@ interface ApiKeyProps { }
 
 const ApiKeyBox = styled.div`
   top: 40px;
-  width: 1041px;
+  max-width: var(--spaship-table-container-max-width);
   height: 55px;
-  border: 1px solid #D2D2D2;
-  border-radius: 8px;
+  border: 1px solid var(--spaship-global--Color--light-gray);
   opacity: 1;
 `;
 
