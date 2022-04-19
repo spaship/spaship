@@ -84,7 +84,7 @@ function getHeaderMeta(propertyName: string | string[]) {
             { path: `/properties`, title: 'Properties' },
             { path: `/properties/${propertyName}`, title: `${propertyName}` }
         ],
-        previous: `properties`,
+        previous: `/properties`,
         settings: `/properties/${propertyName}/settings`
     };
 }
