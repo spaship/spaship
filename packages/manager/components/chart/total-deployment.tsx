@@ -26,18 +26,16 @@ const TotalDeployment: FunctionComponent<Properties> = ({ webprop }: Properties)
     top: 20,
   };
   const areaConfig = {
-    ariaDesc: "Number of Deployment",
-    ariaTitle: "Number of Deployment",
+    ariaTitle: "Number of Deployments",
     legendOrientation: "vertical",
     subTitle: "Deployments",
     constrainToVisibleArea: true,
     width: 350
   };
   const chartConfig = {
-    ariaDesc: areaConfig.ariaDesc,
     ariaTitle: areaConfig.ariaTitle,
     constrainToVisibleArea: areaConfig.constrainToVisibleArea,
-    labels: ({ datum }: any) => `${datum.x}: ${datum.y}%`,
+    labels: ({ datum }: any) => `${datum.x}: ${datum.y}`,
     data: webprop.chartData,
     legendData: webprop.labelData,
     legendOrientation: areaConfig.legendOrientation,
@@ -50,7 +48,7 @@ const TotalDeployment: FunctionComponent<Properties> = ({ webprop }: Properties)
   return (
     <>
       <TextContent>
-        <Text component={TextVariants.h1}> Total Deployment </Text>
+        <Text component={TextVariants.h1}> Total Deployments </Text>
       </TextContent><br />
       <ChartBorder>
         <AggregateChart type={chartType} props={chartConfig}></AggregateChart>
