@@ -9,6 +9,7 @@
   --spaship-global--Color--text-black: #151515;
   --spaship-global--Color--ui-blue: #0066cc;
   --spaship-global--Font-Family: RedHatDisplay, Overpass, Roboto, Cantarell, helvetica, arial, sans-serif;
+  --spaship-table-container-max-width: 1041px;
 }
 
 .spaship-gray {
