@@ -52,7 +52,7 @@ async function deploy({ name, spaArchive, appPath, ref, property, env } = {}) {
     const operatorAlias = responseAlias[0]._doc;
     console.log(operatorAlias);
     if (operatorAlias?.type === "operator") {
-      const zipPath = await createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir);
+      const zipPath = await createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir, env);
 
       const formData = new FormData();
       try {
@@ -128,7 +128,7 @@ async function deploy({ name, spaArchive, appPath, ref, property, env } = {}) {
 
 module.exports = { deploy };
 
-async function createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir) {
+async function createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir, env) {
   if (appPath.charAt(0) == "/" && appPath.length === 1) appPath = ".";
   else if (appPath.charAt(0) == "/") appPath = appPath.substr(1);
   const spaShipFile = {
@@ -136,7 +136,7 @@ async function createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir
     websiteName: operatorAlias.property,
     name: name,
     mapping: appPath,
-    environments: [{ name: operatorAlias.namespace, updateRestriction: false, exclude: false }],
+    environments: [{ name: env, updateRestriction: false, exclude: false }],
   };
   console.log("Operator Config : ");
   console.log(spaShipFile);
@@ -146,13 +146,11 @@ async function createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir
       await fs.writeFileSync(path.join(tmpDir, "dist/.spaship"), JSON.stringify(spaShipFile, null, "\t"));
       zipPath = path.join(tmpDir, "../SPAship" + uuid() + ".zip");
       await zip(path.join(tmpDir, "dist"), zipPath);
-    } 
-    else if (await fileExists(path.join(tmpDir, "build"))) {
+    } else if (await fileExists(path.join(tmpDir, "build"))) {
       await fs.writeFileSync(path.join(tmpDir, "build/.spaship"), JSON.stringify(spaShipFile, null, "\t"));
       zipPath = path.join(tmpDir, "../SPAship" + uuid() + ".zip");
       await zip(path.join(tmpDir, "build"), zipPath);
-    } 
-    else {
+    } else {
       await fs.writeFileSync(path.join(tmpDir, ".spaship"), JSON.stringify(spaShipFile, null, "\t"));
       zipPath = path.join(tmpDir, "../SPAship" + uuid() + ".zip");
       await zip(tmpDir, zipPath);
