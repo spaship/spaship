@@ -1,44 +1,43 @@
 import {
+  Card,
+  CardTitle,
   Switch
 } from "@patternfly/react-core";
 import {
-  Caption, TableComposable, Tbody,
-  Td, Tr
+  TableComposable, 
+  Tbody,
+  Td, 
+  Th, 
+  Thead, 
+  Tr
 } from "@patternfly/react-table";
 import React, { FunctionComponent, useState } from "react";
 import styled from "styled-components";
 import { Properties, SPAProps } from "../models/props";
 
-const ListBox = styled.div`
+const StyledCard = styled(Card)`
   max-width: var(--spaship-table-container-max-width);
-  height: fit-content;
-  border: 1px solid var(--spaship-global--Color--light-gray);
-  opacity: 1;
+  margin-bottom: 2rem;
 `;
 
 const ManageSpa: FunctionComponent<Properties> = ({ webprop }: Properties) => {
   const [switchState, setSwitchState] = useState(true);
   const handleChange = () => {
+    // TODO: implement logic to toggle spa
+    setSwitchState(!switchState);
   };
-  const tableVariant = "compact";
-  const tableBorders = false;
   return (
     <>
-      <ListBox>
-        <TableComposable
-          variant={tableVariant}
-          borders={tableBorders}
-        >
-          <Caption>
-            <b>Manage SPAs</b>
-          </Caption>
-          <Tbody>
+      <StyledCard>
+      <CardTitle>Manage SPAs</CardTitle>
+        <TableComposable>
+          <Thead>
             <Tr>
-              <Td>Name</Td>
-              <Td>Path</Td>
-              <Td>Action</Td>
+              <Th>Name</Th>
+              <Th>Path</Th>
+              <Th>Action</Th>
             </Tr>
-          </Tbody>
+          </Thead>
           <Tbody>
             {webprop.map((spa: SPAProps) => (
               <Tr key={spa.spaName}>
@@ -46,17 +45,18 @@ const ManageSpa: FunctionComponent<Properties> = ({ webprop }: Properties) => {
                 <Td dataLabel={spa.propertyName}>/{spa.spaName}</Td>
                 <Td dataLabel={spa.spaName}>
                   <Switch
-                    id="spaship-switch"
-                    area-label="spaship-switch-area"
+                    id={spa.spaName}
+                    aria-label="spaship-switch-area"
                     isChecked={switchState}
                     onChange={handleChange}
+                    isDisabled
                   />
                 </Td>
               </Tr>
             ))}
           </Tbody>
         </TableComposable>
-      </ListBox>
+      </StyledCard>
     </>
   );
 };
