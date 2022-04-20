@@ -28,7 +28,7 @@ const StyledText = styled(Text)`
   --pf-c-content--h2--FontWeight: 100;
 `;
 
-const ClipboardBox = styled.div({
+const StyledClipboardBox = styled.div({
   width: "500px",
   height: "40px",
 });
@@ -61,11 +61,11 @@ const ApiKey: FunctionComponent<ApiKeyProps> = () => {
       isOpen={isModalOpen}
       onClose={handleModalToggle}
     >
-      <ClipboardBox>
+      <StyledClipboardBox>
         <ClipboardCopy hoverTip="Copy" clickTip="Copied" isReadOnly={true} >
           {_apiKey}
         </ClipboardCopy>
-      </ClipboardBox>
+      </StyledClipboardBox>
     </Modal>
   );
 
