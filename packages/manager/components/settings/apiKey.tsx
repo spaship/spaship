@@ -1,38 +1,41 @@
 import {
-  Button, ClipboardCopy, Form,
+  Button, Flex, FlexItem, Form,
   FormGroup, Modal,
   ModalVariant, Popover,
-  TextInput
+  Text,
+  TextContent,
+  TextInput,
+  TextVariants
 } from "@patternfly/react-core";
-import {
-  Caption, TableComposable, Tbody,
-  Td, Tr
-} from "@patternfly/react-table";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import styled from "styled-components";
 import { post } from "../../utils/api.utils";
 import { getHost } from "../../utils/config.utils";
 import { AnyProps } from "../models/props";
+import styled from "styled-components";
 
 interface ApiKeyProps { }
 
-const ApiKeyBox = styled.div`
-  top: 40px;
-  max-width: var(--spaship-table-container-max-width);
-  height: 55px;
-  border: 1px solid var(--spaship-global--Color--light-gray);
-  opacity: 1;
+const StyledButton = styled(Button)`
+  --pf-c-button--m-tertiary--BackgroundColor: var(--spaship-global--Color--text-black, #000);
+  --pf-c-button--m-tertiary--Color: #fff;
+  --pf-c-button--BorderRadius: none;
+  --pf-c-button--PaddingRight: 3rem;
+  --pf-c-button--PaddingLeft: 3rem;
 `;
 
-const ClipboardBox = styled.div`
-  width: 500px;
-  height: 40px;
+const StyledFlexItem = styled(FlexItem)`
+  --pf-l-flex--spacer: 0;
+`;
+
+const StyledText = styled(Text)`
+  --pf-global--FontWeight--normal: 100;
+  --pf-c-content--h2--FontWeight: 100;
 `;
 
 const ApiKey: FunctionComponent<ApiKeyProps> = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [env, setEnv] = useState("");
-  const [apiKey, setApiKey] = useState("");
+  const [_apiKey, setApiKey] = useState("");
 
   async function handleModalToggle() {
     setModalOpen(!isModalOpen);
@@ -57,89 +60,86 @@ const ApiKey: FunctionComponent<ApiKeyProps> = () => {
   };
 
   useEffect(() => {
+    // TODO document why this arrow function is empty
   }, [isModalOpen]);
 
+  const GenerateKeyModal = () => (
+    <Modal
+      variant={ModalVariant.small}
+      title="Name API Key"
+      isOpen={isModalOpen}
+      onClose={handleModalToggle}
+      actions={[
+        <StyledButton
+          key="create"
+          variant="tertiary"
+          onClick={onClickMethod}>
+          Generate API Key
+        </StyledButton>,
+      ]}>
+      <Form id="modal-with-form-form">
+        <FormGroup
+          label="Enter environment name"
+          labelIcon={
+            <Popover bodyContent={null}>
+              <button
+                type="button"
+                aria-label="More info for name field"
+                onClick={(e) => e.preventDefault()}
+                aria-describedby="modal-with-form-form-name"
+                className="pf-c-form__group-label-help"
+              >
+              </button>
+            </Popover>}
+          isRequired
+          fieldId="modal-with-form-form-name">
+          <TextInput
+            isRequired
+            type="email"
+            id="modal-with-form-form-name"
+            name="modal-with-form-form-name"
+            value={env}
+            onChange={handleNameInputChange}
+          />
+        </FormGroup>
+      </Form>
+    </Modal>
+  );
+
   return (
-    <>
-      <TableComposable
-        variant={"compact"}
-        borders={false}
-      >
-        <Caption>
-          <b>Do you want to create an API Key !</b>
-        </Caption>
-        <Tbody>
-          <ApiKeyBox>
-            <Tr>
-              <Td>
-                <Button style={{
-                  background: "#000000 0% 0% no-repeat padding-box;",
-                  opacity: 1,
-                  borderRadius: "3px;"
-                }} onClick={handleModalToggle}>
-                  Create API Key
-                </Button>
-                <Modal
-                  variant={ModalVariant.small}
-                  title="Name API Key"
-                  isOpen={isModalOpen}
-                  onClose={handleModalToggle}
-                  actions={[
-                    <Button
-                      key="create"
-                      style={{
-                        background: "#000000",
-                        opacity: 1,
-                        borderRadius: "3px;"
-                      }}
-                      onClick={onClickMethod}
-                    >
-                      Generate API Key
-                    </Button>,
-                  ]}
-                >
-                  <Form id="modal-with-form-form">
-                    <FormGroup
-                      label="Enter environment name"
-                      labelIcon={
-                        <Popover bodyContent={null}>
-                          <button
-                            type="button"
-                            aria-label="More info for name field"
-                            onClick={(e) => e.preventDefault()}
-                            aria-describedby="modal-with-form-form-name"
-                            className="pf-c-form__group-label-help"
-                          >
-                          </button>
-                        </Popover>
-                      }
-                      isRequired
-                      fieldId="modal-with-form-form-name"
-                    >
-                      <TextInput
-                        isRequired
-                        type="email"
-                        id="modal-with-form-form-name"
-                        name="modal-with-form-form-name"
-                        value={env}
-                        onChange={handleNameInputChange}
-                      />
-                    </FormGroup>
-                  </Form>
-                </Modal>
-              </Td>
-              <Td>
-                <ClipboardBox>
-                  <ClipboardCopy hoverTip="Copy" clickTip="Copied">
-                    {apiKey}
-                  </ClipboardCopy>
-                </ClipboardBox>
-              </Td>
-            </Tr>
-          </ApiKeyBox>
-        </Tbody>
-      </TableComposable>
-    </>
+  <>
+    <Flex
+      justifyContent={ { default: 'justifyContentSpaceBetween'} }
+      alignItems={ { default: 'alignItemsCenter' } }>
+      <FlexItem>
+        <Flex
+          direction={{ default: 'column' }}>
+          <StyledFlexItem>
+            <TextContent>
+              <StyledText component={TextVariants.h2}>
+                Generate API Key
+              </StyledText>
+            </TextContent>
+          </StyledFlexItem>
+          <FlexItem>
+            <StyledText component={TextVariants.h4}>
+              This key would be valid for 5 hours only.
+            </StyledText>
+          </FlexItem>
+        </Flex>
+      </FlexItem>
+      <FlexItem>
+        <StyledButton 
+          variant="tertiary"
+          onClick={handleModalToggle}>
+          <StyledText component={TextVariants.h4}>
+              Create API key
+          </StyledText>
+        </StyledButton>
+      </FlexItem>
+    </Flex>
+    <GenerateKeyModal />
+  </>
   );
 };
 
