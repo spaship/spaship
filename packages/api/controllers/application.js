@@ -12,12 +12,13 @@ const { uuid } = require("uuidv4");
 const jwt = require("jsonwebtoken");
 const alias = require("../models/alias");
 const _ = require("lodash");
-
+const APIKey = require("../models/apiKey");
 const axios = require("axios");
 const FormData = require("form-data");
 const fs = require("fs");
 const path = require("path");
 const config = require("../config");
+const { hash } = require("../utils/cryptoUtil");
 
 module.exports.list = async (req, res, next) => {
   const list = await FileService.getAll();
@@ -130,11 +131,31 @@ module.exports.delete = async (req, res, next) => {
 };
 
 module.exports.validate = async (req, res, next) => {
-  const expiration = config.get("token:expiration");
+  const expiration = req.body?.expiresIn || config.get("token:expiration");
   const secret = config.get("token:secret");
   const token = jwt.sign({ createdAt: new Date(), expiresIn: expiration }, secret, {
     expiresIn: expiration,
   });
+  let result = null;
+
+  if (req.body?.label == "spaship-cli-token") {
+    const label = req.body?.label;
+    const expiredDate = formatDate(new Date(), 1, 2);
+    const key = token;
+    const userId = uuid() + key.substring(0, 4);
+    const shortKey = hash(userId);
+    const hashKey = token;
+    const data = {
+      label,
+      shortKey,
+      hashKey,
+      userId,
+      expiredDate,
+    };
+    result = await APIKey.create(data);
+    return res.status(200).json({ message: "Validation is successful.", token: result?.userId });
+  }
+
   res.status(200).json({ message: "Validation is successful.", token: token });
 };
 
@@ -187,4 +208,16 @@ function getDescription(req) {
 
 function getWebPropertyName(req) {
   return req?.body?.webPropertyName || false;
+}
+
+function formatDate(date, month, days) {
+  var d = new Date(date),
+    month = "" + (d.getMonth() + month),
+    day = "" + (d.getDate() + days),
+    year = d.getFullYear();
+
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+
+  return [year, month, day].join("-");
 }
