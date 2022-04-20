@@ -4,6 +4,7 @@ const APIKeyService = require("../services/apiKeyService");
 const config = require("../config");
 const keyUtil = require("../utils/keyUtil");
 const jwtAuth = require("jsonwebtoken");
+const APIKey = require("../models/apiKey");
 const Unauthorized = require("../utils/errors/Unauthorized");
 
 module.exports = () => {
@@ -44,9 +45,19 @@ module.exports = () => {
       }
     };
 
-    const token = extractToken(req);
+    let token = extractToken(req);
     let error = false;
     let success = false;
+
+    try {
+      const result = await APIKey.findOne({ userId: token });
+      if (result != null) {
+        token = result.hashKey;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
     jwtAuth.verify(token, config.get("token:secret"), function (err, data) {
       if (err) {
         if (err.message != "invalid algorithm") {
