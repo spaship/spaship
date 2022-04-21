@@ -53,6 +53,7 @@ async function createEventTimeTraceRequest(response) {
     traceId: response.uuid,
     propertyName: response.websiteName,
     envs: response.environmentName,
+    spaName: response?.spaName,
     initialCode: "WEBSITE_CREATE_STARTED",
     finalCode: "WEBSITE_CREATE",
     failure: true,

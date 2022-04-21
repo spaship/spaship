@@ -1,7 +1,6 @@
 const { Router } = require("express");
 const application = require("../controllers/application");
 const upload = require("../utils/multerUtil");
-
 const router = new Router();
 
 /**
@@ -24,7 +23,7 @@ router.post("/", application.post);
 /**
  * Deploy an application
  */
-router.post("/deploy", upload.single("upload"), application.deploy);
+router.post("/deploy/:propertyName/:env", upload.single("upload"), application.deploy);
 
 /**
  * Update an application by name

@@ -2,7 +2,7 @@ const webProperty = require("../../models/webProperty");
 const mongoose = require("mongoose");
 
 const webPropertyDataDump = async (req, res) => {
-  res.status(200).json(await webPropertyDataDumpService(req.sanitize(getDocument(req))));
+  res.status(200).json(await webPropertyDataDumpService(getDocument(req)));
 };
 
 const webPropertyDataDumpService = async (docs) => {

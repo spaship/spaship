@@ -1,7 +1,7 @@
 const webProperty = require('../../models/webProperty')
 const { uuid } = require('uuidv4');
 
-module.exports = async function saveWebProperty(req, res) {
+module.exports = async function saveWebProperty(req, res, next) {
     if (getWebPropertyId(req)) {
         const updatedResponse = await updateWebProperty(req);
         return updatedResponse;

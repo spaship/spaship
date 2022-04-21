@@ -10,6 +10,8 @@ const cliActivities = require("../models/cliActivities");
 const { getUserUUID } = require("../utils/requestUtil");
 const { uuid } = require("uuidv4");
 const jwt = require("jsonwebtoken");
+const alias = require("../models/alias");
+const _ = require("lodash");
 
 const axios = require("axios");
 const FormData = require("form-data");
@@ -107,36 +109,48 @@ module.exports.deploy = async (req, res, next) => {
       return;
     }
   }
-
   const userId = getUserUUID(req);
   const name = getNameRequest(req);
   const ref = getRefRequest(req);
   const { path: appPath } = getRequestBody(req);
   const { path: spaArchive } = getPath(req);
+  const property = req.params.propertyName;
+  const env = req.params.env;
+  const validateFileType = req.file.originalname.split(".").pop();
+  if (validateFileType === "zip" || validateFileType === "tgz") {
+    try {
+      await DeployService.deploy({
+        name,
+        spaArchive,
+        appPath,
+        ref,
+        property,
+        env,
+      });
 
-  try {
-    await DeployService.deploy({
-      name,
-      spaArchive,
-      appPath,
-      ref,
-    });
+      const application = await Application.findOne({ name, path: appPath });
+      try {
+        if (application) {
+          await Application.updateOne({ name: name, path: appPath }, { ref });
+        } else {
+          await Application.create({ name: name, path: appPath, ref, userId });
+        }
+      } catch (e) {
+        console.log(e);
+      }
 
-    const application = await Application.findOne({ name, path: appPath });
-    if (application) {
-      await Application.updateOne({ name, path: appPath }, { ref });
-    } else {
-      await Application.create({ name, path: appPath, ref, userId });
+      res.status(201).send({
+        name,
+        path: appPath,
+        ref,
+        timestamp: new Date(),
+      });
+    } catch (err) {
+      console.error(`Failed to deploy "${name}" to ${appPath}: ${err}`);
+      next(new DeployError(err));
     }
-    res.status(201).send({
-      name,
-      path: appPath,
-      ref,
-      timestamp: new Date(),
-    });
-  } catch (err) {
-    console.error(`Failed to deploy "${name}" to ${appPath}: ${err}`);
-    next(new DeployError(err));
+  } else {
+    next(new DeployError("Invalid File Type"));
   }
 };
 
@@ -188,7 +202,8 @@ function getPathRequest(req) {
 }
 
 function getRefRequest(req) {
-  const requestBody = req?.body?.ref || {};
+  if (req?.body?.ref == "undefined") return req.params.env;
+  const requestBody = req?.body?.ref;
   return requestBody;
 }
 
@@ -214,5 +229,6 @@ function getDescription(req) {
 }
 
 function getWebPropertyName(req) {
-  return req?.body?.webPropertyName.trim();
+
+  return req?.body?.webPropertyName || false;
 }
