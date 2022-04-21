@@ -10,16 +10,19 @@ interface LayoutProps {
 }
 
 const SidebarArea = styled(SplitItem) `
-    width: 250px;
-`
+  width: 250px;
+  @media (max-width: 770px) {
+    display: none;
+  }
+`;
 
 const ContentArea = styled(SplitItem) `
-    min-height: 80vh;
-`
+  min-height: 80vh;
+`;
 
 const BodyArea = styled(StackItem)`
   min-height: 94vh;
-`
+`;
 
 const LayoutDefinition: FunctionComponent<{}> = ({ children }) => {
   return (

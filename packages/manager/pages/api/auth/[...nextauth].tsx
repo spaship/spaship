@@ -26,4 +26,13 @@ export default NextAuth({
     })
     // ...add more providers here
   ],
+  callbacks: {
+    jwt: async ({ token }) => {
+      return token;
+    },
+    session: async ({ session, token }) => {
+      session.token = token;
+      return session;
+    }
+  }
 })

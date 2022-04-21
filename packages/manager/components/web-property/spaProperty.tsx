@@ -9,8 +9,7 @@ import { FunctionComponent } from "react";
 import styled from 'styled-components';
 import { Properties, SPAProps } from "../models/props";
 
-const CardStyle = styled(Card)`
-opacity: 1;
+const StyledCard = styled(Card)`
 border-radius: 8px;
 height: 199px;
 `;
@@ -26,15 +25,15 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop }: Properties) => 
             <Card
               isSelectable
               isCompact
-              key={prop.id}
+              key={prop.propertyName + prop.spaName}
               isRounded
               onClick={() => router.push(`${prop.propertyName}/spa/${prop.spaName} `)}
             >
-              <CardStyle>
+              <StyledCard>
                 <CardTitle>{prop.spaName}</CardTitle>
                 <CardBody>{prop.propertyName}</CardBody>
                 <CardFooter>{prop.count} Deployments</CardFooter>
-              </CardStyle>
+              </StyledCard>
             </Card>
           ))}
         </Gallery>

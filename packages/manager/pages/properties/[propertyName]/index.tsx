@@ -1,3 +1,4 @@
+import { Divider } from "@patternfly/react-core";
 import { useRouter } from "next/router";
 import React, { FunctionComponent } from "react";
 import styled from 'styled-components';
@@ -10,9 +11,9 @@ import { getAllEventCountUrl, getEventAnalyticsUrl } from "../../../utils/endpoi
 
 interface WebPropertyPageProps { }
 
-export const DividerComp = styled.hr`
-  border-top: 1px solid var(--spaship-global--Color--bright-gray);
-  width: 60vw;
+export const StyledDivider = styled(Divider)`
+  --pf-c-divider--BackgroundColor: var(--spaship-global--Color--bright-gray);
+  margin: 1.5rem 0;
 `;
 
 export const getServerSidePaths = async () => {
@@ -66,9 +67,7 @@ const WebPropertyPage: FunctionComponent<WebPropertyPageProps> = ({ webprop, act
     return (
         <Body {...meta}>
             <SPAProperty webprop={webprop}></SPAProperty>
-            <br />
-            <DividerComp />
-            <br />
+            <StyledDivider />
             <ActivityStream webprop={activites}></ActivityStream>
         </Body>
     );
