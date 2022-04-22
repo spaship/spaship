@@ -18,10 +18,18 @@ export function getEventAnalyticsUrl() {
   return `${spashipHost}/event/fetch/analytics/filter`;
 }
 
+export function getOnboardWebpropertyUrl() {
+  return `${spashipHost}/webproperty/alias`;
+}
+
 export function getValidateUrl() {
   return `${spashipHost}/applications/validate`;
 }
 
 export function getNextValidateUrl() {
   return `/api/validate`;
+}
+
+export function getNextOnboardWebpropertyUrl() {
+  return `/api/webPropertyOnboard`;
 }

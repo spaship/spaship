@@ -4,7 +4,7 @@ import { getValidateUrl } from "../../utils/endpoint.utils";
 
 const Validate = async (req: AnyProps, res: AnyProps) => {
     const url = getValidateUrl();
-    const payload = {};
+    const payload = { "label": "spaship-cli-token", };
     const response = await post<AnyProps>(url, payload);
     return res.send({ data: { token: response.token } });
 }
