@@ -1,8 +1,8 @@
 const chart = require("../../models/event");
 
-const getLatestActivitiesService = async (request) => {
+const getLatestActivitiesService = async (matchRequest, limitRequest, skipRequest) => {
   try {
-    const response = await fetchLatestActivitiesByProperty(request);
+    const response = await fetchLatestActivitiesByProperty(matchRequest, limitRequest, skipRequest);
     bindResponse(response);
     return response;
   } catch (e) {
@@ -24,7 +24,7 @@ function bindResponse(response) {
   });
 }
 
-async function fetchLatestActivitiesByProperty(matchRequest) {
+async function fetchLatestActivitiesByProperty(matchRequest, limitRequest, skipRequest) {
   return await chart.aggregate([
     {
       $match: matchRequest,
@@ -46,7 +46,10 @@ async function fetchLatestActivitiesByProperty(matchRequest) {
       },
     },
     {
-      $limit: 15,
+      $limit: limitRequest.limit,
+    },
+    {
+      $skip: skipRequest.skip,
     },
   ]);
 }
