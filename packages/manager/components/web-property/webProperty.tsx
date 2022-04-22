@@ -8,7 +8,6 @@ import styled from 'styled-components';
 import { Properties, WebProps } from "../models/props";
 
 const CardStyle = styled(Card)`
-  opacity: 1;
   borderRadius: 8px;
   height: 199px;
 `;
@@ -21,7 +20,7 @@ const WebProperty: FunctionComponent<Properties> = ({ webprop }: Properties) => 
         <Card
           isSelectable
           isCompact
-          key={prop.id}
+          key={prop.propertyName}
           isRounded
           onClick={() => router.push(`properties/${prop.propertyName}`)}
         >
