@@ -14,6 +14,7 @@ const analyticsServiceFilter = async (req, res) => {
 };
 
 const analyticsOperations = async (request) => {
+  console.log(request);
   if (request?.count) {
     if (getPropertyName(request?.count) && getSpaName(request?.count)) {
       return await getCounts.getCountService(
@@ -59,14 +60,22 @@ const analyticsOperations = async (request) => {
     }
   } else if (request?.activities) {
     if (getPropertyName(request?.activities) && getSpaName(request?.activities)) {
-      return await getLatestActivities.getLatestActivitiesService({
-        propertyName: getPropertyName(request?.activities),
-        spaName: getSpaName(request?.activities),
-      });
+      return await getLatestActivities.getLatestActivitiesService(
+        {
+          propertyName: getPropertyName(request?.activities),
+          spaName: getSpaName(request?.activities),
+        },
+        { limit: getLimit(request?.activities) },
+        { skip: getSkip(request?.activities) }
+      );
     } else if (request?.activities.propertyName) {
-      return await getLatestActivities.getLatestActivitiesService({
-        propertyName: getPropertyName(request?.activities),
-      });
+      return await getLatestActivities.getLatestActivitiesService(
+        {
+          propertyName: getPropertyName(request?.activities),
+        },
+        { limit: getLimit(request?.activities) },
+        { skip: getSkip(request?.activities) }
+      );
     }
   } else if (request?.chart) {
     if (getMonth(request) == true && getPropertyName(request?.chart) && getSpaName(request?.chart)) {
@@ -105,7 +114,7 @@ const analyticsOperations = async (request) => {
           count: "$count",
         }
       );
-     
+
       return response;
     } else if (getPropertyName(request?.chart) && getSpaName(request?.chart)) {
       return await getCounts.getCountService(
@@ -164,4 +173,12 @@ function getSpaName(request) {
 
 function getPropertyName(request) {
   return request?.propertyName;
+}
+
+function getLimit(request) {
+  return parseInt(request?.limit) || 15;
+}
+
+function getSkip(request) {
+  return parseInt(request?.skip) || 0;
 }

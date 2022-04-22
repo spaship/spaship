@@ -12,6 +12,7 @@ const analyticsServiceAll = async (req, res) => {
 };
 
 const propertyFilteration = async (request) => {
+  console.log(request);
   if (request?.count) {
     if (request?.count?.all == true) {
       return await getCounts.getCountService(
@@ -88,6 +89,21 @@ const propertyFilteration = async (request) => {
         }
       );
     } else if (request?.chart.all == true) {
+      return await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
+        {
+          code: "WEBSITE_CREATE",
+        },
+        {
+          envs: "$envs",
+        },
+        {
+          _id: 0,
+          spaName: "$_id.spaName",
+          envs: "$_id.envs",
+          count: "$count",
+        }
+      );
+    } else if (request?.activities.all == true) {
       return await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
         {
           code: "WEBSITE_CREATE",
