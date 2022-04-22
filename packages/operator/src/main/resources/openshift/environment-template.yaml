@@ -31,6 +31,13 @@ parameters:
     required: false
   - name: "DOMAIN"
     required: true
+  - name: "APP_INSTANCE_PREFIX"
+    description: "application instance prefix"
+    required: true
+  - name: "STORAGE_CLASS"
+    description: "storage class of the deployment"
+    required: true
+
 objects:
   - kind: ConfigMap
     apiVersion: v1
@@ -51,7 +58,7 @@ objects:
   - kind: Service
     apiVersion: v1
     metadata:
-      name: svc-${WEBSITE}-${ENV}
+      name: svc-${APP_INSTANCE_PREFIX}-${WEBSITE}-${ENV}
       labels:
         website: ${WEBSITE}
         managedBy: spaship
@@ -75,7 +82,7 @@ objects:
         website: ${WEBSITE}
         environment: ${ENV}
         websiteVersion: ${WEBSITE_VERSION}
-  - kind: Deployment
+  - kind: StatefulSet
     apiVersion: apps/v1
     metadata:
       name: ${WEBSITE}-${ENV}
@@ -119,7 +126,7 @@ objects:
                 - containerPort: 8080
               volumeMounts:
                 - mountPath: "/var/www/html/"
-                  name: data
+                  name: data-${WEBSITE}-${APP_INSTANCE_PREFIX}
                   subpath: html
             - name: sidecar
               image: "${IMAGE_API}:${IMAGE_API_VERSION}"
@@ -152,30 +159,45 @@ objects:
                   value: "/app/data/"
               volumeMounts:
                 - mountPath: "/app/data/"
-                  name: data
+                  name: data-${WEBSITE}-${APP_INSTANCE_PREFIX}
                   subpath: data
               envFrom:
                 - configMapRef:
                     name: sidecar-config-${WEBSITE}-${ENV}
 
-          volumes:
-            - name: data
-              emptyDir: { }
+          #volumes:
+          #  - name: data
+          #    emptyDir: { }
+      volumeClaimTemplates:
+        - metadata:
+            annotations:
+              kubernetes.io/reclaimPolicy: Delete
+            labels:
+              paas.redhat.com/appcode: SPAS-001
+            name: data-${WEBSITE}-${APP_INSTANCE_PREFIX}
+          spec:
+            accessModes: [ "ReadWriteOnce" ]
+            storageClassName: "${STORAGE_CLASS}"
+            resources:
+              requests:
+                storage: 1Gi
+
   - kind: Ingress
     apiVersion: networking.k8s.io/v1
     metadata:
       name: ing-${WEBSITE}-${ENV}
       labels:
         app.kubernetes.io/managed-by: spaship
+        shard: internal
     spec:
       rules:
-        - host: ${WEBSITE}.${ENV}.${DOMAIN}
+        - host: ${APP_INSTANCE_PREFIX}.${WEBSITE}.${ENV}.${DOMAIN}
           http:
             paths:
               - path: /
                 pathType: Prefix
                 backend:
                   service:
-                    name: svc-${WEBSITE}-${ENV}
+                    name: svc-${APP_INSTANCE_PREFIX}-${WEBSITE}-${ENV}
                     port:
                       number: 80

@@ -1,7 +1,51 @@
 module.exports = {
-  someSidebar: {
-    SPAship: ["introduction", "contributing"],
-    "Getting Started": ["architecture",'spaship-manager',"installation", "configuration", "user-guide/user-guide"],
-    Features: ["injection"],
-  },
+  docs: [
+    {
+      type: "category",
+      label: "SPAship",
+      items: ["introduction", "contribution", "comparsion"],
+    },
+
+    {
+      type: "category",
+      label: "Getting Started",
+      items: [
+        {
+          type: "category",
+          label: "Installation",
+          items: [
+            {
+              Kubernetes: ["getting-started/installation/kubernetes/kubernetes"],
+              "Bare Metal": [
+                "getting-started/installation/bare-metal/spaship-manager",
+                "getting-started/installation/bare-metal/installation",
+                "getting-started/installation/bare-metal/configuration",
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Guide",
+      items: [
+        {
+          type: "category",
+          label: "User Guide",
+          items: ["guide/user-guide/Quickstart"],
+        },
+        {
+          type: "category",
+          label: "Dev Guide",
+          items: ["guide/dev-guide/big-picture", "guide/dev-guide/manager-workflow"],
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "QA Testing",
+      items: ["qa-testing/test-process"],
+    },
+  ],
 };
