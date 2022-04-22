@@ -33,7 +33,8 @@ const ActivityStream: FunctionComponent<Properties>  = ({ webprop }: Properties)
               // This should be changed to more activities in the future.
               const variant = activity.code === "WEBSITE_CREATE" ? "success" : "danger";
               return <ProgressStep
-                // id={activity.id}
+                id={activity.id}
+                titleId={activity.id}
                 key={activity.id}
                 variant={variant}
                 // Description does not support elements yet. Hence they are rendered as text. 

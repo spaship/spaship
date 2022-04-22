@@ -6,7 +6,7 @@ import AddProperty from "../../components/web-property/addProperty";
 import WebProperty from "../../components/web-property/webProperty";
 import { post } from "../../utils/api.utils";
 import { getAllEventCountUrl } from "../../utils/endpoint.utils";
-import { DividerComp } from "./[propertyName]";
+import { StyledDivider } from "./[propertyName]";
 
 interface PropertiesListProps { }
 
@@ -45,7 +45,7 @@ const PropertiesList: FunctionComponent<PropertiesListProps> = ({ webprop }: Any
         <WebProperty webprop={webprop}></WebProperty>
       </Gallery>
       <br />
-      <DividerComp />
+      <StyledDivider />
     </Body>
   );
 };

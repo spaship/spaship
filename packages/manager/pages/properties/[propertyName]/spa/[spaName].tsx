@@ -1,4 +1,4 @@
-import { Gallery, GalleryItem } from "@patternfly/react-core";
+import { Divider, Gallery, GalleryItem } from "@patternfly/react-core";
 import { useRouter } from "next/router";
 import React, { FunctionComponent } from "react";
 import styled from 'styled-components';
@@ -10,9 +10,9 @@ import ActivityStream from "../../../../components/web-property/activityStream";
 import { post } from "../../../../utils/api.utils";
 import { getAllEventCountUrl, getEventAnalyticsUrl } from "../../../../utils/endpoint.utils";
 
-export const DividerComp = styled.hr`
-  border-top: 1px solid var(--spaship-global--Color--bright-gray);
-  width: 60vw;
+export const StyledDivider = styled(Divider)`
+  --pf-c-divider--BackgroundColor: var(--spaship-global--Color--bright-gray);
+  margin: 1.5rem 0;
 `;
 
 export const getServerSidePaths = async () => {
@@ -111,7 +111,7 @@ const SPAProperties: FunctionComponent<SPAIndexProps> = ({ activites, totalDeplo
                 <GalleryItem > <DeploymentWeek webprop={monthlyDeployments}></DeploymentWeek> </GalleryItem>
             </Gallery>
             <br />
-            <DividerComp />
+            <StyledDivider />
             <br />
             <ActivityStream webprop={activites}></ActivityStream>
         </Body>
