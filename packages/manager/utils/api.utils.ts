@@ -1,10 +1,7 @@
-import { getToken } from "./config.utils";
-
-const getDefaultHeader = async (useJSON = true) => {
+const getDefaultHeader = async (useJSON = true, token: string) => {
   const headers = new Headers();
-  const token: string = getToken();
   headers.append("Accept", "application/json");
-  headers.append("Authorization", token);
+  headers.append("Authorization", `Bearer ${token}`);
   headers.append("rejectUnauthorized", "false")
   if (useJSON) {
     headers.append("Content-Type", "application/json");
@@ -28,8 +25,9 @@ function handleResponse<T>(res: Response): Promise<T> {
   });
 }
 
-export async function get<T>(url: string): Promise<T> {
-  const headers = await getDefaultHeader();
+export async function get<T>(url: string, token?: string): Promise<T> {
+  const headers = await getDefaultHeader(true, token as string);
+  console.log(headers);
   const options: RequestInit = {
     method: "GET",
     headers,
@@ -38,8 +36,8 @@ export async function get<T>(url: string): Promise<T> {
   return handleResponse<T>(res);
 }
 
-export async function post<T>(url: string, data: object): Promise<T> {
-  const headers = await getDefaultHeader();
+export async function post<T>(url: string, data: object, token?: string): Promise<T> {
+  const headers = await getDefaultHeader(true, token as string);
   const options: RequestInit = {
     method: "POST",
     headers,
@@ -49,8 +47,8 @@ export async function post<T>(url: string, data: object): Promise<T> {
   return handleResponse<T>(res);
 }
 
-export async function upload<T>(url: string, data: FormData): Promise<T> {
-  const headers = await getDefaultHeader(false);
+export async function upload<T>(url: string, data: FormData, token?: string): Promise<T> {
+  const headers = await getDefaultHeader(true, token as string);
   const options: RequestInit = {
     method: "POST",
     headers,
@@ -60,8 +58,8 @@ export async function upload<T>(url: string, data: FormData): Promise<T> {
   return handleResponse<T>(res);
 }
 
-export async function put<T>(url: string, data: object): Promise<T> {
-  const headers = await getDefaultHeader();
+export async function put<T>(url: string, data: object, token?: string): Promise<T> {
+  const headers = await getDefaultHeader(true, token as string);
   const options: RequestInit = {
     method: "PUT",
     headers,
@@ -71,8 +69,8 @@ export async function put<T>(url: string, data: object): Promise<T> {
   return handleResponse<T>(res);
 }
 
-export async function del<T>(url: string, data?: object) {
-  const headers = await getDefaultHeader();
+export async function del<T>(url: string, data: object, token?: string) {
+  const headers = await getDefaultHeader(true, token as string);
   const options: RequestInit = {
     method: "DELETE",
     headers,

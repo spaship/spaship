@@ -3,6 +3,7 @@ import {
   ModalVariant, Text,
   TextContent, TextVariants
 } from "@patternfly/react-core";
+import { useSession } from "next-auth/react";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import styled from "styled-components";
 import { get } from "../../utils/api.utils";
@@ -40,15 +41,20 @@ const ApiKey: FunctionComponent<ApiKeyProps> = () => {
   async function handleModalToggle() {
     setModalOpen(!isModalOpen);
   }
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     (async () => {
       if (isModalOpen == true) {
         try {
-          const url = getNextValidateUrl();
-          const response = await get<AnyProps>(url);
-          setApiKey(response.token);
-        } catch (e) { }
+          if (status != "loading") {
+            const url = getNextValidateUrl();
+            const response = await get<AnyProps>(url, (session as any).accessToken);
+            setApiKey(response.token);
+          }
+        } catch (e) { 
+          console.error(e);
+        }
       }
     })()
   }, [isModalOpen]);
