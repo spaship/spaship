@@ -1,7 +1,8 @@
 import { Gallery } from "@patternfly/react-core";
+import { getSession } from "next-auth/react";
 import { FunctionComponent } from "react";
 import Body from "../../components/layout/body";
-import { AnyProps, Properties } from "../../components/models/props";
+import { AnyProps, ContextProps, Properties } from "../../components/models/props";
 import AddProperty from "../../components/web-property/addProperty";
 import WebProperty from "../../components/web-property/webProperty";
 import { post } from "../../utils/api.utils";
@@ -24,10 +25,11 @@ const meta = {
   ]
 }
 
-export const getServerSideProps = async () => {
+export const getServerSideProps = async (context: any) => {
   try {
+    const token = (await getSession(context as any) as any).accessToken;
     const urlCount = getAllEventCountUrl();
-    const response = await Promise.all([await post<Properties>(urlCount, payload)]);
+    const response = await Promise.all([await post<Properties>(urlCount, payload, token)]);
     const [deploymentCountResponse]: AnyProps = response;
     return {
       props: { webprop: deploymentCountResponse },
