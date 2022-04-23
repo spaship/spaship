@@ -118,6 +118,21 @@ const propertyFilteration = async (request) => {
           count: "$count",
         }
       );
+    } else if (request?.activities.all == true) {
+      return await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
+        {
+          code: "WEBSITE_CREATE",
+        },
+        {
+          envs: "$envs",
+        },
+        {
+          _id: 0,
+          spaName: "$_id.spaName",
+          envs: "$_id.envs",
+          count: "$count",
+        }
+      );
     }
   }
 };
