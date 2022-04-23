@@ -46,10 +46,10 @@ async function fetchResponse(dateFrame, matchRequest, groupRequest, projectReque
   const mappedResponse = {};
   for (item of response) {
     for (obj of item) {
-      if (mappedResponse[obj.envs]) {
-        mappedResponse[obj.envs].push(obj);
+      if (mappedResponse[obj.env]) {
+        mappedResponse[obj.env].push(obj);
       } else {
-        mappedResponse[obj.envs] = [obj];
+        mappedResponse[obj.env] = [obj];
       }
     }
   }
@@ -81,12 +81,12 @@ async function getWeeklyReport(startDate, endDate, matchRequest, groupRequest, p
       $project: {
         _id: 0,
         spaName: "$_id.spaName",
-        envs: "$_id.envs",
+        env: "$_id.env",
         count: "$count",
       },
     },
     {
-      $sort: { envs: 1 },
+      $sort: { env: 1 },
     },
   ]);
 }

@@ -40,7 +40,7 @@ async function fetchLatestActivitiesByProperty(matchRequest, limitRequest, skipR
         propertyName: "$propertyName",
         code: "$code",
         branch: "$branch",
-        envs: "$envs",
+        env: "$env",
         createdAt: "$createdAt",
         _id: 0,
       },
@@ -56,7 +56,7 @@ async function fetchLatestActivitiesByProperty(matchRequest, limitRequest, skipR
 
 function actvitiesText(item, codeMap) {
   item.latestActivityHead = " has been " + item.code + " ";
-  item.latestActivityTail = " at " + item.createdAt.toString().slice(0, 24) + " in " + item.envs;
+  item.latestActivityTail = " at " + item.createdAt.toString().slice(0, 24) + " in " + item.env;
 }
 
 module.exports = { getLatestActivitiesService };

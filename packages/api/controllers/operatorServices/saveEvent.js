@@ -34,7 +34,7 @@ async function createEventRequest(eventId, req) {
         propertyName: getPropertyName(req) ,
         spaName: getSPAName(req) ,
         version: getVersion(req) ,
-        envs: getEnvs(),
+        env: getEnvs(),
         branch: getBranch(),
         code: getCode(),
         failure: getFailure(req) ,
@@ -52,7 +52,7 @@ async function createEventRequest(eventId, req) {
     }
 
     function getEnvs() {
-        return req.body?.envs;
+        return req.body?.env;
     }
 }
 
@@ -73,7 +73,7 @@ async function updateEventRequest(req) {
         propertyName: getPropertyName(req) ,
         spaName: getSPAName(req) ,
         version: getVersion(req) ,
-        envs: getEnvs(),
+        env: getEnvs(),
         branch: getBranch(),
         code: getCode(),
         failure: getFailure(req) ,

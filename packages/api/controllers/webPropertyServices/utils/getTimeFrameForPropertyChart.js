@@ -46,11 +46,11 @@ async function fetchResponse(dateFrame, propertyName) {
   const mappedResponse = {};
   for(item of response){
     for(obj of item){
-      if(mappedResponse[obj.envs]){
-        mappedResponse[obj.envs].push(obj);
+      if(mappedResponse[obj.env]){
+        mappedResponse[obj.env].push(obj);
       }
       else{
-        mappedResponse[obj.envs] = [obj];
+        mappedResponse[obj.env] = [obj];
       }
     }
   }
@@ -77,7 +77,7 @@ async function getWeeklyReport(startDate, endDate, propertyName) {
       $group: {
         _id: {
           propertyName: "$propertyName",
-          envs: "$envs",
+          env: "$env",
         },
         totalAmount: {
           $sum: "$consumedTime",
@@ -98,7 +98,7 @@ async function getWeeklyReport(startDate, endDate, propertyName) {
       $project: {
         _id: 0,
         propertyName: "$_id.propertyName",
-        envs: "$_id.envs",
+        env: "$_id.env",
         totalAmount: "$totalAmount",
         count: "$count",
         avg: {
@@ -107,7 +107,7 @@ async function getWeeklyReport(startDate, endDate, propertyName) {
       },
     },
     {
-      $sort: { envs: 1 },
+      $sort: { env: 1 },
     },
   ]);
 }

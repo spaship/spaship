@@ -18,7 +18,7 @@ const eventTimeTrace = new mongoose.Schema({
     type: String,
     required: false,
   },
-  envs: {
+  env: {
     type: String,
     required: false,
   },
