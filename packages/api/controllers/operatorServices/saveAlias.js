@@ -1,17 +1,44 @@
 const alias = require("../../models/alias");
 const { uuid } = require("uuidv4");
+const ValidationError = require("../../utils/errors/ValidationError");
 
-module.exports = async function saveAlias(req, res) {
+module.exports = async function saveAlias(req, res, next) {
   console.log(req.body);
-  if (req.body?.id) {
-    const updatedResponse = await updateAlias(req);
-    res.send(updatedResponse);
+  const request = req.body;
+  if (!validateProperty(request, next)) return;
+  if (request?.id) {
+    const updatedResponse = await updateAlias(request);
+    return res.send(updatedResponse);
+  }
+  if (!request.hasOwnProperty("propertyName") || !request.hasOwnProperty("propertyTitle")) {
+    return next(new ValidationError("PropertyPlease provide PropertyName and PropertyTitle"));
   }
   let id = await getGeneratedAliasId();
-  let aliasRequest = await createAliasRequest(id, req);
+  let aliasRequest = await createAliasRequest(id, request);
   const createdResponse = await createEvent(aliasRequest);
   res.send(createdResponse);
 };
+
+function validateProperty(request, next) {
+  const formatPropertyName = /[ `!@#$%^&*()_+\=\[\]{};':"\\|,<>\/?~]/;
+  const formatEnv = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+  if (request?.propertyName?.trim().match(formatPropertyName)) {
+    next(new ValidationError("Invalid PropertyName"));
+    return false;
+  }
+  if (request?.env?.trim().match(formatEnv)) {
+    next(new ValidationError("Invalid Env"));
+    return false;
+  }
+  if (request.hasOwnProperty("type")) {
+    const type = request?.type?.trim()?.toLowerCase();
+    if (type != "operator" && type != "baremetal") {
+      next(new ValidationError("Property Type must be operator or baremetal"));
+      return false;
+    }
+  }
+  return true;
+}
 
 async function createEvent(aliasRequest) {
   try {
@@ -26,20 +53,25 @@ async function getGeneratedAliasId() {
   return uuid();
 }
 
-async function createAliasRequest(id, req) {
+async function createAliasRequest(id, request) {
   const currentTime = getCurrentTime();
   return new alias({
     id: id,
-    property: getPropertyName(req),
-    env: getEnv(req),
-    namespace: getNameSpace(req),
-    type: getType(req),
+    propertyName: getPropertyName(request),
+    propertyTitle: getPropertyTitle(request),
+    env: getEnv(request),
+    namespace: getNameSpace(request),
+    type: getType(request),
+    createdBy: getCreatedBy(request),
+    isActive: true,
     createdAt: currentTime,
+    updatedAt: currentTime,
   });
 }
 
-async function updateAlias(req) {
-  const updateResponse = await alias.findOneAndUpdate({ id: req.body?.id }, updateAliasRequest(req), (error, data) => {
+async function updateAlias(request) {
+  const updateData = { ...request, updatedAt: getCurrentTime() };
+  const updateResponse = await alias.findOneAndUpdate({ id: request?.id }, updateData, (error, data) => {
     if (error) {
       console.log("error");
     }
@@ -47,37 +79,30 @@ async function updateAlias(req) {
   return updateResponse;
 }
 
-async function updateAliasRequest(req) {
-  const updateRequest = {
-    property: getPropertyName(req),
-    env: getEnv(req),
-    namespace: getNameSpace(req),
-    type: getType(req),
-    createdAt: getCurrentTime(),
-  };
-  return JSON.parse(JSON.stringify(updateRequest));
-}
-
 function getCurrentTime() {
   return new Date();
 }
 
-function getPropertyName(req) {
-  return req.body?.property;
+function getPropertyName(request) {
+  return request.propertyName.trim().toLowerCase();
 }
 
-function getName(req) {
-  return req.body?.name || "";
+function getPropertyTitle(request) {
+  return request?.propertyTitle?.trim() || "";
 }
 
-function getEnv(req) {
-  return req.body?.env;
+function getCreatedBy(request) {
+  return request?.createdBy?.trim()?.toLowerCase() || "";
 }
 
-function getNameSpace(req) {
-  return req.body?.namespace;
+function getEnv(request) {
+  return request.env.trim().toLowerCase();
 }
 
-function getType(req) {
-  return req.body?.type;
+function getNameSpace(request) {
+  return request?.namespace?.trim()?.toLowerCase() || "";
+}
+
+function getType(request) {
+  return request?.type?.trim()?.toLowerCase() || "operator";
 }
