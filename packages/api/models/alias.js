@@ -6,11 +6,11 @@ const alias = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  property: {
+  propertyName: {
     type: String,
     required: false,
   },
-  name: {
+  propertyTitle: {
     type: String,
     required: false,
   },
@@ -26,11 +26,24 @@ const alias = new mongoose.Schema({
     type: String,
     required: false,
   },
+  createdBy: {
+    type: String,
+    required: false,
+  },
   createdAt: {
     type: Date,
     required: false,
   },
- 
+  updatedAt: {
+    type: Date,
+    required: false,
+  },
+  isActive: {
+    type: Boolean,
+    required: false,
+  },
 });
+
+alias.index({ propertyName: 1, env: 1 }, { unique: true });
 
 module.exports = mongoose.model("alias", alias);
