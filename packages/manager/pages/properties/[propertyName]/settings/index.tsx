@@ -5,6 +5,7 @@ import {
   List, 
   ListItem 
 } from "@patternfly/react-core";
+import { getSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { FunctionComponent } from "react";
 import styled from "styled-components";
@@ -14,30 +15,12 @@ import ApiKey from "../../../../components/settings/apiKey";
 import DeleteSpa from "../../../../components/settings/deleteSpa";
 import ManageSpa from "../../../../components/settings/manageSpa";
 import { post } from "../../../../utils/api.utils";
-import { getAllEventCountUrl, getEventAnalyticsUrl } from "../../../../utils/endpoint.utils";
+import { getEventAnalyticsUrl } from "../../../../utils/endpoint.utils";
 
-export const getServerSidePaths = async () => {
-    try {
-        const url = getAllEventCountUrl();
-        const payload = {
-            "count": {
-                "spa": true
-            }
-        }
-        const response = await post<AnyProps>(url, payload);
-        const paths: AnyProps = [];
-        for (let prop of response) {
-            if (prop?.propertyName)
-                paths.push({ params: { propertyName: prop?.propertyName } });
-        }
-        return { paths, fallback: false }
-    } catch (error) {
-        return { props: {} };
-    }
-}
 
 export const getServerSideProps = async (context: ContextProps) => {
     try {
+      const token = (await getSession(context as any) as any).accessToken;
         const propertyReq = getPropertyRequest(context);
         const urlEvent = getEventAnalyticsUrl();
         const payloadCount = {
@@ -45,7 +28,7 @@ export const getServerSideProps = async (context: ContextProps) => {
                 "propertyName": propertyReq
             }
         };
-        const response = await post<Properties>(urlEvent, payloadCount);
+        const response = await post<Properties>(urlEvent, payloadCount, token);
         return {
             props: { webprop: response },
         };

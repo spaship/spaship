@@ -27,12 +27,15 @@ export default NextAuth({
     // ...add more providers here
   ],
   callbacks: {
-    jwt: async ({ token }) => {
+    jwt: async ({ token, account }) => {
+      if (account?.access_token) {
+        token.accessToken = account.access_token;
+      }
       return token;
     },
-    session: async ({ session, token }) => {
-      session.token = token;
+    session: async ( {session, token} ) => {
+      session.accessToken = token.accessToken;
       return session;
-    }
+    },
   }
 })

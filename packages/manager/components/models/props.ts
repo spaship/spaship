@@ -3,7 +3,7 @@ export interface Properties {
 }
 
 export interface ContextProps {
-    contex: AnyProps;
+    context: AnyProps;
 }
 
 export interface WebProps {

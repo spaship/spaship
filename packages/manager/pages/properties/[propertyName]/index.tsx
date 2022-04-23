@@ -1,4 +1,5 @@
 import { Divider } from "@patternfly/react-core";
+import { getSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { FunctionComponent } from "react";
 import styled from 'styled-components';
@@ -7,7 +8,7 @@ import { AnyProps, ContextProps, Properties } from "../../../components/models/p
 import ActivityStream from "../../../components/web-property/activityStream";
 import SPAProperty from "../../../components/web-property/spaProperty";
 import { post } from "../../../utils/api.utils";
-import { getAllEventCountUrl, getEventAnalyticsUrl } from "../../../utils/endpoint.utils";
+import { getEventAnalyticsUrl } from "../../../utils/endpoint.utils";
 
 interface WebPropertyPageProps { }
 
@@ -16,28 +17,9 @@ export const StyledDivider = styled(Divider)`
   margin: 1.5rem 0;
 `;
 
-export const getServerSidePaths = async () => {
-    try {
-        const url = getAllEventCountUrl();
-        const payload = {
-            "count": {
-                "spa": true
-            }
-        }
-        const response = await post<AnyProps>(url, payload);
-        const paths: AnyProps = [];
-        for (let prop of response) {
-            if (prop?.propertyName)
-                paths.push({ params: { propertyName: prop?.propertyName } });
-        }
-        return { paths, fallback: false }
-    } catch (error) {
-        return { props: {} };
-    }
-}
-
 export const getServerSideProps = async (context: ContextProps) => {
     try {
+        const token = (await getSession(context as any) as any).accessToken;
         const propertyReq = getPropertyRequest(context);
         const urlEvent = getEventAnalyticsUrl();
         const payloadActivites = {
@@ -50,7 +32,12 @@ export const getServerSideProps = async (context: ContextProps) => {
                 "propertyName": propertyReq
             }
         };
-        const response = await Promise.all([await post<Properties>(urlEvent, payloadActivites), await post<Properties>(urlEvent, payloadCount)]);
+        const response = await Promise.all(
+          [
+            await post<Properties>(urlEvent, payloadActivites, token), 
+            await post<Properties>(urlEvent, payloadCount, token)
+          ]
+        );
         const [activitesResponse, countResponse]: AnyProps = response;
         return {
             props: { webprop: countResponse, activites: activitesResponse },
