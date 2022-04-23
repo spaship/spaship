@@ -66,7 +66,7 @@ function getSpas(req, reqBody) {
         repositoryLink: each?.repositoryLink,
         spaName: each?.webPropertyName,
         contextPath: each?.contextPath,
-        envs: each?.envs,
+        env: each?.env,
         ownerEmail : reqBody.body?.ownerEmail,
         ownerName: reqBody.body?.ownerName
     }));

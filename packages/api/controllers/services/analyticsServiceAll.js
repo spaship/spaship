@@ -80,11 +80,11 @@ const propertyFilteration = async (request) => {
           code: "WEBSITE_CREATE",
         },
         {
-          envs: "$envs",
+          env: "$env",
         },
         {
           _id: 0,
-          envs: "$_id.envs",
+          env: "$_id.env",
           count: "$count",
         }
       );
@@ -94,12 +94,12 @@ const propertyFilteration = async (request) => {
           code: "WEBSITE_CREATE",
         },
         {
-          envs: "$envs",
+          env: "$env",
         },
         {
           _id: 0,
           spaName: "$_id.spaName",
-          envs: "$_id.envs",
+          env: "$_id.env",
           count: "$count",
         }
       );
@@ -109,12 +109,12 @@ const propertyFilteration = async (request) => {
           code: "WEBSITE_CREATE",
         },
         {
-          envs: "$envs",
+          env: "$env",
         },
         {
           _id: 0,
           spaName: "$_id.spaName",
-          envs: "$_id.envs",
+          env: "$_id.env",
           count: "$count",
         }
       );

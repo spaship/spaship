@@ -25,7 +25,7 @@ const event = new mongoose.Schema({
     type: String,
     required: false,
   },
-  envs: {
+  env: {
     type: String,
     required: false,
   },
@@ -34,6 +34,14 @@ const event = new mongoose.Schema({
     required: false,
   },
   code: {
+    type: String,
+    required: false,
+  },
+  url: {
+    type: String,
+    required: false,
+  },
+  path: {
     type: String,
     required: false,
   },

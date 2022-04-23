@@ -27,14 +27,14 @@ const analyticsOperations = async (request) => {
           propertyName: "$propertyName",
           spaName: "$spaName",
           code: "$code",
-          envs: "$envs",
+          env: "$env",
         },
         {
           _id: 0,
           propertyName: "$_id.propertyName",
           spaName: "$_id.spaName",
           code: "$_id.code",
-          env: "$_id.envs",
+          env: "$_id.env",
           count: "$count",
         }
       );
@@ -87,12 +87,12 @@ const analyticsOperations = async (request) => {
         },
         {
           spaName: getSpaName(request?.chart),
-          envs: "$envs",
+          env: "$env",
         },
         {
           _id: 0,
           spaName: "$_id.spaName",
-          envs: "$_id.envs",
+          env: "$_id.env",
           count: "$count",
         }
       );
@@ -105,12 +105,12 @@ const analyticsOperations = async (request) => {
         },
         {
           propertyName: getPropertyName(request?.chart),
-          envs: "$envs",
+          env: "$env",
         },
         {
           _id: 0,
           propertyName: "$_id.propertyName",
-          envs: "$_id.envs",
+          env: "$_id.env",
           count: "$count",
         }
       );
@@ -124,12 +124,12 @@ const analyticsOperations = async (request) => {
         },
         {
           spaName: getSpaName(request?.spaName),
-          envs: "$envs",
+          env: "$env",
         },
         {
           _id: 0,
           spaName: "$_id.spaName",
-          envs: "$_id.envs",
+          env: "$_id.env",
           count: "$count",
         }
       );
@@ -140,12 +140,12 @@ const analyticsOperations = async (request) => {
         },
         {
           propertyName: getPropertyName(request?.chart),
-          envs: "$envs",
+          env: "$env",
         },
         {
           _id: 0,
           propertyName: "$_id.propertyName",
-          envs: "$_id.envs",
+          env: "$_id.env",
           count: "$count",
         }
       );

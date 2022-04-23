@@ -11,7 +11,7 @@ module.exports = async function saveAlias(req, res, next) {
     return res.send(updatedResponse);
   }
   if (!request.hasOwnProperty("propertyName") || !request.hasOwnProperty("propertyTitle")) {
-    return next(new ValidationError("PropertyPlease provide PropertyName and PropertyTitle"));
+    return next(new ValidationError("Please provide PropertyName and PropertyTitle"));
   }
   let id = await getGeneratedAliasId();
   let aliasRequest = await createAliasRequest(id, request);
