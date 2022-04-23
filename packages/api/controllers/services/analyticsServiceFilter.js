@@ -114,7 +114,6 @@ const analyticsOperations = async (request) => {
           count: "$count",
         }
       );
-
       return response;
     } else if (getPropertyName(request?.chart) && getSpaName(request?.chart)) {
       return await getCounts.getCountService(

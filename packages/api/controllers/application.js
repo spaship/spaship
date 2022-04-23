@@ -67,6 +67,49 @@ module.exports.put = async (req, res, next) => {
 };
 
 module.exports.deploy = async (req, res, next) => {
+  if (getWebPropertyName(req)) {
+    const uploadBasePath = path.resolve(__dirname, `../${config.get("upload_dir")}`);
+    const formData = new FormData();
+    log.info(req);
+    try {
+      const fileStream = await fs.createReadStream(`${uploadBasePath}/${getFile(req)}`);
+      formData.append("spa", fileStream);
+      formData.append("description", getDescription(req));
+    } catch (err) {
+      log.error(err);
+      next(err);
+      return;
+    }
+    formData.append("website", getWebPropertyName(req));
+
+    try {
+      const response = await axios.post(config.get("cli:base_path"), formData, {
+        maxBodyLength: Infinity,
+        headers: formData.getHeaders(),
+      });
+      const currentTime = new Date();
+      const cliActivitiesRequest = new cliActivities({
+        id: uuid(),
+        fileName: req?.file?.filename,
+        webProperty: getWebPropertyName(req),
+        description: getDescription(req),
+        isActive: true,
+        createdAt: currentTime,
+        updatedAt: currentTime,
+      });
+      const cliActivitiesResponse = await cliActivitiesRequest.save();
+      res.send({
+        status: "SPA deployment process started into operator.",
+        message: response.data,
+        cliData: cliActivitiesResponse,
+      });
+      return;
+    } catch (err) {
+      log.error(err);
+      next(err);
+      return;
+    }
+  }
   const userId = getUserUUID(req);
   const name = getNameRequest(req);
   const ref = getRefRequest(req);
@@ -207,6 +250,7 @@ function getDescription(req) {
 }
 
 function getWebPropertyName(req) {
+
   return req?.body?.webPropertyName || false;
 }
 
