@@ -1,5 +1,6 @@
 package io.spaship.operator.api;
 
+import io.smallrye.common.annotation.NonBlocking;
 import io.smallrye.mutiny.Uni;
 import io.spaship.operator.service.k8s.Operator;
 import io.spaship.operator.service.k8s.SideCarOperations;
@@ -7,10 +8,7 @@ import io.spaship.operator.type.Environment;
 import io.spaship.operator.type.OperationResponse;
 import io.spaship.operator.type.SyncRequest;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Objects;
 
@@ -44,10 +42,26 @@ public class EnvironmentController {
     @Path("/sync")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String scheduleSync(SyncRequest syncRequest){
+    @NonBlocking
+    public Uni<String> scheduleSync(@QueryParam("envName") String envName,
+                               @QueryParam("websiteName") String websiteName,
+                               @QueryParam("nameSpace") String nameSpace,
+                               Object syncRequestBody){
 
-      String sideCarServiceUrl = k8sOperator.environmentSidecarUrl(syncRequest.getEnvironment());
-      return sidecarOps.triggerSync(sideCarServiceUrl,syncRequest.getSyncConfiguration(),syncRequest.getEnvironment());
+      Environment environment = new Environment(
+        envName,
+        websiteName,
+        null,
+        nameSpace,
+        true,
+        null,
+        null,
+        null,
+        null,
+        null,
+        true,
+        false);
+      return sidecarOps.triggerSyncAsync(syncRequestBody,environment);
 
     }
 

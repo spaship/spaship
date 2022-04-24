@@ -1,10 +1,13 @@
 package io.spaship.operator.service.k8s;
 
+import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.infrastructure.Infrastructure;
 import io.spaship.operator.business.EventManager;
 import io.spaship.operator.type.Environment;
 import io.spaship.operator.type.EventStructure;
 import io.spaship.operator.type.OperationResponse;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.mutiny.core.Vertx;
@@ -57,8 +60,19 @@ public class SideCarOperations {
     }
 
 
+    public Uni<String> triggerSyncAsync(Object syncConfig,Environment environment){
+
+      return Uni.createFrom()
+        .item(() -> k8sOperator.environmentSidecarUrl(environment))
+        .runSubscriptionOn(Infrastructure.getDefaultExecutor())
+        .map(url-> triggerSync(url,syncConfig,environment)).onFailure()
+        .recoverWithItem(throwable-> {
+          LOG.error("sync operation failed due to {}",throwable.getMessage());
+          return new JsonObject().put("status","failed to communicate due to "+throwable.getMessage()).encodePrettily();
+        });
+    }
     @SneakyThrows
-    public String triggerSync(String sidecarUrl, String syncConfig,Environment environment){
+    public String triggerSync(String sidecarUrl, Object syncConfig,Environment environment){
 
       sidecarUrl = sidecarUrl.replace("tcp", "http");
       LOG.debug("sidecar url {} syncConfig details {}", sidecarUrl, syncConfig);
@@ -72,14 +86,17 @@ public class SideCarOperations {
 
       return  client.requestAbs(HttpMethod.POST, requestUri)
         .sendJson(syncConfig)
-        .map(HttpResponse::bodyAsString)
+        .map(bufferHttpResponse -> {
+          var output=bufferHttpResponse.bodyAsString();
+          LOG.debug("bufferHttpResponse.bodyAsString() is {}",output);
+          return output;
+        })
         .onFailure()
         .retry()
         .withBackOff(Duration.ofSeconds(2), Duration.ofSeconds(4))
         .atMost(30).onFailure()
         .recoverWithItem(e -> new JsonObject().put("status","failed to communicate due to "+e.getMessage()).encodePrettily())
         .subscribeAsCompletionStage().get();
-
     }
 
     @SneakyThrows

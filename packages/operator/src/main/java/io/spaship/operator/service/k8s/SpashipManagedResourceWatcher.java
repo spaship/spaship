@@ -8,6 +8,7 @@ import io.fabric8.kubernetes.client.WatcherException;
 import io.fabric8.openshift.api.model.Route;
 import io.fabric8.openshift.client.OpenShiftClient;
 import io.quarkus.runtime.StartupEvent;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,11 +32,12 @@ public class SpashipManagedResourceWatcher {
 
     void onStartup(@Observes StartupEvent startupEvent){
 
-        podWatcher(nameSpace,filter);
-
-        serviceWatcher(nameSpace,filter);
-
-        routeWatcher(nameSpace,filter);
+      var watcherEnabled=ConfigProvider.getConfig().getValue("watcher.enabled", Boolean.class);
+      if(Boolean.FALSE.equals(watcherEnabled))
+        return;
+      podWatcher(nameSpace,filter);
+      serviceWatcher(nameSpace,filter);
+      routeWatcher(nameSpace,filter);
 
     }
 
