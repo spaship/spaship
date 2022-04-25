@@ -1,9 +1,8 @@
 import { Card, EmptyState, EmptyStateVariant, Title } from "@patternfly/react-core";
 import { FunctionComponent } from "react";
 import styled from "styled-components";
-import { Properties } from "../models/props";
 
-interface AddCardProps { }
+interface AddCardProps {}
 
 const AddPropertyBox = styled(Card)`
   opacity: 1;
@@ -17,9 +16,7 @@ const AddProperty: FunctionComponent<AddCardProps> = () => {
       <Card isSelectable isRounded>
         <AddPropertyBox>
           <EmptyState variant={EmptyStateVariant.xs}>
-            <div className="spaship-circle spaship-plus">
-              &#43;
-            </div>
+            <div className="spaship-circle spaship-plus">&#43;</div>
             <br />
             <Title headingLevel="h5" size="md">
               New Web Property

@@ -6,11 +6,11 @@ interface APIKeysProps {}
 const meta = {
   title: "API Keys ",
   breadcrumbs: [
-    {path: "/", title:'Home'},
-    {path: "/authentication", title:'Authentication'},
-    {path: "/authentication/api-keys", title:'API Keys'}
-  ]
-}
+    { path: "/", title: "Home" },
+    { path: "/authentication", title: "Authentication" },
+    { path: "/authentication/api-keys", title: "API Keys" },
+  ],
+};
 
 const APIKeys: FunctionComponent<APIKeysProps> = () => {
   return (
