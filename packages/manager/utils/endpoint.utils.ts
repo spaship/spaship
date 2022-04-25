@@ -14,6 +14,10 @@ export function getAllEventCountUrl() {
   return `${spashipHost}/event/fetch/analytics/all`;
 }
 
+export function getPropertyList() {
+  return `${spashipHost}/webproperty/alias/list`;
+}
+
 export function getEventAnalyticsUrl() {
   return `${spashipHost}/event/fetch/analytics/filter`;
 }

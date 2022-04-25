@@ -25,8 +25,8 @@ const WebProperty: FunctionComponent<Properties> = ({ webprop }: Properties) => 
           onClick={() => router.push(`properties/${prop.propertyName}`)}
         >
           <CardStyle>
-            <CardTitle>{prop.propertyName}</CardTitle>
-            <CardBody>Deployed</CardBody>
+            <CardTitle>{convertPropertyTitle(prop.propertyTitle || '')}</CardTitle>
+            <CardBody>{prop.propertyName}</CardBody>
             <CardFooter>{prop.count} Deployments</CardFooter>
           </CardStyle>
         </Card>
@@ -36,3 +36,7 @@ const WebProperty: FunctionComponent<Properties> = ({ webprop }: Properties) => 
 };
 
 export default WebProperty;
+
+function convertPropertyTitle(propertyTitle: string) {
+  return propertyTitle.replace(/\w\S*/g, function (propertyTitle) { return propertyTitle.charAt(0).toUpperCase() + propertyTitle.substr(1).toLowerCase(); });
+}
