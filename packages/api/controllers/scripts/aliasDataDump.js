@@ -12,6 +12,7 @@ const aliasDataDumpService = async (docs) => {
     const currentDate = new Date();
     createBulkData(docs, currentDate, bulk);
     bulk.execute();
+    console.log(docs);
     return { Success: "All data successfully updated", "Records Number": getDocumentCounts(docs) };
   } catch (e) {
     console.log(e);
