@@ -13,6 +13,10 @@ module.exports = async function saveAlias(req, res, next) {
   if (!request.hasOwnProperty("propertyName") || !request.hasOwnProperty("propertyTitle")) {
     return next(new ValidationError("Please provide PropertyName and PropertyTitle"));
   }
+  const result = await alias.findOne({ propertyName: getPropertyName(request), env: getEnv(request) });
+  if (result) {
+    return next(new ValidationError("Propertyname & Env exists."));
+  }
   let id = await getGeneratedAliasId();
   let aliasRequest = await createAliasRequest(id, request);
   const createdResponse = await createEvent(aliasRequest);
