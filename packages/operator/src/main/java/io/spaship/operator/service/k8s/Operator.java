@@ -1,9 +1,6 @@
 package io.spaship.operator.service.k8s;
 
-import io.fabric8.kubernetes.api.model.ConfigMap;
-import io.fabric8.kubernetes.api.model.KubernetesList;
-import io.fabric8.kubernetes.api.model.Pod;
-import io.fabric8.kubernetes.api.model.Service;
+import io.fabric8.kubernetes.api.model.*;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import io.fabric8.kubernetes.api.model.networking.v1.Ingress;
@@ -242,6 +239,13 @@ public class Operator implements Operations {
                 .environmentName(item.getMetadata().getLabels().get(ENVIRONMENT))
                 .state("StatefulSet created");
 
+            }
+            if(item instanceof PersistentVolumeClaim){
+              LOG.debug("creating new pvc in K8s, tracing = {}", tracing);
+              k8sClient.persistentVolumeClaims().inNamespace(nameSpace).createOrReplace((PersistentVolumeClaim)item);
+              eb.websiteName(item.getMetadata().getLabels().get(WEBSITE))
+                .environmentName(item.getMetadata().getLabels().get(ENVIRONMENT))
+                .state("pvc created");
             }
             if (item instanceof Route) {
                 LOG.debug("creating new Route in K8s, tracing = {}", tracing);
