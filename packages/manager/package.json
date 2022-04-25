@@ -33,9 +33,10 @@
   ],
   "license": "MIT",
   "scripts": {
-    "dev": "next dev -p 2468",
+    "local": "bash scripts/local.sh",
+    "dev": "bash scripts/dev.sh",
     "build": "next build",
-    "start": "next start -p 2468",
+    "start": "bash scripts/start.sh",
     "lint": "next lint"
   },
   "dependencies": {
