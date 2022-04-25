@@ -3,12 +3,14 @@ import {
   Flex,
   FlexItem,
   Form,
-  FormGroup, Modal,
-  ModalVariant, Popover,
+  FormGroup,
+  Modal,
+  ModalVariant,
+  Popover,
   Text,
   TextContent,
   TextInput,
-  TextVariants
+  TextVariants,
 } from "@patternfly/react-core";
 import React, { FunctionComponent, useState } from "react";
 import styled from "styled-components";
@@ -32,14 +34,14 @@ const StyledDangerText = styled(StyledText)`
   color: var(--spaship-global--Color--text-danger, #cc0000);
 `;
 
-interface DeleteSpaProps { }
+interface DeleteSpaProps {}
 
 const DeleteSpa: FunctionComponent<DeleteSpaProps> = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [env, setEnv] = useState("");
   const handleModalToggle = async () => {
     setModalOpen(!isModalOpen);
-  }
+  };
   const onClickMethod = async () => {
     setModalOpen(!isModalOpen);
   };
@@ -58,11 +60,7 @@ const DeleteSpa: FunctionComponent<DeleteSpaProps> = () => {
         <Button key="create" variant="danger" onClick={onClickMethod}>
           Yes, Delete
         </Button>,
-        <Button
-          key="cancel"
-          variant="link"
-          onClick={handleModalToggle}
-        >
+        <Button key="cancel" variant="link" onClick={handleModalToggle}>
           Cancel
         </Button>,
       ]}
@@ -71,12 +69,12 @@ const DeleteSpa: FunctionComponent<DeleteSpaProps> = () => {
         <FormGroup
           labelIcon={
             <Popover bodyContent={null}>
-              <Button type="button"
+              <Button
+                type="button"
                 onClick={(e) => e.preventDefault()}
                 aria-describedby="modal-with-form-form-name"
                 className="pf-c-form__group-label-help"
-              >
-              </Button>
+              ></Button>
             </Popover>
           }
           isRequired
@@ -84,7 +82,7 @@ const DeleteSpa: FunctionComponent<DeleteSpaProps> = () => {
         >
           <TextInput
             isRequired
-            placeholder='Enter web property name'
+            placeholder="Enter web property name"
             type="text"
             id="modal-with-form-form-name"
             name="modal-with-form-form-name"
@@ -98,17 +96,12 @@ const DeleteSpa: FunctionComponent<DeleteSpaProps> = () => {
 
   return (
     <>
-      <Flex
-        justifyContent={ { default: 'justifyContentSpaceBetween'} }
-        alignItems={ { default: 'alignItemsCenter' } }>
+      <Flex justifyContent={{ default: "justifyContentSpaceBetween" }} alignItems={{ default: "alignItemsCenter" }}>
         <FlexItem>
-          <Flex
-            direction={{ default: 'column' }}>
+          <Flex direction={{ default: "column" }}>
             <StyledFlexItem>
               <TextContent>
-                <StyledDangerText component={TextVariants.h2}>
-                  Delete Web Property
-                </StyledDangerText>
+                <StyledDangerText component={TextVariants.h2}>Delete Web Property</StyledDangerText>
               </TextContent>
             </StyledFlexItem>
             <FlexItem>
@@ -119,12 +112,8 @@ const DeleteSpa: FunctionComponent<DeleteSpaProps> = () => {
           </Flex>
         </FlexItem>
         <FlexItem>
-          <StyledButton 
-            variant="danger" 
-            onClick={handleModalToggle}>
-              <StyledText component={TextVariants.h4}>
-                Delete Web Property
-              </StyledText>
+          <StyledButton variant="danger" onClick={handleModalToggle}>
+            <StyledText component={TextVariants.h4}>Delete Web Property</StyledText>
           </StyledButton>
         </FlexItem>
       </Flex>

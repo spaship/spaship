@@ -1,21 +1,18 @@
 import { FunctionComponent } from "react";
 import Body from "../../components/layout/body";
 
-interface FeedbackProps { }
+interface FeedbackProps {}
 
 const meta = {
   title: "Feedback ",
   breadcrumbs: [
-    {path: "/", title:'Home'},
-    {path: "/feedback", title:'Feedback'}
-  ]
-}
- 
- 
+    { path: "/", title: "Home" },
+    { path: "/feedback", title: "Feedback" },
+  ],
+};
+
 const Feedback: FunctionComponent<FeedbackProps> = () => {
-    return ( 
-        <Body {...meta}>SPAship Feedback</Body>
-     );
-}
- 
+  return <Body {...meta}>SPAship Feedback</Body>;
+};
+
 export default Feedback;

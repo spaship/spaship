@@ -5,10 +5,10 @@ interface Config {
 }
 
 const configs: Config = {
-  spashipApiBaseUrl: process.env.SPASHIP_API_BASE_URL || '',
-  spashipApiAuthToken: process.env.SPASHIP_API_AUTH_TOKEN || '',
-  spashipGuide: process.env.SPASHIP_GUIDE || '',
-}
+  spashipApiBaseUrl: process.env.SPASHIP_API_BASE_URL || "",
+  spashipApiAuthToken: process.env.SPASHIP_API_AUTH_TOKEN || "",
+  spashipGuide: process.env.SPASHIP_GUIDE || "",
+};
 
 export function getHost() {
   return configs.spashipApiBaseUrl;

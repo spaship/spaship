@@ -1,16 +1,5 @@
-import {
-  Card,
-  CardTitle,
-  Switch
-} from "@patternfly/react-core";
-import {
-  TableComposable, 
-  Tbody,
-  Td, 
-  Th, 
-  Thead, 
-  Tr
-} from "@patternfly/react-table";
+import { Card, CardTitle, Switch } from "@patternfly/react-core";
+import { TableComposable, Tbody, Td, Th, Thead, Tr } from "@patternfly/react-table";
 import React, { FunctionComponent, useState } from "react";
 import styled from "styled-components";
 import { Properties, SPAProps } from "../models/props";
@@ -29,7 +18,7 @@ const ManageSpa: FunctionComponent<Properties> = ({ webprop }: Properties) => {
   return (
     <>
       <StyledCard>
-      <CardTitle>Manage SPAs</CardTitle>
+        <CardTitle>Manage SPAs</CardTitle>
         <TableComposable>
           <Thead>
             <Tr>

@@ -1,11 +1,7 @@
-import {
-  ChartThemeColor
-} from "@patternfly/react-charts";
-import {
-  Text, TextContent, TextVariants
-} from "@patternfly/react-core";
+import { ChartThemeColor } from "@patternfly/react-charts";
+import { Text, TextContent, TextVariants } from "@patternfly/react-core";
 import React, { FunctionComponent } from "react";
-import styled from 'styled-components';
+import styled from "styled-components";
 import { Properties } from "../models/props";
 import AggregateChart from "./aggregate-chart";
 
@@ -30,7 +26,7 @@ const TotalDeployment: FunctionComponent<Properties> = ({ webprop }: Properties)
     legendOrientation: "vertical",
     subTitle: "Deployments",
     constrainToVisibleArea: true,
-    width: 350
+    width: 350,
   };
   const chartConfig = {
     ariaTitle: areaConfig.ariaTitle,
@@ -49,12 +45,13 @@ const TotalDeployment: FunctionComponent<Properties> = ({ webprop }: Properties)
     <>
       <TextContent>
         <Text component={TextVariants.h1}> Total Deployments </Text>
-      </TextContent><br />
+      </TextContent>
+      <br />
       <ChartBorder>
         <AggregateChart type={chartType} props={chartConfig}></AggregateChart>
       </ChartBorder>
     </>
   );
-}
+};
 
 export default TotalDeployment;

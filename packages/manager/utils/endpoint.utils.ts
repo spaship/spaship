@@ -7,7 +7,7 @@ export function getWebPropertyListUrl() {
 }
 
 export function getSpaListUrl(propertyReq: string) {
-  return `${spashipHost}/webproperty/getspalist/${propertyReq}`
+  return `${spashipHost}/webproperty/getspalist/${propertyReq}`;
 }
 
 export function getAllEventCountUrl() {
