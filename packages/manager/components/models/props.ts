@@ -9,6 +9,7 @@ export interface ContextProps {
 export interface WebProps {
     id: string;
     propertyName?: string;
+    propertyTitle?: string;
     count: string;
 }
 
