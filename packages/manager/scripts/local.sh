@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-if [[ -f ".env/.env.local" ]]; then
-  source .env/.env.local
+if [[ -f ".env/local.env" ]]; then
+  source .env/local.env
 fi
 
 next dev -p 2468
