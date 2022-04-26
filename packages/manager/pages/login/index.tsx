@@ -23,8 +23,11 @@ import {
 } from "@patternfly/react-core";
 import EmptySpinner from "../../components/general/empty-spinner";
 import styled from "styled-components";
+import rocketWithPlume from "../../public/images/illustrations/rocket-with-plume.svg";
 import rocket from "../../public/images/illustrations/rocket.svg";
+import plume from "../../public/images/illustrations/plume.svg";
 import darkLogo from "../../public/images/logo/spaship-logo-dark-vector.svg";
+import { useState } from "react";
 
 const Header = styled(PageHeader)`
   background-color: white;
@@ -50,7 +53,6 @@ const Body = styled(PageSection)`
 `;
 
 const StyledCard = styled(Card)`
-  background: white;
   top: 0;
   bottom: 0;
   left: 0;
@@ -79,12 +81,72 @@ const Footer = styled(PageSection)`
   background-color: var(--spaship-global--Color--text-black);
 `;
 
-const Rocket = styled.div`
+const RocketWithPlume = styled.div`
   position: fixed;
   width: 40em;
-  bottom: -5em;
-  right: -7em;
+  right: -5em;
+  bottom: -4em;
   z-index: 0;
+`;
+
+const Plume = styled.div`
+  position: fixed;
+  bottom: -4em;
+  z-index: 0;
+  animation: disperse 1.5s ease;
+    animation-fill-mode: forwards;
+
+  @keyframes disperse {
+    0%{
+      opacity: 1;
+      right: -5em;
+      width: 40em;
+    }
+
+    100% {
+      opacity: 0;
+      right: -60em;
+      width: 120em;
+      bottom: -6em;
+    }
+  }
+`;
+
+const Launcher = styled.div`
+  position: fixed;
+  width: 30em;
+  right: -5em;
+  height: 100vh;
+  bottom: -4em;
+  display: flex;
+  overflow: hidden;
+  justify-content: center;
+
+  .rocket {
+    position: relative;
+    animation: launch 1s ease;
+    animation-fill-mode: forwards;
+  }
+
+  .rocket::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 200px;
+    background: linear-gradient(#fed402, transaparent);
+  }
+
+  @keyframes launch {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-50em);
+    }
+  }
 `;
 
 const HeaderTools = () => {
@@ -131,6 +193,11 @@ const HeaderTools = () => {
 
 const Login: NextPage = () => {
   const { status: authStatus } = useSession();
+  const [launcher, setLauncher] = useState(false);
+  const authenticate = (provider: string) => {
+    setLauncher(true)
+    signIn(provider, { callbackUrl: "/" });
+  }
   if (authStatus === "loading") {
     return (
       <Bullseye>
@@ -170,28 +237,27 @@ const Login: NextPage = () => {
                   </Title>
                 </CardHeader>
                 <CardBody>
-                  <CardButton isBlock variant="primary" onClick={() => signIn("keycloak", { callbackUrl: "/" })} className="spaship_btn">
+                  <CardButton isBlock variant="primary" onClick={() => authenticate('keycloak')} className="spaship_btn">
                     Red Hat SSO
                   </CardButton>
                   <Divider/>
                   <Flex className="OARow" justifyContent={{ default: 'justifyContentSpaceBetween' }}>
                     <FlexItem>
-                      <Button variant="plain" onClick={() => signIn("github", { callbackUrl: "/" })}>
+                      <Button variant="plain" onClick={() => authenticate("github")}>
                         <GithubIcon/>
                       </Button>
                     </FlexItem>
                     <FlexItem>
-                      <Button variant="plain" onClick={() => signIn("gitlab", { callbackUrl: "/" })}>
+                      <Button variant="plain" onClick={() => authenticate("gitlab")}>
                         <GitlabIcon/>
                       </Button>
                     </FlexItem>
                     <FlexItem>
-                      <Button variant="plain" onClick={() => signIn("google", { callbackUrl: "/" })}>
+                      <Button variant="plain" onClick={() => authenticate("google")}>
                         <GoogleIcon/>
                       </Button>
                     </FlexItem>
                   </Flex>
-                  
                 </CardBody>
               </StyledCard>
             </FlexItem>
@@ -219,9 +285,17 @@ const Login: NextPage = () => {
         </Link>
         .
       </Footer>
-      <Rocket>
-        <Image src={rocket} alt="Rocket" priority />
-      </Rocket>
+        <RocketWithPlume style={{display: launcher?"none":"block"}}>
+          <Image src={rocketWithPlume} alt="Rocket With Plume" priority />
+        </RocketWithPlume>
+        <div  style={{display: launcher?"block":"none"}}>
+          <Launcher>
+            <Image className="rocket" src={rocket} alt="Rocket" priority />
+          </Launcher>
+          <Plume>
+              <Image src={plume} alt="Plume" priority />
+          </Plume>
+        </div>
     </Page>
   );
 };
