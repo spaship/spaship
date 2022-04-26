@@ -8,9 +8,9 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="190.073"
-   height="370.5"
-   viewBox="0 0 190.07299 370.49999"
+   width="160"
+   height="311.88016"
+   viewBox="0 0 159.99999 311.88015"
    version="1.1"
    id="svg63"
    sodipodi:docname="rocket.svg"
@@ -45,7 +45,8 @@
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg63" />
+     inkscape:current-layer="svg63"
+     inkscape:document-rotation="0" />
   <defs
      id="defs23">
     <style
@@ -108,7 +109,7 @@
        gradientUnits="userSpaceOnUse" />
   </defs>
   <g
-     transform="translate(-183.227,-565)"
+     transform="matrix(0.84178184,0,0,0.84178184,-154.23716,-475.60674)"
      id="g57">
     <path
        class="d"

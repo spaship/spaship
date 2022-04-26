@@ -93,8 +93,8 @@ const Plume = styled.div`
   position: fixed;
   bottom: -4em;
   z-index: 0;
-  animation: disperse 1.5s ease;
-    animation-fill-mode: forwards;
+  animation: disperse 2s ease;
+  animation-fill-mode: forwards;
 
   @keyframes disperse {
     0%{
@@ -114,8 +114,8 @@ const Plume = styled.div`
 
 const Launcher = styled.div`
   position: fixed;
-  width: 30em;
-  right: -5em;
+  width: 40em;
+  right: -3.5em;
   height: 100vh;
   bottom: -4em;
   display: flex;
@@ -124,24 +124,13 @@ const Launcher = styled.div`
 
   .rocket {
     position: relative;
-    animation: launch 1s ease;
+    animation: launch 1.5s ease;
     animation-fill-mode: forwards;
-  }
-
-  .rocket::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 10px;
-    height: 200px;
-    background: linear-gradient(#fed402, transaparent);
   }
 
   @keyframes launch {
     0% {
-      transform: translateY(0);
+      transform: translateY(6em);
     }
     100% {
       transform: translateY(-50em);
