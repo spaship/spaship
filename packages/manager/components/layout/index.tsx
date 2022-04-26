@@ -1,22 +1,22 @@
 import { FunctionComponent } from "react";
-import { Split, SplitItem, Stack, StackItem } from '@patternfly/react-core';
+import { Split, SplitItem, Stack, StackItem } from "@patternfly/react-core";
 import Footer from "./footer";
 import Sidebar from "./sidebar";
 import styled from "styled-components";
 import React from "react";
 
 interface LayoutProps {
-  skipLayout: boolean
+  skipLayout: boolean;
 }
 
-const SidebarArea = styled(SplitItem) `
+const SidebarArea = styled(SplitItem)`
   width: 250px;
   @media (max-width: 770px) {
     display: none;
   }
 `;
 
-const ContentArea = styled(SplitItem) `
+const ContentArea = styled(SplitItem)`
   min-height: 80vh;
 `;
 
@@ -28,11 +28,13 @@ const LayoutDefinition: FunctionComponent<{}> = ({ children }) => {
   return (
     <>
       <Split>
-        <SidebarArea><Sidebar /></SidebarArea>
+        <SidebarArea>
+          <Sidebar />
+        </SidebarArea>
         <ContentArea isFilled>
           <Stack>
             <BodyArea isFilled>{children}</BodyArea>
-            <Footer/>
+            <Footer />
           </Stack>
         </ContentArea>
       </Split>
@@ -41,8 +43,8 @@ const LayoutDefinition: FunctionComponent<{}> = ({ children }) => {
 };
 
 const Layout: FunctionComponent<LayoutProps> = ({ skipLayout, children }) => {
-  const Wrapper:FunctionComponent = skipLayout ? React.Fragment : LayoutDefinition;
-  return <Wrapper>{children}</Wrapper>
+  const Wrapper: FunctionComponent = skipLayout ? React.Fragment : LayoutDefinition;
+  return <Wrapper>{children}</Wrapper>;
 };
 
 export default Layout;

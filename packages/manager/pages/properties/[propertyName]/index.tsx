@@ -12,7 +12,7 @@ import { CubesIcon, FileIcon, OutlinedWindowRestoreIcon } from "@patternfly/reac
 import { getSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { FunctionComponent } from "react";
-import styled from 'styled-components';
+import styled from "styled-components";
 import Body from "../../../components/layout/body";
 import { AnyProps, ContextProps, Properties } from "../../../components/models/props";
 import ActivityStream from "../../../components/web-property/activityStream";
@@ -21,7 +21,7 @@ import { post } from "../../../utils/api.utils";
 import { getGuideUrl } from "../../../utils/config.utils";
 import { getEventAnalyticsUrl } from "../../../utils/endpoint.utils";
 
-interface WebPropertyPageProps { }
+interface WebPropertyPageProps {}
 
 export const StyledDivider = styled(Divider)`
   --pf-c-divider--BackgroundColor: var(--spaship-global--Color--bright-gray);
@@ -123,5 +123,5 @@ function getHeaderMeta(propertyName: string | string[]) {
 }
 
 function getPropertyRequest(context: AnyProps) {
-    return context.params.propertyName;
+  return context.params.propertyName;
 }

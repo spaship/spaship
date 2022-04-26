@@ -1,14 +1,11 @@
-import {
-  Card, CardBody,
-  CardFooter, CardTitle
-} from "@patternfly/react-core";
+import { Card, CardBody, CardFooter, CardTitle } from "@patternfly/react-core";
 import { useRouter } from "next/router";
 import { FunctionComponent } from "react";
-import styled from 'styled-components';
+import styled from "styled-components";
 import { Properties, WebProps } from "../models/props";
 
 const CardStyle = styled(Card)`
-  borderRadius: 8px;
+  border-radius: 8px;
   height: 199px;
 `;
 
@@ -38,5 +35,7 @@ const WebProperty: FunctionComponent<Properties> = ({ webprop }: Properties) => 
 export default WebProperty;
 
 function convertPropertyTitle(propertyTitle: string) {
-  return propertyTitle.replace(/\w\S*/g, function (propertyTitle) { return propertyTitle.charAt(0).toUpperCase() + propertyTitle.substr(1).toLowerCase(); });
+  return propertyTitle.replace(/\w\S*/g, function (propertyTitle) {
+    return propertyTitle.charAt(0).toUpperCase() + propertyTitle.substr(1).toLowerCase();
+  });
 }

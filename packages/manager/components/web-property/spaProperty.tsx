@@ -1,17 +1,12 @@
-import {
-  Card, CardBody,
-  CardFooter, CardTitle,
-  Gallery,
-  PageSection
-} from "@patternfly/react-core";
+import { Card, CardBody, CardFooter, CardTitle, Gallery, PageSection } from "@patternfly/react-core";
 import { useRouter } from "next/router";
 import { FunctionComponent } from "react";
-import styled from 'styled-components';
+import styled from "styled-components";
 import { Properties, SPAProps } from "../models/props";
 
 const StyledCard = styled(Card)`
-border-radius: 8px;
-height: 199px;
+  border-radius: 8px;
+  height: 199px;
 `;
 
 const SPAProperty: FunctionComponent<Properties> = ({ webprop }: Properties) => {

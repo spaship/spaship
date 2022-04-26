@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import React, { FunctionComponent } from "react";
 import styled from "styled-components";
 
-interface AddCardProps { }
+interface AddCardProps {}
 
 const AddPropertyBox = styled(Card)`
   opacity: 1;
@@ -18,9 +18,7 @@ const AddProperty: FunctionComponent<AddCardProps> = () => {
       <Card isSelectable isRounded onClick={() => router.push(`/properties/new`)} >
         <AddPropertyBox>
           <EmptyState variant={EmptyStateVariant.xs}>
-            <div className="spaship-circle spaship-plus">
-              &#43;
-            </div>
+            <div className="spaship-circle spaship-plus">&#43;</div>
             <br />
             <Title headingLevel="h5" size="md">
               New Web Property

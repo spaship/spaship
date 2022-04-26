@@ -1,9 +1,9 @@
 export interface Properties {
-    webprop: AnyProps;
+  webprop: AnyProps;
 }
 
 export interface ContextProps {
-    context: AnyProps;
+  context: AnyProps;
 }
 
 export interface WebProps {
@@ -15,27 +15,27 @@ export interface WebProps {
 }
 
 export interface SPAProps {
-    id: string;
-    count: string;
-    spaName: string;
-    propertyName: string;
-    contextPath?: string;
+  id: string;
+  count: string;
+  spaName: string;
+  propertyName: string;
+  contextPath?: string;
 }
 
 export interface ActivityProps {
-    id: string;
-    spaName: string;
-    code: string;
-    envs: string;
-    branch: string;
-    createdAt: string;
-    propertyName: string;
+  id: string;
+  spaName: string;
+  code: string;
+  envs: string;
+  branch: string;
+  createdAt: string;
+  propertyName: string;
 }
 
 export interface SPAIndexProps {
-    activites: Properties,
-    totalDeployments: Properties,
-    monthlyDeployments: Properties,
+  activites: Properties;
+  totalDeployments: Properties;
+  monthlyDeployments: Properties;
 }
 
-export type AnyProps<PropsType = any> = PropsType
+export type AnyProps<PropsType = any> = PropsType;

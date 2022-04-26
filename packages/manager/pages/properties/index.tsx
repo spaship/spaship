@@ -9,31 +9,34 @@ import { get, post } from "../../utils/api.utils";
 import { getAllEventCountUrl, getPropertyList } from "../../utils/endpoint.utils";
 import { StyledDivider } from "./[propertyName]";
 
-interface PropertiesListProps { }
+interface PropertiesListProps {}
 
 const payload = {
-  "count": {
-    "all": true
-  }
+  count: {
+    all: true,
+  },
 };
 
 const meta = {
   title: "Properties ",
   breadcrumbs: [
-    { path: "/properties", title: 'Home' },
-    { path: "/properties", title: 'Properties' }
-  ]
-}
+    { path: "/properties", title: "Home" },
+    { path: "/properties", title: "Properties" },
+  ],
+};
 
 export const getServerSideProps = async (context: any) => {
   try {
-    const token = (await getSession(context as any) as any).accessToken;
-    const userEmail = (await getSession(context as any) as any).user.email;
+    const token = ((await getSession(context as any)) as any).accessToken;
+    const userEmail = ((await getSession(context as any)) as any).user.email;
     const urlCount = getAllEventCountUrl();
     const urlProperty = getPropertyList();
-    const response = await Promise.all([await post<Properties>(urlCount, payload, token), await get<AnyProps>(urlProperty, token)]);
+    const response = await Promise.all([
+      await post<Properties>(urlCount, payload, token),
+      await get<AnyProps>(urlProperty, token),
+    ]);
     const [deploymentCountResponse, propertyListResponse]: AnyProps = response;
-    const webProperties = filterWebProperties(propertyListResponse)
+    const webProperties = filterWebProperties(propertyListResponse);
     const myWebProperties: AnyProps = [];
     const allWebproperties: AnyProps = [];
     webProperties.forEach((item: AnyProps) => {
@@ -77,5 +80,8 @@ const PropertiesList: FunctionComponent<PropertiesListProps> = ({ webprop }: Any
 export default PropertiesList;
 
 function filterWebProperties(propertyListResponse: AnyProps) {
-  return propertyListResponse.filter((compareProp: AnyProps, index: AnyProps, filterItem: AnyProps) => filterItem.findIndex((prop: AnyProps) => (prop.propertyName === compareProp.propertyName)) === index);
+  return propertyListResponse.filter(
+    (compareProp: AnyProps, index: AnyProps, filterItem: AnyProps) =>
+      filterItem.findIndex((prop: AnyProps) => prop.propertyName === compareProp.propertyName) === index
+  );
 }

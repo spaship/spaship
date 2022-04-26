@@ -1,8 +1,6 @@
-import {
-  Text, TextContent, TextVariants
-} from "@patternfly/react-core";
+import { Text, TextContent, TextVariants } from "@patternfly/react-core";
 import React, { FunctionComponent } from "react";
-import styled from 'styled-components';
+import styled from "styled-components";
 import { Properties } from "../models/props";
 import AggregateChart from "./aggregate-chart";
 
@@ -14,7 +12,7 @@ const ChartBorder = styled.div`
 `;
 
 const dependentAxisTickValues = [10, 30, 50];
-const chartAxisTickValues = ['week 1', 'week 2', 'week 3', 'week 4'];
+const chartAxisTickValues = ["week 1", "week 2", "week 3", "week 4"];
 
 const DeploymentWeek: FunctionComponent<Properties> = ({ webprop }: Properties) => {
   const chartData = webprop.processedMonthlyDeployments;
@@ -33,7 +31,7 @@ const DeploymentWeek: FunctionComponent<Properties> = ({ webprop }: Properties) 
     maxDomain: { y: 60 },
     minDomain: { y: 0 },
     height: 250,
-    width: 600
+    width: 600,
   };
   const chartConfig = {
     ariaTitle: areaConfig.ariaTitle,
@@ -47,24 +45,29 @@ const DeploymentWeek: FunctionComponent<Properties> = ({ webprop }: Properties) 
     width: areaConfig.width,
     chartData: chartData,
     chartAxisTickValues: chartAxisTickValues,
-    dependentAxisTickValues: dependentAxisTickValues
+    dependentAxisTickValues: dependentAxisTickValues,
   };
   return (
     <>
       <TextContent>
         <Text component={TextVariants.h1}> Deployments/Week </Text>
-      </TextContent><br />
+      </TextContent>
+      <br />
       <ChartBorder>
         <div>
-          <AggregateChart type={chartType} props={{
-            chartConfig: chartConfig, chartData: chartData,
-            chartAxisTickValues: chartAxisTickValues,
-            dependentAxisTickValues: dependentAxisTickValues
-          }}></AggregateChart>
+          <AggregateChart
+            type={chartType}
+            props={{
+              chartConfig: chartConfig,
+              chartData: chartData,
+              chartAxisTickValues: chartAxisTickValues,
+              dependentAxisTickValues: dependentAxisTickValues,
+            }}
+          ></AggregateChart>
         </div>
       </ChartBorder>
     </>
   );
-}
+};
 
 export default DeploymentWeek;

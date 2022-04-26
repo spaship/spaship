@@ -1,7 +1,13 @@
 import {
-  Button, ClipboardCopy, Flex, FlexItem, Modal,
-  ModalVariant, Text,
-  TextContent, TextVariants
+  Button,
+  ClipboardCopy,
+  Flex,
+  FlexItem,
+  Modal,
+  ModalVariant,
+  Text,
+  TextContent,
+  TextVariants,
 } from "@patternfly/react-core";
 import { useSession } from "next-auth/react";
 import React, { FunctionComponent, useEffect, useState } from "react";
@@ -10,7 +16,7 @@ import { get } from "../../utils/api.utils";
 import { getNextValidateUrl } from "../../utils/endpoint.utils";
 import { AnyProps } from "../models/props";
 
-interface ApiKeyProps { }
+interface ApiKeyProps {}
 
 const StyledButton = styled(Button)`
   --pf-c-button--m-tertiary--BackgroundColor: var(--spaship-global--Color--text-black, #000);
@@ -52,12 +58,12 @@ const ApiKey: FunctionComponent<ApiKeyProps> = () => {
             const response = await get<AnyProps>(url, (session as any).accessToken);
             setApiKey(response.token);
           }
-        } catch (e) { 
+        } catch (e) {
           console.error(e);
         }
       }
-    })()
-  }, [isModalOpen]);
+    })();
+  }, [isModalOpen, session, status]);
 
   const GenerateKeyModal = () => (
     <Modal
@@ -68,7 +74,7 @@ const ApiKey: FunctionComponent<ApiKeyProps> = () => {
       onClose={handleModalToggle}
     >
       <StyledClipboardBox>
-        <ClipboardCopy hoverTip="Copy" clickTip="Copied" isReadOnly={true} >
+        <ClipboardCopy hoverTip="Copy" clickTip="Copied" isReadOnly={true}>
           {_apiKey}
         </ClipboardCopy>
       </StyledClipboardBox>
@@ -77,33 +83,22 @@ const ApiKey: FunctionComponent<ApiKeyProps> = () => {
 
   return (
     <>
-      <Flex
-        justifyContent={{ default: 'justifyContentSpaceBetween' }}
-        alignItems={{ default: 'alignItemsCenter' }}>
+      <Flex justifyContent={{ default: "justifyContentSpaceBetween" }} alignItems={{ default: "alignItemsCenter" }}>
         <FlexItem>
-          <Flex
-            direction={{ default: 'column' }}>
+          <Flex direction={{ default: "column" }}>
             <StyledFlexItem>
               <TextContent>
-                <StyledText component={TextVariants.h2}>
-                  Generate API Key
-                </StyledText>
+                <StyledText component={TextVariants.h2}>Generate API Key</StyledText>
               </TextContent>
             </StyledFlexItem>
             <FlexItem>
-              <StyledText component={TextVariants.h4}>
-                This key would be valid for 5 hours only.
-              </StyledText>
+              <StyledText component={TextVariants.h4}>This key would be valid for 5 hours only.</StyledText>
             </FlexItem>
           </Flex>
         </FlexItem>
         <FlexItem>
-          <StyledButton
-            variant="tertiary"
-            onClick={handleModalToggle}>
-            <StyledText component={TextVariants.h4}>
-              Create API key
-            </StyledText>
+          <StyledButton variant="tertiary" onClick={handleModalToggle}>
+            <StyledText component={TextVariants.h4}>Create API key</StyledText>
           </StyledButton>
         </FlexItem>
       </Flex>

@@ -7,10 +7,10 @@ interface AuthConsoleProps {}
 const meta = {
   title: "Authentication ",
   breadcrumbs: [
-    {path: "/", title:'Home'},
-    {path: "/authentication", title:'Authentication'}
-  ]
-}
+    { path: "/", title: "Home" },
+    { path: "/authentication", title: "Authentication" },
+  ],
+};
 
 const AuthConsole: FunctionComponent<AuthConsoleProps> = () => {
   return (

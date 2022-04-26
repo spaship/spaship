@@ -19,7 +19,6 @@ import ManageSpa from "../../../../components/settings/manageSpa";
 import { get, post } from "../../../../utils/api.utils";
 import { getEventAnalyticsUrl, getPropertyList } from "../../../../utils/endpoint.utils";
 
-
 export const getServerSideProps = async (context: ContextProps) => {
   try {
     const token = (await getSession(context as any) as any).accessToken;

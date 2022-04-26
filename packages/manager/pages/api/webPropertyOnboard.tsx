@@ -25,11 +25,11 @@ const WebPropertyOnboard = async (req: AnyProps, res: AnyProps) => {
 export default WebPropertyOnboard;
 
 function getNamespace(req: any) {
-    return req.body.env;
+  return req.body.env;
 }
 
 function getEnv(req: any) {
-    return req.body.env;
+  return req.body.env;
 }
 
 function getUrl(req: any) {
