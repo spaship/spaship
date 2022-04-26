@@ -10,6 +10,7 @@ export interface WebProps {
     id: string;
     propertyName?: string;
     propertyTitle?: string;
+    url?: string;
     count: string;
 }
 
