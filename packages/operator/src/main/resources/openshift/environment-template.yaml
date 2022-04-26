@@ -108,6 +108,8 @@ objects:
         #tracing: ${TRACE_ID}
         websiteVersion: ${WEBSITE_VERSION}
         app.kubernetes.io/managed-by: spaship
+        app.kubernetes.io/part-of: ${WEBSITE}
+        app.openshift.io/runtime: apache
     spec:
       selector:
         matchLabels:
