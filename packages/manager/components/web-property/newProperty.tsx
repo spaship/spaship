@@ -1,5 +1,6 @@
 import { Alert, Button, Form, FormGroup, FormHelperText, Text, TextInput, TextVariants } from '@patternfly/react-core';
 import { CheckCircleIcon, ExclamationCircleIcon } from "@patternfly/react-icons";
+import { useSession } from 'next-auth/react';
 import { useRouter } from "next/router";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import styled from "styled-components";
@@ -54,6 +55,7 @@ const DivStyle = styled.div`
 
 const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps) => {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [errorMessage, setErrorMessage] = useState("");
   const [validatedEnv, setValidatedEnv] = useState(validations.noval);
   const [validatedIdentifier, setValidatedIdentifier] = useState(validations.noval);
@@ -66,7 +68,6 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
   const [env, setEnv] = useState("");
 
   const handleTitle = (value: string) => {
-    console.log("Title" + value);
     const formatName = /[`!@#$%^&*()_+\=\[\]{};':"\\|,.<>\/?~0-9]/;
     if (value.match(formatName)) {
       setValidatedTitle(validations.error)
@@ -82,7 +83,6 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
       setValidatedIdentifier(validations.noval)
       setValidatedTitle(validations.noval)
     }
-    console.log(validatedIdentifier)
     setTitle(value);
   };
 
@@ -95,7 +95,6 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
       checkIdentifier(webProp, value, setValidatedIdentifier);
     }
     else { setValidatedIdentifier(validations.noval) }
-    console.log("Validation name : ", validatedIdentifier)
     setIdentifier(value);
   };
 
@@ -106,7 +105,6 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
     }
     else if (value.length > 1) { setValidatedEnv(validations.success) }
     else { setValidatedEnv(validations.noval) }
-    console.log(validatedEnv)
     setEnv(value);
   };
 
@@ -117,7 +115,6 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
     }
     else if (value.length > 1) { setValidatedUrl(validations.success) }
     else { setValidatedUrl(validations.noval) }
-    console.log(validatedUrl)
     setUrl(value);
   };
 
@@ -130,8 +127,7 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
         "url": url,
         "env": env,
       }
-      const propertyRes = await post<AnyProps>(nextUrl, payload);
-      console.log(propertyRes)
+      const propertyRes = await post<AnyProps>(nextUrl, payload, (session as any).accessToken);
       if (!propertyRes?.response?.id) {
         setErrorMessage(propertyRes.response)
       }
