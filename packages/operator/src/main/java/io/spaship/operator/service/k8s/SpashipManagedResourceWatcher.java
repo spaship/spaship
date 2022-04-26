@@ -20,72 +20,72 @@ import java.util.Map;
 @ApplicationScoped
 public class SpashipManagedResourceWatcher {
 
-    private final KubernetesClient kubernetesClient;
-    private final String nameSpace;
-    private final Map<String,String> filter = Map.of("managedBy","spaship");
-    private static final Logger LOG = LoggerFactory.getLogger(SpashipManagedResourceWatcher.class);
+  private static final Logger LOG = LoggerFactory.getLogger(SpashipManagedResourceWatcher.class);
+  private final KubernetesClient kubernetesClient;
+  private final String nameSpace;
+  private final Map<String, String> filter = Map.of("managedBy", "spaship");
 
-    public SpashipManagedResourceWatcher(KubernetesClient kubernetesClient, @Named("namespace") String nameSpace) {
-        this.kubernetesClient = kubernetesClient;
-        this.nameSpace = nameSpace;
-    }
+  public SpashipManagedResourceWatcher(KubernetesClient kubernetesClient, @Named("namespace") String nameSpace) {
+    this.kubernetesClient = kubernetesClient;
+    this.nameSpace = nameSpace;
+  }
 
-    void onStartup(@Observes StartupEvent startupEvent){
+  void onStartup(@Observes StartupEvent startupEvent) {
 
-      var watcherEnabled=ConfigProvider.getConfig().getValue("watcher.enabled", Boolean.class);
-      if(Boolean.FALSE.equals(watcherEnabled))
-        return;
-      podWatcher(nameSpace,filter);
-      serviceWatcher(nameSpace,filter);
-      routeWatcher(nameSpace,filter);
+    var watcherEnabled = ConfigProvider.getConfig().getValue("watcher.enabled", Boolean.class);
+    if (Boolean.FALSE.equals(watcherEnabled))
+      return;
+    podWatcher(nameSpace, filter);
+    serviceWatcher(nameSpace, filter);
+    routeWatcher(nameSpace, filter);
 
-    }
+  }
 
-    private void routeWatcher(String nameSpace,Map<String,String> filter) {
-        ((OpenShiftClient)kubernetesClient).routes()
-                .inNamespace(nameSpace).withLabels(filter).watch(new Watcher<Route>() {
-            @Override
-            public void eventReceived(Action action, Route resource) {
-              LOG.debug("route eventReceived on resource {} , action {}",action.name(),
-                resource.getMetadata().getName());
-            }
+  private void routeWatcher(String nameSpace, Map<String, String> filter) {
+    ((OpenShiftClient) kubernetesClient).routes()
+      .inNamespace(nameSpace).withLabels(filter).watch(new Watcher<Route>() {
+        @Override
+        public void eventReceived(Action action, Route resource) {
+          LOG.debug("route eventReceived on resource {} , action {}", action.name(),
+            resource.getMetadata().getName());
+        }
 
-            @Override
-            public void onClose(WatcherException cause) {
-              LOG.debug("route onClose exception is {}",cause.asClientException().getMessage());
+        @Override
+        public void onClose(WatcherException cause) {
+          LOG.debug("route onClose exception is {}", cause.asClientException().getMessage());
 
-            }
-        });
-    }
+        }
+      });
+  }
 
-    private void serviceWatcher(String nameSpace,Map<String,String> filter) {
-        kubernetesClient.services().inNamespace(nameSpace)
-                .withLabels(filter).watch(new Watcher<Service>() {
-            @Override
-            public void eventReceived(Action action, Service resource) {
-              LOG.debug("service eventReceived on resource {} , action {}",action.name(),
-                resource.getMetadata().getName());
-            }
+  private void serviceWatcher(String nameSpace, Map<String, String> filter) {
+    kubernetesClient.services().inNamespace(nameSpace)
+      .withLabels(filter).watch(new Watcher<Service>() {
+        @Override
+        public void eventReceived(Action action, Service resource) {
+          LOG.debug("service eventReceived on resource {} , action {}", action.name(),
+            resource.getMetadata().getName());
+        }
 
-            @Override
-            public void onClose(WatcherException cause) {
-              LOG.debug("service onClose exception is {}",cause.asClientException().getMessage());
-            }
-        });
-    }
+        @Override
+        public void onClose(WatcherException cause) {
+          LOG.debug("service onClose exception is {}", cause.asClientException().getMessage());
+        }
+      });
+  }
 
-    private void podWatcher(String nameSpace,Map<String,String> filter) {
-        kubernetesClient.pods().inNamespace(nameSpace)
-                .withLabels(filter).watch(new Watcher<Pod>() {
-            @Override
-            public void eventReceived(Action action, Pod resource) {
-              LOG.debug("POD eventReceived on resource {} , action {}",action.name(),resource.getMetadata().getName());
-            }
+  private void podWatcher(String nameSpace, Map<String, String> filter) {
+    kubernetesClient.pods().inNamespace(nameSpace)
+      .withLabels(filter).watch(new Watcher<Pod>() {
+        @Override
+        public void eventReceived(Action action, Pod resource) {
+          LOG.debug("POD eventReceived on resource {} , action {}", action.name(), resource.getMetadata().getName());
+        }
 
-            @Override
-            public void onClose(WatcherException cause) {
-              LOG.debug("POD onClose exception is {}",cause.asClientException().getMessage());
-            }
-        });
-    }
+        @Override
+        public void onClose(WatcherException cause) {
+          LOG.debug("POD onClose exception is {}", cause.asClientException().getMessage());
+        }
+      });
+  }
 }

@@ -188,20 +188,20 @@ objects:
           #volumes:
           #  - name: data
           #    emptyDir: { }
-#      volumeClaimTemplates:
-#        - metadata:
-#            annotations:
-#              kubernetes.io/reclaimPolicy: Delete
-#            labels:
-#              paas.redhat.com/appcode: SPAS-001
-#              app.kubernetes.io/managed-by: spaship
-#            name: data-${WEBSITE}-${APP_INSTANCE_PREFIX}
-#          spec:
-#            accessModes: [ "ReadWriteOnce" ]
-#            storageClassName: "${STORAGE_CLASS}"
-#            resources:
-#              requests:
-#                storage: 1Gi
+  #      volumeClaimTemplates:
+  #        - metadata:
+  #            annotations:
+  #              kubernetes.io/reclaimPolicy: Delete
+  #            labels:
+  #              paas.redhat.com/appcode: SPAS-001
+  #              app.kubernetes.io/managed-by: spaship
+  #            name: data-${WEBSITE}-${APP_INSTANCE_PREFIX}
+  #          spec:
+  #            accessModes: [ "ReadWriteOnce" ]
+  #            storageClassName: "${STORAGE_CLASS}"
+  #            resources:
+  #              requests:
+  #                storage: 1Gi
 
   - kind: Ingress
     apiVersion: networking.k8s.io/v1
