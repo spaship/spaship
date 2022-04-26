@@ -27,7 +27,6 @@ function handleResponse<T>(res: Response): Promise<T> {
 
 export async function get<T>(url: string, token?: string): Promise<T> {
   const headers = await getDefaultHeader(true, token as string);
-  console.log(headers);
   const options: RequestInit = {
     method: "GET",
     headers,
@@ -37,6 +36,7 @@ export async function get<T>(url: string, token?: string): Promise<T> {
 }
 
 export async function post<T>(url: string, data: object, token?: string): Promise<T> {
+
   const headers = await getDefaultHeader(true, token as string);
   const options: RequestInit = {
     method: "POST",

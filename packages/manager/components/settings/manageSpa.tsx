@@ -4,11 +4,11 @@ import {
   Switch
 } from "@patternfly/react-core";
 import {
-  TableComposable, 
+  TableComposable,
   Tbody,
-  Td, 
-  Th, 
-  Thead, 
+  Td,
+  Th,
+  Thead,
   Tr
 } from "@patternfly/react-table";
 import React, { FunctionComponent, useState } from "react";
@@ -29,7 +29,7 @@ const ManageSpa: FunctionComponent<Properties> = ({ webprop }: Properties) => {
   return (
     <>
       <StyledCard>
-      <CardTitle>Manage SPAs</CardTitle>
+        <CardTitle>Manage SPAs</CardTitle>
         <TableComposable>
           <Thead>
             <Tr>
@@ -39,7 +39,7 @@ const ManageSpa: FunctionComponent<Properties> = ({ webprop }: Properties) => {
             </Tr>
           </Thead>
           <Tbody>
-            {webprop.map((spa: SPAProps) => (
+            {webprop?.map((spa: SPAProps) => (
               <Tr key={spa.spaName}>
                 <Td dataLabel={spa.spaName}>{spa.spaName}</Td>
                 <Td dataLabel={spa.propertyName}>/{spa.spaName}</Td>
