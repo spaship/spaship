@@ -26,7 +26,7 @@ const WebProperty: FunctionComponent<Properties> = ({ webprop }: Properties) => 
         >
           <CardStyle>
             <CardTitle>{convertPropertyTitle(prop.propertyTitle || '')}</CardTitle>
-            <CardBody>{prop.propertyName}</CardBody>
+            <CardBody>{prop.url}</CardBody>
             <CardFooter>{prop.count} Deployments</CardFooter>
           </CardStyle>
         </Card>
