@@ -1,7 +1,8 @@
 import { FunctionComponent } from "react";
 import Body from "../../components/layout/body";
+import { ComponentWithAuth } from "../../utils/auth.utils";
 
-interface FeedbackProps {}
+interface FeedbackProps { }
 
 const meta = {
   title: "Feedback ",
@@ -11,8 +12,9 @@ const meta = {
   ],
 };
 
-const Feedback: FunctionComponent<FeedbackProps> = () => {
+const Feedback: ComponentWithAuth<FeedbackProps> = () => {
   return <Body {...meta}>SPAship Feedback</Body>;
 };
 
+Feedback.authenticationEnabled = true;
 export default Feedback;
