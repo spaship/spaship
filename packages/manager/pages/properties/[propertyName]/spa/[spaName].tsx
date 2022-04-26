@@ -119,17 +119,20 @@ const SPAProperties: FunctionComponent<SPAIndexProps> = ({
 export default SPAProperties;
 
 function getHeaderData(propertyName: string | string[], spaName: string | string[] | undefined) {
-  return {
-    title: propertyName.toString(),
-    breadcrumbs: [
-      { path: `/properties`, title: "Home" },
-      { path: `/properties`, title: "Properties" },
-      { path: `/properties/${propertyName}`, title: `${propertyName}` },
-      { path: `/properties/${propertyName}/spa/${spaName}`, title: `${spaName}` },
-    ],
-    previous: `/properties/${propertyName}`,
-    settings: `/properties/${propertyName}/settings`,
-  };
+    return {
+        title: getPropertyTitle(),
+        breadcrumbs: [
+            { path: `/properties`, title: 'Home' },
+            { path: `/properties`, title: 'Properties' },
+            { path: `/properties/${propertyName}`, title: `${getPropertyTitle()}` },
+            { path: `/properties/${propertyName}/spa/${spaName}`, title: `${spaName}` },
+        ],
+        previous: `/properties/${propertyName}`,
+        settings: `/properties/${propertyName}/settings`
+    };
+    function getPropertyTitle() {
+        return propertyName.toString().replace("-", " ");
+    }
 }
 
 function getSpaReq(context: AnyProps) {

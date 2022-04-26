@@ -7,10 +7,11 @@ export interface ContextProps {
 }
 
 export interface WebProps {
-  id: string;
-  propertyName?: string;
-  propertyTitle?: string;
-  count: string;
+    id: string;
+    propertyName?: string;
+    propertyTitle?: string;
+    url?: string;
+    count: string;
 }
 
 export interface SPAProps {

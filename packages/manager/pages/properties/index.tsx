@@ -58,8 +58,7 @@ const PropertiesList: FunctionComponent<PropertiesListProps> = ({ webprop }: Any
     <Body {...meta}>
       <Title headingLevel="h2" size="3xl">
         My Properties
-      </Title>
-      <br />
+      </Title><br />
       <Gallery hasGutter>
         <AddProperty></AddProperty>
         <WebProperty webprop={webprop?.myWebProperties}></WebProperty>
@@ -68,8 +67,7 @@ const PropertiesList: FunctionComponent<PropertiesListProps> = ({ webprop }: Any
       <StyledDivider />
       <Title headingLevel="h2" size="3xl">
         Other Properties
-      </Title>
-      <br />
+      </Title><br />
       <Gallery hasGutter>
         <WebProperty webprop={webprop?.allWebproperties}></WebProperty>
       </Gallery>
