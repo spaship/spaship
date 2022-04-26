@@ -23,4 +23,6 @@ router.post("/alias", saveAlias);
 
 router.get("/alias/list", getAliasList);
 
+router.get("/alias/list/:name", getAliasList);
+
 module.exports = router;

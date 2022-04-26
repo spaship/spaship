@@ -24,14 +24,19 @@ module.exports = async function saveAlias(req, res, next) {
 };
 
 function validateProperty(request, next) {
-  const formatPropertyName = /[ `!@#$%^&*()_+\=\[\]{};':"\\|,<>\/?~]/;
+  const formatPropertyName = /[ `!@#$%^&*()_+\=\[\]{};':"\\|,.<>\/?~]/;
   const formatEnv = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+  const formatUrl = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?~]/;
   if (request?.propertyName?.trim().match(formatPropertyName)) {
     next(new ValidationError("Invalid PropertyName"));
     return false;
   }
   if (request?.env?.trim().match(formatEnv)) {
     next(new ValidationError("Invalid Env"));
+    return false;
+  }
+  if (request?.url?.trim().match(formatUrl)) {
+    next(new ValidationError("Invalid Url"));
     return false;
   }
   if (request.hasOwnProperty("type")) {
@@ -64,6 +69,7 @@ async function createAliasRequest(id, request) {
     propertyName: getPropertyName(request),
     propertyTitle: getPropertyTitle(request),
     env: getEnv(request),
+    url: getUrl(request),
     namespace: getNameSpace(request),
     type: getType(request),
     createdBy: getCreatedBy(request),
@@ -109,4 +115,8 @@ function getNameSpace(request) {
 
 function getType(request) {
   return request?.type?.trim()?.toLowerCase() || "operator";
+}
+
+function getUrl(request) {
+  return request?.url?.trim()?.toLowerCase() || "";
 }
