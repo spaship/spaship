@@ -6,7 +6,6 @@ import io.spaship.operator.service.k8s.Operator;
 import io.spaship.operator.service.k8s.SideCarOperations;
 import io.spaship.operator.type.Environment;
 import io.spaship.operator.type.OperationResponse;
-import io.spaship.operator.type.SyncRequest;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -16,54 +15,54 @@ import java.util.Objects;
 public class EnvironmentController {
 
 
-    private final Operator k8sOperator;
-    private final SideCarOperations sidecarOps;
+  private final Operator k8sOperator;
+  private final SideCarOperations sidecarOps;
 
-    public EnvironmentController(Operator k8sOperator, SideCarOperations sidecarOps) {
-        this.k8sOperator = k8sOperator;
-      this.sidecarOps = sidecarOps;
-    }
-
-
-    @POST
-    @Path("/purge")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Uni<OperationResponse> upload(Environment environment) {
-        Objects.requireNonNull(environment.getName());
-        Objects.requireNonNull(environment.getWebsiteName());
-        Objects.requireNonNull(environment.getNameSpace());
-        Objects.requireNonNull(environment.getWebsiteVersion());
-        return k8sOperator.deleteEnvironment(environment);
-    }
+  public EnvironmentController(Operator k8sOperator, SideCarOperations sidecarOps) {
+    this.k8sOperator = k8sOperator;
+    this.sidecarOps = sidecarOps;
+  }
 
 
-    @POST
-    @Path("/sync")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @NonBlocking
-    public Uni<String> scheduleSync(@QueryParam("envName") String envName,
-                               @QueryParam("websiteName") String websiteName,
-                               @QueryParam("nameSpace") String nameSpace,
-                               Object syncRequestBody){
+  @POST
+  @Path("/purge")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Uni<OperationResponse> upload(Environment environment) {
+    Objects.requireNonNull(environment.getName());
+    Objects.requireNonNull(environment.getWebsiteName());
+    Objects.requireNonNull(environment.getNameSpace());
+    Objects.requireNonNull(environment.getWebsiteVersion());
+    return k8sOperator.deleteEnvironment(environment);
+  }
 
-      Environment environment = new Environment(
-        envName,
-        websiteName,
-        null,
-        nameSpace,
-        true,
-        null,
-        null,
-        null,
-        null,
-        null,
-        true,
-        false);
-      return sidecarOps.triggerSyncAsync(syncRequestBody,environment);
 
-    }
+  @POST
+  @Path("/sync")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @NonBlocking
+  public Uni<String> scheduleSync(@QueryParam("envName") String envName,
+                                  @QueryParam("websiteName") String websiteName,
+                                  @QueryParam("nameSpace") String nameSpace,
+                                  Object syncRequestBody) {
+
+    Environment environment = new Environment(
+      envName,
+      websiteName,
+      null,
+      nameSpace,
+      true,
+      null,
+      null,
+      null,
+      null,
+      null,
+      true,
+      false);
+    return sidecarOps.triggerSyncAsync(syncRequestBody, environment);
+
+  }
 
 
 }
