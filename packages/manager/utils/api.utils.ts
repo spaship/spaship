@@ -35,7 +35,7 @@ export async function get<T>(url: string, token?: string): Promise<T> {
   return handleResponse<T>(res);
 }
 
-export async function post<T>(url: string, data: object, token?: string): Promise<T> {
+export async function post<T>(url: string, data: object, token: string): Promise<T> {
 
   const headers = await getDefaultHeader(true, token as string);
   const options: RequestInit = {
@@ -47,7 +47,7 @@ export async function post<T>(url: string, data: object, token?: string): Promis
   return handleResponse<T>(res);
 }
 
-export async function upload<T>(url: string, data: FormData, token?: string): Promise<T> {
+export async function upload<T>(url: string, data: FormData, token: string): Promise<T> {
   const headers = await getDefaultHeader(true, token as string);
   const options: RequestInit = {
     method: "POST",

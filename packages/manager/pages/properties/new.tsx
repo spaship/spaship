@@ -5,6 +5,7 @@ import { get, post } from "../../utils/api.utils";
 import { getSession } from "next-auth/react";
 import { getPropertyList } from "../../utils/endpoint.utils";
 import { AnyProps } from "../../components/models/props";
+import { ComponentWithAuth } from "../../utils/auth.utils";
 interface PropertiesListProps { }
 
 const meta = {
@@ -30,7 +31,7 @@ export const getServerSideProps = async (context: any) => {
   }
 };
 
-const PropertiesList: FunctionComponent<PropertiesListProps> = ({ webProp }: AnyProps) => {
+const PropertiesList: ComponentWithAuth<PropertiesListProps> = ({ webProp }: AnyProps) => {
   return (
     <Body {...meta}>
       <NewProperty webProp={webProp.properties}></NewProperty>
@@ -38,8 +39,9 @@ const PropertiesList: FunctionComponent<PropertiesListProps> = ({ webProp }: Any
   );
 };
 
-export default PropertiesList;
-
 function filterWebProperties(propertyListResponse: any) {
   return propertyListResponse.filter((compareProp: any, index: any, filterItem: any) => filterItem.findIndex((prop: any) => (prop.propertyName === compareProp.propertyName)) === index);
 }
+
+PropertiesList.authenticationEnabled = true;
+export default PropertiesList;

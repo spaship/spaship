@@ -23,7 +23,6 @@ const StyledCard = styled(Card)`
 `;
 
 const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
-  console.log(webprop);
   const [switchState, setSwitchState] = useState(true);
   const handleChange = () => {
     // TODO: implement logic to toggle spa

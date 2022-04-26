@@ -5,6 +5,7 @@ import { getSession } from "next-auth/react";
 
 const WebPropertyOnboard = async (req: AnyProps, res: AnyProps) => {
     const url = getOnboardWebpropertyUrl();
+    const token = (await getSession({ req }) as any).accessToken;
     const userEmail = (await getSession({ req }) as any).user.email;
     const propertyType = {
         operator: "operator",
@@ -18,18 +19,18 @@ const WebPropertyOnboard = async (req: AnyProps, res: AnyProps) => {
         "type": propertyType.operator,
         "createdBy": userEmail
     };
-    const response = await post<AnyProps>(url, payload);
+    const response = await post<AnyProps>(url, payload, token);
     return res.send({ data: { response } });
 }
 
 export default WebPropertyOnboard;
 
 function getNamespace(req: any) {
-  return req.body.env;
+    return req.body.env;
 }
 
 function getEnv(req: any) {
-  return req.body.env;
+    return req.body.env;
 }
 
 function getUrl(req: any) {

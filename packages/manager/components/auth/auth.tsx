@@ -27,7 +27,7 @@ const Auth: FunctionComponent<AuthProps> = ({ children }) => {
       <Spinner>
         <Bullseye>
           <EmptySpinner />
-          <div>Authentication user session...</div>
+          <div>Authenticating user session...</div>
         </Bullseye>
       </Spinner>
     );

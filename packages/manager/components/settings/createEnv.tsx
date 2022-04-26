@@ -5,6 +5,7 @@ import {
   TextContent, TextInput, TextVariants
 } from "@patternfly/react-core";
 import { CheckCircleIcon, ExclamationCircleIcon } from "@patternfly/react-icons";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import styled from "styled-components";
@@ -53,6 +54,7 @@ const StyledText = styled(Text)`
 
 const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [isModalOpen, setModalOpen] = useState(false);
   const [env, setEnv] = useState("");
   const [validatedEnv, setValidatedEnv] = useState(validations.noval);
@@ -69,9 +71,10 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
       const payload = {
         "propertyTitle": prop?.propertyTitle,
         "propertyName": prop?.propertyName,
+        "url": prop?.url,
         "env": env,
       }
-      const propertyRes = await post<AnyProps>(url, payload);
+      const propertyRes = await post<AnyProps>(url, payload, (session as any).accessToken);
       if (propertyRes?.response?.id) {
         webprop.push(propertyRes?.response)
         setValidatedEnv(validations.noval)
