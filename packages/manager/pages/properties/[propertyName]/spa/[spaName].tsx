@@ -9,6 +9,7 @@ import Body from "../../../../components/layout/body";
 import { AnyProps, ContextProps, Properties, SPAIndexProps } from "../../../../components/models/props";
 import ActivityStream from "../../../../components/web-property/activityStream";
 import { post } from "../../../../utils/api.utils";
+import { ComponentWithAuth } from "../../../../utils/auth.utils";
 import { getEventAnalyticsUrl } from "../../../../utils/endpoint.utils";
 
 export const StyledDivider = styled(Divider)`
@@ -83,7 +84,7 @@ export const getServerSideProps = async (context: ContextProps) => {
   }
 };
 
-const SPAProperties: FunctionComponent<SPAIndexProps> = ({
+const SPAProperties: ComponentWithAuth<SPAIndexProps> = ({
   activites,
   totalDeployments,
   monthlyDeployments,
@@ -116,23 +117,21 @@ const SPAProperties: FunctionComponent<SPAIndexProps> = ({
   );
 };
 
-export default SPAProperties;
-
 function getHeaderData(propertyName: string | string[], spaName: string | string[] | undefined) {
-    return {
-        title: getPropertyTitle(),
-        breadcrumbs: [
-            { path: `/properties`, title: 'Home' },
-            { path: `/properties`, title: 'Properties' },
-            { path: `/properties/${propertyName}`, title: `${getPropertyTitle()}` },
-            { path: `/properties/${propertyName}/spa/${spaName}`, title: `${spaName}` },
-        ],
-        previous: `/properties/${propertyName}`,
-        settings: `/properties/${propertyName}/settings`
-    };
-    function getPropertyTitle() {
-        return propertyName.toString().replace("-", " ");
-    }
+  return {
+    title: getPropertyTitle(),
+    breadcrumbs: [
+      { path: `/properties`, title: 'Home' },
+      { path: `/properties`, title: 'Properties' },
+      { path: `/properties/${propertyName}`, title: `${getPropertyTitle()}` },
+      { path: `/properties/${propertyName}/spa/${spaName}`, title: `${spaName}` },
+    ],
+    previous: `/properties/${propertyName}`,
+    settings: `/properties/${propertyName}/settings`
+  };
+  function getPropertyTitle() {
+    return propertyName.toString().replace("-", " ");
+  }
 }
 
 function getSpaReq(context: AnyProps) {
@@ -157,3 +156,6 @@ function processTotalDeployments(item: AnyProps, count: number, chartData: AnyPr
   labelData.push(label);
   return count;
 }
+
+SPAProperties.authenticationEnabled = true;
+export default SPAProperties;

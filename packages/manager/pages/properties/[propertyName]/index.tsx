@@ -18,10 +18,11 @@ import { AnyProps, ContextProps, Properties } from "../../../components/models/p
 import ActivityStream from "../../../components/web-property/activityStream";
 import SPAProperty from "../../../components/web-property/spaProperty";
 import { post } from "../../../utils/api.utils";
+import { ComponentWithAuth } from "../../../utils/auth.utils";
 import { getGuideUrl } from "../../../utils/config.utils";
 import { getEventAnalyticsUrl } from "../../../utils/endpoint.utils";
 
-interface WebPropertyPageProps {}
+interface WebPropertyPageProps { }
 
 export const StyledDivider = styled(Divider)`
   --pf-c-divider--BackgroundColor: var(--spaship-global--Color--bright-gray);
@@ -62,7 +63,7 @@ export const getServerSideProps = async (context: ContextProps) => {
     }
 };
 
-const WebPropertyPage: FunctionComponent<WebPropertyPageProps> = ({ webprop, activites, url }: AnyProps) => {
+const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, activites, url }: AnyProps) => {
     const router = useRouter();
     const propertyName = router.query.propertyName || 'NA';
     const meta = getHeaderMeta(propertyName);
@@ -103,8 +104,6 @@ const WebPropertyPage: FunctionComponent<WebPropertyPageProps> = ({ webprop, act
 
 };
 
-export default WebPropertyPage;
-
 function getHeaderMeta(propertyName: string | string[]) {
     return {
         title: getPropertyTitle(),
@@ -123,5 +122,8 @@ function getHeaderMeta(propertyName: string | string[]) {
 }
 
 function getPropertyRequest(context: AnyProps) {
-  return context.params.propertyName;
+    return context.params.propertyName;
 }
+
+WebPropertyPage.authenticationEnabled = true;
+export default WebPropertyPage;

@@ -1,7 +1,8 @@
 import { FunctionComponent } from "react";
 import Body from "../../components/layout/body";
+import { ComponentWithAuth } from "../../utils/auth.utils";
 
-interface DashboardProps {}
+interface DashboardProps { }
 
 const meta = {
   title: "Dashboard ",
@@ -11,8 +12,9 @@ const meta = {
   ],
 };
 
-const Dashboard: FunctionComponent<DashboardProps> = () => {
+const Dashboard: ComponentWithAuth<DashboardProps> = () => {
   return <Body {...meta}>SPAship Dashboard</Body>;
 };
 
+Dashboard.authenticationEnabled = true;
 export default Dashboard;

@@ -8,8 +8,9 @@ import WebProperty from "../../components/web-property/webProperty";
 import { get, post } from "../../utils/api.utils";
 import { getAllEventCountUrl, getPropertyList } from "../../utils/endpoint.utils";
 import { StyledDivider } from "./[propertyName]";
+import { ComponentWithAuth } from "../../utils/auth.utils";
 
-interface PropertiesListProps {}
+interface PropertiesListProps { }
 
 const payload = {
   count: {
@@ -53,7 +54,7 @@ export const getServerSideProps = async (context: any) => {
   }
 };
 
-const PropertiesList: FunctionComponent<PropertiesListProps> = ({ webprop }: AnyProps) => {
+const PropertiesList: ComponentWithAuth<PropertiesListProps> = ({ webprop }: AnyProps) => {
   return (
     <Body {...meta}>
       <Title headingLevel="h2" size="3xl">
@@ -77,11 +78,12 @@ const PropertiesList: FunctionComponent<PropertiesListProps> = ({ webprop }: Any
   );
 };
 
-export default PropertiesList;
-
 function filterWebProperties(propertyListResponse: AnyProps) {
   return propertyListResponse.filter(
     (compareProp: AnyProps, index: AnyProps, filterItem: AnyProps) =>
       filterItem.findIndex((prop: AnyProps) => prop.propertyName === compareProp.propertyName) === index
   );
 }
+
+PropertiesList.authenticationEnabled = true;
+export default PropertiesList;

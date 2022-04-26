@@ -17,6 +17,7 @@ import DeleteSpa from "../../../../components/settings/deleteSpa";
 import EnvList from "../../../../components/settings/envList";
 import ManageSpa from "../../../../components/settings/manageSpa";
 import { get, post } from "../../../../utils/api.utils";
+import { ComponentWithAuth } from "../../../../utils/auth.utils";
 import { getEventAnalyticsUrl, getPropertyList } from "../../../../utils/endpoint.utils";
 
 export const getServerSideProps = async (context: ContextProps) => {
@@ -52,7 +53,7 @@ const StyledCard = styled(Card)`
   max-width: var(--spaship-table-container-max-width);
 `;
 
-const SettingsPage: FunctionComponent<Properties> = ({ webprop }: Properties) => {
+const SettingsPage: ComponentWithAuth<Properties> = ({ webprop }: Properties) => {
   const router = useRouter();
   const propertyName = router.query.propertyName || '';
   const meta = getHeaderData(propertyName)
@@ -75,8 +76,6 @@ const SettingsPage: FunctionComponent<Properties> = ({ webprop }: Properties) =>
   );
 };
 
-export default SettingsPage;
-
 function getHeaderData(propertyName: string | string[]) {
   return {
     title: getPropertyTitle(),
@@ -96,3 +95,6 @@ function getHeaderData(propertyName: string | string[]) {
 function getPropertyRequest(context: AnyProps) {
   return context.params.propertyName;
 }
+
+SettingsPage.authenticationEnabled = true;
+export default SettingsPage;
