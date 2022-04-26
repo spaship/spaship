@@ -2,13 +2,14 @@ import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession, signIn } from "next-auth/react";
-import { FileAltIcon, GithubIcon, OptimizeIcon, UserIcon } from "@patternfly/react-icons";
+import { FileAltIcon, GithubIcon, GitlabIcon, GoogleIcon, OptimizeIcon, UserIcon } from "@patternfly/react-icons";
 import {
   Bullseye,
   Button,
   Card,
   CardBody,
   CardHeader,
+  Divider,
   Flex,
   FlexItem,
   Page,
@@ -25,55 +26,66 @@ import styled from "styled-components";
 import rocket from "../../public/images/illustrations/rocket.svg";
 import darkLogo from "../../public/images/logo/spaship-logo-dark-vector.svg";
 
-const Header = styled(PageHeader)({
-  backgroundColor: "white",
-  height: "10vh",
-});
+const Header = styled(PageHeader)`
+  background-color: white;
+  height: 10vh;
+`;
 
-const Defcard = styled.div({
-  padding: "15vh 0 5vh 0", //TODO: Remove after adding OAuth options.
-  width: "500px",
-  margin: "0 5vw 0 15vw",
-});
+const Defcard = styled.div`
+  padding: 15vh 0 5vh 0; //TODO: Remove after adding OAuth options.
+  width: 500px;
+  margin: 0 5vw 0 15vw;
+`;
 
-const Slogan = styled.h1({
-  fontSize: "2.4rem",
-});
+const Slogan = styled.h1`
+  font-size: 2.4rem;
+`;
 
-const Description = styled.div({
-  fontSize: "1rem",
-});
+const Description = styled.div`
+  font-size: 1rem;
+`;
 
-const Body = styled(PageSection)({
-  height: "80vh",
-});
+const Body = styled(PageSection)`
+  height: 80vh;
+`;
 
-const StyledCard = styled(Card)({
-  top: "0",
-  bottom: "0",
-  left: "0",
-  right: "0",
-  height: "124px",
-  width: "500px",
-  zIndex: 99,
-});
+const StyledCard = styled(Card)`
+  background: white;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 160px;
+  width: 280px;
+  z-index: 99;
 
-const StyledButton = styled(Button)({
-  color: "var(--spaship-global--Color--text-black) !important",
-});
+  .OARow {
+    font-size: 20px !important;
+    margin: auto;
+    width: 80%;
+  }
+`;
 
-const Footer = styled(PageSection)({
-  height: "10vh",
-  backgroundColor: "var(--spaship-global--Color--text-black)",
-});
+const CardButton = styled(Button)`
+  margin: 0 0 12px 0;
+`
 
-const Rocket = styled.div({
-  position: "fixed",
-  width: "40em",
-  bottom: "-5em",
-  right: "-7em",
-  zIndex: 0,
-});
+const StyledButton = styled(Button)`
+  color: var(--spaship-global--Color--text-black) !important;
+`;
+
+const Footer = styled(PageSection)`
+  height: 10vh;
+  background-color: var(--spaship-global--Color--text-black);
+`;
+
+const Rocket = styled.div`
+  position: fixed;
+  width: 40em;
+  bottom: -5em;
+  right: -7em;
+  z-index: 0;
+`;
 
 const HeaderTools = () => {
   const { data: session } = useSession();
@@ -89,9 +101,6 @@ const HeaderTools = () => {
     } else
       return (
         <PageHeaderToolsItem>
-          <StyledButton onClick={() => signIn("github", { callbackUrl: "/" })} variant="link" icon={<UserIcon />}>
-            Sign In
-          </StyledButton>
         </PageHeaderToolsItem>
       );
   };
@@ -161,9 +170,28 @@ const Login: NextPage = () => {
                   </Title>
                 </CardHeader>
                 <CardBody>
-                  <Button isBlock variant="primary" onClick={() => signIn("keycloak")} className="spaship_btn">
+                  <CardButton isBlock variant="primary" onClick={() => signIn("keycloak", { callbackUrl: "/" })} className="spaship_btn">
                     Red Hat SSO
-                  </Button>
+                  </CardButton>
+                  <Divider/>
+                  <Flex className="OARow" justifyContent={{ default: 'justifyContentSpaceBetween' }}>
+                    <FlexItem>
+                      <Button variant="plain" onClick={() => signIn("github", { callbackUrl: "/" })}>
+                        <GithubIcon/>
+                      </Button>
+                    </FlexItem>
+                    <FlexItem>
+                      <Button variant="plain" onClick={() => signIn("gitlab", { callbackUrl: "/" })}>
+                        <GitlabIcon/>
+                      </Button>
+                    </FlexItem>
+                    <FlexItem>
+                      <Button variant="plain" onClick={() => signIn("google", { callbackUrl: "/" })}>
+                        <GoogleIcon/>
+                      </Button>
+                    </FlexItem>
+                  </Flex>
+                  
                 </CardBody>
               </StyledCard>
             </FlexItem>
