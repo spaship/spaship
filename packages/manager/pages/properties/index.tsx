@@ -1,13 +1,12 @@
-import { Gallery, Text, Title } from "@patternfly/react-core";
+import { Gallery, Title } from "@patternfly/react-core";
 import { getSession } from "next-auth/react";
 import { FunctionComponent } from "react";
 import Body from "../../components/layout/body";
-import { AnyProps, ContextProps, Properties } from "../../components/models/props";
+import { AnyProps, Properties } from "../../components/models/props";
 import AddProperty from "../../components/web-property/addProperty";
 import WebProperty from "../../components/web-property/webProperty";
 import { get, post } from "../../utils/api.utils";
 import { getAllEventCountUrl, getPropertyList } from "../../utils/endpoint.utils";
-import { isAuthenticated } from "../../utils/validate.utils";
 import { StyledDivider } from "./[propertyName]";
 
 interface PropertiesListProps { }

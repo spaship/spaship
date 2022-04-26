@@ -18,7 +18,7 @@ export const StyledDivider = styled(Divider)`
 
 export const getServerSideProps = async (context: ContextProps) => {
     try {
-      const token = (await getSession(context as any) as any).accessToken;
+        const token = (await getSession(context as any) as any).accessToken;
         const propertyReq = getPropertyReq(context);
         const spaReq = getSpaReq(context);
         const url = getEventAnalyticsUrl();
@@ -42,11 +42,11 @@ export const getServerSideProps = async (context: ContextProps) => {
             }
         };
         const response = await Promise.all(
-          [
-            await post<Properties>(url, payloadActivites, token), 
-            await post<Properties>(url, payloadTotalDeploymenets, token), 
-            await post<Properties>(url, payloadMonthlyDeploymenets, token)
-          ]
+            [
+                await post<Properties>(url, payloadActivites, token),
+                await post<Properties>(url, payloadTotalDeploymenets, token),
+                await post<Properties>(url, payloadMonthlyDeploymenets, token)
+            ]
         );
         const [activitesResponse, totalDeploymentsResponse, monthlyDeploymentResponse]: AnyProps = response;
         let chartData: AnyProps = [];
@@ -110,16 +110,19 @@ export default SPAProperties;
 
 function getHeaderData(propertyName: string | string[], spaName: string | string[] | undefined) {
     return {
-        title: propertyName.toString(),
+        title: getPropertyTitle(),
         breadcrumbs: [
             { path: `/properties`, title: 'Home' },
             { path: `/properties`, title: 'Properties' },
-            { path: `/properties/${propertyName}`, title: `${propertyName}` },
+            { path: `/properties/${propertyName}`, title: `${getPropertyTitle()}` },
             { path: `/properties/${propertyName}/spa/${spaName}`, title: `${spaName}` },
         ],
         previous: `/properties/${propertyName}`,
         settings: `/properties/${propertyName}/settings`
     };
+    function getPropertyTitle() {
+        return propertyName.toString().replace("-", " ");
+    }
 }
 
 function getSpaReq(context: AnyProps) {
