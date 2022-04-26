@@ -1,7 +1,9 @@
 import {
   Card,
   CardTitle,
-  Switch
+  Switch,
+  Text,
+  TextVariants
 } from "@patternfly/react-core";
 import {
   TableComposable,
@@ -13,14 +15,15 @@ import {
 } from "@patternfly/react-table";
 import React, { FunctionComponent, useState } from "react";
 import styled from "styled-components";
-import { Properties, SPAProps } from "../models/props";
+import { AnyProps, Properties, SPAProps } from "../models/props";
 
 const StyledCard = styled(Card)`
   max-width: var(--spaship-table-container-max-width);
   margin-bottom: 2rem;
 `;
 
-const ManageSpa: FunctionComponent<Properties> = ({ webprop }: Properties) => {
+const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
+  console.log(webprop);
   const [switchState, setSwitchState] = useState(true);
   const handleChange = () => {
     // TODO: implement logic to toggle spa
@@ -29,23 +32,25 @@ const ManageSpa: FunctionComponent<Properties> = ({ webprop }: Properties) => {
   return (
     <>
       <StyledCard>
-        <CardTitle>Manage SPAs</CardTitle>
+        <CardTitle>Environments</CardTitle>
         <TableComposable>
           <Thead>
             <Tr>
-              <Th>Name</Th>
-              <Th>Path</Th>
+              <Th>Env Name</Th>
+              <Th>Create at</Th>
               <Th>Action</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {webprop?.map((spa: SPAProps) => (
-              <Tr key={spa.spaName}>
-                <Td dataLabel={spa.spaName}>{spa.spaName}</Td>
-                <Td dataLabel={spa.propertyName}>/{spa.spaName}</Td>
-                <Td dataLabel={spa.spaName}>
+            {webprop?.map((env: AnyProps) => (
+              <Tr key={env.id}>
+                <Td dataLabel={env.env}>{env.env}</Td>
+                <Td dataLabel={env.createdAt}> <Text component={TextVariants.small}>
+                  {new Date(env.createdAt).toUTCString().substr(0, 25)}
+                </Text></Td>
+                <Td dataLabel={env.env}>
                   <Switch
-                    id={spa.spaName}
+                    id={env.env}
                     aria-label="spaship-switch-area"
                     isChecked={switchState}
                     onChange={handleChange}
@@ -61,4 +66,4 @@ const ManageSpa: FunctionComponent<Properties> = ({ webprop }: Properties) => {
   );
 };
 
-export default ManageSpa;
+export default EnvList;

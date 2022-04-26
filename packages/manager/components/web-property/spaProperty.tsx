@@ -26,7 +26,7 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop }: Properties) => 
             >
               <StyledCard>
                 <CardTitle>{prop.spaName}</CardTitle>
-                <CardBody>{prop.propertyName}</CardBody>
+                <CardBody></CardBody>
                 <CardFooter>{prop.count} Deployments</CardFooter>
               </StyledCard>
             </Card>
