@@ -1,7 +1,8 @@
 import { FunctionComponent } from "react";
 import Body from "../../components/layout/body";
+import { ComponentWithAuth } from "../../utils/auth.utils";
 
-interface ContactUsProps {}
+interface ContactUsProps { }
 
 const meta = {
   title: "Contact Us ",
@@ -11,8 +12,9 @@ const meta = {
   ],
 };
 
-const ContactUs: FunctionComponent<ContactUsProps> = () => {
+const ContactUs: ComponentWithAuth<ContactUsProps> = () => {
   return <Body {...meta}></Body>;
 };
 
+ContactUs.authenticationEnabled = true;
 export default ContactUs;

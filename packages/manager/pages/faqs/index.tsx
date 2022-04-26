@@ -1,7 +1,7 @@
-import { FunctionComponent } from "react";
 import Body from "../../components/layout/body";
+import { ComponentWithAuth } from "../../utils/auth.utils";
 
-interface FAQsProps {}
+interface FAQsProps { }
 
 const meta = {
   title: "FAQs ",
@@ -11,8 +11,9 @@ const meta = {
   ],
 };
 
-const FAQs: FunctionComponent<FAQsProps> = () => {
+const FAQs: ComponentWithAuth<FAQsProps> = () => {
   return <Body {...meta}>SPAship FAQs</Body>;
 };
 
+FAQs.authenticationEnabled = true;
 export default FAQs;
