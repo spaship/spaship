@@ -47,7 +47,7 @@ async function deploy({ name, spaArchive, appPath, ref, property, env } = {}) {
 
   //to check operator
   console.log("Checking the property is Operator or Baremetal : ");
-  const responseAlias = await alias.find({ property: property, env: env });
+  const responseAlias = await alias.find({ propertyName: property, env: env });
   if (responseAlias?.length > 0) {
     const operatorAlias = responseAlias[0]._doc;
     console.log(operatorAlias);
@@ -133,7 +133,7 @@ async function createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir
   else if (appPath.charAt(0) == "/") appPath = appPath.substr(1);
   const spaShipFile = {
     websiteVersion: "v1",
-    websiteName: operatorAlias.property,
+    websiteName: operatorAlias.propertyName,
     name: name,
     mapping: appPath,
     environments: [{ name: env, updateRestriction: false, exclude: false }],
