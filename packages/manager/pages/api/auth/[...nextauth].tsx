@@ -3,6 +3,7 @@ import GithubProvider from "next-auth/providers/github";
 import KeycloakProvider from "next-auth/providers/keycloak";
 import GoogleProvider from "next-auth/providers/google";
 import GitlabProvider from "next-auth/providers/gitlab";
+import { logger } from "../../../utils/logger.utils";
 
 async function refreshAccessToken(token: any) {
   try {
@@ -39,6 +40,7 @@ async function refreshAccessToken(token: any) {
         Date.now() + (refreshedTokens.refresh_expires_in - 15) * 1000,
     };
   } catch (error) {
+    logger.error(error);
     return {
       ...token,
       error: 'RefreshAccessTokenError',
