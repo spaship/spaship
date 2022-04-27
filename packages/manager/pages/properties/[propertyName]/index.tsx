@@ -1,17 +1,21 @@
 import {
     Divider,
     Title,
-    Button,
     EmptyState,
     EmptyStateVariant,
     EmptyStateIcon,
     EmptyStateBody,
-    EmptyStateSecondaryActions
+    EmptyStateSecondaryActions,
+    ListItem,
+    List,
+    CodeBlock,
+    CodeBlockCode,
+    Text
 } from "@patternfly/react-core";
-import { CubesIcon, FileIcon, OutlinedWindowRestoreIcon } from "@patternfly/react-icons";
+import { AutomationIcon, BundleIcon, CogIcon, CubeIcon, CubesIcon, KeyIcon, PficonTemplateIcon } from "@patternfly/react-icons";
 import { getSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import React, { FunctionComponent } from "react";
+import React from "react";
 import styled from "styled-components";
 import Body from "../../../components/layout/body";
 import { AnyProps, ContextProps, Properties } from "../../../components/models/props";
@@ -27,6 +31,32 @@ interface WebPropertyPageProps { }
 export const StyledDivider = styled(Divider)`
   --pf-c-divider--BackgroundColor: var(--spaship-global--Color--bright-gray);
   margin: 1.5rem 0;
+`;
+
+const Pre = styled.pre`
+  background: var(--spaship-global--Color--text-black);
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  text-align: left;
+  margin: 0.25rem 0 0.75rem 0;
+  color: var(--spaship-global--Color--light-gray);
+  padding: 0 0.5rem;
+`;
+
+const StyledImg = styled.img`
+  height: 1rem;
+  margin-bottom: -0.2rem;
+`;
+
+const StyledList = styled(List)`
+  margin-top: 1rem;
+  --pf-c-list--li--MarginTop: .5rem;
+  --pf-c-list__item-icon--Color: var(--spaship-global--Color--text-black);
+`;
+
+const StyledText = styled(Text)`
+  color: var(--spaship-global--Color--ui-blue);
+  margin-left: 0.5rem;
 `;
 
 export const getServerSideProps = async (context: ContextProps) => {
@@ -70,23 +100,37 @@ const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, act
     if (!webprop || !activites) {
         return (
             <Body {...meta}>
-                <EmptyState variant={EmptyStateVariant.xl}>
-                    <EmptyStateIcon icon={OutlinedWindowRestoreIcon} />
-                    <Title headingLevel="h5" size="4xl">
+                <EmptyState variant={EmptyStateVariant.large}>
+                  <EmptyStateIcon icon={CubesIcon} />
+                    <Title headingLevel="h4" size="lg">
                         No SPA Deployed yet
                     </Title>
                     <EmptyStateBody>
-                        Hey, Currently you don't have any spa deployed, hurry up and deploy you spa.  <br />
-                        Follow these steps to quickly Deploy your SPA:  <br /><br />
-                        Step 1 : Generate API Key (Go to Settings)<br />
-                        Step 2 : install spaship cli in your local system < br />
-                        Step 3 : set env (spaship env -name={"''"}   -url={"''"} -apikey={"''"} )< br />
-                        Step 4 : initialize spaship.yaml (spaship init)< br />
-                        Step 5 : pack your build (npm pack)< br />
-                        Step 6 : deploy your spa (spaship deploy -env={"''"} zipfile)< br />
+                        Hey, seems like there are no SPAs deployed yet. Here are some things you can do to get started:
+                        <StyledList isPlain>
+                          <ListItem icon={<PficonTemplateIcon/>	}>Generate API Key
+                            <StyledText 
+                              onClick={() => {router.push(`${propertyName}/settings`); }}>
+                              (Go to Settings)
+                            </StyledText>
+                          </ListItem>
+                          <ListItem icon={<CogIcon />}>Install spaship cli in your local system</ListItem>
+                          <ListItem icon={<KeyIcon /> }>Setup your environment</ListItem>
+                          <Pre>
+                            $ spaship env -name=name -url=url -apikey=key
+                          </Pre>
+                          <ListItem icon={<AutomationIcon />}>Initialize spaship.yaml </ListItem>
+                          <Pre>
+                            $ spaship init
+                          </Pre>
+                          <ListItem icon={<BundleIcon	/>}>Pack your build (npm pack)</ListItem>
+                          <ListItem icon={<CubeIcon />}>Deploy your spa </ListItem>
+                        </StyledList>
                     </EmptyStateBody>
                     <EmptyStateSecondaryActions>
-                        <a target="_blank" href={url}>SPAship Instruction Guide</a>
+                        <a target="_blank" href={url}>
+                          <StyledImg src="/images/logo/spaship-logo-dark-vector.svg" /> Instruction Guide
+                        </a>
                     </EmptyStateSecondaryActions>
                 </EmptyState>
             </Body>

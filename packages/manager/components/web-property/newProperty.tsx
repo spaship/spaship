@@ -150,7 +150,7 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
             fieldId="form-group-label-info"
             helperText={<>
               <FormHelperText icon={validatedTitle === "noval" ? <ExclamationCircleIcon /> : <CheckCircleIcon />} isHidden={validatedTitle !== validations.noval && validatedTitle !== validations.success}>
-                {validatedTitle === "noval" ? <>Title should'nt contain any space, numbers, special-character</> : <>Valid identifier</>}
+                {validatedTitle === "noval" ? <>Title shouldn't contain any space, numbers, special-character</> : <>Valid identifier</>}
               </FormHelperText>
             </>
             }
@@ -205,7 +205,7 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
             fieldId="form-group-label-info"
             helperText={<>
               <FormHelperText icon={validatedUrl === validations.noval ? <ExclamationCircleIcon /> : <CheckCircleIcon />} isHidden={validatedUrl !== validations.noval && validatedUrl !== validations.success}>
-                {validatedUrl === validations.noval ? <>URL should'nt contain any space, special-character (. allowed) </> : <>Valid URL</>}
+                {validatedUrl === validations.noval ? <>URL shouldn't contain any space, special-character (. allowed) </> : <>Valid URL</>}
               </FormHelperText>
             </>
             }
@@ -232,7 +232,7 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
             fieldId="form-group-label-info"
             helperText={
               <FormHelperText icon={validatedEnv === "noval" ? <ExclamationCircleIcon /> : <CheckCircleIcon />} isHidden={validatedEnv !== validations.noval && validatedEnv !== validations.success}>
-                {validatedEnv === "noval" ? <>Env should'nt contain any space, numbers, special-character </> : <>Valid Environment</>}
+                {validatedEnv === "noval" ? <>Env shouldn't contain any space, numbers, special-character </> : <>Valid Environment</>}
               </FormHelperText>
             }
             helperTextInvalid="Invalid Environment Name"
