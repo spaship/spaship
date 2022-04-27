@@ -1,14 +1,18 @@
-import { Gallery, Title } from "@patternfly/react-core";
+import { Gallery, Tab, Tabs, TabTitleIcon, TabTitleText, Title } from "@patternfly/react-core";
 import { getSession } from "next-auth/react";
-import { FunctionComponent } from "react";
 import Body from "../../components/layout/body";
 import { AnyProps, Properties } from "../../components/models/props";
 import AddProperty from "../../components/web-property/addProperty";
 import WebProperty from "../../components/web-property/webProperty";
 import { get, post } from "../../utils/api.utils";
 import { getAllEventCountUrl, getPropertyList } from "../../utils/endpoint.utils";
-import { StyledDivider } from "./[propertyName]";
 import { ComponentWithAuth } from "../../utils/auth.utils";
+import {
+  CubeIcon,
+  CubesIcon 
+} from "@patternfly/react-icons";
+import styled from "styled-components";
+import { useState } from "react";
 
 interface PropertiesListProps { }
 
@@ -25,6 +29,10 @@ const meta = {
     { path: "/properties", title: "Properties" },
   ],
 };
+
+const StyledGallery = styled(Gallery)`
+  margin-top: 1.5rem;
+`;
 
 export const getServerSideProps = async (context: any) => {
   try {
@@ -55,25 +63,45 @@ export const getServerSideProps = async (context: any) => {
 };
 
 const PropertiesList: ComponentWithAuth<PropertiesListProps> = ({ webprop }: AnyProps) => {
+  const [activeTabKey, setActiveTabKey] = useState(0);
+  const handleTab = (_event: any, tabIndex: any) => {
+    setActiveTabKey(tabIndex); 
+  };
   return (
     <Body {...meta}>
-      <Title headingLevel="h2" size="3xl">
-        My Properties
-      </Title><br />
-      <Gallery hasGutter>
-        <AddProperty></AddProperty>
-        <WebProperty webprop={webprop?.myWebProperties}></WebProperty>
-      </Gallery>
-      <br />
-      <StyledDivider />
-      <Title headingLevel="h2" size="3xl">
-        Other Properties
-      </Title><br />
-      <Gallery hasGutter>
-        <WebProperty webprop={webprop?.allWebproperties}></WebProperty>
-      </Gallery>
-      <br />
-      <StyledDivider />
+        <Tabs isBox activeKey={activeTabKey} onSelect={handleTab} aria-label="Tabs in the filled with icons example">
+          <Tab
+            eventKey={0}
+            title={
+              <>
+                <TabTitleIcon>
+                  <CubeIcon />
+                </TabTitleIcon>
+                <TabTitleText>My Properties</TabTitleText>
+              </>
+            }
+          >
+            <StyledGallery hasGutter>
+              <AddProperty></AddProperty>
+              <WebProperty webprop={webprop?.myWebProperties}></WebProperty>
+            </StyledGallery>
+          </Tab>
+          <Tab
+            eventKey={1}
+            title={
+              <>
+                <TabTitleIcon>
+                  <CubesIcon />
+                </TabTitleIcon>
+                <TabTitleText>Other Properties</TabTitleText>
+              </>
+            }
+          >
+            <StyledGallery hasGutter>
+              <WebProperty webprop={webprop?.allWebproperties}></WebProperty>
+            </StyledGallery>
+          </Tab>
+        </Tabs>
     </Body>
   );
 };

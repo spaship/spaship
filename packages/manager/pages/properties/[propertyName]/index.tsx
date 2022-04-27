@@ -8,14 +8,26 @@ import {
     EmptyStateSecondaryActions,
     ListItem,
     List,
-    CodeBlock,
-    CodeBlockCode,
-    Text
+    Text,
+    Tabs,
+    TabTitleIcon,
+    TabTitleText,
+    Tab
 } from "@patternfly/react-core";
-import { AutomationIcon, BundleIcon, CogIcon, CubeIcon, CubesIcon, KeyIcon, PficonTemplateIcon } from "@patternfly/react-icons";
+import {
+  AutomationIcon, 
+  BundleIcon, 
+  CogIcon, 
+  CubeIcon, 
+  CubesIcon,
+  KeyIcon, 
+  PackageIcon, 
+  PficonTemplateIcon, 
+  RunningIcon
+} from "@patternfly/react-icons";
 import { getSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Body from "../../../components/layout/body";
 import { AnyProps, ContextProps, Properties } from "../../../components/models/props";
@@ -23,7 +35,7 @@ import ActivityStream from "../../../components/web-property/activityStream";
 import SPAProperty from "../../../components/web-property/spaProperty";
 import { post } from "../../../utils/api.utils";
 import { ComponentWithAuth } from "../../../utils/auth.utils";
-import { getGuideUrl } from "../../../utils/config.utils";
+import { getGuideUrl, getHost } from "../../../utils/config.utils";
 import { getEventAnalyticsUrl } from "../../../utils/endpoint.utils";
 
 interface WebPropertyPageProps { }
@@ -41,6 +53,7 @@ const Pre = styled.pre`
   margin: 0.25rem 0 0.75rem 0;
   color: var(--spaship-global--Color--light-gray);
   padding: 0 0.5rem;
+  white-space: pre-wrap;
 `;
 
 const StyledImg = styled.img`
@@ -82,7 +95,7 @@ export const getServerSideProps = async (context: ContextProps) => {
         );
         const [activitesResponse, countResponse]: AnyProps = response;
         if (activitesResponse == null || countResponse == null) {
-            return { props: { url: getGuideUrl() } };
+            return { props: { url: getGuideUrl(), baseUrl: getHost() } };
         }
         return {
             props: { webprop: countResponse, activites: activitesResponse },
@@ -93,8 +106,12 @@ export const getServerSideProps = async (context: ContextProps) => {
     }
 };
 
-const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, activites, url }: AnyProps) => {
+const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, activites, url, baseUrl }: AnyProps) => {
     const router = useRouter();
+    const [activeTabKey, setActiveTabKey] = useState(0);
+    const handleTab = (_event: any, tabIndex: any) => {
+      setActiveTabKey(tabIndex); 
+    };
     const propertyName = router.query.propertyName || 'NA';
     const meta = getHeaderMeta(propertyName);
     if (!webprop || !activites) {
@@ -117,7 +134,7 @@ const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, act
                           <ListItem icon={<CogIcon />}>Install spaship cli in your local system</ListItem>
                           <ListItem icon={<KeyIcon /> }>Setup your environment</ListItem>
                           <Pre>
-                            $ spaship env -name=name -url=url -apikey=key
+                            $ spaship env -name=name -url={baseUrl}/application/deploy -apikey=key
                           </Pre>
                           <ListItem icon={<AutomationIcon />}>Initialize spaship.yaml </ListItem>
                           <Pre>
@@ -139,9 +156,34 @@ const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, act
     else {
         return (
             <Body {...meta}>
-                <SPAProperty webprop={webprop}></SPAProperty>
-                <StyledDivider />
-                <ActivityStream webprop={activites}></ActivityStream>
+              <Tabs activeKey={activeTabKey} onSelect={handleTab} isBox aria-label="Tabs in the filled with icons example">
+                <Tab
+                  eventKey={0}
+                  title={
+                    <>
+                      <TabTitleIcon>
+                        <PackageIcon />
+                      </TabTitleIcon>
+                      <TabTitleText>SPAs</TabTitleText>
+                    </>
+                  }
+                >
+                  <SPAProperty webprop={webprop}></SPAProperty>
+                </Tab>
+                <Tab
+                  eventKey={1}
+                  title={
+                    <>
+                      <TabTitleIcon>
+                        <RunningIcon />
+                      </TabTitleIcon>
+                      <TabTitleText>Activity Stream</TabTitleText>
+                    </>
+                  }
+                >
+                  <ActivityStream webprop={activites}></ActivityStream>
+                </Tab>
+              </Tabs>
             </Body>
         );
     }

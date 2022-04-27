@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import Body from "../../components/layout/body";
 import NewProperty from "../../components/web-property/newProperty";
-import { get, post } from "../../utils/api.utils";
+import { get } from "../../utils/api.utils";
 import { getSession } from "next-auth/react";
 import { getPropertyList } from "../../utils/endpoint.utils";
 import { AnyProps } from "../../components/models/props";

@@ -105,7 +105,6 @@ const SPAProperties: ComponentWithAuth<SPAIndexProps> = ({
           <TotalDeployment webprop={totalDeployments}></TotalDeployment>{" "}
         </GalleryItem>
         <GalleryItem>
-          {" "}
           <DeploymentWeek webprop={monthlyDeployments}></DeploymentWeek>{" "}
         </GalleryItem>
       </Gallery>
