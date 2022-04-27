@@ -156,7 +156,7 @@ const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, act
     else {
         return (
             <Body {...meta}>
-              <Tabs activeKey={activeTabKey} onSelect={handleTab} isBox aria-label="Tabs in the filled with icons example">
+              <Tabs activeKey={activeTabKey} onSelect={handleTab} isBox aria-label="Tabs for SPA information">
                 <Tab
                   eventKey={0}
                   title={

@@ -10,7 +10,6 @@ const ChartBorder = styled.div`
   height: 250px;
   width: 350px;
   border: 1px solid var(--spaship-global--Color--light-gray);
-  opacity: 1;
 `;
 
 const TotalDeployment: FunctionComponent<Properties> = ({ webprop }: Properties) => {
