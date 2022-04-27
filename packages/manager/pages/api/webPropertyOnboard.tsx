@@ -2,6 +2,7 @@ import { AnyProps } from "../../components/models/props";
 import { post } from "../../utils/api.utils";
 import { getOnboardWebpropertyUrl } from "../../utils/endpoint.utils";
 import { getSession } from "next-auth/react";
+import { logger } from "../../utils/logger.utils";
 
 const WebPropertyOnboard = async (req: AnyProps, res: AnyProps) => {
     const url = getOnboardWebpropertyUrl();
@@ -20,6 +21,7 @@ const WebPropertyOnboard = async (req: AnyProps, res: AnyProps) => {
         "createdBy": userEmail
     };
     const response = await post<AnyProps>(url, payload, token);
+    logger.info({ response })
     return res.send({ data: { response } });
 }
 
