@@ -6,26 +6,26 @@ import styled from "styled-components";
 interface AddCardProps {}
 
 const AddPropertyBox = styled(Card)`
-  opacity: 1;
   border-radius: 8px;
-  height: 199px;
+  height: 160px;
+`;
+
+const StyledTitle = styled(Title)`
+  margin-top: 0.5rem;
 `;
 
 const AddProperty: FunctionComponent<AddCardProps> = () => {
   const router = useRouter();
   return (
     <>
-      <Card isSelectable isRounded onClick={() => router.push(`/properties/new`)} >
-        <AddPropertyBox>
-          <EmptyState variant={EmptyStateVariant.xs}>
-            <div className="spaship-circle spaship-plus">&#43;</div>
-            <br />
-            <Title headingLevel="h5" size="md">
-              New Web Property
-            </Title>
-          </EmptyState>
-        </AddPropertyBox>
-      </Card>
+      <AddPropertyBox isSelectable isRounded onClick={() => router.push(`/properties/new`)}>
+        <EmptyState variant={EmptyStateVariant.xs}>
+          <div className="spaship-circle spaship-plus">&#43;</div>
+          <StyledTitle headingLevel="h5" size="md">
+            New Web Property
+          </StyledTitle>
+        </EmptyState>
+      </AddPropertyBox>
     </>
   );
 };

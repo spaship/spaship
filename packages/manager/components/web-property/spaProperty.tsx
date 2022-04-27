@@ -6,7 +6,7 @@ import { Properties, SPAProps } from "../models/props";
 
 const StyledCard = styled(Card)`
   border-radius: 8px;
-  height: 199px;
+  height: 160px;
 `;
 
 const SPAProperty: FunctionComponent<Properties> = ({ webprop }: Properties) => {

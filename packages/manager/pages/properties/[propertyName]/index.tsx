@@ -23,7 +23,7 @@ import ActivityStream from "../../../components/web-property/activityStream";
 import SPAProperty from "../../../components/web-property/spaProperty";
 import { post } from "../../../utils/api.utils";
 import { ComponentWithAuth } from "../../../utils/auth.utils";
-import { getGuideUrl } from "../../../utils/config.utils";
+import { getGuideUrl, getHost } from "../../../utils/config.utils";
 import { getEventAnalyticsUrl } from "../../../utils/endpoint.utils";
 
 interface WebPropertyPageProps { }
@@ -41,6 +41,7 @@ const Pre = styled.pre`
   margin: 0.25rem 0 0.75rem 0;
   color: var(--spaship-global--Color--light-gray);
   padding: 0 0.5rem;
+  white-space: pre-wrap;
 `;
 
 const StyledImg = styled.img`
@@ -82,7 +83,7 @@ export const getServerSideProps = async (context: ContextProps) => {
         );
         const [activitesResponse, countResponse]: AnyProps = response;
         if (activitesResponse == null || countResponse == null) {
-            return { props: { url: getGuideUrl() } };
+            return { props: { url: getGuideUrl(), baseUrl: getHost() } };
         }
         return {
             props: { webprop: countResponse, activites: activitesResponse },
@@ -93,7 +94,7 @@ export const getServerSideProps = async (context: ContextProps) => {
     }
 };
 
-const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, activites, url }: AnyProps) => {
+const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, activites, url, baseUrl }: AnyProps) => {
     const router = useRouter();
     const propertyName = router.query.propertyName || 'NA';
     const meta = getHeaderMeta(propertyName);
@@ -117,7 +118,7 @@ const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, act
                           <ListItem icon={<CogIcon />}>Install spaship cli in your local system</ListItem>
                           <ListItem icon={<KeyIcon /> }>Setup your environment</ListItem>
                           <Pre>
-                            $ spaship env -name=name -url=url -apikey=key
+                            $ spaship env -name=name -url={baseUrl}/application/deploy -apikey=key
                           </Pre>
                           <ListItem icon={<AutomationIcon />}>Initialize spaship.yaml </ListItem>
                           <Pre>

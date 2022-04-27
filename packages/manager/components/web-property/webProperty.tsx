@@ -6,7 +6,8 @@ import { Properties, WebProps } from "../models/props";
 
 const CardStyle = styled(Card)`
   border-radius: 8px;
-  height: 199px;
+  height: 160px;
+  border-left: 3px solid var(--spaship-global--Color--solar-orange);
 `;
 
 const WebProperty: FunctionComponent<Properties> = ({ webprop }: Properties) => {

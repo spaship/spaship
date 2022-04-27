@@ -11,6 +11,7 @@
   --spaship-global--Font-Family: RedHatDisplay, Overpass, Roboto, Cantarell, helvetica, arial, sans-serif;
   --spaship-table-container-max-width: 1041px;
   --spaship-button-width-200: 200px;
+  --pf-global--FontWeight--bold: 500;
 }
 
 .spaship-gray {
@@ -46,6 +47,7 @@ body {
   padding: 0;
   margin: 0;
   font-family: var(--spaship-global--Font-Family);
+  font-weight: 300;
 }
 
 a {
@@ -95,7 +97,8 @@ button.spaship_btn {
 }
 
 .spaship-plus {
-  line-height: 1.1em;
+  display: grid;
+  place-content: center;
 }
 
 .spaship-plus:hover {
