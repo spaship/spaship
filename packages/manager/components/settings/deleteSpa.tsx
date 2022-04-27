@@ -112,7 +112,7 @@ const DeleteSpa: FunctionComponent<DeleteSpaProps> = () => {
           </Flex>
         </FlexItem>
         <FlexItem>
-          <StyledButton variant="danger" onClick={handleModalToggle}>
+          <StyledButton isDisabled variant="danger" onClick={handleModalToggle}>
             <StyledText component={TextVariants.h4}>Delete Web Property</StyledText>
           </StyledButton>
         </FlexItem>

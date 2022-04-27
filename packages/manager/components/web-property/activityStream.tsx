@@ -9,12 +9,12 @@ const DivStyle = styled.div`
   padding-bottom: 1rem;
   border: 1px solid var(--spaship-global--Color--light-gray);
   opacity: 1;
+  margin-top: 1.5rem;
 `;
 
 const ActivityStream: FunctionComponent<Properties> = ({ webprop }: Properties) => {
   return (
     <>
-      <br />
       <DivStyle>
         <div>
           <List>
@@ -34,7 +34,7 @@ const ActivityStream: FunctionComponent<Properties> = ({ webprop }: Properties) 
                         <TextContent>
                           <Text component={TextVariants.small}>
                             <Label color="green"> {activity.spaName}</Label> has been deployed for{" "}
-                            <Label color="green"> {activity.propertyName}</Label> on {activity.envs}
+                            <Label color="green"> {activity.propertyName}</Label> on {activity.env}
                             <br />
                           </Text>
                         </TextContent>

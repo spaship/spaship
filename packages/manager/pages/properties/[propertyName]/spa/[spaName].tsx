@@ -1,7 +1,8 @@
-import { Divider, Gallery, GalleryItem } from "@patternfly/react-core";
+import { Divider, Gallery, GalleryItem, Tab, Tabs, TabTitleIcon, TabTitleText } from "@patternfly/react-core";
+import { PackageIcon, RunningIcon } from "@patternfly/react-icons";
 import { getSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import React, { FunctionComponent } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import DeploymentWeek from "../../../../components/chart/deployment-week";
 import TotalDeployment from "../../../../components/chart/total-deployment";
@@ -15,6 +16,10 @@ import { getEventAnalyticsUrl } from "../../../../utils/endpoint.utils";
 export const StyledDivider = styled(Divider)`
   --pf-c-divider--BackgroundColor: var(--spaship-global--Color--bright-gray);
   margin: 1.5rem 0;
+`;
+
+const StyledGallery = styled(Gallery)`
+  margin-top: 1.5rem;
 `;
 
 export const getServerSideProps = async (context: ContextProps) => {
@@ -94,24 +99,55 @@ const SPAProperties: ComponentWithAuth<SPAIndexProps> = ({
     lg: "380px",
     "2xl": "400px",
   };
+  const [activeTabKey, setActiveTabKey] = useState(0);
+  const handleTab = (_event: any, tabIndex: any) => {
+    setActiveTabKey(tabIndex); 
+  };
   const router = useRouter();
   const propertyName = router.query.propertyName || "";
   const spaName = router.query.spaName;
   const meta = getHeaderData(propertyName, spaName);
   return (
     <Body {...meta}>
-      <Gallery hasGutter maxWidths={maxWidths}>
-        <GalleryItem>
-          <TotalDeployment webprop={totalDeployments}></TotalDeployment>{" "}
-        </GalleryItem>
-        <GalleryItem>
-          <DeploymentWeek webprop={monthlyDeployments}></DeploymentWeek>{" "}
-        </GalleryItem>
-      </Gallery>
-      <br />
-      <StyledDivider />
-      <br />
-      <ActivityStream webprop={activites}></ActivityStream>
+       <Tabs
+        activeKey={activeTabKey} 
+        onSelect={handleTab} 
+        isBox 
+        aria-label="Tabs for users and containers">
+          <Tab
+            eventKey={0}
+            title={
+              <>
+                <TabTitleIcon>
+                  <PackageIcon />
+                </TabTitleIcon>
+                <TabTitleText>Deployments Dashboard</TabTitleText>
+              </>
+            }
+          >
+          <StyledGallery hasGutter maxWidths={maxWidths}>
+            <GalleryItem>
+              <TotalDeployment webprop={totalDeployments}></TotalDeployment>{" "}
+            </GalleryItem>
+            <GalleryItem>
+              <DeploymentWeek webprop={monthlyDeployments}></DeploymentWeek>{" "}
+            </GalleryItem>
+          </StyledGallery>
+          </Tab>
+          <Tab
+            eventKey={1}
+            title={
+              <>
+                <TabTitleIcon>
+                  <RunningIcon />
+                </TabTitleIcon>
+                <TabTitleText>Deployment Log</TabTitleText>
+              </>
+            }
+          >
+            <ActivityStream webprop={activites}></ActivityStream>
+          </Tab>
+        </Tabs>
     </Body>
   );
 };
