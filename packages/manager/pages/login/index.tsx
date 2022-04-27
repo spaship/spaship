@@ -57,7 +57,7 @@ const StyledCard = styled(Card)`
   bottom: 0;
   left: 0;
   right: 0;
-  height: 160px;
+  height: fit-content;
   width: 280px;
   z-index: 99;
 
@@ -185,7 +185,7 @@ const Login: NextPage = () => {
   const [launcher, setLauncher] = useState(false);
   const authenticate = (provider: string) => {
     setLauncher(true)
-    signIn(provider, { callbackUrl: "/" });
+    signIn(provider, { callbackUrl: "/properties" });
   }
   if (authStatus === "loading") {
     return (
@@ -229,7 +229,8 @@ const Login: NextPage = () => {
                   <CardButton isBlock variant="primary" onClick={() => authenticate('keycloak')} className="spaship_btn">
                     Red Hat SSO
                   </CardButton>
-                  <Divider/>
+                  {/* TODO: Enable in May 2022 Release */}
+                  {/* <Divider/>
                   <Flex className="OARow" justifyContent={{ default: 'justifyContentSpaceBetween' }}>
                     <FlexItem>
                       <Button variant="plain" onClick={() => authenticate("github")}>
@@ -246,7 +247,7 @@ const Login: NextPage = () => {
                         <GoogleIcon/>
                       </Button>
                     </FlexItem>
-                  </Flex>
+                  </Flex> */}
                 </CardBody>
               </StyledCard>
             </FlexItem>
