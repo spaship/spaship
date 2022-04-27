@@ -1,8 +1,7 @@
 import { FunctionComponent } from "react";
 import { Button, Flex, FlexItem } from "@patternfly/react-core";
-import { GithubIcon } from "@patternfly/react-icons";
+import { BugIcon, CatalogIcon, GithubIcon } from "@patternfly/react-icons";
 import styled from "styled-components";
-import router from "next/router";
 
 const StyledFooter = styled.footer`
   border-top: 1px solid var(--spaship-global--Color--bright-gray);
@@ -20,7 +19,8 @@ const Footer: FunctionComponent<FooterProps> = () => {
   return (
     <StyledFooter>
       <Flex>
-        <FlexItem align={{ default: "alignRight" }}>
+        {/* TODO: Enable when ready! */}
+        {/* <FlexItem>
           <StyledButton
             component="a"
             onClick={() => {
@@ -30,8 +30,8 @@ const Footer: FunctionComponent<FooterProps> = () => {
           >
             Contact Us
           </StyledButton>
-        </FlexItem>
-        <FlexItem>
+        </FlexItem> */}
+        <FlexItem align={{ default: "alignRight" }}>
           <StyledButton
             component="a"
             href="https://github.com/spaship/spaship"
@@ -40,6 +40,28 @@ const Footer: FunctionComponent<FooterProps> = () => {
             icon={<GithubIcon />}
           >
             GitHub
+          </StyledButton>
+        </FlexItem>
+        <FlexItem>
+          <StyledButton
+            component="a"
+            href="https://github.com/spaship/spaship/issues/new?assignees=&labels=bug&template=bug-report.md&title=%5BBug%5D%3A"
+            target="_blank"
+            variant="link"
+            icon={<BugIcon />}
+          >
+            Report a Bug
+          </StyledButton>
+        </FlexItem>
+        <FlexItem>
+        <StyledButton
+            component="a"
+            href="https://spaship.io/docs/introduction"
+            target="_blank"
+            variant="link"
+            icon={<CatalogIcon />}
+          >
+            Read the Docs
           </StyledButton>
         </FlexItem>
       </Flex>
