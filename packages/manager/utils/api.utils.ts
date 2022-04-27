@@ -1,3 +1,5 @@
+import { logger } from "./logger.utils";
+
 const getDefaultHeader = async (useJSON = true, token: string) => {
   const headers = new Headers();
   headers.append("Accept", "application/json");
@@ -31,20 +33,27 @@ export async function get<T>(url: string, token?: string): Promise<T> {
     method: "GET",
     headers,
   };
-  const res = await fetch(url, options);
-  return handleResponse<T>(res);
+  logger.info({ token })
+  logger.info({ url })
+  logger.info({ options })
+  const response = await handleResponse<T>(await fetch(url, options));
+  logger.info({ response })
+  return response;
 }
 
 export async function post<T>(url: string, data: object, token: string): Promise<T> {
-
   const headers = await getDefaultHeader(true, token as string);
   const options: RequestInit = {
     method: "POST",
     headers,
     body: JSON.stringify(data),
   };
-  const res = await fetch(url, options);
-  return handleResponse<T>(res);
+  logger.info({ token })
+  logger.info({ url })
+  logger.info({ options })
+  const response = await handleResponse<T>(await fetch(url, options));
+  logger.info({ response })
+  return response;
 }
 
 export async function upload<T>(url: string, data: FormData, token: string): Promise<T> {
