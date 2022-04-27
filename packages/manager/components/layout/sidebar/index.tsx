@@ -2,7 +2,7 @@ import { FunctionComponent } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Brand, Nav, NavItem, NavList, Stack, StackItem } from "@patternfly/react-core";
-import { FlagIcon, LockOpenIcon, NetworkIcon, OutlinedQuestionCircleIcon, TrendUpIcon } from "@patternfly/react-icons";
+import { MonitoringIcon, ThIcon } from "@patternfly/react-icons";
 import styled from "styled-components";
 import User from "./user";
 
@@ -75,7 +75,7 @@ const Sidebar: FunctionComponent<SidebarProps> = () => {
               }}
             >
               <NavButton>
-                <NetworkIcon />
+                <ThIcon />
                 Web Properties
               </NavButton>
             </StyledNavItem>
@@ -87,11 +87,12 @@ const Sidebar: FunctionComponent<SidebarProps> = () => {
               }}
             >
               <NavButton>
-                <TrendUpIcon />
+                <MonitoringIcon />
                 Dashboard
               </NavButton>
             </StyledNavItem>
-            <StyledNavItem
+            {/* TODO: Enable options once ready! */}
+            {/* <StyledNavItem
               itemId={2}
               isActive={path === "/authentication"}
               onClick={() => {
@@ -126,7 +127,7 @@ const Sidebar: FunctionComponent<SidebarProps> = () => {
                 <FlagIcon />
                 Feedback
               </NavButton>
-            </StyledNavItem>
+            </StyledNavItem> */}
           </StyledNavList>
         </Nav>
       </StackItem>
