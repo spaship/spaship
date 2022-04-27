@@ -7,7 +7,7 @@ interface AddCardProps {}
 
 const AddPropertyBox = styled(Card)`
   border-radius: 8px;
-  height: 160px;
+  height: var(--spaship-card-hight-160);
 `;
 
 const StyledTitle = styled(Title)`
