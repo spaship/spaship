@@ -185,7 +185,7 @@ const Login: NextPage = () => {
   const [launcher, setLauncher] = useState(false);
   const authenticate = (provider: string) => {
     setLauncher(true)
-    signIn(provider, { callbackUrl: "/" });
+    signIn(provider, { callbackUrl: "/properties" });
   }
   if (authStatus === "loading") {
     return (
