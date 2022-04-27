@@ -14,9 +14,6 @@ const DivStyle = styled.div`
 const ActivityStream: FunctionComponent<Properties> = ({ webprop }: Properties) => {
   return (
     <>
-      <TextContent>
-        <Text component={TextVariants.h1}>Activity Stream</Text>
-      </TextContent>
       <br />
       <DivStyle>
         <div>
