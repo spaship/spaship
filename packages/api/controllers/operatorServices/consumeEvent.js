@@ -14,7 +14,7 @@ source.onmessage = function (eventRequest) {
   const eventBody = new event({
     id: uuid(),
     eventId: response?.uuid,
-    propertyName: response?.websiteName,
+    propertyName: response?.websiteName || "NA",
     spaName: response?.spaName || "NA",
     version: 1,
     env: response.environmentName,
