@@ -69,7 +69,7 @@ const PropertiesList: ComponentWithAuth<PropertiesListProps> = ({ webprop }: Any
   };
   return (
     <Body {...meta}>
-        <Tabs isBox activeKey={activeTabKey} onSelect={handleTab} aria-label="Tabs in the filled with icons example">
+        <Tabs isBox activeKey={activeTabKey} onSelect={handleTab} aria-label="Tabs for My Properties and Other Properties">
           <Tab
             eventKey={0}
             title={

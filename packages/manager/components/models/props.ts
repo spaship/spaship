@@ -26,7 +26,7 @@ export interface ActivityProps {
   id: string;
   spaName: string;
   code: string;
-  envs: string;
+  env: string;
   branch: string;
   createdAt: string;
   propertyName: string;
