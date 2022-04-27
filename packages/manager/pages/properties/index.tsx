@@ -6,9 +6,11 @@ import AddProperty from "../../components/web-property/addProperty";
 import WebProperty from "../../components/web-property/webProperty";
 import { get, post } from "../../utils/api.utils";
 import { getAllEventCountUrl, getPropertyList } from "../../utils/endpoint.utils";
-import { StyledDivider } from "./[propertyName]";
 import { ComponentWithAuth } from "../../utils/auth.utils";
-import { BoxIcon, UsersIcon } from "@patternfly/react-icons";
+import {
+  CubeIcon,
+  CubesIcon 
+} from "@patternfly/react-icons";
 import styled from "styled-components";
 import { useState } from "react";
 
@@ -73,7 +75,7 @@ const PropertiesList: ComponentWithAuth<PropertiesListProps> = ({ webprop }: Any
             title={
               <>
                 <TabTitleIcon>
-                  <UsersIcon />
+                  <CubeIcon />
                 </TabTitleIcon>
                 <TabTitleText>My Properties</TabTitleText>
               </>
@@ -89,7 +91,7 @@ const PropertiesList: ComponentWithAuth<PropertiesListProps> = ({ webprop }: Any
             title={
               <>
                 <TabTitleIcon>
-                  <BoxIcon />
+                  <CubesIcon />
                 </TabTitleIcon>
                 <TabTitleText>Other Properties</TabTitleText>
               </>
