@@ -39,8 +39,8 @@ const StyledButton = styled(Button)`
   --pf-c-button--m-tertiary--BackgroundColor: var(--spaship-global--Color--text-black, #000);
   --pf-c-button--m-tertiary--Color: #fff;
   --pf-c-button--BorderRadius: none;
-  --pf-c-button--PaddingRight: 3rem;
-  --pf-c-button--PaddingLeft: 3rem;
+  --pf-c-button--PaddingRight: 2.4rem;
+  --pf-c-button--PaddingLeft: 2.4rem;
 `;
 
 const StyledFlexItem = styled(FlexItem)`
@@ -136,7 +136,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
             variant="tertiary"
             onClick={handleModalToggle}>
             <StyledText component={TextVariants.h4}>
-              Create New Env
+              Add Environment
             </StyledText>
           </StyledButton>
         </FlexItem>

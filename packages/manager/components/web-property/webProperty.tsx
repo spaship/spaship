@@ -4,7 +4,7 @@ import { FunctionComponent } from "react";
 import styled from "styled-components";
 import { Properties, WebProps } from "../models/props";
 
-const CardStyle = styled(Card)`
+const StyledCards = styled(Card)`
   border-radius: 8px;
   height: var(--spaship-card-hight-160);
   border-left: 3px solid var(--spaship-global--Color--solar-orange);
@@ -22,11 +22,11 @@ const WebProperty: FunctionComponent<Properties> = ({ webprop }: Properties) => 
           isRounded
           onClick={() => router.push(`properties/${prop.propertyName}`)}
         >
-          <CardStyle>
+          <StyledCards>
             <CardTitle>{convertPropertyTitle(prop.propertyTitle || '')}</CardTitle>
             <CardBody>{prop.url}</CardBody>
             <CardFooter>{prop.count} Deployments</CardFooter>
-          </CardStyle>
+          </StyledCards>
         </Card>
       ))}
     </>
