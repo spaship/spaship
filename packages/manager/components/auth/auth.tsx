@@ -1,11 +1,11 @@
 import { FunctionComponent, useEffect } from "react";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { Bullseye } from "@patternfly/react-core";
 import EmptySpinner from "../general/empty-spinner";
 import styled from "styled-components";
 
-interface AuthProps {}
+interface AuthProps { }
 
 const Spinner = styled.div`
   height: 100vh;
@@ -21,7 +21,15 @@ const Auth: FunctionComponent<AuthProps> = ({ children }) => {
     if (!loading && !hasUser) {
       router.push("/login");
     }
-  }, [loading, hasUser, router]);
+    const checkSession = async () => {
+      if (session?.error === "RefreshAccessTokenError") {
+        await signOut({ callbackUrl: "/login" });
+        router.push("/login");
+      }
+    }
+    checkSession()
+      .catch(console.error);
+  }, [loading, hasUser, router, session]);
   if (loading || !hasUser) {
     return (
       <Spinner>
