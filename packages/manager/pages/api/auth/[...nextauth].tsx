@@ -86,6 +86,7 @@ export default NextAuth({
       return refreshAccessToken(token)
     },
     session: async ({ session, token }) => {
+      session.error = token.error;
       session.accessToken = token.accessToken;
       return session;
     },
