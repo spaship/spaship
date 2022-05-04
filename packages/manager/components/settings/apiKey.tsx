@@ -8,7 +8,11 @@ import {
   Text,
   TextContent,
   TextVariants,
-  Alert, AlertGroup, AlertActionCloseButton, AlertVariant, getUniqueId,
+  Alert,
+  AlertGroup,
+  AlertActionCloseButton,
+  AlertVariant,
+  getUniqueId,
 } from "@patternfly/react-core";
 import { useSession } from "next-auth/react";
 import React, { FunctionComponent, useEffect, useState } from "react";
@@ -118,6 +122,7 @@ const ApiKey: FunctionComponent<ApiKeyProps> = () => {
             title={title}
             key={key}
             timeout={1500}
+            timeoutAnimation={200}
             actionClose={
               <AlertActionCloseButton
                 title={title}
