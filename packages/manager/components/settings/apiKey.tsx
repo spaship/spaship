@@ -8,6 +8,11 @@ import {
   Text,
   TextContent,
   TextVariants,
+  Alert,
+  AlertGroup,
+  AlertActionCloseButton,
+  AlertVariant,
+  getUniqueId,
 } from "@patternfly/react-core";
 import { useSession } from "next-auth/react";
 import React, { FunctionComponent, useEffect, useState } from "react";
@@ -16,7 +21,7 @@ import { get } from "../../utils/api.utils";
 import { getNextValidateUrl } from "../../utils/endpoint.utils";
 import { AnyProps } from "../models/props";
 
-interface ApiKeyProps {}
+interface ApiKeyProps { }
 
 const StyledButton = styled(Button)`
   --pf-c-button--m-tertiary--BackgroundColor: var(--spaship-global--Color--text-black, #000);
@@ -43,7 +48,11 @@ const StyledClipboardBox = styled.div({
 const ApiKey: FunctionComponent<ApiKeyProps> = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [_apiKey, setApiKey] = useState("");
+  const [alert, setAlert] = useState([]);
 
+  async function removeAlert(key: any) {
+    setAlert(alert.filter((e: any) => e.key !== key))
+  }
   async function handleModalToggle() {
     setModalOpen(!isModalOpen);
   }
@@ -56,6 +65,9 @@ const ApiKey: FunctionComponent<ApiKeyProps> = () => {
           if (status != "loading") {
             const url = getNextValidateUrl();
             const response = await get<AnyProps>(url, (session as any).accessToken);
+            setAlert([
+              { title: `API Key Generated Successfully`, variant: 'success', key: getUniqueId() },
+            ] as any)
             setApiKey(response.token);
           }
         } catch (e) {
@@ -103,6 +115,23 @@ const ApiKey: FunctionComponent<ApiKeyProps> = () => {
         </FlexItem>
       </Flex>
       <GenerateKeyModal />
+      <AlertGroup isToast isLiveRegion aria-live="assertive" >
+        {alert.map(({ title, variant, key, action }) => (
+          <Alert
+            variant={AlertVariant[variant]}
+            title={title}
+            key={key}
+            timeout={1500}
+            timeoutAnimation={200}
+            actionClose={
+              <AlertActionCloseButton
+                title={title}
+                variantLabel={`${variant} alert`}
+                onClose={() => removeAlert(key)}
+              />
+            } />
+        ))}
+      </AlertGroup>
     </>
   );
 };

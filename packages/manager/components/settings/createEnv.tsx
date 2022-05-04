@@ -2,7 +2,8 @@ import {
   Button, Flex, FlexItem, Form,
   FormGroup, FormHelperText, Modal,
   ModalVariant, Text,
-  TextContent, TextInput, TextVariants
+  TextContent, TextInput, TextVariants,
+  Alert, AlertGroup, AlertActionCloseButton, AlertVariant, getUniqueId,
 } from "@patternfly/react-core";
 import { CheckCircleIcon, ExclamationCircleIcon } from "@patternfly/react-icons";
 import { useSession } from "next-auth/react";
@@ -59,9 +60,14 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   const [env, setEnv] = useState("");
   const [validatedEnv, setValidatedEnv] = useState(validations.noval);
   const [helperText, setHelperText] = useState("");
+  const [alert, setAlert] = useState([]);
 
   async function handleModalToggle() {
     setModalOpen(!isModalOpen);
+  }
+
+  async function removeAlert(key: any) {
+    setAlert(alert.filter((e: any) => e.key !== key))
   }
 
   async function handlePropertyCreation() {
@@ -76,6 +82,9 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
       }
       const propertyRes = await post<AnyProps>(url, payload, (session as any).accessToken);
       if (propertyRes?.response?.id) {
+        setAlert([
+          { title: `"${env}" env  added for ${prop?.propertyTitle}`, variant: 'success', key: getUniqueId() },
+        ] as any)
         webprop.push(propertyRes?.response)
         setValidatedEnv(validations.noval)
         setHelperText("");
@@ -180,9 +189,24 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
             />
           </FormGroup>
         </Form>
-
-
       </Modal>
+      <AlertGroup isToast isLiveRegion aria-live="assertive" >
+        {alert.map(({ title, variant, key, action }) => (
+          <Alert
+            variant={AlertVariant[variant]}
+            title={title}
+            key={key}
+            timeout={1500}
+            timeoutAnimation={200}
+            actionClose={
+              <AlertActionCloseButton
+                title={title}
+                variantLabel={`${variant} alert`}
+                onClose={() => removeAlert(key)}
+              />
+            } />
+        ))}
+      </AlertGroup>
     </>
   );
 };
