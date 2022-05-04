@@ -1,4 +1,7 @@
-import { Alert, Button, Form, FormGroup, FormHelperText, Text, TextInput, TextVariants } from '@patternfly/react-core';
+import {
+  Alert, Button, Form, FormGroup, FormHelperText, Text, TextInput, TextVariants,
+  AlertGroup, AlertActionCloseButton, AlertVariant, getUniqueId,
+} from '@patternfly/react-core';
 import { CheckCircleIcon, ExclamationCircleIcon } from "@patternfly/react-icons";
 import { useSession } from 'next-auth/react';
 import { useRouter } from "next/router";
@@ -66,6 +69,11 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [env, setEnv] = useState("");
+  const [alert, setAlert] = useState([]);
+
+  async function removeAlert(key: any) {
+    setAlert(alert.filter((e: any) => e.key !== key))
+  }
 
   const handleTitle = (value: string) => {
     const formatName = /[`!@#$%^&*()_+\=\[\]{};':"\\|,.<>\/?~0-9]/;
@@ -132,6 +140,9 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
         setErrorMessage(propertyRes.response)
       }
       else {
+        setAlert([
+          { title: `${title} Created Successfully`, variant: 'success', key: getUniqueId() },
+        ] as any)
         router.push(`/properties/${identifier}`)
       }
     } catch (e) { }
@@ -261,6 +272,23 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
             <Alert variant="danger" title={'This Webproperty already exists.'} />
           }
         </Form >
+        <AlertGroup isToast isLiveRegion aria-live="assertive" >
+          {alert.map(({ title, variant, key, action }) => (
+            <Alert
+              variant={AlertVariant[variant]}
+              title={title}
+              key={key}
+              timeout={1500}
+              timeoutAnimation={200}
+              actionClose={
+                <AlertActionCloseButton
+                  title={title}
+                  variantLabel={`${variant} alert`}
+                  onClose={() => removeAlert(key)}
+                />
+              } />
+          ))}
+        </AlertGroup>
       </DivStyle>
     </>
   );
