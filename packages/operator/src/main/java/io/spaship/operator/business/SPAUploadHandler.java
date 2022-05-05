@@ -41,7 +41,7 @@ public class SPAUploadHandler {
   private final EventManager eventManager;
 
   public SPAUploadHandler(Operator k8sOperator, SideCarOperations sideCarOperations,
-                          @Named("namespace") String nameSpace, EventManager eventManager) {
+                          @Named("defaultNamespaceMT") String nameSpace, EventManager eventManager) {
     this.k8sOperator = k8sOperator;
     this.sideCarOperations = sideCarOperations;
     this.nameSpace = nameSpace;
@@ -217,8 +217,9 @@ public class SPAUploadHandler {
     var spaContextPath = spaMapping.getContextPath();
     var branch = spaMapping.getBranch();
     var excludeFromEnvironment = (boolean) environmentMapping.get("exclude");
+    var ns = Optional.ofNullable(environmentMapping.get("ns")).orElse(this.nameSpace);
 
-    Environment environment = new Environment(envName, websiteName, traceID, this.nameSpace, updateRestriction,
+    Environment environment = new Environment(envName, websiteName, traceID,(String)ns , updateRestriction,
       zipFileLocation,
       websiteVersion, spaName, spaContextPath, branch, excludeFromEnvironment, false);
     LOG.debug("Constructed environment object is {}", environment);
