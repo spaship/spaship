@@ -71,6 +71,7 @@ const analyticsOperations = async (request) => {
     } else if (request?.activities.propertyName) {
       return await getLatestActivities.getLatestActivitiesService(
         {
+          code: "WEBSITE_CREATE",
           propertyName: getPropertyName(request?.activities),
         },
         { limit: getLimit(request?.activities) },
