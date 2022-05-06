@@ -82,7 +82,21 @@ objects:
         website: ${WEBSITE}
         environment: ${ENV}
         websiteVersion: ${WEBSITE_VERSION}
-  - kind: StatefulSet
+  - kind: PersistentVolumeClaim
+    metadata:
+      name: data-${WEBSITE}-${ENV}-${APP_INSTANCE_PREFIX}
+      annotations:
+        kubernetes.io/reclaimPolicy: Delete
+      labels:
+        paas.redhat.com/appcode: SPAS-001
+        app.kubernetes.io/managed-by: spaship
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "${STORAGE_CLASS}"
+      resources:
+        requests:
+          storage: 1Gi
+  - kind: Deployment
     apiVersion: apps/v1
     metadata:
       name: ${WEBSITE}-${ENV}
@@ -94,6 +108,8 @@ objects:
         #tracing: ${TRACE_ID}
         websiteVersion: ${WEBSITE_VERSION}
         app.kubernetes.io/managed-by: spaship
+        app.kubernetes.io/part-of: ${WEBSITE}
+        app.openshift.io/runtime: apache
     spec:
       selector:
         matchLabels:
@@ -126,7 +142,7 @@ objects:
                 - containerPort: 8080
               volumeMounts:
                 - mountPath: "/var/www/html/"
-                  name: data-${WEBSITE}-${APP_INSTANCE_PREFIX}
+                  name: data-${WEBSITE}-${ENV}-${APP_INSTANCE_PREFIX}
                   subpath: html
             - name: sidecar
               image: "${IMAGE_API}:${IMAGE_API_VERSION}"
@@ -147,11 +163,11 @@ objects:
                 periodSeconds: 10
               resources:
                 requests:
-                  cpu: 10m
-                  memory: 50Mi
-                limits:
                   cpu: 100m
-                  memory: 100Mi
+                  memory: 150Mi
+                limits:
+                  cpu: 250m
+                  memory: 384Mi
               ports:
                 - containerPort: 8081
               env:
@@ -159,28 +175,33 @@ objects:
                   value: "/app/data/"
               volumeMounts:
                 - mountPath: "/app/data/"
-                  name: data-${WEBSITE}-${APP_INSTANCE_PREFIX}
+                  name: data-${WEBSITE}-${ENV}-${APP_INSTANCE_PREFIX}
                   subpath: data
               envFrom:
                 - configMapRef:
                     name: sidecar-config-${WEBSITE}-${ENV}
+          volumes:
+            - name: data-${WEBSITE}-${ENV}-${APP_INSTANCE_PREFIX}
+              persistentVolumeClaim:
+                claimName: data-${WEBSITE}-${ENV}-${APP_INSTANCE_PREFIX}
 
           #volumes:
           #  - name: data
           #    emptyDir: { }
-      volumeClaimTemplates:
-        - metadata:
-            annotations:
-              kubernetes.io/reclaimPolicy: Delete
-            labels:
-              paas.redhat.com/appcode: SPAS-001
-            name: data-${WEBSITE}-${APP_INSTANCE_PREFIX}
-          spec:
-            accessModes: [ "ReadWriteOnce" ]
-            storageClassName: "${STORAGE_CLASS}"
-            resources:
-              requests:
-                storage: 1Gi
+  #      volumeClaimTemplates:
+  #        - metadata:
+  #            annotations:
+  #              kubernetes.io/reclaimPolicy: Delete
+  #            labels:
+  #              paas.redhat.com/appcode: SPAS-001
+  #              app.kubernetes.io/managed-by: spaship
+  #            name: data-${WEBSITE}-${APP_INSTANCE_PREFIX}
+  #          spec:
+  #            accessModes: [ "ReadWriteOnce" ]
+  #            storageClassName: "${STORAGE_CLASS}"
+  #            resources:
+  #              requests:
+  #                storage: 1Gi
 
   - kind: Ingress
     apiVersion: networking.k8s.io/v1

@@ -12,12 +12,12 @@ const generateSseBasePath = (sse) => {
   return `${sse.protocol + sse.domain + sse.path + sse.id}`;
 };
 
-
 let validOptions = [
   // filesystem related
   "config_file",
   "upload_dir",
   "webroot",
+  "baseurl",
 
   // network service options
   "host",
@@ -103,7 +103,7 @@ if (configFile) {
 
 const sse = {
   protocol: "http://",
-  domain: "localhost:5000",
+  domain: "localhost:4000",
   path: "/sse/",
   id: "80",
 };
@@ -113,8 +113,13 @@ nconf.defaults({
   host: "localhost",
   webroot: "/var/www",
   upload_dir: "/tmp/spaship_uploads",
+  token: {
+    secret : process.env.TOKEN_SECRET || 'spaship',
+    expiration : process.env.TOKEN_EXPIRATION || '10h'
+  },
+  baseurl: `${process.env.ORCHESTRATOR_BASEPATH}/spas`,
   sse: {
-    base_path: process.env.SSE_CON || generateSseBasePath(sse),
+    base_path: `${process.env.OPERATOR_BASEPATH}/api/event`,
   },
   directoryBasePath: "root",
   db: {
@@ -130,7 +135,7 @@ nconf.defaults({
     },
   },
   cli: {
-    base_path : process.env.OPERATOR_BASEPATH,
+    base_path : `${process.env.OPERATOR_BASEPATH}/api/upload`,
     dir_path : "uploads",
   },
 });

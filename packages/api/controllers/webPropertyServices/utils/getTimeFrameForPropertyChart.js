@@ -14,10 +14,10 @@ const getTimeFrameForPropertyChartService = async (propertyName, weekRange) => {
   }
 };
 
-function createDateFrame(weekRange) {
+function createDateFrame() {
   const dateFrame = [];
   let recentDate = new Date();
-  for (let i = 1; i <= weekRange; i++) {
+  for (let i = 1; i <= 4; i++) {
     const endDate = recentDate;
     const startDate = new Date(recentDate);
     startDate.setDate(recentDate.getDate() - 7);
@@ -41,7 +41,21 @@ async function fetchResponse(dateFrame, propertyName) {
     });
     response.push(responseChart);
   }
-  return response;
+
+
+  const mappedResponse = {};
+  for(item of response){
+    for(obj of item){
+      if(mappedResponse[obj.env]){
+        mappedResponse[obj.env].push(obj);
+      }
+      else{
+        mappedResponse[obj.env] = [obj];
+      }
+    }
+  }
+  
+  return mappedResponse;
 }
 
 async function getWeeklyReport(startDate, endDate, propertyName) {
@@ -63,7 +77,7 @@ async function getWeeklyReport(startDate, endDate, propertyName) {
       $group: {
         _id: {
           propertyName: "$propertyName",
-          envs: "$envs",
+          env: "$env",
         },
         totalAmount: {
           $sum: "$consumedTime",
@@ -84,7 +98,7 @@ async function getWeeklyReport(startDate, endDate, propertyName) {
       $project: {
         _id: 0,
         propertyName: "$_id.propertyName",
-        envs: "$_id.envs",
+        env: "$_id.env",
         totalAmount: "$totalAmount",
         count: "$count",
         avg: {
@@ -93,7 +107,7 @@ async function getWeeklyReport(startDate, endDate, propertyName) {
       },
     },
     {
-      $sort: { envs: 1 },
+      $sort: { env: 1 },
     },
   ]);
 }

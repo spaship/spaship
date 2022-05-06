@@ -1,17 +1,20 @@
-const chart = require("../../../models/event");
+const event = require("../../../models/event");
 
-const getSearchResultForSPA = async (req, res) => {
-  res.status(200).json(await getSearchResultForSPAService(req.sanitize(req.params.searchQuery)));
+const getSearchResultForSPA = async (req, res, next) => {
+  try {
+    if (req.params.searchQuery)
+      res.status(200).json(await getSearchResultForSPAService(req.sanitize(req.params.searchQuery)));
+    else res.status(200).json(await event.find());
+  } catch (err) {
+    next(err);
+  }
 };
 
 const getSearchResultForSPAService = async (searchQuery) => {
-  try {
-    const response = await fetchSearchResultForSPA(searchQuery);
-    bindResponse(response);
-    return response;
-  } catch (e) {
-    return { Error: e };
-  }
+  const response = await fetchSearchResultForSPA(searchQuery);
+  if (response.length === 0) return { message: "Searched SPA is not avaliable." };
+  bindResponse(response);
+  return response;
 };
 
 function bindResponse(response) {
@@ -22,7 +25,7 @@ function bindResponse(response) {
 }
 
 async function fetchSearchResultForSPA(searchQuery) {
-  return await chart.aggregate([
+  return await event.aggregate([
     {
       $group: {
         _id: {

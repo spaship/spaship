@@ -1,16 +1,18 @@
-const webProperty = require("../../models/webProperty");
+const alias = require("../../models/alias");
 const mongoose = require("mongoose");
+const uuidv4 = require("uuid").v4;
 
-const webPropertyDataDump = async (req, res) => {
-  res.status(200).json(await webPropertyDataDumpService(getDocument(req)));
+const aliasDataDump = async (req, res) => {
+  res.status(200).json(await aliasDataDumpService(getDocument(req)));
 };
 
-const webPropertyDataDumpService = async (docs) => {
+const aliasDataDumpService = async (docs) => {
   try {
-    const bulk = await webProperty.collection.initializeUnorderedBulkOp();
+    const bulk = await alias.collection.initializeUnorderedBulkOp();
     const currentDate = new Date();
     createBulkData(docs, currentDate, bulk);
     bulk.execute();
+    console.log(docs);
     return { Success: "All data successfully updated", "Records Number": getDocumentCounts(docs) };
   } catch (e) {
     console.log(e);
@@ -29,12 +31,13 @@ function createBulkData(docs, currentDate, bulk) {
   for (i = 0; i < getDocumentCounts(docs); i += 1) {
     docs[i]._id = null;
     if (docs[i].createdAt || docs[i].updatedAt) {
-      docs[i].createdAt = new Date(docs[i].createdAt.$date);
-      docs[i].updatedAt = new Date(docs[i].updatedAt.$date);
+      docs[i].id = uuidv4();
+      docs[i].createdAt = currentDate;
+      docs[i].updatedAt = currentDate;
       console.log(docs[i]);
       bulk.insert(docs[i]);
     }
   }
 }
 
-module.exports = { webPropertyDataDump, webPropertyDataDumpService };
+module.exports = { aliasDataDump, aliasDataDumpService };

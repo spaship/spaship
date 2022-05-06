@@ -411,3 +411,7 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/vim,node,linux,macos,windows,eclipse,notepadpp,sublimetext,intellij+all,visualstudiocode
+
+/packages/packages.iml
+packages/operator/local-build.sh
+packages/operator/spa-deployment-operator.iml

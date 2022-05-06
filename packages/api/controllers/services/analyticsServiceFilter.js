@@ -4,10 +4,17 @@ const getCountByEnvWeeklyChart = require("../webPropertyServices/getCountByEnvWe
 const getCounts = require("../webPropertyServices/getCountDeployments");
 
 const analyticsServiceFilter = async (req, res) => {
-  res.status(200).json(await analyticsOperations(req.body));
+  try {
+    const response = await analyticsOperations(req.body);
+    if (response.length === 0) return res.status(200).json({ message: "No data avaliable." });
+    res.status(200).json(response);
+  } catch (err) {
+    next(err);
+  }
 };
 
 const analyticsOperations = async (request) => {
+  console.log(request);
   if (request?.count) {
     if (getPropertyName(request?.count) && getSpaName(request?.count)) {
       return await getCounts.getCountService(
@@ -20,14 +27,14 @@ const analyticsOperations = async (request) => {
           propertyName: "$propertyName",
           spaName: "$spaName",
           code: "$code",
-          envs: "$envs",
+          env: "$env",
         },
         {
           _id: 0,
           propertyName: "$_id.propertyName",
           spaName: "$_id.spaName",
           code: "$_id.code",
-          env: "$_id.envs",
+          env: "$_id.env",
           count: "$count",
         }
       );
@@ -53,18 +60,27 @@ const analyticsOperations = async (request) => {
     }
   } else if (request?.activities) {
     if (getPropertyName(request?.activities) && getSpaName(request?.activities)) {
-      return await getLatestActivities.getLatestActivitiesService({
-        propertyName: getPropertyName(request?.activities),
-        spaName: getSpaName(request?.activities),
-      });
+      return await getLatestActivities.getLatestActivitiesService(
+        {
+          propertyName: getPropertyName(request?.activities),
+          spaName: getSpaName(request?.activities),
+        },
+        { limit: getLimit(request?.activities) },
+        { skip: getSkip(request?.activities) }
+      );
     } else if (request?.activities.propertyName) {
-      return await getLatestActivities.getLatestActivitiesService({
-        propertyName: getPropertyName(request?.activities),
-      });
+      return await getLatestActivities.getLatestActivitiesService(
+        {
+          code: "WEBSITE_CREATE",
+          propertyName: getPropertyName(request?.activities),
+        },
+        { limit: getLimit(request?.activities) },
+        { skip: getSkip(request?.activities) }
+      );
     }
   } else if (request?.chart) {
     if (getMonth(request) == true && getPropertyName(request?.chart) && getSpaName(request?.chart)) {
-      return await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
+      let response = await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
         {
           code: "WEBSITE_CREATE",
           propertyName: getPropertyName(request?.chart),
@@ -72,32 +88,34 @@ const analyticsOperations = async (request) => {
         },
         {
           spaName: getSpaName(request?.chart),
-          envs: "$envs",
+          env: "$env",
         },
         {
           _id: 0,
           spaName: "$_id.spaName",
-          envs: "$_id.envs",
+          env: "$_id.env",
           count: "$count",
         }
       );
+      return response;
     } else if (request?.chart.month == true && getPropertyName(request?.chart)) {
-      return await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
+      let response = await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
         {
           code: "WEBSITE_CREATE",
           propertyName: getPropertyName(request?.chart),
         },
         {
           propertyName: getPropertyName(request?.chart),
-          envs: "$envs",
+          env: "$env",
         },
         {
           _id: 0,
           propertyName: "$_id.propertyName",
-          envs: "$_id.envs",
+          env: "$_id.env",
           count: "$count",
         }
       );
+      return response;
     } else if (getPropertyName(request?.chart) && getSpaName(request?.chart)) {
       return await getCounts.getCountService(
         {
@@ -107,12 +125,12 @@ const analyticsOperations = async (request) => {
         },
         {
           spaName: getSpaName(request?.spaName),
-          envs: "$envs",
+          env: "$env",
         },
         {
           _id: 0,
           spaName: "$_id.spaName",
-          envs: "$_id.envs",
+          env: "$_id.env",
           count: "$count",
         }
       );
@@ -123,12 +141,12 @@ const analyticsOperations = async (request) => {
         },
         {
           propertyName: getPropertyName(request?.chart),
-          envs: "$envs",
+          env: "$env",
         },
         {
           _id: 0,
           propertyName: "$_id.propertyName",
-          envs: "$_id.envs",
+          env: "$_id.env",
           count: "$count",
         }
       );
@@ -155,4 +173,12 @@ function getSpaName(request) {
 
 function getPropertyName(request) {
   return request?.propertyName;
+}
+
+function getLimit(request) {
+  return parseInt(request?.limit) || 15;
+}
+
+function getSkip(request) {
+  return parseInt(request?.skip) || 0;
 }

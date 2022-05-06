@@ -2,10 +2,17 @@ const getCounts = require("../webPropertyServices/getCountDeployments");
 const getCountByEnvWeeklyChart = require("../webPropertyServices/getCountByEnvWeeklyChart");
 
 const analyticsServiceAll = async (req, res) => {
-  res.status(200).json(await propertyFilteration(req.body));
+  try {
+    const response = await propertyFilteration(req.body);
+    if (response.length === 0) return res.status(200).json({ message: "No data avaliable." });
+    res.status(200).json(response);
+  } catch (err) {
+    next(err);
+  }
 };
 
 const propertyFilteration = async (request) => {
+  console.log(request);
   if (request?.count) {
     if (request?.count?.all == true) {
       return await getCounts.getCountService(
@@ -73,15 +80,45 @@ const propertyFilteration = async (request) => {
           code: "WEBSITE_CREATE",
         },
         {
-          envs: "$envs",
+          env: "$env",
         },
         {
           _id: 0,
-          envs: "$_id.envs",
+          env: "$_id.env",
           count: "$count",
         }
       );
     } else if (request?.chart.all == true) {
+      return await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
+        {
+          code: "WEBSITE_CREATE",
+        },
+        {
+          env: "$env",
+        },
+        {
+          _id: 0,
+          spaName: "$_id.spaName",
+          env: "$_id.env",
+          count: "$count",
+        }
+      );
+    } else if (request?.activities.all == true) {
+      return await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
+        {
+          code: "WEBSITE_CREATE",
+        },
+        {
+          env: "$env",
+        },
+        {
+          _id: 0,
+          spaName: "$_id.spaName",
+          env: "$_id.env",
+          count: "$count",
+        }
+      );
+    } else if (request?.activities.all == true) {
       return await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
         {
           code: "WEBSITE_CREATE",

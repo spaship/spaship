@@ -1,20 +1,20 @@
 const mongoose = require("mongoose");
 
-const eventTimeTrace = new mongoose.Schema({
+const alias = new mongoose.Schema({
   id: {
     type: String,
     required: true,
     unique: true,
   },
-  traceId: {
-    type: String,
-    required: true,
-  },
   propertyName: {
     type: String,
     required: false,
   },
-  spaName: {
+  propertyTitle: {
+    type: String,
+    required: false,
+  },
+  url: {
     type: String,
     required: false,
   },
@@ -22,30 +22,32 @@ const eventTimeTrace = new mongoose.Schema({
     type: String,
     required: false,
   },
-  initialCode: {
+  namespace: {
     type: String,
     required: false,
   },
-  finalCode: {
+  type: {
     type: String,
     required: false,
   },
-  failure: {
-    type: Boolean,
+  createdBy: {
+    type: String,
     required: false,
   },
   createdAt: {
     type: Date,
     required: false,
   },
-  completedAt: {
+  updatedAt: {
     type: Date,
     required: false,
   },
-  consumedTime: {
-    type: Number,
+  isActive: {
+    type: Boolean,
     required: false,
   },
 });
 
-module.exports = mongoose.model("eventTimeTrace", eventTimeTrace);
+alias.index({ propertyName: 1, env: 1 }, { unique: true });
+
+module.exports = mongoose.model("alias", alias);

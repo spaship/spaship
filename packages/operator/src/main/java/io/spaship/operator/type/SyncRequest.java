@@ -9,17 +9,16 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ErrorResponse {
-  String errorMessage;
-  String errorCode;
-  String documentationLink;
+public class SyncRequest {
+
+  Environment environment;
+  String syncConfiguration;
 
   @Override
   public String toString() {
     return "{"
-      + "\"errorMessage\":\"" + errorMessage + "\""
-      + ", \"errorCode\":\"" + errorCode + "\""
-      + ", \"documentationLink\":\"" + documentationLink + "\""
+      + "\"environment\":" + environment
+      + ", \"syncConfiguration\":\"" + syncConfiguration + "\""
       + "}";
   }
 }

@@ -43,7 +43,17 @@ async function fetchResponse(dateFrame, matchRequest, groupRequest, projectReque
     });
     response.push(responseChart);
   }
-  return response;
+  const mappedResponse = {};
+  for (item of response) {
+    for (obj of item) {
+      if (mappedResponse[obj.env]) {
+        mappedResponse[obj.env].push(obj);
+      } else {
+        mappedResponse[obj.env] = [obj];
+      }
+    }
+  }
+  return mappedResponse;
 }
 
 async function getWeeklyReport(startDate, endDate, matchRequest, groupRequest, projectRequest) {
@@ -71,12 +81,12 @@ async function getWeeklyReport(startDate, endDate, matchRequest, groupRequest, p
       $project: {
         _id: 0,
         spaName: "$_id.spaName",
-        envs: "$_id.envs",
+        env: "$_id.env",
         count: "$count",
       },
     },
     {
-      $sort: { envs: 1 },
+      $sort: { env: 1 },
     },
   ]);
 }
