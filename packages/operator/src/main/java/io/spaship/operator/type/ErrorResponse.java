@@ -10,9 +10,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ErrorResponse {
-    String errorMessage;
-    String errorCode;
-    String documentationLink;
+  String errorMessage;
+  String errorCode;
+  String documentationLink;
 
   @Override
   public String toString() {

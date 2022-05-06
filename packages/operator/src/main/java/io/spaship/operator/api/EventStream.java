@@ -12,20 +12,20 @@ import javax.ws.rs.core.MediaType;
 @Path("/event")
 public class EventStream {
 
-    private final Vertx vertx;
-    private final String busAddress;
+  private final Vertx vertx;
+  private final String busAddress;
 
-    public EventStream(Vertx vertx) {
-        this.vertx = vertx;
-        busAddress = ConfigProvider.getConfig().getValue("operator.event.bus.address", String.class);
-    }
+  public EventStream(Vertx vertx) {
+    this.vertx = vertx;
+    busAddress = ConfigProvider.getConfig().getValue("operator.event.bus.address", String.class);
+  }
 
-    @GET
-    @Produces(MediaType.SERVER_SENT_EVENTS)
-    public Multi<String> streamEvents() {
-        return vertx.eventBus()
-                .consumer(busAddress)
-                .toMulti()
-                .map(item -> item.body().toString());
-    }
+  @GET
+  @Produces(MediaType.SERVER_SENT_EVENTS)
+  public Multi<String> streamEvents() {
+    return vertx.eventBus()
+      .consumer(busAddress)
+      .toMulti()
+      .map(item -> item.body().toString());
+  }
 }
