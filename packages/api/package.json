@@ -57,7 +57,7 @@
     "nconf": "^0.11.0",
     "nodegit": "^0.27.0",
     "pino": "^6.0.0",
-    "simple-git": "^2.44.0",
+    "simple-git": "^3.0.0",
     "supertest": "^6.1.6",
     "swagger-ui-express": "^4.1.4",
     "uuid": "^8.0.0",
