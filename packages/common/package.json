@@ -20,7 +20,7 @@
     "express-pino-logger": "^6.0.0",
     "js-yaml": "^4.0.0",
     "lodash": "^4.17.15",
-    "nconf": "^0.11.0",
+    "nconf": "^0.12.0",
     "pino": "^6.13.3"
   },
   "engines": {
