@@ -9,6 +9,8 @@ router.post("/fetch/analytics/all", analyticsServiceAll.analyticsServiceAll);
 
 router.post("/fetch/analytics/filter", analyticsServiceFilter.analyticsServiceFilter);
 
+router.get("/get/search/spa", getSearchResultForSPA.getSearchResultForSPA);
+
 router.get("/get/search/spa/:searchQuery", getSearchResultForSPA.getSearchResultForSPA);
 
 module.exports = router;

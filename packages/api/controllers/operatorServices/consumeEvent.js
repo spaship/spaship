@@ -14,11 +14,13 @@ source.onmessage = function (eventRequest) {
   const eventBody = new event({
     id: uuid(),
     eventId: response?.uuid,
-    propertyName: response?.websiteName,
-    spaName: response?.spaName || 'NA',
+    propertyName: response?.websiteName || "NA",
+    spaName: response?.spaName || "NA",
     version: 1,
-    envs: response.environmentName,
+    env: response.environmentName,
     branch: "main",
+    path: "",
+    url: "",
     code: getCode(response.state),
     failure: false,
     isActive: true,
@@ -33,7 +35,7 @@ source.onmessage = function (eventRequest) {
 function getCode(state) {
   if (state == "mapping file loaded into memory") return "WEBSITE_CREATE_STARTED";
   if (state == "spa deployment ops performed") return "WEBSITE_CREATE";
-  return undefined;
+  return "";
 }
 
 async function createEventRequest(response) {
@@ -52,11 +54,11 @@ async function createEventTimeTraceRequest(response) {
     id: uuid(),
     traceId: response.uuid,
     propertyName: response.websiteName,
-    envs: response.environmentName,
+    env: response.environmentName,
     spaName: response?.spaName,
     initialCode: "WEBSITE_CREATE_STARTED",
     finalCode: "WEBSITE_CREATE",
-    failure: true,
+    failure: false,
     createdAt: eventRequest.createdAt,
     completedAt: currentTime,
     consumedTime: consumedTime,
