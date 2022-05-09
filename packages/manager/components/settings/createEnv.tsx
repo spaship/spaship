@@ -73,7 +73,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   async function handlePropertyCreation() {
     try {
       const url = getNextOnboardWebpropertyUrl();
-      const prop = webprop[0];
+      const prop = webprop?.propertyListResponse[0];
       const payload = {
         "propertyTitle": prop?.propertyTitle,
         "propertyName": prop?.propertyName,
@@ -85,7 +85,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
         setAlert([
           { title: `"${env}" env  added for ${prop?.propertyTitle}`, variant: 'success', key: getUniqueId() },
         ] as any)
-        webprop.push(propertyRes?.response)
+        webprop.propertyListResponse.push(propertyRes?.response)
         setValidatedEnv(validations.noval)
         setHelperText("");
         setEnv("");
@@ -100,7 +100,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
       setValidatedEnv(validations.error)
     }
     else if (value.length > 1) {
-      const keyProperty = webprop.find((prop: any) => (prop.env === value));
+      const keyProperty = webprop?.propertyListResponse.find((prop: any) => (prop.env === value));
       if (keyProperty) {
         setHelperText("This Env already exists")
         setValidatedEnv(validations.exists);
@@ -196,7 +196,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
             variant={AlertVariant[variant]}
             title={title}
             key={key}
-            timeout={1500}
+            timeout={webprop.spashipNotificationTimeout}
             timeoutAnimation={200}
             actionClose={
               <AlertActionCloseButton
