@@ -37,6 +37,9 @@ parameters:
   - name: "STORAGE_CLASS"
     description: "storage class of the deployment"
     required: true
+  - name: "NS"
+    description: "name of the namespace"
+    required: true
 
 objects:
   - kind: ConfigMap
@@ -212,7 +215,7 @@ objects:
         shard: internal
     spec:
       rules:
-        - host: ${APP_INSTANCE_PREFIX}.${WEBSITE}.${ENV}.${DOMAIN}
+        - host: ${APP_INSTANCE_PREFIX}.${NS}.${WEBSITE}.${ENV}.${DOMAIN}
           http:
             paths:
               - path: /
