@@ -3,6 +3,7 @@ const get = require("lodash/get");
 
 module.exports = () => {
   return async (req, res, next) => {
+    return next();
     const roles = {
       admin: "spaship-admins",
       user: "spaship-users",
