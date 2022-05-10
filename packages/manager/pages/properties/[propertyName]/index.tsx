@@ -18,6 +18,7 @@ import {
   AutomationIcon, 
   BundleIcon, 
   CogIcon, 
+  CogsIcon, 
   CubeIcon, 
   CubesIcon,
   KeyIcon, 
@@ -70,6 +71,7 @@ const StyledList = styled(List)`
 const StyledText = styled(Text)`
   color: var(--spaship-global--Color--ui-blue);
   margin-left: 0.5rem;
+  cursor: pointer;
 `;
 
 export const getServerSideProps = async (context: ContextProps) => {
@@ -134,7 +136,7 @@ const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, act
                           <ListItem icon={<CogIcon />}>Install spaship cli in your local system</ListItem>
                           <ListItem icon={<KeyIcon /> }>Setup your environment</ListItem>
                           <Pre>
-                            $ spaship env -name=name -url={baseUrl}/application/deploy -apikey=key
+                            $ spaship env -name=SPA-Name -url={baseUrl}/application/deploy -apikey=key
                           </Pre>
                           <ListItem icon={<AutomationIcon />}>Initialize spaship.yaml </ListItem>
                           <Pre>
@@ -156,7 +158,7 @@ const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, act
     else {
         return (
             <Body {...meta}>
-              <Tabs activeKey={activeTabKey} onSelect={handleTab} isBox aria-label="Tabs for SPA information">
+              <Tabs activeKey={activeTabKey} onSelect={handleTab} aria-label="Tabs for SPA information">
                 <Tab
                   eventKey={0}
                   title={
@@ -182,6 +184,19 @@ const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, act
                   }
                 >
                   <ActivityStream webprop={activites}></ActivityStream>
+                </Tab>
+                <Tab
+                  eventKey={2}
+                  title={
+                    <>
+                      <TabTitleIcon>
+                        <CogsIcon />
+                      </TabTitleIcon>
+                      <TabTitleText>Settings</TabTitleText>
+                    </>
+                  }
+                >
+                  This is the settings page
                 </Tab>
               </Tabs>
             </Body>
