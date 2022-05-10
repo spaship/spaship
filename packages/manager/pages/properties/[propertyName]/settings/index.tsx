@@ -3,11 +3,12 @@ import {
   CardBody,
   CardTitle,
   List,
-  ListItem
+  ListItem,
+  Text
 } from "@patternfly/react-core";
 import { getSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import React, { FunctionComponent } from "react";
+import React from "react";
 import styled from "styled-components";
 import Body from "../../../../components/layout/body";
 import { AnyProps, ContextProps, Properties } from "../../../../components/models/props";
@@ -15,10 +16,9 @@ import ApiKey from "../../../../components/settings/apiKey";
 import CreateEnv from "../../../../components/settings/createEnv";
 import DeleteSpa from "../../../../components/settings/deleteSpa";
 import EnvList from "../../../../components/settings/envList";
-import ManageSpa from "../../../../components/settings/manageSpa";
 import { get, post } from "../../../../utils/api.utils";
 import { ComponentWithAuth } from "../../../../utils/auth.utils";
-import { getSpashipNotificationTimeout } from "../../../../utils/config.utils";
+import { getHost, getSpashipNotificationTimeout } from "../../../../utils/config.utils";
 import { getEventAnalyticsUrl, getPropertyList } from "../../../../utils/endpoint.utils";
 
 export const getServerSideProps = async (context: ContextProps) => {
@@ -37,12 +37,31 @@ export const getServerSideProps = async (context: ContextProps) => {
     const [spaCountResponse, propertyListResponse]: AnyProps = response;
     const finalPropertyList = propertyListResponse.filter((prop: any) => prop.propertyName === propertyReq);
     if (!spaCountResponse) {
-      return { props: { webprop: { propertyListResponse: finalPropertyList, spashipNotificationTimeout: spashipNotificationTimeout } } };
+      return { 
+        props: 
+        { 
+          webprop: 
+          { 
+            propertyListResponse: finalPropertyList, 
+            spashipNotificationTimeout: spashipNotificationTimeout,
+            baseUrl: getHost(),
+          } 
+        } 
+      };
     }
     return {
-      props: { webprop: { spaCountResponse: spaCountResponse, propertyListResponse: finalPropertyList, spashipNotificationTimeout: spashipNotificationTimeout } },
+      props: { 
+        webprop: 
+        { 
+          spaCountResponse: spaCountResponse, 
+          propertyListResponse: finalPropertyList, 
+          spashipNotificationTimeout: spashipNotificationTimeout,
+          baseUrl: getHost(),
+        }
+      },
     };
   } catch (error) {
+    // TODO: Add logger to log error
     return { props: {} };
   }
 };
@@ -53,7 +72,14 @@ const StyledList = styled(List)`
 
 const StyledCard = styled(Card)`
   max-width: var(--spaship-table-container-max-width);
+  margin-bottom: 2rem;
 `;
+
+const StyledText = styled(Text)`
+  color: var(--pf-global--danger-color--200);
+  margin-left: 0.5rem;
+`;
+
 
 const SettingsPage: ComponentWithAuth<Properties> = ({ webprop }: Properties) => {
   const router = useRouter();
@@ -62,14 +88,26 @@ const SettingsPage: ComponentWithAuth<Properties> = ({ webprop }: Properties) =>
 
   return (
     <Body {...meta}>
-      <ManageSpa webprop={webprop?.spaCountResponse} />
-      <EnvList webprop={webprop?.propertyListResponse} />
+      <EnvList webprop={webprop?.propertyListResponse} baseUrl={webprop.baseUrl} />
       <StyledCard>
-        <CardTitle>Settings - Here be dragons!</CardTitle>
+        <CardTitle>
+          Configuration
+        </CardTitle>
         <CardBody>
           <StyledList isPlain>
             <ListItem> <CreateEnv webprop={{ propertyListResponse: webprop?.propertyListResponse, spashipNotificationTimeout: webprop?.spashipNotificationTimeout }} /> </ListItem>
             <ListItem> <ApiKey webprop={{ spashipNotificationTimeout: webprop?.spashipNotificationTimeout }} /> </ListItem>
+          </StyledList>
+        </CardBody>
+      </StyledCard>
+      <StyledCard>
+        <CardTitle>
+          <StyledText>
+            Here be dragons!
+          </StyledText>
+        </CardTitle>
+        <CardBody>
+          <StyledList isPlain>
             <ListItem><DeleteSpa /> </ListItem>
           </StyledList>
         </CardBody>

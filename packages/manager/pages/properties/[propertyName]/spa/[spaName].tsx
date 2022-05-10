@@ -78,13 +78,6 @@ export const getServerSideProps = async (context: ContextProps) => {
     }
     const axisValues: AnyProps = [];
     getMaxAxisValues(maxAxisValue, axisValues);
-
-    //  console.log(processedMonthlyDeployments)
-    // for (let i = 0; i < processedMonthlyDeployments.length; i++) {
-    //   console.log("Here")
-    //   console.log(processedMonthlyDeployments.length)
-    //   console.log(processedMonthlyDeployments[i])
-    // }
     return {
       props: {
         activites: activitesResponse,
@@ -120,7 +113,6 @@ const SPAProperties: ComponentWithAuth<SPAIndexProps> = ({
       <Tabs
         activeKey={activeTabKey}
         onSelect={handleTab}
-        isBox
         aria-label="Tabs for users and containers">
         <Tab
           eventKey={0}

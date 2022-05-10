@@ -1,4 +1,4 @@
-import { Gallery, Tab, Tabs, TabTitleIcon, TabTitleText, Title } from "@patternfly/react-core";
+import { Flex, FlexItem, Gallery, SearchInput, Select, SelectOption, SelectVariant, Tab, Tabs, TabTitleIcon, TabTitleText, Title } from "@patternfly/react-core";
 import { getSession } from "next-auth/react";
 import Body from "../../components/layout/body";
 import { AnyProps, Properties } from "../../components/models/props";
@@ -7,10 +7,6 @@ import WebProperty from "../../components/web-property/webProperty";
 import { get, post } from "../../utils/api.utils";
 import { getAllEventCountUrl, getPropertyList } from "../../utils/endpoint.utils";
 import { ComponentWithAuth } from "../../utils/auth.utils";
-import {
-  CubeIcon,
-  CubesIcon 
-} from "@patternfly/react-icons";
 import styled from "styled-components";
 import { useState } from "react";
 
@@ -63,45 +59,74 @@ export const getServerSideProps = async (context: any) => {
 };
 
 const PropertiesList: ComponentWithAuth<PropertiesListProps> = ({ webprop }: AnyProps) => {
-  const [activeTabKey, setActiveTabKey] = useState(0);
-  const handleTab = (_event: any, tabIndex: any) => {
-    setActiveTabKey(tabIndex); 
+  const propertiesOptions = [
+    {
+      title: "All Properties",
+      disabled: false,
+    },
+    {
+      title: "My Properties",
+      disabled: false,
+    },
+    {
+      title: "Other Properties",
+      disabled: false,
+    }
+  ];
+  const [selectedProperty, setSelectedProperty] = useState(propertiesOptions[0].title);
+  const onSelect = (_event : any, selection: any) => {
+    setSelectedProperty(selection);
+    onToggle();
+  };
+  const [isOpen, setIsOpen] = useState(false);
+  const onToggle = () => {
+    setIsOpen(!isOpen);
   };
   return (
     <Body {...meta}>
-        <Tabs isBox activeKey={activeTabKey} onSelect={handleTab} aria-label="Tabs for My Properties and Other Properties">
-          <Tab
-            eventKey={0}
-            title={
-              <>
-                <TabTitleIcon>
-                  <CubeIcon />
-                </TabTitleIcon>
-                <TabTitleText>My Properties</TabTitleText>
-              </>
-            }
+      <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
+        <FlexItem>
+          {/* TODO: Add search here */}
+        </FlexItem>
+        <FlexItem>
+          <Select
+            variant={SelectVariant.single}
+            aria-label="Select Input to filter properties"
+            onToggle={onToggle}
+            onSelect={onSelect}
+            selections={selectedProperty}
+            isOpen={isOpen}
+            aria-labelledby="select-input"
           >
-            <StyledGallery hasGutter>
-              <AddProperty></AddProperty>
-              <WebProperty webprop={webprop?.myWebProperties}></WebProperty>
-            </StyledGallery>
-          </Tab>
-          <Tab
-            eventKey={1}
-            title={
-              <>
-                <TabTitleIcon>
-                  <CubesIcon />
-                </TabTitleIcon>
-                <TabTitleText>Other Properties</TabTitleText>
-              </>
-            }
-          >
-            <StyledGallery hasGutter>
-              <WebProperty webprop={webprop?.allWebproperties}></WebProperty>
-            </StyledGallery>
-          </Tab>
-        </Tabs>
+            {propertiesOptions.map((option, index) => (
+              <SelectOption
+                isDisabled={option.disabled}
+                key={index}
+                value={option.title}
+              />
+            ))}
+          </Select>
+        </FlexItem>
+      </Flex>
+      <StyledGallery hasGutter>
+        <AddProperty></AddProperty>
+        {
+          selectedProperty === propertiesOptions[0].title ? <>
+            <WebProperty webprop={webprop?.myWebProperties}></WebProperty>
+            <WebProperty webprop={webprop?.allWebproperties}></WebProperty>
+            </> : <></>
+        }
+        {
+          selectedProperty === propertiesOptions[1].title ? <>
+            <WebProperty webprop={webprop?.myWebProperties}></WebProperty>
+            </> : <></>
+        }
+        {
+          selectedProperty === propertiesOptions[2].title ? <>
+            <WebProperty webprop={webprop?.allWebproperties}></WebProperty>
+            </> : <></>
+        }
+      </StyledGallery>
     </Body>
   );
 };
