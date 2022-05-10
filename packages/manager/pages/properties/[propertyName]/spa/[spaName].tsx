@@ -58,30 +58,38 @@ export const getServerSideProps = async (context: ContextProps) => {
     let count = 0;
     if (totalDeploymentsResponse) {
       for (let item of totalDeploymentsResponse) {
-        count = processTotalDeployments(item, count, chartData, labelData);
+        count = getProcessTotalDeployments(item, count, chartData, labelData);
       }
     }
-    const processedMonthlyDeployments = [];
     const legendData = [];
     let tempLegendData: AnyProps = new Set();
-    for (const item in monthlyDeploymentResponse) {
-      const data = monthlyDeploymentResponse[item];
-      const temp = [];
-      let i = 1;
-      for (const prop of data) {
-        tempLegendData.add(prop.envs);
-        temp.push({ name: prop.envs, x: `week ${i++}`, y: prop?.count });
-      }
-      processedMonthlyDeployments.push(temp);
+    const axisFrame = [];
+    let recentDate = new Date();
+    for (let i = 1; i <= 4; i++) {
+      const startDate = new Date(recentDate);
+      startDate.setDate(recentDate.getDate() - 7);
+      const axisTick = startDate.getDate() + "-" + startDate.toLocaleDateString('en-us', { month: 'long' });
+      axisFrame.push(axisTick);
+      recentDate = startDate;
     }
+    const { maxAxisValue, processedMonthlyDeployments } = getProcessedMonthlyDeployments(monthlyDeploymentResponse, tempLegendData, axisFrame);
     for (let env of tempLegendData) {
       legendData.push({ name: env });
     }
+    const axisValues: AnyProps = [];
+    getMaxAxisValues(maxAxisValue, axisValues);
+
+    //  console.log(processedMonthlyDeployments)
+    // for (let i = 0; i < processedMonthlyDeployments.length; i++) {
+    //   console.log("Here")
+    //   console.log(processedMonthlyDeployments.length)
+    //   console.log(processedMonthlyDeployments[i])
+    // }
     return {
       props: {
         activites: activitesResponse,
         totalDeployments: { chartData: chartData, labelData: labelData, count: count },
-        monthlyDeployments: { processedMonthlyDeployments: processedMonthlyDeployments, legendData: legendData },
+        monthlyDeployments: { processedMonthlyDeployments: processedMonthlyDeployments, legendData: legendData, axisValues: axisValues, axisFrame: axisFrame.reverse() },
       },
     };
   } catch (error) {
@@ -101,7 +109,7 @@ const SPAProperties: ComponentWithAuth<SPAIndexProps> = ({
   };
   const [activeTabKey, setActiveTabKey] = useState(0);
   const handleTab = (_event: any, tabIndex: any) => {
-    setActiveTabKey(tabIndex); 
+    setActiveTabKey(tabIndex);
   };
   const router = useRouter();
   const propertyName = router.query.propertyName || "";
@@ -109,22 +117,22 @@ const SPAProperties: ComponentWithAuth<SPAIndexProps> = ({
   const meta = getHeaderData(propertyName, spaName);
   return (
     <Body {...meta}>
-       <Tabs
-        activeKey={activeTabKey} 
-        onSelect={handleTab} 
-        isBox 
+      <Tabs
+        activeKey={activeTabKey}
+        onSelect={handleTab}
+        isBox
         aria-label="Tabs for users and containers">
-          <Tab
-            eventKey={0}
-            title={
-              <>
-                <TabTitleIcon>
-                  <PackageIcon />
-                </TabTitleIcon>
-                <TabTitleText>Deployments Dashboard</TabTitleText>
-              </>
-            }
-          >
+        <Tab
+          eventKey={0}
+          title={
+            <>
+              <TabTitleIcon>
+                <PackageIcon />
+              </TabTitleIcon>
+              <TabTitleText>Deployments Dashboard</TabTitleText>
+            </>
+          }
+        >
           <StyledGallery hasGutter maxWidths={maxWidths}>
             <GalleryItem>
               <TotalDeployment webprop={totalDeployments}></TotalDeployment>{" "}
@@ -133,24 +141,59 @@ const SPAProperties: ComponentWithAuth<SPAIndexProps> = ({
               <DeploymentWeek webprop={monthlyDeployments}></DeploymentWeek>{" "}
             </GalleryItem>
           </StyledGallery>
-          </Tab>
-          <Tab
-            eventKey={1}
-            title={
-              <>
-                <TabTitleIcon>
-                  <RunningIcon />
-                </TabTitleIcon>
-                <TabTitleText>Deployment Log</TabTitleText>
-              </>
-            }
-          >
-            <ActivityStream webprop={activites}></ActivityStream>
-          </Tab>
-        </Tabs>
+        </Tab>
+        <Tab
+          eventKey={1}
+          title={
+            <>
+              <TabTitleIcon>
+                <RunningIcon />
+              </TabTitleIcon>
+              <TabTitleText>Deployment Log</TabTitleText>
+            </>
+          }
+        >
+          <ActivityStream webprop={activites}></ActivityStream>
+        </Tab>
+      </Tabs>
     </Body>
   );
 };
+
+function getMaxAxisValues(maxAxisValue: number, axisValues: any[]) {
+  if (maxAxisValue != 0) {
+    axisValues.push(maxAxisValue);
+    axisValues.push(Math.floor(maxAxisValue / 3) * 2);
+    axisValues.push(Math.floor(maxAxisValue / 3));
+  }
+}
+
+function getProcessedMonthlyDeployments(monthlyDeploymentResponse: any, tempLegendData: any, axisFrame: any) {
+  let maxAxisValue = 0;
+  const processedMonthlyDeployments = [];
+  for (const item in monthlyDeploymentResponse) {
+    const data = monthlyDeploymentResponse[item];
+    const temp = [];
+    let currentEnv;
+    for (const prop of data) {
+      currentEnv = prop.env;
+      tempLegendData.add(prop.env);
+      const startDate = new Date(prop.startDate);
+      const axisTick = startDate.getDate() + "-" + startDate.toLocaleDateString('en-us', { month: 'long' });
+      temp.push({ name: prop.env, x: axisTick, y: prop?.count });
+      maxAxisValue = Math.max(maxAxisValue, prop?.count);
+    }
+    for (let axis of axisFrame) {
+      const checkAxis = temp.find(legend => legend.x === axis);
+      if (!checkAxis) {
+        temp.push({ name: currentEnv, x: axis, y: 0 })
+        console.log(temp);
+      }
+    }
+    processedMonthlyDeployments.push(temp);
+  }
+  return { maxAxisValue, processedMonthlyDeployments };
+}
 
 function getHeaderData(propertyName: string | string[], spaName: string | string[] | undefined) {
   return {
@@ -177,7 +220,7 @@ function getPropertyReq(context: AnyProps) {
   return context.params.propertyName;
 }
 
-function processTotalDeployments(item: AnyProps, count: number, chartData: AnyProps, labelData: AnyProps) {
+function getProcessTotalDeployments(item: AnyProps, count: number, chartData: AnyProps, labelData: AnyProps) {
   const value = JSON.parse(JSON.stringify(item));
   count += value.count;
   const dataPoint = {
