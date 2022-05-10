@@ -58,17 +58,11 @@ export const getServerSideProps = async (context: ContextProps) => {
     let count = 0;
     if (totalDeploymentsResponse) {
       for (let item of totalDeploymentsResponse) {
-        count = processTotalDeployments(item, count, chartData, labelData);
+        count = getProcessTotalDeployments(item, count, chartData, labelData);
       }
     }
     const legendData = [];
     let tempLegendData: AnyProps = new Set();
-    const { maxAxisValue, processedMonthlyDeployments } = getProcessedMonthlyDeployments(monthlyDeploymentResponse, tempLegendData);
-    for (let env of tempLegendData) {
-      legendData.push({ name: env });
-    }
-    const axisValues: AnyProps = [];
-    getMaxAxisValues(maxAxisValue, axisValues);
     const axisFrame = [];
     let recentDate = new Date();
     for (let i = 1; i <= 4; i++) {
@@ -78,11 +72,24 @@ export const getServerSideProps = async (context: ContextProps) => {
       axisFrame.push(axisTick);
       recentDate = startDate;
     }
+    const { maxAxisValue, processedMonthlyDeployments } = getProcessedMonthlyDeployments(monthlyDeploymentResponse, tempLegendData, axisFrame);
+    for (let env of tempLegendData) {
+      legendData.push({ name: env });
+    }
+    const axisValues: AnyProps = [];
+    getMaxAxisValues(maxAxisValue, axisValues);
+
+    //  console.log(processedMonthlyDeployments)
+    // for (let i = 0; i < processedMonthlyDeployments.length; i++) {
+    //   console.log("Here")
+    //   console.log(processedMonthlyDeployments.length)
+    //   console.log(processedMonthlyDeployments[i])
+    // }
     return {
       props: {
         activites: activitesResponse,
         totalDeployments: { chartData: chartData, labelData: labelData, count: count },
-        monthlyDeployments: { processedMonthlyDeployments: processedMonthlyDeployments, legendData: legendData, axisValues: axisValues, axisFrame: axisFrame },
+        monthlyDeployments: { processedMonthlyDeployments: processedMonthlyDeployments, legendData: legendData, axisValues: axisValues, axisFrame: axisFrame.reverse() },
       },
     };
   } catch (error) {
@@ -161,19 +168,27 @@ function getMaxAxisValues(maxAxisValue: number, axisValues: any[]) {
   }
 }
 
-function getProcessedMonthlyDeployments(monthlyDeploymentResponse: any, tempLegendData: any) {
+function getProcessedMonthlyDeployments(monthlyDeploymentResponse: any, tempLegendData: any, axisFrame: any) {
   let maxAxisValue = 0;
   const processedMonthlyDeployments = [];
   for (const item in monthlyDeploymentResponse) {
     const data = monthlyDeploymentResponse[item];
     const temp = [];
-    let i = 1;
+    let currentEnv;
     for (const prop of data) {
+      currentEnv = prop.env;
       tempLegendData.add(prop.env);
       const startDate = new Date(prop.startDate);
       const axisTick = startDate.getDate() + "-" + startDate.toLocaleDateString('en-us', { month: 'long' });
       temp.push({ name: prop.env, x: axisTick, y: prop?.count });
       maxAxisValue = Math.max(maxAxisValue, prop?.count);
+    }
+    for (let axis of axisFrame) {
+      const checkAxis = temp.find(legend => legend.x === axis);
+      if (!checkAxis) {
+        temp.push({ name: currentEnv, x: axis, y: 0 })
+        console.log(temp);
+      }
     }
     processedMonthlyDeployments.push(temp);
   }
@@ -205,7 +220,7 @@ function getPropertyReq(context: AnyProps) {
   return context.params.propertyName;
 }
 
-function processTotalDeployments(item: AnyProps, count: number, chartData: AnyProps, labelData: AnyProps) {
+function getProcessTotalDeployments(item: AnyProps, count: number, chartData: AnyProps, labelData: AnyProps) {
   const value = JSON.parse(JSON.stringify(item));
   count += value.count;
   const dataPoint = {
