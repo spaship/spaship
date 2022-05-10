@@ -18,7 +18,6 @@ import {
   AutomationIcon, 
   BundleIcon, 
   CogIcon, 
-  CogsIcon, 
   CubeIcon, 
   CubesIcon,
   KeyIcon, 
@@ -184,19 +183,6 @@ const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, act
                   }
                 >
                   <ActivityStream webprop={activites}></ActivityStream>
-                </Tab>
-                <Tab
-                  eventKey={2}
-                  title={
-                    <>
-                      <TabTitleIcon>
-                        <CogsIcon />
-                      </TabTitleIcon>
-                      <TabTitleText>Settings</TabTitleText>
-                    </>
-                  }
-                >
-                  This is the settings page
                 </Tab>
               </Tabs>
             </Body>

@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
-import { Breadcrumb, BreadcrumbItem, Button, Flex, FlexItem, Title } from "@patternfly/react-core";
+import { Breadcrumb, BreadcrumbItem, Button, Flex, FlexItem, Label, Title } from "@patternfly/react-core";
 import styled from "styled-components";
-import { ArrowLeftIcon, CogIcon } from "@patternfly/react-icons";
+import { ArrowLeftIcon, CogsIcon } from "@patternfly/react-icons";
 import router from "next/router";
 
 interface LinkProps {
@@ -77,7 +77,9 @@ const Header: FunctionComponent<HeaderProps> = ({ breadcrumbs = [], buttons = []
                     router.push(settings);
                   }}
                 >
-                  <CogIcon />
+                  <Label icon={<CogsIcon />}>
+                    <span>Settings/Environments</span>
+                  </Label>
                 </a>
               </FlexItem>
             ) : (
