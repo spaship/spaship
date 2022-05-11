@@ -53,6 +53,10 @@ const StyledText = styled(Text)`
   --pf-c-content--h2--FontWeight: 100;
 `;
 
+const StyledSpan = styled.span`
+  margin-left: 0.25rem;
+`;
+
 const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -135,7 +139,12 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
             </StyledFlexItem>
             <FlexItem>
               <StyledText component={TextVariants.h4}>
-                You can deploy in this environment
+                Create new environment for property :
+                <StyledSpan>
+                  { webprop?.propertyListResponse[0]?.propertyName.length > 15 
+                  ? `${webprop?.propertyListResponse[0]?.propertyName.substring(0, 15)}...` 
+                  : webprop?.propertyListResponse[0]?.propertyName }
+                </StyledSpan>
               </StyledText>
             </FlexItem>
           </Flex>

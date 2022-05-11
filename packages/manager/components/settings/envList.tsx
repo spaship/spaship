@@ -15,14 +15,14 @@ import {
 } from "@patternfly/react-table";
 import React, { FunctionComponent, useState } from "react";
 import styled from "styled-components";
-import { AnyProps } from "../models/props";
+import { AnyProps, Properties } from "../models/props";
 
 const StyledCard = styled(Card)`
   max-width: var(--spaship-table-container-max-width);
   margin-bottom: 2rem;
 `;
 
-const EnvList: FunctionComponent<AnyProps> = ({ webprop, baseUrl }: AnyProps) => {
+const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
   const [switchState, setSwitchState] = useState(true);
   const handleChange = () => {
     // TODO: implement logic to toggle spa
@@ -49,7 +49,7 @@ const EnvList: FunctionComponent<AnyProps> = ({ webprop, baseUrl }: AnyProps) =>
                   {new Date(env.createdAt).toUTCString().substr(0, 25)}
                 </Text></Td>
                 <Td>
-                  {baseUrl}/application/deploy/{env?.propertyName}/{env?.env}
+                  {window.location.origin}/api/v1/application/deploy/{env?.propertyName}/{env?.env}
                 </Td>
                 {/* TODO: Add once feature is available
                 <Td dataLabel={env.env}>
