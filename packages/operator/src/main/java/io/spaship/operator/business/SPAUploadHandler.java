@@ -109,9 +109,10 @@ public class SPAUploadHandler {
 
   }
 
-  private Triplet<String, UUID, Path> spaMappingIntoMemory(Triplet<Path, Pair<String, UUID>, String> input) {
+  private Triplet<SpashipMapping, UUID, Path> spaMappingIntoMemory(Triplet<Path, Pair<String, UUID>, String> input) {
     Path absoluteFilePath = input.getValue0();
     LOG.debug("absolute absoluteFilePath is {}", absoluteFilePath);
+    SpashipMapping spaMapping;
 
     File spaDistribution = new File(absoluteFilePath.toUri());
     String spaMappingReference = null;
@@ -122,6 +123,7 @@ public class SPAUploadHandler {
       Objects.requireNonNull(inputStream, ReUsableItems.getSpashipMappingFileName() + " not found");
       try (inputStream) {
         spaMappingReference = IOUtils.toString(inputStream, Charset.defaultCharset());
+        spaMapping = mappingFromString(spaMappingReference);
       }
     } catch (Exception e) {
       eventManager.queue(
@@ -131,6 +133,7 @@ public class SPAUploadHandler {
           .uuid(input.getValue1().getValue1())
           .state("failed to process zip file due to ".concat(e.getMessage()))
           .spaName(input.getValue1().getValue0())
+          .contextPath("NF")
           .build()
       );
       throw new ZipFileProcessException(e);
@@ -142,23 +145,34 @@ public class SPAUploadHandler {
         .uuid(input.getValue1().getValue1())
         .state("mapping file loaded into memory")
         .spaName(input.getValue1().getValue0())
+        .contextPath(Objects.isNull(spaMapping)?"NF":spaMapping.getContextPath())
         .build());
-    var output = new Triplet<>(spaMappingReference, input.getValue1().getValue1(), input.getValue0());
+    var output = new Triplet<>(spaMapping, input.getValue1().getValue1(), input.getValue0());
     LOG.debug("output of spaMappingIntoMemory  {} ", output);
     return output;
   }
 
-  private List<Environment> buildEnvironmentList(Triplet<String, UUID, Path> input) {
-    SpashipMapping spaMapping;
+  public SpashipMapping mappingFromString (String input){
+    SpashipMapping spaMapping = null;
     try {
-      spaMapping = new SpashipMapping(input.getValue0());
+      spaMapping = new SpashipMapping(input);
     } catch (Exception e) {
-      eventManager.queue(
-        EventStructure.builder()
+      LOG.error("failed to parse SpashipMapping, please check the .sapship file, error message {}",e.getMessage());
+      return null;
+    }
+
+    return spaMapping;
+  }
+
+  private List<Environment> buildEnvironmentList(Triplet<SpashipMapping, UUID, Path> input) {
+    SpashipMapping spaMapping = input.getValue0();
+
+    if(Objects.isNull(spaMapping)) {
+      eventManager.queue(EventStructure.builder()
           .websiteName("NF")
           .environmentName("NA")
           .uuid(input.getValue1())
-          .state("failed to parse .spaship file")
+          .state("failed to parse .spaship file, check app log")
           .build());
       return Collections.emptyList();
     }
@@ -204,7 +218,7 @@ public class SPAUploadHandler {
       }).orElse(null);
   }
 
-  private Environment constructEnvironmentObject(Triplet<String, UUID, Path> input, SpashipMapping spaMapping,
+  private Environment constructEnvironmentObject(Triplet<SpashipMapping, UUID, Path> input, SpashipMapping spaMapping,
                                                  HashMap<String, Object> environmentMapping) {
     var envName = environmentMapping.get("name").toString();
     var websiteName = Objects.isNull(spaMapping.getWebsiteName()) ?
