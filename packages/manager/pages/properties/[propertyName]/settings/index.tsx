@@ -18,7 +18,7 @@ import DeleteSpa from "../../../../components/settings/deleteSpa";
 import EnvList from "../../../../components/settings/envList";
 import { get, post } from "../../../../utils/api.utils";
 import { ComponentWithAuth } from "../../../../utils/auth.utils";
-import { getHost, getSpashipNotificationTimeout } from "../../../../utils/config.utils";
+import { getSpashipNotificationTimeout } from "../../../../utils/config.utils";
 import { getEventAnalyticsUrl, getPropertyList } from "../../../../utils/endpoint.utils";
 
 export const getServerSideProps = async (context: ContextProps) => {
@@ -44,7 +44,6 @@ export const getServerSideProps = async (context: ContextProps) => {
           { 
             propertyListResponse: finalPropertyList, 
             spashipNotificationTimeout: spashipNotificationTimeout,
-            baseUrl: getHost(),
           } 
         } 
       };
@@ -56,7 +55,6 @@ export const getServerSideProps = async (context: ContextProps) => {
           spaCountResponse: spaCountResponse, 
           propertyListResponse: finalPropertyList, 
           spashipNotificationTimeout: spashipNotificationTimeout,
-          baseUrl: getHost(),
         }
       },
     };
@@ -88,7 +86,7 @@ const SettingsPage: ComponentWithAuth<Properties> = ({ webprop }: Properties) =>
 
   return (
     <Body {...meta}>
-      <EnvList webprop={webprop?.propertyListResponse} baseUrl={webprop.baseUrl} />
+      <EnvList webprop={webprop?.propertyListResponse} />
       <StyledCard>
         <CardTitle>
           Configuration
