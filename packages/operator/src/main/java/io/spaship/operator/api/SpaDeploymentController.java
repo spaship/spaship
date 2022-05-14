@@ -3,7 +3,6 @@ package io.spaship.operator.api;
 
 import io.spaship.operator.business.SPAUploadHandler;
 import io.spaship.operator.exception.ValidationException;
-import io.spaship.operator.exception.ZipFileProcessException;
 import io.spaship.operator.repo.SharedRepository;
 import io.spaship.operator.type.FormData;
 import io.vertx.core.json.JsonObject;
