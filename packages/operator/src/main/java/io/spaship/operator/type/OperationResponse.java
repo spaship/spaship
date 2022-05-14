@@ -2,6 +2,7 @@ package io.spaship.operator.type;
 
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 public class OperationResponse {
@@ -28,6 +29,12 @@ public class OperationResponse {
 
   public Environment getEnvironment() {
     return this.environment;
+  }
+
+  public String getContextPath() {
+    return Optional.ofNullable(
+        this.environment.getSpaContextPath()).orElse("NF"
+      );
   }
 
   public String getSpaName() {

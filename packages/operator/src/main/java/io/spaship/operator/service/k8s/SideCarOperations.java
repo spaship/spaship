@@ -134,6 +134,8 @@ public class SideCarOperations {
       .subscribeAsCompletionStage()
       .get();
 
+    LOG.info("computed context path by sidecar container is {}",opResp.getContextPath());
+
     eventManager.queue(
       EventStructure.builder()
         .websiteName(opResp.getEnvironment().getWebsiteName())
@@ -142,6 +144,7 @@ public class SideCarOperations {
         .state(opResp.getErrorMessage() == null ?
           "spa deployment ops performed" : "spa deployment ops failed")
         .spaName(operationResponse.getSpaName())
+        .contextPath(operationResponse.getContextPath())
         .build());
 
     return opResp;
