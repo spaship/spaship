@@ -135,7 +135,7 @@ const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, act
                           <ListItem icon={<CogIcon />}>Install spaship cli in your local system</ListItem>
                           <ListItem icon={<KeyIcon /> }>Setup your environment</ListItem>
                           <Pre>
-                            {`$ spaship env -name=<new-env-name> -url=${window.location.origin}/application/deploy/${propertyName}/<env-name> -apikey=<your-api-key>`}
+                            {`$ spaship env -name=<new-env-name> -url=${window.location.origin}/applications/deploy/${propertyName}/<env-name> -apikey=<your-api-key>`}
                           </Pre>
                           <ListItem icon={<AutomationIcon />}>Initialize spaship.yaml </ListItem>
                           <Pre>
