@@ -49,7 +49,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
                   {new Date(env.createdAt).toUTCString().substr(0, 25)}
                 </Text></Td>
                 <Td>
-                  {window.location.origin}/api/v1/application/deploy/{env?.propertyName}/{env?.env}
+                  {window.location.origin}/api/v1/applications/deploy/{env?.propertyName}/{env?.env}
                 </Td>
                 {/* TODO: Add once feature is available
                 <Td dataLabel={env.env}>
