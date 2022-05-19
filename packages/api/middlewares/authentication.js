@@ -9,7 +9,6 @@ const Unauthorized = require("../utils/errors/Unauthorized");
 
 module.exports = () => {
   return async (req, res, next) => {
-    //return next();
     const apiKey = APIKeyService.getAPIKeyFromRequest(req);
 
     // If an API key was provided, try to validate it.  Except on the /apiKeys endpoint.  API keys cannot be used to
@@ -46,6 +45,7 @@ module.exports = () => {
     };
 
     let token = extractToken(req);
+    let shortApiKey = true;
     let error = false;
     let success = false;
 
@@ -53,6 +53,7 @@ module.exports = () => {
       const result = await APIKey.findOne({ userId: token });
       if (result != null) {
         token = result.hashKey;
+        shortApiKey = true;
       }
     } catch (e) {
       console.log(e);
@@ -65,6 +66,14 @@ module.exports = () => {
           error = true;
         }
       } else {
+        if (shortApiKey == true) {
+          const propertyName = req.params?.propertyName;
+          if (propertyName != data.propertyName) {
+            error = true;
+            res.status(400).json({ message: "Invalid APIkey for property" });
+            return;
+          }
+        }
         success = true;
         return next();
       }
