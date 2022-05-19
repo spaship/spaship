@@ -70,7 +70,7 @@ module.exports = () => {
           const propertyName = req.params?.propertyName;
           if (propertyName != data.propertyName) {
             error = true;
-            res.status(400).json({ message: "Invalid APIkey for property" });
+            res.status(403).json({ message: "Access denied" });
             return;
           }
         }
