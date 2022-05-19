@@ -6,10 +6,9 @@ const getWebPropertyList = require("../controllers/webProperties/getWebPropertyL
 const getAliasList = require("../controllers/webProperties/getAliasList");
 const gitOperations = require("../controllers/webProperties/gitOperations");
 const saveAlias = require("../controllers/operatorServices/saveAlias");
+const getPropertyDetails = require("../controllers/webPropertyServices/utils/getPropertyDetails");
 
 const router = new Router();
-
-
 
 router.post("/", gitOperations);
 
@@ -26,5 +25,9 @@ router.post("/alias", saveAlias);
 router.get("/alias/list", getAliasList);
 
 router.get("/alias/list/:name", getAliasList);
+
+router.get("/get/applications", getPropertyDetails.getPropertyDetails);
+
+router.get("/get/applications/:name", getPropertyDetails.getPropertyDetails);
 
 module.exports = router;
