@@ -11,6 +11,13 @@ const router = new Router();
 router.get("/", apiKey.list);
 
 /**
+ * Get all applications
+ * @return [application] application array
+ *
+ */
+router.get("/:propertyName", apiKey.propertyList);
+
+/**
  * Add an api key
  */
 router.post("/", apiKey.post);
