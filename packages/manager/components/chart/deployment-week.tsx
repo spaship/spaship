@@ -11,12 +11,13 @@ const ChartBorder = styled.div`
   opacity: 1;
 `;
 
-const dependentAxisTickValues = [10, 30, 50];
-const chartAxisTickValues = ["week 1", "week 2", "week 3", "week 4"];
 
 const DeploymentWeek: FunctionComponent<Properties> = ({ webprop }: Properties) => {
-  const chartData = webprop.processedMonthlyDeployments;
-  const legendData = webprop.legendData;
+  const dependentAxisTickValues = getDependentAxisTickValues(webprop);
+  const maxDomain = getMaxDomain(dependentAxisTickValues);
+  const chartAxisTickValues = getChartAxisTickValues(webprop);
+  const chartData = getChartData(webprop);
+  const legendData = getLegendData(webprop);
   const chartType = "month";
   const padding = {
     bottom: 50,
@@ -28,7 +29,7 @@ const DeploymentWeek: FunctionComponent<Properties> = ({ webprop }: Properties) 
     ariaTitle: "Deployments/Week",
     legendOrientation: "vertical",
     legendPosition: "right",
-    maxDomain: { y: 60 },
+    maxDomain: { y: maxDomain + (maxDomain / 3) },
     minDomain: { y: 0 },
     height: 250,
     width: 600,
@@ -71,3 +72,23 @@ const DeploymentWeek: FunctionComponent<Properties> = ({ webprop }: Properties) 
 };
 
 export default DeploymentWeek;
+function getLegendData(webprop: any) {
+  return webprop.legendData;
+}
+
+function getChartData(webprop: any) {
+  return webprop.processedMonthlyDeployments;
+}
+
+function getChartAxisTickValues(webprop: any) {
+  return webprop.axisFrame;
+}
+
+function getMaxDomain(dependentAxisTickValues: any) {
+  return dependentAxisTickValues[0] || 60;
+}
+
+function getDependentAxisTickValues(webprop: any) {
+  return webprop?.axisValues || [10, 30, 50];
+}
+

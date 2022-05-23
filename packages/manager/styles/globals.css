@@ -79,17 +79,18 @@ button.spaship_btn {
 }
 
 .spaship-circle {
+  display: grid;
+  place-content: center;
   border-radius: 50%;
-  width: 70px;
-  height: 70px;
-  margin-top: 25px;
-  margin-left: 25px;
+  width: 60px;
+  height: 60px;
   background: hsl(42, 98%, 54%);
   color: var(--spaship-global--Color--spaship-gray);
-  text-align: center;
   transition: color 0.2s linear;
-  font-size: 70px;
-  font-family: arial, sans-serif;
+}
+.spaship-wrapper {
+  display: flex;
+  justify-content: center;
 }
 
 .spaship-circle:hover {
@@ -97,11 +98,3 @@ button.spaship_btn {
   cursor: pointer;
 }
 
-.spaship-plus {
-  display: grid;
-  place-content: center;
-}
-
-.spaship-plus:hover {
-  color: var(--spaship-global--Color--bright-gray);
-}

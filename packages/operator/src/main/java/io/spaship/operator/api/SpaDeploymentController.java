@@ -2,7 +2,7 @@ package io.spaship.operator.api;
 
 
 import io.spaship.operator.business.SPAUploadHandler;
-import io.spaship.operator.exception.ZipFileProcessException;
+import io.spaship.operator.exception.ValidationException;
 import io.spaship.operator.repo.SharedRepository;
 import io.spaship.operator.type.FormData;
 import io.vertx.core.json.JsonObject;
@@ -39,7 +39,8 @@ public class SpaDeploymentController {
   @Consumes(MediaType.MULTIPART_FORM_DATA)
   public String uploadSPA(@MultipartForm FormData formData) {
     //[0]description[1]unique-trace-id
-    var response = sanity(formData);
+    sanity(formData);
+    var response = requestTagging(formData.website);
     //[0]file-path[1]unique-trace-id[2]website-name
     var fileUploadParams = new Triplet<>(formData.getfilePath(), response, formData.website);
     spaUploadHandlerService.handleFileUpload(fileUploadParams);
@@ -65,28 +66,40 @@ public class SpaDeploymentController {
   }
 
 
-  private Pair<String, UUID> sanity(FormData formData) {
+  private void sanity(FormData formData) {
 
     if (!formData.isFileValid())
-      throw new ZipFileProcessException("invalid file type");
+      throw new ValidationException("invalid file type");
 
     String description = formData.description;
     String fileName = formData.fileName();
     Long fileSize = formData.fileSize();
+    String website = formData.website;
     java.nio.file.Path path = formData.getfilePath();
 
-    Objects.requireNonNull(description, "description is missing from the request body");
-    Objects.requireNonNull(fileName, "file name not found");
-    Objects.requireNonNull(fileSize, "file size cannot be null");
-    Objects.requireNonNull(path, "unable to store the file");
-
-    if (description.isEmpty() || description.isBlank() || description.equals(" "))
+    if (Objects.isNull(description) || description.isEmpty() || description.isBlank()){
+      LOG.warn("description field value is not set");
       description = String.valueOf(LocalDateTime.now());
+    }
 
-    LOG.debug("file received description {} , name is {} , size {}, location {} \n",
+
+    Objects.requireNonNull(fileName, "file name not found");
+    Objects.requireNonNull(fileSize, "file size is not set");
+    Objects.requireNonNull(path, "no path found");
+    Objects.requireNonNull(website, "website attribute is not set");
+
+
+    if (website.isEmpty() || website.isBlank())
+      throw new ValidationException("website attribute is empty");
+
+    LOG.debug("FormData attributes after transformation  description {} , name is {} , size {}, location {} \n",
       description, fileName, fileSize, path);
+    formData.description = description;
+  }
+
+  private Pair<String, UUID> requestTagging(String param){
     UUID processId = UUID.randomUUID();
-    return new Pair<>(description, processId);
+    return new Pair<>(param, processId);
   }
 }
 

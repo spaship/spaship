@@ -136,8 +136,7 @@ public class Operator implements Operations {
   Map<String, String> searchCriteriaLabel(Environment environment) {
     return Map.of(MANAGED_BY, SPASHIP,
       WEBSITE, environment.getWebsiteName().toLowerCase(),
-      ENVIRONMENT, environment.getName().toLowerCase(),
-      "websiteVersion", environment.getWebsiteVersion().toLowerCase()
+      ENVIRONMENT, environment.getName().toLowerCase()
     );
   }
 
@@ -164,7 +163,8 @@ public class Operator implements Operations {
       "WEBSITE_VERSION", environment.getWebsiteVersion().toLowerCase(),
       "DOMAIN", domain,
       "APP_INSTANCE_PREFIX", appInstance,
-      "STORAGE_CLASS", ConfigProvider.getConfig().getValue("storage.class", String.class)
+      "STORAGE_CLASS", ConfigProvider.getConfig().getValue("storage.class", String.class),
+      "NS",environment.getNameSpace()
     );
     LOG.debug("building KubernetesList, templateParameters are as follows {}", templateParameters);
     return ((OpenShiftClient) k8sClient)

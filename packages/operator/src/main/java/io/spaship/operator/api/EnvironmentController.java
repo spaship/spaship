@@ -32,7 +32,6 @@ public class EnvironmentController {
     Objects.requireNonNull(environment.getName());
     Objects.requireNonNull(environment.getWebsiteName());
     Objects.requireNonNull(environment.getNameSpace());
-    Objects.requireNonNull(environment.getWebsiteVersion());
     return k8sOperator.deleteEnvironment(environment);
   }
 

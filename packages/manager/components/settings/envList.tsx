@@ -15,7 +15,7 @@ import {
 } from "@patternfly/react-table";
 import React, { FunctionComponent, useState } from "react";
 import styled from "styled-components";
-import { AnyProps, Properties, SPAProps } from "../models/props";
+import { AnyProps, Properties } from "../models/props";
 
 const StyledCard = styled(Card)`
   max-width: var(--spaship-table-container-max-width);
@@ -35,9 +35,10 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
         <TableComposable>
           <Thead>
             <Tr>
-              <Th>Env Name</Th>
-              <Th>Create at</Th>
-              <Th>Action</Th>
+              <Th>Name</Th>
+              <Th>Created</Th>
+              <Th>Url</Th>
+              {/* TODO: Add once feature is available <Th>Action</Th> */}
             </Tr>
           </Thead>
           <Tbody>
@@ -47,6 +48,10 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
                 <Td dataLabel={env.createdAt}> <Text component={TextVariants.small}>
                   {new Date(env.createdAt).toUTCString().substr(0, 25)}
                 </Text></Td>
+                <Td>
+                  {window.location.origin}/api/v1/applications/deploy/{env?.propertyName}/{env?.env}
+                </Td>
+                {/* TODO: Add once feature is available
                 <Td dataLabel={env.env}>
                   <Switch
                     id={env.env}
@@ -55,7 +60,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
                     onChange={handleChange}
                     isDisabled
                   />
-                </Td>
+                </Td> */}
               </Tr>
             ))}
           </Tbody>
