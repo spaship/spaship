@@ -67,77 +67,37 @@ module.exports.put = async (req, res, next) => {
 };
 
 module.exports.deploy = async (req, res, next) => {
-  if (getWebPropertyName(req)) {
-    const uploadBasePath = path.resolve(__dirname, `../${config.get("upload_dir")}`);
-    const formData = new FormData();
-    log.info(req);
-    try {
-      const fileStream = await fs.createReadStream(`${uploadBasePath}/${getFile(req)}`);
-      formData.append("spa", fileStream);
-      formData.append("description", getDescription(req));
-    } catch (err) {
-      log.error(err);
-      next(err);
-      return;
-    }
-    formData.append("website", getWebPropertyName(req));
-
-    try {
-      const response = await axios.post(config.get("cli:base_path"), formData, {
-        maxBodyLength: Infinity,
-        headers: formData.getHeaders(),
-      });
-      const currentTime = new Date();
-      const cliActivitiesRequest = new cliActivities({
-        id: uuid(),
-        fileName: req?.file?.filename,
-        webProperty: getWebPropertyName(req),
-        description: getDescription(req),
-        isActive: true,
-        createdAt: currentTime,
-        updatedAt: currentTime,
-      });
-      const cliActivitiesResponse = await cliActivitiesRequest.save();
-      res.send({
-        status: "SPA deployment process started into operator.",
-        message: response.data,
-        cliData: cliActivitiesResponse,
-      });
-      return;
-    } catch (err) {
-      log.error(err);
-      next(err);
-      return;
-    }
-  }
   const userId = getUserUUID(req);
   const name = getNameRequest(req);
   const ref = getRefRequest(req);
   const { path: appPath } = getRequestBody(req);
   const { path: spaArchive } = getPath(req);
-  const property = req.params.propertyName;
-  const env = req.params.env;
+  const propertyName = req.params?.propertyName;
+  const env = req.params?.env;
   const validateFileType = req.file.originalname.split(".").pop();
   if (validateFileType === "zip" || validateFileType === "tgz") {
     try {
-      await DeployService.deploy({
+      const response = await DeployService.deploy({
         name,
         spaArchive,
         appPath,
         ref,
-        property,
+        property: propertyName,
         env,
       });
 
-      const application = await Application.findOne({ name, path: appPath });
-      try {
-        if (application) {
-          await Application.updateOne({ name: name, path: appPath }, { ref });
-        } else {
-          await Application.create({ name: name, path: appPath, ref, userId });
+      if (response) {
+        const application = await Application.findOne({ propertyName, name, path: appPath, env });
+
+        try {
+          if (application) {
+            await Application.updateOne({ propertyName, name, path: appPath, env }, { ref });
+          } else {
+            await Application.create({ propertyName, name: name, path: appPath, ref, userId, env });
+          }
+        } catch (e) {
+          console.log(e);
         }
-      } catch (e) {
-        console.log(e);
       }
 
       res.status(201).send({
@@ -176,9 +136,11 @@ module.exports.delete = async (req, res, next) => {
 module.exports.validate = async (req, res, next) => {
   const expiration = req.body?.expiresIn || config.get("token:expiration");
   const secret = config.get("token:secret");
-  const token = jwt.sign({ createdAt: new Date(), expiresIn: expiration }, secret, {
+  const propertyName = req.body?.propertyName || "NA";
+  const token = jwt.sign({ createdAt: new Date(), expiresIn: expiration, propertyName: propertyName }, secret, {
     expiresIn: expiration,
   });
+  console.log(token);
   let result = null;
 
   if (req.body?.label == "spaship-cli-token") {
@@ -250,7 +212,6 @@ function getDescription(req) {
 }
 
 function getWebPropertyName(req) {
-
   return req?.body?.webPropertyName || false;
 }
 

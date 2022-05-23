@@ -38,6 +38,6 @@ router.delete("/:name", application.delete);
 /**
  * Deploy an application
  */
-router.post("/validate",  application.validate);
+router.post("/validate", application.validate);
 
 module.exports = router;

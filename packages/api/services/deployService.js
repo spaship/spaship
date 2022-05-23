@@ -71,7 +71,7 @@ async function deploy({ name, spaArchive, appPath, ref, property, env } = {}) {
           headers: formData.getHeaders(),
         });
         console.log(response?.data);
-        return;
+        return true;
       } catch (err) {
         console.log(err);
         next(err);

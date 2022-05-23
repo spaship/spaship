@@ -39,7 +39,12 @@ function getCode(state) {
 }
 
 async function createEventRequest(response) {
-  await response.save();
+  const result = await event.findOne({ traceId: response.traceId, env: response.code });
+  if (!result) {
+    await response.save();
+  } else {
+    console.log("Duplicate Entry");
+  }
 }
 
 async function createEventTimeTraceRequest(response) {

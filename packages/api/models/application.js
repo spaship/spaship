@@ -3,19 +3,29 @@ const Schema = mongoose.Schema;
 
 const ApplicationSchema = new Schema(
   {
+    propertyName: {
+      type: String,
+      required: true,
+    },
     name: {
       type: String,
       required: true,
       index: true,
-      unique: true,
     },
     path: {
       type: String,
       required: true,
       index: true,
-      unique: true,
     },
     userId: String,
+    env: {
+      type: String,
+      required: false,
+    },
+    ref: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,

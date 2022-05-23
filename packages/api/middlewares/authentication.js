@@ -9,9 +9,7 @@ const Unauthorized = require("../utils/errors/Unauthorized");
 
 module.exports = () => {
   return async (req, res, next) => {
-    //return next();
     const apiKey = APIKeyService.getAPIKeyFromRequest(req);
-
     // If an API key was provided, try to validate it.  Except on the /apiKeys endpoint.  API keys cannot be used to
     // create more API keys.
     if (apiKey && req.url.match(/^(?!\/v\d\/apiKeys)/)) {
@@ -46,6 +44,7 @@ module.exports = () => {
     };
 
     let token = extractToken(req);
+    let shortApiKey = false;
     let error = false;
     let success = false;
 
@@ -53,6 +52,7 @@ module.exports = () => {
       const result = await APIKey.findOne({ userId: token });
       if (result != null) {
         token = result.hashKey;
+        shortApiKey = true;
       }
     } catch (e) {
       console.log(e);
@@ -65,6 +65,14 @@ module.exports = () => {
           error = true;
         }
       } else {
+        if (shortApiKey == true) {
+          const props = req.originalUrl.split("/");
+          if (props[props.length - 2] != data.propertyName) {
+            error = true;
+            res.status(403).json({ message: "Access denied" });
+            return;
+          }
+        }
         success = true;
         return next();
       }
