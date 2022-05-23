@@ -22,6 +22,16 @@ const APIKeySchema = new Schema(
       required: true,
       unique: true,
     },
+    key: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    token: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     expiredDate: {
       type: Date,
       min: getExpiredDateMin(),
@@ -33,6 +43,6 @@ const APIKeySchema = new Schema(
   }
 );
 
-APIKeySchema.index({ label: 1, userId: 1 }, { unique: true });
+APIKeySchema.index({ label: 1, key: 1 }, { unique: true });
 
 module.exports = mongoose.model("APIKey", APIKeySchema);
