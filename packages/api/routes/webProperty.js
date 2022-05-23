@@ -24,10 +24,12 @@ router.post("/alias", saveAlias);
 
 router.get("/alias/list", getAliasList);
 
-router.get("/alias/list/:name", getAliasList);
+router.get("/alias/list/:propertyName", getAliasList);
 
 router.get("/get/applications", getPropertyDetails.getPropertyDetails);
 
-router.get("/get/applications/:name", getPropertyDetails.getPropertyDetails);
+router.get("/get/applications/:propertyName", getPropertyDetails.getPropertyDetails);
+
+router.get("/get/applications/:propertyName/:spaName", getPropertyDetails.getPropertyDetails);
 
 module.exports = router;
