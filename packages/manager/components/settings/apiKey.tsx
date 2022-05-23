@@ -21,8 +21,9 @@ import { get } from "../../utils/api.utils";
 import { getNextValidateUrl } from "../../utils/endpoint.utils";
 import { AnyProps } from "../models/props";
 
-interface ApiKeyProps { }
-
+interface ApiKeyProps {
+  webprop: AnyProps;
+}
 const StyledButton = styled(Button)`
   --pf-c-button--m-tertiary--BackgroundColor: var(--spaship-global--Color--text-black, #000);
   --pf-c-button--m-tertiary--Color: #fff;
@@ -45,7 +46,7 @@ const StyledClipboardBox = styled.div({
   height: "40px",
 });
 
-const ApiKey: FunctionComponent<ApiKeyProps> = () => {
+const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [_apiKey, setApiKey] = useState("");
   const [alert, setAlert] = useState([]);
@@ -121,7 +122,7 @@ const ApiKey: FunctionComponent<ApiKeyProps> = () => {
             variant={AlertVariant[variant]}
             title={title}
             key={key}
-            timeout={1500}
+            timeout={webprop.spashipNotificationTimeout}
             timeoutAnimation={200}
             actionClose={
               <AlertActionCloseButton

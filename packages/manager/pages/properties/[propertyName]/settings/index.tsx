@@ -18,10 +18,12 @@ import EnvList from "../../../../components/settings/envList";
 import ManageSpa from "../../../../components/settings/manageSpa";
 import { get, post } from "../../../../utils/api.utils";
 import { ComponentWithAuth } from "../../../../utils/auth.utils";
+import { getSpashipNotificationTimeout } from "../../../../utils/config.utils";
 import { getEventAnalyticsUrl, getPropertyList } from "../../../../utils/endpoint.utils";
 
 export const getServerSideProps = async (context: ContextProps) => {
   try {
+    const spashipNotificationTimeout = getSpashipNotificationTimeout();
     const token = (await getSession(context as any) as any).accessToken;
     const propertyReq = getPropertyRequest(context);
     const urlEvent = getEventAnalyticsUrl();
@@ -35,10 +37,10 @@ export const getServerSideProps = async (context: ContextProps) => {
     const [spaCountResponse, propertyListResponse]: AnyProps = response;
     const finalPropertyList = propertyListResponse.filter((prop: any) => prop.propertyName === propertyReq);
     if (!spaCountResponse) {
-      return { props: { webprop: { propertyListResponse: finalPropertyList } } };
+      return { props: { webprop: { propertyListResponse: finalPropertyList, spashipNotificationTimeout: spashipNotificationTimeout } } };
     }
     return {
-      props: { webprop: { spaCountResponse: spaCountResponse, propertyListResponse: finalPropertyList } },
+      props: { webprop: { spaCountResponse: spaCountResponse, propertyListResponse: finalPropertyList, spashipNotificationTimeout: spashipNotificationTimeout } },
     };
   } catch (error) {
     return { props: {} };
@@ -66,8 +68,8 @@ const SettingsPage: ComponentWithAuth<Properties> = ({ webprop }: Properties) =>
         <CardTitle>Settings - Here be dragons!</CardTitle>
         <CardBody>
           <StyledList isPlain>
-            <ListItem> <CreateEnv webprop={webprop?.propertyListResponse} /> </ListItem>
-            <ListItem> <ApiKey /> </ListItem>
+            <ListItem> <CreateEnv webprop={{ propertyListResponse: webprop?.propertyListResponse, spashipNotificationTimeout: webprop?.spashipNotificationTimeout }} /> </ListItem>
+            <ListItem> <ApiKey webprop={{ spashipNotificationTimeout: webprop?.spashipNotificationTimeout }} /> </ListItem>
             <ListItem><DeleteSpa /> </ListItem>
           </StyledList>
         </CardBody>

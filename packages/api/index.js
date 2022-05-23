@@ -27,7 +27,7 @@ Configuration:`
 (async () => {
   await db.connect();
   let server = app.listen(config.get("port"), () => {
-    log.info("Server started ! - spaship orchestrator");
+    log.info("Server started ! - spaship api");
   });
 
   server.timeout = 0; // no timeout
