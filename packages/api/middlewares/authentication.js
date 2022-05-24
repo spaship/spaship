@@ -49,9 +49,9 @@ module.exports = () => {
     let success = false;
 
     try {
-      const result = await APIKey.findOne({ userId: token });
+      const result = await APIKey.findOne({ key: token });
       if (result != null) {
-        token = result.hashKey;
+        token = result.token;
         shortApiKey = true;
       }
     } catch (e) {

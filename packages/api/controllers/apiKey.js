@@ -20,6 +20,22 @@ module.exports.list = async (req, res, next) => {
   }
 };
 
+module.exports.propertyList = async (req, res, next) => {
+  const propertyName = req.params.propertyName;
+  try {
+    const results = await APIKey.find({ label: propertyName }).exec();
+    const apiKeys = results.map((obj) => ({
+      label: obj.label,
+      shortKey: obj.shortKey,
+      expirationDate: obj.expiredDate,
+      createdAt: obj.createdAt,
+    }));
+    res.send(apiKeys);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports.post = async (req, res, next) => {
   const userId = getUserUUID(req);
   const { label, expiredDate } = req.body;

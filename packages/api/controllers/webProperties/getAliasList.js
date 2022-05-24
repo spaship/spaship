@@ -2,9 +2,9 @@ const alias = require("../../models/alias");
 
 module.exports = async function getAliasList(req, res, next) {
   try {
-    const { name } = req?.params;
-    if (name) {
-      const response = await alias.find({ propertyName: name });
+    const { propertyName } = req?.params;
+    if (propertyName) {
+      const response = await alias.find({ propertyName: propertyName });
       return res.status(200).json(response);
     }
     const response = await alias.find();

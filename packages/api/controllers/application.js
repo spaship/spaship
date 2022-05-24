@@ -143,22 +143,24 @@ module.exports.validate = async (req, res, next) => {
   console.log(token);
   let result = null;
 
-  if (req.body?.label == "spaship-cli-token") {
-    const label = req.body?.label;
-    const expiredDate = formatDate(new Date(), 1, 2);
-    const key = token;
-    const userId = uuid() + key.substring(0, 4);
-    const shortKey = hash(userId);
-    const hashKey = token;
+  if (req.body?.propertyName) {
+    const label = req.body?.propertyName;
+    const expiredDate = formatDate(expiration);
+    const userId = "";
+    const key = uuid() + token.substring(0, 4);
+    const shortKey = key.substring(0, 7);
+    const hashKey = hash(key);
     const data = {
       label,
       shortKey,
       hashKey,
+      key,
+      token,
       userId,
       expiredDate,
     };
     result = await APIKey.create(data);
-    return res.status(200).json({ message: "Validation is successful.", token: result?.userId });
+    return res.status(200).json({ message: "Validation is successful.", token: result?.key });
   }
 
   res.status(200).json({ message: "Validation is successful.", token: token });
@@ -215,14 +217,8 @@ function getWebPropertyName(req) {
   return req?.body?.webPropertyName || false;
 }
 
-function formatDate(date, month, days) {
-  var d = new Date(date),
-    month = "" + (d.getMonth() + month),
-    day = "" + (d.getDate() + days),
-    year = d.getFullYear();
-
-  if (month.length < 2) month = "0" + month;
-  if (day.length < 2) day = "0" + day;
-
-  return [year, month, day].join("-");
+function formatDate(expiration) {
+  const expiresIn = new Date();
+  expiresIn.setDate(expiresIn.getDate() + parseInt(expiration));
+  return expiresIn;
 }
