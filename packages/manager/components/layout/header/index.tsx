@@ -78,7 +78,7 @@ const Header: FunctionComponent<HeaderProps> = ({ breadcrumbs = [], buttons = []
                   }}
                 >
                   <Label icon={<CogsIcon />}>
-                    <span>Settings/Environments</span>
+                    <span>Environment config</span>
                   </Label>
                 </a>
               </FlexItem>

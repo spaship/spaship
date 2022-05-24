@@ -46,6 +46,12 @@ const StyledClipboardBox = styled.div({
   height: "40px",
 });
 
+const StyledSubText = styled(Text)`
+  --pf-global--FontWeight--normal: 100;
+  --pf-c-content--h2--FontWeight: 100;
+  color: var(--pf-global--Color--200);
+`;
+
 const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [_apiKey, setApiKey] = useState("");
@@ -105,7 +111,7 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
               </TextContent>
             </StyledFlexItem>
             <FlexItem>
-              <StyledText component={TextVariants.h4}>This key would be valid for 5 hours only.</StyledText>
+              <StyledSubText component={TextVariants.h4}>This key would be valid for 5 hours only.</StyledSubText>
             </FlexItem>
           </Flex>
         </FlexItem>

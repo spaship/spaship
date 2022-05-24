@@ -68,10 +68,6 @@ const PropertiesList: ComponentWithAuth<PropertiesListProps> = ({ webprop }: Any
       title: "My Properties",
       disabled: false,
     },
-    {
-      title: "Other Properties",
-      disabled: false,
-    }
   ];
   const [selectedProperty, setSelectedProperty] = useState(propertiesOptions[0].title);
   const onSelect = (_event : any, selection: any) => {
@@ -119,11 +115,6 @@ const PropertiesList: ComponentWithAuth<PropertiesListProps> = ({ webprop }: Any
         {
           selectedProperty === propertiesOptions[1].title ? <>
             <WebProperty webprop={webprop?.myWebProperties}></WebProperty>
-            </> : <></>
-        }
-        {
-          selectedProperty === propertiesOptions[2].title ? <>
-            <WebProperty webprop={webprop?.allWebproperties}></WebProperty>
             </> : <></>
         }
       </StyledGallery>

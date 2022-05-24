@@ -12,7 +12,9 @@ import {
     Tabs,
     TabTitleIcon,
     TabTitleText,
-    Tab
+    Tab,
+    CodeBlock,
+    CodeBlockCode
 } from "@patternfly/react-core";
 import {
   AutomationIcon, 
@@ -33,10 +35,10 @@ import Body from "../../../components/layout/body";
 import { AnyProps, ContextProps, Properties } from "../../../components/models/props";
 import ActivityStream from "../../../components/web-property/activityStream";
 import SPAProperty from "../../../components/web-property/spaProperty";
-import { post } from "../../../utils/api.utils";
+import { get, post } from "../../../utils/api.utils";
 import { ComponentWithAuth } from "../../../utils/auth.utils";
 import { getGuideUrl } from "../../../utils/config.utils";
-import { getEventAnalyticsUrl } from "../../../utils/endpoint.utils";
+import { getEventAnalyticsUrl, getSpaListUrl } from "../../../utils/endpoint.utils";
 
 interface WebPropertyPageProps { }
 
@@ -73,41 +75,41 @@ const StyledText = styled(Text)`
   cursor: pointer;
 `;
 
+const StyledCodeBlock = styled(CodeBlock)`
+  text-align: left;
+`;
+
 export const getServerSideProps = async (context: ContextProps) => {
     try {
         const token = (await getSession(context as any) as any).accessToken;
         const propertyReq = getPropertyRequest(context);
         const urlEvent = getEventAnalyticsUrl();
+        const spaListUrl = getSpaListUrl(propertyReq);
         const payloadActivites = {
             "activities": {
-                "propertyName": propertyReq
-            }
-        };
-        const payloadCount = {
-            "count": {
                 "propertyName": propertyReq
             }
         };
         const response = await Promise.all(
             [
                 await post<Properties>(urlEvent, payloadActivites, token),
-                await post<Properties>(urlEvent, payloadCount, token)
+                await get<Properties>(spaListUrl, token),
             ]
         );
-        const [activitesResponse, countResponse]: AnyProps = response;
-        if (activitesResponse == null || countResponse == null) {
-            return { props: { url: getGuideUrl() } };
-        }
+        const [activitiesResponse, countResponse]: AnyProps = response;
+        // if (!!activitiesResponse?.length || !!countResponse?.length) {
+        //     return { props: { url: getGuideUrl() } };
+        // }
         return {
-            props: { webprop: countResponse, activites: activitesResponse },
+            props: { webprop: countResponse, activities: null },
         };
-
     } catch (error) {
         return { props: {} };
     }
 };
 
-const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, activites, url }: AnyProps) => {
+const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, activites: activities, url }: AnyProps) => {
+  activities = true;
     const router = useRouter();
     const [activeTabKey, setActiveTabKey] = useState(0);
     const handleTab = (_event: any, tabIndex: any) => {
@@ -115,7 +117,7 @@ const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, act
     };
     const propertyName = router.query.propertyName || 'NA';
     const meta = getHeaderMeta(propertyName);
-    if (!webprop || !activites) {
+    if (!webprop || !activities) {
         return (
             <Body {...meta}>
                 <EmptyState variant={EmptyStateVariant.large}>
@@ -134,21 +136,23 @@ const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, act
                           </ListItem>
                           <ListItem icon={<CogIcon />}>Install spaship cli in your local system</ListItem>
                           <ListItem icon={<KeyIcon /> }>Setup your environment</ListItem>
-                          <Pre>
-                            {`$ spaship env -name=<new-env-name> -url=${window.location.origin}/applications/deploy/${propertyName}/<env-name> -apikey=<your-api-key>`}
-                          </Pre>
+                          <StyledCodeBlock>
+                            <CodeBlockCode>
+                              {`spaship env -name=<new-env-name> -url=${window.location.origin}/applications/deploy/${propertyName}/<env-name> -apikey=<your-api-key>`}
+                            </CodeBlockCode>
+                          </StyledCodeBlock>
                           <ListItem icon={<AutomationIcon />}>Initialize spaship.yaml </ListItem>
-                          <Pre>
-                            $ spaship init
-                          </Pre>
+                          <StyledCodeBlock>
+                            <CodeBlockCode>spaship init</CodeBlockCode> 
+                          </StyledCodeBlock>
                           <ListItem icon={<BundleIcon	/>}>Pack your build (npm pack)</ListItem>
-                          <Pre>
-                            {`$ npm pack`}
-                          </Pre>
+                          <StyledCodeBlock>
+                            <CodeBlockCode>npm pack</CodeBlockCode> 
+                          </StyledCodeBlock>
                           <ListItem icon={<CubeIcon />}>Deploy your spa </ListItem>
-                          <Pre>
-                            {`$ spaship deploy -env=<env> <your-archive-file-name>`}
-                          </Pre>
+                          <StyledCodeBlock>
+                            <CodeBlockCode>{`spaship deploy -env=<env> <your-archive-file-name>`}</CodeBlockCode>
+                          </StyledCodeBlock>
                         </StyledList>
                     </EmptyStateBody>
                     <EmptyStateSecondaryActions>
@@ -188,7 +192,7 @@ const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, act
                     </>
                   }
                 >
-                  <ActivityStream webprop={activites}></ActivityStream>
+                  {/* <ActivityStream webprop={activites}></ActivityStream> */}
                 </Tab>
               </Tabs>
             </Body>

@@ -183,6 +183,7 @@ const HeaderTools = () => {
 const Login: NextPage = () => {
   const { status: authStatus } = useSession();
   const [launcher, setLauncher] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
   const authenticate = (provider: string) => {
     setLauncher(true)
     signIn(provider, { callbackUrl: "/properties" });
@@ -226,7 +227,16 @@ const Login: NextPage = () => {
                   </Title>
                 </CardHeader>
                 <CardBody>
-                  <CardButton isBlock variant="primary" onClick={() => authenticate('keycloak')} className="spaship_btn">
+                  <CardButton 
+                    isBlock 
+                    variant="primary" 
+                    isLoading={buttonLoading} 
+                    isDisabled={buttonLoading}
+                    onClick={() => {
+                        setButtonLoading(true);
+                        authenticate('keycloak')
+                      }} 
+                    className="spaship_btn">
                     Red Hat SSO
                   </CardButton>
                   {/* TODO: Enable in May 2022 Release */}

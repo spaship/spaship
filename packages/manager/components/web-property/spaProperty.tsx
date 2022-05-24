@@ -1,37 +1,50 @@
-import { Card, CardBody, CardFooter, CardTitle, Gallery } from "@patternfly/react-core";
+import { Card, Label } from "@patternfly/react-core";
+import { TableComposable, Tbody, Td, Th, Thead, Tr } from "@patternfly/react-table";
 import { useRouter } from "next/router";
 import { FunctionComponent } from "react";
 import styled from "styled-components";
-import { Properties, SPAProps } from "../models/props";
+import { Properties } from "../models/props";
 
 const StyledCard = styled(Card)`
-  border-radius: 8px;
-  height: var(--spaship-card-hight-160);
-  border-top: 3px solid var(--pf-global--success-color--100);
+  margin-top: 2rem;
 `;
-
-const StyledGallery = styled(Gallery)`
-  margin-top: 1.5rem;
+const StyledLabel = styled(Label)`
+  margin-left: 0.5rem;
 `;
 
 const SPAProperty: FunctionComponent<Properties> = ({ webprop }: Properties) => {
-  const router = useRouter();
+  const tableView: Array<SPAProperty> = webprop?.reduce(( acc: any, spa: any) => {
+    if (!!acc[spa.path]) {
+        acc[spa.path].env.push(spa.env);
+        return acc;
+    }
+    acc[spa.path] = { ...spa, env: [spa.env ] }
+    return acc;
+  }, {});
   return (
     <>
-      <StyledGallery hasGutter>
-        {webprop?.map((prop: SPAProps) => (
-          <StyledCard
-            isSelectable
-            isCompact
-            key={prop.propertyName + prop.spaName}
-            isRounded
-            onClick={() => router.push(`${prop.propertyName}/spa/${prop.spaName} `)}>
-            <CardTitle>{prop.spaName}</CardTitle>
-            <CardBody></CardBody>
-            <CardFooter>{prop.count} Deployments</CardFooter>
-          </StyledCard>
-        ))}
-      </StyledGallery>
+      <StyledCard>
+      <TableComposable>
+          <Thead>
+            <Tr>
+              <Th>Name</Th>
+              <Th>Url</Th>
+              <Th>Environment(s)</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {Object.values(tableView)?.map((spa: SPAProperty, index: any) => (
+              <Tr key={index}>
+                <Td>
+                 {spa.name}
+                </Td>
+                <Td> {spa.path} </Td>
+                <Td>{ spa.env.map( ( envName:string, _index: any) => <StyledLabel key={_index}>{ envName }</StyledLabel>) }</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </TableComposable>
+      </StyledCard>
     </>
   );
 };
