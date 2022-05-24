@@ -1,5 +1,6 @@
 const getCounts = require("../webPropertyServices/getCountDeployments");
 const getCountByEnvWeeklyChart = require("../webPropertyServices/getCountByEnvWeeklyChart");
+const getLatestActivities = require("../webPropertyServices/getLatestActivities");
 
 const analyticsServiceAll = async (req, res) => {
   try {
@@ -118,23 +119,22 @@ const propertyFilteration = async (request) => {
           count: "$count",
         }
       );
-    } else if (request?.activities.all == true) {
-      return await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
-        {
-          code: "WEBSITE_CREATE",
-        },
-        {
-          envs: "$envs",
-        },
-        {
-          _id: 0,
-          spaName: "$_id.spaName",
-          envs: "$_id.envs",
-          count: "$count",
-        }
-      );
     }
+  } else if (request?.activities.all == true) {
+    return await getLatestActivities.getLatestActivitiesService(
+      { code: "WEBSITE_CREATE" },
+      { limit: getLimit(request) },
+      { skip: getSkip(request) }
+    );
   }
 };
+
+function getLimit(request) {
+  return parseInt(request?.activities.limit) || 15;
+}
+
+function getSkip(request) {
+  return parseInt(request?.activities.skip) || 0;
+}
 
 module.exports = { analyticsServiceAll };
