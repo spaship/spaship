@@ -63,8 +63,10 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [env, setEnv] = useState("");
   const [validatedEnv, setValidatedEnv] = useState(validations.noval);
+  const [validatedUrl, setValidatedUrl] = useState(validations.noval);
   const [helperText, setHelperText] = useState("");
   const [alert, setAlert] = useState([]);
+  const [url, setUrl] = useState("");
 
   async function handleModalToggle() {
     setModalOpen(!isModalOpen);
@@ -74,17 +76,28 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
     setAlert(alert.filter((e: any) => e.key !== key))
   }
 
+  const handleUrl = (value: string) => {
+    const formatUrl = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?~]/;
+    if (value.match(formatUrl)) {
+      setValidatedUrl(validations.error)
+    }
+    else if (value.length > 1) { setValidatedUrl(validations.success) }
+    else { setValidatedUrl(validations.noval) }
+    setUrl(value);
+  };
+
+
   async function handlePropertyCreation() {
     try {
-      const url = getNextOnboardWebpropertyUrl();
+      const propUrl = getNextOnboardWebpropertyUrl();
       const prop = webprop?.propertyListResponse[0];
       const payload = {
         "propertyTitle": prop?.propertyTitle,
         "propertyName": prop?.propertyName,
-        "url": prop?.url,
+        "url": url,
         "env": env,
       }
-      const propertyRes = await post<AnyProps>(url, payload, (session as any).accessToken);
+      const propertyRes = await post<AnyProps>(propUrl, payload, (session as any).accessToken);
       if (propertyRes?.response?.id) {
         setAlert([
           { title: `"${env}" env  added for ${prop?.propertyTitle}`, variant: 'success', key: getUniqueId() },
@@ -93,6 +106,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
         setValidatedEnv(validations.noval)
         setHelperText("");
         setEnv("");
+        setUrl("");
         setModalOpen(!isModalOpen);
       }
     } catch (e) { }
@@ -141,9 +155,9 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
               <StyledText component={TextVariants.h4}>
                 Create new environment for property :
                 <StyledSpan>
-                  { webprop?.propertyListResponse[0]?.propertyName.length > 15 
-                  ? `${webprop?.propertyListResponse[0]?.propertyName.substring(0, 15)}...` 
-                  : webprop?.propertyListResponse[0]?.propertyName }
+                  {webprop?.propertyListResponse[0]?.propertyName.length > 15
+                    ? `${webprop?.propertyListResponse[0]?.propertyName.substring(0, 15)}...`
+                    : webprop?.propertyListResponse[0]?.propertyName}
                 </StyledSpan>
               </StyledText>
             </FlexItem>
@@ -165,7 +179,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
         isOpen={isModalOpen}
         onClose={handleModalToggle}
         actions={[
-          <StyledButton key="create" variant="tertiary" onClick={handlePropertyCreation} isDisabled={validatedEnv != validations.success}>
+          <StyledButton key="create" variant="tertiary" onClick={handlePropertyCreation} isDisabled={validatedEnv != validations.success || validatedUrl != validations.success}>
             Create
           </StyledButton>
         ]}
@@ -191,10 +205,37 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
               id="form-group-label-info"
               name="form-group-label-info"
               aria-describedby="form-group-label-info-helper"
-              placeholder="Default Environment Name"
+              placeholder="Enter Environment Name"
               value={env}
               onChange={handleEnv}
               validated={validatedEnv as any}
+            />
+          </FormGroup>
+
+          <FormGroup
+            label="Hostname"
+            isRequired
+            fieldId="form-group-label-info"
+            helperText={<>
+              <FormHelperText icon={validatedUrl === validations.noval ? <ExclamationCircleIcon /> : <CheckCircleIcon />} isHidden={validatedUrl !== validations.noval && validatedUrl !== validations.success}>
+                {validatedUrl === validations.noval ? <>Hostname shouldn't contain any space, special-character (. allowed) </> : <>Valid Hostname</>}
+              </FormHelperText>
+            </>
+            }
+            helperTextInvalid="Invalid Hostname"
+            helperTextInvalidIcon={<ExclamationCircleIcon />}
+            validated={validatedUrl as any}
+          >
+            <TextInput
+              isRequired
+              type="text"
+              id="form-group-label-info"
+              name="form-group-label-info"
+              aria-describedby="form-group-label-info-helper"
+              placeholder="Enter Hostname"
+              value={url}
+              onChange={handleUrl}
+              validated={validatedUrl as any}
             />
           </FormGroup>
         </Form>
