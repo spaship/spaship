@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@oclif/dev-cli": "1.26.10",
-    "@oclif/test": "2.0.3",
+    "@oclif/test": "2.1.0",
     "chai": "4.3.6",
     "eslint-config-oclif": "4.0.0",
     "globby": "12.2.0",
