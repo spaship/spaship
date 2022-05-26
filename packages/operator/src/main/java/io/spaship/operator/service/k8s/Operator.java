@@ -24,7 +24,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 
 @ApplicationScoped
@@ -125,12 +128,21 @@ public class Operator implements Operations {
       .concat("-")
       .concat(environment.getName().toLowerCase());
     LOG.debug("computed service name is {}", serviceName);
+    var svc = k8sClient.services().inNamespace(environment.getNameSpace()).withName(serviceName).get();
 
-    return Optional.ofNullable(k8sClient.services().inNamespace(environment.getNameSpace()).withName(serviceName))
-      .map(svc -> svc.getURL("http-api"))
-      .orElseThrow(() -> {
-        throw new ResourceNotFoundException("service:" + serviceName);
-      });
+    String clusterIP = svc.getSpec().getClusterIP();
+    var svcPort = svc.getSpec().getPorts().stream()
+      .filter(port -> Objects.equals(port.getName(), "http-api"))
+      .findFirst()
+      .orElseThrow(() -> new ResourceNotFoundException("service port not found"))
+      .getPort();
+    LOG.debug("computed service port is {}, clusterIp is {}", svcPort,clusterIP);
+
+    String sideCarSvcUrl = "tcp://".concat(clusterIP).concat(":").concat(String.valueOf(svcPort));
+    LOG.debug("computed sidecar service url is {}", sideCarSvcUrl);
+
+    return sideCarSvcUrl;
+
   }
 
   Map<String, String> searchCriteriaLabel(Environment environment) {
@@ -164,7 +176,7 @@ public class Operator implements Operations {
       "DOMAIN", domain,
       "APP_INSTANCE_PREFIX", appInstance,
       "STORAGE_CLASS", ConfigProvider.getConfig().getValue("storage.class", String.class),
-      "NS",environment.getNameSpace()
+      "NS", environment.getNameSpace()
     );
     LOG.debug("building KubernetesList, templateParameters are as follows {}", templateParameters);
     return ((OpenShiftClient) k8sClient)
