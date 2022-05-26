@@ -179,7 +179,6 @@ function getProcessedMonthlyDeployments(monthlyDeploymentResponse: any, tempLege
       const checkAxis = temp.find(legend => legend.x === axis);
       if (!checkAxis) {
         temp.push({ name: currentEnv, x: axis, y: 0 })
-        console.log(temp);
       }
     }
     processedMonthlyDeployments.push(temp);

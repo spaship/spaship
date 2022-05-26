@@ -10,6 +10,14 @@ export function getSpaListUrl(propertyReq: string) {
   return `${spashipHost}/webproperty/get/applications/${propertyReq}`;
 }
 
+export function getEnvListUrl(propertyReq: string) {
+  return `${spashipHost}/webproperty/alias/list/${propertyReq}`;
+}
+
+export function getAPIKeyList(propertyReq: string) {
+  return `${spashipHost}/apikeys/${propertyReq}`;
+}
+
 export function getAllEventCountUrl() {
   return `${spashipHost}/event/fetch/analytics/all`;
 }

@@ -224,7 +224,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
             fieldId="form-group-label-info"
             helperText={<>
               <FormHelperText icon={validatedUrl === validations.noval ? <ExclamationCircleIcon /> : <CheckCircleIcon />} isHidden={validatedUrl !== validations.noval && validatedUrl !== validations.success}>
-                {validatedUrl === validations.noval ? <>Hostname shouldn't contain any space, special-character (. allowed) </> : <>Valid Hostname</>}
+                {validatedUrl === validations.noval ? <>Hostname shouldn't contain any space, special-character (eg: one.redhat.com) </> : <>Valid Hostname</>}
               </FormHelperText>
             </>
             }

@@ -5,6 +5,7 @@ import {
   Text,
   TextVariants
 } from "@patternfly/react-core";
+import { ExternalLinkAltIcon } from "@patternfly/react-icons";
 import {
   TableComposable,
   Tbody,
@@ -23,6 +24,7 @@ const StyledCard = styled(Card)`
 `;
 
 const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
+  const { propertyListResponse, apiKeyList } = webprop;
   const [switchState, setSwitchState] = useState(true);
   const handleChange = () => {
     // TODO: implement logic to toggle spa
@@ -37,17 +39,23 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
             <Tr>
               <Th>Name</Th>
               <Th>Created</Th>
-              <Th>Url</Th>
+              <Th>Publish Domain</Th>
+              <Th>Deploy URL</Th>
               {/* TODO: Add once feature is available <Th>Action</Th> */}
             </Tr>
           </Thead>
           <Tbody>
-            {webprop?.map((env: AnyProps) => (
+            {propertyListResponse?.map((env: AnyProps) => (
               <Tr key={env.id}>
                 <Td dataLabel={env.env}>{env.env}</Td>
-                <Td dataLabel={env.createdAt}> <Text component={TextVariants.small}>
-                  {new Date(env.createdAt).toUTCString().substr(0, 25)}
-                </Text></Td>
+                <Td dataLabel={env.createdAt}>
+                  <Text component={TextVariants.small}>
+                    {new Date(env.createdAt).toUTCString().substr(0, 25)}
+                  </Text>
+                </Td>
+                <Td>
+                  <a href={`https://${env.url}`} target="_blank" rel="noopener noreferrer"> <ExternalLinkAltIcon /> {env.url}</a>
+                </Td>
                 <Td>
                   {window.location.origin}/api/v1/applications/deploy/{env?.propertyName}/{env?.env}
                 </Td>

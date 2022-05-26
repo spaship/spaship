@@ -5,4 +5,5 @@ type SPAProperty = {
   path: string
   propertyName: string
   ref: string
+  count: number
 }

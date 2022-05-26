@@ -19,7 +19,7 @@ import EnvList from "../../../../components/settings/envList";
 import { get, post } from "../../../../utils/api.utils";
 import { ComponentWithAuth } from "../../../../utils/auth.utils";
 import { getSpashipNotificationTimeout } from "../../../../utils/config.utils";
-import { getEventAnalyticsUrl, getPropertyList } from "../../../../utils/endpoint.utils";
+import { getAPIKeyList, getEventAnalyticsUrl, getPropertyList } from "../../../../utils/endpoint.utils";
 
 export const getServerSideProps = async (context: ContextProps) => {
   try {
@@ -28,13 +28,20 @@ export const getServerSideProps = async (context: ContextProps) => {
     const propertyReq = getPropertyRequest(context);
     const urlEvent = getEventAnalyticsUrl();
     const urlProperty = getPropertyList();
+    const apiKeyListUrl = getAPIKeyList(propertyReq);
     const payloadCount = {
       "count": {
         "propertyName": propertyReq
       }
     };
-    const response = await Promise.all([await post<Properties>(urlEvent, payloadCount, token), await get<AnyProps>(urlProperty, token)]);
-    const [spaCountResponse, propertyListResponse]: AnyProps = response;
+    const response = await Promise.all(
+      [
+        await post<Properties>(urlEvent, payloadCount, token), 
+        await get<AnyProps>(urlProperty, token),
+        await get<AnyProps>(apiKeyListUrl, token)
+      ]
+    );
+    const [spaCountResponse, propertyListResponse, apiKeyList]: AnyProps = response;
     const finalPropertyList = propertyListResponse.filter((prop: any) => prop.propertyName === propertyReq);
     if (!spaCountResponse) {
       return { 
@@ -44,6 +51,7 @@ export const getServerSideProps = async (context: ContextProps) => {
           { 
             propertyListResponse: finalPropertyList, 
             spashipNotificationTimeout: spashipNotificationTimeout,
+            apiKeyList: [],
           } 
         } 
       };
@@ -55,6 +63,7 @@ export const getServerSideProps = async (context: ContextProps) => {
           spaCountResponse: spaCountResponse, 
           propertyListResponse: finalPropertyList, 
           spashipNotificationTimeout: spashipNotificationTimeout,
+          apiKeyList: [],
         }
       },
     };
@@ -86,7 +95,7 @@ const SettingsPage: ComponentWithAuth<Properties> = ({ webprop }: Properties) =>
 
   return (
     <Body {...meta}>
-      <EnvList webprop={webprop?.propertyListResponse} />
+      <EnvList webprop={webprop} />
       <StyledCard>
         <CardTitle>
           Configuration
