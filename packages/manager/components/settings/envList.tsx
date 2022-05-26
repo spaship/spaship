@@ -5,7 +5,7 @@ import {
   Text,
   TextVariants
 } from "@patternfly/react-core";
-import { ExternalLinkAltIcon } from "@patternfly/react-icons";
+import { ExternalLinkAltIcon, KeyIcon, OutlinedCalendarAltIcon } from "@patternfly/react-icons";
 import {
   TableComposable,
   Tbody,
@@ -69,6 +69,27 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
                     isDisabled
                   />
                 </Td> */}
+              </Tr>
+            ))}
+          </Tbody>
+        </TableComposable>
+      </StyledCard>
+      <StyledCard>
+        <CardTitle>API Keys</CardTitle>
+        <TableComposable>
+          <Thead>
+            <Tr>
+              <Th>Created By</Th>
+              <Th>Expiration Date</Th>
+              <Th>Short Key</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {apiKeyList?.map((key: any, index: any) => (
+              <Tr key={index}>
+                <Td dataLabel={key.createdAt}><OutlinedCalendarAltIcon /> {new Date(key.createdAt).toLocaleDateString('en')}</Td>
+                <Td dataLabel={key.expirationDate}><OutlinedCalendarAltIcon /> {new Date(key.expirationDate).toLocaleDateString('en')}</Td>
+                <Td dataLabel={key.shortKey}><KeyIcon /> {key.shortKey}</Td>
               </Tr>
             ))}
           </Tbody>

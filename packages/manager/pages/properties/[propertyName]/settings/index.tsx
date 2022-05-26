@@ -51,7 +51,8 @@ export const getServerSideProps = async (context: ContextProps) => {
           { 
             propertyListResponse: finalPropertyList, 
             spashipNotificationTimeout: spashipNotificationTimeout,
-            apiKeyList: [],
+            apiKeyList,
+            propertyName: propertyReq,
           } 
         } 
       };
@@ -63,7 +64,8 @@ export const getServerSideProps = async (context: ContextProps) => {
           spaCountResponse: spaCountResponse, 
           propertyListResponse: finalPropertyList, 
           spashipNotificationTimeout: spashipNotificationTimeout,
-          apiKeyList: [],
+          apiKeyList,
+          propertyName: propertyReq,
         }
       },
     };
@@ -102,8 +104,12 @@ const SettingsPage: ComponentWithAuth<Properties> = ({ webprop }: Properties) =>
         </CardTitle>
         <CardBody>
           <StyledList isPlain>
-            <ListItem> <CreateEnv webprop={{ propertyListResponse: webprop?.propertyListResponse, spashipNotificationTimeout: webprop?.spashipNotificationTimeout }} /> </ListItem>
-            <ListItem> <ApiKey webprop={{ spashipNotificationTimeout: webprop?.spashipNotificationTimeout }} /> </ListItem>
+            <ListItem> 
+              <CreateEnv webprop={{ propertyListResponse: webprop?.propertyListResponse, spashipNotificationTimeout: webprop?.spashipNotificationTimeout }} /> 
+            </ListItem>
+            <ListItem> 
+              <ApiKey webprop={{ spashipNotificationTimeout: webprop?.spashipNotificationTimeout, propertyName: webprop?.propertyName }} /> 
+            </ListItem>
           </StyledList>
         </CardBody>
       </StyledCard>

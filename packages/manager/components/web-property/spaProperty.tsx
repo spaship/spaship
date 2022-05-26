@@ -1,4 +1,4 @@
-import { Card, Label } from "@patternfly/react-core";
+import { Button, Card, Label } from "@patternfly/react-core";
 import { ClockIcon, ExternalLinkAltIcon } from "@patternfly/react-icons";
 import { ExpandableRowContent, TableComposable, Tbody, Td, Th, Thead, Tr } from "@patternfly/react-table";
 import { useRouter } from "next/router";
@@ -18,6 +18,7 @@ const StyledTableHeader = styled(Thead)`
 `
 
 const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) => {
+  const router = useRouter();
   const { envList } = webprop;
   const tableView: Array<SPAProperty> = webprop?.countResponse?.reduce(( acc: any, spa: any) => {
     const url  = `${envList.find( (environment: any) => environment.env === spa.env ).url}${spa.path}`;
@@ -81,7 +82,9 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
                         } : undefined
                       } />
                     <Td>
-                      <a href={`${spa.propertyName}/spa/${spa.name}`} rel="noopener noreferrer"> {spa.name}</a>
+                      <Button onClick={() => router.push(`${spa.propertyName}/spa/${spa.name}`)} variant="link" isInline>
+                        {spa.name}
+                      </Button>
                     </Td>
                     <Td> {spa.name} </Td>
                     <Td>{ spa.env.map( ( envName:string, _index: any) => <StyledLabel key={_index}>{ envName }</StyledLabel>) }</Td>
