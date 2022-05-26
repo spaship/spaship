@@ -1,6 +1,6 @@
 ---
 id: test-process
-title: QA Process
+title: QA Process for SPAship
 sidebar_label: Quality Assurance
 ---
 
@@ -16,14 +16,14 @@ To have a Quality assurance process in place for testing the SPAship Manager and
 ## Need
 
 ---
-* To have an automation testing framework setup for testing the SPAship Manager and SPAship Operator functionalities
+* To have an automation testing framework setup for testing the SPAship Manager and SPAship Operator functionalities. 
 * To have a process documentation of manual testing 
 
 ## Tools & Technologies Used
 
 ---
-* IDE- Pycharm
-* UI Testing Framework- LCC i.e lemoncheesecake with selenium
+* IDE- Visual Studio Code
+* UI Testing Framework- Cypress 
 * Postman - For API Testing
 * Gitlab- For maintaining the test code and used as the CI platform
 * Newman- CLI version of Postman useful for integrating Postman with Gitlab
@@ -31,81 +31,66 @@ To have a Quality assurance process in place for testing the SPAship Manager and
 ## Reporting
 
 ---
-* For LCC- reports are a feature of the framework
+* For Cypress- We are using mochawesome reports
 * For Newman- HTML-extra reporting template(Open Source) is used
 
 ## Installation Procedure
 
-1. ## LCC-lemoncheesecake
+1. ## Cypress Tests
+UI tests for SPAship using Cypress
 
 ## Pre-requisites
-python3
+NodeJs
 
 ## Setup
-Install and create virtualenv (This step should be executed only when setting up the project for the first time)
+Initialize the package.json (This step should be executed only when setting up the project for the first time)
 
-* Install virtualenv
+* Run npm init
 
-``` python3 -m pip install --user virtualenv ```
+```Go through the series of questions that are asked and package.json will be created  ```
 
-* Create virtualenv
+* Install cypress using npm
 
-``` python3 -m venv env ```
+``` npm install cypress --save-dev ```
 
-* Activate the virtual environment:
+* In the package.json, in scripts object:
 
-``` $ source env/bin/activate ```
+``` sh
+"test:e2e": "cypress run",
+"test:e2e:browser": "cypress open 
+```
 
-* Install dependencies for setting up tests:
-
-``` $ pip install -r requirements.txt ```
-
-* Set Python Path to the current directory:
-
-``` export PYTHONPATH = "<path to your current directory>" ```
-
-* To Check if PYTHONPATH is set correctly to the current directory:
-
-``` echo $PYTHONPATH ```
-
-PYTHONPATH should not be blank and should be your current directory.
-
+* Setup Environment variables and other authentication related info
+``` sh
+export CYPRESS_ENV=<envname>
+export CYPRESS_USERNAME=<username>
+export CYPRESS_PASSWORD=<password>
+ ```
 ## Execute tests:
-* Make the changes in the config file for actual values.
+* For headless:
+```sh
+npm run test:e2e or
+npx cypress run
+```
+* For headed interactive:
+```sh
+npm run test:e2e:browser or
+npx cypress open
+```
 
-``` cp config.ini.sample config.ini ```
-
-Make the appropriate changes to base URL,username and password fields in config.ini file.
-You can reach out to any of the contributors for the actual values to be used.
-By default, the tests will run in headless mode. If you choose to run otherwise, change the value to "no".
-
-* To run the test against QA env, set the environment variable appropriately.
-```export ENV=qa``` Acceptable values for ENV variable are dev/qa/stage.
-
-* To execute the tests:
-``` lcc run ```
-
-* To view the reports on console after you ran the tests:
-``` lcc report ```
-
-* To view the report in browser:
-``` firefox report/report.html ```
-
-* User can choose to run the tests for different environments listed in config.ini file by passing the 'env' and 'base_url'
-parameter in 'base.config_reader(`<env>`, `<base_url>`)' method present inside browser_util.py file
-
-* To run a single test:
-``` lcc run <test_file_name> ```
-e.g. lcc run login_test
-
-Deactivate virtualenv:
-``` $ deactivate ```
+## Execute single test:
+```sh
+npx cypress run --spec=<testfilename.js>
+```
+## Reports 
+* Reporting config needs to be done in cypress.json file
+* Click [here](https://docs.cypress.io/guides/tooling/reporters#Installed-via-npm) for more details on reporting
 
 2. ## Postman
 
 * Download Postman from [Postman](https://www.postman.com "Postman")
 * Navigate to testing gitlab repo [TestRepo](https://gitlab.cee.redhat.com/spaship/spaship-3.0-qa)
-* Download the spaship_api_test.json and import it in Postman 
+* Download the SPAship_API_Final_Collection.postman_collection.json and import it in Postman 
 
 ## Notification of Test Completion
 * An email is triggered when the reports are generated containing the links to the url where the report is present
@@ -121,12 +106,11 @@ A google chatbot has been configured that triggers notification whenever any pus
 * QA should be mentioning issues/bugs if found in testing in comments
 
 ## Application URLs to be Used by QA
-* [SPAship Operator](http://qa.operator.apps.grey.dev.iad2.dc.paas.redhat.com)
-* [SPAship Backend](http://qa.api.apps.grey.dev.iad2.dc.paas.redhat.com)
-* [SPAship UI](http://qa.manager.apps.grey.dev.iad2.dc.paas.redhat.com/)
+* [SPAship UI](https://spaship.qa.redhat.com)
 
 
 
 ## Supporting Documents and URLs
 * [TestPlan](https://docs.google.com/document/d/1FUED1-6cH6gZLJehQfQx74_6KpUcLA5u6tpjOl8xG5Q/edit "Test Plan Document") 
-* [TestCases](https://docs.google.com/spreadsheets/d/1RUkeRaOO0PsKfUS0FoKcuRnE4Vv1O-CptZ5SurdUzzk/edit?hl=en&forcehl=1#gid=0 "Test Cases" ) 
+* [TestCases](https://docs.google.c/om/spreadsheets/d/1RUkeRaOO0PsKfUS0FoKcuRnE4Vv1O-CptZ5SurdUzzk/edit#gid=0 "Test Cases" ) 
+* [TestingGitLabRepo](https://gitlab.cee.redhat.com/spaship/spaship-3.0-qa "Gitlab Repo Link")
