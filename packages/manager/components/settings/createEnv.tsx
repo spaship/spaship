@@ -53,6 +53,12 @@ const StyledText = styled(Text)`
   --pf-c-content--h2--FontWeight: 100;
 `;
 
+const StyledSubText = styled(Text)`
+  --pf-global--FontWeight--normal: 100;
+  --pf-c-content--h2--FontWeight: 100;
+  color: var(--pf-global--Color--200);
+`;
+
 const StyledSpan = styled.span`
   margin-left: 0.25rem;
 `;
@@ -152,14 +158,14 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
               </TextContent>
             </StyledFlexItem>
             <FlexItem>
-              <StyledText component={TextVariants.h4}>
+              <StyledSubText component={TextVariants.h4}>
                 Create new environment for property :
                 <StyledSpan>
                   {webprop?.propertyListResponse[0]?.propertyName.length > 15
                     ? `${webprop?.propertyListResponse[0]?.propertyName.substring(0, 15)}...`
                     : webprop?.propertyListResponse[0]?.propertyName}
                 </StyledSpan>
-              </StyledText>
+              </StyledSubText>
             </FlexItem>
           </Flex>
         </FlexItem>
@@ -218,7 +224,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
             fieldId="form-group-label-info"
             helperText={<>
               <FormHelperText icon={validatedUrl === validations.noval ? <ExclamationCircleIcon /> : <CheckCircleIcon />} isHidden={validatedUrl !== validations.noval && validatedUrl !== validations.success}>
-                {validatedUrl === validations.noval ? <>Hostname shouldn't contain any space, special-character (. allowed) </> : <>Valid Hostname</>}
+                {validatedUrl === validations.noval ? <>Hostname shouldn't contain any space, special-character (eg: one.redhat.com) </> : <>Valid Hostname</>}
               </FormHelperText>
             </>
             }

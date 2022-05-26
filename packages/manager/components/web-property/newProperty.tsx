@@ -211,12 +211,14 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
           </FormGroup>
 
           <FormGroup
-            label="URL"
+            label="Hostname"
             isRequired
             fieldId="form-group-label-info"
             helperText={<>
-              <FormHelperText icon={validatedUrl === validations.noval ? <ExclamationCircleIcon /> : <CheckCircleIcon />} isHidden={validatedUrl !== validations.noval && validatedUrl !== validations.success}>
-                {validatedUrl === validations.noval ? <>URL shouldn't contain any space, special-character (. allowed) </> : <>Valid URL</>}
+              <FormHelperText 
+                icon={ validatedUrl === validations.noval ? <ExclamationCircleIcon /> : <CheckCircleIcon /> } 
+                isHidden={validatedUrl !== validations.noval && validatedUrl !== validations.success}>
+                { validatedUrl === validations.noval ? <> Hostname shouldn't contain any space, special-character (eg: one.redhat.com) </> : <>Valid Hostname</>}
               </FormHelperText>
             </>
             }
