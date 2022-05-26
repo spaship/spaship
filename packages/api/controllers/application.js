@@ -187,7 +187,7 @@ function getPathRequest(req) {
 }
 
 function getRefRequest(req) {
-  if (req?.body?.ref == "undefined") return req.params.env;
+  if (req?.body?.ref == "undefined") return "Ready to deploy";
   const requestBody = req?.body?.ref;
   return requestBody;
 }
