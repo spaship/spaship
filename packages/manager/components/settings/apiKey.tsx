@@ -89,7 +89,6 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
     setModalOpen(!isModalOpen);
   }
   async function handleExpiresIn(date: any) {
-    console.log(date);
     var dateChecks = /^\d{4}-\d{2}-\d{2}$/;
     if (date.match(dateChecks) != null && new Date(date) > new Date()) {
       setValidatedDateTime(validations.success);
@@ -139,7 +138,7 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
               </TextContent>
             </StyledFlexItem>
             <FlexItem>
-              <StyledSubText component={TextVariants.h4}>This key would be valid for 5 hours only.</StyledSubText>
+              <StyledSubText component={TextVariants.h4}>Please provide expiration date.</StyledSubText>
             </FlexItem>
           </Flex>
         </FlexItem>
