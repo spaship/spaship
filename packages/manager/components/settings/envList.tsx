@@ -79,7 +79,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
         <TableComposable>
           <Thead>
             <Tr>
-              <Th>Created By</Th>
+              <Th>Created On</Th>
               <Th>Expiration Date</Th>
               <Th>Short Key</Th>
             </Tr>
