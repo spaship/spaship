@@ -122,9 +122,9 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
             { title: `API Key Generated Successfully`, variant: 'success', key: getUniqueId() },
           ] as any)
           setApiKey(response.token);
-        } catch (e) { console.error(e); }
+        } catch (e) { }
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { ; }
   }
 
   return (
@@ -138,7 +138,7 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
               </TextContent>
             </StyledFlexItem>
             <FlexItem>
-              <StyledSubText component={TextVariants.h4}>This key would be valid for 5 hours only.</StyledSubText>
+              <StyledSubText component={TextVariants.h4}>Please provide expiration date.</StyledSubText>
             </FlexItem>
           </Flex>
         </FlexItem>
