@@ -122,9 +122,9 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
             { title: `API Key Generated Successfully`, variant: 'success', key: getUniqueId() },
           ] as any)
           setApiKey(response.token);
-        } catch (e) { }
+        } catch (e) { console.error(e); }
       }
-    } catch (e) { ; }
+    } catch (e) { console.error(e); }
   }
 
   return (
