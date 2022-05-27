@@ -66,7 +66,7 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
             <Tr>
               <Th></Th>
               <Th>Name</Th>
-              <Th>Url</Th>
+              <Th>URL Path</Th>
               <Th>Environment(s)</Th>
             </Tr>
           </Thead>
@@ -86,7 +86,7 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
                     {spa.name}
                   </Button>
                 </Td>
-                <Td> {spa.name} </Td>
+                <Td> {spa.name.startsWith('/') ? spa.name : `/${spa.name}`} </Td>
                 <Td>{spa.env.map((envName: string, _index: any) => <StyledLabel key={_index}>{envName}</StyledLabel>)}</Td>
               </Tr>
               <Tr key={rowIndex} isExpanded={isSPAExpanded(spa.name)}>
@@ -97,7 +97,7 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
                         <Tr>
                           <Th>Environment</Th>
                           <Th>Ref</Th>
-                          <Th>Url</Th>
+                          <Th>URL</Th>
                           <Th>Updated At</Th>
                         </Tr>
                       </StyledTableHeader>
