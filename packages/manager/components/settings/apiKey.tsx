@@ -89,7 +89,6 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
     setModalOpen(!isModalOpen);
   }
   async function handleExpiresIn(date: any) {
-    console.log(date);
     var dateChecks = /^\d{4}-\d{2}-\d{2}$/;
     if (date.match(dateChecks) != null && new Date(date) > new Date()) {
       setValidatedDateTime(validations.success);

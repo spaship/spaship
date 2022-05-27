@@ -14,7 +14,7 @@ const Validate = async (req: AnyProps, res: AnyProps) => {
     expiresIn: expiresIn,
     propertyName: getPropertyName(req),
   }
-  console.log(payload);
+  logger.info(payload)
   const response = await post<AnyProps>(url, payload, token);
   return res.send({ data: { token: response.token } });
 };
