@@ -13,17 +13,39 @@ import {
   AlertActionCloseButton,
   AlertVariant,
   getUniqueId,
+  DatePicker,
 } from "@patternfly/react-core";
 import { useSession } from "next-auth/react";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import styled from "styled-components";
-import { get } from "../../utils/api.utils";
+import { get, post } from "../../utils/api.utils";
 import { getNextValidateUrl } from "../../utils/endpoint.utils";
 import { AnyProps } from "../models/props";
 
 interface ApiKeyProps {
   webprop: AnyProps;
 }
+
+type ValidateType = {
+  default: string;
+  error: string;
+  noval: string;
+  success: string;
+  warning: string;
+  exists: string;
+}
+
+const validations: ValidateType = {
+  default: 'default',
+  error: 'error',
+  noval: 'noval',
+  success: 'success',
+  warning: 'warning',
+  exists: 'exists',
+};
+
+
+
 const StyledButton = styled(Button)`
   --pf-c-button--m-tertiary--BackgroundColor: var(--spaship-global--Color--text-black, #000);
   --pf-c-button--m-tertiary--Color: #fff;
@@ -44,6 +66,7 @@ const StyledText = styled(Text)`
 const StyledClipboardBox = styled.div({
   width: "500px",
   height: "40px",
+  marginTop: "20px"
 });
 
 const StyledSubText = styled(Text)`
@@ -56,6 +79,8 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [_apiKey, setApiKey] = useState("");
   const [alert, setAlert] = useState([]);
+  const [validatedDateTime, setValidatedDateTime] = useState(validations.noval);
+  const [expiresIn, setExpiresIn] = useState("");
 
   async function removeAlert(key: any) {
     setAlert(alert.filter((e: any) => e.key !== key))
@@ -63,42 +88,45 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   async function handleModalToggle() {
     setModalOpen(!isModalOpen);
   }
+  async function handleExpiresIn(date: any) {
+    console.log(date);
+    var dateChecks = /^\d{4}-\d{2}-\d{2}$/;
+    if (date.match(dateChecks) != null && new Date(date) > new Date()) {
+      setValidatedDateTime(validations.success);
+      setExpiresIn(date);
+    }
+    else {
+      setValidatedDateTime(validations.noval);
+    }
+  }
   const { data: session, status } = useSession();
 
-  useEffect(() => {
-    (async () => {
+  const rangeValidator = (date: Date) => {
+    const minDate = new Date();
+    if (date < minDate) {
+      return 'Date is before the allowable range.';
+    }
+    return '';
+  };
+
+  async function handlePropertyCreation() {
+    try {
       if (isModalOpen == true) {
         try {
-          if (status != "loading") {
-            const url = getNextValidateUrl();
-            const response = await get<AnyProps>(url, (session as any).accessToken);
-            setAlert([
-              { title: `API Key Generated Successfully`, variant: 'success', key: getUniqueId() },
-            ] as any)
-            setApiKey(response.token);
+          const url = getNextValidateUrl();
+          const payload = {
+            expiresIn: expiresIn,
+            propertyName: webprop.propertyName,
           }
-        } catch (e) {
-          console.error(e);
-        }
+          const response = await post<AnyProps>(url, payload, (session as any).accessToken);
+          setAlert([
+            { title: `API Key Generated Successfully`, variant: 'success', key: getUniqueId() },
+          ] as any)
+          setApiKey(response.token);
+        } catch (e) { console.error(e); }
       }
-    })();
-  }, [isModalOpen, session, status]);
-
-  const GenerateKeyModal = () => (
-    <Modal
-      variant={ModalVariant.small}
-      title="API Key"
-      description="Please save this API Key"
-      isOpen={isModalOpen}
-      onClose={handleModalToggle}
-    >
-      <StyledClipboardBox>
-        <ClipboardCopy hoverTip="Copy" clickTip="Copied" isReadOnly={true}>
-          {_apiKey}
-        </ClipboardCopy>
-      </StyledClipboardBox>
-    </Modal>
-  );
+    } catch (e) { console.error(e); }
+  }
 
   return (
     <>
@@ -121,7 +149,28 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
           </StyledButton>
         </FlexItem>
       </Flex>
-      <GenerateKeyModal />
+      <Modal
+        variant={ModalVariant.small}
+        title="API Key"
+        description="Please save this API Key"
+        isOpen={isModalOpen}
+        onClose={handleModalToggle}
+        actions={[
+        ]}
+      >
+        <DatePicker
+          validators={[rangeValidator]}
+          onChange={(str, date) => handleExpiresIn(str)}
+        />
+        <StyledButton key="create" variant="tertiary" onClick={handlePropertyCreation} isDisabled={validatedDateTime != validations.success}>
+          Create
+        </StyledButton>
+        <StyledClipboardBox>
+          <ClipboardCopy hoverTip="Copy" clickTip="Copied" isReadOnly={true}>
+            {_apiKey}
+          </ClipboardCopy>
+        </StyledClipboardBox>
+      </Modal>
       <AlertGroup isToast isLiveRegion aria-live="assertive" >
         {alert.map(({ title, variant, key, action }) => (
           <Alert
