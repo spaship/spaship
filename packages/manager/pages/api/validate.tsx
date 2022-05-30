@@ -1,10 +1,7 @@
+import { getSession } from "next-auth/react";
 import { AnyProps } from "../../components/models/props";
 import { post } from "../../utils/api.utils";
 import { getValidateUrl } from "../../utils/endpoint.utils";
-import { getSession } from "next-auth/react";
-import { logger } from "../../utils/logger.utils";
-
-
 
 const Validate = async (req: AnyProps, res: AnyProps) => {
   const url = getValidateUrl();
