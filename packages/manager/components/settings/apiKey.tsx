@@ -87,6 +87,9 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   }
   async function handleModalToggle() {
     setModalOpen(!isModalOpen);
+    setValidatedDateTime(validations.noval);
+    setExpiresIn("");
+    setApiKey("");
   }
   async function handleExpiresIn(date: any) {
     var dateChecks = /^\d{4}-\d{2}-\d{2}$/;

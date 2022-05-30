@@ -1,13 +1,11 @@
 import {
-  Button, Flex, FlexItem, Form,
-  FormGroup, FormHelperText, Modal,
+  Alert, AlertActionCloseButton, AlertGroup, AlertVariant, Button, Flex, FlexItem, Form,
+  FormGroup, FormHelperText, getUniqueId, Modal,
   ModalVariant, Text,
-  TextContent, TextInput, TextVariants,
-  Alert, AlertGroup, AlertActionCloseButton, AlertVariant, getUniqueId,
+  TextContent, TextInput, TextVariants
 } from "@patternfly/react-core";
 import { CheckCircleIcon, ExclamationCircleIcon } from "@patternfly/react-icons";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import styled from "styled-components";
 import { post } from "../../utils/api.utils";
@@ -64,7 +62,6 @@ const StyledSpan = styled.span`
 `;
 
 const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
-  const router = useRouter();
   const { data: session, status } = useSession();
   const [isModalOpen, setModalOpen] = useState(false);
   const [env, setEnv] = useState("");
@@ -84,10 +81,10 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
 
   const handleUrl = (value: string) => {
     const formatUrl = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?~]/;
-    if (value.match(formatUrl)) {
+    if (value.match(formatUrl) || value.includes("..") || value.startsWith(".")) {
       setValidatedUrl(validations.error)
     }
-    else if (value.length > 1) { setValidatedUrl(validations.success) }
+    else if (value.length > 4 && value.includes(".")) { setValidatedUrl(validations.success) }
     else { setValidatedUrl(validations.noval) }
     setUrl(value);
   };
@@ -121,13 +118,14 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   const handleEnv = (value: string) => {
     const formatEnv = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~0-9]/;
     if (value.match(formatEnv)) {
+      setHelperText("Invalid Environment Name")
       setValidatedEnv(validations.error)
     }
     else if (value.length > 1) {
       const keyProperty = webprop?.propertyListResponse.find((prop: any) => (prop.env === value));
       if (keyProperty) {
         setHelperText("This Env already exists")
-        setValidatedEnv(validations.exists);
+        setValidatedEnv(validations.error);
       }
       else {
         setHelperText("Valid Env Name")
@@ -201,7 +199,8 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
                 {validatedEnv === "noval" ? <>Env should'nt contain any space, numbers, special-character </> : <>{helperText}</>}
               </FormHelperText>
             }
-            helperTextInvalid="Invalid Environment Name"
+            //   helperTextInvalid="Invalid Environment Name"
+            helperTextInvalid={helperText}
             helperTextInvalidIcon={<ExclamationCircleIcon />}
             validated={validatedEnv as any}
           >
