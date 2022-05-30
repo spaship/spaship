@@ -152,7 +152,7 @@ const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, act
               </StyledCodeBlock>
               <ListItem icon={<CubeIcon />}>Deploy your spa </ListItem>
               <StyledCodeBlock>
-                <CodeBlockCode>{`spaship deploy -env=<env> <your-archive-file-name>`}</CodeBlockCode>
+                <CodeBlockCode>{`spaship deploy --env=<env> <your-archive-file-name>`}</CodeBlockCode>
               </StyledCodeBlock>
             </StyledList>
           </EmptyStateBody>
