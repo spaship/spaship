@@ -80,15 +80,21 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   }
 
   const handleUrl = (value: string) => {
+    setUrl(value);
     const formatUrl = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?~]/;
     if (value.match(formatUrl) || value.includes("..") || value.startsWith(".")) {
       setValidatedUrl(validations.error)
     }
-    else if (value.length > 4 && value.includes(".")) { setValidatedUrl(validations.success) }
+    else if (value.length > 4 && value.includes(".")) {
+      const domain = value.split(".");
+      const minSize = 2;
+      const checkDomain = (domain[domain.length - 1].length >= minSize && domain[domain.length - 2].length >= minSize);
+      if (checkDomain) setValidatedUrl(validations.success)
+      else setValidatedUrl(validations.noval)
+    }
     else { setValidatedUrl(validations.noval) }
-    setUrl(value);
-  };
 
+  };
 
   async function handlePropertyCreation() {
     try {
@@ -267,3 +273,4 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
 };
 
 export default CreateEnv;
+
