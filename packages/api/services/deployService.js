@@ -29,7 +29,7 @@ const isNPMPack = async (dir) => {
   return false;
 };
 
-async function deploy({ name, spaArchive, appPath, ref, property, env } = {}) {
+async function deploy({ name, spaArchive, appPath, ref, property, env, namespace } = {}) {
   // create a dir in the tmp_dir location, but keep the random archive name
   let tmpDir = `${spaArchive}-extracted`;
   await fsp.mkdir(tmpDir);
@@ -51,7 +51,7 @@ async function deploy({ name, spaArchive, appPath, ref, property, env } = {}) {
     const operatorAlias = responseAlias[0]._doc;
     console.log(operatorAlias);
     if (operatorAlias?.type === "operator") {
-      const zipPath = await createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir, env);
+      const zipPath = await createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir, env, namespace);
 
       const formData = new FormData();
       try {
@@ -63,7 +63,6 @@ async function deploy({ name, spaArchive, appPath, ref, property, env } = {}) {
         return;
       }
       formData.append("website", property);
-
       try {
         const response = await axios.post(config.get("cli:base_path"), formData, {
           maxBodyLength: Infinity,
@@ -127,7 +126,7 @@ async function deploy({ name, spaArchive, appPath, ref, property, env } = {}) {
 
 module.exports = { deploy };
 
-async function createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir, env) {
+async function createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir, env, namespace) {
   if (appPath.charAt(0) == "/" && appPath.length === 1) appPath = ".";
   else if (appPath.charAt(0) == "/") appPath = appPath.substr(1);
   const spaShipFile = {
@@ -135,8 +134,9 @@ async function createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir
     websiteName: operatorAlias.propertyName,
     name: name,
     mapping: appPath,
-    environments: [{ name: env, updateRestriction: false, exclude: false }],
+    environments: [{ name: env, updateRestriction: false, exclude: false, ns: namespace }],
   };
+
   console.log("Operator Config : ");
   console.log(spaShipFile);
   try {
