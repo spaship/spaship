@@ -9,7 +9,6 @@ const fileService = require("./fileService");
 const alias = require("../models/alias");
 const os = require("os");
 const archiver = require("archiver");
-const cliActivities = require("../models/cliActivities");
 const { uuid } = require("uuidv4");
 const FormData = require("form-data");
 const axios = require("axios");
