@@ -3,6 +3,54 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/spaship/spaship/compare/v0.15.0...v1.3.0) (2022-06-02)
+
+
+### Bug Fixes
+
+* **deps:** update dependency next-global-css to v1.3.1 ([#1728](https://github.com/spaship/spaship/issues/1728)) ([1429a5d](https://github.com/spaship/spaship/commit/1429a5d44cf97fd8bb4f679d7d3246a5c5ab684e))
+* **deps:** update dependency styled-components to v5.3.5 ([#1731](https://github.com/spaship/spaship/issues/1731)) ([41d875f](https://github.com/spaship/spaship/commit/41d875f1bafe4ae35fbc39443d99cc711de94a77))
+* **manager:** Fix image asset paths. ([112be96](https://github.com/spaship/spaship/commit/112be965cfa865bf2367f17f082cfd65b42c4f17))
+
+
+### Features
+
+* Add and configure Patternfly. ([8a5dc95](https://github.com/spaship/spaship/commit/8a5dc95cb74c542b8975c21b37aa66f3d282319f))
+* Add SPAship static assets. ([53182d0](https://github.com/spaship/spaship/commit/53182d091cedfd3a08671c6ebaaa120fd06e03c1))
+* **auth:** Converted nextauth api definition to typescript. ([90c9bc3](https://github.com/spaship/spaship/commit/90c9bc3147f540904f75c6df5fee801bf60a6452))
+* **auth:** Enabled user authorization for routes. ([cc8d34f](https://github.com/spaship/spaship/commit/cc8d34fdeb1bd82cebbc769cd89cb8bc78c273c7))
+* **auth:** Implemented OAuth based authentication. ([1c0fca6](https://github.com/spaship/spaship/commit/1c0fca663462b07534ba13c251c4813993f3418c))
+* **auth:** Refactored auth component. ([08bb316](https://github.com/spaship/spaship/commit/08bb316b451a3ed7ceb3573d68c1d534f5036714))
+* **components:** Restructed layout components. ([a0e510c](https://github.com/spaship/spaship/commit/a0e510c3e23e4759cdd0f2ef1916cf98464f93e3))
+* Configure `next-global-css` for Patternfly's global CSS imports. ([8323fe5](https://github.com/spaship/spaship/commit/8323fe5d07836f271bca08033c559aa211a4db88))
+* **footer:** Created Footer component. ([02872cd](https://github.com/spaship/spaship/commit/02872cdd4e9939c5ba7d6938053bc06835aa37fe))
+* **header:** Implemented Header Component. ([a82076f](https://github.com/spaship/spaship/commit/a82076f978b8f5eea9d60abc73261bdec67db01e))
+* **home:** Implemented landing page. ([b1f7e5f](https://github.com/spaship/spaship/commit/b1f7e5ff0a4b17ddc10498756d054456a9d48c0d))
+* **layout:** Created sidebar component. ([827cb02](https://github.com/spaship/spaship/commit/827cb025b547d59fff20df59b68c7a053c0b8a29))
+* **layout:** Implemented Body component. ([f3b01d9](https://github.com/spaship/spaship/commit/f3b01d99532491eb0c1eb277ca2a374cfc40eaad))
+* **layout:** Modified header and footer components to use route pushing for internal links. ([c1d033a](https://github.com/spaship/spaship/commit/c1d033ae3f68d5e75f4c9426c0e5e9b3d8e16b79))
+* **layout:** Refactor sidebar component styling. ([60bb066](https://github.com/spaship/spaship/commit/60bb06657fb88b826c2314b4f0fb8766073177b8))
+* **layout:** Refactored layout component to fix page alignment. ([9278f96](https://github.com/spaship/spaship/commit/9278f967cc77633ee713184156c6b1064f04481e))
+* **layout:** Refactored layout component. ([b5f0586](https://github.com/spaship/spaship/commit/b5f0586dbdd1104f7e75b3407a0c313eee37d935))
+* **layout:** Refined layout styling and added boilerplate example to index page. ([31cb2ec](https://github.com/spaship/spaship/commit/31cb2ec5a970ca8ff48bb12cce8053282bb22642))
+* **login:** Rocket launch animated. ([84b44db](https://github.com/spaship/spaship/commit/84b44db459399d000eff7f10ae1052dd3aaeaa76))
+* **login:** Rocket launch animation smoothened. ([223212a](https://github.com/spaship/spaship/commit/223212a76d7aca2d94e584ed3fd2cd87a6c061d2))
+* **nav:** Disabled non-essential nav links. ([7a2378e](https://github.com/spaship/spaship/commit/7a2378e305ce9e2b7abeadd8a1003291a74f1914))
+* **npm:** Added auto-env setup for npm run jobs ([c760795](https://github.com/spaship/spaship/commit/c760795772c22698c65b30047339b8a8f25f3d6b))
+* **npm:** Updates auto-env setup for npm run jobs ([1f467a0](https://github.com/spaship/spaship/commit/1f467a0d25b57bcf03db20948903f83eda7b40dd))
+* **page:** Created Login page. ([ea4e46a](https://github.com/spaship/spaship/commit/ea4e46af4239a4729b28df2573d23f1f81e5ea49))
+* **page:** Recomposed index page. ([304c01b](https://github.com/spaship/spaship/commit/304c01bf9209553533da2396619a839075b8b7ce))
+* **pages:** Created pages for authentication, contact-us, dashboard, faqs, feedback and properties. ([4e81783](https://github.com/spaship/spaship/commit/4e817837078fd680008d8b55af89feff91423a9a))
+* **page:** Update sign-in options. ([f9b9f63](https://github.com/spaship/spaship/commit/f9b9f63718495875a6ee21886adcd8c64bc1eabd))
+* **property:** Property onboarding api ([#1651](https://github.com/spaship/spaship/issues/1651)) ([74c2a4e](https://github.com/spaship/spaship/commit/74c2a4ec2f4fd1f474a6fe04b8d85c441456da72))
+* **prop:** StaticProps changed to ServerSideProps ([1547810](https://github.com/spaship/spaship/commit/1547810072097a190c9d480f417205a4093a1a96))
+* **style:** Restyled login page. ([bcea33f](https://github.com/spaship/spaship/commit/bcea33ff5b426d2a06d79b77bc23c8928fdf534a))
+* **styles:** Refined global styling and color selections. ([2a6f088](https://github.com/spaship/spaship/commit/2a6f0883ff0fb6b0889d206f83769671d1282b7d))
+
+
+
+
+
 # [0.14.0](https://github.com/spaship/spaship/compare/v0.13.2...v0.14.0) (2021-02-11)
 
 ### Bug Fixes

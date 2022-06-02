@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/spaship/spaship/compare/v0.15.0...v1.3.0) (2022-06-02)
+
+
+### Bug Fixes
+
+* **deps:** update dependency next-global-css to v1.3.1 ([#1728](https://github.com/spaship/spaship/issues/1728)) ([1429a5d](https://github.com/spaship/spaship/commit/1429a5d44cf97fd8bb4f679d7d3246a5c5ab684e))
+
+
+
+
+
 # [0.14.0](https://github.com/spaship/spaship/compare/v0.13.2...v0.14.0) (2021-02-11)
 
 ### Bug Fixes

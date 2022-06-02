@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/spaship/spaship/compare/v0.15.0...v1.3.0) (2022-06-02)
+
+
+### Bug Fixes
+
+* **deps:** update dependency next-global-css to v1.3.1 ([#1728](https://github.com/spaship/spaship/issues/1728)) ([1429a5d](https://github.com/spaship/spaship/commit/1429a5d44cf97fd8bb4f679d7d3246a5c5ab684e))
+* upgrade ajv from 8.6.2 to 8.6.3 ([#1419](https://github.com/spaship/spaship/issues/1419)) ([5520cbb](https://github.com/spaship/spaship/commit/5520cbb9b4c816a3ac48c14fb7aeb970101858fa))
+* upgrade pino from 6.13.2 to 6.13.3 ([#1442](https://github.com/spaship/spaship/issues/1442)) ([67432b8](https://github.com/spaship/spaship/commit/67432b879adc6959c7c245dbe1b4573308aaa566))
+
+
+
+
+
 # [0.14.0](https://github.com/spaship/spaship/compare/v0.13.2...v0.14.0) (2021-02-11)
 
 ### Bug Fixes
