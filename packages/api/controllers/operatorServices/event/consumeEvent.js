@@ -1,9 +1,9 @@
-const event = require("../../models/event");
-const eventTimeTrace = require("../../models/eventTimeTrace");
-const webProperty = require("../../models/webProperty");
+const event = require("../../../models/event");
+const eventTimeTrace = require("../../../models/eventTimeTrace");
+const webProperty = require("../../../models/webProperty");
 const EventSource = require("eventsource");
 const { uuid } = require("uuidv4");
-const config = require("../../config");
+const config = require("../../../config");
 const source = new EventSource(config.get("sse:base_path"));
 const { log } = require("@spaship/common/lib/logging/pino");
 

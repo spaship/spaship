@@ -1,5 +1,5 @@
 const EventSource = require("eventsource");
-const config = require("../../config");
+const config = require("../../../config");
 const { uuid } = require("uuidv4");
 const { log } = require("@spaship/common/lib/logging/pino");
 
