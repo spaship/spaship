@@ -1,12 +1,12 @@
 const { Router } = require("express");
-const produceEvent = require("../controllers/operatorServices/produceEvent");
-const analyzeRepository = require("../controllers/webProperties/analyzeRepository");
-const getSPAList = require("../controllers/webProperties/getSPAList");
-const getWebPropertyList = require("../controllers/webProperties/getWebPropertyList");
-const getAliasList = require("../controllers/webProperties/getAliasList");
-const gitOperations = require("../controllers/webProperties/gitOperations");
-const saveAlias = require("../controllers/operatorServices/saveAlias");
-const getPropertyDetails = require("../controllers/webPropertyServices/utils/getPropertyDetails");
+const produceEvent = require("../controllers/operatorServices/event/produceEvent");
+const analyzeRepository = require("../controllers/deprecated/webProperties/analyzeRepository");
+const getSPAList = require("../controllers/operatorServices/operations/getSPAList");
+const getWebPropertyList = require("../controllers/deprecated/webProperties/getWebPropertyList");
+const getAliasList = require("../controllers/operatorServices/operations/getAliasList");
+const gitOperations = require("../controllers/deprecated/webProperties/gitOperations");
+const saveAlias = require("../controllers/operatorServices/operations/saveAlias");
+const getPropertyList = require("../controllers/operatorServices/operations/getPropertyList");
 
 const router = new Router();
 
@@ -26,10 +26,10 @@ router.get("/alias/list", getAliasList);
 
 router.get("/alias/list/:propertyName", getAliasList);
 
-router.get("/get/applications", getPropertyDetails.getPropertyDetails);
+router.get("/get/applications", getPropertyList.getPropertyList);
 
-router.get("/get/applications/:propertyName", getPropertyDetails.getPropertyDetails);
+router.get("/get/applications/:propertyName", getPropertyList.getPropertyList);
 
-router.get("/get/applications/:propertyName/:spaName", getPropertyDetails.getPropertyDetails);
+router.get("/get/applications/:propertyName/:spaName", getPropertyList.getPropertyList);
 
 module.exports = router;
