@@ -1,6 +1,6 @@
-const alias = require("../../models/alias");
+const alias = require("../../../models/alias");
 const { uuid } = require("uuidv4");
-const ValidationError = require("../../utils/errors/ValidationError");
+const ValidationError = require("../../../utils/errors/ValidationError");
 
 module.exports = async function saveAlias(req, res, next) {
   console.log(req.body);

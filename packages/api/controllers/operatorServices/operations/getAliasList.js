@@ -1,4 +1,4 @@
-const alias = require("../../models/alias");
+const alias = require("../../../models/alias");
 
 module.exports = async function getAliasList(req, res, next) {
   try {

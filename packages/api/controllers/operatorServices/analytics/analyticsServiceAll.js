@@ -1,6 +1,6 @@
-const getCounts = require("../webPropertyServices/getCountDeployments");
-const getCountByEnvWeeklyChart = require("../webPropertyServices/getCountByEnvWeeklyChart");
-const getLatestActivities = require("../webPropertyServices/getLatestActivities");
+const getCounts = require("./utils/getCountDeployments");
+const getCountByEnvWeeklyChart = require("./utils/getCountByEnvWeeklyChart");
+const getLatestActivities = require("./utils/getLatestActivities");
 
 const analyticsServiceAll = async (req, res) => {
   try {

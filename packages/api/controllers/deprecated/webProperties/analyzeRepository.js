@@ -2,7 +2,7 @@ const Git = require("nodegit");
 const path = require("path");
 const fs = require("fs");
 const { uuid } = require("uuidv4");
-const config = require("../../config");
+const config = require("../../../config");
 
 const delay = (millis) =>
   new Promise((resolve, reject) => {

@@ -1,4 +1,4 @@
-const webProperty = require("../../models/webProperty");
+const webProperty = require("../../../models/webProperty");
 
 const getSPAList = async (req, res, next) => {
   try {

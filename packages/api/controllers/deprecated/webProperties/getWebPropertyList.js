@@ -1,4 +1,4 @@
-const webProperty = require("../../models/webProperty");
+const webProperty = require("../../../models/webProperty");
 
 const getWebPropertyList = async (req, res, next) => {
   try {

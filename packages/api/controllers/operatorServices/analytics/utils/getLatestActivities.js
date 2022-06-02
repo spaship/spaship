@@ -1,4 +1,4 @@
-const chart = require("../../models/event");
+const chart = require("../../../../models/event");
 
 const getLatestActivitiesService = async (matchRequest, limitRequest, skipRequest) => {
   try {

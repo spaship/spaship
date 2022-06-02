@@ -4,7 +4,7 @@ const fs = require("fs");
 const { uuid } = require("uuidv4");
 const zip = require("zip-a-folder").zip;
 const saveWebProperty = require("./saveWebProperty");
-const config = require("../../config");
+const config = require("../../../config");
 
 const delay = (millis) =>
   new Promise((resolve, reject) => {

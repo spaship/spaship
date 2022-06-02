@@ -1,7 +1,7 @@
-const getTimeFrameForPropertyChart = require("../webPropertyServices/utils/getTimeFrameForPropertyChart");
-const getLatestActivities = require("../webPropertyServices/getLatestActivities");
-const getCountByEnvWeeklyChart = require("../webPropertyServices/getCountByEnvWeeklyChart");
-const getCounts = require("../webPropertyServices/getCountDeployments");
+const getTimeFrameForPropertyChart = require("./utils/getTimeFrameForPropertyChart");
+const getLatestActivities = require("./utils/getLatestActivities");
+const getCountByEnvWeeklyChart = require("./utils/getCountByEnvWeeklyChart");
+const getCounts = require("./utils/getCountDeployments");
 
 const analyticsServiceFilter = async (req, res) => {
   try {

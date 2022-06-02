@@ -1,13 +1,9 @@
-const chart = require("../../../models/eventTimeTrace");
+const chart = require("../../../../models/event");
 
-const getTimeFrameForPropertyChart = async (req, res) => {
-  res.send(await getTimeFrameForPropertyChartService(req.sanitize(req.params.propertyName)));
-};
-
-const getTimeFrameForPropertyChartService = async (propertyName, weekRange) => {
+const getCountByEnvWeeklyChartService = async (matchRequest, groupRequest, projectRequest) => {
   try {
-    const dateFrame = createDateFrame(weekRange);
-    const response = await fetchResponse(dateFrame, propertyName);
+    const dateFrame = createDateFrame();
+    const response = await fetchResponse(dateFrame, matchRequest, groupRequest, projectRequest);
     return response;
   } catch (e) {
     return { Error: e };
@@ -27,83 +23,66 @@ function createDateFrame() {
   return dateFrame;
 }
 
-async function fetchResponse(dateFrame, propertyName) {
+async function fetchResponse(dateFrame, matchRequest, groupRequest, projectRequest) {
   const response = [];
   for (let i = 0; i < (await dateFrame.length); i++) {
     const element = {
       startDate: dateFrame[i].startDate,
       endDate: dateFrame[i].endDate,
     };
-    const responseChart = await getWeeklyReport(element.startDate, element.endDate, propertyName);
+    const responseChart = await getWeeklyReport(
+      element.startDate,
+      element.endDate,
+      matchRequest,
+      groupRequest,
+      projectRequest
+    );
     responseChart.forEach((item) => {
       item.startDate = element.startDate;
       item.endDate = element.endDate;
     });
     response.push(responseChart);
   }
-
-
   const mappedResponse = {};
-  for(item of response){
-    for(obj of item){
-      if(mappedResponse[obj.env]){
+  for (item of response) {
+    for (obj of item) {
+      if (mappedResponse[obj.env]) {
         mappedResponse[obj.env].push(obj);
-      }
-      else{
+      } else {
         mappedResponse[obj.env] = [obj];
       }
     }
   }
-  
   return mappedResponse;
 }
 
-async function getWeeklyReport(startDate, endDate, propertyName) {
+async function getWeeklyReport(startDate, endDate, matchRequest, groupRequest, projectRequest) {
   return await chart.aggregate([
     {
       $match: {
-        completedAt: {
+        createdAt: {
           $gte: startDate,
           $lt: endDate,
         },
       },
     },
     {
-      $match: {
-        propertyName: propertyName,
-      },
+      $match: matchRequest,
     },
     {
       $group: {
-        _id: {
-          propertyName: "$propertyName",
-          env: "$env",
-        },
-        totalAmount: {
-          $sum: "$consumedTime",
-        },
+        _id: groupRequest,
         count: {
           $sum: 1,
         },
       },
     },
     {
-      $addFields: {
-        avg: {
-          $divide: ["$totalAmount", "$count"],
-        },
-      },
-    },
-    {
       $project: {
         _id: 0,
-        propertyName: "$_id.propertyName",
+        spaName: "$_id.spaName",
         env: "$_id.env",
-        totalAmount: "$totalAmount",
         count: "$count",
-        avg: {
-          $round: ["$avg", 2],
-        },
       },
     },
     {
@@ -112,4 +91,4 @@ async function getWeeklyReport(startDate, endDate, propertyName) {
   ]);
 }
 
-module.exports = { getTimeFrameForPropertyChart, getTimeFrameForPropertyChartService };
+module.exports = { getCountByEnvWeeklyChartService };

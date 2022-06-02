@@ -1,6 +1,6 @@
 const application = require("../../../models/application");
 
-const getPropertyDetails = async (req, res, next) => {
+const getPropertyList = async (req, res, next) => {
   try {
     if (req?.params.propertyName && req?.params.spaName)
       res.status(200).json(
@@ -57,4 +57,4 @@ async function fetchSearchResultForSPA(props) {
   ]);
 }
 
-module.exports = { getPropertyDetails, getPropertyDetailsService };
+module.exports = {  getPropertyList, getPropertyDetailsService };

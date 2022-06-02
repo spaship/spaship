@@ -1,4 +1,4 @@
-const event = require('../../models/event')
+const event = require('../../../models/event')
 const { uuid } = require('uuidv4');
 const sse = require('../../notifications/sseProducer')
 

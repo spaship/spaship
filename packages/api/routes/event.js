@@ -1,7 +1,7 @@
 const { Router } = require("express");
-const getSearchResultForSPA = require("../controllers/webPropertyServices/utils/getSearchResultForSPA");
-const analyticsServiceAll = require("../controllers/services/analyticsServiceAll");
-const analyticsServiceFilter = require("../controllers/services/analyticsServiceFilter");
+const getSearchResultForSPA = require("../controllers/operatorServices//operations/getSearchResultForSPA");
+const analyticsServiceAll = require("../controllers/operatorServices/analytics/analyticsServiceAll");
+const analyticsServiceFilter = require("../controllers/operatorServices/analytics/analyticsServiceFilter");
 
 const router = new Router();
 
