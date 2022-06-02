@@ -18,6 +18,7 @@ const fs = require("fs");
 const path = require("path");
 const config = require("../config");
 const { hash } = require("../utils/cryptoUtil");
+const ValidationError = require("../utils/errors/ValidationError");
 
 module.exports.list = async (req, res, next) => {
   const list = await FileService.getAll();
@@ -66,12 +67,14 @@ module.exports.put = async (req, res, next) => {
 };
 
 module.exports.deploy = async (req, res, next) => {
+  if (!validatePropertyName(req, next)) return;
   const userId = getUserUUID(req);
   const name = getNameRequest(req);
   const ref = getRefRequest(req);
   const { path: appPath } = getRequestBody(req);
   const { path: spaArchive } = getPath(req);
-  const propertyName = req.params?.propertyName;
+  const propertyName = getPropertyName(req);
+  const namespace = generateNamespace(propertyName);
   const env = req.params?.env;
   const validateFileType = req.file.originalname.split(".").pop();
   if (validateFileType === "zip" || validateFileType === "tgz") {
@@ -83,16 +86,24 @@ module.exports.deploy = async (req, res, next) => {
         ref,
         property: propertyName,
         env,
+        namespace,
       });
 
       if (response) {
         const application = await Application.findOne({ propertyName, name, path: appPath, env });
-
         try {
           if (application) {
             await Application.updateOne({ propertyName, name, path: appPath, env }, { ref });
           } else {
-            await Application.create({ propertyName, name: name, path: appPath, ref, userId, env });
+            await Application.create({
+              propertyName,
+              name: name,
+              path: appPath,
+              ref,
+              userId,
+              env,
+              namespace,
+            });
           }
         } catch (e) {
           console.log(e);
@@ -165,6 +176,24 @@ module.exports.validate = async (req, res, next) => {
   res.status(200).json({ message: "Validation is successful.", token: token });
 };
 
+function generateNamespace(propertyName) {
+  return `spaship--${propertyName}`;
+}
+
+function getPropertyName(req) {
+  return req.params?.propertyName;
+}
+
+function validatePropertyName(req, next) {
+  const proeprtyName = req.params?.propertyName;
+  const formatPropertyName = /[ `!@#$%^&*()_+\=\[\]{};':"\\|,.<>\/?~]/;
+  if (proeprtyName?.trim().match(formatPropertyName)) {
+    next(new ValidationError("Invalid PropertyName"));
+    return false;
+  }
+  return true;
+}
+
 function getName(req) {
   const requestParams = req?.params?.name || {};
   return requestParams;
@@ -205,15 +234,6 @@ function getFile(req) {
     return req?.file?.filename;
   }
   throw new Error("File missing in the request body !");
-}
-
-function getDescription(req) {
-  if (req?.body?.description && req?.body?.description.trim().length > 0) return req?.body?.description.trim();
-  throw new Error("Description missing in the request body !");
-}
-
-function getWebPropertyName(req) {
-  return req?.body?.webPropertyName || false;
 }
 
 function formatDate(expiration) {

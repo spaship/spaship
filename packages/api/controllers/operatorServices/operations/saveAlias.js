@@ -5,13 +5,14 @@ const ValidationError = require("../../../utils/errors/ValidationError");
 module.exports = async function saveAlias(req, res, next) {
   console.log(req.body);
   const request = req.body;
+  if (checkProperties(request)) {
+    return next(new ValidationError("Missing properties in request body"));
+  }
   if (!validateProperty(request, next)) return;
+  if (!validateCluster(request, next)) return;
   if (request?.id) {
     const updatedResponse = await updateAlias(request);
     return res.send(updatedResponse);
-  }
-  if (!request.hasOwnProperty("propertyName") || !request.hasOwnProperty("propertyTitle")) {
-    return next(new ValidationError("Please provide PropertyName and PropertyTitle"));
   }
   const result = await alias.findOne({ propertyName: getPropertyName(request), env: getEnv(request) });
   if (result) {
@@ -22,6 +23,16 @@ module.exports = async function saveAlias(req, res, next) {
   const createdResponse = await createEvent(aliasRequest);
   res.send(createdResponse);
 };
+
+function checkProperties(request) {
+  return (
+    !request.hasOwnProperty("propertyName") ||
+    !request.hasOwnProperty("propertyTitle") ||
+    !request.hasOwnProperty("env") ||
+    !request.hasOwnProperty("url") ||
+    !request.hasOwnProperty("cluster")
+  );
+}
 
 function validateProperty(request, next) {
   const formatPropertyName = /[ `!@#$%^&*()_+\=\[\]{};':"\\|,.<>\/?~]/;
@@ -49,6 +60,14 @@ function validateProperty(request, next) {
   return true;
 }
 
+function validateCluster(request, next) {
+  const cluster = { prod: "prod", preprod: "preprod" };
+  if (request?.cluster == cluster.prod || request?.cluster == cluster.preprod) {
+    return true;
+  }
+  next(new ValidationError("Invalid Cluster"));
+  return false;
+}
 async function createEvent(aliasRequest) {
   try {
     const saveResponse = await aliasRequest.save();
@@ -70,7 +89,8 @@ async function createAliasRequest(id, request) {
     propertyTitle: getPropertyTitle(request),
     env: getEnv(request),
     url: getUrl(request),
-    namespace: getNameSpace(request),
+    namespace: generateNamespace(getPropertyName(request)),
+    cluster: getCluster(request),
     type: getType(request),
     createdBy: getCreatedBy(request),
     isActive: true,
@@ -101,6 +121,10 @@ function getPropertyTitle(request) {
   return request?.propertyTitle?.trim() || "";
 }
 
+function getCluster(request) {
+  return request?.cluster?.trim() || "";
+}
+
 function getCreatedBy(request) {
   return request?.createdBy?.trim()?.toLowerCase() || "";
 }
@@ -109,8 +133,8 @@ function getEnv(request) {
   return request.env.trim().toLowerCase();
 }
 
-function getNameSpace(request) {
-  return request?.namespace?.trim()?.toLowerCase() || "";
+function generateNamespace(propertyName) {
+  return `spaship--${propertyName}`;
 }
 
 function getType(request) {
