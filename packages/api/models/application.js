@@ -26,6 +26,15 @@ const ApplicationSchema = new Schema(
       type: String,
       required: false,
     },
+    namespace: {
+      type: String,
+      required: false,
+    },
+    isActive: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   },
   {
     timestamps: true,

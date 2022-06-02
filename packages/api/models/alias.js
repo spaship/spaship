@@ -26,6 +26,10 @@ const alias = new mongoose.Schema({
     type: String,
     required: false,
   },
+  cluster: {
+    type: String,
+    required: false,
+  },
   type: {
     type: String,
     required: false,
