@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -41,12 +42,15 @@ public class Operator implements Operations {
   private final EventManager eventManager;
   private final String domain;
   private final String appInstance;
+  private final String deDebugNs;
 
-  public Operator(KubernetesClient k8sClient, EventManager eventManager) {
+  public Operator(KubernetesClient k8sClient,
+                  EventManager eventManager,@Named("deNamespace") String ns) {
     this.k8sClient = k8sClient;
     this.eventManager = eventManager;
     domain = ConfigProvider.getConfig().getValue("operator.domain.name", String.class);
     appInstance = setAppInstanceValue();
+    this.deDebugNs = ns;
   }
 
   private String setAppInstanceValue() {
@@ -87,6 +91,18 @@ public class Operator implements Operations {
 
 
   public boolean environmentExists(Environment environment) {
+    if(!nameSpaceExists(environment))
+      return false;
+    return podExists(environment);
+  }
+
+  private boolean nameSpaceExists(Environment environment) {
+    var ns = k8sClient.namespaces().withName(environment.getNameSpace()).get();
+    var nsExists = Objects.nonNull(ns);
+    LOG.debug("nameSpaceExists status is {}", nsExists);
+    return nsExists;
+  }
+  private boolean podExists(Environment environment) {
     Map<String, String> labels = searchCriteriaLabel(environment);
     List<Pod> matchedPods = k8sClient.pods().inNamespace(environment.getNameSpace()).withLabels(labels).list()
       .getItems();
@@ -114,9 +130,49 @@ public class Operator implements Operations {
 
 
   void createNewEnvironment(Environment environment) {
+    if(!nameSpaceExists(environment))
+      createMpPlusProject(environment);
     KubernetesList result = buildK8sResourceList(environment);
     LOG.debug("create environment is in progress");
     processK8sList(result, environment.getTraceID(), environment.getNameSpace());
+  }
+
+  // TODO: this implementation is mp+ specific, using inheritance
+  //  create implementations for different cloud providers,
+  //  and use property as deciding factor for the implementation.A
+  private void createMpPlusProject(Environment environment) {
+
+
+    var ns = (environment.getNameSpace()).replace("spaship--","");
+    LOG.debug("Creating namespace with name {}", ns);
+    var appCode = ConfigProvider.getConfig().getValue("mpp.app.code", String.class);
+    var tenantName = ConfigProvider.getConfig().getValue("mpp.tenant.name", String.class);
+    var parentRBName= ConfigProvider.getConfig().getValue("mpp.parent.rb.name", String.class);
+
+    var templateParameters = Map.of("APP_CODE",appCode,
+      "TENANT_NAME",tenantName,
+      "NS_NAME",ns,
+      "PARENT_ROLE_BINDING",parentRBName,
+      "DE_NAMESPACE",deDebugNs
+      );
+
+
+    var k8sNSList = ((OpenShiftClient) k8sClient)
+      .templates()
+      .inNamespace(environment.getNameSpace())
+      .load(Operations.class.getResourceAsStream("/openshift/mpp-namespace-template.yaml"))
+      .processLocally(templateParameters);
+    var createRecord = k8sClient.resourceList(k8sNSList).createOrReplace();
+
+    LOG.debug("namespace successfully provisioned, with details\n {}",createRecord);
+
+    var eb = EventStructure.builder().uuid(environment.getTraceID());
+    eb.websiteName(environment.getWebsiteName())
+      .environmentName(environment.getName())
+      .state("namespace created successfully in {} cluster".replace("{}", environment.getNameSpace()));
+    eventManager.queue(eb.build());
+
+
   }
 
   public String environmentSidecarUrl(Environment environment) {

@@ -11,14 +11,20 @@ parameters:
   - name: "TENANT_NAME"
     description: "Name of the parent project"
     required: true
-  - name: "WEB_PROPERTY_NAME"
+  - name: "NS_NAME"
     description: "based on web property name the automation will create the tenant"
+    required: true
+  - name: "PARENT_ROLE_BINDING"
+    description: "role binding name of the controller ns"
+    required: true
+  - name: "DE_NAMESPACE"
+    description: "deployment engine's namespace"
     required: true
 objects:
   - kind: TenantNamespace
     apiVersion: tenant.paas.redhat.com/v1alpha1
     metadata:
-      name: ${WEB_PROPERTY_NAME}
+      name: ${NS_NAME}
       labels:
         paas.redhat.com/appcode: ${APP_CODE}
         tenant.paas.redhat.com/namespace-type: runtime
@@ -50,3 +56,17 @@ objects:
               port: 8081
             - protocol: TCP
               port: 80
+
+  - kind: RoleBinding
+    apiVersion: tenant.paas.redhat.com/v1alpha1
+    metadata:
+      name: ${PARENT_ROLE_BINDING}-child
+      namespace: ${TENANT_NAME}--${NS_NAME}
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: Role
+      name: admin
+    subjects:
+    - kind: ServiceAccount
+      name: ${PARENT_ROLE_BINDING}
+      namespace: ${DE_NAMESPACE}

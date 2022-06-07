@@ -14,7 +14,6 @@ import io.spaship.operator.util.ReUsableItems;
 import org.apache.commons.io.IOUtils;
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -211,7 +210,7 @@ public class SPAUploadHandler {
     return environment;
   }
 
-  @NotNull
+
   private OperationResponse createOrUpdateSPA(OperationResponse opsResponse) {
     if (opsResponse.getStatus() == -1 || opsResponse.getStatus() == 0) {
       LOG.debug("no operation performed");

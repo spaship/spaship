@@ -13,20 +13,22 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
+import io.quarkus.runtime.configuration.ProfileManager;
+import io.spaship.operator.exception.ResourceNotFoundException;
 
 
 @Singleton
 public class K8sClientProducer {
   private static final Logger LOG = LoggerFactory.getLogger(K8sClientProducer.class);
 
-  @ConfigProperty(name = "application.k8s.namespace")
+  @ConfigProperty(name = "mpp.de.default.namespace")
   Optional<String> nameSpaceFromEnv;
 
   @ConfigProperty(name = "application.webprop.ns.default")
   Optional<String> defaultWebappNameSpace;
 
   @Produces
-  @Named("namespace")
+  @Named("deNamespace")
   String getNamespace() {
     String computedNameSpace = Optional.ofNullable(readNameFromFile()).orElse(whenNameSpaceMetaFileNotFound());
     LOG.info("computed namespace is {}", computedNameSpace);
@@ -52,11 +54,16 @@ public class K8sClientProducer {
     return ns;
   }
 
+  // This implementation is mpp specific
   private String whenNameSpaceMetaFileNotFound() {
+
     LOG.debug("namespace file does not exists.");
-    return nameSpaceFromEnv.orElseGet(() -> {
-      LOG.debug("namespace not on environment either! proceeding with ns <default>");
-      return "default";
+
+    if(!ProfileManager.getActiveProfile().toLowerCase().contains("dev"))
+      throw new ResourceNotFoundException("the profile is not dev , could not determine de namespace");
+
+    return nameSpaceFromEnv.orElseThrow(() -> {
+      throw new ResourceNotFoundException("deployment engine's default namespace is not set in properties file");
     });
   }
 
