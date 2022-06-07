@@ -17,6 +17,8 @@ const config = require("./config");
 const routes = require("./routes");
 const swaggerDocument = yaml.safeLoad(fs.readFileSync(path.join(__dirname, "openapi.yml"), "utf8"));
 const app = new express();
+const consumeSSE = require("./controllers/operatorServices/event/consumeEvent");
+
 app
   .use(bodyParser.json({ limit: "50mb" }))
   .use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }))
@@ -42,4 +44,5 @@ app
   .use("/api", [authentication()], routes)
   .use(errorHandler());
 
+consumeSSE()
 module.exports = app;
