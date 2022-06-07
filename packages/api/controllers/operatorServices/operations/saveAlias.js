@@ -9,7 +9,7 @@ module.exports = async function saveAlias(req, res, next) {
     return next(new ValidationError("Missing properties in request body"));
   }
   if (!validateProperty(request, next)) return;
-  if (!validateCluster(request, next)) return;
+  if (!validateDeploymentConnectionType(request, next)) return;
   if (request?.id) {
     const updatedResponse = await updateAlias(request);
     return res.send(updatedResponse);
@@ -30,7 +30,7 @@ function checkProperties(request) {
     !request.hasOwnProperty("propertyTitle") ||
     !request.hasOwnProperty("env") ||
     !request.hasOwnProperty("url") ||
-    !request.hasOwnProperty("cluster")
+    !request.hasOwnProperty("deploymentConenctionType")
   );
 }
 
@@ -60,14 +60,15 @@ function validateProperty(request, next) {
   return true;
 }
 
-function validateCluster(request, next) {
-  const cluster = { prod: "prod", preprod: "preprod" };
-  if (request?.cluster == cluster.prod || request?.cluster == cluster.preprod) {
+function validateDeploymentConnectionType(request, next) {
+  const type = { prod: "prod", preprod: "preprod" };
+  if (request?.deploymentConenctionType == type.prod || request?.deploymentConenctionType == type.preprod) {
     return true;
   }
-  next(new ValidationError("Invalid Cluster"));
+  next(new ValidationError("Invalid Deployment Conenction Type"));
   return false;
 }
+
 async function createEvent(aliasRequest) {
   try {
     const saveResponse = await aliasRequest.save();
@@ -82,7 +83,6 @@ async function getGeneratedAliasId() {
 }
 
 async function createAliasRequest(id, request) {
-  const currentTime = getCurrentTime();
   return new alias({
     id: id,
     propertyName: getPropertyName(request),
@@ -90,27 +90,20 @@ async function createAliasRequest(id, request) {
     env: getEnv(request),
     url: getUrl(request),
     namespace: generateNamespace(getPropertyName(request)),
-    cluster: getCluster(request),
+    deploymentConenctionType: getDeploymentConenctionType(request),
     type: getType(request),
     createdBy: getCreatedBy(request),
-    isActive: true,
-    createdAt: currentTime,
-    updatedAt: currentTime,
   });
 }
 
 async function updateAlias(request) {
-  const updateData = { ...request, updatedAt: getCurrentTime() };
+  const updateData = { ...request };
   const updateResponse = await alias.findOneAndUpdate({ id: request?.id }, updateData, (error, data) => {
     if (error) {
       console.log("error");
     }
   });
   return updateResponse;
-}
-
-function getCurrentTime() {
-  return new Date();
 }
 
 function getPropertyName(request) {
@@ -121,8 +114,8 @@ function getPropertyTitle(request) {
   return request?.propertyTitle?.trim() || "";
 }
 
-function getCluster(request) {
-  return request?.cluster?.trim() || "";
+function getDeploymentConenctionType(request) {
+  return request?.deploymentConenctionType?.trim() || "";
 }
 
 function getCreatedBy(request) {
