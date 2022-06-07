@@ -1,14 +1,28 @@
 const event = require("../../../models/event");
+const deploymentConnection = require("../../../models/deploymentConnection");
 const eventTimeTrace = require("../../../models/eventTimeTrace");
 const webProperty = require("../../../models/webProperty");
 const EventSource = require("eventsource");
 const { uuid } = require("uuidv4");
 const config = require("../../../config");
-const source = new EventSource(config.get("sse:base_path"));
+//const source = new EventSource("http://localhost:4001/sse/2");
 const { log } = require("@spaship/common/lib/logging/pino");
 
-source.onmessage = function (eventRequest) {
-  log.info(eventRequest.data);
+module.exports = async function consumeEvent() {
+  const sse = await deploymentConnection.find();
+  for (let item of sse) {
+    log.info(item);
+    const eventUrl = `${item.baseurl}/api/event`;
+    console.log(eventUrl);
+    new EventSource(eventUrl).onmessage = async function (eventRequest) {
+      log.info(eventUrl);
+      log.info(eventRequest);
+      processEvents(eventRequest);
+    };
+  }
+};
+
+function processEvents(eventRequest) {
   const response = JSON.parse(eventRequest.data);
   const currentTime = new Date();
   const eventBody = new event({
@@ -30,7 +44,7 @@ source.onmessage = function (eventRequest) {
   });
   console.log(eventBody);
   Promise.all([createEventRequest(eventBody), createEventTimeTraceRequest(response)]);
-};
+}
 
 function getCode(state) {
   if (state == "mapping file loaded into memory") return "WEBSITE_CREATE_STARTED";
@@ -43,7 +57,7 @@ async function createEventRequest(response) {
   if (!result) {
     await response.save();
   } else {
-    console.log("Duplicate Entry");
+    console.error("Duplicate Entry");
   }
 }
 

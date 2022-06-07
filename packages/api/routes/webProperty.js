@@ -7,6 +7,10 @@ const getAliasList = require("../controllers/operatorServices/operations/getAlia
 const gitOperations = require("../controllers/deprecated/webProperties/gitOperations");
 const saveAlias = require("../controllers/operatorServices/operations/saveAlias");
 const getPropertyList = require("../controllers/operatorServices/operations/getPropertyList");
+const saveDeploymentConnection = require("../controllers/operatorServices/operations/saveDeploymentConnection");
+const getDeploymentConnectionList = require("../controllers/operatorServices/operations/getDeploymentConnectionList");
+const saveDeploymentRecord = require("../controllers/operatorServices/operations/saveDeploymentRecord");
+const getDeploymentRecordList = require("../controllers/operatorServices/operations/getDeploymentRecordList");
 
 const router = new Router();
 
@@ -31,5 +35,17 @@ router.get("/get/applications", getPropertyList.getPropertyList);
 router.get("/get/applications/:propertyName", getPropertyList.getPropertyList);
 
 router.get("/get/applications/:propertyName/:spaName", getPropertyList.getPropertyList);
+
+router.post("/deploymentConnenction", saveDeploymentConnection);
+
+router.get("/deploymentConnenction/list", getDeploymentConnectionList);
+
+router.get("/deploymentConnenction/list/:name", getDeploymentConnectionList);
+
+router.post("/deploymentRecord", saveDeploymentRecord.saveDeploymentRecord);
+
+router.get("/deploymentRecord/list", getDeploymentRecordList);
+
+router.get("/deploymentRecord/list/:name", getDeploymentRecordList);
 
 module.exports = router;
