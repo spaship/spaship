@@ -139,7 +139,8 @@ public class Operator implements Operations {
 
   // TODO: this implementation is mp+ specific, using inheritance
   //  create implementations for different cloud providers,
-  //  and use property as deciding factor for the implementation.A
+  //  and use property as deciding factor for the implementation.
+  //TODO: break this method into smaller methods
   private void createMpPlusProject(Environment environment) {
 
 
@@ -147,12 +148,12 @@ public class Operator implements Operations {
     LOG.debug("Creating namespace with name {}", ns);
     var appCode = ConfigProvider.getConfig().getValue("mpp.app.code", String.class);
     var tenantName = ConfigProvider.getConfig().getValue("mpp.tenant.name", String.class);
-    var parentRBName= ConfigProvider.getConfig().getValue("mpp.parent.rb.name", String.class);
+    var deFullName= ConfigProvider.getConfig().getValue("application.de.chart.fullname", String.class);
 
     var templateParameters = Map.of("APP_CODE",appCode,
       "TENANT_NAME",tenantName,
       "NS_NAME",ns,
-      "PARENT_ROLE_BINDING",parentRBName,
+      "DE_CHART_FULL_NAME",deFullName,
       "DE_NAMESPACE",deDebugNs
       );
 
@@ -162,9 +163,16 @@ public class Operator implements Operations {
       .inNamespace(environment.getNameSpace())
       .load(Operations.class.getResourceAsStream("/openshift/mpp-namespace-template.yaml"))
       .processLocally(templateParameters);
-    var createRecord = k8sClient.resourceList(k8sNSList).createOrReplace();
+    var createNsRecord = k8sClient.resourceList(k8sNSList).createOrReplace();
+    LOG.debug("namespace successfully provisioned, with details\n {}",createNsRecord);
 
-    LOG.debug("namespace successfully provisioned, with details\n {}",createRecord);
+    var nsSupportResourcesList = ((OpenShiftClient) k8sClient)
+      .templates()
+      .inNamespace(environment.getNameSpace())
+      .load(Operations.class.getResourceAsStream("/openshift/mpp-prepare-namespace.yaml"))
+      .processLocally(templateParameters);
+    var createSupportRecord = k8sClient.resourceList(nsSupportResourcesList).createOrReplace();
+    LOG.debug("support resources for namespace provisioned, with details\n {}",createSupportRecord);
 
     var eb = EventStructure.builder().uuid(environment.getTraceID());
     eb.websiteName(environment.getWebsiteName())

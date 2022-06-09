@@ -1,0 +1,57 @@
+kind: "Template"
+apiVersion: "v1"
+metadata:
+  name: "namespace-template"
+labels:
+  template: "namnespace-template"
+parameters:
+  - name: "APP_CODE"
+    description: "App code of the parent project"
+    required: true
+  - name: "TENANT_NAME"
+    description: "Name of the parent project"
+    required: true
+  - name: "NS_NAME"
+    description: "based on web property name the automation will create the tenant"
+    required: true
+  - name: "DE_CHART_FULL_NAME"
+    description: "deployment engine chart full name"
+    required: true
+  - name: "DE_NAMESPACE"
+    description: "deployment engine's namespace"
+    required: true
+objects:
+  - kind: NetworkPolicy
+    apiVersion: networking.k8s.io/v1
+    metadata:
+      name: allow-pod-and-namespace-both
+    spec:
+      podSelector:
+        matchLabels:
+          managedBy: spaship
+      ingress:
+        - from:
+            - namespaceSelector:
+                matchLabels:
+                  tenant.paas.redhat.com/tenant: ${TENANT_NAME}
+            - podSelector:
+                matchLabels:
+                  managedBy: spaship
+          ports:
+            - protocol: TCP
+              port: 8081
+            - protocol: TCP
+              port: 80
+  - kind: RoleBinding
+    apiVersion: rbac.authorization.k8s.io/v1
+    metadata:
+      name: rb-${DE_CHART_FULL_NAME}-child
+      namespace: ${TENANT_NAME}--${NS_NAME}
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: admin
+    subjects:
+      - kind: ServiceAccount
+        name: sa-${DE_CHART_FULL_NAME}
+        namespace: ${DE_NAMESPACE}
