@@ -15,8 +15,8 @@ module.exports = async function saveDeploymentConnection(req, res, next) {
   if (result) {
     return next(new ValidationError("Deployment Connection Name exists."));
   }
-  let deploymentConenctionRequest = await createDeploymentConnectionRequest(request);
-  const createdResponse = await createDeploymentConnection(deploymentConenctionRequest);
+  let deploymentConnectionRequest = await createDeploymentConnectionRequest(request);
+  const createdResponse = await createDeploymentConnection(deploymentConnectionRequest);
   res.send(createdResponse);
 };
 
@@ -47,9 +47,9 @@ function validateProperties(request, next) {
   return true;
 }
 
-async function createDeploymentConnection(deploymentConenctionType) {
+async function createDeploymentConnection(deploymentConnectionType) {
   try {
-    const saveResponse = await deploymentConenctionType.save();
+    const saveResponse = await deploymentConnectionType.save();
     return saveResponse;
   } catch (e) {
     return { Error: e };
