@@ -8,7 +8,7 @@ image:
   repository: quay.io/spaship/operator
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "develop"
+  tag: "master"
 
 imagePullSecrets: [ ]
 nameOverride: "deployment-engine"
@@ -47,9 +47,9 @@ ingress:
     haproxy.router.openshift.io/timeout: 600s
   # kubernetes.io/ingress.class: nginx
   # kubernetes.io/tls-acme: "true"
-  host: deployment-engine.apps.int.grey.dev.iad2.dc.paas.redhat.com
+  host: apps.int.spoke.preprod.us-east-1.aws.paas.redhat.com
   hosts:
-    - host: deployment-engine.apps.int.grey.dev.iad2.dc.paas.redhat.com
+    - host: apps.int.spoke.preprod.us-east-1.aws.paas.redhat.com
       paths:
         - path: /
           pathType: Prefix
@@ -80,10 +80,10 @@ tolerations: [ ]
 affinity: { }
 
 app:
-  domain: apps.int.grey.dev.iad2.dc.paas.redhat.com
+  domain: apps.int.spoke.preprod.us-east-1.aws.paas.redhat.com
   ec: spa-ops-event-channel
   instance: preprod
-  defaultns: "spaship--default" # default ns to create environment if ns not specified in .spaship file
+  defaultns: "spaship--cc" # default ns to create environment if ns not specified in .spaship file, TODO should be spaship--default
   tenant: "spaship"
   appcode: "SPAS-001"
   rolebinding: ""

@@ -39,7 +39,7 @@ spec:
   {{- end }}
   rules:
     {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
+    - host: {{ $.Values.nameOverride }}.{{ .host }}
       http:
         paths:
           {{- range .paths }}
