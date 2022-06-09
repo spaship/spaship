@@ -35,6 +35,7 @@ Common labels
 */}}
 {{- define "spa-deployment-operator.labels" -}}
 helm.sh/chart: {{ include "spa-deployment-operator.chart" . }}
+managedBy: spaship
 {{ include "spa-deployment-operator.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
