@@ -1,4 +1,4 @@
-import { Button, Card, Label } from "@patternfly/react-core";
+import { Button, Card, Flex, FlexItem, Label, SearchInput } from "@patternfly/react-core";
 import { ClockIcon, ExternalLinkAltIcon } from "@patternfly/react-icons";
 import { ExpandableRowContent, TableComposable, Tbody, Td, Th, Thead, Tr } from "@patternfly/react-table";
 import { useRouter } from "next/router";
@@ -7,6 +7,9 @@ import styled from "styled-components";
 import { Properties } from "../models/props";
 
 const StyledCard = styled(Card)`
+  margin-top: 1rem;
+`;
+const StyledFlex = styled(Flex)`
   margin-top: 2rem;
 `;
 const StyledLabel = styled(Label)`
@@ -20,7 +23,7 @@ const StyledTableHeader = styled(Thead)`
 const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) => {
   const router = useRouter();
   const { envList } = webprop;
-  const tableView: Array<SPAProperty> = webprop?.countResponse?.reduce((acc: any, spa: any) => {
+  const tableView: Array<SPAProperty> = Object.values(webprop?.countResponse?.reduce((acc: any, spa: any) => {
     const url = `${envList.find((environment: any) => environment.env === spa.env).url}${spa.path}`;
     if (!!acc[spa.name]) {
       acc[spa.name].env.push(spa.env);
@@ -48,7 +51,8 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
       ],
     }
     return acc;
-  }, {});
+  }, {}));
+  const [tableData, setTableData] = useState(tableView);
   const [expandedSpaNames, setExpandedSpaNames] = useState(['']);
   const setSpaExpanded = (spaName: string, isExpanding = true) =>
     setExpandedSpaNames(prevExpandedSpaNames => {
@@ -58,8 +62,30 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
         : otherSpaNames;
     });
   const isSPAExpanded = (spaName: string) => expandedSpaNames.includes(spaName);
+  const [searchValue, setSearchValue] = useState('');
+  const debounce = (delay: number,) => {
+    let timer: any;
+    return function(value: string) {
+      clearTimeout(timer);
+      timer = setTimeout( () => {
+        setTableData(tableView.filter((item: any) => item.name.toLowerCase().includes(value.toLowerCase())))
+      }, delay)
+     }
+  }
+  const onSearch = debounce(300);
+  const onClear= () => setSearchValue('');
   return (
     <>
+      <StyledFlex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
+        <FlexItem>
+          <SearchInput
+            placeholder="Find by name"
+            value={searchValue}
+            onChange={onSearch}
+            onClear={onClear}
+          />
+        </FlexItem>
+      </StyledFlex>
       <StyledCard>
         <TableComposable>
           <Thead>
@@ -70,7 +96,7 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
               <Th>Environment(s)</Th>
             </Tr>
           </Thead>
-          {Object.values(tableView)?.map((spa: SPAProperty, rowIndex: any) => (
+          {tableData.map((spa: SPAProperty, rowIndex: any) => (
             <Tbody key={spa.name} isExpanded={isSPAExpanded(spa.name)}>
               <Tr key={spa.name}>
                 <Td
