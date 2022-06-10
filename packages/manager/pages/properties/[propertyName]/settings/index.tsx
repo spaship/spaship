@@ -38,7 +38,7 @@ export const getServerSideProps = async (context: ContextProps) => {
       [
         await post<Properties>(urlEvent, payloadCount, token), 
         await get<AnyProps>(urlProperty, token),
-        await get<AnyProps>(apiKeyListUrl, token)
+        await get<AnyProps>(apiKeyListUrl, token),
       ]
     );
     const [spaCountResponse, propertyListResponse, apiKeyList]: AnyProps = response;
@@ -51,7 +51,7 @@ export const getServerSideProps = async (context: ContextProps) => {
           { 
             propertyListResponse: finalPropertyList, 
             spashipNotificationTimeout: spashipNotificationTimeout,
-            apiKeyList,
+            apiKeyList: apiKeyList ?? [],
             propertyName: propertyReq,
           } 
         } 
@@ -64,7 +64,7 @@ export const getServerSideProps = async (context: ContextProps) => {
           spaCountResponse: spaCountResponse, 
           propertyListResponse: finalPropertyList, 
           spashipNotificationTimeout: spashipNotificationTimeout,
-          apiKeyList,
+          apiKeyList: apiKeyList ?? [],
           propertyName: propertyReq,
         }
       },

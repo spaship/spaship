@@ -1,4 +1,11 @@
-import { Flex, FlexItem, Gallery, SearchInput, Select, SelectOption, SelectVariant, Tab, Tabs, TabTitleIcon, TabTitleText, Title } from "@patternfly/react-core";
+import { 
+  Flex, 
+  FlexItem, 
+  Gallery, 
+  Select, 
+  SelectOption, 
+  SelectVariant 
+} from "@patternfly/react-core";
 import { getSession } from "next-auth/react";
 import Body from "../../components/layout/body";
 import { AnyProps, Properties } from "../../components/models/props";
