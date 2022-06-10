@@ -1,11 +1,24 @@
 import {
-  Alert, Button, Form, FormGroup, FormHelperText, Text, TextInput, TextVariants,
-  AlertGroup, AlertActionCloseButton, AlertVariant, getUniqueId,
+  Alert, 
+  Button, 
+  Form, 
+  FormGroup, 
+  FormHelperText, 
+  Text, 
+  TextInput, 
+  TextVariants,
+  AlertGroup, 
+  AlertActionCloseButton, 
+  AlertVariant, 
+  getUniqueId, 
+  Flex, 
+  FlexItem,
+  Switch,
 } from '@patternfly/react-core';
 import { CheckCircleIcon, ExclamationCircleIcon } from "@patternfly/react-icons";
 import { useSession } from 'next-auth/react';
 import { useRouter } from "next/router";
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useState } from "react";
 import styled from "styled-components";
 import { post } from "../../utils/api.utils";
 import { getNextOnboardWebpropertyUrl } from "../../utils/endpoint.utils";
@@ -48,22 +61,22 @@ const StyledText = styled(Text)`
 `;
 
 const DivStyle = styled.div`
-  height: fit-content;
-  width: 50vw;
   padding-bottom: 1rem;
-  opacity: 1;
 `;
 
-
+const StyledSwitch = styled(Switch)`
+  margin: 0.4rem 0;
+`;
 
 const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps) => {
   const router = useRouter();
-  const { data: session, status } = useSession();
-  const [errorMessage, setErrorMessage] = useState("");
+  const { data: session, status: _status } = useSession();
+  const [_errorMessage, setErrorMessage] = useState("");
   const [validatedEnv, setValidatedEnv] = useState(validations.noval);
   const [validatedIdentifier, setValidatedIdentifier] = useState(validations.noval);
   const [validatedTitle, setValidatedTitle] = useState(validations.noval);
   const [validatedUrl, setValidatedUrl] = useState(validations.noval);
+  const [envType, setEnvType] = useState(false);
 
   const [identifier, setIdentifier] = useState("");
   const [title, setTitle] = useState("");
@@ -134,6 +147,7 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
         "propertyName": identifier,
         "url": url,
         "env": env,
+        "isProd": envType,
       }
       const propertyRes = await post<AnyProps>(nextUrl, payload, (session as any).accessToken);
       if (!propertyRes?.response?.id) {
@@ -148,8 +162,6 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
     } catch (e) { }
   };
 
-  useEffect(() => {
-  }, []);
 
   return (
     <>
@@ -238,34 +250,68 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
               validated={validatedUrl as any}
             />
           </FormGroup>
+          <Flex>
+            <FlexItem>
+              <FormGroup
+                label="Environment Name"
+                isRequired
+                fieldId="form-group-label-info"
+                helperText={
+                  <FormHelperText icon={validatedEnv === "noval" ? <ExclamationCircleIcon /> : <CheckCircleIcon />} isHidden={validatedEnv !== validations.noval && validatedEnv !== validations.success}>
+                    {validatedEnv === "noval" ? <>Env shouldn't contain any space, numbers, special-character </> : <>Valid Environment</>}
+                  </FormHelperText>
+                }
+                helperTextInvalid="Invalid Environment Name"
+                helperTextInvalidIcon={<ExclamationCircleIcon />}
+                validated={validatedEnv as any}
+              >
+              <TextInput
+                isRequired
+                type="text"
+                id="form-group-label-info"
+                name="form-group-label-info"
+                aria-describedby="form-group-label-info-helper"
+                placeholder="Default Environment Name"
+                value={env}
+                onChange={handleEnv}
+                validated={validatedEnv as any}
+              />
+              </FormGroup>
+            </FlexItem>
+            <FlexItem>
+              <FormGroup
+                label="Environment Type"
+                fieldId="form-group-label-env-type"
+                helperText={
+                  <FormHelperText icon={<ExclamationCircleIcon/>} isHidden={false}>
+                    {`Env type for your property`}
+                  </FormHelperText>
+                }
+                isRequired>
+              <StyledSwitch
+                label="production"
+                labelOff="pre-production"
+                id="env-type"
+                aria-label="prod and pre-prod env type checkbox"
+                isChecked={envType}
+                onChange={(status) => { setEnvType(status) }}
+              />
+              </FormGroup>
+            </FlexItem>
+          </Flex>
+          
 
-          <FormGroup
-            label="Environment Name"
-            isRequired
-            fieldId="form-group-label-info"
-            helperText={
-              <FormHelperText icon={validatedEnv === "noval" ? <ExclamationCircleIcon /> : <CheckCircleIcon />} isHidden={validatedEnv !== validations.noval && validatedEnv !== validations.success}>
-                {validatedEnv === "noval" ? <>Env shouldn't contain any space, numbers, special-character </> : <>Valid Environment</>}
-              </FormHelperText>
-            }
-            helperTextInvalid="Invalid Environment Name"
-            helperTextInvalidIcon={<ExclamationCircleIcon />}
-            validated={validatedEnv as any}
-          >
-            <TextInput
-              isRequired
-              type="text"
-              id="form-group-label-info"
-              name="form-group-label-info"
-              aria-describedby="form-group-label-info-helper"
-              placeholder="Default Environment Name"
-              value={env}
-              onChange={handleEnv}
-              validated={validatedEnv as any}
-            />
-          </FormGroup>
-
-          <StyledButton variant="tertiary" onClick={handleOnClick} isDisabled={validatedEnv != validations.success || validatedIdentifier != validations.success || validatedTitle != validations.success || validatedUrl != validations.success}>
+          <StyledButton 
+          variant="tertiary" 
+          onClick={handleOnClick} 
+          isDisabled={
+            validatedEnv != validations.success 
+            || 
+            validatedIdentifier != validations.success 
+            || 
+            validatedTitle != validations.success 
+            || 
+            validatedUrl != validations.success}>
             <StyledText component={TextVariants.h4}>
               Create
             </StyledText>
@@ -275,7 +321,7 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
           }
         </Form >
         <AlertGroup isToast isLiveRegion aria-live="assertive" >
-          {alert.map(({ title, variant, key, action }) => (
+          {alert.map(({ title, variant, key }) => (
             <Alert
               variant={AlertVariant[variant]}
               title={title}
