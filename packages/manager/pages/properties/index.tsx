@@ -2,6 +2,7 @@ import {
   Flex, 
   FlexItem, 
   Gallery, 
+  SearchInput, 
   Select, 
   SelectOption, 
   SelectVariant 
@@ -76,28 +77,54 @@ const PropertiesList: ComponentWithAuth<PropertiesListProps> = ({ webprop }: Any
       disabled: false,
     },
   ];
+  const allProperties = webprop?.myWebProperties.concat(webprop?.allWebproperties);
   const [selectedProperty, setSelectedProperty] = useState(propertiesOptions[0].title);
+  const [properties, setProperties] = useState(allProperties);
   const onSelect = (_event : any, selection: any) => {
     setSelectedProperty(selection);
+    if (selection === propertiesOptions[0].title) {
+      setProperties(allProperties);
+    }
+    if (selection === propertiesOptions[1].title) {
+      setProperties(webprop?.myWebProperties);
+    }
     onToggle();
   };
   const [isOpen, setIsOpen] = useState(false);
   const onToggle = () => {
     setIsOpen(!isOpen);
   };
+  const [searchValue, setSearchValue] = useState('');
+  const onSearch = (value: any) => {
+    if (value.length < 1) {
+      return onClear();
+    }
+    setProperties(allProperties.filter((item: AnyProps) => item.propertyName.toLowerCase().includes(value.toLowerCase())));
+    setSearchValue(value);
+    setSelectedProperty(propertiesOptions[0].title);
+  }
+  const onClear = () => {
+    setProperties(allProperties);
+    setSearchValue('');
+  }
   return (
     <Body {...meta}>
       <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
         <FlexItem>
-          {/* TODO: Add search here */}
+          <SearchInput
+            placeholder="Find by name"
+            value={searchValue}
+            onChange={onSearch}
+            onClear={onClear}
+          />
         </FlexItem>
         <FlexItem>
           <Select
             variant={SelectVariant.single}
             aria-label="Select Input to filter properties"
             onToggle={onToggle}
-            onSelect={onSelect}
             selections={selectedProperty}
+            onSelect={onSelect}
             isOpen={isOpen}
             aria-labelledby="select-input"
           >
@@ -113,17 +140,7 @@ const PropertiesList: ComponentWithAuth<PropertiesListProps> = ({ webprop }: Any
       </Flex>
       <StyledGallery hasGutter>
         <AddProperty></AddProperty>
-        {
-          selectedProperty === propertiesOptions[0].title ? <>
-            <WebProperty webprop={webprop?.myWebProperties}></WebProperty>
-            <WebProperty webprop={webprop?.allWebproperties}></WebProperty>
-            </> : <></>
-        }
-        {
-          selectedProperty === propertiesOptions[1].title ? <>
-            <WebProperty webprop={webprop?.myWebProperties}></WebProperty>
-            </> : <></>
-        }
+        <WebProperty webprop={properties}></WebProperty>
       </StyledGallery>
     </Body>
   );
