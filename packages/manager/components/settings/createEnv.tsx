@@ -105,7 +105,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
         "propertyName": prop?.propertyName,
         "url": url,
         "env": env,
-        "deploymentConnectionType": envType ? 'prod': 'preprod',
+        "deploymentConnectionType": envType,
       }
       const propertyRes = await post<AnyProps>(propUrl, payload, (session as any).accessToken);
       if (propertyRes?.response?.id) {

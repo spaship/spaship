@@ -147,7 +147,7 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
         "propertyName": identifier,
         "url": url,
         "env": env,
-        "deploymentConnectionType": envType ? 'prod': 'preprod',
+        "deploymentConnectionType": envType,
       }
       const propertyRes = await post<AnyProps>(nextUrl, payload, (session as any).accessToken);
       if (!propertyRes?.response?.id) {
