@@ -147,7 +147,7 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
         "propertyName": identifier,
         "url": url,
         "env": env,
-        "isProd": envType,
+        "deploymentConnectionType": envType ? 'prod': 'preprod',
       }
       const propertyRes = await post<AnyProps>(nextUrl, payload, (session as any).accessToken);
       if (!propertyRes?.response?.id) {
@@ -289,8 +289,8 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
                 }
                 isRequired>
               <StyledSwitch
-                label="production"
-                labelOff="pre-production"
+                label="Production"
+                labelOff="Pre-production"
                 id="env-type"
                 aria-label="prod and pre-prod env type checkbox"
                 isChecked={envType}

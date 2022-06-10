@@ -105,7 +105,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
         "propertyName": prop?.propertyName,
         "url": url,
         "env": env,
-        "isProd": envType,
+        "deploymentConnectionType": envType ? 'prod': 'preprod',
       }
       const propertyRes = await post<AnyProps>(propUrl, payload, (session as any).accessToken);
       if (propertyRes?.response?.id) {
@@ -262,8 +262,8 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
           }
           isRequired>
         <Switch
-          label="production"
-          labelOff="pre-production"
+          label="Production"
+          labelOff="Pre-production"
           id="env-type"
           aria-label="prod and pre-prod env type checkbox"
           isChecked={envType}
