@@ -16,7 +16,7 @@ const WebPropertyOnboard = async (req: AnyProps, res: AnyProps) => {
         "propertyName": getPropertyName(req),
         "env": getEnv(req),
         "url": getUrl(req),
-        "namespace": getNamespace(req),
+        "deploymentConnectionType": getDeploymentConnection(req),
         "type": propertyType.operator,
         "createdBy": userEmail
     };
@@ -28,21 +28,25 @@ const WebPropertyOnboard = async (req: AnyProps, res: AnyProps) => {
 export default WebPropertyOnboard;
 
 function getNamespace(req: any) {
-    return req.body.env;
+  return req.body.env;
 }
 
 function getEnv(req: any) {
-    return req.body.env;
+  return req.body.env;
 }
 
 function getUrl(req: any) {
-    return req.body.url;
+  return req.body.url;
 }
 
 function getPropertyName(req: any) {
-    return req.body.propertyName;
+  return req.body.propertyName;
 }
 
 function getPropertyTitle(req: any) {
-    return req.body.propertyTitle;
+  return req.body.propertyTitle;
+}
+
+function getDeploymentConnection(req: any) {
+  return req.body?.deploymentConnectionType ? 'prod': 'preprod';
 }

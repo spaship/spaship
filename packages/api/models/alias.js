@@ -27,7 +27,7 @@ const alias = new mongoose.Schema(
       type: String,
       required: false,
     },
-    deploymentConenctionType: {
+    deploymentConnectionType: {
       type: String,
       required: false,
     },

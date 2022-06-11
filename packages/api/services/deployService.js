@@ -55,7 +55,7 @@ async function deploy({ name, spaArchive, appPath, ref, property, env, namespace
     console.log(operatorAlias);
     if (operatorAlias?.type === "operator") {
       const zipPath = await createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir, env, namespace);
-      const aliasDeploymentConnectionType = operatorAlias.deploymentConenctionType;
+      const aliasDeploymentConnectionType = operatorAlias.deploymentConnectionType;
 
       // Check deployment connection exists for this property or not
       // if deploy connections done doesn't exist, it will create a new mapping for this property

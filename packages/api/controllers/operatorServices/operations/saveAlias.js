@@ -30,7 +30,7 @@ function checkProperties(request) {
     !request.hasOwnProperty("propertyTitle") ||
     !request.hasOwnProperty("env") ||
     !request.hasOwnProperty("url") ||
-    !request.hasOwnProperty("deploymentConenctionType")
+    !request.hasOwnProperty("deploymentConnectionType")
   );
 }
 
@@ -62,7 +62,7 @@ function validateProperty(request, next) {
 
 function validateDeploymentConnectionType(request, next) {
   const type = { prod: "prod", preprod: "preprod" };
-  if (request?.deploymentConenctionType == type.prod || request?.deploymentConenctionType == type.preprod) {
+  if (request?.deploymentConnectionType == type.prod || request?.deploymentConnectionType == type.preprod) {
     return true;
   }
   next(new ValidationError("Invalid Deployment Conenction Type"));
@@ -90,7 +90,7 @@ async function createAliasRequest(id, request) {
     env: getEnv(request),
     url: getUrl(request),
     namespace: generateNamespace(getPropertyName(request)),
-    deploymentConenctionType: getDeploymentConenctionType(request),
+    deploymentConnectionType: getDeploymentConnectionType(request),
     type: getType(request),
     createdBy: getCreatedBy(request),
   });
@@ -114,8 +114,8 @@ function getPropertyTitle(request) {
   return request?.propertyTitle?.trim() || "";
 }
 
-function getDeploymentConenctionType(request) {
-  return request?.deploymentConenctionType?.trim() || "";
+function getDeploymentConnectionType(request) {
+  return request?.deploymentConnectionType?.trim() || "";
 }
 
 function getCreatedBy(request) {
