@@ -1,5 +1,6 @@
 package io.spaship.operator.config;
 
+import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.openshift.client.DefaultOpenShiftClient;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -76,7 +77,15 @@ public class K8sClientProducer {
 
   @Produces
   public KubernetesClient openshiftClient() {
-    return new DefaultOpenShiftClient();
+    final ConfigBuilder configBuilder = new ConfigBuilder();
+    configBuilder.withTrustCerts(true).withOauthToken("")
+      .withConnectionTimeout(600000)
+      .withRequestTimeout(600000)
+      .withWebsocketTimeout(600000)
+      .withWebsocketPingInterval(600000)
+      .withUploadConnectionTimeout(600000)
+      .withUploadRequestTimeout(600000);
+    return new DefaultOpenShiftClient(configBuilder.build());
   }
 
 

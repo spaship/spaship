@@ -18,6 +18,7 @@ import io.spaship.operator.type.Environment;
 import io.spaship.operator.type.EventStructure;
 import io.spaship.operator.type.OperationResponse;
 import io.spaship.operator.util.ReUsableItems;
+import lombok.SneakyThrows;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.javatuples.Pair;
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 
 @ApplicationScoped
@@ -97,11 +99,16 @@ public class Operator implements Operations {
   }
 
   private boolean nameSpaceExists(Environment environment) {
-    var ns = k8sClient.namespaces().withName(environment.getNameSpace()).get();
+    return nameSpaceExists(environment.getNameSpace());
+  }
+  private boolean nameSpaceExists(String namespace){
+    var ns = k8sClient.namespaces().withName(namespace).get();
     var nsExists = Objects.nonNull(ns);
     LOG.debug("nameSpaceExists status is {}", nsExists);
     return nsExists;
   }
+
+
   private boolean podExists(Environment environment) {
     Map<String, String> labels = searchCriteriaLabel(environment);
     List<Pod> matchedPods = k8sClient.pods().inNamespace(environment.getNameSpace()).withLabels(labels).list()
@@ -141,6 +148,7 @@ public class Operator implements Operations {
   //  create implementations for different cloud providers,
   //  and use property as deciding factor for the implementation.
   //TODO: break this method into smaller methods
+  @SneakyThrows
   private void createMpPlusProject(Environment environment) {
 
 
@@ -163,16 +171,21 @@ public class Operator implements Operations {
       .inNamespace(environment.getNameSpace())
       .load(Operations.class.getResourceAsStream("/openshift/mpp-namespace-template.yaml"))
       .processLocally(templateParameters);
-    var createNsRecord = k8sClient.resourceList(k8sNSList).createOrReplace();
-    LOG.debug("namespace successfully provisioned, with details\n {}",createNsRecord);
+    k8sClient.resourceList(k8sNSList).createOrReplace();
+    LOG.debug("new namespace {} created successfully ",environment.getNameSpace());
+
+    while(!nameSpaceExists(environment.getNameSpace())){
+      LOG.debug("waiting for namespace to be created...");
+      TimeUnit.SECONDS.sleep(1);
+    }
 
     var nsSupportResourcesList = ((OpenShiftClient) k8sClient)
       .templates()
       .inNamespace(environment.getNameSpace())
       .load(Operations.class.getResourceAsStream("/openshift/mpp-prepare-namespace.yaml"))
       .processLocally(templateParameters);
-    var createSupportRecord = k8sClient.resourceList(nsSupportResourcesList).createOrReplace();
-    LOG.debug("support resources for namespace provisioned, with details\n {}",createSupportRecord);
+    k8sClient.resourceList(nsSupportResourcesList).inNamespace(environment.getNameSpace()).createOrReplace();
+    LOG.debug("network management and network policy installed successfully in namespace {} ",environment.getNameSpace());
 
     var eb = EventStructure.builder().uuid(environment.getTraceID());
     eb.websiteName(environment.getWebsiteName())

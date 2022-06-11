@@ -14,9 +14,6 @@ parameters:
   - name: "NS_NAME"
     description: "based on web property name the automation will create the tenant"
     required: true
-  - name: "DE_CHART_FULL_NAME"
-    description: "deployment engine chart full name"
-    required: true
   - name: "DE_NAMESPACE"
     description: "deployment engine's namespace"
     required: true
