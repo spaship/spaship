@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: quay.io/spaship/operator
+  repository: quay.io/arbhatta/operator
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "master"
+  tag: "dev"
 
 imagePullSecrets: [ ]
 nameOverride: "deployment-engine"
@@ -86,6 +86,5 @@ app:
   defaultns: "spaship--cc" # default ns to create environment if ns not specified in .spaship file, TODO should be spaship--default
   tenant: "spaship"
   appcode: "SPAS-001"
-  rolebinding: ""
+  devopsnamingconvension: "spaship-deployment-engine"
   dedefaultns: "spaship--cc" # usually determined automatically, in case not found then determine the ns where operator is installed
-

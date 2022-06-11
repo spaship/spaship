@@ -148,12 +148,12 @@ public class Operator implements Operations {
     LOG.debug("Creating namespace with name {}", ns);
     var appCode = ConfigProvider.getConfig().getValue("mpp.app.code", String.class);
     var tenantName = ConfigProvider.getConfig().getValue("mpp.tenant.name", String.class);
-    var deFullName= ConfigProvider.getConfig().getValue("application.de.chart.fullname", String.class);
+    var devOpsNamingConvention= ConfigProvider.getConfig().getValue("application.devops.naming.convention", String.class);
 
     var templateParameters = Map.of("APP_CODE",appCode,
       "TENANT_NAME",tenantName,
       "NS_NAME",ns,
-      "DE_CHART_FULL_NAME",deFullName,
+      "DEVOPS_NAMING_CONVENTION",devOpsNamingConvention,
       "DE_NAMESPACE",deDebugNs
       );
 

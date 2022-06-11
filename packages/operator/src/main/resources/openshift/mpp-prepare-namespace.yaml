@@ -14,8 +14,8 @@ parameters:
   - name: "NS_NAME"
     description: "based on web property name the automation will create the tenant"
     required: true
-  - name: "DE_CHART_FULL_NAME"
-    description: "deployment engine chart full name"
+  - name: "DEVOPS_NAMING_CONVENTION"
+    description: "deployment naming convention for related resources"
     required: true
   - name: "DE_NAMESPACE"
     description: "deployment engine's namespace"
@@ -45,7 +45,7 @@ objects:
   - kind: RoleBinding
     apiVersion: rbac.authorization.k8s.io/v1
     metadata:
-      name: rb-${DE_CHART_FULL_NAME}-child
+      name: rb-${DEVOPS_NAMING_CONVENTION}-child
       namespace: ${TENANT_NAME}--${NS_NAME}
     roleRef:
       apiGroup: rbac.authorization.k8s.io
@@ -53,5 +53,5 @@ objects:
       name: admin
     subjects:
       - kind: ServiceAccount
-        name: sa-${DE_CHART_FULL_NAME}
+        name: sa-${DEVOPS_NAMING_CONVENTION}
         namespace: ${DE_NAMESPACE}

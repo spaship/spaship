@@ -17,3 +17,4 @@ data:
   MPP_APP_CODE: {{ .Values.app.appcode }}
   MPP_PARENT_RB_NAME: role-{{ include "spa-deployment-operator.fullname" . }}
   MPP_DE_DEFAULT_NAMESPACE: {{ .Values.app.dedefaultns }}
+  APPLICATION_DEVOPS_NAMING_CONVENTION: {{ include "spa-deployment-operator.fullname" . }}
