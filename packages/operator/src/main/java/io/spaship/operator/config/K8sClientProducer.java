@@ -3,6 +3,7 @@ package io.spaship.operator.config;
 import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.openshift.client.DefaultOpenShiftClient;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +79,8 @@ public class K8sClientProducer {
   @Produces
   public KubernetesClient openshiftClient() {
     final ConfigBuilder configBuilder = new ConfigBuilder();
-    configBuilder.withTrustCerts(true).withOauthToken("")
+    configBuilder.withTrustCerts(true)
+      .withOauthToken(ConfigProvider.getConfig().getValue("mpp.cluster.access.token", String.class))
       .withConnectionTimeout(600000)
       .withRequestTimeout(600000)
       .withWebsocketTimeout(600000)

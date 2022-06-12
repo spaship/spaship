@@ -34,6 +34,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: "config-{{ include "spa-deployment-operator.fullname" . }}"
+            - secretRef:
+                name: "secret-{{ include "spa-deployment-operator.fullname" . }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http

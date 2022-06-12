@@ -174,11 +174,9 @@ public class Operator implements Operations {
     k8sClient.resourceList(k8sNSList).createOrReplace();
     LOG.debug("new namespace {} created successfully ",environment.getNameSpace());
 
-    while(!nameSpaceExists(environment.getNameSpace())){
-      LOG.debug("waiting for namespace to be created...");
-      TimeUnit.SECONDS.sleep(1);
-    }
-
+    LOG.debug("giving it time to init the namespace");
+    TimeUnit.SECONDS.sleep(10);
+    LOG.debug("namespace should be ready by now.. executing the next step");
     var nsSupportResourcesList = ((OpenShiftClient) k8sClient)
       .templates()
       .inNamespace(environment.getNameSpace())
