@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -168,29 +169,43 @@ public class Operator implements Operations {
 
     var k8sNSList = ((OpenShiftClient) k8sClient)
       .templates()
-      .inNamespace(environment.getNameSpace())
       .load(Operations.class.getResourceAsStream("/openshift/mpp-namespace-template.yaml"))
       .processLocally(templateParameters);
     k8sClient.resourceList(k8sNSList).createOrReplace();
     LOG.debug("new namespace {} created successfully ",environment.getNameSpace());
 
-    LOG.debug("giving it time to init the namespace");
-    TimeUnit.SECONDS.sleep(10);
-    LOG.debug("namespace should be ready by now.. executing the next step");
+    var eb = EventStructure.builder().uuid(environment.getTraceID());
+    eb.websiteName(environment.getWebsiteName())
+      .environmentName(environment.getName())
+      .state("namespace created successfully in {} cluster".replace("{}", environment.getNameSpace()));
+
     var nsSupportResourcesList = ((OpenShiftClient) k8sClient)
       .templates()
       .inNamespace(environment.getNameSpace())
       .load(Operations.class.getResourceAsStream("/openshift/mpp-prepare-namespace.yaml"))
       .processLocally(templateParameters);
-    k8sClient.resourceList(nsSupportResourcesList).inNamespace(environment.getNameSpace()).createOrReplace();
-    LOG.debug("network management and network policy installed successfully in namespace {} ",environment.getNameSpace());
 
-    var eb = EventStructure.builder().uuid(environment.getTraceID());
-    eb.websiteName(environment.getWebsiteName())
-      .environmentName(environment.getName())
-      .state("namespace created successfully in {} cluster".replace("{}", environment.getNameSpace()));
-    eventManager.queue(eb.build());
 
+    Uni.createFrom().item(nsSupportResourcesList)
+      .map(item->k8sClient.resourceList(item).inNamespace(environment.getNameSpace()).createOrReplace())
+      .onFailure()
+      .retry()
+      .withBackOff(java.time.Duration.ofSeconds(1), Duration.ofSeconds(2))
+      .atMost(10)
+      .onFailure()
+      .recoverWithItem(throwable -> {
+        throwable.printStackTrace();
+        return null;
+      }).subscribeAsCompletionStage()
+      .thenApply(param-> {
+        if (Objects.isNull(param)){
+          LOG.error("failed to create the namespace after 10 attempts , check the stacktrace for more details");
+          return param;
+        }
+        eventManager.queue(eb.build());
+        LOG.debug("network management and network policy installed successfully in namespace {} ",environment.getNameSpace());
+        return param;
+      }).get();
 
   }
 
