@@ -15,6 +15,7 @@ import io.vertx.mutiny.ext.web.client.HttpResponse;
 import io.vertx.mutiny.ext.web.client.WebClient;
 import io.vertx.mutiny.ext.web.multipart.MultipartForm;
 import lombok.SneakyThrows;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,6 +136,9 @@ public class SideCarOperations {
       .get();
 
     LOG.info("computed context path by sidecar container is {}",opResp.getContextPath());
+    // todo, because the env access host url has a fixed logic that's why computing based on that to save some time and
+    //  network latency, if performance is not a constant then it's better to use k8s client to get the host
+    var environmentUri = computeEnvironmentUri(environment);
 
     eventManager.queue(
       EventStructure.builder()
@@ -145,9 +149,22 @@ public class SideCarOperations {
           "spa deployment ops performed" : "spa deployment ops failed")
         .spaName(operationResponse.getSpaName())
         .contextPath(operationResponse.getContextPath())
+        .accessUrl(environmentUri)
         .build());
 
     return opResp;
+  }
+
+  // hell of a detail :D
+  private String computeEnvironmentUri(Environment environment) {
+    var appInstancePrefix = ConfigProvider.getConfig().getValue("app.instance", String.class);
+    var domain = ConfigProvider.getConfig().getValue("operator.domain.name", String.class);
+    var ns = environment.getNameSpace();
+    var websiteName = environment.getWebsiteName();
+    var envName = environment.getName();
+    return "http://".concat(appInstancePrefix).concat(".").concat(ns).concat(".").concat(websiteName)
+      .concat(".").concat(envName).concat(".").concat(domain).concat("/")
+      .concat(environment.getSpaContextPath().replace(".", ""));
   }
 
   private void waitForReadiness(Environment env) throws InterruptedException {

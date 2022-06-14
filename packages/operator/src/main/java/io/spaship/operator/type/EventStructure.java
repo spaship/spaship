@@ -10,8 +10,9 @@ public class EventStructure {
   private String state;
   private String spaName;
   private String contextPath;
+  private String accessUrl;
 
-  EventStructure(String uuid, String websiteName, String environmentName, String state, String spaName,String contextPath) {
+  EventStructure(String uuid, String websiteName, String environmentName, String state, String spaName,String contextPath,String accessUrl) {
     this.uuid = uuid;
     this.websiteName = websiteName;
     this.environmentName = environmentName;
@@ -19,6 +20,7 @@ public class EventStructure {
     this.spaName = spaName;
     this.dateTime = LocalDateTime.now();
     this.contextPath = contextPath;
+    this.accessUrl = accessUrl;
   }
 
   public static EventStructureBuilder builder() {
@@ -77,6 +79,14 @@ public class EventStructure {
     this.contextPath = contextPath;
   }
 
+  public String getAccessUrl() {
+    return accessUrl;
+  }
+
+  public void setAccessUrl(String accessUrl) {
+    this.accessUrl = accessUrl;
+  }
+
   @Override
   public String toString() {
     return "{"
@@ -87,6 +97,7 @@ public class EventStructure {
       + ", \"state\":\"" + state + "\""
       + ", \"spaName\":\"" + spaName + "\""
       + ", \"contextPath\":\"" + contextPath + "\""
+      + ", \"accessUrl\":\"" + accessUrl + "\""
       + "}";
   }
 
@@ -97,6 +108,7 @@ public class EventStructure {
     private String state;
     private String spaName;
     private String contextPath;
+    private String accessUrl;
 
     EventStructureBuilder() {
     }
@@ -130,9 +142,13 @@ public class EventStructure {
       this.contextPath = contextPath;
       return this;
     }
+    public EventStructureBuilder accessUrl(String accessUrl) {
+      this.accessUrl = accessUrl;
+      return this;
+    }
 
     public EventStructure build() {
-      return new EventStructure(uuid, websiteName, environmentName, state, spaName,contextPath);
+      return new EventStructure(uuid, websiteName, environmentName, state, spaName,contextPath,accessUrl);
     }
 
     @Override
@@ -144,6 +160,7 @@ public class EventStructure {
         + ", \"state\":\"" + state + "\""
         + ", \"spaName\":\"" + spaName + "\""
         + ", \"contextPath\":\"" + contextPath + "\""
+        + ", \"accessUrl\":\"" + accessUrl + "\""
         + "}";
     }
   }

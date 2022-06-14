@@ -21,7 +21,6 @@ import io.spaship.operator.util.ReUsableItems;
 import lombok.SneakyThrows;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.javatuples.Pair;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
