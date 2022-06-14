@@ -21,6 +21,7 @@ import io.spaship.operator.util.ReUsableItems;
 import lombok.SneakyThrows;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.javatuples.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +32,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
-
+// todo this class violates single responsibility principal
 @ApplicationScoped
 public class Operator implements Operations {
   private static final Logger LOG = LoggerFactory.getLogger(Operator.class);
@@ -48,7 +49,7 @@ public class Operator implements Operations {
   private final String deDebugNs;
 
   public Operator(KubernetesClient k8sClient,
-                  EventManager eventManager,@Named("deNamespace") String ns) {
+                  EventManager eventManager, @Named("deNamespace") String ns) {
     this.k8sClient = k8sClient;
     this.eventManager = eventManager;
     domain = ConfigProvider.getConfig().getValue("operator.domain.name", String.class);
@@ -94,7 +95,7 @@ public class Operator implements Operations {
 
 
   public boolean environmentExists(Environment environment) {
-    if(!nameSpaceExists(environment))
+    if (!nameSpaceExists(environment))
       return false;
     return podExists(environment);
   }
@@ -102,7 +103,8 @@ public class Operator implements Operations {
   private boolean nameSpaceExists(Environment environment) {
     return nameSpaceExists(environment.getNameSpace());
   }
-  private boolean nameSpaceExists(String namespace){
+
+  private boolean nameSpaceExists(String namespace) {
     var ns = k8sClient.namespaces().withName(namespace).get();
     var nsExists = Objects.nonNull(ns);
     LOG.debug("nameSpaceExists status is {}", nsExists);
@@ -138,7 +140,7 @@ public class Operator implements Operations {
 
 
   void createNewEnvironment(Environment environment) {
-    if(!nameSpaceExists(environment))
+    if (!nameSpaceExists(environment))
       createMpPlusProject(environment);
     KubernetesList result = buildK8sResourceList(environment);
     LOG.debug("create environment is in progress");
@@ -147,67 +149,81 @@ public class Operator implements Operations {
 
   // TODO: this implementation is mp+ specific, using inheritance
   //  create implementations for different cloud providers,
-  //  and use property as deciding factor for the implementation.
-  //TODO: break this method into smaller methods
-  @SneakyThrows
+  //  the implementation is determined by an attribute of application.properties
   private void createMpPlusProject(Environment environment) {
+    Map<String, String> templateParameters = buildTemplateParameterMap(environment);
+    createNewTenantNamespace(environment, templateParameters);
+    var eb = EventStructure.builder().uuid(environment.getTraceID());
+    eb.websiteName(environment.getWebsiteName()).environmentName(environment.getName()).state(
+      "namespace created successfully in {} cluster".replace("{}", environment.getNameSpace())
+    );
+    prepareNewTenantNameSpace(environment, templateParameters, eb);
+  }
 
-
-    var ns = (environment.getNameSpace()).replace("spaship--","");
+  private Map<String, String> buildTemplateParameterMap(Environment environment) {
+    var ns = (environment.getNameSpace()).replace("spaship--", "");
     LOG.debug("Creating namespace with name {}", ns);
     var appCode = ConfigProvider.getConfig().getValue("mpp.app.code", String.class);
     var tenantName = ConfigProvider.getConfig().getValue("mpp.tenant.name", String.class);
-    var devOpsNamingConvention= ConfigProvider.getConfig().getValue("application.devops.naming.convention", String.class);
+    var devOpsNamingConvention = ConfigProvider.getConfig()
+      .getValue("application.devops.naming.convention", String.class);
 
-    var templateParameters = Map.of("APP_CODE",appCode,
-      "TENANT_NAME",tenantName,
-      "NS_NAME",ns,
-      "DEVOPS_NAMING_CONVENTION",devOpsNamingConvention,
-      "DE_NAMESPACE",deDebugNs
-      );
+    return Map.of("APP_CODE", appCode,
+      "TENANT_NAME", tenantName,
+      "NS_NAME", ns,
+      "DEVOPS_NAMING_CONVENTION", devOpsNamingConvention,
+      "DE_NAMESPACE", deDebugNs
+    );
+  }
 
-
+  private void createNewTenantNamespace(Environment environment, Map<String, String> templateParameters) {
     var k8sNSList = ((OpenShiftClient) k8sClient)
       .templates()
       .load(Operations.class.getResourceAsStream("/openshift/mpp-namespace-template.yaml"))
       .processLocally(templateParameters);
     k8sClient.resourceList(k8sNSList).createOrReplace();
-    LOG.debug("new namespace {} created successfully ",environment.getNameSpace());
+    LOG.debug("new namespace {} created successfully ", environment.getNameSpace());
+  }
 
-    var eb = EventStructure.builder().uuid(environment.getTraceID());
-    eb.websiteName(environment.getWebsiteName())
-      .environmentName(environment.getName())
-      .state("namespace created successfully in {} cluster".replace("{}", environment.getNameSpace()));
-
+  @SneakyThrows
+  private void prepareNewTenantNameSpace(Environment environment, Map<String, String> templateParameters,
+                                         EventStructure.EventStructureBuilder eb) {
     var nsSupportResourcesList = ((OpenShiftClient) k8sClient)
       .templates()
       .inNamespace(environment.getNameSpace())
       .load(Operations.class.getResourceAsStream("/openshift/mpp-prepare-namespace.yaml"))
       .processLocally(templateParameters);
 
-
     Uni.createFrom().item(nsSupportResourcesList)
-      .map(item->k8sClient.resourceList(item).inNamespace(environment.getNameSpace()).createOrReplace())
+      .map(item -> {
+        LOG.debug("executing mpp-prepare-namespace.yaml for namespace {}", environment.getNameSpace());
+        return k8sClient.resourceList(item).inNamespace(environment.getNameSpace()).createOrReplace();
+      })
       .onFailure()
       .retry()
-      .withBackOff(java.time.Duration.ofSeconds(1), Duration.ofSeconds(2))
+      .withBackOff(Duration.ofSeconds(1), Duration.ofSeconds(2))
       .atMost(10)
       .onFailure()
       .recoverWithItem(throwable -> {
         throwable.printStackTrace();
         return null;
       }).subscribeAsCompletionStage()
-      .thenApply(param-> {
-        if (Objects.isNull(param)){
-          LOG.error("failed to create the namespace after 10 attempts , check the stacktrace for more details");
-          return param;
-        }
-        eventManager.queue(eb.build());
-        LOG.debug("network management and network policy installed successfully in namespace {} ",environment.getNameSpace());
-        return param;
-      }).get();
-
+      .thenAccept(reactOnOperationOutcome(environment, eb)).get();
   }
+
+  private Consumer<List<HasMetadata>> reactOnOperationOutcome(Environment environment,
+                                                              EventStructure.EventStructureBuilder eb) {
+    return param -> {
+      if (Objects.isNull(param)) {
+        LOG.error("failed to create the namespace after 10 attempts , check the stacktrace for more details");
+        return;
+      }
+      eventManager.queue(eb.build());
+      LOG.debug("network management and rbac policy installed successfully in namespace {} ",
+        environment.getNameSpace());
+    };
+  }
+
 
   public String environmentSidecarUrl(Environment environment) {
     String serviceName = "svc"
@@ -226,7 +242,7 @@ public class Operator implements Operations {
       .findFirst()
       .orElseThrow(() -> new ResourceNotFoundException("service port not found"))
       .getPort();
-    LOG.debug("computed service port is {}, clusterIp is {}", svcPort,clusterIP);
+    LOG.debug("computed service port is {}, clusterIp is {}", svcPort, clusterIP);
 
     String sideCarSvcUrl = "tcp://".concat(clusterIP).concat(":").concat(String.valueOf(svcPort));
     LOG.debug("computed sidecar service url is {}", sideCarSvcUrl);
