@@ -19,7 +19,7 @@ const analyticsOperations = async (request) => {
     if (getPropertyName(request?.count) && getSpaName(request?.count)) {
       return await getCounts.getCountService(
         {
-          code: "WEBSITE_CREATETED",
+          code: "WEBSITE_CREATED",
           propertyName: getPropertyName(request?.count),
           spaName: getSpaName(request?.count),
         },
@@ -41,7 +41,7 @@ const analyticsOperations = async (request) => {
     } else if (getPropertyName(request?.count)) {
       return await getCounts.getCountService(
         {
-          code: "WEBSITE_CREATETED",
+          code: "WEBSITE_CREATED",
           propertyName: getPropertyName(request?.count),
         },
         {
@@ -71,7 +71,7 @@ const analyticsOperations = async (request) => {
     } else if (request?.activities.propertyName) {
       return await getLatestActivities.getLatestActivitiesService(
         {
-          code: "WEBSITE_CREATETED",
+          code: "WEBSITE_CREATED",
           propertyName: getPropertyName(request?.activities),
         },
         { limit: getLimit(request?.activities) },
@@ -82,7 +82,7 @@ const analyticsOperations = async (request) => {
     if (getMonth(request) == true && getPropertyName(request?.chart) && getSpaName(request?.chart)) {
       let response = await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
         {
-          code: "WEBSITE_CREATETED",
+          code: "WEBSITE_CREATED",
           propertyName: getPropertyName(request?.chart),
           spaName: getSpaName(request?.chart),
         },
@@ -101,7 +101,7 @@ const analyticsOperations = async (request) => {
     } else if (request?.chart.month == true && getPropertyName(request?.chart)) {
       let response = await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
         {
-          code: "WEBSITE_CREATETED",
+          code: "WEBSITE_CREATED",
           propertyName: getPropertyName(request?.chart),
         },
         {
@@ -119,7 +119,7 @@ const analyticsOperations = async (request) => {
     } else if (getPropertyName(request?.chart) && getSpaName(request?.chart)) {
       return await getCounts.getCountService(
         {
-          code: "WEBSITE_CREATETED",
+          code: "WEBSITE_CREATED",
           propertyName: getPropertyName(request?.chart),
           spaName: getSpaName(request?.chart),
         },

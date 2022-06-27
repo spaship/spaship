@@ -17,7 +17,7 @@ const propertyFilteration = async (request) => {
   if (request?.count) {
     if (request?.count?.all == true) {
       return await getCounts.getCountService(
-        { code: "WEBSITE_CREATETED" },
+        { code: "WEBSITE_CREATED" },
         {
           propertyName: "$propertyName",
           code: "$code",
@@ -78,7 +78,7 @@ const propertyFilteration = async (request) => {
     } else if (request?.chart.all == true && request?.chart.property == true) {
       return await getCounts.getCountService(
         {
-          code: "WEBSITE_CREATETED",
+          code: "WEBSITE_CREATED",
         },
         {
           env: "$env",
@@ -92,7 +92,7 @@ const propertyFilteration = async (request) => {
     } else if (request?.chart.all == true) {
       return await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
         {
-          code: "WEBSITE_CREATETED",
+          code: "WEBSITE_CREATED",
         },
         {
           env: "$env",
@@ -107,7 +107,7 @@ const propertyFilteration = async (request) => {
     } else if (request?.activities.all == true) {
       return await getCountByEnvWeeklyChart.getCountByEnvWeeklyChartService(
         {
-          code: "WEBSITE_CREATETED",
+          code: "WEBSITE_CREATED",
         },
         {
           env: "$env",
@@ -122,7 +122,7 @@ const propertyFilteration = async (request) => {
     }
   } else if (request?.activities.all == true) {
     return await getLatestActivities.getLatestActivitiesService(
-      { code: "WEBSITE_CREATETED" },
+      { code: "WEBSITE_CREATED" },
       { limit: getLimit(request) },
       { skip: getSkip(request) }
     );

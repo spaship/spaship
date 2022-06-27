@@ -44,9 +44,9 @@ async function processEvents(eventRequest) {
 }
 
 function getCode(state) {
-  const property = { WEBSITE_CREATETED: "WEBSITE_CREATETED", WEBSITE_CREATEION_STARTED: "WEBSITE_CREATEION_STARTED" };
-  if (state == "spa deployment ops performed") return property.WEBSITE_CREATETED;
-  return property.WEBSITE_CREATEION_STARTED;
+  const property = { WEBSITE_CREATED: "WEBSITE_CREATED", WEBSITE_CREATION_STARTED: "WEBSITE_CREATION_STARTED" };
+  if (state == "spa deployment ops performed") return property.WEBSITE_CREATED;
+  return property.WEBSITE_CREATION_STARTED;
 }
 
 function getUrl(accessUrl) {
@@ -64,7 +64,7 @@ async function createEventRequest(response) {
 
 async function createEventTimeTraceRequest(response) {
   if (response.accessUrl == null) return;
-  const property = { WEBSITE_CREATETED: "WEBSITE_CREATETED", WEBSITE_CREATEION_STARTED: "WEBSITE_CREATEION_STARTED" };
+  const property = { WEBSITE_CREATED: "WEBSITE_CREATED", WEBSITE_CREATION_STARTED: "WEBSITE_CREATION_STARTED" };
   const propertyName = response.websiteName;
   const name = response?.spaName;
   const path = `/${response?.contextPath}`;
@@ -84,8 +84,8 @@ async function createEventTimeTraceRequest(response) {
     propertyName: propertyName,
     env: env,
     spaName: name,
-    initialCode: property.WEBSITE_CREATEION_STARTED,
-    finalCode: property.WEBSITE_CREATETED,
+    initialCode: property.WEBSITE_CREATION_STARTED,
+    finalCode: property.WEBSITE_CREATED,
     failure: false,
     createdAt: eventRequest?.createdAt,
     completedAt: currentTime,
