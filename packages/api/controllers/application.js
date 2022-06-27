@@ -76,6 +76,7 @@ module.exports.deploy = async (req, res, next) => {
   const propertyName = getPropertyName(req);
   const namespace = generateNamespace(propertyName);
   const env = req.params?.env;
+  const accessUrl = "";
   const validateFileType = req.file.originalname.split(".").pop();
   if (validateFileType === "zip" || validateFileType === "tgz") {
     try {
@@ -103,6 +104,7 @@ module.exports.deploy = async (req, res, next) => {
               userId,
               env,
               namespace,
+              accessUrl,
             });
           }
         } catch (e) {
