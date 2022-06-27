@@ -1,11 +1,9 @@
+const application = require("../../../models/application");
 const event = require("../../../models/event");
 const deploymentConnection = require("../../../models/deploymentConnection");
 const eventTimeTrace = require("../../../models/eventTimeTrace");
-const webProperty = require("../../../models/webProperty");
 const EventSource = require("eventsource");
 const { uuid } = require("uuidv4");
-const config = require("../../../config");
-//const source = new EventSource("http://localhost:4001/sse/2");
 const { log } = require("@spaship/common/lib/logging/pino");
 
 module.exports = async function consumeEvent() {
@@ -22,34 +20,36 @@ module.exports = async function consumeEvent() {
   }
 };
 
-function processEvents(eventRequest) {
+async function processEvents(eventRequest) {
   const response = JSON.parse(eventRequest.data);
-  const currentTime = new Date();
   const eventBody = new event({
     id: uuid(),
     eventId: response?.uuid,
     propertyName: response?.websiteName || "NA",
     spaName: response?.spaName || "NA",
     version: 1,
-    env: response.environmentName,
+    env: response?.environmentName || "NA",
     branch: "main",
-    path: "",
-    url: "",
+    state: response.state,
+    path: response?.contextPath || "NA",
+    accessUrl: getUrl(response.accessUrl),
     code: getCode(response.state),
     failure: false,
     isActive: true,
-    createdAt: currentTime,
-    updatedAt: currentTime,
     traceId: response?.uuid,
   });
   console.log(eventBody);
-  Promise.all([createEventRequest(eventBody), createEventTimeTraceRequest(response)]);
+  await createEventRequest(eventBody);
+  await createEventTimeTraceRequest(response);
 }
 
 function getCode(state) {
-  if (state == "mapping file loaded into memory") return "WEBSITE_CREATE_STARTED";
-  if (state == "spa deployment ops performed") return "WEBSITE_CREATE";
-  return "";
+  if (state == "spa deployment ops performed") return "WEBSITE_CREATETED";
+  return "WEBSITE_CREATEION_STARTED";
+}
+
+function getUrl(accessUrl) {
+  return accessUrl == null ? "NA" : accessUrl;
 }
 
 async function createEventRequest(response) {
@@ -62,23 +62,30 @@ async function createEventRequest(response) {
 }
 
 async function createEventTimeTraceRequest(response) {
-  if (response.environmentName == "NA") return;
+  if (response.accessUrl == null) return;
+  const propertyName = response.websiteName;
+  const name = response?.spaName;
+  const path = `/${response?.contextPath}`;
+  const env = response?.environmentName;
+  const accessUrl = response?.accessUrl;
+  const applicationResponse = await application.updateOne({ propertyName, name, path, env }, { accessUrl });
+  console.log(applicationResponse);
   const currentTime = new Date();
-  const eventRequest = await event.findOne({ eventId: response.uuid });
-  let diff = (eventRequest.createdAt.getTime() - currentTime.getTime()) / 1000;
-  const consumedTime = Math.abs(Math.round(diff));
-  log.info(`time diffrence between : ${eventRequest.createdAt}  -  ${currentTime}`);
+  const eventRequest = await event.findOne({ eventId: response.uuid }).sort({ createdAt: 1 }).lean().exec();
+  let diff = (eventRequest?.createdAt?.getTime() - currentTime.getTime()) / 1000;
+  const consumedTime = Math.abs(diff);
+  log.info(`time diffrence between : ${eventRequest?.createdAt}  -  ${currentTime}`);
   log.info(`consumedTime : ${consumedTime}`);
   const eventTimeTraceData = new eventTimeTrace({
     id: uuid(),
     traceId: response.uuid,
-    propertyName: response.websiteName,
-    env: response.environmentName,
-    spaName: response?.spaName,
-    initialCode: "WEBSITE_CREATE_STARTED",
-    finalCode: "WEBSITE_CREATE",
+    propertyName: propertyName,
+    env: env,
+    spaName: name,
+    initialCode: "WEBSITE_CREATEION_STARTED",
+    finalCode: "WEBSITE_CREATETED",
     failure: false,
-    createdAt: eventRequest.createdAt,
+    createdAt: eventRequest?.createdAt,
     completedAt: currentTime,
     consumedTime: consumedTime,
   });
