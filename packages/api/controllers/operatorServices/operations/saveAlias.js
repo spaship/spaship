@@ -1,6 +1,7 @@
 const alias = require("../../../models/alias");
 const { uuid } = require("uuidv4");
 const ValidationError = require("../../../utils/errors/ValidationError");
+const envCreation = require("./envCreation");
 
 module.exports = async function saveAlias(req, res, next) {
   console.log(req.body);
@@ -21,6 +22,7 @@ module.exports = async function saveAlias(req, res, next) {
   let id = await getGeneratedAliasId();
   let aliasRequest = await createAliasRequest(id, request);
   const createdResponse = await createEvent(aliasRequest);
+  await envCreation(request)
   res.send(createdResponse);
 };
 
