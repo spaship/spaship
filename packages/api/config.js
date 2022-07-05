@@ -114,8 +114,8 @@ nconf.defaults({
   webroot: "/var/www",
   upload_dir: "/tmp/spaship_uploads",
   token: {
-    secret : process.env.TOKEN_SECRET || 'spaship',
-    expiration : process.env.TOKEN_EXPIRATION || '10h'
+    secret: process.env.TOKEN_SECRET || "spaship",
+    expiration: process.env.TOKEN_EXPIRATION || "10h",
   },
   baseurl: `${process.env.ORCHESTRATOR_BASEPATH}/spas`,
   sse: {
@@ -124,8 +124,10 @@ nconf.defaults({
   directoryBasePath: "root",
   db: {
     mongo: {
-      url: "localhost:27017",
-      db_name: "spaship",
+      url: process.env.SPASHIP_DB__URL || "localhost:27017",
+      db_name: process.env.SPASHIP_DB__NAME || "spaship", 
+      user: process.env.SPASHIP_DB__USER || "",
+      password: process.env.SPASHIP_DB__PASSWORD || "",
       mock: process.env.NODE_ENV !== "production", // use a mock database by default in dev environments
     },
   },
@@ -135,8 +137,8 @@ nconf.defaults({
     },
   },
   cli: {
-    base_path : `${process.env.OPERATOR_BASEPATH}/api/upload`,
-    dir_path : "uploads",
+    base_path: `${process.env.OPERATOR_BASEPATH}/api/upload`,
+    dir_path: "uploads",
   },
 });
 
