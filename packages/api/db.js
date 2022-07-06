@@ -8,13 +8,12 @@ const connect = async () => {
   const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true,
   };
   config.get("db:mongo:user") && (options.user = config.get("db:mongo:user"));
   config.get("db:mongo:password") && (options.pass = config.get("db:mongo:password"));
   log.info(uri);
   log.info(options);
-  await mongoose.connect(uri, options);
+  await mongoose.connect(uri);
 };
 
 mongoose.connection.on("connected", function () {
