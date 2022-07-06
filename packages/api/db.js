@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { log } = require("@spaship/common/lib/logging/pino");
 const config = require("./config");
 
-const uri = `mongodb://${config.get("db:mongo:url")}/${config.get("db:mongo:db_name")}`;
+const uri = `mongodb://${config.get("db:mongo:url")}`;
 
 const connect = async () => {
   const options = {
