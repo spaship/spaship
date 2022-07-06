@@ -1,16 +1,10 @@
 const { Command, flags } = require("@oclif/command");
-const path = require("path");
 const inquirer = require("inquirer");
-const fsp = require("fs").promises;
-const { config } = require("@spaship/common");
+const { config } = require("../common/config/index");
 const { assign, last, omit } = require("lodash");
-
-// were any command line flags (options) passed in
 const hasOptions = last(process.argv) !== "init";
-
 class InitCommand extends Command {
   async run() {
-    // if spaship.yaml already exists, warn and abort
     let existingConfig;
 
     try {
@@ -63,12 +57,15 @@ class InitCommand extends Command {
     // smush cli options, questionnaire answers, and anything extra into a data
     // object to pass into the template
     const data = assign({}, responses, cmd.flags);
-
+    if (data.name.trim().length == 0) {
+      throw new Error("Please provide name");
+    } else if (data.path.trim().length == 0) {
+      throw new Error("Please provide path");
+    }
     try {
       if (!existingConfig || data.overwrite) {
         await config.write("spaship.yaml", omit(data, "overwrite"));
       }
-
       this.log("Generated spaship.yaml");
     } catch (error) {
       if (error.code === "EEXIST") {
@@ -81,8 +78,9 @@ class InitCommand extends Command {
     }
   }
 }
+//}
 
-InitCommand.description = `Initialize a SPAship config file for your app.
+InitCommand.description = `initialize a SPAship config file for your app.
 Without arguments, init will ask you a few questions and generate a spaship.yaml config file.  The answers can also be passed in as CLI options.
 `;
 
@@ -90,12 +88,12 @@ InitCommand.flags = {
   name: flags.string({
     char: "n",
     description: "a human-friendly title for your app",
-    required: hasOptions, // not required for interactive mode
+    required: false, // not required for interactive mode
   }),
   path: flags.string({
     char: "p",
     description: "the URL path for your app under the SPAship domain. ex: /my/app",
-    required: hasOptions, // not required for interactive mode
+    required: false, // not required for interactive mode
   }),
   single: flags.boolean({
     char: "s",
@@ -104,6 +102,20 @@ InitCommand.flags = {
   }),
   overwrite: flags.boolean({
     description: "overwrite existing spaship.yaml",
+  }),
+
+  dist: flags.string({
+    char: "d",
+    description: "the URL path for dist folder",
+  }),
+  file: flags.string({
+    char: "m",
+    description: "the URL path for .spaship file",
+  }),
+  builddir: flags.string({
+    char: "b",
+    required: false,
+    description: "path of your SPAs artifact. Defaults to 'buildDir' if specified in the spaship.yaml.",
   }),
 };
 
