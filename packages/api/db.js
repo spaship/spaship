@@ -13,7 +13,7 @@ const connect = async () => {
   config.get("db:mongo:password") && (options.pass = config.get("db:mongo:password"));
   log.info(uri);
   log.info(options);
-  await mongoose.connect(uri);
+  await mongoose.connect(uri, options);
 };
 
 mongoose.connection.on("connected", function () {
