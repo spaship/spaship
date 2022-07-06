@@ -30,6 +30,10 @@ const ApplicationSchema = new Schema(
       type: String,
       required: false,
     },
+    accessUrl:{
+      type : String,
+      required : false,
+    },
     isActive: {
       type: Boolean,
       required: false,

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { log } = require("@spaship/common/lib/logging/pino");
 const config = require("./config");
 
-const uri = `mongodb://${config.get("db:mongo:url")}/${config.get("db:mongo:db_name")}`;
+const uri = `mongodb://${config.get("db:mongo:url")}`;
 
 const connect = async () => {
   const options = {
@@ -12,6 +12,8 @@ const connect = async () => {
   };
   config.get("db:mongo:user") && (options.user = config.get("db:mongo:user"));
   config.get("db:mongo:password") && (options.pass = config.get("db:mongo:password"));
+  log.info(uri);
+  log.info(options);
   await mongoose.connect(uri, options);
 };
 

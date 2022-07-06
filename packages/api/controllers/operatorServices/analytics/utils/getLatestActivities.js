@@ -12,9 +12,9 @@ const getLatestActivitiesService = async (matchRequest, limitRequest, skipReques
 
 function bindResponse(response) {
   const codeMap = {
-    WEBSITE_CREATE: "deployed over",
-    WEBSITE_DELETE: "deleted from",
-    WEBSITE_UPDATE: "updated from",
+    WEBSITE_CREATED: "deployed over",
+    WEBSITE_DELETED: "deleted from",
+    WEBSITE_UPDATED: "updated from",
   };
   let i = 1;
   response.forEach((item) => {

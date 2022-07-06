@@ -11,6 +11,7 @@ const saveDeploymentConnection = require("../controllers/operatorServices/operat
 const getDeploymentConnectionList = require("../controllers/operatorServices/operations/getDeploymentConnectionList");
 const saveDeploymentRecord = require("../controllers/operatorServices/operations/saveDeploymentRecord");
 const getDeploymentRecordList = require("../controllers/operatorServices/operations/getDeploymentRecordList");
+const deletePropertyEnv = require("../controllers/operatorServices/operations/deletePropertyEnv");
 
 const router = new Router();
 
@@ -47,5 +48,7 @@ router.post("/deploymentRecord", saveDeploymentRecord.saveDeploymentRecord);
 router.get("/deploymentRecord/list", getDeploymentRecordList);
 
 router.get("/deploymentRecord/list/:name", getDeploymentRecordList);
+
+router.post("/delete/env", deletePropertyEnv.deletePropertyEnv);
 
 module.exports = router;

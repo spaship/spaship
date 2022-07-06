@@ -47,6 +47,7 @@ async function fetchSearchResultForSPA(props) {
         path: "$path",
         ref: "$ref",
         env: "$env",
+        accessUrl: "$accessUrl",
         updatedAt: "$updatedAt",
         _id: 0,
       },
