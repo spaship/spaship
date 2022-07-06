@@ -5,7 +5,6 @@ const { assign, get, isEmpty, omit } = require("lodash");
 const { config } = require("../common/config/index");
 const commonFlags = require("../common/flags");
 const os = require("os");
-//process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 class EnvCommand extends Command {
   async run() {
@@ -18,8 +17,6 @@ class EnvCommand extends Command {
       existingConfig = false;
     }
     const { flags } = this.parse(EnvCommand);
-
-    //  const cmd = this.parse(EnvCommand);
     const dataObj = {};
     dataObj[flags.name] = { apikey: flags.apikey, url: flags.url };
     const finalObj = { envs: dataObj };
