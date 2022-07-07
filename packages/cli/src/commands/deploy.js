@@ -73,7 +73,7 @@ class DeployCommand extends Command {
     }
 
     try {
-      host = new URL(host).origin;
+      host = new URL(host);
     } catch (error) {
       this.error(`The API url ${host} is invalid`);
     }
@@ -99,15 +99,15 @@ class DeployCommand extends Command {
         this.log("Creating a zip archive...");
         try {
           args.archive = await zipDirectory(buildDirPath, rawSpashipYml);
+          this.log(buildDirPath);
+          this.log(rawSpashipYml);
           this.log("Done creating the archive...");
         } catch (e) {
           this.error(e);
         }
       } else {
         // No buildDir is specified in the spaship.yaml
-        this.error(
-          "You should specify the build artifact path as `buildDir` in the spaship.yaml to run `spaship deploy` without the archive path."
-        );
+        this.error("You should provide the archive file name which contains the spaship.yaml file.");
       }
     }
     const spinner = ora(`Start deploying SPA`);
@@ -123,10 +123,10 @@ class DeployCommand extends Command {
       const data = new FormData();
       data.append("name", name);
       data.append("path", path);
-      data.append("ref", flags.ref);
+      data.append("ref", this.getRef(flags));
       data.append("upload", fs.createReadStream(args.archive));
 
-      const response = await DeployService.upload(nodePath.join(host, apiPath), data, apikey, (progress) => {
+      const response = await DeployService.upload(host, data, apikey, (progress) => {
         if (progress.percent < 1) {
           const percent = Math.round(progress.percent * 100);
           const takenTime = performance.now() - startTime;
@@ -157,6 +157,10 @@ class DeployCommand extends Command {
         this.error(e, { exit: 1 });
       }
     }
+  }
+
+  getRef(flags) {
+    return flags.ref;
   }
 }
 
@@ -194,8 +198,7 @@ DeployCommand.flags = assign(
     builddir: flags.string({
       char: "b",
       required: false,
-      description:
-        "path of your SPAs artifact. Defaults to 'buildDir' if specified in the spaship.yaml.",
+      description: "path of your SPAs artifact. Defaults to 'buildDir' if specified in the spaship.yaml.",
     }),
   },
   commonFlags.apikey,
