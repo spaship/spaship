@@ -40,7 +40,7 @@ EnvCommand.flags = assign(
     name: flags.string({
       char: "n",
       description: "name of the environment",
-      required: false,
+      required: false, // not required for interactive mode
       default: "undefined",
     }),
   },
@@ -48,7 +48,7 @@ EnvCommand.flags = assign(
     url: flags.string({
       char: "u",
       description: "url of the environment",
-      required: false,
+      required: false, // not required for interactive mode
       default: "undefined",
     }),
   },
