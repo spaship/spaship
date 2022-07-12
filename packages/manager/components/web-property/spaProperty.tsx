@@ -24,8 +24,8 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
   const router = useRouter();
   const { envList } = webprop;
   const tableView: Array<SPAProperty> = Object.values(webprop?.countResponse?.reduce((acc: any, spa: any) => {
-    const url = `${envList.find((environment: any) => environment.env === spa.env).url}${spa.path}`;
-    if (!!acc[spa.name]) {
+    const url = `${envList.find((environment: any) => environment.env === spa.env).url}${spa.path.startsWith('/') ? spa.path : `/${spa.path}`}`;
+    if (acc.hasOwnProperty(spa.name)) {
       acc[spa.name].env.push(spa.env);
       acc[spa.name].details.push(
         {
