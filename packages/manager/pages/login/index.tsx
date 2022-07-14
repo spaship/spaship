@@ -239,7 +239,7 @@ const Login: NextPage = () => {
                     className="spaship_btn">
                     Red Hat SSO
                   </CardButton>
-                  {/* TODO: Enable in May 2022 Release */}
+                  {/* TODO: Enable in May 2023 Release */}
                   {/* <Divider/>
                   <Flex className="OARow" justifyContent={{ default: 'justifyContentSpaceBetween' }}>
                     <FlexItem>

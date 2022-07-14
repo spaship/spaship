@@ -21,7 +21,7 @@ const ActivityStream: FunctionComponent<Properties> = ({ webprop }: Properties) 
             <ProgressStepper isVertical>
               {webprop?.map((activity: ActivityProps) => {
                 // This should be changed to more activities in the future.
-                const variant = activity.code === "WEBSITE_CREATE" ? "success" : "danger";
+                const variant = activity.code === "WEBSITE_CREATED" ? "success" : "danger";
                 return (
                   <ProgressStep
                     id={activity.id}
