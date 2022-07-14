@@ -24,7 +24,6 @@ spec:
       imagePullSecrets:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: sa-{{ include "spa-deployment-operator.fullname" . }}
       securityContext:
       {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -35,19 +34,23 @@ spec:
           envFrom:
             - configMapRef:
                 name: "config-{{ include "spa-deployment-operator.fullname" . }}"
+            - secretRef:
+                name: "secret-{{ include "spa-deployment-operator.fullname" . }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
               containerPort: 8080
               protocol: TCP
           livenessProbe:
-            httpGet:
-              path: /api/upload
+            tcpSocket:
               port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
           readinessProbe:
-            httpGet:
-              path: /api/upload
+            tcpSocket:
               port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
           resources:
       {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

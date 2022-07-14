@@ -8,11 +8,11 @@ image:
   repository: quay.io/arbhatta/operator
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "develop"
+  tag: "dev"
 
 imagePullSecrets: [ ]
-nameOverride: "operator"
-fullnameOverride: "operator"
+nameOverride: "deployment-engine"
+fullnameOverride: "spaship-deployment-engine"
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -43,15 +43,16 @@ service:
 ingress:
   enabled: true
   className: ""
-  annotations: { }
+  annotations:
+    haproxy.router.openshift.io/timeout: 600s
   # kubernetes.io/ingress.class: nginx
   # kubernetes.io/tls-acme: "true"
-  host: apps.sandbox-m2.ll9k.p1.openshiftapps.com
+  host: apps.int.spoke.preprod.us-east-1.aws.paas.redhat.com
   hosts:
-    - host: apps.sandbox-m2.ll9k.p1.openshiftapps.com
+    - host: apps.int.spoke.preprod.us-east-1.aws.paas.redhat.com
       paths:
         - path: /
-          pathType: ImplementationSpecific
+          pathType: Prefix
   tls: [ ]
   #  - secretName: chart-example-tls
   #    hosts:
@@ -79,6 +80,11 @@ tolerations: [ ]
 affinity: { }
 
 app:
-  domain: apps.crc.testing
+  domain: apps.int.spoke.preprod.us-east-1.aws.paas.redhat.com
   ec: spa-ops-event-channel
-  instance: dev
+  instance: preprod
+  defaultns: "spaship--cc" # default ns to create environment if ns not specified in .spaship file, TODO should be spaship--default
+  tenant: "spaship"
+  appcode: "SPAS-001"
+  devopsnamingconvension: "spaship-deployment-engine"
+  dedefaultns: "spaship--cc" # usually determined automatically, in case not found then determine the ns where operator is installed

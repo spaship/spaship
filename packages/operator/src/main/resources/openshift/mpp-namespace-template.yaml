@@ -1,0 +1,33 @@
+kind: "Template"
+apiVersion: "v1"
+metadata:
+  name: "namespace-template"
+labels:
+  template: "namnespace-template"
+parameters:
+  - name: "APP_CODE"
+    description: "App code of the parent project"
+    required: true
+  - name: "TENANT_NAME"
+    description: "Name of the parent project"
+    required: true
+  - name: "NS_NAME"
+    description: "based on web property name the automation will create the tenant"
+    required: true
+  - name: "DE_NAMESPACE"
+    description: "deployment engine's namespace"
+    required: true
+objects:
+  - kind: TenantNamespace
+    apiVersion: tenant.paas.redhat.com/v1alpha1
+    metadata:
+      name: ${NS_NAME}
+      namespace: ${TENANT_NAME}--config
+      labels:
+        paas.redhat.com/appcode: ${APP_CODE}
+        tenant.paas.redhat.com/namespace-type: runtime
+        tenant.paas.redhat.com/tenant: ${TENANT_NAME}
+    spec:
+      type: runtime
+      network:
+        security-zone: external
