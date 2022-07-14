@@ -38,6 +38,7 @@ USAGE
 
 <!-- commands -->
 
+- [`spaship env [COMMAND]`](#spaship-add-env)
 - [`spaship deploy [ARCHIVE]`](#spaship-deploy-archive)
 - [`spaship help [COMMAND]`](#spaship-help-command)
 - [`spaship init`](#spaship-init)
@@ -92,6 +93,23 @@ OPTIONS
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.0/src/commands/help.ts)_
+
+## `spaship env`
+
+Add env in the spashiprc file
+
+```
+USAGE
+  $ spaship env --name=[name] --url=[url] --apikey=[apikey]
+
+OPTIONS
+  --name=name    (required) name of the alias
+  --url=url    (required) deployment url of the property
+  --apikey=apikey    (required) a SPAship API key 
+
+DESCRIPTION
+  This spaship env will create an alias in the spashiprc file, which we can use for the further deployment
+```
 
 ## `spaship init`
 
@@ -186,6 +204,10 @@ cd $HOME/projects/MyProject
 spaship deploy --env prod MyProject-1.0.0.tgz
 ```
 
+```sh
+cd $HOME/projects/MyProject
+spaship deploy --env=<your deploy url or alias name (if configured in spashiprc)> --builddir=<optional as it can be configured in spaship.yaml> --apikey=<your api key (optional if configured in spashiprc)>
+```
 # Writing tests
 
 Tests are written using oclif's testing tools. See [oclif's testing documentation](https://oclif.io/docs/testing) for more.
