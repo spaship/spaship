@@ -94,7 +94,7 @@ objects:
         paas.redhat.com/appcode: SPAS-001
         app.kubernetes.io/managed-by: spaship
     spec:
-      accessModes: [ "ReadWriteOnce" ]
+      accessModes: [ "ReadWriteMany" ]
       storageClassName: "${STORAGE_CLASS}"
       resources:
         requests:
