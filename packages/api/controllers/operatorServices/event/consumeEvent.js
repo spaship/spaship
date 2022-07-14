@@ -67,7 +67,7 @@ async function createEventTimeTraceRequest(response) {
   const property = { WEBSITE_CREATED: "WEBSITE_CREATED", WEBSITE_CREATION_STARTED: "WEBSITE_CREATION_STARTED" };
   const propertyName = response.websiteName;
   const name = response?.spaName;
-  const path = `/${response?.contextPath}`;
+  const path = getPath(response);
   const env = response?.environmentName;
   const accessUrl = response?.accessUrl;
   const applicationResponse = await application.updateOne({ propertyName, name, path, env }, { accessUrl });
@@ -92,4 +92,9 @@ async function createEventTimeTraceRequest(response) {
     consumedTime: consumedTime,
   });
   await eventTimeTraceData.save();
+}
+
+function getPath(response) {
+  if (response?.contextPath == ".") return "/";
+  return `/${response?.contextPath}`;
 }
