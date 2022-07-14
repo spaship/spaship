@@ -12,7 +12,7 @@ A command line interface for SPAship.
 - [SPAship CLI](#spaship-cli)
 - [Usage](#usage)
 - [Commands](#commands)
-- [spashiprc & SPAship environments](#spashiprc--spaship-environments)
+- [SPAship environments & .spashiprc](#spashiprc--spaship-environments)
 - [Writing tests](#writing-tests)
 <!-- tocstop -->
 
@@ -25,7 +25,7 @@ $ npm install -g @spaship/cli
 $ spaship COMMAND
 running command...
 $ spaship (-v|--version|version)
-@spaship/cli/0.13.2 linux-x64 node-v12.18.3
+@spaship/cli/1.5.0 darwin-x64 node-v14.17.1
 $ spaship --help [COMMAND]
 USAGE
   $ spaship COMMAND
@@ -45,7 +45,7 @@ USAGE
 
 ## `spaship deploy [ARCHIVE]`
 
-deploy to a SPAship host
+### Deploy to a SPAship host
 
 ```
 USAGE
@@ -73,13 +73,14 @@ DESCRIPTION
 EXAMPLES
   $ npm pack && spaship deploy your-app-1.0.0.tgz # deploying an archive created with npm pack
   $ spaship deploy # deploying a buildDir directory
+  $ spaship deploy --env=dev
 ```
 
 _See code: [src/commands/deploy.js](https://github.com/spaship/spaship/blob/v0.13.2/src/commands/deploy.js)_
 
 ## `spaship help [COMMAND]`
 
-display help for spaship
+### Display help for spaship
 
 ```
 USAGE
@@ -94,9 +95,9 @@ OPTIONS
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.0/src/commands/help.ts)_
 
-## `spaship env`
+## `spaship env [COMMAND]`
 
-Add env in the spashiprc file
+### Add env in the spashiprc file
 
 ```
 USAGE
@@ -113,7 +114,7 @@ DESCRIPTION
 
 ## `spaship init`
 
-Initialize a SPAship config file for your app.
+### Initialize a SPAship config file for your app.
 
 ```
 USAGE
@@ -124,7 +125,6 @@ OPTIONS
   -p, --path=path    (required) the URL path for your app under the SPAship domain. ex: /my/app
   -s, --[no-]single  route all non-asset requests to index.html
   --overwrite        overwrite existing spaship.yaml
-
 DESCRIPTION
   Without arguments, init will ask you a few questions and generate a spaship.yaml config file.  The answers can also be
   passed in as CLI options.
@@ -134,7 +134,7 @@ _See code: [src/commands/init.js](https://github.com/spaship/spaship/blob/v0.13.
 
 <!-- commandsstop -->
 
-# spashiprc & SPAship environments
+# SPAship environments & .spashiprc
 
 _(As a rule of thumb, spaship.yaml files are consumed by the SPAship API, whereas spashiprc files are consumed by the CLI)_
 
