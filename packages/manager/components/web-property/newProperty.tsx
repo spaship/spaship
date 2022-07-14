@@ -138,6 +138,7 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
     else { setValidatedUrl(validations.noval) }
     setUrl(value);
   };
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   const handleOnClick = async () => {
     try {
@@ -303,8 +304,15 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
 
           <StyledButton 
           variant="tertiary" 
-          onClick={handleOnClick} 
+          onClick={ () => {
+            handleOnClick();
+            setButtonLoading(true);
+          }
+        }
+          isLoading={buttonLoading}
           isDisabled={
+            buttonLoading 
+            ||
             validatedEnv != validations.success 
             || 
             validatedIdentifier != validations.success 

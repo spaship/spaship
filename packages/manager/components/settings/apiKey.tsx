@@ -130,6 +130,8 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
     } catch (e) { console.error(e); }
   }
 
+  const [buttonLoading, setButtonLoading] = useState(false);
+
   return (
     <>
       <Flex justifyContent={{ default: "justifyContentSpaceBetween" }} alignItems={{ default: "alignItemsCenter" }}>
@@ -154,9 +156,13 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
       <Modal
         variant={ModalVariant.small}
         title="API Key"
-        description="Please save this API Key"
+        description="Please save this API Key. You won’t be able to see it again!"
         isOpen={isModalOpen}
-        onClose={handleModalToggle}
+        onClose={() => {
+          handleModalToggle();
+          setButtonLoading(false);
+        }
+        }
         actions={[
         ]}
       >
@@ -164,7 +170,18 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
           validators={[rangeValidator]}
           onChange={(str, date) => handleExpiresIn(str)}
         />
-        <StyledButton key="create" variant="tertiary" onClick={handlePropertyCreation} isDisabled={validatedDateTime != validations.success}>
+        <StyledButton 
+          key="create" 
+          variant="tertiary"
+          onClick={() => {
+            handlePropertyCreation();
+            setButtonLoading(true);
+          }} 
+          isDisabled={
+            validatedDateTime != validations.success
+            ||
+            buttonLoading
+          }>
           Create
         </StyledButton>
         <StyledClipboardBox>

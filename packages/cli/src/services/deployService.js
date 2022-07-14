@@ -3,7 +3,8 @@ const http = require("http");
 const pkg = require("../../package.json");
 
 const upload = (url, data, apiKey, onUploadProgress) => {
-  let protocol = url.startsWith("https://") ? https : http;
+  let protocol = url.protocol == "https:" ? https : http;
+  // let protocol = "http";
   return new Promise((resolve, reject) => {
     let contentLength = null;
     let bytes = 0;
@@ -26,19 +27,33 @@ const upload = (url, data, apiKey, onUploadProgress) => {
 
     const defaultHeaders = {
       "user-agent": `@spaship/cli@${pkg.version} ${pkg.homepage}`,
-      authorization: `APIKey ${apiKey}`,
+      authorization: getAuthToken(apiKey),
     };
 
-    const options = {
-      method: "POST",
-      rejectUnauthorized: false,
-      agentOptions: {
-        ciphers: "ALL",
-        secureProtocol: "TLSv1_1_method",
-      },
-      agent: new https.Agent({ keepAlive: true, keepAliveMsecs: 1000 }),
-      headers: Object.assign({}, defaultHeaders, data.getHeaders()),
-    };
+    let options;
+    if (url.protocol == "https:") {
+      options = {
+        method: "POST",
+        rejectUnauthorized: false,
+        agentOptions: {
+          ciphers: "ALL",
+          secureProtocol: "TLSv1_1_method",
+        },
+        agent: new https.Agent({ keepAlive: true, keepAliveMsecs: 1000 }),
+        headers: Object.assign({}, defaultHeaders, data.getHeaders()),
+      };
+    } else {
+      options = {
+        method: "POST",
+        // rejectUnauthorized: false,
+        agentOptions: {
+          ciphers: "ALL",
+          //  secureProtocol: "TLSv1_1_method",
+        },
+        agent: new http.Agent({ keepAlive: true, keepAliveMsecs: 1000 }),
+        headers: Object.assign({}, defaultHeaders, data.getHeaders()),
+      };
+    }
 
     const req = protocol.request(url, options, (res) => {
       let rawData = "";
@@ -98,3 +113,9 @@ const upload = (url, data, apiKey, onUploadProgress) => {
   });
 };
 module.exports = { upload };
+
+function getAuthToken(apiKey) {
+  const API_KEY_LENGTH = 36;
+  if (apiKey.length > API_KEY_LENGTH) return `Bearer ${apiKey}`;
+  else return `APIKey ${apiKey}`;
+}

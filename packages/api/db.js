@@ -8,7 +8,6 @@ const connect = async () => {
   const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true,
   };
   config.get("db:mongo:user") && (options.user = config.get("db:mongo:user"));
   config.get("db:mongo:password") && (options.pass = config.get("db:mongo:password"));

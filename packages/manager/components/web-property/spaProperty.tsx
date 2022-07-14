@@ -20,20 +20,24 @@ const StyledTableHeader = styled(Thead)`
 --pf-c-table--border-width--base:none;
 `
 
+const StyledExternalLinkAltIcon = styled(ExternalLinkAltIcon)`
+  margin-right: 0.5rem;
+`;
+
 const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) => {
   const router = useRouter();
   const { envList } = webprop;
   const tableView: Array<SPAProperty> = Object.values(webprop?.countResponse?.reduce((acc: any, spa: any) => {
-    const url = `${envList.find((environment: any) => environment.env === spa.env).url}${spa.path}`;
-    if (!!acc[spa.name]) {
+    const url = `${envList.find((environment: any) => environment.env === spa.env).url}${spa.path.startsWith('/') ? spa.path : `/${spa.path}`}`;
+    if (acc.hasOwnProperty(spa.name)) {
       acc[spa.name].env.push(spa.env);
       acc[spa.name].details.push(
         {
           env: spa.env,
           url,
           ref: spa.ref,
-          updatedAt: spa.updatedAt
-
+          updatedAt: spa.updatedAt,
+          accessUrl: spa.accessUrl,
         }
       )
       return acc;
@@ -46,7 +50,8 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
           env: spa.env,
           url,
           ref: spa.ref,
-          updatedAt: spa.updatedAt
+          updatedAt: spa.updatedAt,
+          accessUrl: spa.accessUrl,
         },
       ],
     }
@@ -74,6 +79,7 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
   }
   const onSearch = debounce(300);
   const onClear= () => setSearchValue('');
+  const lengthLimit = 20;
   return (
     <>
       <StyledFlex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
@@ -124,6 +130,7 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
                           <Th>Environment</Th>
                           <Th>Ref</Th>
                           <Th>URL</Th>
+                          <Th>Access URL</Th>
                           <Th>Updated At</Th>
                         </Tr>
                       </StyledTableHeader>
@@ -131,9 +138,24 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
                         {(spa as any).details.map((detail: any, index: any) =>
                           <Tr key={index}>
                             <Td><StyledLabel>{detail.env}</StyledLabel></Td>
-                            <Td>{detail.ref}</Td>
+                            <Td>{detail.ref.length > lengthLimit ? `${detail.ref.substring(0, lengthLimit)}...` : detail.ref}</Td>
                             <Td>
-                              <a href={`https://${detail.url}`} target="_blank" rel="noopener noreferrer"><ExternalLinkAltIcon /> {detail.url} </a>
+                              <a href={`https://${detail.url}`} target="_blank" rel="noopener noreferrer">
+                                <StyledExternalLinkAltIcon /> 
+                                {detail.url.length > lengthLimit ? `${detail.url.substring(0, lengthLimit)}...` : detail.url} 
+                              </a>
+                            </Td>
+                            <Td>
+                              {
+                                detail.accessUrl
+                                ? 
+                                <a href={`${detail.accessUrl}`} target="_blank" rel="noopener noreferrer">
+                                  <StyledExternalLinkAltIcon /> 
+                                  {`${detail.accessUrl.substring(0, lengthLimit)}...`} 
+                                </a> 
+                                :
+                                'N/A'
+                              }
                             </Td>
                             <Td><ClockIcon /> {new Date(detail.updatedAt).toLocaleString('en')}</Td>
                           </Tr>

@@ -11,6 +11,7 @@ import styled from "styled-components";
 import { post } from "../../utils/api.utils";
 import { getNextOnboardWebpropertyUrl } from "../../utils/endpoint.utils";
 import { AnyProps } from "../models/props";
+import { useRouter } from "next/router";
 
 interface ApiKeyProps {
   webprop: AnyProps;
@@ -62,6 +63,7 @@ const StyledSpan = styled.span`
 `;
 
 const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
+  const router = useRouter();
   const { data: session, status: _status } = useSession();
   const [isModalOpen, setModalOpen] = useState(false);
   const [env, setEnv] = useState("");
@@ -97,6 +99,9 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   };
 
   async function handlePropertyCreation() {
+    setAlert([
+      { title: `Your env is being created`, variant: 'info' },
+    ] as any)
     try {
       const propUrl = getNextOnboardWebpropertyUrl();
       const prop = webprop?.propertyListResponse[0];
@@ -118,6 +123,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
         setEnv("");
         setUrl("");
         setModalOpen(!isModalOpen);
+        router.reload();
       }
     } catch (e) { }
   }
@@ -143,9 +149,9 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
     else { setValidatedEnv(validations.noval) }
     setEnv(value);
   };
+  const [buttonLoading, setButtonLoading] = useState(false);
 
-  useEffect(() => {
-  }, [isModalOpen]);
+  useEffect(() => { /* TODO : To be done later */ }, [isModalOpen]);
   const [envType, setEnvType] = useState(false);
 
   return (
@@ -191,7 +197,20 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
         isOpen={isModalOpen}
         onClose={handleModalToggle}
         actions={[
-          <StyledButton key="create" variant="tertiary" onClick={handlePropertyCreation} isDisabled={validatedEnv != validations.success || validatedUrl != validations.success}>
+          <StyledButton 
+            key="create" 
+            variant="tertiary"
+            isLoading={buttonLoading}
+            onClick={() => {
+              handlePropertyCreation();
+              setButtonLoading(true);
+            }} 
+            isDisabled={
+              buttonLoading
+              ||
+              validatedEnv != validations.success 
+              || 
+              validatedUrl != validations.success}>
             Create
           </StyledButton>
         ]}
@@ -230,7 +249,13 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
           isRequired
           fieldId="form-group-label-info"
           helperText={<>
-            <FormHelperText icon={validatedUrl === validations.noval ? <ExclamationCircleIcon /> : <CheckCircleIcon />} isHidden={validatedUrl !== validations.noval && validatedUrl !== validations.success}>
+            <FormHelperText 
+              icon={
+                validatedUrl === validations.noval 
+                ? 
+                <ExclamationCircleIcon /> : <CheckCircleIcon />
+              } 
+              isHidden={validatedUrl !== validations.noval && validatedUrl !== validations.success}>
               {validatedUrl === validations.noval ? <>Hostname shouldn't contain any space, special-character (eg: one.redhat.com) </> : <>Valid Hostname</>}
             </FormHelperText>
           </>
