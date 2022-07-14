@@ -20,6 +20,10 @@ const StyledTableHeader = styled(Thead)`
 --pf-c-table--border-width--base:none;
 `
 
+const StyledExternalLinkAltIcon = styled(ExternalLinkAltIcon)`
+  margin-right: 0.5rem;
+`;
+
 const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) => {
   const router = useRouter();
   const { envList } = webprop;
@@ -134,18 +138,20 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
                         {(spa as any).details.map((detail: any, index: any) =>
                           <Tr key={index}>
                             <Td><StyledLabel>{detail.env}</StyledLabel></Td>
-                            <Td>{detail.ref > lengthLimit ? detail.ref.substring(0, lengthLimit) + '...' : detail.ref}</Td>
+                            <Td>{detail.ref.length > lengthLimit ? `${detail.ref.substring(0, lengthLimit)}...` : detail.ref}</Td>
                             <Td>
-                              <a href={`https://${detail.url}`} target="_blank" rel="noopener noreferrer"><ExternalLinkAltIcon /> 
-                                {detail.url.length > lengthLimit ? detail.url.substring(0, lengthLimit) + '...' : detail.url} 
+                              <a href={`https://${detail.url}`} target="_blank" rel="noopener noreferrer">
+                                <StyledExternalLinkAltIcon /> 
+                                {detail.url.length > lengthLimit ? `${detail.url.substring(0, lengthLimit)}...` : detail.url} 
                               </a>
                             </Td>
                             <Td>
                               {
-                                detail.accessUrl 
+                                detail.accessUrl
                                 ? 
-                                <a href={`https://${detail.accessUrl}`} target="_blank" rel="noopener noreferrer"><ExternalLinkAltIcon /> 
-                                  {detail.accessUrl > lengthLimit ? detail.accessUrl.substring(0, lengthLimit) + '...' : detail.accessUrl} 
+                                <a href={`${detail.accessUrl}`} target="_blank" rel="noopener noreferrer">
+                                  <StyledExternalLinkAltIcon /> 
+                                  {`${detail.accessUrl.substring(0, lengthLimit)}...`} 
                                 </a> 
                                 :
                                 'N/A'
