@@ -32,34 +32,37 @@ public class K8sClientProducer {
   @Produces
   @Named("deNamespace")
   String getNamespace() {
-    String computedNameSpace = Optional.ofNullable(readNameFromFile()).orElse(whenNameSpaceMetaFileNotFound());
-    LOG.info("computed namespace is {}", computedNameSpace);
+    String computedNameSpace = Optional.ofNullable(readNameFromFile()).orElseGet(this::whenNameSpaceMetaFileNotFound);
+    LOG.info("computed deNamespace namespace is {}", computedNameSpace);
     return computedNameSpace;
   }
   @Produces
   @Named("defaultNamespaceMT")
   String getMultiTenantDefaultNamespace() {
     var computedNamespace = multiTenantDeploymentDefaultNs();
-    LOG.info("computed namespace is {}", computedNamespace);
+    LOG.info("computed defaultNamespaceMT  namespace is {}", computedNamespace);
     return computedNamespace;
   }
 
   private String readNameFromFile() {
+    LOG.info("looking for namespace into the predefined location");
     String ns;
     try {
       ns = new String(Files
         .readAllBytes(Paths.get("/var/run/secrets/kubernetes.io/serviceaccount/namespace")));
+      LOG.info("content of the namespace is {}", ns);
     } catch (IOException e) {
-      LOG.warn("failed to read namespace from metadata {}", e.getMessage());
+      LOG.error("failed to read namespace from metadata {}", e.getMessage());
       ns = null;
     }
+    LOG.info("returning namespace from metadata {}", ns);
     return ns;
   }
 
   // This implementation is mpp specific
   private String whenNameSpaceMetaFileNotFound() {
 
-    LOG.debug("namespace file does not exists.");
+    LOG.info("namespace file does not exists.");
 
     if(!ProfileManager.getActiveProfile().toLowerCase().contains("dev"))
       throw new ResourceNotFoundException("the profile is not dev , could not determine de namespace");
