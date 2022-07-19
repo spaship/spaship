@@ -200,7 +200,8 @@ async function getAliasDeploymentRecord(aliasDeploymentConnectionType, property)
 }
 
 async function createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir, env, namespace) {
-  if (appPath.charAt(0) == "/" && appPath.length === 1) appPath = ".";
+  const rootspa = "ROOTSPA";
+  if (appPath.charAt(0) == "/" && appPath.length === 1) appPath = rootspa;
   else if (appPath.charAt(0) == "/") appPath = appPath.substr(1);
   const spaShipFile = {
     websiteVersion: "v1",
