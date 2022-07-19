@@ -78,7 +78,12 @@ module.exports.deploy = async (req, res, next) => {
   const env = req.params?.env;
   const accessUrl = "";
   const validateFileType = req.file.originalname.split(".").pop();
-  if (validateFileType === "zip" || validateFileType === "tgz") {
+  if (
+    validateFileType === "zip" ||
+    validateFileType === "tgz" ||
+    validateFileType === "gz" ||
+    validateFileType === "bz2"
+  ) {
     try {
       const response = await DeployService.deploy({
         name,
