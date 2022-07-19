@@ -37,7 +37,7 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
           url,
           ref: spa.ref,
           updatedAt: spa.updatedAt,
-          accessUrl: spa.accessUrl,
+          accessUrl: spa.accessUrl ?? spa.accessUrl.endsWith('/') ? spa.accessUrl : `${spa.accessUrl}/`,
         }
       )
       return acc;
@@ -51,7 +51,7 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
           url,
           ref: spa.ref,
           updatedAt: spa.updatedAt,
-          accessUrl: spa.accessUrl,
+          accessUrl: spa.accessUrl ?? spa.accessUrl.endsWith('/') ? spa.accessUrl : `${spa.accessUrl}/`,
         },
       ],
     }
@@ -130,7 +130,7 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
                           <Th>Environment</Th>
                           <Th>Ref</Th>
                           <Th>URL</Th>
-                          <Th>Access URL</Th>
+                          <Th>Internal Access URL</Th>
                           <Th>Updated At</Th>
                         </Tr>
                       </StyledTableHeader>
@@ -140,7 +140,10 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
                             <Td><StyledLabel>{detail.env}</StyledLabel></Td>
                             <Td>{detail.ref.length > lengthLimit ? `${detail.ref.substring(0, lengthLimit)}...` : detail.ref}</Td>
                             <Td>
-                              <a href={`https://${detail.url}`} target="_blank" rel="noopener noreferrer">
+                              <a 
+                                href={`https://${detail.url}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer">
                                 <StyledExternalLinkAltIcon /> 
                                 {detail.url.length > lengthLimit ? `${detail.url.substring(0, lengthLimit)}...` : detail.url} 
                               </a>
@@ -149,7 +152,10 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
                               {
                                 detail.accessUrl
                                 ? 
-                                <a href={`${detail.accessUrl}`} target="_blank" rel="noopener noreferrer">
+                                <a 
+                                  href={`${detail.accessUrl}`} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer">
                                   <StyledExternalLinkAltIcon /> 
                                   {`${detail.accessUrl.substring(0, lengthLimit)}...`} 
                                 </a> 
