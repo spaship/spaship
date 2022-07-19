@@ -31,7 +31,7 @@ async function processEvents(eventRequest) {
     env: response?.environmentName || "NA",
     branch: "main",
     state: response.state,
-    path: response?.contextPath || "NA",
+    path: getPath(response),
     accessUrl: getUrl(response.accessUrl),
     code: getCode(response.state),
     failure: false,
@@ -95,6 +95,7 @@ async function createEventTimeTraceRequest(response) {
 }
 
 function getPath(response) {
-  if (response?.contextPath == ".") return "/";
+  if (response?.contextPath == null) return "NA";
+  else if (response?.contextPath == "ROOTSPA") return "/";
   return `/${response?.contextPath}`;
 }
