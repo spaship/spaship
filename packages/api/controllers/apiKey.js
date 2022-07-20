@@ -66,14 +66,13 @@ module.exports.post = async (req, res, next) => {
 };
 
 module.exports.delete = async (req, res, next) => {
-  const userId = getUserUUID(req);
-  const { label } = req.params;
+  const { label, shortKey } = req.params;
   try {
-    const apiKey = await APIKey.findOneAndDelete({ label, userId });
+    const apiKey = await APIKey.findOneAndDelete({ label, shortKey });
     if (apiKey) {
       res.status(200).json({ message: "API key removed successfully." });
     } else {
-      next(new NotFoundError(`API key labeled ${label} not found.`));
+      next(new NotFoundError(`API key for ${label} not found.`));
     }
   } catch (error) {
     next(error);
