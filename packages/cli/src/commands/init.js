@@ -57,9 +57,9 @@ class InitCommand extends Command {
     // smush cli options, questionnaire answers, and anything extra into a data
     // object to pass into the template
     const data = assign({}, responses, cmd.flags);
-    if (data.name.trim().length == 0) {
+    if (data?.name?.trim().length == 0) {
       throw new Error("Please provide name");
-    } else if (data.path.trim().length == 0) {
+    } else if (data?.path?.trim().length == 0) {
       throw new Error("Please provide path");
     }
     try {
