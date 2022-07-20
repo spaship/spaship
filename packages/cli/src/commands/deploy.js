@@ -73,6 +73,8 @@ class DeployCommand extends Command {
     }
 
     try {
+      if(host.endsWith("/api/v1")) { host = `${host}/applications/deploy`}
+      else if(!host.includes(apiPath)) { host = `${host}${apiPath}`}
       host = new URL(host);
     } catch (error) {
       this.error(`The API url ${host} is invalid`);

@@ -4,7 +4,7 @@ const pkg = require("../../package.json");
 
 const upload = (url, data, apiKey, onUploadProgress) => {
   let protocol = url.protocol == "https:" ? https : http;
-  // let protocol = "http";
+
   return new Promise((resolve, reject) => {
     let contentLength = null;
     let bytes = 0;
@@ -39,16 +39,14 @@ const upload = (url, data, apiKey, onUploadProgress) => {
           ciphers: "ALL",
           secureProtocol: "TLSv1_1_method",
         },
-        agent: new https.Agent({ keepAlive: true, keepAliveMsecs: 1000 }),
+        agent: new https.Agent({ keepAlive: true, keepAliveMsecs: 100000 }),
         headers: Object.assign({}, defaultHeaders, data.getHeaders()),
       };
     } else {
       options = {
         method: "POST",
-        // rejectUnauthorized: false,
         agentOptions: {
           ciphers: "ALL",
-          //  secureProtocol: "TLSv1_1_method",
         },
         agent: new http.Agent({ keepAlive: true, keepAliveMsecs: 1000 }),
         headers: Object.assign({}, defaultHeaders, data.getHeaders()),
