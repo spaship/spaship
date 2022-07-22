@@ -245,7 +245,7 @@ DESCRIPTION
     cd demo-spa
     npm install
     npm run build
-    npx @spaship/cli@1.5.0 deploy --apikey=70f19422-bf53-44b1-b664-f9b4636bea61 --env=https://deploy-url-from-spaship-manager.com --builddir=dist --ref=1.0.0
+    npx @spaship/cli@latest deploy --apikey=70f19422-bf53-44b1-b664-f9b4636bea61 --env=https://deploy-url-from-spaship-manager.com --builddir=dist --ref=1.0.0
     ```
 :::info
 The same set of commands can also be used in most CD setups.

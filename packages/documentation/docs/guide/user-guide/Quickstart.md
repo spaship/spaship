@@ -10,6 +10,8 @@ SPAship Manager is **user interface** for managing your ***API Keys*** and ***SP
 ### **Step 1: Registering as a SPAship user**
 Ensure that you have access to the ***‘spaship-users’*** rover group before getting started with using any Red Hat internal preset SPAship instance. If you are not already in the group and for some reason are not able to join the group yourself, please drop in an email to <spaship-dev@redhat.com>
 
+- Please check the as well [video tutorial](https://drive.google.com/file/d/150OyktZdmqMXKwNS1mDkqIo7ZvgyCCGp/view?usp=sharing) 
+
 ### **Step 2: Logging in**
 By default, when you try to access the SPA Manager, SPAship will try to automatically log you in using the pre-configured Single Sign On (SSO) service. However, depending upon how your instance is configured, trying to access the SPA Manager can also open up the /login page.
 
@@ -71,7 +73,7 @@ cd demo-spa
 npm install
 npm run build
 
-npx @spaship/cli@1.5.0 deploy --apikey=$KEY --env=https://deploy-url-from-spaship-manager.com --ref=1.0.0
+npx @spaship/cli@latest deploy --apikey=$KEY --env=https://deploy-url-from-spaship-manager.com --ref=1.0.0
 ```
 
 #### After getting the deploy url and API key you can start deploying manually using the Click (next page)
