@@ -33,7 +33,7 @@ module.exports = {
         {
           type: "category",
           label: "User Guide",
-          items: ["guide/user-guide/Quickstart"],
+          items: ["guide/user-guide/Quickstart", "guide/user-guide/cli"],
         },
         {
           type: "category",
