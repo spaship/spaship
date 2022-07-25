@@ -61,7 +61,7 @@ module.exports = () => {
     jwtAuth.verify(token, config.get("token:secret"), function (err, data) {
       if (err) {
         if (err.message != "invalid algorithm") {
-          res.status(400).json({ message: err.message });
+          res.status(401).json({ message: err.message });
           error = true;
         }
       } else {
@@ -69,7 +69,7 @@ module.exports = () => {
           const props = req.originalUrl.split("/");
           if (props[props.length - 2] != data.propertyName) {
             error = true;
-            res.status(403).json({ message: "Access denied" });
+            res.status(401).json({ message: "Access denied" });
             return;
           }
         }
