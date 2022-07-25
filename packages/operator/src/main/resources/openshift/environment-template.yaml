@@ -90,6 +90,7 @@ objects:
       name: data-${WEBSITE}-${ENV}-${APP_INSTANCE_PREFIX}
       annotations:
         kubernetes.io/reclaimPolicy: Delete
+        trident.netapp.io/reclaimPolicy: Delete
       labels:
         paas.redhat.com/appcode: SPAS-001
         app.kubernetes.io/managed-by: spaship
