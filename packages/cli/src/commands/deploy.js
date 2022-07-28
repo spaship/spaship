@@ -126,6 +126,10 @@ class DeployCommand extends Command {
       data.append("name", name);
       data.append("path", path);
       data.append("ref", this.getRef(flags));
+      if (!fs.existsSync(args.archive)) {
+        spinner.fail(`${args.archive} not found in the directory, Please provide a valid file.`);
+        return;
+      }
       data.append("upload", fs.createReadStream(args.archive));
 
       const response = await DeployService.upload(host, data, apikey, (progress) => {
@@ -149,15 +153,10 @@ class DeployCommand extends Command {
       this.log(`Total: ${Math.round((endTime - startTime) / 1000)} seconds`);
       this.log(response);
     } catch (e) {
-      if (step === "processing") {
-        spinner.info("Lost connection with SPAship server during processing.");
-        this.log(
-          `Lost connections usually still result in successful deployments, and are caused by a simple network timeout during archive processing.  Please confirm your deployment succeeded by checking the SPAship UI, and checking your application in the environment you deployed to.  To avoid timeouts, reduce the size of your application to help speed up processing.`
-        );
-      } else {
-        spinner.fail(e.message);
-        this.error(e, { exit: 1 });
-      }
+      spinner.fail(e.message);
+      e.includes("ENOTFOUND")
+        ? this.error(`${host} is not valid, please check the Deployment URL`, { exit: 1 })
+        : this.error(e, { exit: 1 });
     }
   }
 
