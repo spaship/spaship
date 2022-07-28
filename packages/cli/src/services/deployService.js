@@ -71,33 +71,31 @@ const upload = (url, data, apiKey, onUploadProgress) => {
           } else if (res.statusCode >= 400 && res.statusCode < 500) {
             switch (res.statusCode) {
               case 400:
-                reject("Error: Failed to deploy. [400]");
+                reject("Failed to deploy, Please check the Deployment URL or File type. [400]");
                 break;
               case 401:
-                reject(`Error: The API key was not accepted by ${url} [401]`);
+                reject(`The API key was not accepted by ${url} [401]`);
               default:
-                reject(`Error: Failed to deploy with an unknown error. [${res.statusCode}]`);
+                reject(`Failed to deploy with an unknown error. [${res.statusCode}]`);
             }
           } else if (res.statusCode >= 500 && res.statusCode < 600) {
             switch (res.statusCode) {
               case 500:
-                reject(
-                  `Error: The SPAship server has encountered a mysterious problem; someone call Richard Feynman! [500]`
-                );
+                reject(`The SPAship server has encountered a mysterious problem; someone call Richard Feynman! [500]`);
                 break;
               case 501:
                 reject(
-                  `Error: The spaship CLI attempted an action not supported by the server, possible version mismatch. [501]`
+                  `The spaship CLI attempted an action not supported by the server, possible version mismatch. [501]`
                 );
                 break;
               default:
-                reject(`Error: Unknown. [${res.statusCode}]`);
+                reject(`Unknown. [${res.statusCode}]`);
             }
           } else {
           }
         } catch (e) {
           reject(
-            "Error: the server returned an invalid message.  The server may be down, or your .spashiprc.yml may be pointing at the wrong server."
+            "The server returned an invalid message.  The server may be down, or your .spashiprc.yml may be pointing at the wrong server (Please upgrade your CLI version and try again)."
           );
         }
       });
