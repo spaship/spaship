@@ -23,9 +23,11 @@ module.exports.list = async (req, res, next) => {
 module.exports.propertyList = async (req, res, next) => {
   const propertyName = req.params.propertyName;
   try {
-    const results = await APIKey.find({ label: propertyName }).exec();
+    const results = await APIKey.find({ propertyName: propertyName }).exec();
     const apiKeys = results.map((obj) => ({
       label: obj.label,
+      propertyName: obj.propertyName,
+      env: obj.env,
       shortKey: obj.shortKey,
       expirationDate: obj.expiredDate,
       createdAt: obj.createdAt,
