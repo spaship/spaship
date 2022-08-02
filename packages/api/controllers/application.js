@@ -151,24 +151,31 @@ module.exports.delete = async (req, res, next) => {
 };
 
 module.exports.validate = async (req, res, next) => {
-  const expiration = req.body?.expiresIn || config.get("token:expiration");
+  const request = req.body;
+  if (!validateProperties(request, next)) return;
+  const expiration = request?.expiresIn || config.get("token:expiration");
   const secret = config.get("token:secret");
-  const propertyName = req.body?.propertyName || "NA";
-  const token = jwt.sign({ createdAt: new Date(), expiresIn: expiration, propertyName: propertyName }, secret, {
-    expiresIn: expiration,
-  });
-  console.log(token);
-  let result = null;
-
-  if (req.body?.propertyName) {
-    const label = req.body?.propertyName;
+  const propertyName = request.propertyName;
+  const envs = getEnvs(request);
+  const response = [];
+  for (let env of envs) {
+    const token = jwt.sign(
+      { createdAt: new Date(), expiresIn: expiration, propertyName: propertyName, env: env },
+      secret,
+      {
+        expiresIn: expiration,
+      }
+    );
+    const label = getLabel(request);
     const expiredDate = formatDate(expiration);
-    const userId = "";
+    const userId = getUserId(req);
     const key = uuid() + token.substring(0, 4);
     const shortKey = key.substring(0, 7);
     const hashKey = hash(key);
     const data = {
       label,
+      propertyName,
+      env,
       shortKey,
       hashKey,
       key,
@@ -176,12 +183,23 @@ module.exports.validate = async (req, res, next) => {
       userId,
       expiredDate,
     };
-    result = await APIKey.create(data);
-    return res.status(200).json({ message: "Validation is successful.", token: result?.key });
+    const apikey = await APIKey.create(data);
+    response.push({ propertyName: apikey.propertyName, env: apikey.env, token: apikey.key });
   }
-
-  res.status(200).json({ message: "Validation is successful.", token: token });
+  return res.status(200).json(response);
 };
+
+function getLabel(request) {
+  return request.label || "NA";
+}
+
+function getUserId(req) {
+  return req.body?.createdBy || "";
+}
+
+function getEnvs(req) {
+  return req?.env;
+}
 
 function generateNamespace(propertyName) {
   return `spaship--${propertyName}`;
@@ -247,4 +265,30 @@ function formatDate(expiration) {
   const expiresIn = new Date();
   expiresIn.setDate(expiresIn.getDate() + parseInt(expiration));
   return expiresIn;
+}
+
+function validateProperties(request, next) {
+  const formatPropertyName = /[ `!@#$%^&*()_+\=\[\]{};':"\\|,.<>\/?~]/;
+  const formatEnv = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+  if (!request.hasOwnProperty("propertyName") || !request.hasOwnProperty("env")) {
+    next(new ValidationError("Missing properties in request body"));
+    return false;
+  }
+
+  if (request?.propertyName?.trim().match(formatPropertyName)) {
+    next(new ValidationError("Invalid PropertyName"));
+    return false;
+  }
+  if (request?.env.length < 1) {
+    next(new ValidationError("Please provide the environment"));
+    return false;
+  }
+  const envs = request.env;
+  for (let env of envs) {
+    if (env?.trim().match(formatEnv)) {
+      next(new ValidationError("Invalid environment"));
+      return false;
+    }
+  }
+  return true;
 }
