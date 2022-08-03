@@ -67,7 +67,7 @@ module.exports = () => {
       } else {
         if (shortApiKey == true) {
           const props = req.originalUrl.split("/");
-          if (props[props.length - 2] != data.propertyName) {
+          if (props[props.length - 2] != data.propertyName || props[props.length - 1] != data.env) {
             error = true;
             res.status(401).json({ message: "Access denied" });
             return;
