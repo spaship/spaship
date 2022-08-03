@@ -124,8 +124,8 @@ nconf.defaults({
   directoryBasePath: "root",
   db: {
     mongo: {
-      url: process.env.SPASHIP_DB__MONGO__URL || "localhost:27017",
-      db_name: process.env.SPASHIP_DB__MONGO__DB_NAME || "spaship", 
+      url: process.env.SPASHIP_DB__MONGO__URL || "localhost:27017/spaship",
+      db_name: process.env.SPASHIP_DB__MONGO__DB_NAME || "spaship",
       user: process.env.SPASHIP_DB__MONGO__USER || "",
       password: process.env.SPASHIP_DB__MONGO__PASSWORD || "",
       mock: process.env.NODE_ENV !== "production", // use a mock database by default in dev environments
