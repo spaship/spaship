@@ -9,6 +9,8 @@ const Unauthorized = require("../utils/errors/Unauthorized");
 
 module.exports = () => {
   return async (req, res, next) => {
+    log.info(req.headers);
+    log.info(req.body);
     const apiKey = APIKeyService.getAPIKeyFromRequest(req);
     // If an API key was provided, try to validate it.  Except on the /apiKeys endpoint.  API keys cannot be used to
     // create more API keys.
@@ -24,8 +26,9 @@ module.exports = () => {
           };
           return next();
         }
-      } catch (error) {
-        return next(error);
+      } catch (err) {
+        log.error(err);
+        return next(err);
       }
     }
 
@@ -39,6 +42,7 @@ module.exports = () => {
           return bearerToken;
         }
       } catch (err) {
+        log.error(err);
         next(new Unauthorized(`Authorization header missing.`));
       }
     };
@@ -54,8 +58,8 @@ module.exports = () => {
         token = result.token;
         shortApiKey = true;
       }
-    } catch (e) {
-      console.log(e);
+    } catch (err) {
+      log.error(err);
     }
 
     jwtAuth.verify(token, config.get("token:secret"), function (err, data) {
