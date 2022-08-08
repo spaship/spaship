@@ -17,10 +17,6 @@ const APIKeySchema = new Schema(
       type: String,
       required: true,
     },
-    env: {
-      type: String,
-      required: true,
-    },
     shortKey: {
       type: String,
       required: true,
