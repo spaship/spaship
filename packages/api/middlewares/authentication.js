@@ -71,7 +71,7 @@ module.exports = () => {
       } else {
         if (shortApiKey == true) {
           const props = req.originalUrl.split("/");
-          if (props[props.length - 2] != data.propertyName || props[props.length - 1] != data.env) {
+          if (props[props.length - 2] != data.propertyName || !checkEnv(props, data)) {
             error = true;
             res.status(401).json({ message: "Access denied" });
             return;
@@ -91,3 +91,13 @@ module.exports = () => {
     })(req, res, next);
   };
 };
+function checkEnv(props, data) {
+  try {
+    const env = props[props.length - 1];
+    const envList = data.env;
+    return envList.includes(env);
+  } catch (err) {
+    log.err(err);
+    return next();
+  }
+}

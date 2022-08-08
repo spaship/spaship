@@ -14,6 +14,7 @@ module.exports.list = async (req, res, next) => {
       expiredDate: obj.expiredDate,
       createdAt: obj.createdAt,
     }));
+    if (apiKeys.length == 0) res.send({ message: `No apikeys avaliable for ${userId}` });
     res.send(apiKeys);
   } catch (error) {
     next(error);
@@ -27,11 +28,11 @@ module.exports.propertyList = async (req, res, next) => {
     const apiKeys = results.map((obj) => ({
       label: obj.label,
       propertyName: obj.propertyName,
-      env: obj.env,
       shortKey: obj.shortKey,
       expirationDate: obj.expiredDate,
       createdAt: obj.createdAt,
     }));
+    if (apiKeys.length == 0) res.send({ message: `No apikeys avaliable for ${propertyName}` });
     res.send(apiKeys);
   } catch (error) {
     next(error);
@@ -68,13 +69,13 @@ module.exports.post = async (req, res, next) => {
 };
 
 module.exports.delete = async (req, res, next) => {
-  const { label, shortKey } = req.params;
+  const { propertyName, shortKey } = req.params;
   try {
-    const apiKey = await APIKey.findOneAndDelete({ label, shortKey });
+    const apiKey = await APIKey.findOneAndDelete({ propertyName, shortKey });
     if (apiKey) {
       res.status(200).json({ message: "API key removed successfully." });
     } else {
-      next(new NotFoundError(`API key for ${label} not found.`));
+      next(new NotFoundError(`API key for ${propertyName} not found.`));
     }
   } catch (error) {
     next(error);

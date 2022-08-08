@@ -157,40 +157,35 @@ module.exports.validate = async (req, res, next) => {
   const secret = config.get("token:secret");
   const propertyName = request.propertyName;
   const envs = getEnvs(request);
-  const response = [];
-  for (let env of envs) {
-    const token = jwt.sign(
-      { createdAt: new Date(), expiresIn: expiration, propertyName: propertyName, env: env },
-      secret,
-      {
-        expiresIn: expiration,
-      }
-    );
-    const label = getLabel(request);
-    const expiredDate = formatDate(expiration);
-    const userId = getUserId(req);
-    const key = uuid() + token.substring(0, 4);
-    const shortKey = key.substring(0, 7);
-    const hashKey = hash(key);
-    const data = {
-      label,
-      propertyName,
-      env,
-      shortKey,
-      hashKey,
-      key,
-      token,
-      userId,
-      expiredDate,
-    };
-    const apikey = await APIKey.create(data);
-    response.push({ propertyName: apikey.propertyName, env: apikey.env, token: apikey.key });
-  }
-  return res.status(200).json(response);
+  const userId = getUserId(req);
+  const token = jwt.sign(
+    { expiresIn: expiration, propertyName: propertyName, env: envs, createdBy: userId, createdAt: new Date() },
+    secret,
+    {
+      expiresIn: expiration,
+    }
+  );
+  const label = getLabel(request);
+  const expiredDate = formatDate(expiration);
+  const key = uuid() + token.substring(0, 4);
+  const shortKey = key.substring(0, 7);
+  const hashKey = hash(key);
+  const data = {
+    label,
+    propertyName,
+    shortKey,
+    hashKey,
+    key,
+    token,
+    userId,
+    expiredDate,
+  };
+  const apikey = await APIKey.create(data);
+  return res.status(200).json({ propertyName: apikey.propertyName, token: apikey.key });
 };
 
 function getLabel(request) {
-  return request.label || "NA";
+  return request.label || "default";
 }
 
 function getUserId(req) {
@@ -269,26 +264,17 @@ function formatDate(expiration) {
 
 function validateProperties(request, next) {
   const formatPropertyName = /[ `!@#$%^&*()_+\=\[\]{};':"\\|,.<>\/?~]/;
-  const formatEnv = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
   if (!request.hasOwnProperty("propertyName") || !request.hasOwnProperty("env")) {
     next(new ValidationError("Missing properties in request body"));
     return false;
   }
-
   if (request?.propertyName?.trim().match(formatPropertyName)) {
     next(new ValidationError("Invalid PropertyName"));
     return false;
   }
-  if (request?.env.length < 1) {
+  if (request?.env.length == 0) {
     next(new ValidationError("Please provide the environment"));
     return false;
-  }
-  const envs = request.env;
-  for (let env of envs) {
-    if (env?.trim().match(formatEnv)) {
-      next(new ValidationError("Invalid environment"));
-      return false;
-    }
   }
   return true;
 }
