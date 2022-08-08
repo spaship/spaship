@@ -6,10 +6,14 @@ import { getValidateUrl } from "../../utils/endpoint.utils";
 const Validate = async (req: AnyProps, res: AnyProps) => {
   const url = getValidateUrl();
   const token = (await getSession({ req }) as any).accessToken;
+  const userEmail = (await getSession({ req }) as any).user.email;
   const expiresIn = getExpiresIn(req.body.expiresIn);
   const payload = {
     expiresIn: expiresIn,
+    env: getEnv(req),
+    label: getLabel(req),
     propertyName: getPropertyName(req),
+    createdBy: userEmail
   }
   const response = await post<AnyProps>(url, payload, token);
   return res.send({ data: { token: response.token } });
@@ -27,4 +31,13 @@ function getExpiresIn(reqExpiresIn: any) {
 function getPropertyName(req: any) {
   return req.body.propertyName;
 }
+
+function getEnv(req: any) {
+  return req.body.env;
+}
+
+function getLabel(req: any) {
+  return req.body.label;
+}
+
 

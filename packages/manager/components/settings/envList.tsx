@@ -5,7 +5,7 @@ import {
   Text,
   TextVariants
 } from "@patternfly/react-core";
-import { CheckCircleIcon, ExternalLinkAltIcon, KeyIcon, OutlinedCalendarAltIcon, TimesCircleIcon } from "@patternfly/react-icons";
+import { CheckCircleIcon, ExternalLinkAltIcon, KeyIcon, LockIcon, OutlinedCalendarAltIcon, TimesCircleIcon } from "@patternfly/react-icons";
 import {
   TableComposable,
   Tbody,
@@ -79,6 +79,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
         <TableComposable>
           <Thead>
             <Tr>
+              <Th>Label</Th>
               <Th>Short Key</Th>
               <Th>Created On</Th>
               <Th>Expiration Date</Th>
@@ -88,19 +89,20 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
           <Tbody>
             {apiKeyList?.map((key: any, index: any) => (
               <Tr key={index}>
+                <Td dataLabel={key.label}><LockIcon /> {key.label}</Td>
                 <Td dataLabel={key.shortKey}><KeyIcon /> {key.shortKey}</Td>
                 <Td dataLabel={key.createdAt}><OutlinedCalendarAltIcon /> {new Date(key.createdAt).toLocaleDateString('en')}</Td>
                 <Td dataLabel={key.expirationDate}><OutlinedCalendarAltIcon /> {new Date(key.expirationDate).toLocaleDateString('en')}</Td>
                 <Td dataLabel={key.createdAt}>
-                  {new Date(key.expirationDate) > new Date() 
-                  ? 
-                  <div>
-                    <CheckCircleIcon /> Active
-                  </div>
-                  : 
-                  <div>
-                    <TimesCircleIcon /> Inactive
-                  </div>
+                  {new Date(key.expirationDate) > new Date()
+                    ?
+                    <div>
+                      <CheckCircleIcon /> Active
+                    </div>
+                    :
+                    <div>
+                      <TimesCircleIcon /> Inactive
+                    </div>
                   }
                 </Td>
               </Tr>

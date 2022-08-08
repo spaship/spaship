@@ -36,7 +36,7 @@ export const getServerSideProps = async (context: ContextProps) => {
     };
     const response = await Promise.all(
       [
-        await post<Properties>(urlEvent, payloadCount, token), 
+        await post<Properties>(urlEvent, payloadCount, token),
         await get<AnyProps>(urlProperty, token),
         await get<AnyProps>(apiKeyListUrl, token),
       ]
@@ -44,25 +44,25 @@ export const getServerSideProps = async (context: ContextProps) => {
     const [spaCountResponse, propertyListResponse, apiKeyList]: AnyProps = response;
     const finalPropertyList = propertyListResponse.filter((prop: any) => prop.propertyName === propertyReq);
     if (!spaCountResponse) {
-      return { 
-        props: 
-        { 
-          webprop: 
-          { 
-            propertyListResponse: finalPropertyList, 
+      return {
+        props:
+        {
+          webprop:
+          {
+            propertyListResponse: finalPropertyList,
             spashipNotificationTimeout: spashipNotificationTimeout,
             apiKeyList: apiKeyList ?? [],
             propertyName: propertyReq,
-          } 
-        } 
+          }
+        }
       };
     }
     return {
-      props: { 
-        webprop: 
-        { 
-          spaCountResponse: spaCountResponse, 
-          propertyListResponse: finalPropertyList, 
+      props: {
+        webprop:
+        {
+          spaCountResponse: spaCountResponse,
+          propertyListResponse: finalPropertyList,
           spashipNotificationTimeout: spashipNotificationTimeout,
           apiKeyList: apiKeyList ?? [],
           propertyName: propertyReq,
@@ -104,11 +104,11 @@ const SettingsPage: ComponentWithAuth<Properties> = ({ webprop }: Properties) =>
         </CardTitle>
         <CardBody>
           <StyledList isPlain>
-            <ListItem> 
-              <CreateEnv webprop={{ propertyListResponse: webprop?.propertyListResponse, spashipNotificationTimeout: webprop?.spashipNotificationTimeout }} /> 
+            <ListItem>
+              <CreateEnv webprop={{ propertyListResponse: webprop?.propertyListResponse, spashipNotificationTimeout: webprop?.spashipNotificationTimeout }} />
             </ListItem>
-            <ListItem> 
-              <ApiKey webprop={{ spashipNotificationTimeout: webprop?.spashipNotificationTimeout, propertyName: webprop?.propertyName }} /> 
+            <ListItem>
+              <ApiKey webprop={{ spashipNotificationTimeout: webprop?.spashipNotificationTimeout, propertyName: webprop?.propertyName, propertyListResponse: webprop?.propertyListResponse }} />
             </ListItem>
           </StyledList>
         </CardBody>
