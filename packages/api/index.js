@@ -8,6 +8,7 @@ const consumeSSE = require("./controllers/operatorServices/event/consumeEvent");
 if (process.env.NODE_ENV === "production") {
   log.info(config.toObject(), `Starting SPAship ${pkgJSON.version} with the following settings`);
 } else {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   log.info(
     config.toObject(),
     `
