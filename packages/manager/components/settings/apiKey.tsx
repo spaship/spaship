@@ -1,17 +1,16 @@
 import {
   Alert, AlertActionCloseButton, AlertGroup, AlertVariant, Button, Checkbox, ClipboardCopy, DatePicker, Flex,
-  FlexItem, Form,
-  FormGroup, getUniqueId, Modal,
+  FlexItem, FormGroup, getUniqueId, Modal,
   ModalVariant, Text,
-  TextContent, TextInput, TextVariants, InputGroup
+  TextContent, TextInput, TextVariants
 } from "@patternfly/react-core";
+import { ExclamationCircleIcon } from "@patternfly/react-icons";
 import { useSession } from "next-auth/react";
 import React, { FunctionComponent, useState } from "react";
 import styled from "styled-components";
 import { post } from "../../utils/api.utils";
 import { getNextValidateUrl } from "../../utils/endpoint.utils";
 import { AnyProps } from "../models/props";
-
 
 interface ApiKeyProps {
   webprop: AnyProps;
@@ -35,8 +34,6 @@ const validations: ValidateType = {
   exists: 'exists',
 };
 
-
-
 const StyledButton = styled(Button)`
   --pf-c-button--m-tertiary--BackgroundColor: var(--spaship-global--Color--text-black, #000);
   --pf-c-button--m-tertiary--Color: #fff;
@@ -44,8 +41,6 @@ const StyledButton = styled(Button)`
   --pf-c-button--PaddingRight: 3rem;
   --pf-c-button--PaddingLeft: 3rem;
 `;
-
-
 
 const StyledFlexItem = styled(FlexItem)`
   --pf-l-flex--spacer: 0;
@@ -86,7 +81,6 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   const [label, setLabel] = useState("");
   const [validatedLabel, setValidatedLabel] = useState(validations.noval);
 
-
   async function removeAlert(key: any) {
     setAlert(alert.filter((e: any) => e.key !== key))
   }
@@ -104,6 +98,9 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
 
   const handleLabel = (value: string) => {
     const formatLabel = /[ `!@#$%^&*()+\=\[\]{};':"\\|,<>\/?~]/;
+    const lengthLimit = 35;
+    value = value.trim();
+    value = value.length > lengthLimit ? `${value.substring(0, lengthLimit)}` : value;
     if (value.match(formatLabel)) {
       setValidatedLabel(validations.error)
       setLabel(value);
@@ -145,7 +142,7 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
         setLabel("");
         return;
       }
-      const label = `sh-${envList.join('-')}`
+      const label = `spaship-${envList.join('-')}`
       setValidatedLabel(validations.success);
       setLabel(label);
     } else {
@@ -154,10 +151,10 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
 
       let label;
       if (selectedEnvironments.length == 0) {
-        label = `sh-${envName}`
+        label = `spaship-${envName}`
       }
       else {
-        label = `sh-${selectedEnvironments.join('-')}-${envName}`
+        label = `spaship-${selectedEnvironments.join('-')}-${envName}`
       }
       setValidatedLabel(validations.success);
       setLabel(label);
@@ -249,7 +246,13 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
         ]}
       >
         <StyledInput>
-          <InputGroup        >
+          <FormGroup
+            isRequired
+            fieldId="form-group-label-info"
+            helperTextInvalid=" Invalid Label (only - . _ allowed)"
+            helperTextInvalidIcon={<ExclamationCircleIcon />}
+            validated={validatedLabel as any}
+          >
             <TextInput
               isRequired
               type="text"
@@ -261,31 +264,38 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
               onChange={handleLabel}
               validated={validatedLabel as any}
             />
-          </InputGroup>
+          </FormGroup>
         </StyledInput>
-
         <StyledInput>
-          <InputGroup>
-            <DatePicker
-              validators={[rangeValidator]}
-              onChange={(str, date) => handleExpiresIn(str)}
-              appendTo={() => document.body}
-            />
-            <StyledButton
-              key="create"
-              variant="tertiary"
-              onClick={() => {
-                handlePropertyCreation();
-                setButtonLoading(true);
-              }}
-              isDisabled={
-                (validatedDateTime != validations.success || validatedEnv != validations.success)
-                ||
-                buttonLoading
-              }>
-              Create
-            </StyledButton>
-          </InputGroup>
+          <Flex justifyContent={{ default: "justifyContentFlexStart" }} alignItems={{ default: "alignItemsCenter" }}>
+            <FlexItem>
+              <StyledFlexItem>
+                <DatePicker
+                  validators={[rangeValidator]}
+                  onChange={(str, date) => handleExpiresIn(str)}
+                  appendTo={() => document.body}
+                />
+              </StyledFlexItem>
+            </FlexItem>
+            <FlexItem>
+              <StyledFlexItem>
+                <StyledButton
+                  key="create"
+                  variant="tertiary"
+                  onClick={() => {
+                    handlePropertyCreation();
+                    setButtonLoading(true);
+                  }}
+                  isDisabled={
+                    (validatedDateTime != validations.success || validatedEnv != validations.success)
+                    ||
+                    buttonLoading
+                  }>
+                  Create
+                </StyledButton>
+              </StyledFlexItem>
+            </FlexItem>
+          </Flex>
         </StyledInput>
         <>{renderEnvironments()}</>
         <StyledClipboardBox>
@@ -293,7 +303,7 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
             {_apiKey}
           </ClipboardCopy>
         </StyledClipboardBox>
-      </Modal>
+      </Modal >
       <AlertGroup isToast isLiveRegion aria-live="assertive" >
         {alert.map(({ title, variant, key, action }) => (
           <Alert
