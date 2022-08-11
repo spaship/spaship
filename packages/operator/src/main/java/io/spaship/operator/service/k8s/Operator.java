@@ -44,6 +44,8 @@ public class Operator implements Operations {
   private final KubernetesClient k8sClient;
   private final EventManager eventManager;
   private final String domain;
+  private final String routerDomain;
+  private final String routerShard;
   private final String appInstance;
   private final String deDebugNs;
 
@@ -52,6 +54,8 @@ public class Operator implements Operations {
     this.k8sClient = k8sClient;
     this.eventManager = eventManager;
     domain = ConfigProvider.getConfig().getValue("operator.domain.name", String.class);
+    routerDomain = ConfigProvider.getConfig().getValue("operator.router.domain.name", String.class);
+    routerShard = ConfigProvider.getConfig().getValue("operator.router.shard.type", String.class);
     appInstance = setAppInstanceValue();
     this.deDebugNs = ns;
   }
@@ -68,7 +72,7 @@ public class Operator implements Operations {
 
   public OperationResponse createOrUpdateEnvironment(Environment environment) {
 
-    domainValidation(domain);
+    propertyValidation();
 
     ReUsableItems.enforceOpsLocking(new Pair<>(environment.getIdentification(), environment.getTraceID()));
 
@@ -85,10 +89,16 @@ public class Operator implements Operations {
       .originatedFrom(this.getClass().toString()).status(envExists ? 2 : 1).build();
   }
 
-  private void domainValidation(String domain) {
-    if (Objects.isNull(domain)) {
-      LOG.error("the domain name is missing");
-      throw new ResourceNotFoundException("property operator.domain.name is not set");
+  private void propertyValidation() {
+    propertyValidation(domain,"operator.domain.name");
+    propertyValidation(routerDomain,"operator.router.domain.name");
+    propertyValidation(routerShard,"operator.router.shard.type");
+  }
+
+  private void propertyValidation(String property, String propertyID) {
+    if (Objects.isNull(property)) {
+      LOG.error("the property value of {} is missing", propertyID);
+      throw new ResourceNotFoundException("property "+propertyID+" is not set");
     }
   }
 
@@ -281,7 +291,9 @@ public class Operator implements Operations {
       "DOMAIN", domain,
       "APP_INSTANCE_PREFIX", appInstance,
       "STORAGE_CLASS", ConfigProvider.getConfig().getValue("storage.class", String.class),
-      "NS", environment.getNameSpace()
+      "NS", environment.getNameSpace(),
+      "SHARD",routerShard,
+      "ROUTER_DOMAIN", routerDomain
     );
     LOG.debug("building KubernetesList, templateParameters are as follows {}", templateParameters);
     return ((OpenShiftClient) k8sClient)

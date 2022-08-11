@@ -40,7 +40,12 @@ parameters:
   - name: "NS"
     description: "name of the namespace"
     required: true
-
+  - name: "SHARD"
+    description: "shard type of router route"
+    required: true
+  - name: "ROUTER_DOMAIN"
+    description: "domain for router"
+    required: true
 objects:
   - kind: ConfigMap
     apiVersion: v1
@@ -226,3 +231,123 @@ objects:
                     name: svc-${APP_INSTANCE_PREFIX}-${WEBSITE}-${ENV}
                     port:
                       number: 80
+  - kind: ConfigMap
+    apiVersion: v1
+    metadata:
+      name: router-config-${WEBSITE}-${ENV}
+      labels:
+        website: ${WEBSITE}
+        environment: ${ENV}
+        app.kubernetes.io/managed-by: spaship
+        type: router
+    data:
+      FALLBACK: ""
+      LOG_FORMAT: json
+      ROUTER_PORT: '8080'
+      forwarded_host: ""
+      target: http://svc-${APP_INSTANCE_PREFIX}-${WEBSITE}-${ENV}
+      webroot: '/var/www/html'
+
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: svc-router-${APP_INSTANCE_PREFIX}-${WEBSITE}-${ENV}
+      labels:
+        website: ${WEBSITE}
+        environment: ${ENV}
+        app.kubernetes.io/managed-by: spaship
+        type: router
+    spec:
+      ports:
+        - name: 8080-tcp
+          protocol: TCP
+          port: 8080
+          targetPort: 8080
+      selector:
+        app.kubernetes.io/managed-by: spaship
+        website: ${WEBSITE}
+        environment: ${ENV}
+        type: router
+
+  - kind: Deployment
+    apiVersion: apps/v1
+    metadata:
+      name: router-${WEBSITE}-${ENV}
+      website: ${WEBSITE}
+      labels:
+        website: ${WEBSITE}
+        environment: ${ENV}
+        type: router
+        app.kubernetes.io/managed-by: spaship
+        app.kubernetes.io/part-of: ${WEBSITE}
+        app.openshift.io/runtime: nodejs
+      annotations:
+        app.openshift.io/connects-to: >-
+          [{ "apiVersion":"apps/v1","kind":"Deployment","name":"${WEBSITE}-${ENV}" }]
+    spec:
+      selector:
+        matchLabels:
+          app.kubernetes.io/managed-by: spaship
+          website: ${WEBSITE}
+          environment: ${ENV}
+          type: router
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/managed-by: spaship
+            website: ${WEBSITE}
+            environment: ${ENV}
+            type: router
+        spec:
+          containers:
+            - name: spaship-router
+              image: quay.io/spaship/router
+              imagePullPolicy: IfNotPresent
+              resources:
+                requests:
+                  cpu: 25m
+                  memory: 128Mi
+                limits:
+                  cpu: 100m
+                  memory: 256Mi
+              ports:
+                - containerPort: 8080
+                  protocol: TCP
+              env:
+                - name: NODE_EXTRA_CA_CERTS
+                  value: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+                - name: NODE_OPTIONS
+                  value: "--max-http-header-size=32768"
+              volumeMounts:
+                - mountPath: "/var/www/html/"
+                  name: data-${WEBSITE}-${ENV}-${APP_INSTANCE_PREFIX}
+              envFrom:
+                - prefix: SPASHIP_
+                  configMapRef:
+                    name: router-config-${WEBSITE}-${ENV}
+          volumes:
+            - name: data-${WEBSITE}-${ENV}-${APP_INSTANCE_PREFIX}
+              persistentVolumeClaim:
+                claimName: data-${WEBSITE}-${ENV}-${APP_INSTANCE_PREFIX}
+
+  - kind: Route
+    apiVersion: route.openshift.io/v1
+    metadata:
+      name: route-${WEBSITE}-${ENV}-${APP_INSTANCE_PREFIX}
+      labels:
+        shard: ${SHARD}
+      annotations:
+        #haproxy.router.openshift.io/disable_cookies: 'true'
+        haproxy.router.openshift.io/timeout: 5m
+    spec:
+      host: route-${WEBSITE}-${ENV}-${APP_INSTANCE_PREFIX}.${ROUTER_DOMAIN}
+      to:
+        kind: Service
+        name: svc-router-${APP_INSTANCE_PREFIX}-${WEBSITE}-${ENV}
+      port:
+        targetPort: 8080-tcp
+      tls:
+        termination: edge
+        insecureEdgeTerminationPolicy: Redirect
+      wildcardPolicy: None
