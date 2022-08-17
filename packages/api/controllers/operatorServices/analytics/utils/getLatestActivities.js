@@ -46,10 +46,10 @@ async function fetchLatestActivitiesByProperty(matchRequest, limitRequest, skipR
       },
     },
     {
-      $limit: limitRequest.limit,
+      $skip: skipRequest.skip,
     },
     {
-      $skip: skipRequest.skip,
+      $limit: limitRequest.limit,
     },
   ]);
 }

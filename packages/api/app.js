@@ -17,6 +17,16 @@ const config = require("./config");
 const routes = require("./routes");
 const swaggerDocument = yaml.safeLoad(fs.readFileSync(path.join(__dirname, "openapi.yml"), "utf8"));
 const app = new express();
+const rateLimit = require("express-rate-limit");
+
+const timeLimit = 60000;
+const maxRequest = 2;
+const apiRateLimiter = rateLimit({
+  windowMs: timeLimit,
+  max: maxRequest,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 app
   .use(bodyParser.json({ limit: "50mb" }))
@@ -40,8 +50,8 @@ app
     swaggerUi.serve,
     swaggerUi.setup(swaggerDocument)
   )
+  .use("/api/v1/applications/deploy", [authentication(), apiRateLimiter], routes)
   .use("/api", [authentication()], routes)
   .use(errorHandler());
-
 
 module.exports = app;

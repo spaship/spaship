@@ -2,6 +2,11 @@ const application = require("../../../models/application");
 
 const getPropertyList = async (req, res, next) => {
   try {
+    const defaultLimit = 250;
+    const defaultSkip = 0;
+    const limit = parseInt(req?.query?.limit) || defaultLimit;
+    const skip = parseInt(req?.query?.skip) || defaultSkip;
+
     if (req?.params.propertyName && req?.params.spaName)
       res.status(200).json(
         await getPropertyDetailsService({
@@ -9,13 +14,14 @@ const getPropertyList = async (req, res, next) => {
           name: req.sanitize(req.params.spaName),
         })
       );
-    else if (req?.params.propertyName)
+    else if (req?.params.propertyName) {
       res.status(200).json(
         await getPropertyDetailsService({
-          propertyName: req.sanitize(req.params.propertyName),
+          property: { propertyName: req.sanitize(req.params.propertyName) },
+          page: { limit: limit, skip: skip },
         })
       );
-    else res.status(200).json(await application.find());
+    } else res.status(200).json(await application.find());
   } catch (err) {
     next(err);
   }
@@ -38,7 +44,7 @@ function bindResponse(response) {
 async function fetchSearchResultForSPA(props) {
   return await application.aggregate([
     {
-      $match: props,
+      $match: props.property,
     },
     {
       $project: {
@@ -55,7 +61,14 @@ async function fetchSearchResultForSPA(props) {
     {
       $sort: { propertyName: 1, name: 1, env: 1 },
     },
+    {
+      $skip: props.page.skip,
+    },
+    {
+      $limit: props.page.limit,
+    },
+   
   ]);
 }
 
-module.exports = {  getPropertyList, getPropertyDetailsService };
+module.exports = { getPropertyList, getPropertyDetailsService };
