@@ -19,9 +19,11 @@ const swaggerDocument = yaml.safeLoad(fs.readFileSync(path.join(__dirname, "open
 const app = new express();
 const rateLimit = require("express-rate-limit");
 
+const timeLimit = 60000;
+const maxRequest = 2;
 const apiRateLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 10,
+  windowMs: timeLimit,
+  max: maxRequest,
   standardHeaders: true,
   legacyHeaders: false,
 });

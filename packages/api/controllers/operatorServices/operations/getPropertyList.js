@@ -2,8 +2,10 @@ const application = require("../../../models/application");
 
 const getPropertyList = async (req, res, next) => {
   try {
-    const limit = parseInt(req?.query?.limit) || 250;
-    const skip = parseInt(req?.query?.skip) || 0;
+    const defaultLimit = 250;
+    const defaultSkip = 0;
+    const limit = parseInt(req?.query?.limit) || defaultLimit;
+    const skip = parseInt(req?.query?.skip) || defaultSkip;
 
     if (req?.params.propertyName && req?.params.spaName)
       res.status(200).json(
@@ -13,8 +15,6 @@ const getPropertyList = async (req, res, next) => {
         })
       );
     else if (req?.params.propertyName) {
-      console.log(skip);
-      console.log(limit);
       res.status(200).json(
         await getPropertyDetailsService({
           property: { propertyName: req.sanitize(req.params.propertyName) },
