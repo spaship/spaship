@@ -75,8 +75,8 @@ export async function upload<T>(url: string, data: FormData, token: string): Pro
     headers,
     body: data,
   };
-  const res = await fetch(url, options);
-  return handleResponse<T>(res);
+  const response = await fetch(url, options);
+  return handleResponse<T>(response);
 }
 
 export async function put<T>(url: string, data: object, token?: string): Promise<T> {
@@ -86,8 +86,8 @@ export async function put<T>(url: string, data: object, token?: string): Promise
     headers,
     body: JSON.stringify(data),
   };
-  const res = await fetch(url, options);
-  return handleResponse<T>(res);
+  const response = await handleResponse<T>(await fetch(url, options));
+  return response;
 }
 
 export async function del<T>(url: string, data: object, token?: string) {
