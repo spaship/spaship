@@ -31,9 +31,10 @@ const StyledCard = styled(Card)`
 `;
 
 const StyledButton = styled(Button)`
-  --pf-c-button--m-tertiary--BackgroundColor: var(--spaship-global--Color--text-red, #c9190b);
-  --pf-c-button--m-tertiary--Color: #FFFFFF;
-  --pf-c-button--BorderRadius: none;
+  --pf-c-button--m-tertiary--BackgroundColor: var(--spaship-global--Color--text-#c9190b, #FFFFF);
+  --pf-c-button--m-tertiary--Color: #c9190b;
+  --pf-c-button--BorderColor: #c9190b;
+  --pf-c-button--m-tertiary--focus--BorderColor #c9190b;
   --pf-c-button--PaddingRight: 3rem;
   --pf-c-button--PaddingLeft: 3rem;
 `;
@@ -161,7 +162,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
                   <StyledButton variant="tertiary"
                     onClick={() => selectApiKey(key.shortKey)}
                   >
-                    <TrashIcon />
+                    <TrashIcon /> Delete
                   </StyledButton> </Td>
               </Tr>
             ))}
