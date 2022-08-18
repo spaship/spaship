@@ -12,6 +12,7 @@ import { post } from "../../utils/api.utils";
 import { getNextOnboardWebpropertyUrl } from "../../utils/endpoint.utils";
 import { AnyProps } from "../models/props";
 import { useRouter } from "next/router";
+import { GlobalConstants } from "../../scripts/GlobalConstants";
 
 interface ApiKeyProps {
   webprop: AnyProps;
@@ -241,6 +242,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
               value={env}
               onChange={handleEnv}
               validated={validatedEnv as any}
+              maxLength={GlobalConstants.MAX_INPUT_LENGTH}
             />
           </FormGroup>
 
@@ -274,6 +276,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
             value={url}
             onChange={handleUrl}
             validated={validatedUrl as any}
+            maxLength={GlobalConstants.MAX_INPUT_LENGTH}
           />
         </FormGroup>
         

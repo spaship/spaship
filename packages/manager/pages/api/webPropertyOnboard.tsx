@@ -21,7 +21,6 @@ const WebPropertyOnboard = async (req: AnyProps, res: AnyProps) => {
         "createdBy": userEmail
     };
     const response = await post<AnyProps>(url, payload, token);
-    logger.info({ response })
     return res.send({ data: { response } });
 }
 

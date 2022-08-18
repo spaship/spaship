@@ -20,6 +20,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from "next/router";
 import React, { FunctionComponent, useState } from "react";
 import styled from "styled-components";
+import { GlobalConstants } from '../../scripts/GlobalConstants';
 import { post } from "../../utils/api.utils";
 import { getNextOnboardWebpropertyUrl } from "../../utils/endpoint.utils";
 import { AnyProps } from "../models/props";
@@ -66,6 +67,10 @@ const DivStyle = styled.div`
 
 const StyledSwitch = styled(Switch)`
   margin: 0.4rem 0;
+`;
+
+const StyledTextInput = styled(TextInput)`
+  --pf-c-form-control--Width: 25rem;
 `;
 
 const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps) => {
@@ -196,6 +201,7 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
               value={title}
               onChange={handleTitle}
               validated={validatedTitle as any}
+              maxLength={GlobalConstants.MAX_INPUT_LENGTH}
             />
           </FormGroup>
 
@@ -224,6 +230,7 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
               onChange={handleIdentifier}
               validated={validatedIdentifier as any}
               isDisabled={true}
+              maxLength={GlobalConstants.MAX_INPUT_LENGTH}
             />
           </FormGroup>
 
@@ -253,6 +260,7 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
               value={url}
               onChange={handleUrl}
               validated={validatedUrl as any}
+              maxLength={GlobalConstants.MAX_INPUT_LENGTH}
             />
           </FormGroup>
           <Flex>
@@ -270,17 +278,18 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
                 helperTextInvalidIcon={<ExclamationCircleIcon />}
                 validated={validatedEnv as any}
               >
-                <TextInput
-                  isRequired
-                  type="text"
-                  id="form-group-label-info"
-                  name="form-group-label-info"
-                  aria-describedby="form-group-label-info-helper"
-                  placeholder="Default Environment Name"
-                  value={env}
-                  onChange={handleEnv}
-                  validated={validatedEnv as any}
-                />
+              <StyledTextInput
+                isRequired
+                type="text"
+                id="form-group-label-info"
+                name="form-group-label-info"
+                aria-describedby="form-group-label-info-helper"
+                placeholder="Default Environment Name"
+                value={env}
+                onChange={handleEnv}
+                validated={validatedEnv as any}
+                maxLength={GlobalConstants.MAX_INPUT_LENGTH}
+              />
               </FormGroup>
             </FlexItem>
             <FlexItem>

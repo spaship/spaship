@@ -76,6 +76,7 @@ button.spaship_btn {
 
 * {
   box-sizing: border-box;
+  transition: all 240ms linear;
 }
 
 .spaship-circle {
@@ -86,7 +87,7 @@ button.spaship_btn {
   height: 60px;
   background: hsl(42, 98%, 54%);
   color: var(--spaship-global--Color--spaship-gray);
-  transition: color 0.2s linear;
+  transition: all 240ms linear;
 }
 .spaship-wrapper {
   display: flex;
@@ -94,7 +95,6 @@ button.spaship_btn {
 }
 
 .spaship-circle:hover {
-  background: var(--spaship-global--Color--spaship-gray);
+  background: #f9d207;
   cursor: pointer;
 }
-

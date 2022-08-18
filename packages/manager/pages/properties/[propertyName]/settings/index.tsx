@@ -80,7 +80,6 @@ const StyledList = styled(List)`
 `;
 
 const StyledCard = styled(Card)`
-  max-width: var(--spaship-table-container-max-width);
   margin-bottom: 2rem;
 `;
 

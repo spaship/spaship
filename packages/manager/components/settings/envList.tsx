@@ -26,7 +26,6 @@ import { getNextDeleteApiKey, getNextValidateUrl } from "../../utils/endpoint.ut
 import { AnyProps, Properties } from "../models/props";
 
 const StyledCard = styled(Card)`
-  max-width: var(--spaship-table-container-max-width);
   margin-bottom: 2rem;
 `;
 
@@ -86,7 +85,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
     <>
       <StyledCard>
         <CardTitle>Environments</CardTitle>
-        <TableComposable>
+        <TableComposable isStriped>
           <Thead>
             <Tr>
               <Th>Name</Th>
@@ -128,7 +127,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
       </StyledCard>
       <StyledCard>
         <CardTitle>API Keys</CardTitle>
-        <TableComposable>
+        <TableComposable isStriped>
           <Thead>
             <Tr>
               <Th>Label</Th>

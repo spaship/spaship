@@ -104,7 +104,7 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
           </Thead>
           {tableData.map((spa: SPAProperty, rowIndex: any) => (
             <Tbody key={spa.name} isExpanded={isSPAExpanded(spa.name)}>
-              <Tr key={spa.name}>
+              <Tr key={spa.name} {... (rowIndex % 2 === 0) && { isStriped: true}}>
                 <Td
                   expand={
                     spa ? {
@@ -124,7 +124,7 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
               <Tr key={rowIndex} isExpanded={isSPAExpanded(spa.name)}>
                 <Td colSpan={5}>
                   <ExpandableRowContent>
-                    <TableComposable variant="compact" borders={false}>
+                    <TableComposable variant="compact" borders={false} isStriped>
                       <StyledTableHeader>
                         <Tr>
                           <Th>Environment</Th>
