@@ -32,7 +32,7 @@ module.exports.propertyList = async (req, res, next) => {
       expirationDate: obj.expiredDate,
       createdAt: obj.createdAt,
     }));
-    if (apiKeys.length == 0) res.send({ message: `No apikeys avaliable for ${propertyName}` });
+    if (apiKeys.length == 0) return res.status(404).send({ message: `No apikeys avaliable for ${propertyName}` });
     res.send(apiKeys);
   } catch (error) {
     next(error);
