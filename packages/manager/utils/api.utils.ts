@@ -16,15 +16,29 @@ function handleResponse<T>(res: Response): Promise<T> {
     if (res.status === 200 || res.status === 201) {
       res
         .json()
-        .then((json) => resolve(json.data))
+        .then((json) => resolve(getJson<T>(json)))
         .catch((err) => reject(err));
-    } else {
+    }
+    else if (res.status === 404) {
+      const resposne = JSON.parse(JSON.stringify({ status: res.status }));
+      res
+        .json()
+        .then((json) => resolve(resposne))
+        .catch((err) => reject(err));
+    }
+    else {
       res
         .json()
         .then((json) => resolve(json.message))
         .catch((err) => reject(err));
     }
   });
+}
+
+function getJson<T>(json: any): T | PromiseLike<T> {
+  if (json.data)
+    return json.data;
+  else return json;
 }
 
 export async function get<T>(url: string, token?: string): Promise<T> {
@@ -61,8 +75,8 @@ export async function upload<T>(url: string, data: FormData, token: string): Pro
     headers,
     body: data,
   };
-  const res = await fetch(url, options);
-  return handleResponse<T>(res);
+  const response = await fetch(url, options);
+  return handleResponse<T>(response);
 }
 
 export async function put<T>(url: string, data: object, token?: string): Promise<T> {
@@ -72,8 +86,8 @@ export async function put<T>(url: string, data: object, token?: string): Promise
     headers,
     body: JSON.stringify(data),
   };
-  const res = await fetch(url, options);
-  return handleResponse<T>(res);
+  const response = await handleResponse<T>(await fetch(url, options));
+  return response;
 }
 
 export async function del<T>(url: string, data: object, token?: string) {
@@ -85,6 +99,6 @@ export async function del<T>(url: string, data: object, token?: string) {
   if (data) {
     options.body = JSON.stringify(data);
   }
-  const res = await fetch(url, options);
-  return handleResponse<T>(res);
+  const response = await handleResponse<T>(await fetch(url, options));
+  return response;
 }

@@ -1,17 +1,17 @@
 import {
-  Alert, 
-  Button, 
-  Form, 
-  FormGroup, 
-  FormHelperText, 
-  Text, 
-  TextInput, 
+  Alert,
+  Button,
+  Form,
+  FormGroup,
+  FormHelperText,
+  Text,
+  TextInput,
   TextVariants,
-  AlertGroup, 
-  AlertActionCloseButton, 
-  AlertVariant, 
-  getUniqueId, 
-  Flex, 
+  AlertGroup,
+  AlertActionCloseButton,
+  AlertVariant,
+  getUniqueId,
+  Flex,
   FlexItem,
   Switch,
 } from '@patternfly/react-core';
@@ -152,7 +152,11 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
       }
       const propertyRes = await post<AnyProps>(nextUrl, payload, (session as any).accessToken);
       if (!propertyRes?.response?.id) {
-        setErrorMessage(propertyRes.response)
+        setErrorMessage(propertyRes.response);
+        setAlert([
+          { title: `${propertyRes.response}`, variant: 'danger', key: getUniqueId() },
+        ] as any)
+        setButtonLoading(false);
       }
       else {
         setAlert([
@@ -266,17 +270,17 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
                 helperTextInvalidIcon={<ExclamationCircleIcon />}
                 validated={validatedEnv as any}
               >
-              <TextInput
-                isRequired
-                type="text"
-                id="form-group-label-info"
-                name="form-group-label-info"
-                aria-describedby="form-group-label-info-helper"
-                placeholder="Default Environment Name"
-                value={env}
-                onChange={handleEnv}
-                validated={validatedEnv as any}
-              />
+                <TextInput
+                  isRequired
+                  type="text"
+                  id="form-group-label-info"
+                  name="form-group-label-info"
+                  aria-describedby="form-group-label-info-helper"
+                  placeholder="Default Environment Name"
+                  value={env}
+                  onChange={handleEnv}
+                  validated={validatedEnv as any}
+                />
               </FormGroup>
             </FlexItem>
             <FlexItem>
@@ -284,42 +288,42 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
                 label="Environment Type"
                 fieldId="form-group-label-env-type"
                 helperText={
-                  <FormHelperText icon={<ExclamationCircleIcon/>} isHidden={false}>
+                  <FormHelperText icon={<ExclamationCircleIcon />} isHidden={false}>
                     {`Env type for your property`}
                   </FormHelperText>
                 }
                 isRequired>
-              <StyledSwitch
-                label="Production"
-                labelOff="Pre-production"
-                id="env-type"
-                aria-label="prod and pre-prod env type checkbox"
-                isChecked={envType}
-                onChange={(status) => { setEnvType(status) }}
-              />
+                <StyledSwitch
+                  label="Production"
+                  labelOff="Pre-production"
+                  id="env-type"
+                  aria-label="prod and pre-prod env type checkbox"
+                  isChecked={envType}
+                  onChange={(status) => { setEnvType(status) }}
+                />
               </FormGroup>
             </FlexItem>
           </Flex>
-          
 
-          <StyledButton 
-          variant="tertiary" 
-          onClick={ () => {
-            handleOnClick();
-            setButtonLoading(true);
-          }
-        }
-          isLoading={buttonLoading}
-          isDisabled={
-            buttonLoading 
-            ||
-            validatedEnv != validations.success 
-            || 
-            validatedIdentifier != validations.success 
-            || 
-            validatedTitle != validations.success 
-            || 
-            validatedUrl != validations.success}>
+
+          <StyledButton
+            variant="tertiary"
+            onClick={() => {
+              handleOnClick();
+              setButtonLoading(true);
+            }
+            }
+            isLoading={buttonLoading}
+            isDisabled={
+              buttonLoading
+              ||
+              validatedEnv != validations.success
+              ||
+              validatedIdentifier != validations.success
+              ||
+              validatedTitle != validations.success
+              ||
+              validatedUrl != validations.success}>
             <StyledText component={TextVariants.h4}>
               Create
             </StyledText>
