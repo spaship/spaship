@@ -51,7 +51,7 @@ export const getServerSideProps = async (context: ContextProps) => {
           {
             propertyListResponse: finalPropertyList,
             spashipNotificationTimeout: spashipNotificationTimeout,
-            apiKeyList: apiKeyList ?? [],
+            apiKeyList: getApiKeyList(apiKeyList),
             propertyName: propertyReq,
           }
         }
@@ -64,7 +64,7 @@ export const getServerSideProps = async (context: ContextProps) => {
           spaCountResponse: spaCountResponse,
           propertyListResponse: finalPropertyList,
           spashipNotificationTimeout: spashipNotificationTimeout,
-          apiKeyList: apiKeyList ?? [],
+          apiKeyList: getApiKeyList(apiKeyList),
           propertyName: propertyReq,
         }
       },
@@ -128,6 +128,13 @@ const SettingsPage: ComponentWithAuth<Properties> = ({ webprop }: Properties) =>
     </Body>
   );
 };
+
+function getApiKeyList(apiKeyList: any) {
+  if (apiKeyList.status === 404) {
+    return [];
+  }
+  return apiKeyList ?? [];
+}
 
 function getHeaderData(propertyName: string | string[]) {
   return {

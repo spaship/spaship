@@ -1,11 +1,14 @@
 import {
+  Button,
   Card,
   CardTitle,
+  Modal,
+  ModalVariant,
   Switch,
   Text,
   TextVariants
 } from "@patternfly/react-core";
-import { CheckCircleIcon, ExternalLinkAltIcon, KeyIcon, LockIcon, OutlinedCalendarAltIcon, TimesCircleIcon } from "@patternfly/react-icons";
+import { CheckCircleIcon, ExternalLinkAltIcon, KeyIcon, LockIcon, OutlinedCalendarAltIcon, TimesCircleIcon, TrashIcon } from "@patternfly/react-icons";
 import {
   TableComposable,
   Tbody,
@@ -14,8 +17,12 @@ import {
   Thead,
   Tr
 } from "@patternfly/react-table";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import React, { FunctionComponent, useState } from "react";
 import styled from "styled-components";
+import { post } from "../../utils/api.utils";
+import { getNextDeleteApiKey, getNextValidateUrl } from "../../utils/endpoint.utils";
 import { AnyProps, Properties } from "../models/props";
 
 const StyledCard = styled(Card)`
@@ -23,13 +30,57 @@ const StyledCard = styled(Card)`
   margin-bottom: 2rem;
 `;
 
+const StyledButton = styled(Button)`
+  --pf-c-button--m-tertiary--BackgroundColor: var(--spaship-global--Color--text-red, #c9190b);
+  --pf-c-button--m-tertiary--Color: #FFFFFF;
+  --pf-c-button--BorderRadius: none;
+  --pf-c-button--PaddingRight: 3rem;
+  --pf-c-button--PaddingLeft: 3rem;
+`;
+
+const StyledText = styled(Text)`
+  --pf-global--FontWeight--normal: 100;
+  --pf-c-content--h2--FontWeight: 100;
+`;
+
+
+
 const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
-  const { propertyListResponse, apiKeyList } = webprop;
+  const router = useRouter();
+  const { propertyName, propertyListResponse, apiKeyList } = webprop;
+  const [isModalOpen, setModalOpen] = useState(false);
+  const { data: session, status: _status } = useSession();
+  const [selectedApiKey, setSelectedApiKey] = useState("");
   const [switchState, setSwitchState] = useState(true);
   const handleChange = () => {
     // TODO: implement logic to toggle spa
     setSwitchState(!switchState);
   };
+
+  async function handleModalToggle() {
+    setSelectedApiKey("");
+    setModalOpen(!isModalOpen);
+  }
+
+  async function selectApiKey(apikey: string) {
+    setSelectedApiKey(apikey);
+    setModalOpen(!isModalOpen);
+  }
+
+  async function deleteApiKey() {
+    try {
+      const propUrl = getNextDeleteApiKey();
+      const payload = {
+        propertyName: propertyName,
+        shortKey: selectedApiKey
+      }
+      const response = await post<AnyProps>(propUrl, payload, (session as any).accessToken);
+      router.reload();
+    } catch (e) { }
+    setModalOpen(!isModalOpen);
+  }
+
+
   return (
     <>
       <StyledCard>
@@ -84,6 +135,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
               <Th>Created On</Th>
               <Th>Expiration Date</Th>
               <Th>Status</Th>
+              <Th>Delete</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -105,11 +157,32 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
                     </div>
                   }
                 </Td>
+                <Td dataLabel={key.shortKey}>
+                  <StyledButton variant="tertiary"
+                    onClick={() => selectApiKey(key.shortKey)}
+                  >
+                    <TrashIcon />
+                  </StyledButton> </Td>
               </Tr>
             ))}
           </Tbody>
         </TableComposable>
       </StyledCard>
+      <Modal
+        variant={ModalVariant.small}
+        isOpen={isModalOpen}
+        onClose={handleModalToggle}
+        actions={[
+          <Button key="confirm" variant="danger" onClick={deleteApiKey}>
+            Confirm
+          </Button>,
+          <Button key="cancel" variant="plain" onClick={handleModalToggle}>
+            Cancel
+          </Button>
+        ]}
+      >
+        Do you want to delete thie API Key ?
+      </Modal>
     </>
   );
 };
