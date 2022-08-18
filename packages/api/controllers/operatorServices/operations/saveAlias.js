@@ -20,10 +20,18 @@ module.exports = async function saveAlias(req, res, next) {
     return next(new ValidationError("Propertyname & Env exists."));
   }
   let id = await getGeneratedAliasId();
+
   let aliasRequest = await createAliasRequest(id, request);
   const createdResponse = await createEvent(aliasRequest);
-  await envCreation(request)
-  res.send(createdResponse);
+  try{
+      await envCreation(request)
+  }
+  catch(e){
+    console.log(e);
+    await alias.findOneAndDelete({ id:createdResponse.id });
+    return res.status(500).send({ message: `Issue in creating webproperty` });
+  }
+  return res.send(createdResponse);
 };
 
 function checkProperties(request) {
