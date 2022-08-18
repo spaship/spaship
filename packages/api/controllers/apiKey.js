@@ -12,9 +12,10 @@ module.exports.list = async (req, res, next) => {
       label: obj.label,
       shortKey: obj.shortKey,
       expiredDate: obj.expiredDate,
+      createdBy : obj.userId,
       createdAt: obj.createdAt,
     }));
-    if (apiKeys.length == 0) res.send({ message: `No apikeys avaliable for ${userId}` });
+    if (apiKeys.length == 0) res.status(404).send({ message: `No apikeys avaliable for ${userId}` });
     res.send(apiKeys);
   } catch (error) {
     next(error);
@@ -30,6 +31,7 @@ module.exports.propertyList = async (req, res, next) => {
       propertyName: obj.propertyName,
       shortKey: obj.shortKey,
       expirationDate: obj.expiredDate,
+      createdBy: obj.userId,
       createdAt: obj.createdAt,
     }));
     if (apiKeys.length == 0) return res.status(404).send({ message: `No apikeys avaliable for ${propertyName}` });
