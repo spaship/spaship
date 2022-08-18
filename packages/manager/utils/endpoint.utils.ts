@@ -38,10 +38,18 @@ export function getValidateUrl() {
   return `${spashipHost}/applications/validate`;
 }
 
+export function getDeleteApiKeyUrl() {
+  return `${spashipHost}/apikeys`;
+}
+
 export function getNextValidateUrl() {
   return `/api/validate`;
 }
 
 export function getNextOnboardWebpropertyUrl() {
   return `/api/webPropertyOnboard`;
+}
+
+export function getNextDeleteApiKey() {
+  return `/api/delete/apiKey`;
 }
