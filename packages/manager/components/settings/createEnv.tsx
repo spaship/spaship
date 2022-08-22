@@ -4,7 +4,7 @@ import {
   ModalVariant, Switch, Text,
   TextContent, TextInput, TextVariants
 } from "@patternfly/react-core";
-import { CheckCircleIcon, ExclamationCircleIcon } from "@patternfly/react-icons";
+import { CheckCircleIcon, ExclamationCircleIcon, PlusIcon } from "@patternfly/react-icons";
 import { useSession } from "next-auth/react";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import styled from "styled-components";
@@ -37,27 +37,13 @@ const validations: ValidateType = {
 };
 
 const StyledButton = styled(Button)`
-  --pf-c-button--PaddingRight: 2.4rem;
-  --pf-c-button--PaddingLeft: 2.4rem;
-`;
-
-const StyledFlexItem = styled(FlexItem)`
-  --pf-l-flex--spacer: 0;
-`;
-
-const StyledText = styled(Text)`
-  --pf-global--FontWeight--normal: 100;
-  --pf-c-content--h2--FontWeight: 100;
-`;
-
-const StyledSubText = styled(Text)`
-  --pf-global--FontWeight--normal: 100;
-  --pf-c-content--h2--FontWeight: 100;
-  color: var(--pf-global--Color--200);
+  --pf-c-button--PaddingRight: 1.5rem;
+  --pf-c-button--PaddingLeft: 1.5rem;
 `;
 
 const StyledSpan = styled.span`
-  margin-left: 0.25rem;
+  font-weight: 100;
+  margin-left: 0.5rem;
 `;
 
 const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
@@ -155,11 +141,12 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   return (
     <>
       <StyledButton
-        variant="tertiary"
+        variant="primary"
         onClick={handleModalToggle}>
-        <StyledText component={TextVariants.h4}>
-          Add Environment
-        </StyledText>
+        <PlusIcon />
+        <StyledSpan>
+          Create new environment
+        </StyledSpan>
       </StyledButton>
       <Modal
         variant={ModalVariant.small}

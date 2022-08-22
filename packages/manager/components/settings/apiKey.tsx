@@ -17,7 +17,7 @@ import {
   TextInput, 
   TextVariants
 } from "@patternfly/react-core";
-import { ExclamationCircleIcon } from "@patternfly/react-icons";
+import { ExclamationCircleIcon, PlusIcon } from "@patternfly/react-icons";
 import { useSession } from "next-auth/react";
 import React, { FunctionComponent, useState } from "react";
 import styled from "styled-components";
@@ -48,17 +48,17 @@ const validations: ValidateType = {
 };
 
 const StyledButton = styled(Button)`
-  --pf-c-button--PaddingRight: 3rem;
-  --pf-c-button--PaddingLeft: 3rem;
+  --pf-c-button--PaddingRight: 2rem;
+  --pf-c-button--PaddingLeft: 2rem;
 `;
 
 const StyledFlexItem = styled(FlexItem)`
   --pf-l-flex--spacer: 0;
 `;
 
-const StyledText = styled(Text)`
-  --pf-global--FontWeight--normal: 100;
-  --pf-c-content--h2--FontWeight: 100;
+const StyledSpan = styled.span`
+  font-weight: 100;
+  margin-left: 0.5rem;
 `;
 
 const StyledInput = styled.div({
@@ -70,12 +70,6 @@ const StyledClipboardBox = styled.div({
   height: "40px",
   marginTop: "20px"
 });
-
-const StyledSubText = styled(Text)`
-  --pf-global--FontWeight--normal: 100;
-  --pf-c-content--h2--FontWeight: 100;
-  color: var(--pf-global--Color--200);
-`;
 
 const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   const environments = webprop?.propertyListResponse;
@@ -222,8 +216,11 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
 
   return (
     <>
-      <StyledButton variant="tertiary" onClick={handleModalToggle}>
-        <StyledText component={TextVariants.h4}>Create API key</StyledText>
+      <StyledButton 
+        variant="primary" 
+        onClick={handleModalToggle}>
+        <PlusIcon />
+        <StyledSpan>Create new API key</StyledSpan>
       </StyledButton>
       <Modal
         variant={ModalVariant.small}

@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import { Banner, Breadcrumb, BreadcrumbItem, Button, Flex, FlexItem, Label, Title } from "@patternfly/react-core";
 import styled from "styled-components";
-import { ArrowLeftIcon, CogsIcon } from "@patternfly/react-icons";
+import { ArrowLeftIcon, CogsIcon, ExternalLinkAltIcon } from "@patternfly/react-icons";
 import router from "next/router";
 
 interface LinkProps {
@@ -17,24 +17,23 @@ interface HeaderProps {
 }
 
 const StyledHeader = styled.header`
-  background-color: var(--spaship-global--Color--spaship-gray);
-  color: white;
   height: 147px;
+  color: #000;
   padding-top: 2rem;
   display: flex;
   justify-content: center;
   text-transform: capitalize;
   a {
-    color: white;
+    color: #202020;
   }
-  a :hover {
-    color: var(--spaship-global--Color--amarillo-flare);
-    text-decoration: none;
+  a:hover {
+    color: #000;
   }
   svg {
     padding: 2px;
   }
   --pf-l-flex--spacer: 0;
+  border-bottom: 1px solid var(--spaship-global--Color--light-gray);
 `;
 
 const StyledButton = styled(Button)`
@@ -43,19 +42,21 @@ const StyledButton = styled(Button)`
   text-transform: capitalize;
 `;
 
-const StyledBreadcrumb = styled(Breadcrumb)`
-  --pf-c-breadcrumb__link--Color: white;
-  --pf-c-breadcrumb__link--m-current--Color: var(--spaship-global--Color--amarillo-flare);
-`;
-
 const StyledDiv = styled.div`
   display: flex;
   justify-content: center;
-  background-color: var(--spaship-global--Color--spaship-gray);
 `;
 
 const StyledBanner = styled(Banner)`
+  background-color: #000;
   border-radius: 0px 0px 4px 4px;
+  > a {
+    color: #fff;
+    text-decoration: none;
+    > span {
+      margin-left: 0.5rem;
+    }
+  }
 `;
 
 const StyledSpanTitle = styled.span`
@@ -63,28 +64,28 @@ const StyledSpanTitle = styled.span`
   margin-left: 0.5rem;
 `;
 
-const StyledEnvButton = styled(Button)`
-  color: var(--spaship-global--Color--text-black) !important;
-  background-color: #fff !important;
-  :hover {
-    box-shadow: 1px 1px 8px white;
-  }
-`;
 
 const StyledFlex = styled(Flex)`
   width: 67vw;
+`;
+
+const StyledFlexItem = styled(FlexItem)`
+  margin-right: 1.5rem;
 `;
 
 const Header: FunctionComponent<HeaderProps> = ({ breadcrumbs = [], buttons = [], previous, settings, title = "" }) => {
   return (
     <>
     <StyledDiv>
-      <StyledBanner variant="info">
+      <StyledBanner>
         <a 
           href="https://source.redhat.com/groups/public/spaship/blog_article/onboarding_to_spaship_cloud_native_version" 
           target="_blank" 
           rel="noopener noreferrer">
-            Ongoing migration to SPAship Cloud native. Find more information here
+            <ExternalLinkAltIcon />
+            <span>
+              Ongoing migration to SPAship Cloud native. Find more information here
+            </span>
         </a>
       </StyledBanner>
     </StyledDiv>
@@ -92,8 +93,7 @@ const Header: FunctionComponent<HeaderProps> = ({ breadcrumbs = [], buttons = []
       <StyledFlex
         alignSelf={{ default: "alignSelfFlexEnd" }}
         direction={{ default: "column" }}
-        spaceItems={{ default: "spaceItemsSm" }}
-      >
+        spaceItems={{ default: "spaceItemsSm" }}>
         <Title headingLevel={"h1"}>
           <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
             {previous ? (
@@ -110,19 +110,19 @@ const Header: FunctionComponent<HeaderProps> = ({ breadcrumbs = [], buttons = []
                 </StyledSpanTitle>
               </FlexItem>
             ) : (
-              ""
+              'Properties'
             )}
             {settings ? (
-              <FlexItem>
-                <StyledEnvButton 
+              <StyledFlexItem>
+                <Button 
                   onClick={() => {
                     router.push(settings);
                   }} 
                   variant="primary">
                     <CogsIcon />
                     <StyledSpanTitle>Environment Configuration</StyledSpanTitle>
-                </StyledEnvButton>
-              </FlexItem>
+                </Button>
+              </StyledFlexItem>
             ) : (
               ""
             )}
@@ -132,7 +132,7 @@ const Header: FunctionComponent<HeaderProps> = ({ breadcrumbs = [], buttons = []
           <Flex spaceItems={{ default: "spaceItemsMd" }}>
             {breadcrumbs.length ? (
               <FlexItem>
-                <StyledBreadcrumb>
+                <Breadcrumb>
                   {breadcrumbs.map((breadcrumb, index) => {
                     return (
                       <BreadcrumbItem
@@ -145,7 +145,7 @@ const Header: FunctionComponent<HeaderProps> = ({ breadcrumbs = [], buttons = []
                       </BreadcrumbItem>
                     );
                   })}
-                </StyledBreadcrumb>
+                </Breadcrumb>
               </FlexItem>
             ) : (
               ""

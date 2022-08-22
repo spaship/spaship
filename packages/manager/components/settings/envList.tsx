@@ -115,7 +115,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
           <Tr>
             <Td colSpan={4}>
               {
-                !propertyListResponse &&
+                !!!propertyListResponse.length &&
                   <EmptyState>
                     <EmptyStateIcon icon={CubesIcon} />
                     <Title headingLevel="h4" size="lg">
@@ -183,7 +183,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
             <Tr>
               <Td colSpan={6}>
               {
-                !apiKeyList &&
+                !!!apiKeyList.length &&
                   <EmptyState>
                     <EmptyStateIcon icon={CubesIcon} />
                     <Title headingLevel="h4" size="lg">
