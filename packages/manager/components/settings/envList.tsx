@@ -5,6 +5,8 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
+  Flex,
+  FlexItem,
   Label,
   Modal,
   ModalVariant,
@@ -28,6 +30,8 @@ import styled from "styled-components";
 import { post } from "../../utils/api.utils";
 import { getNextDeleteApiKey } from "../../utils/endpoint.utils";
 import { AnyProps, Properties } from "../models/props";
+import ApiKey from "./apiKey";
+import CreateEnv from "./createEnv";
 
 const StyledCard = styled(Card)`
   margin-bottom: 2rem;
@@ -78,7 +82,16 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
   return (
     <>
       <StyledCard>
-        <CardTitle>Environments</CardTitle>
+        <CardTitle>
+          <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
+            <FlexItem>
+              Environments
+            </FlexItem>
+            <FlexItem>
+              <ApiKey webprop={webprop} />
+            </FlexItem>
+          </Flex>
+        </CardTitle>
         <TableComposable isStriped>
           <Thead>
             <Tr>
@@ -136,7 +149,16 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
         </TableComposable>
       </StyledCard>
       <StyledCard>
-        <CardTitle>API Keys</CardTitle>
+        <CardTitle>
+          <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
+            <FlexItem>
+              API Keys
+            </FlexItem>
+            <FlexItem>
+              <CreateEnv webprop={webprop} />
+            </FlexItem>
+          </Flex>
+        </CardTitle>
         <TableComposable isStriped>
           <Thead>
             <Tr>

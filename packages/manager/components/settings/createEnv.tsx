@@ -37,9 +37,6 @@ const validations: ValidateType = {
 };
 
 const StyledButton = styled(Button)`
-  --pf-c-button--m-tertiary--BackgroundColor: var(--spaship-global--Color--text-black, #000);
-  --pf-c-button--m-tertiary--Color: #fff;
-  --pf-c-button--BorderRadius: none;
   --pf-c-button--PaddingRight: 2.4rem;
   --pf-c-button--PaddingLeft: 2.4rem;
 `;
@@ -157,41 +154,13 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
 
   return (
     <>
-      <Flex
-        justifyContent={{ default: 'justifyContentSpaceBetween' }}
-        alignItems={{ default: 'alignItemsCenter' }}>
-        <FlexItem>
-          <Flex
-            direction={{ default: 'column' }}>
-            <StyledFlexItem>
-              <TextContent>
-                <StyledText component={TextVariants.h2}>
-                  Add new Environment
-                </StyledText>
-              </TextContent>
-            </StyledFlexItem>
-            <FlexItem>
-              <StyledSubText component={TextVariants.h4}>
-                Create new environment for property :
-                <StyledSpan>
-                  {webprop?.propertyListResponse[0]?.propertyName.length > 15
-                    ? `${webprop?.propertyListResponse[0]?.propertyName.substring(0, 15)}...`
-                    : webprop?.propertyListResponse[0]?.propertyName}
-                </StyledSpan>
-              </StyledSubText>
-            </FlexItem>
-          </Flex>
-        </FlexItem>
-        <FlexItem>
-          <StyledButton
-            variant="tertiary"
-            onClick={handleModalToggle}>
-            <StyledText component={TextVariants.h4}>
-              Add Environment
-            </StyledText>
-          </StyledButton>
-        </FlexItem>
-      </Flex>
+      <StyledButton
+        variant="tertiary"
+        onClick={handleModalToggle}>
+        <StyledText component={TextVariants.h4}>
+          Add Environment
+        </StyledText>
+      </StyledButton>
       <Modal
         variant={ModalVariant.small}
         title="Create New Environment"
