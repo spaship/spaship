@@ -14,7 +14,16 @@ import {
   TextVariants,
   Title
 } from "@patternfly/react-core";
-import { CheckCircleIcon, CubesIcon, ExternalLinkAltIcon, KeyIcon, LockIcon, OutlinedCalendarAltIcon, TimesCircleIcon, TrashIcon } from "@patternfly/react-icons";
+import { 
+  CheckCircleIcon, 
+  CubesIcon, 
+  ExternalLinkAltIcon, 
+  KeyIcon, 
+  LockIcon, 
+  OutlinedCalendarAltIcon, 
+  TimesCircleIcon, 
+  TrashIcon 
+} from "@patternfly/react-icons";
 import {
   TableComposable,
   Tbody,
@@ -88,7 +97,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
               Environments
             </FlexItem>
             <FlexItem>
-              <ApiKey webprop={webprop} />
+              <CreateEnv webprop={webprop} />
             </FlexItem>
           </Flex>
         </CardTitle>
@@ -155,7 +164,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
               API Keys
             </FlexItem>
             <FlexItem>
-              <CreateEnv webprop={webprop} />
+              <ApiKey webprop={webprop} />
             </FlexItem>
           </Flex>
         </CardTitle>

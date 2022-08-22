@@ -97,11 +97,6 @@ const SettingsPage: ComponentWithAuth<Properties> = ({ webprop }: Properties) =>
       <EnvList webprop={webprop} />
       <StyledCard>
         <CardTitle>
-          Configuration
-        </CardTitle>
-      </StyledCard>
-      <StyledCard>
-        <CardTitle>
           <StyledText>
             Here be dragons!
           </StyledText>

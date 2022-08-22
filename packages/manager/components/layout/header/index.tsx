@@ -20,7 +20,9 @@ const StyledHeader = styled.header`
   background-color: var(--spaship-global--Color--spaship-gray);
   color: white;
   height: 147px;
-  padding: 65px 10vw 0 10vw;
+  padding-top: 2rem;
+  display: flex;
+  justify-content: center;
   text-transform: capitalize;
   a {
     color: white;
@@ -69,6 +71,10 @@ const StyledEnvButton = styled(Button)`
   }
 `;
 
+const StyledFlex = styled(Flex)`
+  width: 67vw;
+`;
+
 const Header: FunctionComponent<HeaderProps> = ({ breadcrumbs = [], buttons = [], previous, settings, title = "" }) => {
   return (
     <>
@@ -83,7 +89,7 @@ const Header: FunctionComponent<HeaderProps> = ({ breadcrumbs = [], buttons = []
       </StyledBanner>
     </StyledDiv>
     <StyledHeader>
-      <Flex
+      <StyledFlex
         alignSelf={{ default: "alignSelfFlexEnd" }}
         direction={{ default: "column" }}
         spaceItems={{ default: "spaceItemsSm" }}
@@ -163,7 +169,7 @@ const Header: FunctionComponent<HeaderProps> = ({ breadcrumbs = [], buttons = []
               : ""}
           </Flex>
         </FlexItem>
-      </Flex>
+      </StyledFlex>
     </StyledHeader>
     </>
   );

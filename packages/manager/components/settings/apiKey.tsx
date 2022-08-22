@@ -1,8 +1,21 @@
 import {
-  Alert, AlertActionCloseButton, AlertGroup, AlertVariant, Button, Checkbox, ClipboardCopy, DatePicker, Flex,
-  FlexItem, FormGroup, getUniqueId, Modal,
-  ModalVariant, Text,
-  TextContent, TextInput, TextVariants
+  Alert, 
+  AlertActionCloseButton, 
+  AlertGroup, 
+  AlertVariant, 
+  Button,
+  Checkbox, 
+  ClipboardCopy,
+  DatePicker, 
+  Flex,
+  FlexItem, 
+  FormGroup, 
+  getUniqueId, 
+  Modal,
+  ModalVariant, 
+  Text,
+  TextInput, 
+  TextVariants
 } from "@patternfly/react-core";
 import { ExclamationCircleIcon } from "@patternfly/react-icons";
 import { useSession } from "next-auth/react";
@@ -156,7 +169,6 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
       setValidatedLabel(validations.success);
       setLabel(label);
     }
-
   };
 
   const rangeValidator = (date: Date) => {
@@ -221,8 +233,7 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
         onClose={() => {
           setButtonLoading(false);
           handleModalToggle();
-        }
-        }
+        }}
         actions={[
         ]}
       >
@@ -297,7 +308,11 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
               <AlertActionCloseButton
                 title={title}
                 variantLabel={`${variant} alert`}
-                onClose={() => removeAlert(key)}
+                onClose={
+                  () => {
+                    removeAlert(key);
+                  }
+                }
               />
             } />
         ))}
