@@ -238,8 +238,8 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
         description="Please save this API Key. You won’t be able to see it again!"
         isOpen={isModalOpen}
         onClose={() => {
-          handleModalToggle();
           setButtonLoading(false);
+          handleModalToggle();
         }
         }
         actions={[
