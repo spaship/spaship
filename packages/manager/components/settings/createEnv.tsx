@@ -51,6 +51,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   const { data: session, status: _status } = useSession();
   const [isModalOpen, setModalOpen] = useState(false);
   const [env, setEnv] = useState("");
+  const [envType, setEnvType] = useState(false);
   const [validatedEnv, setValidatedEnv] = useState(validations.noval);
   const [validatedUrl, setValidatedUrl] = useState(validations.noval);
   const [helperText, setHelperText] = useState("");
@@ -58,6 +59,11 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   const [url, setUrl] = useState("");
 
   async function handleModalToggle() {
+    setValidatedEnv(validations.noval)
+    setHelperText("");
+    setEnv("");
+    setUrl("");
+    setEnvType(false);
     setModalOpen(!isModalOpen);
   }
 
@@ -109,6 +115,12 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
         setModalOpen(!isModalOpen);
         router.reload();
       }
+      else {
+        setAlert([
+          { title: `${propertyRes.response}`, variant: 'danger', key: getUniqueId() },
+        ] as any)
+        setButtonLoading(false);
+      }
     } catch (e) { }
   }
 
@@ -136,7 +148,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   const [buttonLoading, setButtonLoading] = useState(false);
 
   useEffect(() => { /* TODO : To be done later */ }, [isModalOpen]);
-  const [envType, setEnvType] = useState(false);
+
 
   return (
     <>
@@ -154,19 +166,19 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
         isOpen={isModalOpen}
         onClose={handleModalToggle}
         actions={[
-          <StyledButton 
-            key="create" 
+          <StyledButton
+            key="create"
             variant="tertiary"
             isLoading={buttonLoading}
             onClick={() => {
               handlePropertyCreation();
               setButtonLoading(true);
-            }} 
+            }}
             isDisabled={
               buttonLoading
               ||
-              validatedEnv != validations.success 
-              || 
+              validatedEnv != validations.success
+              ||
               validatedUrl != validations.success}>
             Create
           </StyledButton>
@@ -202,57 +214,57 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
             />
           </FormGroup>
 
-        <FormGroup
-          label="Hostname"
-          isRequired
-          fieldId="form-group-label-info"
-          helperText={<>
-            <FormHelperText 
-              icon={
-                validatedUrl === validations.noval 
-                ? 
-                <ExclamationCircleIcon /> : <CheckCircleIcon />
-              } 
-              isHidden={validatedUrl !== validations.noval && validatedUrl !== validations.success}>
-              {validatedUrl === validations.noval ? <>Hostname shouldn't contain any space, special-character (eg: one.redhat.com) </> : <>Valid Hostname</>}
-            </FormHelperText>
-          </>
-          }
-          helperTextInvalid="Invalid Hostname"
-          helperTextInvalidIcon={<ExclamationCircleIcon />}
-          validated={validatedUrl as any}
-          >
-          <TextInput
+          <FormGroup
+            label="Hostname"
             isRequired
-            type="text"
-            id="form-group-label-info"
-            name="form-group-label-info"
-            aria-describedby="form-group-label-info-helper"
-            placeholder="Enter Hostname"
-            value={url}
-            onChange={handleUrl}
+            fieldId="form-group-label-info"
+            helperText={<>
+              <FormHelperText
+                icon={
+                  validatedUrl === validations.noval
+                    ?
+                    <ExclamationCircleIcon /> : <CheckCircleIcon />
+                }
+                isHidden={validatedUrl !== validations.noval && validatedUrl !== validations.success}>
+                {validatedUrl === validations.noval ? <>Hostname shouldn't contain any space, special-character (eg: one.redhat.com) </> : <>Valid Hostname</>}
+              </FormHelperText>
+            </>
+            }
+            helperTextInvalid="Invalid Hostname"
+            helperTextInvalidIcon={<ExclamationCircleIcon />}
             validated={validatedUrl as any}
-            maxLength={GlobalConstants.MAX_INPUT_LENGTH}
-          />
-        </FormGroup>
-        
-        <FormGroup
-          label="Environment Type"
-          fieldId="form-group-label-env-type"
-          helperText={
-            <FormHelperText icon={<ExclamationCircleIcon/>} isHidden={false}>
-              {`Env type for your property`}
-            </FormHelperText>
-          }
-          isRequired>
-        <Switch
-          label="Production"
-          labelOff="Pre-production"
-          id="env-type"
-          aria-label="prod and pre-prod env type checkbox"
-          isChecked={envType}
-          onChange={(status: any) => { setEnvType(status) }}
-          />
+          >
+            <TextInput
+              isRequired
+              type="text"
+              id="form-group-label-info"
+              name="form-group-label-info"
+              aria-describedby="form-group-label-info-helper"
+              placeholder="Enter Hostname"
+              value={url}
+              onChange={handleUrl}
+              validated={validatedUrl as any}
+              maxLength={GlobalConstants.MAX_INPUT_LENGTH}
+            />
+          </FormGroup>
+
+          <FormGroup
+            label="Environment Type"
+            fieldId="form-group-label-env-type"
+            helperText={
+              <FormHelperText icon={<ExclamationCircleIcon />} isHidden={false}>
+                {`Env type for your property`}
+              </FormHelperText>
+            }
+            isRequired>
+            <Switch
+              label="Production"
+              labelOff="Pre-production"
+              id="env-type"
+              aria-label="prod and pre-prod env type checkbox"
+              isChecked={envType}
+              onChange={(status: any) => { setEnvType(status) }}
+            />
           </FormGroup>
         </Form>
       </Modal>
