@@ -4,7 +4,7 @@ import {
   ModalVariant, Switch, Text,
   TextContent, TextInput, TextVariants
 } from "@patternfly/react-core";
-import { CheckCircleIcon, ExclamationCircleIcon } from "@patternfly/react-icons";
+import { CheckCircleIcon, ExclamationCircleIcon, PlusIcon } from "@patternfly/react-icons";
 import { useSession } from "next-auth/react";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import styled from "styled-components";
@@ -12,6 +12,7 @@ import { post } from "../../utils/api.utils";
 import { getNextOnboardWebpropertyUrl } from "../../utils/endpoint.utils";
 import { AnyProps } from "../models/props";
 import { useRouter } from "next/router";
+import { GlobalConstants } from "../../scripts/GlobalConstants";
 
 interface ApiKeyProps {
   webprop: AnyProps;
@@ -36,30 +37,13 @@ const validations: ValidateType = {
 };
 
 const StyledButton = styled(Button)`
-  --pf-c-button--m-tertiary--BackgroundColor: var(--spaship-global--Color--text-black, #000);
-  --pf-c-button--m-tertiary--Color: #fff;
-  --pf-c-button--BorderRadius: none;
-  --pf-c-button--PaddingRight: 2.4rem;
-  --pf-c-button--PaddingLeft: 2.4rem;
-`;
-
-const StyledFlexItem = styled(FlexItem)`
-  --pf-l-flex--spacer: 0;
-`;
-
-const StyledText = styled(Text)`
-  --pf-global--FontWeight--normal: 100;
-  --pf-c-content--h2--FontWeight: 100;
-`;
-
-const StyledSubText = styled(Text)`
-  --pf-global--FontWeight--normal: 100;
-  --pf-c-content--h2--FontWeight: 100;
-  color: var(--pf-global--Color--200);
+  --pf-c-button--PaddingRight: 1.5rem;
+  --pf-c-button--PaddingLeft: 1.5rem;
 `;
 
 const StyledSpan = styled.span`
-  margin-left: 0.25rem;
+  font-weight: 100;
+  margin-left: 0.5rem;
 `;
 
 const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
@@ -156,41 +140,14 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
 
   return (
     <>
-      <Flex
-        justifyContent={{ default: 'justifyContentSpaceBetween' }}
-        alignItems={{ default: 'alignItemsCenter' }}>
-        <FlexItem>
-          <Flex
-            direction={{ default: 'column' }}>
-            <StyledFlexItem>
-              <TextContent>
-                <StyledText component={TextVariants.h2}>
-                  Add new Environment
-                </StyledText>
-              </TextContent>
-            </StyledFlexItem>
-            <FlexItem>
-              <StyledSubText component={TextVariants.h4}>
-                Create new environment for property :
-                <StyledSpan>
-                  {webprop?.propertyListResponse[0]?.propertyName.length > 15
-                    ? `${webprop?.propertyListResponse[0]?.propertyName.substring(0, 15)}...`
-                    : webprop?.propertyListResponse[0]?.propertyName}
-                </StyledSpan>
-              </StyledSubText>
-            </FlexItem>
-          </Flex>
-        </FlexItem>
-        <FlexItem>
-          <StyledButton
-            variant="tertiary"
-            onClick={handleModalToggle}>
-            <StyledText component={TextVariants.h4}>
-              Add Environment
-            </StyledText>
-          </StyledButton>
-        </FlexItem>
-      </Flex>
+      <StyledButton
+        variant="primary"
+        onClick={handleModalToggle}>
+        <PlusIcon />
+        <StyledSpan>
+          Create new environment
+        </StyledSpan>
+      </StyledButton>
       <Modal
         variant={ModalVariant.small}
         title="Create New Environment"
@@ -241,6 +198,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
               value={env}
               onChange={handleEnv}
               validated={validatedEnv as any}
+              maxLength={GlobalConstants.MAX_INPUT_LENGTH}
             />
           </FormGroup>
 
@@ -274,6 +232,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
             value={url}
             onChange={handleUrl}
             validated={validatedUrl as any}
+            maxLength={GlobalConstants.MAX_INPUT_LENGTH}
           />
         </FormGroup>
         

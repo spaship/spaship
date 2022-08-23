@@ -12,8 +12,6 @@ import React from "react";
 import styled from "styled-components";
 import Body from "../../../../components/layout/body";
 import { AnyProps, ContextProps, Properties } from "../../../../components/models/props";
-import ApiKey from "../../../../components/settings/apiKey";
-import CreateEnv from "../../../../components/settings/createEnv";
 import DeleteSpa from "../../../../components/settings/deleteSpa";
 import EnvList from "../../../../components/settings/envList";
 import { get, post } from "../../../../utils/api.utils";
@@ -80,7 +78,6 @@ const StyledList = styled(List)`
 `;
 
 const StyledCard = styled(Card)`
-  max-width: var(--spaship-table-container-max-width);
   margin-bottom: 2rem;
 `;
 
@@ -98,21 +95,6 @@ const SettingsPage: ComponentWithAuth<Properties> = ({ webprop }: Properties) =>
   return (
     <Body {...meta}>
       <EnvList webprop={webprop} />
-      <StyledCard>
-        <CardTitle>
-          Configuration
-        </CardTitle>
-        <CardBody>
-          <StyledList isPlain>
-            <ListItem>
-              <CreateEnv webprop={{ propertyListResponse: webprop?.propertyListResponse, spashipNotificationTimeout: webprop?.spashipNotificationTimeout }} />
-            </ListItem>
-            <ListItem>
-              <ApiKey webprop={{ spashipNotificationTimeout: webprop?.spashipNotificationTimeout, propertyName: webprop?.propertyName, propertyListResponse: webprop?.propertyListResponse }} />
-            </ListItem>
-          </StyledList>
-        </CardBody>
-      </StyledCard>
       <StyledCard>
         <CardTitle>
           <StyledText>

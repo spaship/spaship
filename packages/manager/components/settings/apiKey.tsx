@@ -1,10 +1,23 @@
 import {
-  Alert, AlertActionCloseButton, AlertGroup, AlertVariant, Button, Checkbox, ClipboardCopy, DatePicker, Flex,
-  FlexItem, FormGroup, getUniqueId, Modal,
-  ModalVariant, Text,
-  TextContent, TextInput, TextVariants
+  Alert, 
+  AlertActionCloseButton, 
+  AlertGroup, 
+  AlertVariant, 
+  Button,
+  Checkbox, 
+  ClipboardCopy,
+  DatePicker, 
+  Flex,
+  FlexItem, 
+  FormGroup, 
+  getUniqueId, 
+  Modal,
+  ModalVariant, 
+  Text,
+  TextInput, 
+  TextVariants
 } from "@patternfly/react-core";
-import { ExclamationCircleIcon } from "@patternfly/react-icons";
+import { ExclamationCircleIcon, PlusIcon } from "@patternfly/react-icons";
 import { useSession } from "next-auth/react";
 import React, { FunctionComponent, useState } from "react";
 import styled from "styled-components";
@@ -35,20 +48,17 @@ const validations: ValidateType = {
 };
 
 const StyledButton = styled(Button)`
-  --pf-c-button--m-tertiary--BackgroundColor: var(--spaship-global--Color--text-black, #000);
-  --pf-c-button--m-tertiary--Color: #fff;
-  --pf-c-button--BorderRadius: none;
-  --pf-c-button--PaddingRight: 3rem;
-  --pf-c-button--PaddingLeft: 3rem;
+  --pf-c-button--PaddingRight: 2rem;
+  --pf-c-button--PaddingLeft: 2rem;
 `;
 
 const StyledFlexItem = styled(FlexItem)`
   --pf-l-flex--spacer: 0;
 `;
 
-const StyledText = styled(Text)`
-  --pf-global--FontWeight--normal: 100;
-  --pf-c-content--h2--FontWeight: 100;
+const StyledSpan = styled.span`
+  font-weight: 100;
+  margin-left: 0.5rem;
 `;
 
 const StyledInput = styled.div({
@@ -60,12 +70,6 @@ const StyledClipboardBox = styled.div({
   height: "40px",
   marginTop: "20px"
 });
-
-const StyledSubText = styled(Text)`
-  --pf-global--FontWeight--normal: 100;
-  --pf-c-content--h2--FontWeight: 100;
-  color: var(--pf-global--Color--200);
-`;
 
 const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   const environments = webprop?.propertyListResponse;
@@ -159,7 +163,6 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
       setValidatedLabel(validations.success);
       setLabel(label);
     }
-
   };
 
   const rangeValidator = (date: Date) => {
@@ -213,35 +216,21 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
 
   return (
     <>
-      <Flex justifyContent={{ default: "justifyContentSpaceBetween" }} alignItems={{ default: "alignItemsCenter" }}>
-        <FlexItem>
-          <Flex direction={{ default: "column" }}>
-            <StyledFlexItem>
-              <TextContent>
-                <StyledText component={TextVariants.h2}>Generate API Key</StyledText>
-              </TextContent>
-            </StyledFlexItem>
-            <FlexItem>
-              <StyledSubText component={TextVariants.h4}>Please provide expiration date.</StyledSubText>
-            </FlexItem>
-          </Flex>
-        </FlexItem>
-        <FlexItem>
-          <StyledButton variant="tertiary" onClick={handleModalToggle}>
-            <StyledText component={TextVariants.h4}>Create API key</StyledText>
-          </StyledButton>
-        </FlexItem>
-      </Flex>
+      <StyledButton 
+        variant="primary" 
+        onClick={handleModalToggle}>
+        <PlusIcon />
+        <StyledSpan>Create new API key</StyledSpan>
+      </StyledButton>
       <Modal
         variant={ModalVariant.small}
         title="API Key"
         description="Please save this API Key. You won’t be able to see it again!"
         isOpen={isModalOpen}
         onClose={() => {
-          handleModalToggle();
           setButtonLoading(false);
-        }
-        }
+          handleModalToggle();
+        }}
         actions={[
         ]}
       >
@@ -316,7 +305,11 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
               <AlertActionCloseButton
                 title={title}
                 variantLabel={`${variant} alert`}
-                onClose={() => removeAlert(key)}
+                onClose={
+                  () => {
+                    removeAlert(key);
+                  }
+                }
               />
             } />
         ))}

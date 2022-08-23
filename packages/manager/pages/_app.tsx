@@ -9,6 +9,8 @@ import Layout from "../components/layout";
 import { NextComponentType, NextPageContext } from "next";
 import { AuthEnabledComponentConfig } from "../utils/auth.utils";
 import Auth from "../components/auth/auth";
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css'
 
 type AppAuthProps = AppProps & {
   Component: NextComponentType<NextPageContext, any, {}> & Partial<AuthEnabledComponentConfig>;
@@ -18,6 +20,12 @@ function SPAshipManager({ Component, pageProps: { session, ...pageProps } }: App
   const router = useRouter();
   const layoutLessPages = [`/login`];
   const skipLayout = layoutLessPages.includes(router.pathname);
+  router.events?.on('routeChangeStart', () => {
+    NProgress.start();
+  });
+  router.events?.on('routeChangeComplete', () => {
+    NProgress.done();
+  });
   return (
     <SessionProvider session={pageProps.session}>
       <Head>

@@ -14,6 +14,7 @@ import {
 } from "@patternfly/react-core";
 import React, { FunctionComponent, useState } from "react";
 import styled from "styled-components";
+import { GlobalConstants } from "../../scripts/GlobalConstants";
 
 const StyledButton = styled(Button)`
   --pf-c-button--BorderRadius: none;
@@ -88,6 +89,7 @@ const DeleteSpa: FunctionComponent<DeleteSpaProps> = () => {
             name="modal-with-form-form-name"
             value={env}
             onChange={handleNameInputChange}
+            maxLength={GlobalConstants.MAX_INPUT_LENGTH}
           />
         </FormGroup>
       </Form>

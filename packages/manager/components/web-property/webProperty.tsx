@@ -29,11 +29,11 @@ const WebProperty: FunctionComponent<Properties> = ({ webprop }: Properties) => 
           <CardTitle>{convertPropertyTitle(prop.propertyTitle || '')}</CardTitle>
           <CardBody>{prop.url}</CardBody>
           <CardFooter>
-            <p>
+            {/* <p>
               <Label isCompact icon={<UserIcon />}>
                 { (prop as any)?.createdBy.length > 20 ? (prop as any)?.createdBy.slice(0, 25) + '...' : (prop as any)?.createdBy }
               </Label>
-            </p>
+            </p> */}
             {prop.count} Deployments
           </CardFooter>
         </StyledCards>

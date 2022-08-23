@@ -2,13 +2,29 @@ import {
   Button,
   Card,
   CardTitle,
+  ClipboardCopy,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  Flex,
+  FlexItem,
+  Label,
   Modal,
   ModalVariant,
-  Switch,
   Text,
-  TextVariants
+  TextVariants,
+  Title
 } from "@patternfly/react-core";
-import { CheckCircleIcon, ExternalLinkAltIcon, KeyIcon, LockIcon, OutlinedCalendarAltIcon, TimesCircleIcon, TrashIcon } from "@patternfly/react-icons";
+import { 
+  CheckCircleIcon, 
+  CubesIcon, 
+  ExternalLinkAltIcon, 
+  KeyIcon, 
+  LockIcon, 
+  OutlinedCalendarAltIcon, 
+  TimesCircleIcon, 
+  TrashIcon 
+} from "@patternfly/react-icons";
 import {
   TableComposable,
   Tbody,
@@ -22,29 +38,20 @@ import { useRouter } from "next/router";
 import React, { FunctionComponent, useState } from "react";
 import styled from "styled-components";
 import { post } from "../../utils/api.utils";
-import { getNextDeleteApiKey, getNextValidateUrl } from "../../utils/endpoint.utils";
+import { getNextDeleteApiKey } from "../../utils/endpoint.utils";
 import { AnyProps, Properties } from "../models/props";
+import ApiKey from "./apiKey";
+import CreateEnv from "./createEnv";
 
 const StyledCard = styled(Card)`
-  max-width: var(--spaship-table-container-max-width);
   margin-bottom: 2rem;
 `;
 
 const StyledButton = styled(Button)`
-  --pf-c-button--m-tertiary--BackgroundColor: var(--spaship-global--Color--text-#c9190b, #FFFFF);
-  --pf-c-button--m-tertiary--Color: #c9190b;
-  --pf-c-button--BorderColor: #c9190b;
-  --pf-c-button--m-tertiary--focus--BorderColor #c9190b;
-  --pf-c-button--PaddingRight: 3rem;
-  --pf-c-button--PaddingLeft: 3rem;
+  > span {
+    margin-left: .5rem;
+  }
 `;
-
-const StyledText = styled(Text)`
-  --pf-global--FontWeight--normal: 100;
-  --pf-c-content--h2--FontWeight: 100;
-`;
-
-
 
 const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
   const router = useRouter();
@@ -53,6 +60,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
   const { data: session, status: _status } = useSession();
   const [selectedApiKey, setSelectedApiKey] = useState("");
   const [switchState, setSwitchState] = useState(true);
+  const [isButtonLoading, setButtonLoading] = useState(false);
   const handleChange = () => {
     // TODO: implement logic to toggle spa
     setSwitchState(!switchState);
@@ -81,12 +89,20 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
     setModalOpen(!isModalOpen);
   }
 
-
   return (
     <>
       <StyledCard>
-        <CardTitle>Environments</CardTitle>
-        <TableComposable>
+        <CardTitle>
+          <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
+            <FlexItem>
+              Environments
+            </FlexItem>
+            <FlexItem>
+              <CreateEnv webprop={webprop} />
+            </FlexItem>
+          </Flex>
+        </CardTitle>
+        <TableComposable isStriped>
           <Thead>
             <Tr>
               <Th>Name</Th>
@@ -97,19 +113,37 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
             </Tr>
           </Thead>
           <Tbody>
+          <Tr>
+            <Td colSpan={4}>
+              {
+                !!!propertyListResponse.length &&
+                  <EmptyState>
+                    <EmptyStateIcon icon={CubesIcon} />
+                    <Title headingLevel="h4" size="lg">
+                      Environments not created yet
+                    </Title>
+                    <EmptyStateBody>
+                      Please create environments to see them here.
+                    </EmptyStateBody>
+                  </EmptyState>
+                }
+              </Td>
+            </Tr>
             {propertyListResponse?.map((env: AnyProps) => (
               <Tr key={env.id}>
                 <Td dataLabel={env.env}>{env.env}</Td>
                 <Td dataLabel={env.createdAt}>
                   <Text component={TextVariants.small}>
-                    {new Date(env.createdAt).toUTCString().substr(0, 25)}
+                    {new Date(env.createdAt).toUTCString()}
                   </Text>
                 </Td>
                 <Td>
                   <a href={`https://${env.url}`} target="_blank" rel="noopener noreferrer"> <ExternalLinkAltIcon /> {env.url}</a>
                 </Td>
                 <Td>
-                  {window.location.origin}/api/v1/applications/deploy/{env?.propertyName}/{env?.env}
+                <ClipboardCopy hoverTip="Copy" clickTip="Copied" variant="inline-compact" isCode>
+                  {`${window.location.origin}/api/v1/applications/deploy/${env?.propertyName}/${env?.env}`}
+                </ClipboardCopy>
                 </Td>
                 {/* TODO: Add once feature is available
                 <Td dataLabel={env.env}>
@@ -127,8 +161,17 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
         </TableComposable>
       </StyledCard>
       <StyledCard>
-        <CardTitle>API Keys</CardTitle>
-        <TableComposable>
+        <CardTitle>
+          <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
+            <FlexItem>
+              API Keys
+            </FlexItem>
+            <FlexItem>
+              <ApiKey webprop={webprop} />
+            </FlexItem>
+          </Flex>
+        </CardTitle>
+        <TableComposable isStriped>
           <Thead>
             <Tr>
               <Th>Label</Th>
@@ -140,6 +183,22 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
             </Tr>
           </Thead>
           <Tbody>
+            <Tr>
+              <Td colSpan={6}>
+              {
+                !!!apiKeyList.length &&
+                  <EmptyState>
+                    <EmptyStateIcon icon={CubesIcon} />
+                    <Title headingLevel="h4" size="lg">
+                      API Keys not found.
+                    </Title>
+                    <EmptyStateBody>
+                      Please create an API keys to see them here.
+                    </EmptyStateBody>
+                  </EmptyState>
+                }
+              </Td>
+            </Tr>
             {apiKeyList?.map((key: any, index: any) => (
               <Tr key={index}>
                 <Td dataLabel={key.label}><LockIcon /> {key.label}</Td>
@@ -149,20 +208,22 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
                 <Td dataLabel={key.createdAt}>
                   {new Date(key.expirationDate) > new Date()
                     ?
-                    <div>
-                      <CheckCircleIcon /> Active
-                    </div>
+                    <Label icon={<CheckCircleIcon />} color="green">
+                      Active
+                    </Label>
                     :
-                    <div>
-                      <TimesCircleIcon /> Inactive
-                    </div>
+                    <Label color="red" icon={<TimesCircleIcon />}>
+                      Inactive
+                    </Label>
                   }
                 </Td>
                 <Td dataLabel={key.shortKey}>
-                  <StyledButton variant="tertiary"
+                  <StyledButton
+                    variant="secondary"
+                    isDanger
                     onClick={() => selectApiKey(key.shortKey)}
                   >
-                    <TrashIcon /> Delete
+                    <TrashIcon /><span>Delete</span>
                   </StyledButton> </Td>
               </Tr>
             ))}
@@ -170,11 +231,23 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
         </TableComposable>
       </StyledCard>
       <Modal
+        aria-label="Delete API Key"
         variant={ModalVariant.small}
         isOpen={isModalOpen}
         onClose={handleModalToggle}
         actions={[
-          <Button key="confirm" variant="danger" onClick={deleteApiKey}>
+          <Button 
+            key="confirm" 
+            variant="secondary"
+            isDanger
+            isLoading={isButtonLoading}
+            isDisabled={isButtonLoading}
+            onClick={
+              () => {
+                deleteApiKey();
+                setButtonLoading(true);
+              }
+          }>
             Confirm
           </Button>,
           <Button key="cancel" variant="plain" onClick={handleModalToggle}>
@@ -182,7 +255,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
           </Button>
         ]}
       >
-        Do you want to delete thie API Key ?
+        Do you want to delete this API Key ?
       </Modal>
     </>
   );

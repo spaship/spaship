@@ -16,7 +16,6 @@ import styled from "styled-components";
 import { Properties, SPAProps } from "../models/props";
 
 const StyledCard = styled(Card)`
-  max-width: var(--spaship-table-container-max-width);
   margin-bottom: 2rem;
 `;
 

@@ -25,6 +25,7 @@ import {
   KeyIcon,
   PackageIcon,
   PficonTemplateIcon,
+  PlusIcon,
   RunningIcon
 } from "@patternfly/react-icons";
 import { getSession } from "next-auth/react";
@@ -129,10 +130,16 @@ const WebPropertyPage: ComponentWithAuth<WebPropertyPageProps> = ({ webprop, act
           <EmptyStateBody>
             Hey, seems like there are no SPAs deployed yet. Here are some things you can do to get started:
             <StyledList isPlain>
+              <ListItem icon={<PlusIcon />}>Create a new environment
+                <StyledText
+                  onClick={() => { router.push(`${propertyName}/settings`); }}>
+                  (Environment Configuration)
+                </StyledText>
+              </ListItem>
               <ListItem icon={<PficonTemplateIcon />}>Generate API Key
                 <StyledText
                   onClick={() => { router.push(`${propertyName}/settings`); }}>
-                  (Go to Environment Configuration)
+                  (Environment Configuration)
                 </StyledText>
               </ListItem>
               <ListItem icon={<CogIcon />}>Install spaship cli in your local system</ListItem>

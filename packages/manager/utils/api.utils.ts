@@ -47,10 +47,7 @@ export async function get<T>(url: string, token?: string): Promise<T> {
     method: "GET",
     headers,
   };
-  logger.info({ url })
-  logger.info({ options })
   const response = await handleResponse<T>(await fetch(url, options));
-  logger.info({ response })
   return response;
 }
 
@@ -61,10 +58,7 @@ export async function post<T>(url: string, data: object, token: string): Promise
     headers,
     body: JSON.stringify(data),
   };
-  logger.info({ url })
-  logger.info({ options })
   const response = await handleResponse<T>(await fetch(url, options));
-  logger.info({ response })
   return response;
 }
 
