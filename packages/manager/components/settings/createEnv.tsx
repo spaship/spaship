@@ -117,7 +117,7 @@ const CreateEnv: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
       }
       else {
         setAlert([
-          { title: `${propertyRes.response}`, variant: 'danger', key: getUniqueId() },
+          { title: `Unable to process the request, Please try again if this problem persists, please contact admin spaship_support@redhat.com`, variant: 'danger', key: getUniqueId() },
         ] as any)
         setButtonLoading(false);
       }
