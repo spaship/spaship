@@ -133,17 +133,15 @@ module.exports.deploy = async (req, res, next) => {
 };
 
 module.exports.delete = async (req, res, next) => {
-  const userId = getUserUUID(req);
-  const { name } = req.params;
+  const { propertyName } = req.params;
   try {
-    const result = await Application.findOne({ name, userId });
-    const application = await Application.findOneAndDelete({ name, userId });
+    const result = await Application.findOne({ propertyName });
+    const toObject = true;
+    const application = await Application.findOne({ propertyName: propertyName }).remove().exec();;
     if (application) {
-      const path = application.path;
-      await FileService.remove(path);
       res.status(200).json({ message: "Application removed successfully." });
     } else {
-      next(new NotFoundError(`Application named ${name} not found.`));
+      next(new NotFoundError(`Application named ${propertyName} not found.`));
     }
   } catch (error) {
     next(error);

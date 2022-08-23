@@ -33,7 +33,7 @@ router.put("/:name", application.put);
 /**
  * Delete a application
  */
-router.delete("/:name", application.delete);
+router.delete("/:propertyName", application.delete);
 
 /**
  * Deploy an application

@@ -20,13 +20,23 @@ const app = new express();
 const rateLimit = require("express-rate-limit");
 
 const timeLimit = 60000;
-const maxRequest = 10;
-const apiRateLimiter = rateLimit({
+const maxRequest = 300;
+const maxRequestDeploy = 10;
+
+const deployApiRateLimiter = rateLimit({
+  windowMs: timeLimit,
+  max: maxRequestDeploy,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const publicApiRateLimiter = rateLimit({
   windowMs: timeLimit,
   max: maxRequest,
   standardHeaders: true,
   legacyHeaders: false,
 });
+
 
 app
   .use(bodyParser.json({ limit: "50mb" }))
@@ -50,7 +60,10 @@ app
     swaggerUi.serve,
     swaggerUi.setup(swaggerDocument)
   )
-  .use("/api/v1/applications/deploy", [authentication(), apiRateLimiter], routes)
+  .use("/api/v1/event", [authentication(), publicApiRateLimiter], routes)
+  .use("/api/v1/webProperty", [authentication(), publicApiRateLimiter], routes)
+  .use("/api/v1/apikeys", [authentication(), publicApiRateLimiter], routes)
+  .use("/api/v1/applications/deploy", [authentication(), deployApiRateLimiter], routes)
   .use("/api", [authentication()], routes)
   .use(errorHandler());
 
