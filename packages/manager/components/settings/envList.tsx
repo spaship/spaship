@@ -2,6 +2,7 @@ import {
   Button,
   Card,
   CardTitle,
+  ClipboardCopy,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
@@ -122,7 +123,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
                       Environments not created yet
                     </Title>
                     <EmptyStateBody>
-                      Please create an environments to see them here.
+                      Please create environments to see them here.
                     </EmptyStateBody>
                   </EmptyState>
                 }
@@ -133,14 +134,16 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
                 <Td dataLabel={env.env}>{env.env}</Td>
                 <Td dataLabel={env.createdAt}>
                   <Text component={TextVariants.small}>
-                    {new Date(env.createdAt).toUTCString().substr(0, 25)}
+                    {new Date(env.createdAt).toUTCString()}
                   </Text>
                 </Td>
                 <Td>
                   <a href={`https://${env.url}`} target="_blank" rel="noopener noreferrer"> <ExternalLinkAltIcon /> {env.url}</a>
                 </Td>
                 <Td>
-                  {window.location.origin}/api/v1/applications/deploy/{env?.propertyName}/{env?.env}
+                <ClipboardCopy hoverTip="Copy" clickTip="Copied" variant="inline-compact" isCode>
+                  {`${window.location.origin}/api/v1/applications/deploy/${env?.propertyName}/${env?.env}`}
+                </ClipboardCopy>
                 </Td>
                 {/* TODO: Add once feature is available
                 <Td dataLabel={env.env}>

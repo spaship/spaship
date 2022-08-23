@@ -48,7 +48,7 @@ const StyledDiv = styled.div`
 `;
 
 const StyledBanner = styled(Banner)`
-  background-color: #000;
+  background: linear-gradient(90deg, rgba(167,29,49,1) 0%, rgba(63,13,18,1) 35%);
   border-radius: 0px 0px 4px 4px;
   > a {
     color: #fff;
