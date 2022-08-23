@@ -47,8 +47,10 @@ const StyledDiv = styled.div`
   justify-content: center;
 `;
 
-const StyledBanner = styled(Banner)`
+const StyledBanner = styled.div`
   background: linear-gradient(90deg, rgba(167,29,49,1) 0%, rgba(63,13,18,1) 35%);
+  font-size: 14px;
+  padding: 4px 24px;
   border-radius: 0px 0px 4px 4px;
   > a {
     color: #fff;
