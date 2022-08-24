@@ -193,7 +193,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
                       API Keys not found.
                     </Title>
                     <EmptyStateBody>
-                      Please create an API keys to see them here.
+                      Please create API keys, to see them here.
                     </EmptyStateBody>
                   </EmptyState>
                 }
