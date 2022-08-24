@@ -159,7 +159,7 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
       if (!propertyRes?.response?.id) {
         setErrorMessage(propertyRes.response);
         setAlert([
-          { title: `${propertyRes.response}`, variant: 'danger', key: getUniqueId() },
+          { title: `Unable to process the request, Please try again if this problem persists, please contact admin spaship_support@redhat.com`, variant: 'danger', key: getUniqueId() },
         ] as any)
         setButtonLoading(false);
       }
@@ -278,18 +278,18 @@ const NewProperty: FunctionComponent<NewPropertyProps> = ({ webProp }: AnyProps)
                 helperTextInvalidIcon={<ExclamationCircleIcon />}
                 validated={validatedEnv as any}
               >
-              <StyledTextInput
-                isRequired
-                type="text"
-                id="form-group-label-info"
-                name="form-group-label-info"
-                aria-describedby="form-group-label-info-helper"
-                placeholder="Default Environment Name"
-                value={env}
-                onChange={handleEnv}
-                validated={validatedEnv as any}
-                maxLength={GlobalConstants.MAX_INPUT_LENGTH}
-              />
+                <StyledTextInput
+                  isRequired
+                  type="text"
+                  id="form-group-label-info"
+                  name="form-group-label-info"
+                  aria-describedby="form-group-label-info-helper"
+                  placeholder="Default Environment Name"
+                  value={env}
+                  onChange={handleEnv}
+                  validated={validatedEnv as any}
+                  maxLength={GlobalConstants.MAX_INPUT_LENGTH}
+                />
               </FormGroup>
             </FlexItem>
             <FlexItem>
