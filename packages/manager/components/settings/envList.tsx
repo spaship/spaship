@@ -54,7 +54,7 @@ const StyledButton = styled(Button)`
 `;
 
 const StyledClipboardCopy = styled(ClipboardCopy)`
-  background: none;
+  background: none !important;
 `;
 
 const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
