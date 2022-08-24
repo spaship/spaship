@@ -53,6 +53,10 @@ const StyledButton = styled(Button)`
   }
 `;
 
+const StyledClipboardCopy = styled(ClipboardCopy)`
+  background: none;
+`;
+
 const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
   const router = useRouter();
   const { propertyName, propertyListResponse, apiKeyList } = webprop;
@@ -141,9 +145,9 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
                   <a href={`https://${env.url}`} target="_blank" rel="noopener noreferrer"> <ExternalLinkAltIcon /> {env.url}</a>
                 </Td>
                 <Td>
-                <ClipboardCopy hoverTip="Copy" clickTip="Copied" variant="inline-compact" isCode>
+                <StyledClipboardCopy hoverTip="Copy" clickTip="Copied" variant="inline-compact" isCode>
                   {`${window.location.origin}/api/v1/applications/deploy/${env?.propertyName}/${env?.env}`}
-                </ClipboardCopy>
+                </StyledClipboardCopy>
                 </Td>
                 {/* TODO: Add once feature is available
                 <Td dataLabel={env.env}>
@@ -185,7 +189,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
           <Tbody>
             <Tr>
               <Td colSpan={6}>
-              {
+                {
                 !!!apiKeyList.length &&
                   <EmptyState>
                     <EmptyStateIcon icon={CubesIcon} />
@@ -193,7 +197,7 @@ const EnvList: FunctionComponent<Properties> = ({ webprop }: Properties) => {
                       API Keys not found.
                     </Title>
                     <EmptyStateBody>
-                      Please create an API keys to see them here.
+                      Please create API keys, to see them here.
                     </EmptyStateBody>
                   </EmptyState>
                 }

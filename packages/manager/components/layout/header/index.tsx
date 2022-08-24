@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import { Banner, Breadcrumb, BreadcrumbItem, Button, Flex, FlexItem, Label, Title } from "@patternfly/react-core";
 import styled from "styled-components";
-import { ArrowLeftIcon, CogsIcon, ExternalLinkAltIcon } from "@patternfly/react-icons";
+import { ArrowLeftIcon, CogIcon, CogsIcon, ExternalLinkAltIcon } from "@patternfly/react-icons";
 import router from "next/router";
 
 interface LinkProps {
@@ -47,8 +47,10 @@ const StyledDiv = styled.div`
   justify-content: center;
 `;
 
-const StyledBanner = styled(Banner)`
+const StyledBanner = styled.div`
   background: linear-gradient(90deg, rgba(167,29,49,1) 0%, rgba(63,13,18,1) 35%);
+  font-size: 14px;
+  padding: 4px 24px;
   border-radius: 0px 0px 4px 4px;
   > a {
     color: #fff;
@@ -118,9 +120,9 @@ const Header: FunctionComponent<HeaderProps> = ({ breadcrumbs = [], buttons = []
                   onClick={() => {
                     router.push(settings);
                   }} 
-                  variant="primary">
-                    <CogsIcon />
-                    <StyledSpanTitle>Environment Configuration</StyledSpanTitle>
+                  icon={<CogIcon />}
+                  variant="link">
+                    Environment Configuration
                 </Button>
               </StyledFlexItem>
             ) : (

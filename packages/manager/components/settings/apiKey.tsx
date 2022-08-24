@@ -217,10 +217,10 @@ const ApiKey: FunctionComponent<ApiKeyProps> = ({ webprop }: AnyProps) => {
   return (
     <>
       <StyledButton 
-        variant="primary" 
+        variant="link" 
+        icon={<PlusIcon />}
         onClick={handleModalToggle}>
-        <PlusIcon />
-        <StyledSpan>Create new API key</StyledSpan>
+          Create new API key
       </StyledButton>
       <Modal
         variant={ModalVariant.small}

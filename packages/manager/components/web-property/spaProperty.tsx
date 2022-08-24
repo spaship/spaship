@@ -1,5 +1,5 @@
-import { Button, Card, Flex, FlexItem, Label, SearchInput } from "@patternfly/react-core";
-import { ClockIcon, ExternalLinkAltIcon } from "@patternfly/react-icons";
+import { Button, Card, EmptyState, EmptyStateBody, EmptyStateIcon, Flex, FlexItem, Label, SearchInput, Title } from "@patternfly/react-core";
+import { ClockIcon, CubesIcon, ExternalLinkAltIcon, SearchIcon } from "@patternfly/react-icons";
 import { ExpandableRowContent, TableComposable, Tbody, Td, Th, Thead, Tr } from "@patternfly/react-table";
 import { useRouter } from "next/router";
 import { FunctionComponent, useState } from "react";
@@ -102,6 +102,26 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
               <Th>Environment(s)</Th>
             </Tr>
           </Thead>
+          {
+            <Tbody>
+              <Tr>
+                <Td colSpan={4}>
+                {
+                !!!tableData.length &&
+                  <EmptyState>
+                    <EmptyStateIcon icon={SearchIcon} />
+                    <Title headingLevel="h4" size="lg">
+                      No results found
+                    </Title>
+                    <EmptyStateBody>
+                      Search for another SPA name.
+                    </EmptyStateBody>
+                  </EmptyState>
+                }
+              </Td>
+            </Tr>
+          </Tbody>
+          }
           {tableData.map((spa: SPAProperty, rowIndex: any) => (
             <Tbody key={spa.name} isExpanded={isSPAExpanded(spa.name)}>
               <Tr key={spa.name} {... (rowIndex % 2 === 0) && { isStriped: true}}>
