@@ -1,8 +1,7 @@
 import {
   Alert, AlertActionCloseButton, AlertGroup, AlertVariant, Button, Flex, FlexItem, Form,
   FormGroup, FormHelperText, getUniqueId, Modal,
-  ModalVariant, Switch, Text,
-  TextContent, TextInput, TextVariants
+  ModalVariant, Switch, TextInput
 } from "@patternfly/react-core";
 import { CheckCircleIcon, ExclamationCircleIcon, PlusIcon } from "@patternfly/react-icons";
 import { useSession } from "next-auth/react";
