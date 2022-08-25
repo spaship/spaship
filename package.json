@@ -1,7 +1,7 @@
 {
   "name": "@spaship/spaship",
   "description": "Monorepo for the SPAship project.",
-  "version": "0.3.3",
+  "version": "22.08.0",
   "private": true,
   "devDependencies": {
     "babel-jest": "26.6.0",
