@@ -138,7 +138,7 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
                     {spa.name}
                   </Button>
                 </Td>
-                <Td> {spa.name.startsWith('/') ? spa.name : `/${spa.name}`} </Td>
+                <Td> {spa.path.startsWith('/') ? spa.path : `/${spa.path}`} </Td>
                 <Td>{spa.env.map((envName: string, _index: any) => <StyledLabel key={_index}>{envName}</StyledLabel>)}</Td>
               </Tr>
               <Tr key={rowIndex} isExpanded={isSPAExpanded(spa.name)}>
