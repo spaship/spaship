@@ -26,7 +26,8 @@ module.exports = {
       {
         namedComponents: 'arrow-function'
       }
-    ]
+    ],
+    'react/no-unknown-property': ['error', { ignore: ['jsx'] }]
   },
   settings: {
     'import/resolver': {
