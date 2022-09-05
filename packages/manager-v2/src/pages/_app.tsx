@@ -1,7 +1,12 @@
+/* eslint-disable react/jsx-props-no-spreading */
+import { SessionProvider } from 'next-auth/react';
 import type { AppProps } from 'next/app';
 import '@patternfly/react-core/dist/styles/base.css';
-import '../styles/globals.css';
+import '@app/styles/globals.css';
 
-// eslint-disable-next-line react/jsx-props-no-spreading
-const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => <Component {...pageProps} />;
+const MyApp = ({ Component, pageProps: { session, ...pageProps } }: AppProps): JSX.Element => (
+  <SessionProvider>
+    <Component {...pageProps} />
+  </SessionProvider>
+);
 export default MyApp;

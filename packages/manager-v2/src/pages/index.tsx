@@ -1,13 +1,6 @@
-import { Card, CardBody, CardTitle } from '@patternfly/react-core';
 import type { NextPage } from 'next';
+import { WebPropertyListPage } from '@app/views/WebPropertyListPage';
 
-const Home: NextPage = () => (
-  <div>
-    <Card>
-      <CardTitle>SPASHIP MANAGER</CardTitle>
-      <CardBody>Something</CardBody>
-    </Card>
-  </div>
-);
+const Home: NextPage = () => <WebPropertyListPage />;
 
 export default Home;

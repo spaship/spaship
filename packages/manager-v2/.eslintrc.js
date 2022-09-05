@@ -4,13 +4,7 @@ module.exports = {
     browser: true,
     es2021: true
   },
-  extends: [
-    'plugin:react/recommended',
-    'airbnb',
-    'airbnb/hooks',
-    'standard-with-typescript',
-    'prettier'
-  ],
+  extends: ['airbnb', 'airbnb-typescript', 'airbnb/hooks', 'plugin:react/recommended', 'prettier'],
   overrides: [],
   parserOptions: {
     ecmaVersion: 'latest',
@@ -33,5 +27,10 @@ module.exports = {
         namedComponents: 'arrow-function'
       }
     ]
+  },
+  settings: {
+    'import/resolver': {
+      typescript: {}
+    }
   }
 };

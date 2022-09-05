@@ -1,7 +1,58 @@
+@import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
+@import '@patternfly/react-styles/css/utilities/Text/text.css';
+
+:root {
+  --spaship-global--Color--spaship-gray: #333333;
+  --spaship-global--Color--light-gray: #d2d2d2;
+  --spaship-global--Color--bright-gray: #eaeaea;
+  --spaship-global--Color--sonic-silver: #72767b;
+  --spaship-global--Color--solar-orange: #fdb716;
+  --spaship-global--Color--amarillo-flare: #fed402;
+  --spaship-global--Color--munsell-yellow: #f1c904;
+  --spaship-global--Color--text-black: #151515;
+  --spaship-global--Color--ui-blue: #0066cc;
+  --spaship-global--Font-Family: RedHatDisplay, Overpass, Roboto, Cantarell, helvetica, arial, sans-serif;
+  --spaship-table-container-max-width: 1041px;
+  --spaship-button-width-200: 200px;
+  --spaship-card-hight-160: 160px;
+  --pf-global--FontWeight--bold: 500;
+}
+
 html,
 body {
   padding: 0;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+.pf-c-page {
+  --pf-c-page__main-section--BackgroundColor: #fff !important;
+  height: 100vh !important;
+}
+
+.pf-c-page__sidebar-body {
+  height: 100% !important;
+}
+
+.pf-c-button {
+  --pf-c-button--m-link--Color: #000 !important;
+}
+
+.pf-m-primary {
+  --pf-c-button--m-primary--BackgroundColor: var(--spaship-global--Color--amarillo-flare) !important;
+  --pf-c-button--m-primary--Color: var(--spaship-global--Color--text-black) !important;
+  outline: none;
+}
+
+.pf-m-primary:hover {
+  --pf-c-button--m-primary--BackgroundColor: var(--spaship-global--Color--solar-orange) !important;
+}
+
+.pf-m-primary:focus {
+  --pf-c-button--m-primary--focus--BackgroundColor: var(--spaship-global--Color--solar-orange) !important;
+}
+
+.pf-m-primary:active {
+  --pf-c-button--m-primary--active--BackgroundColor: var(--spaship-global--Color--munsell-yellow) !important;
 }
