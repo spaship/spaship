@@ -10,6 +10,7 @@ const { getUserUUID } = require("../utils/requestUtil");
 const { uuid } = require("uuidv4");
 const jwt = require("jsonwebtoken");
 const alias = require("../models/alias");
+const activityStream = require("../models/activityStream");
 const _ = require("lodash");
 const APIKey = require("../models/apiKey");
 const axios = require("axios");
@@ -19,6 +20,7 @@ const path = require("path");
 const config = require("../config");
 const { hash } = require("../utils/cryptoUtil");
 const ValidationError = require("../utils/errors/ValidationError");
+const saveActivity = require("./operatorServices/operations/saveActivity");
 
 module.exports.list = async (req, res, next) => {
   const list = await FileService.getAll();
@@ -70,7 +72,9 @@ module.exports.deploy = async (req, res, next) => {
   if (!validatePropertyName(req, next)) return;
   const userId = getUserUUID(req);
   const name = getNameRequest(req);
-  const ref = getRefRequest(req);
+  const identifier = getIdentifier(name);
+  const nextRef = getRefRequest(req);
+  const ref = "";
   const { path: appPath } = getRequestBody(req);
   const { path: spaArchive } = getPath(req);
   const propertyName = getPropertyName(req);
@@ -86,7 +90,7 @@ module.exports.deploy = async (req, res, next) => {
   ) {
     try {
       const response = await DeployService.deploy({
-        name,
+        name: identifier,
         spaArchive,
         appPath,
         ref,
@@ -96,16 +100,18 @@ module.exports.deploy = async (req, res, next) => {
       });
 
       if (response) {
-        const application = await Application.findOne({ propertyName, name, path: appPath, env });
+        const application = await Application.findOne({ propertyName, identifier, path: appPath, env });
         try {
           if (application) {
-            await Application.updateOne({ propertyName, name, path: appPath, env }, { ref });
+            await Application.updateOne({ propertyName, identifier, path: appPath, env }, { name, nextRef });
           } else {
             await Application.create({
               propertyName,
               name: name,
+              identifier,
               path: appPath,
               ref,
+              nextRef,
               userId,
               env,
               namespace,
@@ -179,6 +185,17 @@ module.exports.validate = async (req, res, next) => {
     expiredDate,
   };
   const apikey = await APIKey.create(data);
+
+
+  const _createApikey = "CREATE_APIKEY"
+  const activity = new activityStream({
+    source: userId,
+    action: _createApikey,
+    propertyName: propertyName,
+    props: { env: envs.toString(), spaName: "NA" },
+  });
+  await saveActivity(activity)
+
   return res.status(200).json({ propertyName: apikey.propertyName, token: apikey.key });
 };
 
@@ -275,4 +292,20 @@ function validateProperties(request, next) {
     return false;
   }
   return true;
+}
+
+
+function getIdentifier(req) {
+  return encodeURIComponent(req)
+    .toLowerCase()
+    /* Replace the encoded hexadecimal code with `-` */
+    .replace(/%[0-9a-zA-Z]{2}/g, '-')
+    /* Replace any special characters with `-` */
+    .replace(/[\ \-\/\:\@\[\]\`\{\~\.]+/g, '-')
+    /* Special characters are replaced by an underscore */
+    .replace(/[\|!@#$%^&*;"<>\(\)\+,]/g, '_')
+    /* Remove any starting or ending `-` */
+    .replace(/^-+|-+$/g, '')
+    /* Removing multiple consecutive `-`s */
+    .replace(/--+/g, '-');
 }
