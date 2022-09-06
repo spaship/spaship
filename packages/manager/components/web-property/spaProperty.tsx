@@ -29,31 +29,36 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
   const { envList } = webprop;
   const tableView: Array<SPAProperty> = Object.values(webprop?.countResponse?.reduce((acc: any, spa: any) => {
     const url = `${envList.find((environment: any) => environment.env === spa.env).url}${spa.path.startsWith('/') ? spa.path : `/${spa.path}`}`;
-    if (acc.hasOwnProperty(spa.name)) {
-      acc[spa.name].env.push(spa.env);
-      acc[spa.name].details.push(
-        {
-          env: spa.env,
-          url,
-          ref: spa.ref,
-          updatedAt: spa.updatedAt,
-          accessUrl: spa.accessUrl ?? spa.accessUrl.endsWith('/') ? spa.accessUrl : `${spa.accessUrl}/`,
-        }
-      )
+    if (spa.accessUrl.length > 0) {
+      if (acc.hasOwnProperty(spa.identifier)) {
+        acc[spa.identifier].env.push(spa.env);
+        acc[spa.identifier].details.push(
+          {
+            env: spa.env,
+            name: spa.name,
+            url,
+            ref: spa.ref,
+            updatedAt: spa.updatedAt,
+            accessUrl: spa.accessUrl ?? spa.accessUrl.endsWith('/') ? spa.accessUrl : `${spa.accessUrl}/`,
+            identifier: spa.identifier
+          }
+        )
+        return acc;
+      }
+      acc[spa.identifier] = {
+        ...spa,
+        env: [spa.env],
+        details: [
+          {
+            env: spa.env,
+            url,
+            ref: spa.ref,
+            updatedAt: spa.updatedAt,
+            accessUrl: spa.accessUrl ?? spa.accessUrl.endsWith('/') ? spa.accessUrl : `${spa.accessUrl}/`,
+          },
+        ],
+      }
       return acc;
-    }
-    acc[spa.name] = {
-      ...spa,
-      env: [spa.env],
-      details: [
-        {
-          env: spa.env,
-          url,
-          ref: spa.ref,
-          updatedAt: spa.updatedAt,
-          accessUrl: spa.accessUrl ?? spa.accessUrl.endsWith('/') ? spa.accessUrl : `${spa.accessUrl}/`,
-        },
-      ],
     }
     return acc;
   }, {}));
@@ -70,15 +75,15 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
   const [searchValue, setSearchValue] = useState('');
   const debounce = (delay: number,) => {
     let timer: any;
-    return function(value: string) {
+    return function (value: string) {
       clearTimeout(timer);
-      timer = setTimeout( () => {
+      timer = setTimeout(() => {
         setTableData(tableView.filter((item: any) => item.name.toLowerCase().includes(value.toLowerCase())))
       }, delay)
-     }
+    }
   }
   const onSearch = debounce(300);
-  const onClear= () => setSearchValue('');
+  const onClear = () => setSearchValue('');
   const lengthLimit = 20;
   return (
     <>
@@ -106,25 +111,25 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
             <Tbody>
               <Tr>
                 <Td colSpan={4}>
-                {
-                !!!tableData.length &&
-                  <EmptyState>
-                    <EmptyStateIcon icon={SearchIcon} />
-                    <Title headingLevel="h4" size="lg">
-                      No results found
-                    </Title>
-                    <EmptyStateBody>
-                      Search for another SPA name.
-                    </EmptyStateBody>
-                  </EmptyState>
-                }
-              </Td>
-            </Tr>
-          </Tbody>
+                  {
+                    !!!tableData.length &&
+                    <EmptyState>
+                      <EmptyStateIcon icon={SearchIcon} />
+                      <Title headingLevel="h4" size="lg">
+                        No results found
+                      </Title>
+                      <EmptyStateBody>
+                        Search for another SPA name.
+                      </EmptyStateBody>
+                    </EmptyState>
+                  }
+                </Td>
+              </Tr>
+            </Tbody>
           }
           {tableData.map((spa: SPAProperty, rowIndex: any) => (
             <Tbody key={spa.name} isExpanded={isSPAExpanded(spa.name)}>
-              <Tr key={spa.name} {... (rowIndex % 2 === 0) && { isStriped: true}}>
+              <Tr key={spa.name} {... (rowIndex % 2 === 0) && { isStriped: true }}>
                 <Td
                   expand={
                     spa ? {
@@ -134,7 +139,7 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
                     } : undefined
                   } />
                 <Td>
-                  <Button onClick={() => router.push(`${spa.propertyName}/spa/${spa.name}`)} variant="link" isInline>
+                  <Button onClick={() => router.push(`${spa.propertyName}/spa/${spa.identifier}`)} variant="link" isInline>
                     {spa.name}
                   </Button>
                 </Td>
@@ -160,27 +165,27 @@ const SPAProperty: FunctionComponent<Properties> = ({ webprop, }: Properties) =>
                             <Td><StyledLabel>{detail.env}</StyledLabel></Td>
                             <Td>{detail.ref.length > lengthLimit ? `${detail.ref.substring(0, lengthLimit)}...` : detail.ref}</Td>
                             <Td>
-                              <a 
-                                href={`https://${detail.url}`} 
-                                target="_blank" 
+                              <a
+                                href={`https://${detail.url}`}
+                                target="_blank"
                                 rel="noopener noreferrer">
-                                <StyledExternalLinkAltIcon /> 
-                                {detail.url.length > lengthLimit ? `${detail.url.substring(0, lengthLimit)}...` : detail.url} 
+                                <StyledExternalLinkAltIcon />
+                                {detail.url.length > lengthLimit ? `${detail.url.substring(0, lengthLimit)}...` : detail.url}
                               </a>
                             </Td>
                             <Td>
                               {
                                 detail.accessUrl
-                                ? 
-                                <a 
-                                  href={`${detail.accessUrl}`} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer">
-                                  <StyledExternalLinkAltIcon /> 
-                                  {`${detail.accessUrl.substring(0, lengthLimit)}...`} 
-                                </a> 
-                                :
-                                'N/A'
+                                  ?
+                                  <a
+                                    href={`${detail.accessUrl}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer">
+                                    <StyledExternalLinkAltIcon />
+                                    {`${detail.accessUrl.substring(0, lengthLimit)}...`}
+                                  </a>
+                                  :
+                                  'N/A'
                               }
                             </Td>
                             <Td><ClockIcon /> {new Date(detail.updatedAt).toLocaleString('en')}</Td>
