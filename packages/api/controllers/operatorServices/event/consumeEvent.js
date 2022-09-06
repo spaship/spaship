@@ -66,11 +66,13 @@ async function createEventTimeTraceRequest(response) {
   if (response.accessUrl == null) return;
   const property = { WEBSITE_CREATED: "WEBSITE_CREATED", WEBSITE_CREATION_STARTED: "WEBSITE_CREATION_STARTED" };
   const propertyName = response.websiteName;
-  const name = response?.spaName;
+  const identifier = response?.spaName;
   const path = getPath(response);
   const env = response?.environmentName;
   const accessUrl = response?.accessUrl;
-  const applicationResponse = await application.updateOne({ propertyName, name, path, env }, { accessUrl });
+  const lastApplicationRecord = await application.findOne({ propertyName, identifier, path, env });
+  const ref = lastApplicationRecord.nextRef;
+  const applicationResponse = await application.updateOne({ propertyName, identifier, path, env }, { accessUrl, ref });
   console.log(applicationResponse);
   const currentTime = new Date();
   const eventRequest = await event.findOne({ eventId: response.uuid }).sort({ createdAt: 1 }).lean().exec();
@@ -83,7 +85,7 @@ async function createEventTimeTraceRequest(response) {
     traceId: response.uuid,
     propertyName: propertyName,
     env: env,
-    spaName: name,
+    spaName: identifier,
     initialCode: property.WEBSITE_CREATION_STARTED,
     finalCode: property.WEBSITE_CREATED,
     failure: false,
