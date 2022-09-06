@@ -2,10 +2,10 @@ import { ReactNode } from 'react';
 import { Card, CardBody, CardFooter, CardTitle, Text, Title } from '@patternfly/react-core';
 
 type Props = {
-  title: ReactNode;
-  subtitle: ReactNode;
+  title?: ReactNode;
+  subtitle?: ReactNode;
   children?: ReactNode;
-  footer: ReactNode;
+  footer?: ReactNode;
 };
 
 export const WebPropertyCard = ({ title, subtitle, children, footer }: Props) => (
@@ -17,7 +17,7 @@ export const WebPropertyCard = ({ title, subtitle, children, footer }: Props) =>
     className="pf-u-px-sm rounded-md transition hover:shadow-sm"
   >
     <CardTitle>
-      <Title headingLevel="h3" size="xl">
+      <Title headingLevel="h3" size="xl" className="capitalize">
         {title}
       </Title>
       <Text component="small" className="pf-u-color-400">
@@ -32,5 +32,8 @@ export const WebPropertyCard = ({ title, subtitle, children, footer }: Props) =>
 );
 
 WebPropertyCard.defaultProps = {
-  children: null
+  children: null,
+  title: '',
+  subtitle: '',
+  footer: ''
 };

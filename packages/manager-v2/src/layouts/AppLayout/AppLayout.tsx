@@ -1,17 +1,6 @@
 import { ReactNode } from 'react';
 
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  Flex,
-  FlexItem,
-  Page,
-  PageSection,
-  Stack,
-  StackItem,
-  Title,
-  TitleSizes
-} from '@patternfly/react-core';
+import { Flex, FlexItem, Page } from '@patternfly/react-core';
 
 import { SideBar } from './components/SideBar';
 import { Nav } from './components/Nav';
@@ -33,29 +22,6 @@ export const AppLayout = ({ children }: Props): JSX.Element => (
       style={{ height: '100%' }}
       flexWrap={{ default: 'nowrap' }}
     >
-      <FlexItem>
-        <PageSection
-          isWidthLimited
-          isCenterAligned
-          className="pf-u-px-4xl"
-          style={{ backgroundColor: 'var(--spaship-global--Color--spaship-gray)', color: '#fff' }}
-        >
-          <Stack hasGutter>
-            <StackItem>
-              <Title headingLevel="h1" size={TitleSizes['2xl']}>
-                Your Web Properties
-              </Title>
-            </StackItem>
-            <StackItem>
-              <Breadcrumb>
-                <BreadcrumbItem>Section home</BreadcrumbItem>
-                <BreadcrumbItem>Section title</BreadcrumbItem>
-                <BreadcrumbItem>Section title</BreadcrumbItem>
-              </Breadcrumb>
-            </StackItem>
-          </Stack>
-        </PageSection>
-      </FlexItem>
       <FlexItem grow={{ default: 'grow' }}>{children}</FlexItem>
       <FlexItem>
         <Footer />

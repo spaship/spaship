@@ -1,12 +1,31 @@
 import { useQuery } from '@tanstack/react-query';
 import { orchestratorReq } from '@app/config/orchestratorReq';
-import { OrchServerRes } from '@app/types';
+import { TUniqueWebProperty, TWebProperty } from './types';
 
-import { TWebPropertyList } from './types';
-
-const fetchWebProperties = async (): Promise<OrchServerRes<TWebPropertyList>> => {
-  const { data } = await orchestratorReq.get('/webproperty/alias/list');
-  return data;
+const webPropertyKeys = {
+  list: ['web-properties'] as const
 };
 
-export const useGetWebProperties = () => useQuery(['web-properties'], fetchWebProperties);
+const fetchWebProperties = async (): Promise<TWebProperty[]> => {
+  const { data } = await orchestratorReq.get('/webproperty/alias/list');
+  return data.data;
+};
+
+export const useGetWebProperties = <T extends unknown>(select?: (data: TWebProperty[]) => T) =>
+  useQuery(webPropertyKeys.list, fetchWebProperties, { select });
+
+const transformAllToUniqueWebProperties = (webProperties: TWebProperty[]): TUniqueWebProperty[] => {
+  const hasSeenWebProperty: Record<string, boolean> = {};
+  const uniqueWebProperties: TUniqueWebProperty[] = [];
+  webProperties.forEach(({ createdBy, propertyName, propertyTitle, url }) => {
+    if (!hasSeenWebProperty?.[propertyName]) {
+      uniqueWebProperties.push({ createdBy, propertyName, url, propertyTitle });
+      hasSeenWebProperty[propertyName] = true;
+    }
+  });
+
+  return uniqueWebProperties;
+};
+
+export const useGetUniqueWebProperties = () =>
+  useGetWebProperties(transformAllToUniqueWebProperties);

@@ -1,4 +1,4 @@
-export type TWebPropertyList = {
+export type TWebProperty = {
   _id: string;
   propertyTitle: string;
   propertyName: string;
@@ -12,4 +12,11 @@ export type TWebPropertyList = {
   createdAt: Date;
   updatedAt: Date;
   id: string;
+};
+
+export type TUniqueWebProperty = {
+  propertyTitle: string;
+  propertyName: string;
+  url: string;
+  createdBy: string;
 };

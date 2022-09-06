@@ -91,3 +91,12 @@ body {
 .transition{
   transition: all 150ms linear;
 }
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.text-decoration-none{
+  text-decoration: none;
+  color: inherit;
+}
