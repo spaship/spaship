@@ -7,6 +7,11 @@ const ApplicationSchema = new Schema(
       type: String,
       required: true,
     },
+    identifier: {
+      type: String,
+      required: true,
+      index: true,
+    },
     name: {
       type: String,
       required: true,
@@ -26,13 +31,17 @@ const ApplicationSchema = new Schema(
       type: String,
       required: false,
     },
+    nextRef: {
+      type: String,
+      required: false,
+    },
     namespace: {
       type: String,
       required: false,
     },
-    accessUrl:{
-      type : String,
-      required : false,
+    accessUrl: {
+      type: String,
+      required: false,
     },
     isActive: {
       type: Boolean,

@@ -53,6 +53,9 @@ async function fetchSearchResultForSPA(props) {
         path: "$path",
         ref: "$ref",
         env: "$env",
+        identifier: "$identifier",
+        nextRef: "$nextRef",
+        env: "$env",
         accessUrl: "$accessUrl",
         updatedAt: "$updatedAt",
         _id: 0,
@@ -67,7 +70,7 @@ async function fetchSearchResultForSPA(props) {
     {
       $limit: props.page.limit,
     },
-   
+
   ]);
 }
 
