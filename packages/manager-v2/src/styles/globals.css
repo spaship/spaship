@@ -28,6 +28,7 @@ body {
 }
 
 .pf-c-page {
+  --pf-c-page--BackgroundColor: #fff !important;
   --pf-c-page__main-section--BackgroundColor: #fff !important;
   height: 100vh !important;
 }
@@ -71,5 +72,22 @@ body {
   --pf-c-nav__link--hover--Color: var(--spaship-global--Color--solar-orange);
   --pf-c-nav__link--hover--after--BorderLeftWidth: 2px;
   --pf-c-nav__link--hover--after--BorderColor: var(--spaship-global--Color--solar-orange);
+  --pf-c-nav__link--m-current--after--BorderColor:var(--spaship-global--Color--solar-orange);
   transition: all 250ms linear;
+}
+
+.rounded-md {
+  border-radius: 8px !important;
+}
+
+.shadow-sm {
+  box-shadow: 0px 3px 6px #00000029 !important;
+}
+
+.hover\:shadow-sm:hover{
+  box-shadow: 0px 3px 6px #00000029 !important;
+}
+
+.transition{
+  transition: all 150ms linear;
 }

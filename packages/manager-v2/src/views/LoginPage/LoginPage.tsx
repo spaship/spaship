@@ -5,79 +5,21 @@ import Router from 'next/router';
 import {
   Bullseye,
   Button,
-  ButtonVariant,
   Card,
   CardBody,
   CardTitle,
   Flex,
   FlexItem,
-  Masthead,
-  MastheadBrand,
-  MastheadContent,
-  MastheadMain,
   Page,
   PageSection,
   Spinner,
   Text,
   Title,
-  TitleSizes,
-  Toolbar,
-  ToolbarContent,
-  ToolbarGroup,
-  ToolbarItem
+  TitleSizes
 } from '@patternfly/react-core';
-import { FileIcon, GithubIcon } from '@patternfly/react-icons';
 
-import { env } from '@app/config/env';
 import { useToggle } from '@app/hooks';
-
-const PageNav = () => (
-  <Masthead backgroundColor="light">
-    <MastheadMain>
-      <MastheadBrand>
-        <img src="/img/spaship-logo.svg" alt="SPASHIP" style={{ height: '32px' }} />
-      </MastheadBrand>
-    </MastheadMain>
-    <MastheadContent>
-      <Toolbar id="toolbar" isFullHeight isStatic>
-        <ToolbarContent>
-          <ToolbarGroup
-            variant="icon-button-group"
-            alignment={{ default: 'alignRight' }}
-            spacer={{ default: 'spacerNone', md: 'spacerMd' }}
-          >
-            <ToolbarItem>
-              <Button
-                component="a"
-                aria-label="DOC URL"
-                variant={ButtonVariant.link}
-                icon={<FileIcon />}
-                href={env.PUBLIC_DOC_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Documentation
-              </Button>
-            </ToolbarItem>
-            <ToolbarItem>
-              <Button
-                aria-label="GitHub URL"
-                variant={ButtonVariant.link}
-                icon={<GithubIcon />}
-                href={env.PUBLIC_GITHUB_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                component="a"
-              >
-                GitHub
-              </Button>
-            </ToolbarItem>
-          </ToolbarGroup>
-        </ToolbarContent>
-      </Toolbar>
-    </MastheadContent>
-  </Masthead>
-);
+import { Nav } from './components/Nav';
 
 export const LoginPage = (): JSX.Element => {
   const [isLoggingIn, setIsLoggingIn] = useToggle();
@@ -97,7 +39,7 @@ export const LoginPage = (): JSX.Element => {
   };
 
   return (
-    <Page header={<PageNav />}>
+    <Page header={<Nav />}>
       <PageSection>
         {status === 'loading' ? (
           <Bullseye>

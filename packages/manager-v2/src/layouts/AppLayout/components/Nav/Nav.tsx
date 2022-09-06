@@ -1,3 +1,4 @@
+import Router from 'next/router';
 import { signOut, useSession } from 'next-auth/react';
 
 import {
@@ -29,9 +30,13 @@ export const Nav = () => {
 
   const onSignOut = () => {
     setIsSigningOut.on();
-    signOut({ callbackUrl: '/login' }).finally(() => {
-      setIsSigningOut.off();
-    });
+    signOut({ redirect: false, callbackUrl: '/login' })
+      .then((data) => {
+        Router.push(data.url);
+      })
+      .catch(() => {
+        setIsSigningOut.off();
+      });
   };
 
   return (

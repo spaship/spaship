@@ -6,4 +6,6 @@ const Home: NextPageWithLayout = () => <WebPropertyListPage />;
 
 Home.getLayout = getAppLayout;
 
+Home.isProtected = true;
+
 export default Home;

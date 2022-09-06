@@ -9,7 +9,9 @@ import { env } from '@app/config/env';
 
 async function refreshAccessToken(token: any) {
   try {
-    if (Date.now() > token.refreshTokenExpired) throw new Error('refresh token expired');
+    if (Date.now() > token.refreshTokenExpired) {
+      return { ...token, error: 'RefreshAccessTokenError' };
+    }
 
     const params = new url.URLSearchParams({
       client_id: env.SPASHIP_AUTH_KEYCLOAK_ID,
@@ -79,7 +81,7 @@ export default NextAuth({
     session: async ({ session, token }) => {
       const sess = { ...session };
       sess.error = token.error;
-      sess.accessToken = token.accessToken;
+      sess.accessToken = token.accessToken as string;
       return sess;
     }
   }

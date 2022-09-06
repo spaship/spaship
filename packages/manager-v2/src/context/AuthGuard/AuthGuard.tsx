@@ -1,0 +1,47 @@
+import { useEffect } from 'react';
+import { signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+
+import { setOrchestratorAuthorizationHeader } from '@app/config/orchestratorReq';
+import { Bullseye, Spinner } from '@patternfly/react-core';
+
+type Props = {
+  children: JSX.Element;
+};
+
+export const AuthGuard = ({ children }: Props) => {
+  const router = useRouter();
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated: () => {
+      router.push('/login');
+    }
+  });
+
+  // set the access token header when available for orchestrator requests
+  useEffect(() => {
+    if (session?.accessToken) {
+      setOrchestratorAuthorizationHeader(session?.accessToken as string);
+    }
+  }, [session?.accessToken]);
+
+  // if the refresh token failed in backend. Signout and ask user to login
+  useEffect(() => {
+    if (session?.error) {
+      signOut({ redirect: false, callbackUrl: '/login' }).then((data) => {
+        router.push(data.url);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.error]);
+
+  if (status === 'loading' || session?.error) {
+    return (
+      <Bullseye>
+        <Spinner size="xl" />
+      </Bullseye>
+    );
+  }
+
+  return children;
+};

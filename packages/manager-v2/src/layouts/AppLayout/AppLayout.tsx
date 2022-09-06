@@ -31,6 +31,7 @@ export const AppLayout = ({ children }: Props): JSX.Element => (
       direction={{ default: 'column' }}
       spaceItems={{ default: 'spaceItemsNone' }}
       style={{ height: '100%' }}
+      flexWrap={{ default: 'nowrap' }}
     >
       <FlexItem>
         <PageSection
@@ -42,7 +43,7 @@ export const AppLayout = ({ children }: Props): JSX.Element => (
           <Stack hasGutter>
             <StackItem>
               <Title headingLevel="h1" size={TitleSizes['2xl']}>
-                Properties
+                Your Web Properties
               </Title>
             </StackItem>
             <StackItem>
@@ -55,9 +56,7 @@ export const AppLayout = ({ children }: Props): JSX.Element => (
           </Stack>
         </PageSection>
       </FlexItem>
-      <FlexItem grow={{ default: 'grow' }}>
-        <PageSection className="pf-u-h-100">{children}</PageSection>
-      </FlexItem>
+      <FlexItem grow={{ default: 'grow' }}>{children}</FlexItem>
       <FlexItem>
         <Footer />
       </FlexItem>

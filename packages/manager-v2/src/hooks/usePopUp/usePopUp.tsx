@@ -58,6 +58,6 @@ export const usePopUp = <T extends Readonly<string[]> | UsePopUpProps[]>(
     popUp,
     handlePopUpOpen,
     handlePopUpClose,
-    handlePopUpToggle,
+    handlePopUpToggle
   };
 };
