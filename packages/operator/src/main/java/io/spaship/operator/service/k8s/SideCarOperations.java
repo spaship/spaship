@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.io.File;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -164,7 +165,7 @@ public class SideCarOperations {
     var envName = environment.getName();
     return "http://".concat(appInstancePrefix).concat(".").concat(ns).concat(".").concat(websiteName)
       .concat(".").concat(envName).concat(".").concat(domain).concat("/")
-      .concat(environment.getSpaContextPath().replace(".", ""));
+      .concat(environment.getSpaContextPath().replace(".", "").replace(File.separator,"_"));
   }
 
   private void waitForReadiness(Environment env) throws InterruptedException {
