@@ -2,10 +2,13 @@ const alias = require("../../../models/alias");
 const { uuid } = require("uuidv4");
 const ValidationError = require("../../../utils/errors/ValidationError");
 const envCreation = require("./envCreation");
+const saveActivity = require("./saveActivity");
 
 module.exports = async function saveAlias(req, res, next) {
   console.log(req.body);
+
   const request = req.body;
+
   if (checkProperties(request)) {
     return next(new ValidationError("Missing properties in request body"));
   }
@@ -19,18 +22,43 @@ module.exports = async function saveAlias(req, res, next) {
   if (result) {
     return next(new ValidationError("Propertyname & Env exists."));
   }
+
   let id = await getGeneratedAliasId();
 
   let aliasRequest = await createAliasRequest(id, request);
-  const createdResponse = await createEvent(aliasRequest);
-  try{
-      await envCreation(request)
+
+
+  const checkProperty = await alias.findOne({ propertyName: getPropertyName(request) });
+  if (!checkProperty) {
+    const _createProperty = "CREATE_PROPERTY"
+    const activity = {
+      source: getCreatedBy(request),
+      action: _createProperty,
+      propertyName: getPropertyName(request),
+      props: { env: "NA", spaName: "NA" },
+    };
+    await saveActivity(activity)
   }
-  catch(e){
+
+  const createdResponse = await createEvent(aliasRequest);
+  try {
+    await envCreation(request)
+  }
+  catch (e) {
     console.log(e);
-    await alias.findOneAndDelete({ id:createdResponse.id });
+    await alias.findOneAndDelete({ id: createdResponse.id });
     return res.status(500).send({ message: `Issue in creating webproperty` });
   }
+
+  const _createProperty = "CREATE_ENV"
+  const activity = {
+    source: getCreatedBy(request),
+    action: _createProperty,
+    propertyName: getPropertyName(request),
+    props: { env: getEnv(request), spaName: "NA" },
+  };
+  await saveActivity(activity)
+
   return res.send(createdResponse);
 };
 
