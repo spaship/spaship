@@ -30,10 +30,9 @@ function getDocument(req) {
 function createBulkData(docs, currentDate, bulk) {
   for (i = 0; i < getDocumentCounts(docs); i += 1) {
     docs[i]._id = null;
-    docs[i].createdAt = currentDate;
-    docs[i].updatedAt = currentDate;
+    docs[i].createdAt = new Date(docs[i].createdAt);
+    docs[i].updatedAt = new Date(docs[i].updatedAt);
     console.log(docs[i]);
-    docs[i].name = docs[i].name.toString().toLowerCase().replace(/ /g, "-");
     bulk.insert(docs[i]);
   }
 }

@@ -27,10 +27,9 @@ function getDocument(req) {
 function createBulkData(docs, currentDate, bulk) {
   for (i = 0; i < getDocumentCounts(docs); i += 1) {
     docs[i]._id = null;
-    if (docs[i].createdAt) {
-      docs[i].createdAt = new Date(docs[i].createdAt.$date);
-      bulk.insert(docs[i]);
-    }
+    docs[i].createdAt = new Date(docs[i].createdAt);
+    docs[i].updatedAt = new Date(docs[i].updatedAt);
+    bulk.insert(docs[i]);
   }
 }
 
