@@ -1,1 +1,1 @@
-export { useGetWebProperties, useGetUniqueWebProperties } from './queries';
+export { useGetWebProperties, useGetUniqueWebProperties, useAddWebPropery } from './queries';

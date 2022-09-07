@@ -20,3 +20,13 @@ export type TUniqueWebProperty = {
   url: string;
   createdBy: string;
 };
+
+export type TCreateWebPropertyDTO = {
+  propertyTitle: string;
+  propertyName: string;
+  deploymentConnectionType: string;
+  url: string;
+  env: string;
+  createdBy: string;
+  type: string;
+};

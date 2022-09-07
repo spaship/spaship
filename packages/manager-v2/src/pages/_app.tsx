@@ -2,6 +2,8 @@
 import { SessionProvider } from 'next-auth/react';
 import type { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'react-hot-toast';
+import * as yup from 'yup';
 
 import { AuthGuard } from '@app/context/AuthGuard';
 import type { NextPageWithLayout } from '@app/types';
@@ -14,6 +16,24 @@ type AppPropsWithLayout = AppProps & {
 };
 
 const queryClient = new QueryClient();
+
+yup.addMethod(yup.string, 'noWhitespace', function noWhitespace() {
+  return this.matches(/^(\S+$)/, { message: 'Whitespace not allowed', excludeEmptyString: true });
+});
+
+yup.addMethod(yup.string, 'alphabetsOnly', function noWhitespace() {
+  return this.matches(/^[a-zA-Z\s]+$/, {
+    message: 'Alphabet characters only',
+    excludeEmptyString: true
+  });
+});
+
+yup.addMethod(yup.string, 'alphaNumbericOnly', function noWhitespace() {
+  return this.matches(/^[a-zA-Z0-9\s]+$/, {
+    message: 'Alphanumeric characters only',
+    excludeEmptyString: true
+  });
+});
 
 const MyApp = ({
   Component,
@@ -33,6 +53,7 @@ const MyApp = ({
             )
           : getLayout(<Component {...pageProps} />)}
       </QueryClientProvider>
+      <Toaster position="bottom-left" />
     </SessionProvider>
   );
 };

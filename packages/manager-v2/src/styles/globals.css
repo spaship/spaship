@@ -23,7 +23,7 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+  font-family: RedHatText,-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
@@ -74,6 +74,21 @@ body {
   --pf-c-nav__link--hover--after--BorderColor: var(--spaship-global--Color--solar-orange);
   --pf-c-nav__link--m-current--after--BorderColor:var(--spaship-global--Color--solar-orange);
   transition: all 250ms linear;
+}
+
+.pf-c-form__label-text{
+  font-family: RedHatDisplay;
+}
+
+.pf-c-switch__input:checked~.pf-c-switch__toggle {
+  --pf-c-switch__input--checked__toggle--BackgroundColor: var(--spaship-global--Color--solar-orange);
+}
+
+.pf-c-form-control:focus {
+  --pf-c-form-control--focus--BorderBottomColor:var(--spaship-global--Color--solar-orange);
+}
+.pf-c-form-control:hover {
+  --pf-c-form-control--hover--BorderBottomColor:var(--spaship-global--Color--solar-orange);
 }
 
 .rounded-md {

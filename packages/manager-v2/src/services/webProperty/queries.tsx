@@ -1,11 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { orchestratorReq } from '@app/config/orchestratorReq';
-import { TUniqueWebProperty, TWebProperty } from './types';
+import { TCreateWebPropertyDTO, TUniqueWebProperty, TWebProperty } from './types';
 
 const webPropertyKeys = {
   list: ['web-properties'] as const
 };
 
+// GET Operations
 const fetchWebProperties = async (): Promise<TWebProperty[]> => {
   const { data } = await orchestratorReq.get('/webproperty/alias/list');
   return data.data;
@@ -29,3 +30,20 @@ const transformAllToUniqueWebProperties = (webProperties: TWebProperty[]): TUniq
 
 export const useGetUniqueWebProperties = () =>
   useGetWebProperties(transformAllToUniqueWebProperties);
+
+// POST OPERATIONS
+
+const createAWebProperty = async (dto: TCreateWebPropertyDTO): Promise<TWebProperty> => {
+  const { data } = await orchestratorReq.post('/webproperty/alias', dto);
+  return data.data;
+};
+
+export const useAddWebPropery = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(createAWebProperty, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(webPropertyKeys.list);
+    }
+  });
+};
