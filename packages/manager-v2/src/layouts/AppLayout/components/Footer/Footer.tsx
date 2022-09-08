@@ -6,7 +6,7 @@ import {
   FlexItem,
   PageSection
 } from '@patternfly/react-core';
-import { GithubIcon, UserIcon } from '@patternfly/react-icons';
+import { BugIcon, GithubIcon, UserIcon } from '@patternfly/react-icons';
 import { env } from '@app/config/env';
 
 export const Footer = (): JSX.Element => (
@@ -24,6 +24,19 @@ export const Footer = (): JSX.Element => (
           component="a"
         >
           Contact Us
+        </Button>
+      </FlexItem>
+      <FlexItem>
+        <Button
+          aria-label="contact us"
+          variant={ButtonVariant.link}
+          icon={<BugIcon />}
+          href={env.PUBLIC_SPASHIP_REPORT_BUG}
+          target="_blank"
+          rel="noopener noreferrer"
+          component="a"
+        >
+          Report a bug
         </Button>
       </FlexItem>
       <FlexItem>

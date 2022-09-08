@@ -15,12 +15,12 @@ import {
   Split,
   SplitItem,
   Switch,
-  TextInput,
-  Title
+  TextInput
 } from '@patternfly/react-core';
 
 import { Banner } from '@app/components';
 import { useAddWebPropery } from '@app/services/webProperty';
+import { pageLinks } from '@app/links';
 
 import { addNewWebPropertySchema, FormData } from './AddWebProperty.utils';
 
@@ -51,7 +51,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
         type: 'operator'
       });
       toast.success('Web Property Created');
-      router.push(`/properties/${propertyID}`);
+      router.push(pageLinks.webPropertyDetailPage.replace('[propertyName]', propertyID));
     } catch (error) {
       toast.error('Failed to create property');
     }
@@ -59,11 +59,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
 
   return (
     <>
-      <Banner>
-        <Title headingLevel="h1" size="2xl">
-          Web Properties
-        </Title>
-      </Banner>
+      <Banner title="Add A New Web Property" backRef={pageLinks.webPropertyListPage} />
       <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
         <Form onSubmit={handleSubmit(onFormSubmit)} style={{ maxWidth: '720px' }}>
           <Controller
@@ -174,7 +170,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
             >
               Create
             </Button>
-            <Link href="/">
+            <Link href={pageLinks.webPropertyListPage}>
               <a>
                 <Button variant="link">Cancel</Button>
               </a>

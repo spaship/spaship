@@ -61,8 +61,6 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
     resolver: yupResolver(schema)
   });
 
-  console.log(token);
-
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Split hasGutter>
@@ -94,7 +92,7 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
             control={control}
             name="expiresIn"
             defaultValue=""
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
+            render={({ field: { onChange, value, onBlur }, fieldState: { error } }) => (
               <FormGroup
                 label="API Key Expiry"
                 fieldId="property-env-expiry"
@@ -104,8 +102,15 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
               >
                 <DatePicker
                   value={value}
-                  onBlur={(str) => onChange(str)}
-                  onChange={(str) => onChange(str)}
+                  onBlur={(str) => {
+                    onBlur();
+                    onChange(str);
+                  }}
+                  appendTo={() => document.body}
+                  onChange={(str) => {
+                    onChange(str);
+                    onBlur();
+                  }}
                 />
               </FormGroup>
             )}
@@ -151,12 +156,25 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
         {token}
       </ClipboardCopy>
       <ActionGroup>
-        <Button variant="primary" type="submit" isLoading={isSubmitting} isDisabled={isSubmitting}>
-          Create
-        </Button>
-        <Button variant="link" onClick={onClose}>
-          Cancel
-        </Button>
+        {token ? (
+          <Button variant="primary" onClick={onClose}>
+            Close
+          </Button>
+        ) : (
+          <>
+            <Button
+              variant="primary"
+              type="submit"
+              isLoading={isSubmitting}
+              isDisabled={isSubmitting}
+            >
+              Create
+            </Button>
+            <Button variant="link" onClick={onClose}>
+              Cancel
+            </Button>
+          </>
+        )}
       </ActionGroup>
     </Form>
   );

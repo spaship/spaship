@@ -1,5 +1,5 @@
-import { signIn, useSession } from 'next-auth/react';
 import { useEffect } from 'react';
+import { signIn, useSession } from 'next-auth/react';
 import Router from 'next/router';
 
 import {
@@ -19,6 +19,8 @@ import {
 } from '@patternfly/react-core';
 
 import { useToggle } from '@app/hooks';
+import { pageLinks } from '@app/links';
+
 import { Nav } from './components/Nav';
 
 export const LoginPage = (): JSX.Element => {
@@ -27,13 +29,13 @@ export const LoginPage = (): JSX.Element => {
 
   useEffect(() => {
     if (status === 'authenticated') {
-      Router.push('/');
+      Router.push(pageLinks.webPropertyListPage);
     }
   }, [status]);
 
   const onLogin = () => {
     setIsLoggingIn.on();
-    signIn('keycloak', { callbackUrl: '/' }).catch(() => {
+    signIn('keycloak', { callbackUrl: pageLinks.webPropertyListPage }).catch(() => {
       setIsLoggingIn.off();
     });
   };

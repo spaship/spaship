@@ -1,20 +1,24 @@
 import { ReactNode } from 'react';
 import { Card, CardBody, CardFooter, CardTitle, Text, Title } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 
 type Props = {
   title?: ReactNode;
   subtitle?: ReactNode;
   children?: ReactNode;
   footer?: ReactNode;
+  isSelected?: boolean;
 };
 
-export const WebPropertyCard = ({ title, subtitle, children, footer }: Props) => (
+export const WebPropertyCard = ({ title, subtitle, children, footer, isSelected }: Props) => (
   <Card
     isSelectable
     isFullHeight
     style={{ height: '200px' }}
     isRounded
-    className="pf-u-px-sm rounded-md transition hover:shadow-sm"
+    className={css('pf-u-px-sm rounded-md transition hover:shadow-sm', {
+      'selected-card': isSelected
+    })}
   >
     <CardTitle>
       <Title headingLevel="h3" size="xl" className="capitalize">
@@ -35,5 +39,6 @@ WebPropertyCard.defaultProps = {
   children: null,
   title: '',
   subtitle: '',
-  footer: ''
+  footer: '',
+  isSelected: false
 };

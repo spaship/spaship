@@ -25,6 +25,7 @@ import { useGetUniqueWebProperties } from '@app/services/webProperty';
 import { useGetDeploymentCounts } from '@app/services/analytics';
 import { Banner } from '@app/components';
 import { useDebounce, useToggle } from '@app/hooks';
+import { pageLinks } from '@app/links';
 
 import { WebPropertyCard } from './components/WebPropertyCard';
 import { WebPropertyCardSkeleton } from './components/WebPropertyCardSkeleton';
@@ -76,11 +77,7 @@ export const WebPropertyListPage = (): JSX.Element => {
 
   return (
     <>
-      <Banner>
-        <Title headingLevel="h1" size="2xl">
-          Web Properties
-        </Title>
-      </Banner>
+      <Banner title="Web Properties" />
       <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
         <Split hasGutter className="pf-u-mb-md">
           <SplitItem className="pf-u-w-33">
@@ -119,7 +116,7 @@ export const WebPropertyListPage = (): JSX.Element => {
             <Title headingLevel="h4" size="lg">
               {isWebPropertiesEmpty ? 'No web property found' : 'Something went wrong!!'}
             </Title>
-            <Link passHref href="/properties/new/">
+            <Link passHref href={pageLinks.newWebPropertyPage}>
               <Button variant="primary">Add a web property</Button>
             </Link>
           </EmptyState>
@@ -127,7 +124,7 @@ export const WebPropertyListPage = (): JSX.Element => {
           <Gallery hasGutter>
             {/* Add A Property Card */}
             <GalleryItem>
-              <Link href="/properties/new">
+              <Link href={pageLinks.newWebPropertyPage}>
                 <a className="text-decoration-none">
                   <WebPropertyCard>
                     <Flex
@@ -152,13 +149,14 @@ export const WebPropertyListPage = (): JSX.Element => {
               </Link>
             </GalleryItem>
             {/* List of Properties */}
-            {filteredWebProperties?.map(({ propertyName, propertyTitle, url }) => (
+            {filteredWebProperties?.map(({ propertyName, propertyTitle, url, createdBy }) => (
               <GalleryItem key={propertyName}>
-                <Link href={{ pathname: '/properties/[propertyName]', query: { propertyName } }}>
+                <Link href={{ pathname: pageLinks.webPropertyDetailPage, query: { propertyName } }}>
                   <a className="text-decoration-none">
                     <WebPropertyCard
                       title={propertyTitle}
                       subtitle={url}
+                      isSelected={createdBy === session?.user?.email}
                       footer={`${
                         webPropertyDeloymentCount?.data?.[propertyName] || 0
                       } Deployment(s)`}

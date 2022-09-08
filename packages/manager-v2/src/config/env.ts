@@ -2,6 +2,10 @@ export const env = {
   PUBLIC_SPASHIP_ORCHESTRATOR_BASE_URL: process.env.NEXT_PUBLIC_SPASHIP_API_BASE_URL,
   PUBLIC_GITHUB_URL: process.env.NEXT_PUBLIC_GITHUB_URL || 'https://github.com/spaship/spaship',
   PUBLIC_DOC_URL: process.env.NEXT_PUBLIC_DOC_URL || 'https://spaship.io',
+  PUBLIC_SPASHIP_GUIDE: process.env.NEXT_PUBLIC_SPASHIP_GUIDE || '',
+  PUBLIC_SPASHIP_REPORT_BUG:
+    process.env.NEXT_PUBLIC_SPASHIP_REPORT_BUG ||
+    'https://github.com/spaship/spaship/issues/new?assignees=&labels=bug&template=bug-report.md&title=%5BBug%5D%3A',
 
   // GitHub (https://github.com/organizations/spaship/settings/applications)
   SPASHIP_AUTH_GITHUB_ID: process.env.SPASHIP_AUTH__GITHUB_ID || '',

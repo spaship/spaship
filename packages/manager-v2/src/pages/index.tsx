@@ -1,8 +1,8 @@
-import { WebPropertyListPage } from '@app/views/WebPropertyListPage';
+import { HomePage } from '@app/views/HomePage';
 import { NextPageWithLayout } from '@app/types';
 import { getAppLayout } from '@app/layouts/AppLayout';
 
-const Home: NextPageWithLayout = () => <WebPropertyListPage />;
+const Home: NextPageWithLayout = () => <HomePage />;
 
 Home.getLayout = getAppLayout;
 

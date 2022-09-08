@@ -37,10 +37,11 @@ import {
   TrashIcon
 } from '@patternfly/react-icons';
 
-import { Banner, DeleteConfirmationModal } from '@app/components';
+import { Banner, DeleteConfirmationModal, TableRowSkeleton } from '@app/components';
 import { useAddWebPropery, useGetEnvList } from '@app/services/webProperty';
 import { useCreateAPIKey, useDeleteAPIKey, useGetApiKeys } from '@app/services/apiKeys';
-import { usePopUp } from '@app/hooks';
+import { useFormatDate, usePopUp } from '@app/hooks';
+import { pageLinks } from '@app/links';
 
 import { CreateEnvForm, FormData as EnvForm } from './components/CreateEnvForm/CreateEnvForm';
 import {
@@ -60,6 +61,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
   const { query } = useRouter();
   const propertyName = query.propertyName as string;
   const { data: session } = useSession();
+  const formatDate = useFormatDate();
 
   const envList = useGetEnvList(propertyName);
   const createAWebProp = useAddWebPropery(propertyName);
@@ -124,11 +126,10 @@ export const WebPropertyEnvPage = (): JSX.Element => {
 
   return (
     <>
-      <Banner>
-        <Title headingLevel="h1" size="2xl">
-          Ecosystem Catalog
-        </Title>
-      </Banner>
+      <Banner
+        title={propertyName.replace('-', ' ')}
+        backRef={{ pathname: pageLinks.webPropertyDetailPage, query: { propertyName } }}
+      />
       <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
         <Stack hasGutter>
           <StackItem className="pf-u-mb-md">
@@ -157,31 +158,50 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {envList.data?.map((env) => (
-                      <Tr key={env.id}>
-                        <Td dataLabel={env.env}>{env.env}</Td>
-                        <Td dataLabel={env.createdAt}>
-                          <Text component={TextVariants.small}>
-                            {new Date(env.createdAt).toUTCString()}
-                          </Text>
-                        </Td>
-                        <Td>
-                          <a href={`https://${env.url}`} target="_blank" rel="noopener noreferrer">
-                            <ExternalLinkAltIcon /> {env.url}
-                          </a>
-                        </Td>
-                        <Td>
-                          <ClipboardCopy
-                            hoverTip="Copy"
-                            clickTip="Copied"
-                            variant="inline-compact"
-                            isCode
-                          >
-                            {`${window.location.origin}/api/v1/applications/deploy/${env?.propertyName}/${env?.env}`}
-                          </ClipboardCopy>
+                    {envList.isLoading && <TableRowSkeleton columns={4} rows={3} />}
+                    {apiKeys.isSuccess && envList.data?.length === 0 && (
+                      <Tr>
+                        <Td colSpan={6}>
+                          <EmptyState>
+                            <EmptyStateIcon icon={CubesIcon} />
+                            <Title headingLevel="h4" size="lg">
+                              Environments not found
+                            </Title>
+                            <EmptyStateBody>Please create an environment</EmptyStateBody>
+                          </EmptyState>
                         </Td>
                       </Tr>
-                    ))}
+                    )}
+                    {envList.isSuccess &&
+                      envList.data?.map((env) => (
+                        <Tr key={env.id}>
+                          <Td dataLabel={env.env}>{env.env}</Td>
+                          <Td dataLabel={env.createdAt}>
+                            <Text component={TextVariants.small}>
+                              {new Date(env.createdAt).toUTCString()}
+                            </Text>
+                          </Td>
+                          <Td>
+                            <a
+                              href={`https://${env.url}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <ExternalLinkAltIcon /> {env.url}
+                            </a>
+                          </Td>
+                          <Td>
+                            <ClipboardCopy
+                              hoverTip="Copy"
+                              clickTip="Copied"
+                              variant="inline-compact"
+                              isCode
+                            >
+                              {`${window.location.origin}/api/v1/applications/deploy/${env?.propertyName}/${env?.env}`}
+                            </ClipboardCopy>
+                          </Td>
+                        </Tr>
+                      ))}
                   </Tbody>
                 </TableComposable>
               </CardBody>
@@ -215,7 +235,8 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {apiKeys.isSuccess && apiKeys.data.length === 0 && (
+                    {apiKeys.isLoading && <TableRowSkeleton columns={6} rows={3} />}
+                    {!apiKeys.isLoading && (apiKeys?.data?.length === 0 || apiKeys.isError) && (
                       <Tr>
                         <Td colSpan={6}>
                           <EmptyState>
@@ -240,12 +261,11 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                             <KeyIcon /> {key.shortKey}
                           </Td>
                           <Td dataLabel={key.createdAt}>
-                            <OutlinedCalendarAltIcon />{' '}
-                            {new Date(key.createdAt).toLocaleDateString('en')}
+                            <OutlinedCalendarAltIcon /> {formatDate(key.createdAt, 'MM/DD/YYYY')}
                           </Td>
                           <Td dataLabel={key.expirationDate}>
-                            <OutlinedCalendarAltIcon />{' '}
-                            {new Date(key.expirationDate).toLocaleDateString('en')}
+                            <OutlinedCalendarAltIcon />
+                            {formatDate(key.expirationDate, 'MM/DD/YYYY')}
                           </Td>
                           <Td dataLabel={key.createdAt}>
                             {new Date(key.expirationDate) > new Date() ? (

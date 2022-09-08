@@ -5,11 +5,12 @@ import Link from 'next/link';
 
 import { Nav, NavItem, NavList, PageSidebar, Split, SplitItem } from '@patternfly/react-core';
 import { ChartLineIcon, CommentAltIcon, KeyIcon, ThIcon } from '@patternfly/react-icons';
+import { pageLinks } from '@app/links';
 
 type SNProps = {
   title: string;
   icon: ReactNode;
-  isActive?: boolean;
+  isActive: boolean;
 };
 
 const SidebarNavItem = ({ title, icon, isActive }: SNProps) => (
@@ -29,16 +30,16 @@ export const SideBar = () => {
       nav={
         <Nav aria-label="Nav">
           <NavList>
-            <Link href="/">
+            <Link href={pageLinks.webPropertyListPage}>
               <a>
                 <SidebarNavItem
                   title="Web Properties"
                   icon={<ThIcon size="sm" />}
-                  isActive={pathname === '/'}
+                  isActive={pathname === pageLinks.webPropertyListPage}
                 />
               </a>
             </Link>
-            <Link href="/dashboard">
+            <Link href="/">
               <a>
                 <SidebarNavItem
                   title="Dashboard"
@@ -47,7 +48,7 @@ export const SideBar = () => {
                 />
               </a>
             </Link>
-            <Link href="/auth">
+            <Link href="/">
               <a>
                 <SidebarNavItem
                   title="Authentication"
@@ -56,7 +57,7 @@ export const SideBar = () => {
                 />
               </a>
             </Link>
-            <Link href="/feedback">
+            <Link href="/">
               <a>
                 <SidebarNavItem
                   title="Feedback"

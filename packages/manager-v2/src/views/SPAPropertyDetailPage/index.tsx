@@ -1,1 +1,1 @@
-export {SPAPropertyDetailPage} from './SPAPropertyDetailPage'
+export { SPAPropertyDetailPage } from './SPAPropertyDetailPage';

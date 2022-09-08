@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 
 import { setOrchestratorAuthorizationHeader } from '@app/config/orchestratorReq';
 import { Bullseye, Spinner } from '@patternfly/react-core';
+import { pageLinks } from '@app/links';
 
 type Props = {
   children: JSX.Element;
@@ -14,7 +15,7 @@ export const AuthGuard = ({ children }: Props) => {
   const { data: session, status } = useSession({
     required: true,
     onUnauthenticated: () => {
-      router.push('/login');
+      router.push(pageLinks.loginPage);
     }
   });
 
@@ -28,7 +29,7 @@ export const AuthGuard = ({ children }: Props) => {
   // if the refresh token failed in backend. Signout and ask user to login
   useEffect(() => {
     if (session?.error) {
-      signOut({ redirect: false, callbackUrl: '/login' }).then((data) => {
+      signOut({ redirect: false, callbackUrl: pageLinks.loginPage }).then((data) => {
         router.push(data.url);
       });
     }

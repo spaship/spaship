@@ -73,6 +73,7 @@ body {
   --pf-c-nav__link--hover--after--BorderLeftWidth: 2px;
   --pf-c-nav__link--hover--after--BorderColor: var(--spaship-global--Color--solar-orange);
   --pf-c-nav__link--m-current--after--BorderColor:var(--spaship-global--Color--solar-orange);
+  --pf-c-nav__link--m-current--Color:var(--spaship-global--Color--solar-orange);
   transition: all 250ms linear;
 }
 
@@ -125,4 +126,8 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.selected-card {
+  border-top: 5px solid var(--spaship-global--Color--solar-orange);
 }

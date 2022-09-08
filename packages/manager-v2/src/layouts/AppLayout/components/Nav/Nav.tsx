@@ -23,6 +23,7 @@ import {
 import { BellIcon } from '@patternfly/react-icons';
 import { env } from '@app/config/env';
 import { useToggle } from '@app/hooks';
+import { pageLinks } from '@app/links';
 
 export const Nav = () => {
   const { data: session } = useSession();
@@ -30,7 +31,7 @@ export const Nav = () => {
 
   const onSignOut = () => {
     setIsSigningOut.on();
-    signOut({ redirect: false, callbackUrl: '/login' })
+    signOut({ redirect: false, callbackUrl: pageLinks.loginPage })
       .then((data) => {
         Router.push(data.url);
       })

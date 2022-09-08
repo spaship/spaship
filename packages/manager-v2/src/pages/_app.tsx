@@ -10,12 +10,20 @@ import type { NextPageWithLayout } from '@app/types';
 
 import '@patternfly/react-core/dist/styles/base.css';
 import '@app/styles/globals.css';
+import Head from 'next/head';
 
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1
+    }
+  }
+});
 
 yup.addMethod(yup.string, 'noWhitespace', function noWhitespace() {
   return this.matches(/^(\S+$)/, { message: 'Whitespace not allowed', excludeEmptyString: true });
@@ -44,6 +52,9 @@ const MyApp = ({
 
   return (
     <SessionProvider>
+      <Head>
+        <title>SPAship Manager</title>
+      </Head>
       <QueryClientProvider client={queryClient}>
         {isProtected
           ? getLayout(

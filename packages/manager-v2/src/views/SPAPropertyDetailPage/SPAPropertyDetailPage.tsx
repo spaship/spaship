@@ -1,10 +1,12 @@
+import { useMemo } from 'react';
 import {
-  Bullseye,
   Button,
   Card,
   CardBody,
   CardHeader,
   CardTitle,
+  EmptyState,
+  EmptyStateIcon,
   Label,
   Level,
   LevelItem,
@@ -12,7 +14,7 @@ import {
   PageSection,
   ProgressStep,
   ProgressStepper,
-  Spinner,
+  Skeleton,
   Split,
   SplitItem,
   Tab,
@@ -24,9 +26,11 @@ import {
   TextVariants,
   Title
 } from '@patternfly/react-core';
-import { Banner } from '@app/components';
 import Link from 'next/link';
-import { CogIcon, PackageIcon, RunningIcon } from '@patternfly/react-icons';
+import dayjs from 'dayjs';
+import { useRouter } from 'next/router';
+
+import { CogIcon, CubesIcon, PackageIcon, RunningIcon } from '@patternfly/react-icons';
 import {
   Chart,
   ChartAxis,
@@ -35,15 +39,14 @@ import {
   ChartLine,
   ChartVoronoiContainer
 } from '@patternfly/react-charts';
-import { useRouter } from 'next/router';
 import {
   useGetMonthyDeploymentChart,
   useGetTotalDeployments,
   useGetWebPropActivityStream
 } from '@app/services/analytics';
 import { useFormatDate, useTabs } from '@app/hooks';
-import { useMemo } from 'react';
-import dayjs from 'dayjs';
+import { Banner } from '@app/components';
+import { pageLinks } from '@app/links';
 
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
@@ -67,7 +70,8 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
       })),
       names: sortedDeployCount?.map(({ env, count }) => ({
         name: `${env} ${count}`
-      }))
+      })),
+      total: sortedDeployCount?.reduce((prev, curr) => curr.count + prev, 0)
     }),
     [sortedDeployCount]
   );
@@ -76,17 +80,19 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
 
   return (
     <>
-      <Banner>
+      <Banner
+        title={propertyName.replace('-', ' ')}
+        backRef={{
+          pathname: pageLinks.webPropertyDetailPage,
+          query: {
+            propertyName
+          }
+        }}
+      >
         <Level>
+          <LevelItem />
           <LevelItem>
-            <Title headingLevel="h1" size="2xl">
-              Ecosystem Catalog
-            </Title>
-          </LevelItem>
-          <LevelItem>
-            <Link
-              href={{ pathname: '/properties/[propertyName]/settings', query: { propertyName } }}
-            >
+            <Link href={{ pathname: pageLinks.webPropertySettingPage, query: { propertyName } }}>
               <a>
                 <Button variant="link" icon={<CogIcon />}>
                   Settings
@@ -119,10 +125,14 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                     </CardTitle>
                   </CardHeader>
                   <CardBody className="x-y-center">
-                    {deploymentCount.isLoading && (
-                      <Bullseye>
-                        <Spinner size="lg" />
-                      </Bullseye>
+                    {deploymentCount.isLoading && <Skeleton shape="circle" width="50%" />}
+                    {!deploymentCount.isLoading && !deploymentCount.data && (
+                      <EmptyState>
+                        <EmptyStateIcon icon={CubesIcon} />
+                        <Title headingLevel="h4" size="lg">
+                          No deployments found
+                        </Title>
+                      </EmptyState>
                     )}
                     {deploymentCount.isSuccess && (
                       <ChartDonut
@@ -141,7 +151,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                           top: 20
                         }}
                         subTitle="Deployments"
-                        title="100"
+                        title={`${donutChartData.total}`}
                         width={350}
                       />
                     )}
@@ -149,50 +159,61 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                 </Card>
               </SplitItem>
               <SplitItem isFilled>
-                <Card>
+                <Card isFullHeight>
                   <CardHeader>
                     <CardTitle>
                       <Title headingLevel="h6">Deployment History</Title>
                     </CardTitle>
                   </CardHeader>
-                  <CardBody>
-                    <Chart
-                      ariaDesc="Average number of pets"
-                      ariaTitle="Line chart example"
-                      containerComponent={
-                        <ChartVoronoiContainer
-                          labels={({ datum }) => `${datum.name}: ${datum.y}`}
-                          constrainToVisibleArea
-                        />
-                      }
-                      legendData={lineChartLegend}
-                      legendOrientation="vertical"
-                      legendPosition="right"
-                      height={250}
-                      name="chart1"
-                      padding={{
-                        bottom: 50,
-                        left: 50,
-                        right: 200, // Adjusted to accommodate legend
-                        top: 50
-                      }}
-                      width={600}
-                    >
-                      <ChartAxis tickFormat={(y) => dayjs(y).format('DD MMM')} />
-                      <ChartAxis dependentAxis showGrid tickFormat={(x) => Number(x)} />
-                      <ChartGroup>
-                        {lineChartLegend.map(({ name }) => (
-                          <ChartLine
-                            key={`key-${name}`}
-                            data={monthyDeployChart?.data?.[name].map(({ count, startDate }) => ({
-                              name,
-                              x: startDate,
-                              y: count
-                            }))}
+                  <CardBody className="x-y-center">
+                    {monthyDeployChart.isLoading && <Skeleton shape="square" width="50%" />}
+                    {!monthyDeployChart.isLoading && !monthyDeployChart.data && (
+                      <EmptyState>
+                        <EmptyStateIcon icon={CubesIcon} />
+                        <Title headingLevel="h4" size="lg">
+                          No History found
+                        </Title>
+                      </EmptyState>
+                    )}
+                    {monthyDeployChart.isSuccess && (
+                      <Chart
+                        ariaDesc="Average number of pets"
+                        ariaTitle="Line chart example"
+                        containerComponent={
+                          <ChartVoronoiContainer
+                            labels={({ datum }) => `${datum.name}: ${datum.y}`}
+                            constrainToVisibleArea
                           />
-                        ))}
-                      </ChartGroup>
-                    </Chart>
+                        }
+                        legendData={lineChartLegend}
+                        legendOrientation="vertical"
+                        legendPosition="right"
+                        height={250}
+                        name="chart1"
+                        padding={{
+                          bottom: 50,
+                          left: 50,
+                          right: 200, // Adjusted to accommodate legend
+                          top: 50
+                        }}
+                        width={600}
+                      >
+                        <ChartAxis tickFormat={(y) => dayjs(y).format('DD MMM')} />
+                        <ChartAxis dependentAxis showGrid tickFormat={(x) => Number(x)} />
+                        <ChartGroup>
+                          {lineChartLegend.map(({ name }) => (
+                            <ChartLine
+                              key={`key-${name}`}
+                              data={monthyDeployChart?.data?.[name].map(({ count, startDate }) => ({
+                                name,
+                                x: startDate,
+                                y: count
+                              }))}
+                            />
+                          ))}
+                        </ChartGroup>
+                      </Chart>
+                    )}
                   </CardBody>
                 </Card>
               </SplitItem>
@@ -210,7 +231,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             }
             aria-label="SPA activity"
           >
-            <List>
+            <List className="pf-u-mt-lg">
               <ProgressStepper isVertical>
                 {activityStream?.data?.map((activity) => {
                   // This should be changed to more activities in the future.

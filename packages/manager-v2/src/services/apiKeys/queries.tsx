@@ -12,6 +12,7 @@ const fetcSpaProperties = async (propertyName: string): Promise<TApiKey[]> => {
   return data.data;
 };
 
+// TODO: Backend returns 404 not found error for empty list of api keys causing retry
 export const useGetApiKeys = (webPropertyName: string) =>
   useQuery(apiKeyQueryKeys.list(webPropertyName), () => fetcSpaProperties(webPropertyName));
 
