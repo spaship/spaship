@@ -119,3 +119,10 @@ body {
   text-decoration: none;
   color: inherit;
 }
+
+.x-y-center{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

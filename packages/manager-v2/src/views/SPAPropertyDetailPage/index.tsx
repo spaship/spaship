@@ -1,0 +1,1 @@
+export {SPAPropertyDetailPage} from './SPAPropertyDetailPage'

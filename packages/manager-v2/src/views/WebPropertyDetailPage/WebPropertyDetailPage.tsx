@@ -169,7 +169,16 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                           expandId: 'composable-property-table'
                         }}
                       />
-                      <Td>{name}</Td>
+                      <Td>
+                        <Link
+                          href={{
+                            pathname: '/properties/[propertyName]/[spaProperty]',
+                            query: { propertyName, spaProperty: name }
+                          }}
+                        >
+                          {name}
+                        </Link>
+                      </Td>
                       <Td>{spaProperties.data[name]?.[0].path}</Td>
                       <Td>
                         <Split hasGutter>

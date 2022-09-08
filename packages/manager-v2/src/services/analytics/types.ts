@@ -15,3 +15,19 @@ export type TWebPropActivityStream = {
   latestActivityHead: string;
   latestActivityTail: string;
 };
+
+export type TSPADeploymentCount = {
+  propertyName: string;
+  spaName: string;
+  code: string;
+  env: string;
+  count: number;
+};
+
+export type TSPAMonthlyDeploymentCount = {
+  spaName: string;
+  env: string;
+  count: number;
+  startDate: string;
+  endDate: string;
+};
