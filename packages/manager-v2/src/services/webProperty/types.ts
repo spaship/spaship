@@ -9,8 +9,8 @@ export type TWebProperty = {
   type: string;
   createdBy: string;
   isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   id: string;
 };
 

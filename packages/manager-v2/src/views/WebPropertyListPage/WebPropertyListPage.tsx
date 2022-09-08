@@ -154,11 +154,17 @@ export const WebPropertyListPage = (): JSX.Element => {
             {/* List of Properties */}
             {filteredWebProperties?.map(({ propertyName, propertyTitle, url }) => (
               <GalleryItem key={propertyName}>
-                <WebPropertyCard
-                  title={propertyTitle}
-                  subtitle={url}
-                  footer={`${webPropertyDeloymentCount?.data?.[propertyName] || 0} Deployment(s)`}
-                />
+                <Link href={{ pathname: '/properties/[propertyName]', query: { propertyName } }}>
+                  <a className="text-decoration-none">
+                    <WebPropertyCard
+                      title={propertyTitle}
+                      subtitle={url}
+                      footer={`${
+                        webPropertyDeloymentCount?.data?.[propertyName] || 0
+                      } Deployment(s)`}
+                    />
+                  </a>
+                </Link>
               </GalleryItem>
             ))}
           </Gallery>

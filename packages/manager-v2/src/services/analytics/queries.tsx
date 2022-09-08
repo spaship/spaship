@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { orchestratorReq } from '@app/config/orchestratorReq';
-import { TDeploymentCount } from './types';
+import { TDeploymentCount, TWebPropActivityStream } from './types';
 
-const webPropertyKeys = {
-  deploy: ['deployment-count'] as const
+const analyticsKeys = {
+  deploy: ['deployment-count'] as const,
+  propertyActivityStream: (id: string) => ['activity-stream', id] as const
 };
 
 const fetchDeploymentCounts = async (): Promise<TDeploymentCount[]> => {
@@ -26,6 +27,22 @@ const groupDeploymentCountByPropertyName = (data: TDeploymentCount[]): Record<st
 };
 
 export const useGetDeploymentCounts = () =>
-  useQuery(webPropertyKeys.deploy, fetchDeploymentCounts, {
+  useQuery(analyticsKeys.deploy, fetchDeploymentCounts, {
     select: groupDeploymentCountByPropertyName
   });
+
+const fetchWebPropertyActivityStream = async (
+  webProperty: string
+): Promise<TWebPropActivityStream[]> => {
+  const { data } = await orchestratorReq.post('/event/fetch/analytics/filter', {
+    activities: {
+      propertyName: webProperty
+    }
+  });
+  return data.data;
+};
+
+export const useGetWebPropActivityStream = (webProperty: string) =>
+  useQuery(analyticsKeys.propertyActivityStream(webProperty), () =>
+    fetchWebPropertyActivityStream(webProperty)
+  );

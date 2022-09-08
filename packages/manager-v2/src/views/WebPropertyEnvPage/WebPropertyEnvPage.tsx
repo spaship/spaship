@@ -1,0 +1,348 @@
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import toast from 'react-hot-toast';
+import {
+  Button,
+  Card,
+  CardActions,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  ClipboardCopy,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  Label,
+  Modal,
+  ModalVariant,
+  PageSection,
+  Split,
+  SplitItem,
+  Stack,
+  StackItem,
+  Text,
+  TextVariants,
+  Title
+} from '@patternfly/react-core';
+import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import {
+  CheckCircleIcon,
+  CubesIcon,
+  ExternalLinkAltIcon,
+  KeyIcon,
+  LockIcon,
+  OutlinedCalendarAltIcon,
+  PlusIcon,
+  TimesCircleIcon,
+  TrashIcon
+} from '@patternfly/react-icons';
+
+import { Banner, DeleteConfirmationModal } from '@app/components';
+import { useAddWebPropery, useGetEnvList } from '@app/services/webProperty';
+import { useCreateAPIKey, useDeleteAPIKey, useGetApiKeys } from '@app/services/apiKeys';
+import { usePopUp } from '@app/hooks';
+
+import { CreateEnvForm, FormData as EnvForm } from './components/CreateEnvForm/CreateEnvForm';
+import {
+  CreateAPIKeyForm,
+  FormData as APIKeyForm
+} from './components/CreateAPIKeyForm/CreateAPIKeyForm';
+
+function getExpiryDayDiff(expiry: string) {
+  const currentDate = new Date();
+  const expiresIn = new Date(expiry);
+  const timeDiff = expiresIn.getTime() - currentDate.getTime();
+  const dateDiff: number = timeDiff / (1000 * 3600 * 24);
+  return `${Math.ceil(dateDiff)}d`;
+}
+
+export const WebPropertyEnvPage = (): JSX.Element => {
+  const { query } = useRouter();
+  const propertyName = query.propertyName as string;
+  const { data: session } = useSession();
+
+  const envList = useGetEnvList(propertyName);
+  const createAWebProp = useAddWebPropery(propertyName);
+  const apiKeys = useGetApiKeys(propertyName);
+  const createAPIKey = useCreateAPIKey(propertyName);
+  const deleteAPIKey = useDeleteAPIKey(propertyName);
+
+  const propertyTitle = envList?.data?.[0]?.propertyTitle;
+
+  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
+    'createEnv',
+    'createApiKey',
+    'deleteApiKey',
+    'deleteWebProp'
+  ] as const);
+
+  const handleCreateEnv = async (data: EnvForm) => {
+    if (!propertyTitle) return;
+    try {
+      await createAWebProp.mutateAsync({
+        ...data,
+        deploymentConnectionType: data.deploymentConnectionType ? 'preprod' : 'prod',
+        propertyName,
+        createdBy: session?.user.email || '',
+        type: 'operator',
+        propertyTitle
+      });
+      toast.success('Environment Created');
+      handlePopUpClose('createEnv');
+    } catch (error) {
+      toast.error('Failed to create environment');
+    }
+  };
+
+  const handleCreateAPIKey = async (data: APIKeyForm) => {
+    try {
+      const res = await createAPIKey.mutateAsync({
+        ...data,
+        propertyName,
+        createdBy: session?.user.email || '',
+        expiresIn: getExpiryDayDiff(data.expiresIn)
+      });
+      handlePopUpOpen('createApiKey', res.token);
+      toast.success('API Key Created');
+    } catch (error) {
+      toast.error('Failed to create API Key');
+    }
+  };
+
+  const handleDeleteAPIKey = async () => {
+    try {
+      await deleteAPIKey.mutateAsync({
+        propertyName,
+        shortKey: popUp.deleteApiKey.data as string
+      });
+      handlePopUpClose('deleteApiKey');
+      toast.success('API Key deleted');
+    } catch (error) {
+      toast.error('Failed to delete API Key');
+    }
+  };
+
+  return (
+    <>
+      <Banner>
+        <Title headingLevel="h1" size="2xl">
+          Ecosystem Catalog
+        </Title>
+      </Banner>
+      <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
+        <Stack hasGutter>
+          <StackItem className="pf-u-mb-md">
+            <Card>
+              <CardHeader>
+                <CardTitle>Environments</CardTitle>
+                <CardActions>
+                  <Button
+                    variant="secondary"
+                    icon={<PlusIcon />}
+                    isSmall
+                    onClick={() => handlePopUpOpen('createEnv')}
+                  >
+                    Create new environment
+                  </Button>
+                </CardActions>
+              </CardHeader>
+              <CardBody>
+                <TableComposable>
+                  <Thead>
+                    <Tr>
+                      <Th>Name</Th>
+                      <Th>Created</Th>
+                      <Th>Publish Domain</Th>
+                      <Th>Deploy URL</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {envList.data?.map((env) => (
+                      <Tr key={env.id}>
+                        <Td dataLabel={env.env}>{env.env}</Td>
+                        <Td dataLabel={env.createdAt}>
+                          <Text component={TextVariants.small}>
+                            {new Date(env.createdAt).toUTCString()}
+                          </Text>
+                        </Td>
+                        <Td>
+                          <a href={`https://${env.url}`} target="_blank" rel="noopener noreferrer">
+                            <ExternalLinkAltIcon /> {env.url}
+                          </a>
+                        </Td>
+                        <Td>
+                          <ClipboardCopy
+                            hoverTip="Copy"
+                            clickTip="Copied"
+                            variant="inline-compact"
+                            isCode
+                          >
+                            {`${window.location.origin}/api/v1/applications/deploy/${env?.propertyName}/${env?.env}`}
+                          </ClipboardCopy>
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </TableComposable>
+              </CardBody>
+            </Card>
+          </StackItem>
+          <StackItem>
+            <Card className="pf-u-mt-lg">
+              <CardHeader>
+                <CardTitle>API Keys</CardTitle>
+                <CardActions>
+                  <Button
+                    variant="secondary"
+                    icon={<PlusIcon />}
+                    isSmall
+                    onClick={() => handlePopUpOpen('createApiKey')}
+                  >
+                    Create new key
+                  </Button>
+                </CardActions>
+              </CardHeader>
+              <CardBody>
+                <TableComposable isStriped>
+                  <Thead>
+                    <Tr>
+                      <Th>Label</Th>
+                      <Th>Short Key</Th>
+                      <Th>Created On</Th>
+                      <Th>Expiration Date</Th>
+                      <Th>Status</Th>
+                      <Th>Delete</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {apiKeys.isSuccess && apiKeys.data.length === 0 && (
+                      <Tr>
+                        <Td colSpan={6}>
+                          <EmptyState>
+                            <EmptyStateIcon icon={CubesIcon} />
+                            <Title headingLevel="h4" size="lg">
+                              API Keys not found.
+                            </Title>
+                            <EmptyStateBody>
+                              Please create API keys, to see them here.
+                            </EmptyStateBody>
+                          </EmptyState>
+                        </Td>
+                      </Tr>
+                    )}
+                    {apiKeys?.isSuccess &&
+                      apiKeys.data?.map((key) => (
+                        <Tr key={key.shortKey}>
+                          <Td dataLabel={key.label}>
+                            <LockIcon /> {key.label}
+                          </Td>
+                          <Td dataLabel={key.shortKey}>
+                            <KeyIcon /> {key.shortKey}
+                          </Td>
+                          <Td dataLabel={key.createdAt}>
+                            <OutlinedCalendarAltIcon />{' '}
+                            {new Date(key.createdAt).toLocaleDateString('en')}
+                          </Td>
+                          <Td dataLabel={key.expirationDate}>
+                            <OutlinedCalendarAltIcon />{' '}
+                            {new Date(key.expirationDate).toLocaleDateString('en')}
+                          </Td>
+                          <Td dataLabel={key.createdAt}>
+                            {new Date(key.expirationDate) > new Date() ? (
+                              <Label isCompact icon={<CheckCircleIcon />} color="green">
+                                Active
+                              </Label>
+                            ) : (
+                              <Label color="red" icon={<TimesCircleIcon />} isCompact>
+                                Inactive
+                              </Label>
+                            )}
+                          </Td>
+                          <Td dataLabel={key.shortKey}>
+                            <Button
+                              variant="secondary"
+                              isDanger
+                              icon={<TrashIcon />}
+                              onClick={() => handlePopUpOpen('deleteApiKey', key.shortKey)}
+                            >
+                              Delete
+                            </Button>
+                          </Td>
+                        </Tr>
+                      ))}
+                  </Tbody>
+                </TableComposable>
+              </CardBody>
+            </Card>
+          </StackItem>
+          <StackItem>
+            <Card style={{ color: 'red' }}>
+              <CardTitle>
+                <Title headingLevel="h6">Here Be Dragons!!</Title>
+              </CardTitle>
+              <CardBody>
+                <Split>
+                  <SplitItem isFilled>
+                    <Title headingLevel="h6" size="2xl">
+                      Delete Web Property
+                    </Title>
+                  </SplitItem>
+
+                  <SplitItem>
+                    <Button
+                      variant="danger"
+                      isDisabled
+                      onClick={() => handlePopUpOpen('deleteWebProp')}
+                    >
+                      Delete Web Property
+                    </Button>
+                  </SplitItem>
+                </Split>
+              </CardBody>
+            </Card>
+          </StackItem>
+        </Stack>
+      </PageSection>
+      <Modal
+        title="Create Environment"
+        variant={ModalVariant.medium}
+        isOpen={popUp.createEnv.isOpen}
+        onClose={() => handlePopUpClose('createEnv')}
+      >
+        <CreateEnvForm onClose={() => handlePopUpClose('createEnv')} onSubmit={handleCreateEnv} />
+      </Modal>
+      <Modal
+        title="API Key"
+        description="Please save this API Key. You won’t be able to see it again!"
+        variant={ModalVariant.medium}
+        isOpen={popUp.createApiKey.isOpen}
+        onClose={() => handlePopUpClose('createApiKey')}
+      >
+        <CreateAPIKeyForm
+          envs={envList.data?.map(({ env }) => env) || []}
+          onClose={() => handlePopUpClose('createApiKey')}
+          onSubmit={handleCreateAPIKey}
+          token={popUp.createApiKey?.data as string}
+        />
+      </Modal>
+      <DeleteConfirmationModal
+        title="Are Your Sure ? "
+        description="You are deleting this Web Property from SPAship. This operation will delete all data permanenetly."
+        variant={ModalVariant.medium}
+        isOpen={popUp.deleteWebProp.isOpen}
+        onClose={() => handlePopUpClose('deleteWebProp')}
+        confirmationToken={propertyName}
+        onSubmit={() => {}}
+      />
+      <DeleteConfirmationModal
+        variant={ModalVariant.small}
+        isOpen={popUp.deleteApiKey.isOpen}
+        onClose={() => handlePopUpClose('deleteApiKey')}
+        onSubmit={() => handleDeleteAPIKey()}
+        isLoading={deleteAPIKey.isLoading}
+      >
+        Do you want to delete this API Key
+      </DeleteConfirmationModal>
+    </>
+  );
+};

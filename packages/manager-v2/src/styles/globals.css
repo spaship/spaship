@@ -91,6 +91,10 @@ body {
   --pf-c-form-control--hover--BorderBottomColor:var(--spaship-global--Color--solar-orange);
 }
 
+.pf-c-table thead{
+  font-family: RedHatDisplay;
+}
+
 .rounded-md {
   border-radius: 8px !important;
 }
