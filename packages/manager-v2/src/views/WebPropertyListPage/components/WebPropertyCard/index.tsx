@@ -1,0 +1,1 @@
+export { WebPropertyCard } from './WebPropertyCard';
