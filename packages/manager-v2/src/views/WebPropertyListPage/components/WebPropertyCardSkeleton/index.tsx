@@ -1,0 +1,1 @@
+export { WebPropertyCardSkeleton } from './WebPropertyCardSkeleton';
