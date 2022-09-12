@@ -131,3 +131,7 @@ body {
 .selected-card {
   border-top: 5px solid var(--spaship-global--Color--solar-orange);
 }
+
+#nprogress .bar {
+  background:var(--spaship-global--Color--solar-orange);
+}
