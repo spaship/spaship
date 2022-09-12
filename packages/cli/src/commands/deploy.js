@@ -97,6 +97,11 @@ class DeployCommand extends Command {
       if (buildDir) {
         // No archive path specified in the commandline as argument and buildDir is specified in the spaship.yaml
         const buildDirPath = nodePath.join(process.cwd(), buildDir);
+        try {
+          fs.statSync(buildDirPath);
+        } catch {
+          this.error(`Unable to access ${buildDirPath}, please check the buildDir value.`);
+        }
         const rawSpashipYml = await common.config.readRaw("spaship.yaml");
         this.log("Creating a zip archive...");
         try {
