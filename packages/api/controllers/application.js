@@ -126,7 +126,7 @@ module.exports.deploy = async (req, res, next) => {
       res.status(201).send({
         name,
         path: appPath,
-        ref,
+        ref: nextRef,
         timestamp: new Date(),
       });
     } catch (err) {
