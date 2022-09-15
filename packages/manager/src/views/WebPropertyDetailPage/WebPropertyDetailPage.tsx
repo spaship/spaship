@@ -118,34 +118,34 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                 </Thead>
                 {((spaProperties.isSuccess && isSpaPropertyListEmpty) ||
                   spaProperties.isLoading) && (
-                  <Tbody>
-                    {spaProperties.isLoading && <TableRowSkeleton rows={3} columns={4} />}
-                    {spaProperties.isSuccess && isSpaPropertyListEmpty && (
-                      <Tr>
-                        <Td colSpan={4}>
-                          <Bullseye>
-                            <EmptyState variant={EmptyStateVariant.small}>
-                              <EmptyStateIcon icon={SearchIcon} />
-                              <Title headingLevel="h2" size="lg">
-                                No results found
-                              </Title>
-                              <Button>Clear all filters</Button>
-                            </EmptyState>
-                          </Bullseye>
-                        </Td>
-                      </Tr>
-                    )}
-                  </Tbody>
-                )}
+                    <Tbody>
+                      {spaProperties.isLoading && <TableRowSkeleton rows={3} columns={4} />}
+                      {spaProperties.isSuccess && isSpaPropertyListEmpty && (
+                        <Tr>
+                          <Td colSpan={4}>
+                            <Bullseye>
+                              <EmptyState variant={EmptyStateVariant.small}>
+                                <EmptyStateIcon icon={SearchIcon} />
+                                <Title headingLevel="h2" size="lg">
+                                  No results found
+                                </Title>
+                                <Button>Clear all filters</Button>
+                              </EmptyState>
+                            </Bullseye>
+                          </Td>
+                        </Tr>
+                      )}
+                    </Tbody>
+                  )}
                 {spaProperties.isSuccess &&
-                  spaPropertyKeys.map((name, rowIndex) => (
-                    <Tbody isExpanded={Boolean(isRowExpanded?.[name])} key={name}>
+                  spaPropertyKeys.map((identifier, rowIndex) => (
+                    <Tbody isExpanded={Boolean(isRowExpanded?.[identifier])} key={identifier}>
                       <Tr isStriped={Boolean(rowIndex % 2)}>
                         <Td
                           expand={{
                             rowIndex,
-                            isExpanded: Boolean(isRowExpanded?.[name]),
-                            onToggle: () => onToggleRowExpanded(name),
+                            isExpanded: Boolean(isRowExpanded?.[identifier]),
+                            onToggle: () => onToggleRowExpanded(identifier),
                             expandId: 'composable-property-table'
                           }}
                         />
@@ -153,16 +153,16 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                           <Link
                             href={{
                               pathname: '/properties/[propertyName]/[spaProperty]',
-                              query: { propertyName, spaProperty: name }
+                              query: { propertyName, spaProperty: identifier }
                             }}
                           >
-                            {name}
+                            {spaProperties.data[identifier]?.[0]?.name}
                           </Link>
                         </Td>
-                        <Td>{spaProperties.data[name]?.[0].path}</Td>
+                        <Td>{spaProperties.data[identifier]?.[0]?.path}</Td>
                         <Td>
                           <Split hasGutter>
-                            {spaProperties.data[name].map(({ id, env }) => (
+                            {spaProperties.data[identifier].map(({ id, env }) => (
                               <SplitItem key={id}>
                                 <Label color="gold" isCompact>
                                   {env}
@@ -172,7 +172,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                           </Split>
                         </Td>
                       </Tr>
-                      <Tr isExpanded={Boolean(isRowExpanded?.[name])}>
+                      <Tr isExpanded={Boolean(isRowExpanded?.[identifier])}>
                         <Td colSpan={4} noPadding={false}>
                           <ExpandableRowContent>
                             <TableComposable variant="compact" aria-label="expandable-table">
@@ -186,7 +186,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                 </Tr>
                               </Thead>
                               <Tbody>
-                                {spaProperties?.data?.[name].map((prop) => (
+                                {spaProperties?.data?.[identifier].map((prop) => (
                                   <Tr key={`expandable-property${prop.id}`}>
                                     <Td>
                                       <Label color="gold" isCompact>
@@ -194,11 +194,10 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                       </Label>
                                     </Td>
                                     <Td>{prop.ref}</Td>
-                                    <Td>{webProperties?.data?.[prop.env].url}</Td>
+                                    <Td>{webProperties?.data?.[prop.env]?.url}</Td>
                                     <Td>
-                                      {`${prop.accessUrl.slice(0, 25)} ${
-                                        prop.accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
-                                      }`}
+                                      {`${prop.accessUrl.slice(0, 25)} ${prop.accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
+                                        }`}
                                     </Td>
                                     <Td>
                                       {formatDate(prop.updatedAt, 'MMM DD, YYYY - hh:mm:ss A')}
