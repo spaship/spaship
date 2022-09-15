@@ -10,7 +10,7 @@ info:
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  version: 1.0.0
+  version: 2.1.0
 servers:
   - url:
     description: Current server
@@ -19,53 +19,11 @@ tags:
     description: Everything about your SPA
   - name: apiKey
     description: Everything about your API Key
+  - name: webproperty
+    description: Everything about your WebProperty
+  - name: event
+    description: Analytics for WebProperty
 paths:
-  /applications:
-    get:
-      summary: Get all applications
-      tags:
-        - application
-      responses:
-        200:
-          description: A list of applications.
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/APIResponse"
-                  - type: object
-                    properties:
-                      data:
-                        type: array
-                        items:
-                          $ref: "#/components/schemas/Application"
-      security:
-        - bearerAuth: []
-        - api_key: []
-    post:
-      summary: Create an application entity only
-      tags:
-        - application
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Application"
-      responses:
-        201:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/APIResponse"
-                  - type: object
-                    properties:
-                      data:
-                        $ref: "#/components/schemas/Application"
-      security:
-        - bearerAuth: []
-        - api_key: []
   /applications/deploy:
     post:
       summary: Create an application entity and upload file
@@ -106,136 +64,44 @@ paths:
       security:
         - bearerAuth: []
         - api_key: []
-  /applications/{name}:
+
+  /apiKeys/{propertyName}:
     get:
-      summary: Get an application details
-      tags:
-        - application
-      parameters:
-        - name: name
-          in: path
-          description: Name of application to use
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/APIResponse"
-                  - type: object
-                    properties:
-                      data:
-                        $ref: "#/components/schemas/Application"
-    put:
-      summary: Update an application entity
-      tags:
-        - application
-      parameters:
-        - name: name
-          in: path
-          description: Name of application to use
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Application"
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/APIResponse"
-                  - type: object
-                    properties:
-                      data:
-                        $ref: "#/components/schemas/Application"
-      security:
-        - bearerAuth: []
-        - api_key: []
-    delete:
-      summary: Remove an application
-      tags:
-        - application
-      parameters:
-        - name: name
-          in: path
-          description: Name of application to use
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/APIResponse"
-      security:
-        - bearerAuth: []
-        - api_key: []
-  /apiKeys:
-    get:
-      summary: Get all API Keys
+      summary: Get an API Key
       tags:
         - apiKey
+      parameters:
+        - name: propertyName
+          in: path
+          description: PropertyName of API Key to use
+          required: true
+          schema:
+            type: string
       responses:
         200:
-          description: A list of API Keys.
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/APIResponse"
-                  - type: object
-                    properties:
-                      data:
-                        type: array
-                        items:
-                          $ref: "#/components/schemas/APIKey"
-      security:
-        - bearerAuth: []
-    post:
-      summary: Create an API Key
-      tags:
-        - apiKey
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/APIKey"
-      responses:
-        201:
           description: successful operation
           content:
             application/json:
               schema:
                 allOf:
                   - $ref: "#/components/schemas/APIResponse"
-                  - type: object
-                    properties:
-                      data:
-                        $ref: "#/components/schemas/APIKey"
       security:
         - bearerAuth: []
-  /apiKeys/{label}:
-    delete:
+  /apiKeys/{propertyName}/{shortKey}:
+    get:
       summary: Delete an API Key
       tags:
         - apiKey
       parameters:
-        - name: label
+        - name: propertyName
           in: path
-          description: Label of API Key to use
+          description: PropertyName of the API Key
+          required: true
+          schema:
+            type: string
+        - name: shortKey
+          in: path
+          description: Shortkey for the apikey
           required: true
           schema:
             type: string
@@ -247,6 +113,215 @@ paths:
               schema:
                 allOf:
                   - $ref: "#/components/schemas/APIResponse"
+      security:
+        - bearerAuth: []
+
+  /webproperty/get/applications/{propertyName}:
+    get:
+      summary: Get the list of the Application
+      tags:
+        - webproperty
+      parameters:
+        - name: propertyName
+          in: path
+          description: PropertyName for the SPA
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/WebProperties"
+      security:
+        - bearerAuth: []
+  /webproperty/applications/validate:
+    post:
+      summary: Create a API Key
+      tags:
+        - webproperty
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                expiresIn:
+                  type: string
+                propertyName:
+                  type: string
+                env:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Env"
+                label:
+                  type: string
+                createdBy:
+                  type: string
+              required:
+                - expiresIn
+                - propertyName
+                - env
+                - label
+                - createdBy
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/WebProperties"
+      security:
+        - bearerAuth: []
+  /webproperty/alias:
+    post:
+      summary: Create a Web Property
+      tags:
+        - webproperty
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                propertyTitle:
+                  type: string
+                propertyName:
+                  type: string
+                env:
+                  type: string
+                url:
+                  type: string
+                type:
+                  type: string
+                deploymentConnectionType:
+                  type: string
+                createdBy:
+                  type: string
+              required:
+                - propertyTitle
+                - propertyName
+                - env
+                - url
+                - type
+                - deploymentConnectionType
+                - createdBy
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/WebProperties"
+      security:
+        - bearerAuth: []
+  /webproperty/alias/list:
+    get:
+      summary: Get the List of the Properties
+      tags:
+        - webproperty
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/WebProperties"
+      security:
+        - bearerAuth: []
+  /webproperty/alias/list/{propertyName}:
+    get:
+      summary: Get the List for the perticular property (includes env)
+      tags:
+        - webproperty
+      parameters:
+        - name: propertyName
+          in: path
+          description: Provide the PropertyName
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/WebProperties"
+      security:
+        - bearerAuth: []
+
+  /event/fetch/analytics/all:
+    post:
+      summary: Count, Chart & Activities for all the web-properties
+      tags:
+        - event
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                chart:
+                  type: object
+                  items:
+                    $ref: "#/components/schemas/Event"
+                count:
+                  type: object
+                  items:
+                    $ref: "#/components/schemas/Event"
+                activites:
+                  type: object
+                  items:
+                    $ref: "#/components/schemas/Event"
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/WebProperties"
+      security:
+        - bearerAuth: []
+  /event/fetch/analytics/filter:
+    post:
+      summary: Count, Chart & Activities for perticular the WebProperty
+      tags:
+        - event
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                chart:
+                  type: object
+                  items:
+                    $ref: "#/components/schemas/Event"
+                count:
+                  type: object
+                  items:
+                    $ref: "#/components/schemas/Event"
+                activites:
+                  type: object
+                  items:
+                    $ref: "#/components/schemas/Event"
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/WebProperties"
       security:
         - bearerAuth: []
 
@@ -311,6 +386,27 @@ components:
                 $ref: "#/components/schemas/APIKey"
         message:
           type: string
+
+    WebProperties:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - success
+            - fail
+            - error
+        message:
+          type: string
+    Event:
+      type: object
+      properties:
+        propertyName:
+          type: string
+        spaName:
+          type: string
+    Env:
+      type: string
   securitySchemes:
     api_key:
       type: apiKey
