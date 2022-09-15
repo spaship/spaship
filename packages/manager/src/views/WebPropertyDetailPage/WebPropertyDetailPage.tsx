@@ -118,25 +118,25 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                 </Thead>
                 {((spaProperties.isSuccess && isSpaPropertyListEmpty) ||
                   spaProperties.isLoading) && (
-                    <Tbody>
-                      {spaProperties.isLoading && <TableRowSkeleton rows={3} columns={4} />}
-                      {spaProperties.isSuccess && isSpaPropertyListEmpty && (
-                        <Tr>
-                          <Td colSpan={4}>
-                            <Bullseye>
-                              <EmptyState variant={EmptyStateVariant.small}>
-                                <EmptyStateIcon icon={SearchIcon} />
-                                <Title headingLevel="h2" size="lg">
-                                  No results found
-                                </Title>
-                                <Button>Clear all filters</Button>
-                              </EmptyState>
-                            </Bullseye>
-                          </Td>
-                        </Tr>
-                      )}
-                    </Tbody>
-                  )}
+                  <Tbody>
+                    {spaProperties.isLoading && <TableRowSkeleton rows={3} columns={4} />}
+                    {spaProperties.isSuccess && isSpaPropertyListEmpty && (
+                      <Tr>
+                        <Td colSpan={4}>
+                          <Bullseye>
+                            <EmptyState variant={EmptyStateVariant.small}>
+                              <EmptyStateIcon icon={SearchIcon} />
+                              <Title headingLevel="h2" size="lg">
+                                No results found
+                              </Title>
+                              <Button>Clear all filters</Button>
+                            </EmptyState>
+                          </Bullseye>
+                        </Td>
+                      </Tr>
+                    )}
+                  </Tbody>
+                )}
                 {spaProperties.isSuccess &&
                   spaPropertyKeys.map((identifier, rowIndex) => (
                     <Tbody isExpanded={Boolean(isRowExpanded?.[identifier])} key={identifier}>
@@ -196,8 +196,9 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                     <Td>{prop.ref}</Td>
                                     <Td>{webProperties?.data?.[prop.env]?.url}</Td>
                                     <Td>
-                                      {`${prop.accessUrl.slice(0, 25)} ${prop.accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
-                                        }`}
+                                      {`${prop.accessUrl.slice(0, 25)} ${
+                                        prop.accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
+                                      }`}
                                     </Td>
                                     <Td>
                                       {formatDate(prop.updatedAt, 'MMM DD, YYYY - hh:mm:ss A')}
