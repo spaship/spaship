@@ -24,10 +24,10 @@ export const useGetSPAProperties = <T extends unknown>(
 const groupSpaPropertyByName = (spaProperty: TSpaProperty[]) => {
   const groupBy: Record<string, TSpaProperty[]> = {};
   spaProperty.forEach((prop) => {
-    if (groupBy?.[prop.name]) {
-      groupBy[prop.name].push(prop);
+    if (groupBy?.[prop.identifier]) {
+      groupBy[prop.identifier].push(prop);
     } else {
-      groupBy[prop.name] = [prop];
+      groupBy[prop.identifier] = [prop];
     }
   });
 
