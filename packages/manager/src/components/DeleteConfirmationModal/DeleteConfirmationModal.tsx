@@ -36,7 +36,7 @@ export const DeleteConfirmationModal = ({
   }, [props.isOpen]);
 
   return (
-    <Modal {...props} aria-label="delete conformation modal">
+    <Modal {...props} aria-label="delete confirmation modal">
       <Stack hasGutter>
         <StackItem>
           {children || (
