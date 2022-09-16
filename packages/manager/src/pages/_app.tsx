@@ -80,13 +80,11 @@ const MyApp = ({
         <title>SPAship Manager</title>
       </Head>
       <QueryClientProvider client={queryClient}>
-        {isProtected
-          ? getLayout(
-              <AuthGuard>
-                <Component {...pageProps} />
-              </AuthGuard>
-            )
-          : getLayout(<Component {...pageProps} />)}
+        {isProtected ? (
+          <AuthGuard>{getLayout(<Component {...pageProps} />)}</AuthGuard>
+        ) : (
+          getLayout(<Component {...pageProps} />)
+        )}
       </QueryClientProvider>
       <Toaster position="bottom-left" />
     </SessionProvider>

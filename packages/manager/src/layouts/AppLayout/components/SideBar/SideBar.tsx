@@ -31,7 +31,7 @@ export const SideBar = () => {
         <Nav aria-label="Nav">
           <NavList>
             <Link href={pageLinks.webPropertyListPage}>
-              <a>
+              <a className="text-decoration-none">
                 <SidebarNavItem
                   title="Web Properties"
                   icon={<ThIcon size="sm" />}
@@ -39,8 +39,8 @@ export const SideBar = () => {
                 />
               </a>
             </Link>
-            <Link href="/">
-              <a>
+            <Link href="/coming-soon">
+              <a className="text-decoration-none">
                 <SidebarNavItem
                   title="Dashboard"
                   icon={<ChartLineIcon size="sm" />}
@@ -48,8 +48,8 @@ export const SideBar = () => {
                 />
               </a>
             </Link>
-            <Link href="/">
-              <a>
+            <Link href="/coming-soon">
+              <a className="text-decoration-none">
                 <SidebarNavItem
                   title="Authentication"
                   icon={<KeyIcon size="sm" />}
@@ -57,8 +57,8 @@ export const SideBar = () => {
                 />
               </a>
             </Link>
-            <Link href="/">
-              <a>
+            <Link href="/coming-soon">
+              <a className="text-decoration-none">
                 <SidebarNavItem
                   title="Feedback"
                   icon={<CommentAltIcon size="sm" />}

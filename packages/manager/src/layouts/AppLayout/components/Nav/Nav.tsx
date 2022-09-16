@@ -41,14 +41,14 @@ export const Nav = () => {
   };
 
   return (
-    <Masthead backgroundColor="light" style={{ padding: 0, backgroundColor: '#333333' }}>
-      <MastheadMain className="logo" style={{ backgroundColor: '#000', width: '256px' }}>
+    <Masthead backgroundColor="dark" style={{ padding: 0 }}>
+      <MastheadMain className="logo" style={{ width: '256px' }}>
         <MastheadBrand className="pf-u-ml-lg">
           <img src="/img/spaship-logo-light.svg" alt="SPASHIP" style={{ height: '32px' }} />
         </MastheadBrand>
       </MastheadMain>
       <MastheadContent>
-        <Toolbar id="toolbar" isFullHeight isStatic style={{ backgroundColor: '#333333' }}>
+        <Toolbar id="toolbar" isFullHeight isStatic>
           <ToolbarContent>
             <ToolbarGroup
               variant="icon-button-group"
