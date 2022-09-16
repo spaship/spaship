@@ -1,5 +1,6 @@
 export type TApiKey = {
   label: string;
+  env: [string];
   propertyName: string;
   shortKey: string;
   expirationDate: string;

@@ -227,6 +227,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                   <Thead>
                     <Tr>
                       <Th>Label</Th>
+                      <Th>Scope</Th>
                       <Th>Short Key</Th>
                       <Th>Created On</Th>
                       <Th>Expiration Date</Th>
@@ -256,6 +257,15 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                         <Tr key={key.shortKey}>
                           <Td dataLabel={key.label}>
                             <LockIcon /> {key.label}
+                          </Td>
+                          <Td>
+                            {key.env
+                              ? key.env.slice(0, 5).map((environment) => (
+                                  <Label key={environment} isCompact>
+                                    {environment}
+                                  </Label>
+                                ))
+                              : 'N/A'}
                           </Td>
                           <Td dataLabel={key.shortKey}>
                             <KeyIcon /> {key.shortKey}
