@@ -1,13 +1,20 @@
 {
   "name": "@spaship/manager",
   "description": "The SPAship UI.",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "private": true,
   "author": {
     "name": "Akhil Mohan",
     "email": "akhilmhdh@gmail.com",
     "url": "https://akhilmhdh.com"
   },
+  "contributors": [
+    {
+      "name": "Deepesh Nair",
+      "email": "hybridx18@gmail.com",
+      "url": "https://github.com/hybridx"
+    }
+  ],
   "scripts": {
     "dev": "next dev -p 2468",
     "build": "next build",
