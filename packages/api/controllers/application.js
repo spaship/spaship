@@ -160,10 +160,10 @@ module.exports.validate = async (req, res, next) => {
   const expiration = request?.expiresIn || config.get("token:expiration");
   const secret = config.get("token:secret");
   const propertyName = request.propertyName;
-  const envs = getEnvs(request);
+  const env = getEnvs(request);
   const userId = getUserId(req);
   const token = jwt.sign(
-    { expiresIn: expiration, propertyName: propertyName, env: envs, createdBy: userId, createdAt: new Date() },
+    { expiresIn: expiration, propertyName: propertyName, env: env, createdBy: userId, createdAt: new Date() },
     secret,
     {
       expiresIn: expiration,
@@ -182,6 +182,7 @@ module.exports.validate = async (req, res, next) => {
     key,
     token,
     userId,
+    env,
     expiredDate,
   };
   const apikey = await APIKey.create(data);
@@ -192,7 +193,7 @@ module.exports.validate = async (req, res, next) => {
     source: userId,
     action: _createApikey,
     propertyName: propertyName,
-    props: { env: envs.toString(), spaName: "NA" },
+    props: { env: env.toString(), spaName: "NA" },
   });
   await saveActivity(activity)
 
