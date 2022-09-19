@@ -15,18 +15,19 @@ import {
   SplitItem,
   TextInput
 } from '@patternfly/react-core';
-import { requiredErrMsg } from '@app/utils/formErrMessages';
 
 export const schema = yup.object({
   // TODO: change this to URL validation, after server supports http protocol append
-  label: yup.string().trim().required(requiredErrMsg('Label')),
+  label: yup.string().label('Label').trim().max(50).required(),
   env: yup
-    .array(yup.string().noWhitespace().trim().alphabetsOnly().required('Environment'))
+    .array(yup.string().label('Environment').noWhitespace().trim().alphabetsOnly().required())
+    .label('Environments')
     .min(1)
-    .required(requiredErrMsg('Environments')),
+    .required(),
   expiresIn: yup
     .string()
-    .test('is-valid-date', 'Given date is expired', (value) => {
+    .label('API Key Expiry')
+    .test('is-valid-date', 'Date selected is expired', (value) => {
       if (!value) return true;
       const present = new Date();
       const expiry = new Date(value);

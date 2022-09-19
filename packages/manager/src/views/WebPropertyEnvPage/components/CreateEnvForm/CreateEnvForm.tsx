@@ -13,17 +13,18 @@ import {
   Switch,
   TextInput
 } from '@patternfly/react-core';
-import { requiredErrMsg } from '@app/utils/formErrMessages';
 
 export const schema = yup.object({
   // TODO: change this to URL validation, after server supports http protocol append
-  url: yup.string().trim().required(requiredErrMsg('Hostname URL')),
+  url: yup.string().label('Hostname URL').trim().required().max(250),
   env: yup
     .string()
+    .label('Environement Name')
     .noWhitespace()
     .trim()
+    .max(50)
     .alphabetsOnly()
-    .required(requiredErrMsg('Environement Name')),
+    .required(),
   deploymentConnectionType: yup.bool().required()
 });
 

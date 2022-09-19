@@ -1,16 +1,17 @@
-import { requiredErrMsg } from '@app/utils/formErrMessages';
 import * as yup from 'yup';
 
 export const addNewWebPropertySchema = yup.object({
-  propertyTitle: yup.string().alphaNumbericOnly().trim().required(requiredErrMsg('Property Title')),
+  propertyTitle: yup.string().label('Property Title').alphaNumbericOnly().max(50).trim().required(),
   // TODO: change this to URL validation, after server supports http protocol append
-  url: yup.string().trim().required(requiredErrMsg('Hostname URL')),
+  url: yup.string().label('Hostname URL').trim().max(250).required(),
   env: yup
     .string()
+    .label('Environement Name')
     .noWhitespace()
     .trim()
     .alphabetsOnly()
-    .required(requiredErrMsg('Environement Name')),
+    .max(50)
+    .required(),
   deploymentConnectionType: yup.bool().required()
 });
 

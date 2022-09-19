@@ -3,7 +3,7 @@ import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
 import { setOrchestratorAuthorizationHeader } from '@app/config/orchestratorReq';
-import { Bullseye, Spinner } from '@patternfly/react-core';
+import { Bullseye, Page, PageSection, Spinner } from '@patternfly/react-core';
 import { pageLinks } from '@app/links';
 
 type Props = {
@@ -38,9 +38,13 @@ export const AuthGuard = ({ children }: Props) => {
 
   if (status === 'loading' || session?.error) {
     return (
-      <Bullseye>
-        <Spinner size="xl" />
-      </Bullseye>
+      <Page>
+        <PageSection>
+          <Bullseye>
+            <Spinner size="xl" />
+          </Bullseye>
+        </PageSection>
+      </Page>
     );
   }
 
