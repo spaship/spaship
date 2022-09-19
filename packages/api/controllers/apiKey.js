@@ -31,6 +31,7 @@ module.exports.propertyList = async (req, res, next) => {
       propertyName: obj.propertyName,
       shortKey: obj.shortKey,
       expirationDate: obj.expiredDate,
+      env: obj.env,
       createdBy: obj.userId,
       createdAt: obj.createdAt,
     }));

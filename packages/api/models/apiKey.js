@@ -36,6 +36,10 @@ const APIKeySchema = new Schema(
       required: true,
       unique: true,
     },
+    env: {
+      type: Array,
+      required: true,
+    },
     expiredDate: {
       type: Date,
       min: getExpiredDateMin(),
