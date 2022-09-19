@@ -108,6 +108,12 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
                     onChange(str);
                   }}
                   appendTo={() => document.body}
+                  popoverProps={
+                    {
+                      position: 'left'
+                      // TODO: This is a ts type bug in Pfe asking for body content. Will raise it in PFE
+                    } as any
+                  }
                   onChange={(str) => {
                     onChange(str);
                     onBlur();
