@@ -14,6 +14,7 @@ import {
   PageSection,
   ProgressStep,
   ProgressStepper,
+  SearchInput,
   Split,
   SplitItem,
   Tab,
@@ -39,8 +40,14 @@ import {
   Thead,
   Tr
 } from '@patternfly/react-table';
-import { CogIcon, PackageIcon, RunningIcon, SearchIcon } from '@patternfly/react-icons';
-import { useFormatDate, useTabs } from '@app/hooks';
+import {
+  CogIcon,
+  ExternalLinkAltIcon,
+  PackageIcon,
+  RunningIcon,
+  SearchIcon
+} from '@patternfly/react-icons';
+import { useDebounce, useFormatDate, useTabs } from '@app/hooks';
 import { useGetWebPropActivityStream } from '@app/services/analytics';
 import { pageLinks } from '@app/links';
 
@@ -54,6 +61,8 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const propertyName = (query?.propertyName as string) || '';
   const formatDate = useFormatDate();
   const { openTab, handleTabChange } = useTabs(2);
+  const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 200);
 
   // api calls
   const spaProperties = useGetSPAPropGroupByName(propertyName);
@@ -75,7 +84,12 @@ export const WebPropertyDetailPage = (): JSX.Element => {
 
   return (
     <>
-      <Banner title={propertyName.replace('-', ' ')}>
+      <Banner
+        title={propertyName.replace('-', ' ')}
+        backRef={{
+          pathname: pageLinks.webPropertyListPage
+        }}
+      >
         <Level>
           <LevelItem />
           <LevelItem>
@@ -90,6 +104,14 @@ export const WebPropertyDetailPage = (): JSX.Element => {
         </Level>
       </Banner>
       <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
+        <div className="pf-u-w-33 pf-u-mb-lg">
+          <SearchInput
+            placeholder="Search by name"
+            value={searchTerm}
+            onChange={(value) => setSearchTerm(value?.toLowerCase())}
+            onClear={() => setSearchTerm('')}
+          />
+        </div>
         {!spaProperties.isLoading && isSpaPropertyListEmpty ? (
           <EmptyInfo propertyName={propertyName} />
         ) : (
@@ -138,80 +160,99 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                   </Tbody>
                 )}
                 {spaProperties.isSuccess &&
-                  spaPropertyKeys.map((identifier, rowIndex) => (
-                    <Tbody isExpanded={Boolean(isRowExpanded?.[identifier])} key={identifier}>
-                      <Tr isStriped={Boolean(rowIndex % 2)}>
-                        <Td
-                          expand={{
-                            rowIndex,
-                            isExpanded: Boolean(isRowExpanded?.[identifier]),
-                            onToggle: () => onToggleRowExpanded(identifier),
-                            expandId: 'composable-property-table'
-                          }}
-                        />
-                        <Td>
-                          <Link
-                            href={{
-                              pathname: '/properties/[propertyName]/[spaProperty]',
-                              query: { propertyName, spaProperty: identifier }
+                  spaPropertyKeys
+                    .filter((el) => el.toLowerCase().includes(debouncedSearchTerm))
+                    .map((identifier, rowIndex) => (
+                      <Tbody isExpanded={Boolean(isRowExpanded?.[identifier])} key={identifier}>
+                        <Tr isStriped={Boolean(rowIndex % 2)}>
+                          <Td
+                            expand={{
+                              rowIndex,
+                              isExpanded: Boolean(isRowExpanded?.[identifier]),
+                              onToggle: () => onToggleRowExpanded(identifier),
+                              expandId: 'composable-property-table'
                             }}
-                          >
-                            {spaProperties.data[identifier]?.[0]?.name}
-                          </Link>
-                        </Td>
-                        <Td>{spaProperties.data[identifier]?.[0]?.path}</Td>
-                        <Td>
-                          <Split hasGutter>
-                            {spaProperties.data[identifier].map(({ id, env }) => (
-                              <SplitItem key={id}>
-                                <Label color="gold" isCompact>
-                                  {env}
-                                </Label>
-                              </SplitItem>
-                            ))}
-                          </Split>
-                        </Td>
-                      </Tr>
-                      <Tr isExpanded={Boolean(isRowExpanded?.[identifier])}>
-                        <Td colSpan={4} noPadding={false}>
-                          <ExpandableRowContent>
-                            <TableComposable variant="compact" aria-label="expandable-table">
-                              <Thead>
-                                <Tr>
-                                  <Th>Environment Name</Th>
-                                  <Th>Ref</Th>
-                                  <Th>URL</Th>
-                                  <Th>Internal Access URL</Th>
-                                  <Th>Updated At</Th>
-                                </Tr>
-                              </Thead>
-                              <Tbody>
-                                {spaProperties?.data?.[identifier].map((prop) => (
-                                  <Tr key={`expandable-property${prop.id}`}>
-                                    <Td>
-                                      <Label color="gold" isCompact>
-                                        {prop.env}
-                                      </Label>
-                                    </Td>
-                                    <Td>{prop.ref}</Td>
-                                    <Td>{webProperties?.data?.[prop.env]?.url}</Td>
-                                    <Td>
-                                      {`${prop.accessUrl.slice(0, 25)} ${
-                                        prop.accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
-                                      }`}
-                                    </Td>
-                                    <Td>
-                                      {formatDate(prop.updatedAt, 'MMM DD, YYYY - hh:mm:ss A')}
-                                    </Td>
+                          />
+                          <Td>
+                            <Link
+                              href={{
+                                pathname: '/properties/[propertyName]/[spaProperty]',
+                                query: { propertyName, spaProperty: identifier }
+                              }}
+                            >
+                              {spaProperties.data[identifier]?.[0]?.name}
+                            </Link>
+                          </Td>
+                          <Td>{spaProperties.data[identifier]?.[0]?.path}</Td>
+                          <Td>
+                            <Split hasGutter>
+                              {spaProperties.data[identifier].map(({ id, env }) => (
+                                <SplitItem key={id}>
+                                  <Label color="gold" isCompact>
+                                    {env}
+                                  </Label>
+                                </SplitItem>
+                              ))}
+                            </Split>
+                          </Td>
+                        </Tr>
+                        <Tr isExpanded={Boolean(isRowExpanded?.[identifier])}>
+                          <Td colSpan={4} noPadding={false}>
+                            <ExpandableRowContent>
+                              <TableComposable variant="compact" aria-label="expandable-table">
+                                <Thead>
+                                  <Tr>
+                                    <Th>Environment Name</Th>
+                                    <Th>Ref</Th>
+                                    <Th>Publish Domain</Th>
+                                    <Th>Internal Access URL</Th>
+                                    <Th>Updated At</Th>
                                   </Tr>
-                                ))}
-                              </Tbody>
-                            </TableComposable>
-                          </ExpandableRowContent>
-                        </Td>
-                      </Tr>
-                    </Tbody>
-                  ))}
+                                </Thead>
+                                <Tbody>
+                                  {spaProperties?.data?.[identifier].map((prop) => (
+                                    <Tr key={`expandable-property${prop.id}`}>
+                                      <Td>
+                                        <Label color="gold" isCompact>
+                                          {prop.env}
+                                        </Label>
+                                      </Td>
+                                      <Td>{prop.ref}</Td>
+                                      <Td>
+                                        <a
+                                          href={`https://${webProperties?.data?.[prop.env]?.url}`}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                        >
+                                          <ExternalLinkAltIcon />{' '}
+                                          {webProperties?.data?.[prop.env]?.url}
+                                        </a>
+                                      </Td>
+
+                                      <Td>
+                                        <a
+                                          href={prop.accessUrl}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                        >
+                                          <ExternalLinkAltIcon />{' '}
+                                          {`${prop.accessUrl.slice(0, URL_LENGTH_LIMIT)} ${
+                                            prop.accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
+                                          }`}
+                                        </a>
+                                      </Td>
+                                      <Td>
+                                        {formatDate(prop.updatedAt, 'MMM DD, YYYY - hh:mm:ss A')}
+                                      </Td>
+                                    </Tr>
+                                  ))}
+                                </Tbody>
+                              </TableComposable>
+                            </ExpandableRowContent>
+                          </Td>
+                        </Tr>
+                      </Tbody>
+                    ))}
               </TableComposable>
             </Tab>
             <Tab

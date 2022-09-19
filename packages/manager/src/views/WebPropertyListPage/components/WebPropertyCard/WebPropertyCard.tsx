@@ -14,7 +14,7 @@ export const WebPropertyCard = ({ title, subtitle, children, footer, isSelected 
   <Card
     isSelectable
     isFullHeight
-    style={{ height: '200px' }}
+    style={{ height: '200px', overflow: 'hidden' }}
     isRounded
     className={css('pf-u-px-sm rounded-md transition hover:shadow-sm', {
       'selected-card': isSelected
