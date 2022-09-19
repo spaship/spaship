@@ -118,14 +118,14 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
           >
             <Split hasGutter className="pf-u-mt-md">
               <SplitItem isFilled>
-                <Card style={{ maxWidth: '100%' }} isFullHeight>
+                <Card isFullHeight style={{ height: '320px' }}>
                   <CardHeader>
                     <CardTitle>
                       <Title headingLevel="h6">Total Deployments</Title>
                     </CardTitle>
                   </CardHeader>
-                  <CardBody className="x-y-center">
-                    {deploymentCount.isLoading && <Skeleton shape="circle" width="50%" />}
+                  <CardBody className="x-y-center pf-u-h-100">
+                    {deploymentCount.isLoading && <Skeleton shape="circle" width="160px" />}
                     {!deploymentCount.isLoading && !deploymentCount.data && (
                       <EmptyState>
                         <EmptyStateIcon icon={CubesIcon} />
@@ -143,30 +143,31 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                         legendData={donutChartData.names}
                         legendOrientation="vertical"
                         legendPosition="right"
-                        name="chart2"
+                        name="monthly-deployment"
                         padding={{
-                          bottom: 20,
+                          bottom: 40,
                           left: 20,
                           right: 140, // Adjusted to accommodate legend
                           top: 20
                         }}
                         subTitle="Deployments"
                         title={`${donutChartData.total}`}
-                        width={350}
+                        width={320}
+                        height={220}
                       />
                     )}
                   </CardBody>
                 </Card>
               </SplitItem>
               <SplitItem isFilled>
-                <Card isFullHeight>
+                <Card isFullHeight style={{ height: '320px' }}>
                   <CardHeader>
                     <CardTitle>
                       <Title headingLevel="h6">Deployment History</Title>
                     </CardTitle>
                   </CardHeader>
-                  <CardBody className="x-y-center">
-                    {monthyDeployChart.isLoading && <Skeleton shape="square" width="50%" />}
+                  <CardBody className="x-y-center pf-u-h-100 ">
+                    {monthyDeployChart.isLoading && <Skeleton height="160px" width="90%" />}
                     {!monthyDeployChart.isLoading && !monthyDeployChart.data && (
                       <EmptyState>
                         <EmptyStateIcon icon={CubesIcon} />
@@ -188,15 +189,15 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                         legendData={lineChartLegend}
                         legendOrientation="vertical"
                         legendPosition="right"
-                        height={250}
                         name="chart1"
+                        minDomain={0}
                         padding={{
-                          bottom: 50,
+                          bottom: 100,
                           left: 50,
-                          right: 200, // Adjusted to accommodate legend
+                          right: 100, // Adjusted to accommodate legend
                           top: 50
                         }}
-                        width={600}
+                        width={700}
                       >
                         <ChartAxis tickFormat={(y) => dayjs(y).format('DD MMM')} />
                         <ChartAxis dependentAxis showGrid tickFormat={(x) => Number(x)} />

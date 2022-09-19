@@ -34,8 +34,8 @@ body {
 }
 
 .pf-c-page__sidebar{
-  --pf-c-page__sidebar--BackgroundColor: #000;
-  --pf-c-page__sidebar--Width: 256px;
+  --pf-c-page__sidebar--Width: 240px;
+  --pf-c-page__sidebar-body--PaddingTop: 0;
 }
 
 .pf-c-page__sidebar-body {
@@ -94,6 +94,10 @@ body {
 
 .pf-c-table thead{
   font-family: RedHatDisplay;
+}
+
+.pf-c-spinner{
+    --pf-c-spinner--Color: var(--spaship-global--Color--solar-orange) !important;
 }
 
 .rounded-md {
