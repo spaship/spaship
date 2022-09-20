@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@one-platform/opc-feedback": "^0.0.11-prerelease",
-    "@patternfly/react-charts": "^6.51.19",
+    "@patternfly/react-charts": "6.92.0",
     "@patternfly/react-core": "^4.221.11",
     "@patternfly/react-icons": "^4.49.19",
     "@patternfly/react-styles": "^4.48.19",
