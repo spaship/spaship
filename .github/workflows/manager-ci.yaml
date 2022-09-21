@@ -7,7 +7,7 @@ on:
     tags:
       - '*'
     paths:
-      - '*'
+      - '/packages/manager/**'
   workflow_dispatch:
     inputs:
       env:
@@ -46,7 +46,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./packages/manager
-          #file: ./packages/manager/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           build-args: |
             NEXT_PUBLIC_SPASHIP_API_BASE_URL=${{ secrets.DEV_API_URL }}
@@ -62,7 +61,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./packages/manager
-          #file: ./packages/manager/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           build-args: |
             NEXT_PUBLIC_SPASHIP_API_BASE_URL=${{ secrets.QA_API_URL }}
@@ -78,7 +76,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./packages/manager
-          #file: ./packages/manager/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           build-args: |
             NEXT_PUBLIC_SPASHIP_API_BASE_URL=${{ secrets.STAGE_API_URL }}
@@ -94,7 +91,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./packages/manager
-          #file: ./packages/manager/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           build-args: |
             NEXT_PUBLIC_SPASHIP_API_BASE_URL=${{ secrets.PROD_API_URL }}
