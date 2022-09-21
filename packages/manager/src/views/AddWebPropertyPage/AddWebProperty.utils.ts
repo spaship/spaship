@@ -6,7 +6,7 @@ export const addNewWebPropertySchema = yup.object({
   url: yup.string().label('Hostname URL').trim().max(250).required(),
   env: yup
     .string()
-    .label('Environement Name')
+    .label('Environment Name')
     .noWhitespace()
     .trim()
     .alphabetsOnly()
