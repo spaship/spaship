@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       env:
-        description: Select envirinment
+        description: Select environment
         options:
           - Dev
           - Qa
