@@ -2,6 +2,8 @@
   "packages": [
     "packages/*"
   ],
-  "useNx": true,
-  "version": "independent"
+  "version": "1.3.0",
+  "ignoreChanges": [
+    "package-lock.json"
+  ]
 }

@@ -1,1 +1,0 @@
-export { WebPropertyDetailPage } from './WebPropertyDetailPage';

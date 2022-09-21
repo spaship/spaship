@@ -8,6 +8,13 @@ on:
       - '*'
     paths:
       - '*'
+  pull_request:
+    branches:
+      - '*'
+    tags:
+      - '*'
+    paths:
+      - '*'
   workflow_dispatch:
     inputs:
       version:
