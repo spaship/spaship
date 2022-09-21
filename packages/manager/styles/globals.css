@@ -1,0 +1,100 @@
+:root {
+  --spaship-global--Color--spaship-gray: #333333;
+  --spaship-global--Color--light-gray: #d2d2d2;
+  --spaship-global--Color--bright-gray: #eaeaea;
+  --spaship-global--Color--sonic-silver: #72767b;
+  --spaship-global--Color--solar-orange: #fdb716;
+  --spaship-global--Color--amarillo-flare: #fed402;
+  --spaship-global--Color--munsell-yellow: #f1c904;
+  --spaship-global--Color--text-black: #151515;
+  --spaship-global--Color--ui-blue: #0066cc;
+  --spaship-global--Font-Family: RedHatDisplay, Overpass, Roboto, Cantarell, helvetica, arial, sans-serif;
+  --spaship-table-container-max-width: 1041px;
+  --spaship-button-width-200: 200px;
+  --spaship-card-hight-160: 160px;
+  --pf-global--FontWeight--bold: 500;
+}
+
+.spaship-gray {
+  color: var(--spaship-global--Color--spaship-gray);
+}
+
+.sonic-silver {
+  color: var(--spaship-global--Color--sonic-silver);
+}
+
+.solar-orange {
+  color: var(--spaship-global--Color--solar-orange);
+}
+
+.amarillo-flare {
+  color: var(--spaship-global--Color--amarillo-flare);
+}
+
+.munsell-yellow {
+  color: var(--spaship-global--Color--munsell-yellow);
+}
+
+.text-black {
+  color: var(--spaship-global--Color--text-black);
+}
+
+.ui-blue {
+  color: var(--spaship-global--Color--ui-blue);
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: var(--spaship-global--Font-Family);
+  font-weight: 300;
+}
+
+a {
+  color: var(--spaship-global--Color--ui-blue);
+  text-decoration: none;
+}
+
+button.spaship_btn {
+  --pf-c-button--m-primary--BackgroundColor: var(--spaship-global--Color--amarillo-flare);
+  --pf-c-button--m-primary--Color: var(--spaship-global--Color--text-black) !important;
+  outline: none;
+}
+
+.spaship_btn:hover {
+  --pf-c-button--m-primary--hover--BackgroundColor: var(--spaship-global--Color--solar-orange) !important;
+}
+
+.spaship_btn:focus {
+  --pf-c-button--m-primary--focus--BackgroundColor: var(--spaship-global--Color--solar-orange) !important;
+}
+
+.spaship_btn:active {
+  --pf-c-button--m-primary--active--BackgroundColor: var(--spaship-global--Color--munsell-yellow) !important;
+}
+
+* {
+  box-sizing: border-box;
+  transition: all 240ms linear;
+}
+
+.spaship-circle {
+  display: grid;
+  place-content: center;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  background: hsl(42, 98%, 54%);
+  color: var(--spaship-global--Color--spaship-gray);
+  transition: all 240ms linear;
+}
+.spaship-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.spaship-circle:hover {
+  background: #f9d207;
+  cursor: pointer;
+}

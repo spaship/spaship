@@ -1,1 +1,0 @@
-export { WebPropertyCard } from './WebPropertyCard';
