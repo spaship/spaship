@@ -62,7 +62,7 @@
   "devDependencies": {
     "@types/node": "17.0.22",
     "@types/nprogress": "^0.2.0",
-    "@types/react": "17.0.44",
+    "@types/react": "17.0.50",
     "babel-eslint": "^9.0.0",
     "eslint": "8.11.0",
     "eslint-config-next": "12.1.0",
