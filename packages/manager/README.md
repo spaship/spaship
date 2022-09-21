@@ -1,32 +1,60 @@
-# SPAship Manager
+# SPASHIP MANAGER
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+UI for the SPAShip to manage and deploy SPAs
+
+## Prerequisite
+
+1. `NodeJS >= v16`
+2. npm
 
 ## Getting Started
 
-First, run the development server:
+1. Run
 
-```bash
-npm run dev
-# or
-yarn dev
+```sh
+npm install
 ```
 
-Open [http://localhost:2468](http://localhost:2468) with your browser to see the result.
+2. Copy `.env.example` to `.env` and fill the values
+3. Start the dev server with
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```
+npm run dev
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:2468/api/hello](http://localhost:2468/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+4. Open `http://localhost:2468`
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Available Scripts
 
-## Authentication
-This project uses [NextAuth.js](https://next-auth.js.org/) for Authentication. You can check out [NextAuth.js Tutorials](https://next-auth.js.org/tutorials) to learn about it.
-## Learn More
+In the project directory, you can run:
 
-To learn more about Next.js, take a look at the following resources:
+### `npm run dev`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Runs the app in the development mode.\
+Open [http://localhost:2468](http://localhost:2468) to view it in the browser.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
+
+### `npm test`
+
+Launches the test runner in the interactive watch mode.
+
+### `npm run build`
+
+Builds the app for production to the `dist` folder.
+
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
+
+### `npm start`
+
+This will start the productions server. (Must be done after build)
+
+### `npm run lint`
+
+Runs the eslint with prettier
+
+## Contributors
+
+👤 **Akhil Mohan** ([@akhilmhdh](https://github.com/akhilmhdh))
