@@ -199,7 +199,11 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                         <Tr isExpanded={Boolean(isRowExpanded?.[identifier])}>
                           <Td colSpan={4} noPadding={false}>
                             <ExpandableRowContent>
-                              <TableComposable variant="compact" aria-label="expandable-table">
+                              <TableComposable
+                                variant="compact"
+                                aria-label="expandable-table"
+                                borders={false}
+                              >
                                 <Thead>
                                   <Tr>
                                     <Th>Environment Name</Th>

@@ -19,7 +19,7 @@ export const schema = yup.object({
   url: yup.string().label('Hostname URL').trim().required().max(250),
   env: yup
     .string()
-    .label('Environement Name')
+    .label('Environment Name')
     .noWhitespace()
     .trim()
     .max(50)
@@ -60,11 +60,11 @@ export const CreateEnvForm = ({ onSubmit, onClose }: Props): JSX.Element => {
                 fieldId="property-env"
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
-                helperText="Env shouldn't contain any space, numbers, special-character "
+                helperText="Environment name shouldn't contain any space, numbers, special-character"
               >
                 <TextInput
                   isRequired
-                  placeholder="Default Environement Name"
+                  placeholder="Default Environment Name"
                   type="text"
                   id="property-env"
                   {...field}

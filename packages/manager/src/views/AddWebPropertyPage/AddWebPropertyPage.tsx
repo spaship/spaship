@@ -59,7 +59,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
 
   return (
     <>
-      <Banner title="Add A New Web Property" backRef={pageLinks.webPropertyListPage} />
+      <Banner title="Add New Web Property" backRef={pageLinks.webPropertyListPage} />
       <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
         <Form onSubmit={handleSubmit(onFormSubmit)} style={{ maxWidth: '720px' }}>
           <Controller
@@ -73,7 +73,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
                 fieldId="property-title"
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
-                helperText="Title shouldn't contain any space, numbers, special-character"
+                helperText="Title shouldn't contain any space, special-character"
               >
                 <TextInput
                   isRequired
@@ -130,11 +130,11 @@ export const AddWebPropertyPage = (): JSX.Element => {
                     fieldId="property-env"
                     validated={error ? 'error' : 'default'}
                     helperTextInvalid={error?.message}
-                    helperText="Env shouldn't contain any space, numbers, special-character "
+                    helperText="Environment Name shouldn't contain any space, numbers, special-character "
                   >
                     <TextInput
                       isRequired
-                      placeholder="Default Environement Name"
+                      placeholder="Default Environment Name"
                       type="text"
                       id="property-env"
                       {...field}
