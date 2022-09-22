@@ -73,7 +73,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
                 fieldId="property-title"
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
-                helperText="Title shouldn't contain any space, special-character"
+                helperText="Title shouldn't contain any special-character"
               >
                 <TextInput
                   isRequired

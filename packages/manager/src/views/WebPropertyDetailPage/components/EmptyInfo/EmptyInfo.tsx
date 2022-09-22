@@ -78,7 +78,9 @@ export const EmptyInfo = ({ propertyName }: Props): JSX.Element => (
     </EmptyStateBody>
     <EmptyStateSecondaryActions>
       <a target="_blank" href={env.PUBLIC_SPASHIP_GUIDE} rel="noreferrer">
-        <img src="/images/logo/spaship-logo-dark-vector.svg" alt="instruction" /> Instruction Guide
+        <img src="/img/spaship-logo.svg" alt="instruction" style={{ height: '25px' }} />
+        <br />
+        Instruction Guide
       </a>
     </EmptyStateSecondaryActions>
   </EmptyState>

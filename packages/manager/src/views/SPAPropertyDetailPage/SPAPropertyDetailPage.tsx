@@ -199,17 +199,21 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                         }}
                         width={700}
                       >
-                        <ChartAxis tickFormat={(y) => dayjs(y).format('DD MMM')} />
+                        <ChartAxis />
                         <ChartAxis dependentAxis showGrid tickFormat={(x) => Number(x)} />
                         <ChartGroup>
                           {lineChartLegend.map(({ name }) => (
                             <ChartLine
                               key={`key-${name}`}
-                              data={monthyDeployChart?.data?.[name].map(({ count, startDate }) => ({
-                                name,
-                                x: startDate,
-                                y: count
-                              }))}
+                              data={monthyDeployChart?.data?.[name].map(
+                                ({ count, startDate, endDate }) => ({
+                                  name,
+                                  x: `${dayjs(startDate).format('DD MMM')} - ${dayjs(
+                                    endDate
+                                  ).format('DD MMM')}`,
+                                  y: count
+                                })
+                              )}
                             />
                           ))}
                         </ChartGroup>
