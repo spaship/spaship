@@ -66,11 +66,11 @@ export const WebPropertyListPage = (): JSX.Element => {
   }
 
   // search filter debounced
-  const filteredWebProperties = webProperties?.data?.filter(({ propertyName, createdBy }) => {
+  const filteredWebProperties = webProperties?.data?.filter(({ propertyTitle, createdBy }) => {
     if (filter === MY_PROPERTY_LABEL && createdBy !== session?.user.email) {
       return false;
     }
-    return propertyName.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
+    return propertyTitle.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
   });
 
   const isWebPropertiesEmpty = filteredWebProperties?.length === 0;
