@@ -26,6 +26,10 @@ const activityStream = new mongoose.Schema(
       required: true,
     },
     props: props,
+    payload: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,
