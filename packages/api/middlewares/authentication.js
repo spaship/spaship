@@ -65,7 +65,7 @@ module.exports = () => {
     jwtAuth.verify(token, config.get("token:secret"), function (err, data) {
       if (err) {
         if (err.message != "invalid algorithm") {
-          log.error("Invalid algoritgm for the given token (APIkey mismatch for the env)");
+          log.error("Invalid algorithm for the given token (API key mismatch for the env)");
           res.status(401).json({ message: err.message });
           error = true;
         }
