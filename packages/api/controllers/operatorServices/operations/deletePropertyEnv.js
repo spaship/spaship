@@ -53,6 +53,7 @@ const deletePropertyEnv = async (req, res, next) => {
       action: _delete,
       propertyName: deleteAlias?.propertyName || "",
       props: { env: deleteAlias?.env, spaName: "NA" },
+      payload: JSON.stringify(deleteAlias)
     });
     for (let item of deleteApplication) {
       const data = {
@@ -61,6 +62,7 @@ const deletePropertyEnv = async (req, res, next) => {
         action: _delete,
         propertyName: item?.propertyName.trim()?.toLowerCase() || "",
         props: { env: item?.env?.trim()?.toLowerCase(), spaName: item.name?.trim()?.toLowerCase() },
+        payload: JSON.stringify(item)
       };
       applicationsActivityStream.push(data);
     }

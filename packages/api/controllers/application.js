@@ -74,7 +74,7 @@ module.exports.deploy = async (req, res, next) => {
   const name = getNameRequest(req);
   const identifier = getIdentifier(name);
   const nextRef = getRefRequest(req);
-  const ref = "";
+  const ref = getRefRequest(req);
   const { path: appPath } = getRequestBody(req);
   const { path: spaArchive } = getPath(req);
   const propertyName = getPropertyName(req);
@@ -110,7 +110,7 @@ module.exports.deploy = async (req, res, next) => {
               name: name,
               identifier,
               path: appPath,
-              ref,
+              ref: "",
               nextRef,
               userId,
               env,
@@ -126,7 +126,7 @@ module.exports.deploy = async (req, res, next) => {
       res.status(201).send({
         name,
         path: appPath,
-        ref: nextRef,
+        ref,
         timestamp: new Date(),
       });
     } catch (err) {
@@ -186,7 +186,7 @@ module.exports.validate = async (req, res, next) => {
     expiredDate,
   };
   const apikey = await APIKey.create(data);
-
+  const _payload = JSON.stringify(data);
 
   const _createApikey = "CREATE_APIKEY"
   const activity = new activityStream({
@@ -194,6 +194,7 @@ module.exports.validate = async (req, res, next) => {
     action: _createApikey,
     propertyName: propertyName,
     props: { env: env.toString(), spaName: "NA" },
+    payload: _payload,
   });
   await saveActivity(activity)
 

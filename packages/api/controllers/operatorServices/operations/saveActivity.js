@@ -6,6 +6,7 @@ module.exports = async function saveAlias(request) {
     action: request.action,
     propertyName: request.propertyName,
     props: { env: request.props.env, spaName: request.props.spaName },
+    payload: request?.payload
   });
   const response = await activity.save();
   return response;
