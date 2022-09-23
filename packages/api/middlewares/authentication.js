@@ -65,6 +65,7 @@ module.exports = () => {
     jwtAuth.verify(token, config.get("token:secret"), function (err, data) {
       if (err) {
         if (err.message != "invalid algorithm") {
+          log.error("Invalid algoritgm for the given token (APIkey mismatch for the env)");
           res.status(401).json({ message: err.message });
           error = true;
         }
@@ -73,11 +74,13 @@ module.exports = () => {
           const props = req.originalUrl.split("/");
           if (props[props.length - 2] != data.propertyName || !checkEnv(props, data)) {
             error = true;
+            log.error("Access denied (Mismatch in PropertyName or Env)");
             res.status(401).json({ message: "Access denied" });
             return;
           }
         }
         success = true;
+        log.info("Authentication successful for the API Key");
         return next();
       }
     });
