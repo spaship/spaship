@@ -30,12 +30,14 @@ module.exports = async function saveAlias(req, res, next) {
 
   const checkProperty = await alias.findOne({ propertyName: getPropertyName(request) });
   if (!checkProperty) {
+    const _payload = JSON.stringify(request);
     const _createProperty = "CREATE_PROPERTY"
     const activity = {
       source: getCreatedBy(request),
       action: _createProperty,
       propertyName: getPropertyName(request),
       props: { env: "NA", spaName: "NA" },
+      payload: _payload
     };
     await saveActivity(activity)
   }
@@ -51,11 +53,13 @@ module.exports = async function saveAlias(req, res, next) {
   }
 
   const _createProperty = "CREATE_ENV"
+  const _payload = JSON.stringify(request);
   const activity = {
     source: getCreatedBy(request),
     action: _createProperty,
     propertyName: getPropertyName(request),
     props: { env: getEnv(request), spaName: "NA" },
+    payload: _payload
   };
   await saveActivity(activity)
 

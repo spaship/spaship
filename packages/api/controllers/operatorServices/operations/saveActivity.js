@@ -1,6 +1,6 @@
 const activityStream = require("../../../models/activityStream");
 
-module.exports = async function saveAlias(request) {
+module.exports = async function saveActivity(request) {
   const activity = new activityStream({
     source: request.source,
     action: request.action,
