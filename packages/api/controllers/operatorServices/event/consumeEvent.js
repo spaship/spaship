@@ -71,7 +71,7 @@ async function createEventTimeTraceRequest(response) {
   const env = response?.environmentName;
   const accessUrl = response?.accessUrl;
   const lastApplicationRecord = await application.findOne({ propertyName, identifier, path, env });
-  const ref = lastApplicationRecord.nextRef;
+  const ref = lastApplicationRecord?.nextRef || '';
   const applicationResponse = await application.updateOne({ propertyName, identifier, path, env }, { accessUrl, ref });
   console.log(applicationResponse);
   const currentTime = new Date();
