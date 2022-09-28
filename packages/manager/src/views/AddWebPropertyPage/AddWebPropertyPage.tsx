@@ -39,13 +39,14 @@ export const AddWebPropertyPage = (): JSX.Element => {
   const router = useRouter();
 
   const propertyTitle = watch('propertyTitle');
+  const isItProduction = watch('deploymentConnectionType');
   const propertyID = propertyTitle?.toLowerCase().replaceAll(' ', '-') || '';
 
   const onFormSubmit = async (data: FormData) => {
     try {
       await createWebPropertyMutation.mutateAsync({
         ...data,
-        deploymentConnectionType: data.deploymentConnectionType ? 'preprod' : 'prod',
+        deploymentConnectionType: data.deploymentConnectionType ? 'prod' : 'preprod',
         propertyName: propertyID,
         createdBy: session?.user.email || '',
         type: 'operator'
@@ -152,7 +153,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
                   <FormGroup label="Environment Type" fieldId="property-env-type">
                     <Switch
                       id="property-deployconnection"
-                      label="Pre-production"
+                      label={isItProduction ? 'production' : 'pre-production'}
                       isChecked={value}
                       onChange={onChange}
                     />

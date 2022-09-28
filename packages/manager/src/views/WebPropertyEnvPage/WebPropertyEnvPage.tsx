@@ -83,7 +83,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     try {
       await createAWebProp.mutateAsync({
         ...data,
-        deploymentConnectionType: data.deploymentConnectionType ? 'preprod' : 'prod',
+        deploymentConnectionType: data.deploymentConnectionType ? 'prod' : 'preprod',
         propertyName,
         createdBy: session?.user.email || '',
         type: 'operator',

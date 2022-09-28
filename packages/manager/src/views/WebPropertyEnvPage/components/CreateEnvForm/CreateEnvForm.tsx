@@ -39,11 +39,14 @@ export const CreateEnvForm = ({ onSubmit, onClose }: Props): JSX.Element => {
   const {
     control,
     handleSubmit,
+    watch,
     formState: { isSubmitting }
   } = useForm<FormData>({
     mode: 'onBlur',
     resolver: yupResolver(schema)
   });
+
+  const isItProduction = watch('deploymentConnectionType');
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -82,7 +85,7 @@ export const CreateEnvForm = ({ onSubmit, onClose }: Props): JSX.Element => {
               <FormGroup label="Environment Type" fieldId="property-env-type">
                 <Switch
                   id="property-deployconnection"
-                  label="Pre-production"
+                  label={isItProduction ? 'production' : 'pre-production'}
                   isChecked={value}
                   onChange={onChange}
                 />
