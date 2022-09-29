@@ -1,6 +1,7 @@
 package io.spaship.operator.api;
 
 
+import io.quarkus.security.Authenticated;
 import io.spaship.operator.business.SPAUploadHandler;
 import io.spaship.operator.exception.ValidationException;
 import io.spaship.operator.repo.SharedRepository;
@@ -19,6 +20,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Path("upload")
+@Authenticated
 public class SpaDeploymentController {
 
   private static final Logger LOG = LoggerFactory.getLogger(SpaDeploymentController.class);

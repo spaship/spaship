@@ -1,5 +1,6 @@
 package io.spaship.operator.api;
 
+import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Multi;
 import io.vertx.mutiny.core.Vertx;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -10,6 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @Path("/event")
+@Authenticated
 public class EventStream {
 
   private final Vertx vertx;

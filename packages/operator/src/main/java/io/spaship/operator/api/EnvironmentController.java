@@ -6,12 +6,14 @@ import io.spaship.operator.service.k8s.Operator;
 import io.spaship.operator.service.k8s.SideCarOperations;
 import io.spaship.operator.type.Environment;
 import io.spaship.operator.type.OperationResponse;
+import io.quarkus.security.Authenticated;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Objects;
 
 @Path("environment")
+@Authenticated
 public class EnvironmentController {
 
 
