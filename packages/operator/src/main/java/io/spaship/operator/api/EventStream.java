@@ -11,7 +11,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @Path("/event")
-@Authenticated
 public class EventStream {
 
   private final Vertx vertx;
