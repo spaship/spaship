@@ -1,6 +1,5 @@
 package io.spaship.operator.api;
 
-import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Multi;
 import io.vertx.mutiny.core.Vertx;
 import org.eclipse.microprofile.config.ConfigProvider;
