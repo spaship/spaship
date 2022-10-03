@@ -51,12 +51,13 @@ import { useDebounce, useFormatDate, useTabs } from '@app/hooks';
 import { useGetWebPropActivityStream } from '@app/services/analytics';
 import { pageLinks } from '@app/links';
 
+import toast from 'react-hot-toast';
 import { EmptyInfo } from './components/EmptyInfo';
 
 const URL_LENGTH_LIMIT = 25;
 
 export const WebPropertyDetailPage = (): JSX.Element => {
-  const { query } = useRouter();
+  const { push, query } = useRouter();
   const [isRowExpanded, setIsRowExpanded] = useState<Record<string, boolean>>({});
   const propertyName = (query?.propertyName as string) || '';
   const formatDate = useFormatDate();
@@ -68,6 +69,11 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const spaProperties = useGetSPAPropGroupByName(propertyName);
   const webProperties = useGetWebPropertyGroupedByEnv(propertyName);
   const activityStream = useGetWebPropActivityStream(propertyName);
+
+  if (spaProperties.isError === true) {
+    toast.error(`Sorry cannot find ${propertyName}`);
+    push('/properties');
+  }
 
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;

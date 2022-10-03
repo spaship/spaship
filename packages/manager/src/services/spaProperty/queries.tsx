@@ -8,7 +8,7 @@ const spaPropertyKeys = {
 };
 
 // GET Operations
-const fetcSpaProperties = async (propertName: string) => {
+const fetchSpaProperties = async (propertName: string) => {
   const { data } = await orchestratorReq.get(`/webproperty/get/applications/${propertName}`);
   return data.data;
 };
@@ -17,7 +17,7 @@ export const useGetSPAProperties = <T extends unknown>(
   webProperyName: string,
   select?: (data: TSpaProperty[]) => T
 ) =>
-  useQuery(spaPropertyKeys.list(webProperyName), () => fetcSpaProperties(webProperyName), {
+  useQuery(spaPropertyKeys.list(webProperyName), () => fetchSpaProperties(webProperyName), {
     select
   });
 
