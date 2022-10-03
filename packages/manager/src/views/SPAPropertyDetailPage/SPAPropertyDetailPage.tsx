@@ -47,6 +47,7 @@ import {
 import { useFormatDate, useTabs } from '@app/hooks';
 import { Banner } from '@app/components';
 import { pageLinks } from '@app/links';
+import toast from 'react-hot-toast';
 
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
@@ -55,8 +56,12 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
   const spaProperty = router.query.spaProperty as string;
 
   const deploymentCount = useGetTotalDeployments(propertyName, spaProperty);
-  const monthyDeployChart = useGetMonthyDeploymentChart(propertyName, spaProperty);
+  const monthlyDeployChart = useGetMonthyDeploymentChart(propertyName, spaProperty);
   const activityStream = useGetWebPropActivityStream(propertyName, spaProperty);
+  if (deploymentCount.isError === true) {
+    toast.error(`Sorry cannot find ${spaProperty}`);
+    router.push(`/properties/${propertyName}`);
+  }
 
   const { handleTabChange, openTab } = useTabs(2);
 
@@ -76,7 +81,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
     [sortedDeployCount]
   );
 
-  const lineChartLegend = Object.keys(monthyDeployChart?.data || {}).map((key) => ({ name: key }));
+  const lineChartLegend = Object.keys(monthlyDeployChart?.data || {}).map((key) => ({ name: key }));
 
   return (
     <>
@@ -167,8 +172,8 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                     </CardTitle>
                   </CardHeader>
                   <CardBody className="x-y-center pf-u-h-100 ">
-                    {monthyDeployChart.isLoading && <Skeleton height="160px" width="90%" />}
-                    {!monthyDeployChart.isLoading && !monthyDeployChart.data && (
+                    {monthlyDeployChart.isLoading && <Skeleton height="160px" width="90%" />}
+                    {!monthlyDeployChart.isLoading && !monthlyDeployChart.data && (
                       <EmptyState>
                         <EmptyStateIcon icon={CubesIcon} />
                         <Title headingLevel="h4" size="lg">
@@ -176,7 +181,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                         </Title>
                       </EmptyState>
                     )}
-                    {monthyDeployChart.isSuccess && (
+                    {monthlyDeployChart.isSuccess && (
                       <Chart
                         ariaDesc="Average number of pets"
                         ariaTitle="Line chart example"
@@ -205,7 +210,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                           {lineChartLegend.map(({ name }) => (
                             <ChartLine
                               key={`key-${name}`}
-                              data={monthyDeployChart?.data?.[name].map(
+                              data={monthlyDeployChart?.data?.[name].map(
                                 ({ count, startDate, endDate }) => ({
                                   name,
                                   x: `${dayjs(startDate).format('DD MMM')} - ${dayjs(
