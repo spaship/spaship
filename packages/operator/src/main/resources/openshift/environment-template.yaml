@@ -27,7 +27,7 @@ parameters:
     value: "1.3.6"
     required: false
   - name: "IMAGE_API_VERSION"
-    value: "v1.3.0"
+    value: "v1.4.0"
     required: false
   - name: "DOMAIN"
     required: true
