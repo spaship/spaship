@@ -1,23 +1,40 @@
 const deploymentRecord = require("../../../models/deploymentRecord");
 const activityStream = require("../../../models/activityStream");
 const applications = require("../../../models/application");
+const ephemeralRecord = require("../../../models/ephemeralRecord");
 const alias = require("../../../models/alias");
 const uuidv4 = require("uuid").v4;
 const axios = require("axios");
 const NotFoundError = require("../../../utils/errors/NotFoundError");
 const ValidationError = require("../../../utils/errors/ValidationError");
+const { log } = require("@spaship/common/lib/logging/pino");
 
 const deletePropertyEnv = async (req, res, next) => {
+  if (checkProperties(req.body)) {
+    return next(new ValidationError("Missing properties in request body"));
+  }
   try {
-    console.log(req.body);
-    if (checkProperties(req.body)) {
-      return next(new ValidationError("Missing properties in request body"));
-    }
+    const response = await deletePropertyEnvService(req.body);
+    return res.status(200).json(response);
+  }
+  catch (e) {
+    return next(new Error(e));
+  }
+};
 
-    const propertyName = req.body?.propertyName;
-    const env = req.body?.env;
-    const type = req.body?.type;
-    const source = req.body?.createdBy;
+const deletePropertyEnvService = async (req) => {
+
+  try {
+    console.log(req);
+    const propertyName = req?.propertyName;
+    const env = req?.env;
+    const type = req?.type;
+    const source = req?.createdBy;
+
+    if (env == "prod") {
+      log.info("Prod can't be deleted, please contact SPAship team");
+      throw new ValidationError("Prod can't be deleted, please contact SPAship team")
+    }
 
     const deploymentRecordResponse = await deploymentRecord.findOne({
       propertyName: propertyName,
@@ -25,8 +42,14 @@ const deletePropertyEnv = async (req, res, next) => {
     });
 
     if (!deploymentRecordResponse) {
-      next(new NotFoundError("Property not found"));
-      return;
+      log.info("Invalid Property Name");
+      throw new NotFoundError("Invalid Property Name")
+    }
+    const toObject = true;
+    const deleteAlias = await alias.findOne({ propertyName: propertyName, env: env }, null, { lean: toObject });
+    if (!deleteAlias) {
+      log.info("Env is already deleted or invalid");
+      throw new NotFoundError("Please provide a valid environment name.")
     }
 
     const operatorPayload = {
@@ -38,12 +61,9 @@ const deletePropertyEnv = async (req, res, next) => {
     const deploymentUrl = `${deploymentRecordResponse.baseurl}/api/environment/purge`;
     const response = await axios.post(deploymentUrl, operatorPayload);
 
-    const toObject = true;
-    const deleteAlias = await alias.findOne({ propertyName: propertyName, env: env }, null, { lean: toObject });
     const deleteApplication = await applications.find({ propertyName: propertyName, env: env }, null, {
       lean: toObject,
     });
-
 
     const applicationsActivityStream = [];
     const _delete = "DELETE";
@@ -69,18 +89,30 @@ const deletePropertyEnv = async (req, res, next) => {
     await dataAlias.save();
     await activityStream.insertMany(applicationsActivityStream);
 
-    console.log(deleteAlias);
-    console.log(deleteApplication);
+    log.info(`Deleted alias record : ${JSON.stringify(deleteAlias)}`);
+    log.info(`Deleted aplications record : ${JSON.stringify(deleteApplication)}`);
 
     const deleteCountAlias = await alias.findOne({ propertyName: propertyName, env: env }).remove().exec();
     const deleteCountApplication = await applications.findOne({ propertyName: propertyName, env: env }).remove().exec();
 
-    console.log(deleteCountAlias);
-    console.log(deleteCountApplication);
+    log.info(`Deleted alias record count : ${JSON.stringify(deleteCountAlias)}`);
+    log.info(`Deleted aplications record : ${JSON.stringify(deleteCountApplication)}`);
 
-    res.status(200).json({ deleteAlias: deleteCountAlias, deleteApplication: deleteCountApplication });
+
+    try {
+      /*
+      Remove ephemeral env from the record if exists
+      */
+      await ephemeralRecord.updateOne({ propertyName, env }, { isActive: false });
+    }
+    catch (e) {
+      log.error(err);
+      throw new Error(e);
+    }
+    return { deleteAlias: deleteCountAlias, deleteApplication: deleteCountApplication };
   } catch (err) {
-    next(err);
+    log.error(err);
+    throw new Error(err);
   }
 };
 
@@ -88,4 +120,4 @@ function checkProperties(request) {
   return !request.hasOwnProperty("env") || !request.hasOwnProperty("propertyName") || !request.hasOwnProperty("type");
 }
 
-module.exports = { deletePropertyEnv };
+module.exports = { deletePropertyEnv, deletePropertyEnvService };

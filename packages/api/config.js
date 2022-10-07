@@ -55,6 +55,7 @@ let validOptions = [
   //  cli credentials
   "cli:base_path",
   "cli:dir_path",
+  "cli:eph_ttl"
 ];
 const filepathOptions = ["config_file", "upload_dir", "webroot"]; // config options that represent filepaths
 
@@ -139,6 +140,7 @@ nconf.defaults({
   cli: {
     base_path: `${process.env.OPERATOR_BASEPATH}/api/upload`,
     dir_path: "uploads",
+    eph_ttl: process.env.SPASHIP_EPH__TTL || 3600,
   },
 });
 

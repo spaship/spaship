@@ -16,6 +16,7 @@ const { uuid } = require("uuidv4");
 const FormData = require("form-data");
 const axios = require("axios");
 const zip = require("zip-a-folder").zip;
+const { log } = require("@spaship/common/lib/logging/pino");
 /**
  * detect if the archive was created with `npm pack`.  npm pack creates a
  * tarball with a "package" dir.  we want what's in the package dir but not
@@ -210,7 +211,7 @@ async function createSPAshipTemplateRequest(operatorAlias, name, appPath, tmpDir
     mapping: appPath,
     environments: [{ name: env, updateRestriction: false, exclude: false, ns: namespace }],
   };
-  console.log(`Operator Config : ${spaShipFile}`);
+  log.info(`Operator Config : ${JSON.stringify(spaShipFile)}`);
   try {
     let zipPath;
     if (await fileExists(path.join(tmpDir, "dist"))) {
