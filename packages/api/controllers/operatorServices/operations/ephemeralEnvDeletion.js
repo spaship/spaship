@@ -7,17 +7,17 @@ const config = require("../../../config");
 
 module.exports = async function ephemeralEnvDeletion(req) {
     const ephttl = config.get("cli:eph_ttl");
-    const sceduleDate = new Date();
-    sceduleDate.setSeconds(sceduleDate.getSeconds() + ephttl);
+    const sceduledDate = new Date();
+    sceduledDate.setSeconds(sceduledDate.getSeconds() + ephttl);
     const propertyName = req?.propertyName;
     const env = req?.env;
     const type = 'preprod';
     const createdBy = req?.createdBy;
     
-    log.info(`${propertyName}--${env} will be deleted at ${sceduleDate}`);
+    log.info(`${propertyName}--${env} will be deleted at ${sceduledDate}`);
     const findEphemeral = await ephemeralRecord.findOne({ propertyName, env, actionEnabled: true, isActive: true });
     if (!findEphemeral?.agendaId) {
-        const res = await agenda.schedule(sceduleDate, 'DELETE_EPH_ENV', { propertyName: propertyName, env: env, type: type, createdBy: createdBy });
+        const res = await agenda.schedule(sceduledDate, 'DELETE_EPH_ENV', { propertyName: propertyName, env: env, type: type, createdBy: createdBy });
         const agendaId = res?.attrs?._id?.toString();
         if (agendaId) await ephemeralRecord.updateOne({ propertyName, env }, { agendaId: agendaId });
         log.info(`Deletion successfully scheduled for ${propertyName}--${env}, Ref agendaId - ${agendaId}`);

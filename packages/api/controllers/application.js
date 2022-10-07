@@ -85,19 +85,19 @@ module.exports.deploy = async (req, res, next) => {
   let env = req.params?.env;
   let ephemeralResponse;
   if (getEphemeral(req) == true) {
-    console.log("This deployment is ephemeral enabled");
+    log.info("This deployment is ephemeral enabled");
     const actionId = req?.body?.actionId || 'NA';
     const findEphemeral = await ephemeralRecord.findOne({ propertyName, actionId, actionEnabled: true, isActive: true });
     try {
       if (findEphemeral?.env) {
-        console.log(`Active env present for the action is ${actionId}`);
+        log.info(`Active env present for the action is ${actionId}`);
         if (!findEphemeral.env.includes('ephemeral')) {
           throw new ValidationError("Issue whille createing the env");
         }
         env = findEphemeral.env;
       }
       else {
-        console.log(`Creating new env present for the action is ${actionId}`);
+        log.info(`Creating new env present for the action is ${actionId}`);
         ephemeralResponse = await ephemeralEnvCreation({ propertyName, namespace, userId, actionId });
         if (!ephemeralResponse.env.includes('ephemeral')) {
           throw new ValidationError("Issue whille createing the env")
@@ -106,6 +106,7 @@ module.exports.deploy = async (req, res, next) => {
       }
     }
     catch (e) {
+      log.error(e);
       next(new ValidationError(e));
       return;
     }

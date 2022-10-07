@@ -7,6 +7,7 @@ const uuidv4 = require("uuid").v4;
 const axios = require("axios");
 const NotFoundError = require("../../../utils/errors/NotFoundError");
 const ValidationError = require("../../../utils/errors/ValidationError");
+const { log } = require("@spaship/common/lib/logging/pino");
 
 const deletePropertyEnv = async (req, res, next) => {
   if (checkProperties(req.body)) {
@@ -31,7 +32,7 @@ const deletePropertyEnvService = async (req) => {
     const source = req?.createdBy;
 
     if (env == "prod") {
-      console.log("Prod can't be deleted, please contact to the SPAship team.");
+      log.info("Prod can't be deleted, please contact to the SPAship team.");
       throw new ValidationError("Prod can't be deleted, please contact to the SPAship team")
     }
 
@@ -41,13 +42,13 @@ const deletePropertyEnvService = async (req) => {
     });
 
     if (!deploymentRecordResponse) {
-      console.log("Invalid Property Name");
+      log.info("Invalid Property Name");
       throw new NotFoundError("Invalid Property Name")
     }
     const toObject = true;
     const deleteAlias = await alias.findOne({ propertyName: propertyName, env: env }, null, { lean: toObject });
     if (!deleteAlias) {
-      console.log("Env is already deleted or invalid");
+      log.info("Env is already deleted or invalid");
       throw new NotFoundError("Please provide a valid environment name.")
     }
 
@@ -88,14 +89,14 @@ const deletePropertyEnvService = async (req) => {
     await dataAlias.save();
     await activityStream.insertMany(applicationsActivityStream);
 
-    console.log(deleteAlias);
-    console.log(deleteApplication);
+    log.info(deleteAlias);
+    log.info(deleteApplication);
 
     const deleteCountAlias = await alias.findOne({ propertyName: propertyName, env: env }).remove().exec();
     const deleteCountApplication = await applications.findOne({ propertyName: propertyName, env: env }).remove().exec();
 
-    console.log(deleteCountAlias);
-    console.log(deleteCountApplication);
+    log.info(deleteCountAlias);
+    log.info(deleteCountApplication);
 
 
     try {
@@ -105,13 +106,12 @@ const deletePropertyEnvService = async (req) => {
       await ephemeralRecord.updateOne({ propertyName, env }, { isActive: false });
     }
     catch (e) {
-      console.log(e);
+      log.error(err);
       throw new Error(e);
     }
-
     return { deleteAlias: deleteCountAlias, deleteApplication: deleteCountApplication };
   } catch (err) {
-    console.log(err);
+    log.error(err);
     throw new Error(err);
   }
 };
