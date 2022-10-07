@@ -1,3 +1,4 @@
+const { log } = require("@spaship/common/lib/logging/pino");
 const ephemeralRecord = require("../../../models/ephemeralRecord");
 const alias = require('../../../models/alias')
 const config = require("../../../config");
@@ -40,6 +41,6 @@ module.exports = async function ephemeralEnvCreation(req) {
         return await saveAlias.save();
     }
     catch (e) {
-        console.log(e);
+        log.error(e);
     }
 }

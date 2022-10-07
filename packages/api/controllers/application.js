@@ -152,7 +152,7 @@ module.exports.deploy = async (req, res, next) => {
             });
           }
         } catch (e) {
-          console.log(e);
+          log.error(e);
         }
       }
       if (getEphemeral(req) == true) {
@@ -166,7 +166,7 @@ module.exports.deploy = async (req, res, next) => {
         timestamp: new Date(),
       });
     } catch (err) {
-      console.error(`Failed to deploy "${name}" to ${appPath}: ${err}`);
+      log.error(`Failed to deploy "${name}" to ${appPath}: ${err}`);
       next(new DeployError(err));
     }
   } else {

@@ -89,14 +89,14 @@ const deletePropertyEnvService = async (req) => {
     await dataAlias.save();
     await activityStream.insertMany(applicationsActivityStream);
 
-    log.info(deleteAlias);
-    log.info(deleteApplication);
+    log.info(`Deleted alias record : ${JSON.stringify(deleteAlias)}`);
+    log.info(`Deleted aplications record : ${JSON.stringify(deleteApplication)}`);
 
     const deleteCountAlias = await alias.findOne({ propertyName: propertyName, env: env }).remove().exec();
     const deleteCountApplication = await applications.findOne({ propertyName: propertyName, env: env }).remove().exec();
 
-    log.info(deleteCountAlias);
-    log.info(deleteCountApplication);
+    log.info(`Deleted alias record count : ${JSON.stringify(deleteCountAlias)}`);
+    log.info(`Deleted aplications record : ${JSON.stringify(deleteCountApplication)}`);
 
 
     try {
