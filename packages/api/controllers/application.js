@@ -13,6 +13,7 @@ const alias = require("../models/alias");
 const activityStream = require("../models/activityStream");
 const _ = require("lodash");
 const APIKey = require("../models/apiKey");
+const ephemeralRecord = require("../models/ephemeralRecord");
 const axios = require("axios");
 const FormData = require("form-data");
 const fs = require("fs");
@@ -21,6 +22,8 @@ const config = require("../config");
 const { hash } = require("../utils/cryptoUtil");
 const ValidationError = require("../utils/errors/ValidationError");
 const saveActivity = require("./operatorServices/operations/saveActivity");
+const ephemeralEnvCreation = require("./operatorServices/operations/ephemeralEnvCreation");
+const ephemeralEnvDeletion = require("./operatorServices/operations/ephemeralEnvDeletion");
 
 module.exports.list = async (req, res, next) => {
   const list = await FileService.getAll();
@@ -70,16 +73,44 @@ module.exports.put = async (req, res, next) => {
 
 module.exports.deploy = async (req, res, next) => {
   if (!validatePropertyName(req, next)) return;
-  const userId = getUserUUID(req);
+  const userId = await extractUserId(req);
   const name = getNameRequest(req);
   const identifier = getIdentifier(name);
   const nextRef = getRefRequest(req);
-  const ref = getRefRequest(req);
+  const ref = "";
   const { path: appPath } = getRequestBody(req);
   const { path: spaArchive } = getPath(req);
   const propertyName = getPropertyName(req);
   const namespace = generateNamespace(propertyName);
-  const env = req.params?.env;
+  let env = req.params?.env;
+  let ephemeralResponse;
+  if (getEphemeral(req) == true) {
+    console.log("This deployment is ephemeral enabled");
+    const actionId = req?.body?.actionId || 'NA';
+    const findEphemeral = await ephemeralRecord.findOne({ propertyName, actionId, actionEnabled: true, isActive: true });
+    try {
+      if (findEphemeral?.env) {
+        console.log(`Active env present for the action is ${actionId}`);
+        if (!findEphemeral.env.includes('ephemeral')) {
+          throw new ValidationError("Issue whille createing the env");
+        }
+        env = findEphemeral.env;
+      }
+      else {
+        console.log(`Creating new env present for the action is ${actionId}`);
+        ephemeralResponse = await ephemeralEnvCreation({ propertyName, namespace, userId, actionId });
+        if (!ephemeralResponse.env.includes('ephemeral')) {
+          throw new ValidationError("Issue whille createing the env")
+        }
+        env = ephemeralResponse.env;
+      }
+    }
+    catch (e) {
+      next(new ValidationError(e));
+      return;
+    }
+
+  }
   const accessUrl = "";
   const validateFileType = req.file.originalname.split(".").pop();
   if (
@@ -89,6 +120,7 @@ module.exports.deploy = async (req, res, next) => {
     validateFileType === "bz2"
   ) {
     try {
+
       const response = await DeployService.deploy({
         name: identifier,
         spaArchive,
@@ -122,11 +154,14 @@ module.exports.deploy = async (req, res, next) => {
           console.log(e);
         }
       }
+      if (getEphemeral(req) == true) {
+        await ephemeralEnvDeletion({ propertyName, env, createdBy: userId });
+      }
 
       res.status(201).send({
         name,
         path: appPath,
-        ref,
+        ref: nextRef,
         timestamp: new Date(),
       });
     } catch (err) {
@@ -260,6 +295,19 @@ function getRefRequest(req) {
 function getPath(req) {
   const requestFile = req?.file || {};
   return requestFile;
+}
+
+function getEphemeral(req) {
+  if (req?.body?.ephemeral == 'true') {
+    return true;
+  }
+  return false;
+}
+
+async function extractUserId(req) {
+  const key = req.headers.authorization.split(' ')[1];
+  const response = await APIKey.findOne({ key: key });
+  return response?.userId || 'NA';
 }
 
 function getFile(req) {
