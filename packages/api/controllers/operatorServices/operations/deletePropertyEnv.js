@@ -32,8 +32,8 @@ const deletePropertyEnvService = async (req) => {
     const source = req?.createdBy;
 
     if (env == "prod") {
-      log.info("Prod can't be deleted, please contact to the SPAship team.");
-      throw new ValidationError("Prod can't be deleted, please contact to the SPAship team")
+      log.info("Prod can't be deleted, please contact SPAship team");
+      throw new ValidationError("Prod can't be deleted, please contact SPAship team")
     }
 
     const deploymentRecordResponse = await deploymentRecord.findOne({
