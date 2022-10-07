@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@formkit/auto-animate": "1.0.0-beta.3",
-    "@hookform/resolvers": "2.9.7",
+    "@hookform/resolvers": "2.9.8",
     "@patternfly/react-charts": "6.88.7",
     "@patternfly/react-core": "4.235.7",
     "@patternfly/react-icons": "4.86.7",
