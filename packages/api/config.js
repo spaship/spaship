@@ -140,7 +140,7 @@ nconf.defaults({
   cli: {
     base_path: `${process.env.OPERATOR_BASEPATH}/api/upload`,
     dir_path: "uploads",
-    eph_ttl: process.env.SPASHIP_EPH__TTL || 120,
+    eph_ttl: process.env.SPASHIP_EPH__TTL || 3600,
   },
 });
 
