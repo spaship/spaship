@@ -42,7 +42,7 @@
     "@formkit/auto-animate": "1.0.0-beta.3",
     "@hookform/resolvers": "2.9.8",
     "@patternfly/react-charts": "6.88.7",
-    "@patternfly/react-core": "4.235.7",
+    "@patternfly/react-core": "4.239.0",
     "@patternfly/react-icons": "4.86.7",
     "@patternfly/react-styles": "4.85.7",
     "@patternfly/react-table": "4.104.7",
