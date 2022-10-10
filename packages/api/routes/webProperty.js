@@ -12,6 +12,7 @@ const getDeploymentConnectionList = require("../controllers/operatorServices/ope
 const saveDeploymentRecord = require("../controllers/operatorServices/operations/saveDeploymentRecord");
 const getDeploymentRecordList = require("../controllers/operatorServices/operations/getDeploymentRecordList");
 const deletePropertyEnv = require("../controllers/operatorServices/operations/deletePropertyEnv");
+const getEphList = require("../controllers/operatorServices/operations/getEphList");
 
 const router = new Router();
 
@@ -50,5 +51,7 @@ router.get("/deploymentRecord/list", getDeploymentRecordList);
 router.get("/deploymentRecord/list/:name", getDeploymentRecordList);
 
 router.post("/delete/env", deletePropertyEnv.deletePropertyEnv);
+
+router.get("/eph/list", getEphList);
 
 module.exports = router;
