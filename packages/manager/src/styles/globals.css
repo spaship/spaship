@@ -92,6 +92,14 @@ body {
   --pf-c-form-control--hover--BorderBottomColor:var(--spaship-global--Color--solar-orange);
 }
 
+.pf-c-radio {
+  display: flex !important;
+}
+
+.pf-c-radio__label {
+   --pf-c-radio__label--FontSize: 14px;
+ }
+
 .pf-c-table thead{
   font-family: RedHatDisplay;
 }
@@ -123,6 +131,10 @@ body {
 .text-decoration-none{
   text-decoration: none;
   color: inherit;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 .x-y-center{

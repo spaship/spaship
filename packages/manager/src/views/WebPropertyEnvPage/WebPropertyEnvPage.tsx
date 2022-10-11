@@ -83,7 +83,6 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     try {
       await createAWebProp.mutateAsync({
         ...data,
-        deploymentConnectionType: data.deploymentConnectionType ? 'prod' : 'preprod',
         propertyName,
         createdBy: session?.user.email || '',
         type: 'operator',
@@ -236,10 +235,10 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {apiKeys.isLoading && <TableRowSkeleton columns={6} rows={3} />}
+                    {apiKeys.isLoading && <TableRowSkeleton columns={7} rows={3} />}
                     {!apiKeys.isLoading && (apiKeys?.data?.length === 0 || apiKeys.isError) && (
                       <Tr>
-                        <Td colSpan={6}>
+                        <Td colSpan={7}>
                           <EmptyState>
                             <EmptyStateIcon icon={CubesIcon} />
                             <Title headingLevel="h4" size="lg">

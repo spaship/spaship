@@ -10,7 +10,7 @@ const spaPropertyKeys = {
 // GET Operations
 const fetchSpaProperties = async (propertName: string) => {
   const { data } = await orchestratorReq.get(`/webproperty/get/applications/${propertName}`);
-  return data.data;
+  return data.data || [];
 };
 
 export const useGetSPAProperties = <T extends unknown>(

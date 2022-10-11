@@ -110,7 +110,12 @@ export const Nav = () => {
                     </Flex>
                   }
                 >
-                  <Avatar src="/img/avatar.svg" alt="Avatar image" size="md" />
+                  <Avatar
+                    src="/img/avatar.svg"
+                    alt="Avatar image"
+                    size="md"
+                    className="cursor-pointer"
+                  />
                 </Popover>
               </ToolbarItem>
             </ToolbarGroup>

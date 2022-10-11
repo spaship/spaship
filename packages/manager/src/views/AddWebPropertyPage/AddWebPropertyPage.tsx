@@ -14,11 +14,10 @@ import {
   PageSection,
   Split,
   SplitItem,
-  Switch,
   TextInput
 } from '@patternfly/react-core';
 
-import { Banner } from '@app/components';
+import { Banner, CustomRadio, CustomRadioContainer } from '@app/components';
 import { useAddWebPropery } from '@app/services/webProperty';
 import { pageLinks } from '@app/links';
 
@@ -39,14 +38,12 @@ export const AddWebPropertyPage = (): JSX.Element => {
   const router = useRouter();
 
   const propertyTitle = watch('propertyTitle');
-  const isItProduction = watch('deploymentConnectionType');
   const propertyID = propertyTitle?.toLowerCase().replaceAll(' ', '-') || '';
 
   const onFormSubmit = async (data: FormData) => {
     try {
       await createWebPropertyMutation.mutateAsync({
         ...data,
-        deploymentConnectionType: data.deploymentConnectionType ? 'prod' : 'preprod',
         propertyName: propertyID,
         createdBy: session?.user.email || '',
         type: 'operator'
@@ -148,15 +145,32 @@ export const AddWebPropertyPage = (): JSX.Element => {
               <Controller
                 control={control}
                 name="deploymentConnectionType"
-                defaultValue={false}
+                defaultValue="preprod"
                 render={({ field: { onChange, value } }) => (
-                  <FormGroup label="Environment Type" fieldId="property-env-type">
-                    <Switch
-                      id="property-deployconnection"
-                      label={isItProduction ? 'production' : 'pre-production'}
-                      isChecked={value}
-                      onChange={onChange}
-                    />
+                  <FormGroup
+                    role="radiogroup"
+                    label="Environment Type"
+                    isInline
+                    fieldId="property-env-type"
+                  >
+                    <CustomRadioContainer>
+                      <CustomRadio
+                        name="basic-inline-radio"
+                        label="Pre-Prod"
+                        id="pre-prod-radio"
+                        isChecked={value === 'preprod'}
+                        isSelected={value === 'preprod'}
+                        onChange={() => onChange('preprod')}
+                      />
+                      <CustomRadio
+                        name="basic-inline-radio"
+                        label="Prod"
+                        id="prod-radio"
+                        isChecked={value === 'prod'}
+                        isSelected={value === 'prod'}
+                        onChange={() => onChange('prod')}
+                      />
+                    </CustomRadioContainer>
                   </FormGroup>
                 )}
               />

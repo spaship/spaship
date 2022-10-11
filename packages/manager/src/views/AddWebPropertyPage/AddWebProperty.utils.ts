@@ -12,7 +12,11 @@ export const addNewWebPropertySchema = yup.object({
     .alphabetsOnly()
     .max(50)
     .required(),
-  deploymentConnectionType: yup.bool().required()
+  deploymentConnectionType: yup
+    .string()
+    .label('Environment Type')
+    .oneOf(['preprod', 'prod'])
+    .required()
 });
 
 export interface FormData extends yup.InferType<typeof addNewWebPropertySchema> {}
