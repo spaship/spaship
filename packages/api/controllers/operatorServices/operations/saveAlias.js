@@ -80,11 +80,13 @@ function validateProperty(request, next) {
   const formatPropertyName = /[ `!@#$%^&*()_+\=\[\]{};':"\\|,.<>\/?~]/;
   const formatEnv = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
   const formatUrl = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?~]/;
-  if (request?.propertyName?.trim().match(formatPropertyName)) {
+  const propertyLimit = 50;
+  const envLimit = 25;
+  if (request?.propertyName?.trim().match(formatPropertyName) || request?.propertyName?.length > propertyLimit) {
     next(new ValidationError("Invalid PropertyName"));
     return false;
   }
-  if (request?.env?.trim().match(formatEnv)) {
+  if (request?.env?.trim().match(formatEnv) || request?.env?.length > envLimit) {
     next(new ValidationError("Invalid Env"));
     return false;
   }
