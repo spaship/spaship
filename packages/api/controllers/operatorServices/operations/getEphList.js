@@ -10,20 +10,20 @@ module.exports = async function getEphList(req, res, next) {
     const { propertyName } = req?.query;
     let ephResponse;
     if (propertyName) {
-      ephResponse = await ephemeralRecord.find({ propertyName: propertyName, isActive: true }).exec();;
-      spaResponse = await application.find({ propertyName: propertyName }).exec();;
+      ephResponse = await ephemeralRecord.find({ propertyName: propertyName, isActive: true }).exec();
+      spaResponse = await application.find({ propertyName: propertyName }).exec();
     }
     else {
-      ephResponse = await ephemeralRecord.find({ isActive: true }).exec();;
-      spaResponse = await application.find().exec();;
+      ephResponse = await ephemeralRecord.find({ isActive: true }).exec();
+      spaResponse = await application.find().exec();
     }
-    if (ephResponse.length == 0) return res.status(200).json({ message: "No data avaliable." });
-    log.info(`Ephemeral preview records : ${JSON.stringify(ephResponse)}`)
-    log.info(`Active Ephemeral envs : ${ephResponse.length}`)
+    if (ephResponse.length === 0) return res.status(200).json({ message: "No data avaliable." });
+    log.info(`Ephemeral preview records : ${JSON.stringify(ephResponse)}`);
+    log.info(`Active Ephemeral environments : ${ephResponse.length}`);
     const finalResponse = [];
     ephResponse.forEach(eph => {
       const spaData = spaResponse.filter(key => key.env === eph.env);
-      const data = responseMapper(eph, spaData)
+      const data = responseMapper(eph, spaData);
       finalResponse.push(data);
     })
     return res.status(200).json(checkResponse(finalResponse));
@@ -52,7 +52,7 @@ function responseMapper(eph, spaData) {
 
 function checkResponse(response) {
   if (response.length === 0) {
-    log.info(`No Active Ephemeral env present`);
+    log.info(`No Active Ephemeral environment present`);
     return { message: "No data avaliable." };
   }
   return response;
