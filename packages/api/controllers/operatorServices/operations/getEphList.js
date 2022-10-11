@@ -18,8 +18,8 @@ module.exports = async function getEphList(req, res, next) {
       spaResponse = await application.find().exec();;
     }
     if (ephResponse.length == 0) return res.status(200).json({ message: "No data avaliable." });
-    log.info(`ephemeral preview records : ${JSON.stringify(ephResponse)}`)
-    log.info(`active ephemeral envs : ${ephResponse.length}`)
+    log.info(`Ephemeral preview records : ${JSON.stringify(ephResponse)}`)
+    log.info(`Active Ephemeral envs : ${ephResponse.length}`)
     const finalResponse = [];
     ephResponse.forEach(eph => {
       const spaData = spaResponse.filter(key => key.env === eph.env);
@@ -52,7 +52,7 @@ function responseMapper(eph, spaData) {
 
 function checkResponse(response) {
   if (response.length === 0) {
-    log.info(`no active ephemeral env present`);
+    log.info(`No Active Ephemeral env present`);
     return { message: "No data avaliable." };
   }
   return response;
