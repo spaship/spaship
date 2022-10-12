@@ -21,6 +21,6 @@ export const useGetEphemeralList = (webPropertyName: string) =>
     ephemeralQueryKeys.list(webPropertyName),
     () => fetchEphemeralEnvironments(webPropertyName),
     {
-      refetchInterval: 13000
+      refetchInterval: 3000
     }
   );
