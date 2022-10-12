@@ -31,6 +31,7 @@ import {
 import { Banner, TableRowSkeleton } from '@app/components';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/webProperty';
+import { useGetEphemeralList } from '@app/services/ephemeral';
 import {
   Caption,
   ExpandableRowContent,
@@ -54,8 +55,8 @@ import { useGetWebPropActivityStream } from '@app/services/analytics';
 import { pageLinks } from '@app/links';
 
 import toast from 'react-hot-toast';
-import { EmptyInfo } from './components/EmptyInfo';
 import { Ephemeral } from './components/Ephemeral';
+import { EmptyInfo } from './components/EmptyInfo';
 
 const URL_LENGTH_LIMIT = 25;
 
@@ -72,7 +73,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const spaProperties = useGetSPAPropGroupByName(propertyName);
   const webProperties = useGetWebPropertyGroupedByEnv(propertyName);
   const activityStream = useGetWebPropActivityStream(propertyName);
-  // const ephemeralPreview
+  const ephemeralPreview = useGetEphemeralList(propertyName);
 
   useEffect(() => {
     if (spaProperties.isError) {
@@ -323,13 +324,16 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                     <CubeIcon />
                   </TabTitleIcon>
                   <TabTitleText>
-                    Ephemeral Previews {true && <Badge isRead={false}>1</Badge>}
+                    Ephemeral Preview{' '}
+                    <Badge isRead={!ephemeralPreview.data?.length}>
+                      {ephemeralPreview.data?.length}
+                    </Badge>
                   </TabTitleText>
                 </>
               }
               aria-label="Ephemeral Environment"
             >
-              <Ephemeral />
+              <Ephemeral ephemeralEnvs={ephemeralPreview} />
             </Tab>
           </Tabs>
         )}
