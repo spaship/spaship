@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
+  Badge,
   Bullseye,
   Button,
   EmptyState,
@@ -42,6 +43,7 @@ import {
 } from '@patternfly/react-table';
 import {
   CogIcon,
+  CubeIcon,
   ExternalLinkAltIcon,
   PackageIcon,
   RunningIcon,
@@ -53,6 +55,7 @@ import { pageLinks } from '@app/links';
 
 import toast from 'react-hot-toast';
 import { EmptyInfo } from './components/EmptyInfo';
+import { Ephemeral } from './components/Ephemeral';
 
 const URL_LENGTH_LIMIT = 25;
 
@@ -61,7 +64,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const [isRowExpanded, setIsRowExpanded] = useState<Record<string, boolean>>({});
   const propertyName = (query?.propertyName as string) || '';
   const formatDate = useFormatDate();
-  const { openTab, handleTabChange } = useTabs(2);
+  const { openTab, handleTabChange } = useTabs(3);
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
 
@@ -69,11 +72,14 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const spaProperties = useGetSPAPropGroupByName(propertyName);
   const webProperties = useGetWebPropertyGroupedByEnv(propertyName);
   const activityStream = useGetWebPropActivityStream(propertyName);
+  // const ephemeralPreview
 
-  if (spaProperties.isError === true) {
-    toast.error(`Sorry cannot find ${propertyName}`);
-    push('/properties');
-  }
+  useEffect(() => {
+    if (spaProperties.isError) {
+      toast.error(`Sorry cannot find ${propertyName}`);
+      push('/properties');
+    }
+  }, [spaProperties.isError, propertyName, push]);
 
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
@@ -308,6 +314,22 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                   })}
                 </ProgressStepper>
               </List>
+            </Tab>
+            <Tab
+              eventKey={2}
+              title={
+                <>
+                  <TabTitleIcon>
+                    <CubeIcon />
+                  </TabTitleIcon>
+                  <TabTitleText>
+                    Ephemeral Previews {true && <Badge isRead={false}>1</Badge>}
+                  </TabTitleText>
+                </>
+              }
+              aria-label="Ephemeral Environment"
+            >
+              <Ephemeral />
             </Tab>
           </Tabs>
         )}
