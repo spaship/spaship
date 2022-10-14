@@ -33,6 +33,24 @@ type Props = {
   isSuccess: boolean;
 };
 
+const msToTime = (ms: number) => {
+  const minutes = Number((ms / (1000 * 60)).toFixed(0));
+  const hours = Number((ms / (1000 * 60 * 60)).toFixed(0));
+  const days = Number((ms / (1000 * 60 * 60 * 24)).toFixed(0));
+  if (minutes < 60) return `${minutes} min`;
+  if (hours < 24) return `${hours} hr`;
+  return `${days} Days`;
+};
+const getExpiresTime = (createdAt: string, totalTime: number) => {
+  const currentTime = new Date();
+  const envDeletionAt = new Date(createdAt);
+  const totalTimeInHours = totalTime / 60 / 60;
+  envDeletionAt.setHours(envDeletionAt.getHours() + totalTimeInHours);
+
+  const res = envDeletionAt.getTime() - currentTime.getTime();
+  return msToTime(res);
+};
+
 export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
   const isEnvEmpty = ephemeralEnvs?.length === 0;
   const URL_LENGTH_LIMIT = 40;
@@ -46,23 +64,6 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
       state[id] = true;
     }
     setIsRowExpanded(state);
-  };
-  const msToTime = (ms: number) => {
-    const minutes = Number((ms / (1000 * 60)).toFixed(0));
-    const hours = Number((ms / (1000 * 60 * 60)).toFixed(0));
-    const days = Number((ms / (1000 * 60 * 60 * 24)).toFixed(0));
-    if (minutes < 60) return `${minutes} min`;
-    if (hours < 24) return `${hours} hr`;
-    return `${days} Days`;
-  };
-  const getExpiresTime = (createdAt: string, totalTime: number) => {
-    const currentTime = new Date();
-    const envDeletionAt = new Date(createdAt);
-    const totalTimeInHours = totalTime / 60 / 60;
-    envDeletionAt.setHours(envDeletionAt.getHours() + totalTimeInHours);
-
-    const res = envDeletionAt.getTime() - currentTime.getTime();
-    return msToTime(res);
   };
   return (
     <TableComposable aria-label="Compound expandable table">
