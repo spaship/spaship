@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import {
   Badge,
   Bullseye,
@@ -58,10 +58,10 @@ import toast from 'react-hot-toast';
 import { Ephemeral } from './components/Ephemeral';
 import { EmptyInfo } from './components/EmptyInfo';
 
-const URL_LENGTH_LIMIT = 25;
+const URL_LENGTH_LIMIT = 50;
 
 export const WebPropertyDetailPage = (): JSX.Element => {
-  const { push, query } = useRouter();
+  const { query } = useRouter();
   const [isRowExpanded, setIsRowExpanded] = useState<Record<string, boolean>>({});
   const propertyName = (query?.propertyName as string) || '';
   const formatDate = useFormatDate();
@@ -78,9 +78,9 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   useEffect(() => {
     if (spaProperties.isError) {
       toast.error(`Sorry cannot find ${propertyName}`);
-      push('/properties');
+      Router.push('/properties');
     }
-  }, [spaProperties.isError, propertyName, push]);
+  }, [spaProperties.isError, propertyName]);
 
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
@@ -333,7 +333,10 @@ export const WebPropertyDetailPage = (): JSX.Element => {
               }
               aria-label="Ephemeral Environment"
             >
-              <Ephemeral ephemeralEnvs={ephemeralPreview} />
+              <Ephemeral
+                isSuccess={ephemeralPreview.isSuccess}
+                ephemeralEnvs={ephemeralPreview.data}
+              />
             </Tab>
           </Tabs>
         )}

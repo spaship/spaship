@@ -9,10 +9,10 @@ export type TEphemeralEnv = {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  spa: TSPA[];
+  spa: TPreviewSPA[];
 };
 
-export type TSPA = {
+export type TPreviewSPA = {
   _id: string;
   propertyName: string;
   identifier: string;

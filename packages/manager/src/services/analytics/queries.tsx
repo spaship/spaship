@@ -69,6 +69,10 @@ const fetchTotalDeployment = async (
       spaName
     }
   });
+  // TODO: To be removed after backend revamp
+  if (data.data) {
+    data.data = data.data.filter((spa: any) => !spa.env.startsWith('ephemeral'));
+  }
   return data.data;
 };
 
@@ -88,6 +92,15 @@ const fetchMonthlyDeploymentChart = async (
       spaName
     }
   });
+  // TODO: Remove this once backend has been revamped
+  if (data.data) {
+    data.data = Object.keys(data.data).reduce((acc: any, key: string) => {
+      if (!key.startsWith('ephemeral')) {
+        acc[key] = data.data[key];
+      }
+      return acc;
+    }, {});
+  }
   return data.data;
 };
 

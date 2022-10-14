@@ -6,10 +6,12 @@ const ephemeralQueryKeys = {
   list: (webPropertyName: string) => ['ephemeral-env', webPropertyName] as const
 };
 
-const path = `/webproperty/eph/list?propertyName=`;
-
 const fetchEphemeralEnvironments = async (propertyName: string): Promise<TEphemeralEnv[]> => {
-  const { data } = await orchestratorReq.get(`${path}${propertyName}`);
+  const { data } = await orchestratorReq.get(`/webproperty/eph/list`, {
+    params: {
+      propertyName
+    }
+  });
   if (data.message) {
     return [];
   }
@@ -21,6 +23,6 @@ export const useGetEphemeralList = (webPropertyName: string) =>
     ephemeralQueryKeys.list(webPropertyName),
     () => fetchEphemeralEnvironments(webPropertyName),
     {
-      refetchInterval: 3000
+      refetchInterval: 5000
     }
   );
