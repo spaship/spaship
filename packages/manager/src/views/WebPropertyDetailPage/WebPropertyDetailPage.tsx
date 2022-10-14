@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import {
+  Badge,
   Bullseye,
   Button,
   EmptyState,
@@ -30,6 +31,7 @@ import {
 import { Banner, TableRowSkeleton } from '@app/components';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/webProperty';
+import { useGetEphemeralList } from '@app/services/ephemeral';
 import {
   Caption,
   ExpandableRowContent,
@@ -42,6 +44,7 @@ import {
 } from '@patternfly/react-table';
 import {
   CogIcon,
+  CubeIcon,
   ExternalLinkAltIcon,
   PackageIcon,
   RunningIcon,
@@ -52,16 +55,17 @@ import { useGetWebPropActivityStream } from '@app/services/analytics';
 import { pageLinks } from '@app/links';
 
 import toast from 'react-hot-toast';
+import { Ephemeral } from './components/Ephemeral';
 import { EmptyInfo } from './components/EmptyInfo';
 
-const URL_LENGTH_LIMIT = 25;
+const URL_LENGTH_LIMIT = 50;
 
 export const WebPropertyDetailPage = (): JSX.Element => {
-  const { push, query } = useRouter();
+  const { query } = useRouter();
   const [isRowExpanded, setIsRowExpanded] = useState<Record<string, boolean>>({});
   const propertyName = (query?.propertyName as string) || '';
   const formatDate = useFormatDate();
-  const { openTab, handleTabChange } = useTabs(2);
+  const { openTab, handleTabChange } = useTabs(3);
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
 
@@ -69,11 +73,14 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const spaProperties = useGetSPAPropGroupByName(propertyName);
   const webProperties = useGetWebPropertyGroupedByEnv(propertyName);
   const activityStream = useGetWebPropActivityStream(propertyName);
+  const ephemeralPreview = useGetEphemeralList(propertyName);
 
-  if (spaProperties.isError === true) {
-    toast.error(`Sorry cannot find ${propertyName}`);
-    push('/properties');
-  }
+  useEffect(() => {
+    if (spaProperties.isError) {
+      toast.error(`Sorry cannot find ${propertyName}`);
+      Router.push('/properties');
+    }
+  }, [spaProperties.isError, propertyName]);
 
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
@@ -308,6 +315,28 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                   })}
                 </ProgressStepper>
               </List>
+            </Tab>
+            <Tab
+              eventKey={2}
+              title={
+                <>
+                  <TabTitleIcon>
+                    <CubeIcon />
+                  </TabTitleIcon>
+                  <TabTitleText>
+                    Ephemeral Preview{' '}
+                    <Badge isRead={!ephemeralPreview.data?.length}>
+                      {ephemeralPreview.data?.length}
+                    </Badge>
+                  </TabTitleText>
+                </>
+              }
+              aria-label="Ephemeral Environment"
+            >
+              <Ephemeral
+                isSuccess={ephemeralPreview.isSuccess}
+                ephemeralEnvs={ephemeralPreview.data}
+              />
             </Tab>
           </Tabs>
         )}

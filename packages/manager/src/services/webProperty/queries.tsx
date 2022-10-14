@@ -34,6 +34,10 @@ export const useGetUniqueWebProperties = () => useGetWebProperties(getUniqueWebP
 // webproperty list filterest by propertyName
 const fetchEnvList = async (propertyName: string): Promise<TWebProperty[]> => {
   const { data } = await orchestratorReq.get(`/webproperty/alias/list/${propertyName}`);
+  // TODO: To be removed after backend revamp
+  if (data.data) {
+    data.data = data.data.filter((spa: any) => !spa.env.startsWith('ephemeral'));
+  }
   return data.data;
 };
 
