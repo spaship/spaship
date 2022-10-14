@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useEffect } from 'react';
+import { Session } from 'next-auth';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { SessionProvider } from 'next-auth/react';
@@ -18,6 +19,9 @@ import '@app/styles/globals.css';
 
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
+  pageProps: {
+    session: Session;
+  };
 };
 
 const queryClient = new QueryClient({
