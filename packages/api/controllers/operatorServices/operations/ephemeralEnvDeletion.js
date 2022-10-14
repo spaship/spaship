@@ -15,8 +15,8 @@ module.exports = async function ephemeralEnvDeletion(req) {
     const createdBy = req?.createdBy;
 
     if (!env.includes("ephemeral")) {
-        log.info("Only Ephemeral Env can be deleted, please contact SPAship team");
-        throw new ValidationError("Only Ephemeral Env can be deleted, please contact SPAship team")
+        log.info("Only Ephemeral Environment can be deleted, please contact SPAship team");
+        throw new ValidationError("Only Ephemeral Environment can be deleted, please contact SPAship team")
     }
 
     log.info(`${propertyName}--${env} will be deleted at ${sceduledDate}`);
