@@ -25,15 +25,14 @@ const deletePropertyEnv = async (req, res, next) => {
 const deletePropertyEnvService = async (req) => {
 
   try {
-    console.log(req);
     const propertyName = req?.propertyName;
     const env = req?.env;
     const type = req?.type;
     const source = req?.createdBy;
 
-    if (env == "prod") {
-      log.info("Prod can't be deleted, please contact SPAship team");
-      throw new ValidationError("Prod can't be deleted, please contact SPAship team")
+    if (!env.includes("ephemeral")) {
+      log.info("Only Ephemeral Environment can be deleted, please contact SPAship team");
+      throw new ValidationError("Only Ephemeral Environment can be deleted, please contact SPAship team")
     }
 
     const deploymentRecordResponse = await deploymentRecord.findOne({
@@ -48,8 +47,8 @@ const deletePropertyEnvService = async (req) => {
     const toObject = true;
     const deleteAlias = await alias.findOne({ propertyName: propertyName, env: env }, null, { lean: toObject });
     if (!deleteAlias) {
-      log.info("Env is already deleted or invalid");
-      throw new NotFoundError("Please provide a valid environment name.")
+      log.info("Environment is already deleted or invalid.");
+      throw new NotFoundError("Please provide valid Environment.")
     }
 
     const operatorPayload = {
@@ -82,7 +81,7 @@ const deletePropertyEnvService = async (req) => {
         action: _delete,
         propertyName: item?.propertyName.trim()?.toLowerCase() || "",
         props: { env: item?.env?.trim()?.toLowerCase(), spaName: item.name?.trim()?.toLowerCase() },
-        payload: JSON.stringify(item)
+        payload: JSON.stringify(item),
       };
       applicationsActivityStream.push(data);
     }
@@ -90,15 +89,14 @@ const deletePropertyEnvService = async (req) => {
     await activityStream.insertMany(applicationsActivityStream);
 
     log.info(`Deleted alias record : ${JSON.stringify(deleteAlias)}`);
-    log.info(`Deleted aplications record : ${JSON.stringify(deleteApplication)}`);
+    log.info(`Deleted applications record : ${JSON.stringify(deleteApplication)}`);
 
-    const deleteCountAlias = await alias.findOne({ propertyName: propertyName, env: env }).remove().exec();
-    const deleteCountApplication = await applications.findOne({ propertyName: propertyName, env: env }).remove().exec();
+    const deleteCountAlias = await alias.findOneAndRemove({ propertyName: propertyName, env: env }).exec();
+    const deleteCountApplication = await applications.deleteMany({ propertyName: propertyName, env: env }).exec();
 
     log.info(`Deleted alias record count : ${JSON.stringify(deleteCountAlias)}`);
-    log.info(`Deleted aplications record : ${JSON.stringify(deleteCountApplication)}`);
-
-
+    log.info(`Deleted applications record : ${JSON.stringify(deleteCountApplication)}`);
+    
     try {
       /*
       Remove ephemeral env from the record if exists
