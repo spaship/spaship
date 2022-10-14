@@ -31,10 +31,12 @@ const deletePropertyEnvService = async (req) => {
     const type = req?.type;
     const source = req?.createdBy;
 
-    if (env == "prod") {
-      log.info("Prod can't be deleted, please contact SPAship team");
-      throw new ValidationError("Prod can't be deleted, please contact SPAship team")
+
+    if (!env.includes("ephemeral")) {
+      log.info("Only Ephemeral Env can be deleted, please contact SPAship team");
+      throw new ValidationError("Only Ephemeral Env can be deleted, please contact SPAship team")
     }
+    
 
     const deploymentRecordResponse = await deploymentRecord.findOne({
       propertyName: propertyName,

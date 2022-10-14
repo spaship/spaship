@@ -13,7 +13,12 @@ module.exports = async function ephemeralEnvDeletion(req) {
     const env = req?.env;
     const type = 'preprod';
     const createdBy = req?.createdBy;
-    
+
+    if (!env.includes("ephemeral")) {
+        log.info("Only Ephemeral Env can be deleted, please contact SPAship team");
+        throw new ValidationError("Only Ephemeral Env can be deleted, please contact SPAship team")
+    }
+
     log.info(`${propertyName}--${env} will be deleted at ${sceduledDate}`);
     const findEphemeral = await ephemeralRecord.findOne({ propertyName, env, actionEnabled: true, isActive: true });
     if (!findEphemeral?.agendaId) {
