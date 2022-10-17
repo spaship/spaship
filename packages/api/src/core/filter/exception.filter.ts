@@ -1,10 +1,9 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
-import { LoggerService } from '../logger/logger.service';
-
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from "@nestjs/common";
+import { LoggerService } from "../logger/logger.service";
 
 interface IError {
   message: string;
-  code_error: string;
+  codeError: string;
 }
 
 @Catch()
@@ -19,7 +18,7 @@ export class AllExceptionFilter implements ExceptionFilter {
     const message =
       exception instanceof HttpException
         ? (exception.getResponse() as IError)
-        : { message: (exception as Error).message, code_error: null };
+        : { message: (exception as Error).message, codeError: null };
 
     const responseData = {
       ...{
@@ -39,15 +38,15 @@ export class AllExceptionFilter implements ExceptionFilter {
     if (status === 500) {
       this.logger.error(
         `End Request for ${request.path}`,
-        `method=${request.method} status=${status} code_error=${message.code_error ? message.code_error : null
+        `method=${request.method} status=${status} codeError=${message.codeError ? message.codeError : null
         } message=${message.message ? message.message : null}`,
-        status >= 500 ? exception.stack : '',
+        status >= 500 ? exception.stack : ""
       );
     } else {
       this.logger.warn(
         `End Request for ${request.path}`,
-        `method=${request.method} status=${status} code_error=${message.code_error ? message.code_error : null
-        } message=${message.message ? message.message : null}`,
+        `method=${request.method} status=${status} codeError=${message.codeError ? message.codeError : null
+        } message=${message.message ? message.message : null}`
       );
     }
   }

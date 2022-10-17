@@ -10,4 +10,4 @@ import { ApplicationUseCases } from "./application.use-case";
   providers: [ApplicationFactoryService, ApplicationUseCases],
   exports: [ApplicationFactoryService, ApplicationUseCases],
 })
-export class ApplicationUseCasesModule { }
+export class ApplicationUseCasesModule {}

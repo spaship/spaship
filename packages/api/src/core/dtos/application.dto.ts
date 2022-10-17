@@ -21,4 +21,4 @@ export class CreateApplicationDto {
   // }
 }
 
-export class UpdateApplicationDto extends PartialType(CreateApplicationDto) { }
+export class UpdateApplicationDto extends PartialType(CreateApplicationDto) {}

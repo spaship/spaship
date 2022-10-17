@@ -19,4 +19,4 @@ export class CreateDeploymentRecordDto {
   type: string;
 }
 
-export class UpdateDeploymentRecordDto extends PartialType(CreateDeploymentRecordDto) { }
+export class UpdateDeploymentRecordDto extends PartialType(CreateDeploymentRecordDto) {}

@@ -13,11 +13,13 @@ import { ApikeyUseCasesModule } from "./use-cases/apikey/apikey-use-cases.module
 import { DeployServicesModule } from "./services/deployment-services/deployment-service.module";
 import { DeploymentConnectionUseCasesModule } from "./use-cases/deploymentConnection/deployment-connection-use-cases.module";
 import { LoggerModule } from "./core/logger/logger.module";
+import { ExceptionsModule } from "./services/exceptions/exceptions.module";
 
 @Module({
   imports: [
     DataServicesModule,
     LoggerModule,
+    ExceptionsModule,
     ApplicationUseCasesModule,
     DeploymentRecordUseCasesModule,
     ApikeyUseCasesModule,

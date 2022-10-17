@@ -24,4 +24,4 @@ export class DeploymentConnectionDTO {
   type: string;
 }
 
-export class UpdateDeploymentConnectionDTO extends PartialType(DeploymentConnectionDTO) { }
+export class UpdateDeploymentConnectionDTO extends PartialType(DeploymentConnectionDTO) {}

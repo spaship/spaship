@@ -5,7 +5,7 @@ import { CreateApplicationDto, UpdateApplicationDto } from "../../core/dtos";
 @Injectable()
 /** @internal ApplicationFactoryService is for the business logics */
 export class ApplicationFactoryService {
-  createNewApplication(createApplicationDto: CreateApplicationDto): Application{
+  createNewApplication(createApplicationDto: CreateApplicationDto): Application {
     const newApplication = new Application();
     newApplication.spaName = createApplicationDto.name;
     newApplication.path = createApplicationDto.path;

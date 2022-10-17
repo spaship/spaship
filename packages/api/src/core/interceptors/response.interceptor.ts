@@ -1,7 +1,7 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from "@nestjs/common";
+import { ApiProperty } from "@nestjs/swagger";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 
 export class ResponseFormat<T> {
   @ApiProperty()
@@ -30,7 +30,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, ResponseFormat
         path: request.path,
         duration: `${Date.now() - now}ms`,
         method: request.method,
-      })),
+      }))
     );
   }
 }

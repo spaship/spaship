@@ -5,4 +5,4 @@ import { DeploymentServicesModule } from "../../frameworks/deployment-services/d
   imports: [DeploymentServicesModule],
   exports: [DeploymentServicesModule],
 })
-export class DeployServicesModule { }
+export class DeployServicesModule {}

@@ -5,7 +5,7 @@ import { IDataServices, IDeploymentServices } from "../../core/abstracts";
 @Injectable()
 /** @internal ApplicationUseCases is for depenednt operations on database */
 export class ApplicationUseCases {
-  constructor(private dataServices: IDataServices, private deploymentServices: IDeploymentServices) { }
+  constructor(private dataServices: IDataServices, private deploymentServices: IDeploymentServices) {}
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.applications.getAll();

@@ -1,10 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ILogger } from '../abstracts/logger.interface';
+import { Injectable, Logger } from "@nestjs/common";
+import { ILogger } from "../abstracts/logger.abstract";
 
 @Injectable()
 export class LoggerService extends Logger implements ILogger {
   debug(context: string, message: string) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== "production") {
       super.debug(`[DEBUG] ${message}`, context);
     }
   }
@@ -18,7 +18,7 @@ export class LoggerService extends Logger implements ILogger {
     super.warn(`[WARN] ${message}`, context);
   }
   verbose(context: string, message: string) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== "production") {
       super.verbose(`[VERBOSE] ${message}`, context);
     }
   }

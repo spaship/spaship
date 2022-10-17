@@ -29,4 +29,4 @@ export class CreateApikeyDto {
   createdBy: string;
 }
 
-export class UpdateApikeyDto extends PartialType(CreateApikeyDto) { }
+export class UpdateApikeyDto extends PartialType(CreateApikeyDto) {}
