@@ -1,3 +1,6 @@
+// pfe base css needs to be top for some unknown reason to work properly
+import '@patternfly/react-core/dist/styles/base.css';
+
 /* eslint-disable react/jsx-props-no-spreading */
 import { useEffect } from 'react';
 import { Session } from 'next-auth';
@@ -13,7 +16,6 @@ import NProgress from 'nprogress';
 import { AuthGuard } from '@app/context/AuthGuard';
 import type { NextPageWithLayout } from '@app/types';
 
-import '@patternfly/react-core/dist/styles/base.css';
 import 'nprogress/nprogress.css';
 import '@app/styles/globals.css';
 
