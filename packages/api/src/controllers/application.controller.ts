@@ -1,4 +1,6 @@
 import { Controller, Get, Param, Post, Body, Put } from "@nestjs/common";
+import { ApiOperation } from "@nestjs/swagger";
+import { Application } from "src/core";
 import { LoggerService } from "src/core/logger/logger.service";
 import { CreateApplicationDto, UpdateApplicationDto } from "../core/dtos";
 import { ApplicationUseCases, ApplicationFactoryService } from "../use-cases/application";
@@ -12,6 +14,7 @@ export class ApplicationController {
   ) { }
 
   @Get()
+  @ApiOperation({ description: 'Get the list of all the SPAs' })
   async getAll() {
     return this.applicationUseCases.getAllApplications();
   }
@@ -22,11 +25,12 @@ export class ApplicationController {
   }
 
   @Post("/deploy")
-  async createApplication(@Body() applicationDto: CreateApplicationDto) {
+  async createApplication(@Body() applicationDto: CreateApplicationDto): Promise<CreateApplicationDto> {
     this.loggerService.log("applicationDto", JSON.stringify(applicationDto));
     const createApplicationResponse = new CreateApplicationDto();
     const application = this.applicationFactoryService.createNewApplication(createApplicationResponse);
-    return this.applicationUseCases.createApplication(application);
+    await this.applicationUseCases.createApplication(application);
+    return (new CreateApplicationDto());
   }
 
   @Put(":id")
