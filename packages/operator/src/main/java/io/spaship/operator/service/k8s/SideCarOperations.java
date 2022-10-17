@@ -1,5 +1,6 @@
 package io.spaship.operator.service.k8s;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.infrastructure.Infrastructure;
 import io.spaship.operator.business.EventManager;
@@ -60,16 +61,37 @@ public class SideCarOperations {
   }
 
 
-  public Uni<String> triggerSyncAsync(Object syncConfig, Environment environment) {
+  @SneakyThrows
+  public Uni<String> triggerSyncAsync(String syncConfig, Environment environment) {
+
+    ObjectMapper objectMapper = new ObjectMapper();
+    Object syncJson = objectMapper.readValue(syncConfig, Object.class);
+
+    LOG.info("converted String into Object");
 
     return Uni.createFrom()
       .item(() -> k8sOperator.environmentSidecarUrl(environment))
       .runSubscriptionOn(Infrastructure.getDefaultExecutor())
-      .map(url -> triggerSync(url, syncConfig, environment)).onFailure()
+      .map(url -> triggerSync(url, syncJson, environment)).onFailure()
       .recoverWithItem(throwable -> {
         LOG.error("sync operation failed due to {}", throwable.getMessage());
         return new JsonObject().put("status", "failed to communicate due to " + throwable.getMessage()).encodePrettily();
+      })
+      .onItem()
+      .call(i->{
+        if(!(i.contains("failed to communicate due to"))){
+          LOG.info("everything went well updating the sync config");
+          return updateSideCarConfigMap(syncConfig,environment);
+        }
+        LOG.info("failed to update the sync config.. skipping the config map update part...");
+        return Uni.createFrom().nullItem();
       });
+  }
+
+  private Uni<?> updateSideCarConfigMap(Object syncConfig, Environment environment) {
+    return Uni.createFrom().item(syncConfig)
+      .runSubscriptionOn(Infrastructure.getDefaultExecutor())
+      .map(syncCfg-> k8sOperator.updateConfigMap(environment,syncConfig));
   }
 
   @SneakyThrows
