@@ -38,7 +38,7 @@ function responseMapper(eph, spaData) {
     id: eph.id,
     propertyName: eph.propertyName,
     actionEnabled: eph.actionEnabled,
-    actionId: eph.propertyName,
+    actionId: eph.actionId,
     env: eph.env,
     expiresIn: eph.expiresIn,
     createdBy: eph.createdBy,
