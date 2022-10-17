@@ -4,11 +4,18 @@ import { PartialType } from "@nestjs/mapped-types";
 export class CreateApplicationDto {
   @IsString()
   @IsNotEmpty()
-  spaName: string;
+  name: string;
 
   @IsString()
   @IsNotEmpty()
   path: string;
+
+  // /**
+  //  * printng the name of the application
+  //  */
+  // public toString(): Promise<string> {
+  //   return Promise.resolve(`CreateApplicationDto[ spaName = ${this.spaName}, path =  ${this.path}]`);
+  // }
 }
 
-export class UpdateApplicationDto extends PartialType(CreateApplicationDto) {}
+export class UpdateApplicationDto extends PartialType(CreateApplicationDto) { }

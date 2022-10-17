@@ -1,13 +1,15 @@
 import { Controller, Get, Param, Post, Body, Put } from "@nestjs/common";
+import { LoggerService } from "src/core/logger/logger.service";
 import { CreateApplicationDto, UpdateApplicationDto } from "../core/dtos";
 import { ApplicationUseCases, ApplicationFactoryService } from "../use-cases/application";
 
-@Controller("api/application")
+@Controller("application")
 export class ApplicationController {
   constructor(
     private applicationUseCases: ApplicationUseCases,
-    private applicationFactoryService: ApplicationFactoryService
-  ) {}
+    private applicationFactoryService: ApplicationFactoryService,
+    private loggerService: LoggerService
+  ) { }
 
   @Get()
   async getAll() {
@@ -19,11 +21,12 @@ export class ApplicationController {
     return this.applicationUseCases.getApplicationById(id);
   }
 
-  @Post()
-  async createApplication(@Body() applicationDto: CreateApplicationDto): Promise<CreateApplicationDto> {
+  @Post("/deploy")
+  async createApplication(@Body() applicationDto: CreateApplicationDto) {
+    this.loggerService.log("applicationDto", JSON.stringify(applicationDto));
     const createApplicationResponse = new CreateApplicationDto();
-
-    return createApplicationResponse;
+    const application = this.applicationFactoryService.createNewApplication(createApplicationResponse);
+    return this.applicationUseCases.createApplication(application);
   }
 
   @Put(":id")

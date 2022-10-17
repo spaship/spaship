@@ -12,10 +12,12 @@ import { DeploymentRecordUseCasesModule } from "./use-cases/deploymentRecord/dep
 import { ApikeyUseCasesModule } from "./use-cases/apikey/apikey-use-cases.module";
 import { DeployServicesModule } from "./services/deployment-services/deployment-service.module";
 import { DeploymentConnectionUseCasesModule } from "./use-cases/deploymentConnection/deployment-connection-use-cases.module";
+import { LoggerModule } from "./core/logger/logger.module";
 
 @Module({
   imports: [
     DataServicesModule,
+    LoggerModule,
     ApplicationUseCasesModule,
     DeploymentRecordUseCasesModule,
     ApikeyUseCasesModule,
@@ -31,4 +33,4 @@ import { DeploymentConnectionUseCasesModule } from "./use-cases/deploymentConnec
   ],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }
