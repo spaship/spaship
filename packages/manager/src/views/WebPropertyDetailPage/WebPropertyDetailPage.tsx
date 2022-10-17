@@ -65,6 +65,9 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const [isRowExpanded, setIsRowExpanded] = useState<Record<string, boolean>>({});
   const propertyName = (query?.propertyName as string) || '';
   const formatDate = useFormatDate();
+  // TODO: To be removed once backend has a date standard
+  const dateFormatter = (date: string) =>
+    formatDate(`${date.slice(9)} ${date.split(' ')[0]}`, 'MMM DD, hh:mm a');
   const { openTab, handleTabChange } = useTabs(3);
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
@@ -296,7 +299,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                         key={activity.id}
                         variant={variant}
                         // Description does not support elements yet. Hence they are rendered as text.
-                        description={formatDate(activity.createdAt, 'MMM DD, hh:mm a')}
+                        description={dateFormatter(activity.createdAt)}
                       >
                         <TextContent className="pf-u-mb-sm">
                           <Text component={TextVariants.small}>
