@@ -46,7 +46,7 @@ public class EnvironmentController {
   public Uni<String> scheduleSync(@QueryParam("envName") String envName,
                                   @QueryParam("websiteName") String websiteName,
                                   @QueryParam("nameSpace") String nameSpace,
-                                  Object syncRequestBody) {
+                                  String syncRequestBody) {
 
     Environment environment = new Environment(
       envName,

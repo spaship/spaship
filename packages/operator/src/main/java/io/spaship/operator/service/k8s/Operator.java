@@ -398,5 +398,18 @@ public class Operator implements Operations {
 
   }
 
+  public ConfigMap updateConfigMap(Environment environment, Object syncConfig){
+
+    var configMapName = "sidecar-config-"
+      .concat(environment.getWebsiteName().toLowerCase())
+      .concat("-")
+      .concat(environment.getName().toLowerCase());
+    var cfgMapData =  k8sClient.configMaps().inNamespace(environment.getNameSpace()).withName(configMapName).get();
+    var existingConfigData =  cfgMapData.getData();
+    existingConfigData.put("SIDECAR_SYNC_CONFIG",syncConfig.toString());
+    cfgMapData.setData(existingConfigData);
+    return k8sClient.configMaps().inNamespace(environment.getNameSpace()).createOrReplace(cfgMapData);
+  }
+
 
 }
