@@ -17,9 +17,6 @@ export class Apikey {
   key: string;
 
   @Prop({ required: true })
-  token: string;
-
-  @Prop({ required: true })
   env: string[];
 
   @Prop({})

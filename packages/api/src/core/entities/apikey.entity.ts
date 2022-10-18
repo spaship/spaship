@@ -9,8 +9,6 @@ export class Apikey {
 
   key: string;
 
-  token: string;
-
   env: string[];
 
   expiredDate: string;

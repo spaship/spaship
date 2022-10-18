@@ -11,7 +11,6 @@ export class ApikeyFactoryService {
     newApikey.shortKey = Math.random().toString();
     newApikey.hashKey = Math.random().toString();
     newApikey.key = Math.random().toString();
-    newApikey.token = Math.random().toString();
     newApikey.env = createApikeyDto.env;
     newApikey.expiredDate = createApikeyDto.expiredDate;
     newApikey.createdBy = createApikeyDto.createdBy;

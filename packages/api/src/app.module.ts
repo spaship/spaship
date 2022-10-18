@@ -14,9 +14,12 @@ import { DeployServicesModule } from "./services/deployment-services/deployment-
 import { DeploymentConnectionUseCasesModule } from "./use-cases/deploymentConnection/deployment-connection-use-cases.module";
 import { LoggerModule } from "./core/logger/logger.module";
 import { ExceptionsModule } from "./services/exceptions/exceptions.module";
+import { AuthModule } from "./services/auth/auth.module";
+import { JwtService } from "@nestjs/jwt";
 
 @Module({
   imports: [
+    AuthModule,
     DataServicesModule,
     LoggerModule,
     ExceptionsModule,

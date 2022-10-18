@@ -1,6 +1,5 @@
 import { Controller, Get, Param, Post, Body, Put } from "@nestjs/common";
 import { ApiOperation } from "@nestjs/swagger";
-import { Application } from "src/core";
 import { LoggerService } from "src/core/logger/logger.service";
 import { ExceptionsService } from "src/services/exceptions/exceptions.service";
 import { CreateApplicationDto, UpdateApplicationDto } from "../core/dtos";
@@ -12,7 +11,6 @@ export class ApplicationController {
     private applicationUseCases: ApplicationUseCases,
     private applicationFactoryService: ApplicationFactoryService,
     private loggerService: LoggerService,
-    private exceptionService: ExceptionsService
   ) { }
 
   @Get()
