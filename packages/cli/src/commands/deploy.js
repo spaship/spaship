@@ -24,6 +24,7 @@ function isURL(s) {
 
 // regex to test whether an environment name is valid
 const validEnvName = /^[A-Za-z_]+[A-Za-z_0-9]+$/;
+const validPRId = /[ `!@#$%^&*()_+\=\[\]{};':"\\|,<>\/?~]/;
 
 class DeployCommand extends Command {
   async run() {
@@ -39,6 +40,23 @@ class DeployCommand extends Command {
     let path = flags.path || yamlPath;
     const configBuildDir = yamlConfig ? yamlConfig.buildDir : config.buildDir; // buildDIr from config
     const buildDir = flags.builddir ? flags.builddir : configBuildDir; // uses command line arg if present
+    const ephemeral = flags?.preview || false;
+    const actionId = flags?.prid;
+
+
+    if (actionId) {
+      this.validateActionId(actionId);
+    }
+
+    if (actionId && !ephemeral) {
+      this.error("You need to provide --preview or -P to use this --prid option");
+    }
+
+
+    if (ephemeral) {
+      this.log("This Deployment is ephemeral preview enabled, please check your deployment from SPAship Manager")
+    }
+
 
     if (!name) {
       this.error("Please define your app name in your package.json or use init to create spaship.yaml ");
@@ -131,6 +149,12 @@ class DeployCommand extends Command {
       data.append("name", name);
       data.append("path", path);
       data.append("ref", this.getRef(flags));
+      if (ephemeral) {
+        data.append("ephemeral", 'true');
+        if (actionId) {
+          data.append("actionId", actionId);
+        }
+      }
       if (!fs.existsSync(args.archive)) {
         spinner.fail(`${args.archive} not found in the directory, Please provide a valid file.`);
         return;
@@ -162,6 +186,12 @@ class DeployCommand extends Command {
       e.includes("ENOTFOUND")
         ? this.error(`${host} is not valid, please check the Deployment URL`, { exit: 1 })
         : this.error(e, { exit: 1 });
+    }
+  }
+
+  validateActionId(actionId) {
+    if (actionId.trim().toLowerCase().match(validPRId) || actionId.length > 10) {
+      this.error("Please provide a valid prid");
     }
   }
 
@@ -197,7 +227,7 @@ DeployCommand.flags = assign(
     path: flags.string({
       char: "p",
       description:
-        "a custom URL path for your app under the SPAship domain. Defaults to the 'path' in your spaship.yaml. ex: /my/app",
+        "a custom URL path for your app under the SPAship domain. Defaults to the 'path' in your spaship.yaml. ex: /my/app.",
     }),
   },
   {
@@ -205,6 +235,19 @@ DeployCommand.flags = assign(
       char: "b",
       required: false,
       description: "path of your SPAs artifact. Defaults to 'buildDir' if specified in the spaship.yaml.",
+    }),
+  },
+  {
+    preview: flags.boolean({
+      char: "P",
+      required: false,
+      description: "deploying into temporary preview environment.",
+    }),
+  },
+  {
+    prid: flags.string({
+      required: false,
+      description: "prid is to enable temporary preview environment in a optimized way. ex: pass the pull request id.",
     }),
   },
   commonFlags.apikey,
