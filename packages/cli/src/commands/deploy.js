@@ -45,9 +45,7 @@ class DeployCommand extends Command {
 
 
     if (actionId) {
-      if (actionId.trim().toLowerCase().match(validPRId) || actionId.length > 10) {
-        this.error("Please provide a valid prid");
-      }
+      this.validateActionId(actionId);
     }
 
     if (actionId && !ephemeral) {
@@ -188,6 +186,12 @@ class DeployCommand extends Command {
       e.includes("ENOTFOUND")
         ? this.error(`${host} is not valid, please check the Deployment URL`, { exit: 1 })
         : this.error(e, { exit: 1 });
+    }
+  }
+
+  validateActionId(actionId) {
+    if (actionId.trim().toLowerCase().match(validPRId) || actionId.length > 10) {
+      this.error("Please provide a valid prid");
     }
   }
 
