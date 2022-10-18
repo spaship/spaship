@@ -10,8 +10,8 @@ export class ApplicationController {
   constructor(
     private applicationUseCases: ApplicationUseCases,
     private applicationFactoryService: ApplicationFactoryService,
-    private loggerService: LoggerService,
-  ) { }
+    private loggerService: LoggerService
+  ) {}
 
   @Get()
   @ApiOperation({ description: "Get the list of all the SPAs" })

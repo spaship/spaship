@@ -8,7 +8,7 @@ interface IError {
 
 @Catch()
 export class AllExceptionFilter implements ExceptionFilter {
-  constructor(private readonly logger: LoggerService) { }
+  constructor(private readonly logger: LoggerService) {}
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
@@ -38,15 +38,17 @@ export class AllExceptionFilter implements ExceptionFilter {
     if (status === 500) {
       this.logger.error(
         `End Request for ${request.path}`,
-        `method=${request.method} status=${status} codeError=${message.codeError ? message.codeError : null
-        } message=${message.message ? message.message : null}`,
+        `method=${request.method} status=${status} codeError=${message.codeError ? message.codeError : null} message=${
+          message.message ? message.message : null
+        }`,
         status >= 500 ? exception.stack : ""
       );
     } else {
       this.logger.warn(
         `End Request for ${request.path}`,
-        `method=${request.method} status=${status} codeError=${message.codeError ? message.codeError : null
-        } message=${message.message ? message.message : null}`
+        `method=${request.method} status=${status} codeError=${message.codeError ? message.codeError : null} message=${
+          message.message ? message.message : null
+        }`
       );
     }
   }

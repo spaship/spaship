@@ -1,30 +1,23 @@
-import {
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { AuthGuard } from '@nestjs/passport';
-import { JwtService } from '@nestjs/jwt';
+import { ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { AuthGuard } from "@nestjs/passport";
+import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
-
+export class JwtAuthGuard extends AuthGuard("jwt") {
   constructor(private jwtService: JwtService) {
     super();
   }
 
   canActivate(context: ExecutionContext) {
     const secret: string = this.getSecret();
-    const bearerToken: string = context.getArgs()[0].headers['authorization'].split(' ')[1];
+    const bearerToken: string = context.getArgs()[0].headers["authorization"].split(" ")[1];
     const options: any = {
       secret: secret,
-
-    }
+    };
     const check = this.jwtService.verify(bearerToken, options);
     return super.canActivate(context);
   }
-
 
   handleRequest(err, user, info) {
     // You can throw an exception based on either "info" or "err" arguments
@@ -34,15 +27,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return user;
   }
 
-
   getSecret() {
-    const publicKey = 'publicKey';
+    const publicKey = "publicKey";
 
     if (publicKey && publicKey.trim().length > 0) {
       return this.formatAsPem(publicKey);
     }
   }
-
 
   formatAsPem(str) {
     const keyHeader = "-----BEGIN PUBLIC KEY-----";
@@ -60,5 +51,5 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
 
     return `${keyHeader}\n${formatKey}${keyFooter}`;
-  };
+  }
 }

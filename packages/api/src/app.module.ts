@@ -38,4 +38,4 @@ import { JwtService } from "@nestjs/jwt";
   ],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

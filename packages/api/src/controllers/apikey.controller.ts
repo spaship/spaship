@@ -5,7 +5,7 @@ import { ApikeyUseCases } from "../use-cases/apikey/apikey.use-case";
 
 @Controller("apikey")
 export class ApikeyController {
-  constructor(private apikeyUseCases: ApikeyUseCases) { }
+  constructor(private apikeyUseCases: ApikeyUseCases) {}
 
   @Get()
   @UseGuards(JwtAuthGuard)

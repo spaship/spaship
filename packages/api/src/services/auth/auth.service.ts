@@ -1,12 +1,11 @@
-
 import { LoggerService } from "src/core/logger/logger.service";
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { IAuthService, IAuthServicePayload } from 'src/core/abstracts/auth.abstract';
+import { Injectable } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { IAuthService, IAuthServicePayload } from "src/core/abstracts/auth.abstract";
 
 @Injectable()
 export class AuthService implements IAuthService {
-  constructor(private authService: JwtService) { }
+  constructor(private authService: JwtService) {}
 
   async checkToken(token: string): Promise<any> {
     const decode = await this.authService.verifyAsync(token);
@@ -20,4 +19,3 @@ export class AuthService implements IAuthService {
     });
   }
 }
-
