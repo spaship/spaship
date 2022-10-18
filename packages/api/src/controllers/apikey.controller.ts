@@ -13,18 +13,13 @@ export class ApikeyController {
     return this.apikeyUseCases.getAllApikeys();
   }
 
-  @Get(":id")
-  async getById(@Param("id") id: any) {
-    return this.apikeyUseCases.getApikeyById(id);
+  @Get(":propertyName")
+  async getById(@Param("propertyName") propertyName: any) {
+    return this.apikeyUseCases.getApikeyById(propertyName);
   }
 
   @Post()
   createApikey(@Body() apikeyDto: CreateApikeyDto) {
     return this.apikeyUseCases.createApikey(apikeyDto);
-  }
-
-  @Put(":id")
-  updateApikey(@Param("id") apikeyId: string, @Body() updateApikeyDto: UpdateApikeyDto) {
-    return this.apikeyUseCases.updateApikey(apikeyId, updateApikeyDto);
   }
 }

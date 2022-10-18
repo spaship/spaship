@@ -1,26 +1,25 @@
 import { Injectable } from "@nestjs/common";
 import { Apikey } from "../../core/entities";
 import { CreateApikeyDto, UpdateApikeyDto } from "../../core/dtos";
+import { v4 as uuidv4 } from "uuid";
 
 @Injectable()
 export class ApikeyFactoryService {
-  createNewApikey(createApikeyDto: CreateApikeyDto) {
-    const newApikey = new Apikey();
-    newApikey.label = createApikeyDto.label;
-    newApikey.propertyName = createApikeyDto.propertyName;
-    newApikey.shortKey = Math.random().toString();
-    newApikey.hashKey = Math.random().toString();
-    newApikey.key = Math.random().toString();
-    newApikey.env = createApikeyDto.env;
-    newApikey.expiredDate = createApikeyDto.expiredDate;
-    newApikey.createdBy = createApikeyDto.createdBy;
-
-    return newApikey;
+  createNewApikey(createApikeyDto: CreateApikeyDto): Apikey {
+    const apiKey = new Apikey();
+    apiKey.propertyName = createApikeyDto.propertyName;
+    apiKey.createdBy = createApikeyDto.createdBy;
+    apiKey.label = createApikeyDto.label;
+    apiKey.env = createApikeyDto.env;
+    apiKey.expiredDate = this.formatApikeyDate(createApikeyDto.expiresIn);
+    apiKey.key = uuidv4();
+    apiKey.shortKey = apiKey.key.substring(0, 7);
+    return apiKey;
   }
 
-  updateApikey(updateApikeyDto: UpdateApikeyDto) {
-    const newApikey = new Apikey();
-
-    return newApikey;
+  formatApikeyDate(expiration) {
+    const expiresIn = new Date();
+    expiresIn.setDate(expiresIn.getDate() + parseInt(expiration));
+    return expiresIn;
   }
 }

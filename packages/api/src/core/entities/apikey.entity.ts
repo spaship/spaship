@@ -5,13 +5,11 @@ export class Apikey {
 
   shortKey: string;
 
-  hashKey: string;
-
   key: string;
 
   env: string[];
 
-  expiredDate: string;
+  expiredDate: Date;
 
   createdBy: string;
 }

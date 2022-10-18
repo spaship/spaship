@@ -14,14 +14,13 @@ export class CreateApikeyDto {
   propertyName: string;
 
   @ApiProperty()
-  @IsString()
   @IsNotEmpty()
   env: string[];
 
   @ApiProperty()
-  @IsString()
   @IsNotEmpty()
-  expiredDate: string;
+  @IsString()
+  expiresIn: string;
 
   @ApiProperty()
   @IsString()

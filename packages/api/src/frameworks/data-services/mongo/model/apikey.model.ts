@@ -11,9 +11,6 @@ export class Apikey {
   shortKey: string;
 
   @Prop({ required: true })
-  hashKey: string;
-
-  @Prop({ required: true })
   key: string;
 
   @Prop({ required: true })
@@ -23,7 +20,7 @@ export class Apikey {
   label: string;
 
   @Prop({ required: true })
-  expiredDate: string;
+  expiredDate: Date;
 
   @Prop({ required: true })
   createdBy: string;
