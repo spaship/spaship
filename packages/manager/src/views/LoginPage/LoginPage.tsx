@@ -20,6 +20,7 @@ import {
 
 import { useToggle } from '@app/hooks';
 import { pageLinks } from '@app/links';
+import { env } from '@app/config/env';
 
 import { Nav } from './components/Nav';
 
@@ -54,6 +55,18 @@ export const LoginPage = (): JSX.Element => {
             style={{ marginTop: '10rem' }}
           >
             <FlexItem style={{ width: '500px' }}>
+              {Boolean(env.PUBLIC_SPASHIP_INTRO_VIDEO_URL) && (
+                <iframe
+                  src={env.PUBLIC_SPASHIP_INTRO_VIDEO_URL}
+                  title="spaship-intro"
+                  className="pf-u-w-100 pf-u-mb-md rounded-sm"
+                  style={{
+                    height: '200px',
+                    backgroundColor: '#025891',
+                    border: 'hidden'
+                  }}
+                />
+              )}
               <Title headingLevel="h1" size={TitleSizes['4xl']} style={{ fontSize: '2.4rem' }}>
                 develop fast ·{' '}
                 <span style={{ color: 'var(--spaship-global--Color--solar-orange)' }}>

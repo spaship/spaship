@@ -6,6 +6,7 @@ export const env = {
   PUBLIC_SPASHIP_REPORT_BUG:
     process.env.NEXT_PUBLIC_SPASHIP_REPORT_BUG ||
     'https://github.com/spaship/spaship/issues/new?assignees=&labels=bug&template=bug-report.md&title=%5BBug%5D%3A',
+  PUBLIC_SPASHIP_INTRO_VIDEO_URL: process.env.NEXT_PUBLIC_SPASHIP_INTRO_VIDEO_URL || '',
 
   // GitHub (https://github.com/organizations/spaship/settings/applications)
   SPASHIP_AUTH_GITHUB_ID: process.env.SPASHIP_AUTH__GITHUB_ID || '',

@@ -112,6 +112,10 @@ body {
   border-radius: 8px !important;
 }
 
+.rounded-sm {
+  border-radius: 4px !important;
+}
+
 .shadow-sm {
   box-shadow: 0px 3px 6px #00000029 !important;
 }
