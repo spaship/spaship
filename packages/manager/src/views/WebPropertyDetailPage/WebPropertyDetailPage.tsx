@@ -120,14 +120,6 @@ export const WebPropertyDetailPage = (): JSX.Element => {
         </Level>
       </Banner>
       <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
-        <div className="pf-u-w-33 pf-u-mb-lg">
-          <SearchInput
-            placeholder="Search by name"
-            value={searchTerm}
-            onChange={(value) => setSearchTerm(value?.toLowerCase())}
-            onClear={() => setSearchTerm('')}
-          />
-        </div>
         {!spaProperties.isLoading && isSpaPropertyListEmpty ? (
           <EmptyInfo propertyName={propertyName} />
         ) : (
@@ -144,6 +136,14 @@ export const WebPropertyDetailPage = (): JSX.Element => {
               }
               aria-label="SPA listing"
             >
+              <div className="pf-u-w-33 pf-u-mb-lg pf-u-mt-md">
+                <SearchInput
+                  placeholder="Search by name"
+                  value={searchTerm}
+                  onChange={(value) => setSearchTerm(value?.toLowerCase())}
+                  onClear={() => setSearchTerm('')}
+                />
+              </div>
               <TableComposable aria-label="spa-property-list" className="">
                 <Caption>SPA&apos;s DEPLOYED</Caption>
                 <Thead>

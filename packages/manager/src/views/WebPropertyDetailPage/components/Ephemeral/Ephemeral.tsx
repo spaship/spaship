@@ -33,20 +33,22 @@ type Props = {
   isSuccess: boolean;
 };
 
-const msToTime = (ms: number) => {
-  const minutes = Number((ms / (1000 * 60)).toFixed(0));
-  const hours = Number((ms / (1000 * 60 * 60)).toFixed(0));
-  const days = Number((ms / (1000 * 60 * 60 * 24)).toFixed(0));
-  if (minutes < 60) return `${minutes} min`;
-  if (hours < 24) return `${hours} hr`;
-  return `${days} Days`;
+const msToTime = (milliseconds: number) => {
+  let seconds = Math.floor(milliseconds / 1000);
+  let minutes = Math.floor(seconds / 60);
+  let hours = Math.floor(minutes / 60);
+  seconds %= 60;
+  minutes = seconds >= 30 ? minutes + 1 : minutes;
+  minutes %= 60;
+  hours %= 24;
+  const padTo2Digits = (num: number) => num.toString().padStart(2, '0');
+  return `${padTo2Digits(hours)} hr ${padTo2Digits(minutes)} min`;
 };
 const getExpiresTime = (createdAt: string, totalTime: number) => {
   const currentTime = new Date();
   const envDeletionAt = new Date(createdAt);
   const totalTimeInHours = totalTime / 60 / 60;
   envDeletionAt.setHours(envDeletionAt.getHours() + totalTimeInHours);
-
   const res = envDeletionAt.getTime() - currentTime.getTime();
   return msToTime(res);
 };
