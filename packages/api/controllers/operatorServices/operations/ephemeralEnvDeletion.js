@@ -6,13 +6,13 @@ const { agenda } = require("../../../agenda");
 const config = require("../../../config");
 
 module.exports = async function ephemeralEnvDeletion(req) {
-    const ephttl = Number(config.get("cli:eph_ttl"));
-    const scheduledDate = new Date();
-    log.info(`eph time : ${ephttl}`);
-    log.info(`current time : ${scheduledDate}`);
-    scheduledDate.setSeconds(scheduledDate.getSeconds() + ephttl);
     const propertyName = req?.propertyName;
     const env = req?.env;
+    const ephttl = Number(config.get("cli:eph_ttl"));
+    const scheduledDate = new Date();
+    log.info(`eph time : ${ephttl} for ${env}`);
+    log.info(`current time : ${scheduledDate}`);
+    scheduledDate.setSeconds(scheduledDate.getSeconds() + ephttl);
     const type = 'preprod';
     const createdBy = req?.createdBy;
 
