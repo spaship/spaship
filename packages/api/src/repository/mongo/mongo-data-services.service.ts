@@ -1,7 +1,7 @@
 import { Injectable, OnApplicationBootstrap } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { IDataServices } from "../../../core";
+import { IDataServices } from "../../core";
 import { MongoGenericRepository } from "./mongo-generic-repository";
 import {
   DeploymentRecord,

@@ -1,5 +1,5 @@
 import { Model } from "mongoose";
-import { IGenericRepository } from "../../../core";
+import { IGenericRepository } from "../../core";
 
 export class MongoGenericRepository<T> implements IGenericRepository<T> {
   private _repository: Model<T>;

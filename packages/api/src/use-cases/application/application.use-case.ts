@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
+import { IDataServices } from "../../core/abstracts";
 import { Application } from "../../core/entities";
-import { IDataServices, IDeploymentServices } from "../../core/abstracts";
 
 @Injectable()
 /** @internal ApplicationUseCases is for depenednt operations on database */
 export class ApplicationUseCases {
-  constructor(private dataServices: IDataServices, private deploymentServices: IDeploymentServices) {}
+  constructor(private dataServices: IDataServices) {}
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.applications.getAll();
@@ -16,7 +16,7 @@ export class ApplicationUseCases {
   }
 
   async createApplication(application: Application): Promise<Application> {
-    await this.deploymentServices.deployApplication(application);
+
     const createdApplication = await this.dataServices.applications.create(application);
     return createdApplication;
   }

@@ -10,7 +10,6 @@ import { PropertyController } from "./controllers/property.controller";
 import { LoggerModule } from "./core/logger/logger.module";
 import { AuthModule } from "./services/auth/auth.module";
 import { DataServicesModule } from "./services/data-services/data-services.module";
-import { DeployServicesModule } from "./services/deployment-services/deployment-service.module";
 import { ExceptionsModule } from "./services/exceptions/exceptions.module";
 import { SSEConsumeModule } from "./services/sse-services/sse-consume.module";
 import { ApikeyUseCasesModule } from "./use-cases/apikey/apikey-use-cases.module";
@@ -28,7 +27,6 @@ import { PropertyUseCasesModule } from "./use-cases/property/property-use-cases.
     ApplicationUseCasesModule,
     DeploymentRecordUseCasesModule,
     ApikeyUseCasesModule,
-    DeployServicesModule,
     DeploymentConnectionUseCasesModule,
     PropertyUseCasesModule,
     SSEConsumeModule,
