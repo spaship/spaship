@@ -16,6 +16,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ARG NEXT_PUBLIC_SPASHIP_API_BASE_URL
+ARG NEXT_PUBLIC_SPASHIP_INTRO_VIDEO_URL
 ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN npm run build
