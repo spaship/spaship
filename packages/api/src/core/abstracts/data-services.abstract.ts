@@ -1,4 +1,13 @@
-import { DeploymentRecord, Application, Apikey, DeploymentConnection } from "../entities";
+import {
+  DeploymentRecord,
+  Application,
+  Property,
+  Apikey,
+  DeploymentConnection,
+  Environment,
+  Event,
+  EventTimeTrace,
+} from "../entities";
 import { IGenericRepository } from "./generic-repository.abstract";
 
 export abstract class IDataServices {
@@ -9,4 +18,12 @@ export abstract class IDataServices {
   abstract deploymentConnection: IGenericRepository<DeploymentConnection>;
 
   abstract deploymentRecord: IGenericRepository<DeploymentRecord>;
+
+  abstract environment: IGenericRepository<Environment>;
+
+  abstract event: IGenericRepository<Event>;
+
+  abstract eventTimeTrace: IGenericRepository<EventTimeTrace>;
+
+  abstract property: IGenericRepository<Property>;
 }

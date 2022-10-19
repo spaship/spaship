@@ -12,6 +12,14 @@ import {
   ApikeyDocument,
   DeploymentConnection,
   DeploymentConnectionDocument,
+  Event,
+  EventDocument,
+  EventTimeTrace,
+  EventTimeTraceDocument,
+  Environment,
+  EnvironmentDocument,
+  Property,
+  PropertyDocument,
 } from "./model";
 
 @Injectable()
@@ -20,6 +28,10 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
   applications: MongoGenericRepository<Application>;
   apikeys: MongoGenericRepository<Apikey>;
   deploymentConnection: MongoGenericRepository<DeploymentConnection>;
+  environment: MongoGenericRepository<Environment>;
+  event: MongoGenericRepository<Event>;
+  eventTimeTrace: MongoGenericRepository<EventTimeTrace>;
+  property: MongoGenericRepository<Property>;
 
   constructor(
     @InjectModel(DeploymentRecord.name)
@@ -29,7 +41,15 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
     @InjectModel(Apikey.name)
     private ApikeyRepository: Model<ApikeyDocument>,
     @InjectModel(DeploymentConnection.name)
-    private DeploymentConnectionRepository: Model<DeploymentConnectionDocument>
+    private DeploymentConnectionRepository: Model<DeploymentConnectionDocument>,
+    @InjectModel(Environment.name)
+    private EnvironmentRepository: Model<EnvironmentDocument>,
+    @InjectModel(Event.name)
+    private EventRepository: Model<EventDocument>,
+    @InjectModel(EventTimeTrace.name)
+    private EventTimeTraceRepository: Model<EventTimeTraceDocument>,
+    @InjectModel(Property.name)
+    private PropertyRepository: Model<PropertyDocument>
   ) {}
 
   onApplicationBootstrap() {
@@ -37,5 +57,9 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
     this.applications = new MongoGenericRepository<Application>(this.ApplicationRepository);
     this.apikeys = new MongoGenericRepository<Apikey>(this.ApikeyRepository);
     this.deploymentConnection = new MongoGenericRepository<DeploymentConnection>(this.DeploymentConnectionRepository);
+    this.event = new MongoGenericRepository<Event>(this.EventRepository);
+    this.eventTimeTrace = new MongoGenericRepository<EventTimeTrace>(this.EventTimeTraceRepository);
+    this.environment = new MongoGenericRepository<Environment>(this.EnvironmentRepository);
+    this.property = new MongoGenericRepository<Property>(this.PropertyRepository);
   }
 }

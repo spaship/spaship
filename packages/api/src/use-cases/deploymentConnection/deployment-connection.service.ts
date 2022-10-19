@@ -1,7 +1,6 @@
-import { log } from "@spaship/common/lib/logging/pino";
 import { Injectable } from "@nestjs/common";
-import { DeploymentRecord, DeploymentConnection } from "../../core/entities";
-import { DeploymentConnectionDTO } from "../../core/dtos";
+import { DeploymentConnectionDTO, UpdateDeploymentConnectionDTO } from "../../core/dtos";
+import { DeploymentConnection } from "../../core/entities";
 
 @Injectable()
 export class DeploymentConnectionFactoryService {
@@ -12,7 +11,13 @@ export class DeploymentConnectionFactoryService {
     obj.alias = res.alias;
     obj.type = res.type;
     obj.isActive = true;
-    log.info(obj.toString());
+    return obj;
+  }
+
+  updateDeploymentConnection(res: UpdateDeploymentConnectionDTO) {
+    const obj = new DeploymentConnection();
+    obj.baseurl = res.baseurl;
+    obj.type = res.type;
     return obj;
   }
 }

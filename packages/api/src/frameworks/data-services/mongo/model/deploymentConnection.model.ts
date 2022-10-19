@@ -1,6 +1,4 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import * as mongoose from "mongoose";
-import { DeploymentRecord } from ".";
 
 export type DeploymentConnectionDocument = DeploymentConnection & Document;
 
