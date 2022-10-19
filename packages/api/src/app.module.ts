@@ -1,21 +1,23 @@
 import { Module } from "@nestjs/common";
 import {
+  ApikeyController,
   AppController,
   ApplicationController,
-  DeploymentRecordController,
-  ApikeyController,
   DeploymentConnectionController,
+  DeploymentRecordController,
 } from "./controllers";
-import { DataServicesModule } from "./services/data-services/data-services.module";
-import { ApplicationUseCasesModule } from "./use-cases/application/application-use-cases.module";
-import { DeploymentRecordUseCasesModule } from "./use-cases/deploymentRecord/deployment-record.use-cases.module";
-import { ApikeyUseCasesModule } from "./use-cases/apikey/apikey-use-cases.module";
-import { DeployServicesModule } from "./services/deployment-services/deployment-service.module";
-import { DeploymentConnectionUseCasesModule } from "./use-cases/deploymentConnection/deployment-connection-use-cases.module";
+import { PropertyController } from "./controllers/property.controller";
 import { LoggerModule } from "./core/logger/logger.module";
-import { ExceptionsModule } from "./services/exceptions/exceptions.module";
 import { AuthModule } from "./services/auth/auth.module";
-import { JwtService } from "@nestjs/jwt";
+import { DataServicesModule } from "./services/data-services/data-services.module";
+import { DeployServicesModule } from "./services/deployment-services/deployment-service.module";
+import { ExceptionsModule } from "./services/exceptions/exceptions.module";
+import { SSEConsumeModule } from "./services/sse-services/sse-consume.module";
+import { ApikeyUseCasesModule } from "./use-cases/apikey/apikey-use-cases.module";
+import { ApplicationUseCasesModule } from "./use-cases/application/application-use-cases.module";
+import { DeploymentConnectionUseCasesModule } from "./use-cases/deploymentConnection/deployment-connection-use-cases.module";
+import { DeploymentRecordUseCasesModule } from "./use-cases/deploymentRecord/deployment-record.use-cases.module";
+import { PropertyUseCasesModule } from "./use-cases/property/property-use-cases.module";
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { JwtService } from "@nestjs/jwt";
     ApikeyUseCasesModule,
     DeployServicesModule,
     DeploymentConnectionUseCasesModule,
+    PropertyUseCasesModule,
+    SSEConsumeModule,
   ],
   controllers: [
     AppController,
@@ -35,7 +39,8 @@ import { JwtService } from "@nestjs/jwt";
     DeploymentRecordController,
     ApikeyController,
     DeploymentConnectionController,
+    PropertyController,
   ],
-  providers: [],
+  providers: [SSEConsumeModule],
 })
 export class AppModule {}

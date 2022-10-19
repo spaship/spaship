@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Post, Body, Put } from "@nestjs/common";
-import { CreateApikeyDto, DeploymentConnectionDTO, UpdateApikeyDto } from "../core/dtos";
+import { CreateApikeyDto, DeploymentConnectionDTO, UpdateApikeyDto, UpdateDeploymentConnectionDTO } from "../core/dtos";
 import { DeploymentConnectionUseCases } from "../use-cases/deploymentConnection/deployment-connection.use-case";
 
 @Controller("deployment-connection")
@@ -11,21 +11,13 @@ export class DeploymentConnectionController {
     return this.deploymentConnectionUseCases.getAllRecords();
   }
 
-  // @Get(':id')
-  // async getById(@Param('id') id: any) {
-  //   return this.deploymentConnectionUseCases.getApikeyById(id);
-  // }
-
   @Post()
-  createApikey(@Body() req: DeploymentConnectionDTO) {
+  createDeploymentConnection(@Body() req: DeploymentConnectionDTO) {
     return this.deploymentConnectionUseCases.createDeploymentConnection(req);
   }
 
-  // @Put(':id')
-  // updateApikey(
-  //   @Param('id') apikeyId: string,
-  //   @Body() updateApikeyDto: UpdateApikeyDto,
-  // ) {
-  //   return this.deploymentConnectionUseCases.updateApikey(apikeyId, updateApikeyDto);
-  // }
+  @Put()
+  updateApikey(@Body() updateApikeyDto: UpdateDeploymentConnectionDTO) {
+    return this.deploymentConnectionUseCases.updateDeploymentRecord(updateApikeyDto._id, updateApikeyDto);
+  }
 }

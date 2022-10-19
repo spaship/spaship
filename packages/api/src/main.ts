@@ -7,6 +7,8 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { LoggingInterceptor } from "./core/interceptors/logger.interceptor";
 import { LoggerService } from "./core/logger/logger.service";
 import { ResponseFormat, ResponseInterceptor } from "./core/interceptors/response.interceptor";
+import { SSEConsumeModule } from "./services/sse-services/sse-consume.module";
+import { SSEConsumeService } from "./services/sse-services/sse-consume.service";
 
 async function bootstrap() {
   const env = process.env.NODE_ENV;
@@ -39,7 +41,7 @@ async function bootstrap() {
     });
     SwaggerModule.setup("api", app, document);
   }
-
+  new SSEConsumeService().consumeEvent();
   await app.listen(3000);
 }
 bootstrap();
