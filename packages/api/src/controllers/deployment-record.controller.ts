@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Post, Body, Put } from "@nestjs/common";
 import { CreateDeploymentRecordDto, UpdateDeploymentRecordDto } from "../core/dtos";
-import { DeploymentRecordUseCases } from "../use-cases/deploymentRecord/deployment-record.use-case";
+import { DeploymentRecordUseCases } from "../use-cases/deployment-record/deployment-record.use-case";
 
 @Controller("deployment-record")
 export class DeploymentRecordController {

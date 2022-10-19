@@ -14,8 +14,8 @@ import { ExceptionsModule } from "./services/exceptions/exceptions.module";
 import { SSEConsumeModule } from "./services/sse-services/sse-consume.module";
 import { ApikeyUseCasesModule } from "./use-cases/apikey/apikey-use-cases.module";
 import { ApplicationUseCasesModule } from "./use-cases/application/application-use-cases.module";
-import { DeploymentConnectionUseCasesModule } from "./use-cases/deploymentConnection/deployment-connection-use-cases.module";
-import { DeploymentRecordUseCasesModule } from "./use-cases/deploymentRecord/deployment-record.use-cases.module";
+import { DeploymentConnectionUseCasesModule } from "./use-cases/deployment-connection/deployment-connection-use-cases.module";
+import { DeploymentRecordUseCasesModule } from "./use-cases/deployment-record/deployment-record.use-cases.module";
 import { PropertyUseCasesModule } from "./use-cases/property/property-use-cases.module";
 
 @Module({
