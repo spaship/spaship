@@ -52,6 +52,9 @@ import toast from 'react-hot-toast';
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
   const formatDate = useFormatDate();
+  // TODO: To be removed once backend has a date standard
+  const dateFormatter = (date: string) =>
+    formatDate(`${date.slice(9)} ${date.split(' ')[0]}`, 'MMM DD, hh:mm a');
   const propertyName = router.query.propertyName as string;
   const spaProperty = router.query.spaProperty as string;
 
@@ -253,7 +256,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                       key={activity.id}
                       variant={variant}
                       // Description does not support elements yet. Hence they are rendered as text.
-                      description={formatDate(activity.createdAt, 'MMM DD, hh:mm a')}
+                      description={dateFormatter(activity.createdAt)}
                     >
                       <TextContent className="pf-u-mb-sm">
                         <Text component={TextVariants.small}>
