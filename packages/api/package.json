@@ -1,6 +1,6 @@
 {
   "name": "@spaship/api",
-  "version": "2.1.0",
+  "version": "2.3.0",
   "description": "The RESTFul API of the SPAship platform.",
   "homepage": "https://github.com/spaship/spaship/tree/master/packages/api#readme",
   "repository": {
