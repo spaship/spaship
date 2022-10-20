@@ -17,7 +17,13 @@ interface Props {
  */
 export const AppLayout = ({ children }: Props): JSX.Element => (
   <>
-    <Banner isSticky variant="info">
+    <Banner
+      style={{
+        backgroundColor: 'var(--spaship-global--Color--solar-orange)'
+      }}
+      isSticky
+      variant="info"
+    >
       <Flex
         justifyContent={{ default: 'justifyContentCenter' }}
         alignItems={{ default: 'alignItemsCenter' }}
