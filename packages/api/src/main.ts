@@ -1,13 +1,12 @@
-import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
 import { ValidationPipe } from "@nestjs/common";
-import * as cookieParser from "cookie-parser";
-import { AllExceptionFilter } from "./core/filter/exception.filter";
+import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import * as cookieParser from "cookie-parser";
+import { AppModule } from "./app.module";
+import { AllExceptionFilter } from "./core/filter/exception.filter";
 import { LoggingInterceptor } from "./core/interceptors/logger.interceptor";
-import { LoggerService } from "./core/logger/logger.service";
 import { ResponseFormat, ResponseInterceptor } from "./core/interceptors/response.interceptor";
-import { SSEConsumeModule } from "./services/sse-services/sse-consume.module";
+import { LoggerService } from "./core/logger/logger.service";
 import { SSEConsumeService } from "./services/sse-services/sse-consume.service";
 
 async function bootstrap() {

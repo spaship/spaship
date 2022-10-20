@@ -3,7 +3,7 @@ import { ApiOperation } from "@nestjs/swagger";
 import { LoggerService } from "src/core/logger/logger.service";
 import { ExceptionsService } from "src/services/exceptions/exceptions.service";
 import { CreatePropertyDto } from "../core/dtos";
-import { PropertyUseCases, PropertyFactoryService } from "../use-cases/property";
+import { PropertyUseCases, PropertyFactoryService } from "../services/property";
 
 @Controller("property")
 export class PropertyController {

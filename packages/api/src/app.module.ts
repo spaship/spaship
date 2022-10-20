@@ -1,3 +1,4 @@
+import { HttpService } from "@nestjs/axios";
 import { Module } from "@nestjs/common";
 import {
   ApikeyController,
@@ -12,11 +13,11 @@ import { AuthModule } from "./services/auth/auth.module";
 import { DataServicesModule } from "./services/data-services/data-services.module";
 import { ExceptionsModule } from "./services/exceptions/exceptions.module";
 import { SSEConsumeModule } from "./services/sse-services/sse-consume.module";
-import { ApikeyUseCasesModule } from "./use-cases/apikey/apikey-use-cases.module";
-import { ApplicationUseCasesModule } from "./use-cases/application/application-use-cases.module";
-import { DeploymentConnectionUseCasesModule } from "./use-cases/deployment-connection/deployment-connection-use-cases.module";
-import { DeploymentRecordUseCasesModule } from "./use-cases/deployment-record/deployment-record.use-cases.module";
-import { PropertyUseCasesModule } from "./use-cases/property/property-use-cases.module";
+import { ApikeyUseCasesModule } from "./services/apikey/apikey-use-cases.module";
+import { ApplicationUseCasesModule } from "./services/application/application-use-cases.module";
+import { DeploymentConnectionUseCasesModule } from "./services/deployment-connection/deployment-connection-use-cases.module";
+import { DeploymentRecordUseCasesModule } from "./services/deployment-record/deployment-record.use-cases.module";
+import { PropertyUseCasesModule } from "./services/property/property-use-cases.module";
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { PropertyUseCasesModule } from "./use-cases/property/property-use-cases.
     DeploymentConnectionUseCasesModule,
     PropertyUseCasesModule,
     SSEConsumeModule,
+
   ],
   controllers: [
     AppController,
@@ -38,7 +40,8 @@ import { PropertyUseCasesModule } from "./use-cases/property/property-use-cases.
     ApikeyController,
     DeploymentConnectionController,
     PropertyController,
+
   ],
-  providers: [SSEConsumeModule],
+  providers: [],
 })
-export class AppModule {}
+export class AppModule { }
