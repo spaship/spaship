@@ -10,9 +10,8 @@ export class PropertyFactoryService {
     newProperty.propertyName = "one-platform";
     newProperty.createdBy = "souchowd@redhat.com";
     newProperty.isActive = true;
-    newProperty.createdBy = 'souchowd@redhat.com'
-    newProperty.namespace = 'souchowd@redhat.com'
-
+    newProperty.createdBy = "souchowd@redhat.com";
+    newProperty.namespace = "souchowd@redhat.com";
 
     const newDR = new DeploymentConnectionRecord();
     newDR.deploymentConnectionName = "west2";
@@ -23,8 +22,3 @@ export class PropertyFactoryService {
     return newProperty;
   }
 }
-/* eslint-disable
-    // newProperty.env = "pla",
-    // newProperty.url = "stage.one.redhat.com",
-    // newProperty.type = "operator",
-    // newProperty.deploymentConnectionType = "preprod",*/

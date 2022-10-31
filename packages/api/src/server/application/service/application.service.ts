@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { Application } from "src/core/entities/application.entity";
-import { IDataServices } from "../../../core/abstracts";
+import { IDataServices } from "src/repository/data-services.abstract";
+import { Application } from "src/server/application/application.entity";
 
 @Injectable()
 /** @internal ApplicationUseCases is for depenednt operations on database */
@@ -16,7 +16,6 @@ export class ApplicationUseCases {
   }
 
   async createApplication(application: Application): Promise<Application> {
-
     const createdApplication = await this.dataServices.applications.create(application);
     return createdApplication;
   }

@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { IDataServices } from "src/core/abstracts";
-import { Apikey } from "src/core/entities/apikey.entity";
+import { Apikey } from "src/server/api-key/apikey.entity";
 import { CreateApikeyDto } from "src/server/api-key/apikey.dto";
 import { ApikeyFactoryService } from "./apikey.factory";
+import { IDataServices } from "src/repository/data-services.abstract";
 
 @Injectable()
 export class ApikeyUseCases {

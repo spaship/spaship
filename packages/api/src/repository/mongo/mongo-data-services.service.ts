@@ -20,7 +20,7 @@ import {
   Property,
   PropertyDocument,
 } from "./model";
-import { IDataServices } from "src/core/abstracts";
+import { IDataServices } from "src/repository/data-services.abstract";
 
 @Injectable()
 export class MongoDataServices implements IDataServices, OnApplicationBootstrap {

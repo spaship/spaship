@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { IDataServices } from "src/core/abstracts";
+import { IDataServices } from "src/repository/data-services.abstract";
 import { DATA_BASE_CONFIGURATION } from "../../configuration";
 import {
   DeploymentRecord,

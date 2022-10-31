@@ -1,15 +1,18 @@
 import { Injectable } from "@nestjs/common";
-import { IDataServices } from "../../../core/abstracts";
 import { DeploymentRecordFactoryService } from "./deployment-record.service";
-import { CreateDeploymentRecordDto, UpdateDeploymentRecordDto } from "src/server/deployment-record/deploymenet-record.dto";
+import {
+  CreateDeploymentRecordDto,
+  UpdateDeploymentRecordDto,
+} from "src/server/deployment-record/deploymenet-record.dto";
 import { DeploymentRecord } from "src/repository/mongo/model";
+import { IDataServices } from "src/repository/data-services.abstract";
 
 @Injectable()
 export class DeploymentRecordUseCases {
   constructor(
     private dataServices: IDataServices,
     private deploymentRecordFactoryService: DeploymentRecordFactoryService
-  ) { }
+  ) {}
 
   getAllDeploymentRecords(): Promise<DeploymentRecord[]> {
     return this.dataServices.deploymentRecord.getAll();

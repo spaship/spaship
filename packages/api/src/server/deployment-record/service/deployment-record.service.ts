@@ -1,6 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { DeploymentRecord } from "src/repository/mongo/model";
-import { CreateDeploymentRecordDto, UpdateDeploymentRecordDto } from "src/server/deployment-record/deploymenet-record.dto";
+import {
+  CreateDeploymentRecordDto,
+  UpdateDeploymentRecordDto,
+} from "src/server/deployment-record/deploymenet-record.dto";
 
 @Injectable()
 export class DeploymentRecordFactoryService {

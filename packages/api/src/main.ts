@@ -7,7 +7,7 @@ import { AllExceptionFilter } from "./configuration/exceptions/exception.filter"
 import { LoggingInterceptor } from "./configuration/interceptors/logger.interceptor";
 import { ResponseFormat, ResponseInterceptor } from "./configuration/interceptors/response.interceptor";
 import { LoggerService } from "./configuration/logger/logger.service";
-import { SSEConsumeService } from "./server/sse-services/sse-consume.service";
+import { SSEConsumeService } from "./server/sse-services/service/sse-consume.service";
 
 async function bootstrap() {
   const env = process.env.NODE_ENV;

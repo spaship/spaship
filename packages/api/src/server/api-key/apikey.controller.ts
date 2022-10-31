@@ -7,7 +7,6 @@ export class ApikeyController {
   constructor(private apikeyUseCases: ApikeyUseCases) {}
 
   @Get(":propertyName")
-  //@UseGuards(JwtAuthGuard)
   async getById(@Param("propertyName") propertyName: any) {
     return this.apikeyUseCases.getApikeyById(propertyName);
   }

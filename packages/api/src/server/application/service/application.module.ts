@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { LoggerModule } from "src/configuration/logger/logger.module";
-import { DataServicesModule } from "../../../services/data-services/data-services.module";
+import { DataServicesModule } from "../../../repository/data-services.module";
 import { ApplicationFactoryService } from "./application.factory";
 import { ApplicationUseCases } from "./application.service";
 
@@ -9,4 +9,4 @@ import { ApplicationUseCases } from "./application.service";
   providers: [ApplicationFactoryService, ApplicationUseCases],
   exports: [ApplicationFactoryService, ApplicationUseCases],
 })
-export class ApplicationUseCasesModule { }
+export class ApplicationUseCasesModule {}
