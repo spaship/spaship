@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
+import { CreateDeploymentRecordDto, UpdateDeploymentRecordDto } from "src/server/deployment-record/deploymenet-record.dto";
 import { DeploymentRecord } from "../../core/entities";
-import { CreateDeploymentRecordDto, UpdateDeploymentRecordDto } from "../../core/dtos";
 
 @Injectable()
 export class DeploymentRecordFactoryService {

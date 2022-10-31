@@ -2,8 +2,8 @@ import { Controller, Get, Param, Post, Body, Put } from "@nestjs/common";
 import { ApiOperation } from "@nestjs/swagger";
 import { LoggerService } from "src/core/logger/logger.service";
 import { ExceptionsService } from "src/services/exceptions/exceptions.service";
-import { CreatePropertyDto } from "../../core/dtos";
 import { PropertyUseCases, PropertyFactoryService } from "../../services/property";
+import { CreatePropertyDto } from "./property.dto";
 
 @Controller("property")
 export class PropertyController {

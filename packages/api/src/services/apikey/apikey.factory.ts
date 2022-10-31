@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Apikey } from "../../core/entities";
-import { CreateApikeyDto, UpdateApikeyDto } from "../../core/dtos";
 import { v4 as uuidv4 } from "uuid";
+import { CreateApikeyDto } from "src/server/api-key/apikey.dto";
 
 @Injectable()
 export class ApikeyFactoryService {

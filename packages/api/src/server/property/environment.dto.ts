@@ -1,5 +1,5 @@
 import { ApiProperty, PartialType } from "@nestjs/swagger";
-import { Application } from "../entities";
+import { Application } from "../../core/entities";
 
 export class EnvironmentD {
   @ApiProperty()

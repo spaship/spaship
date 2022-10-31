@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
+import { CreateApplicationDto, UpdateApplicationDto } from "src/server/application/application.dto";
 import { Application } from "../../core/entities";
-import { CreateApplicationDto, UpdateApplicationDto } from "../../core/dtos";
 
 @Injectable()
 /** @internal ApplicationFactoryService is for the business logics */

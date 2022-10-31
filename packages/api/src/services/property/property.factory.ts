@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
+import { CreatePropertyDto } from "src/server/property/property.dto";
 import { Property, DeploymentConnectionRecord } from "../../core/entities";
-import { CreatePropertyDto } from "../../core/dtos";
 
 @Injectable()
 export class PropertyFactoryService {

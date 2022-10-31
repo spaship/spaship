@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DeploymentConnectionDTO, UpdateDeploymentConnectionDTO } from "../../core/dtos";
+import { DeploymentConnectionDTO, UpdateDeploymentConnectionDTO } from "src/server/deployment-conncetion/deployment-connection.dto";
 import { DeploymentConnection } from "../../core/entities";
 
 @Injectable()
