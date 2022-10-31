@@ -7,7 +7,7 @@ import {
   DeploymentConnectionController,
   DeploymentRecordController,
 } from "./controllers";
-import { PropertyController } from "./controllers/property.controller";
+import { PropertyController } from "./server/property/property.controller";
 import { LoggerModule } from "./core/logger/logger.module";
 import { AuthModule } from "./services/auth/auth.module";
 import { DataServicesModule } from "./services/data-services/data-services.module";

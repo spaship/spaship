@@ -2,8 +2,8 @@ import { Controller, Get, Param, Post, Body, Put } from "@nestjs/common";
 import { ApiOperation } from "@nestjs/swagger";
 import { LoggerService } from "src/core/logger/logger.service";
 import { ExceptionsService } from "src/services/exceptions/exceptions.service";
-import { CreateApplicationDto, UpdateApplicationDto } from "../core/dtos";
-import { ApplicationUseCases, ApplicationFactoryService } from "../services/application";
+import { CreateApplicationDto, UpdateApplicationDto } from "../../core/dtos";
+import { ApplicationUseCases, ApplicationFactoryService } from "../../services/application";
 
 @Controller("application")
 export class ApplicationController {
