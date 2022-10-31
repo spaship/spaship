@@ -13,11 +13,11 @@ import { AuthModule } from "./services/auth/auth.module";
 import { DataServicesModule } from "./services/data-services/data-services.module";
 import { ExceptionsModule } from "./services/exceptions/exceptions.module";
 import { SSEConsumeModule } from "./services/sse-services/sse-consume.module";
-import { ApikeyUseCasesModule } from "./services/apikey/apikey-use-cases.module";
-import { ApplicationUseCasesModule } from "./services/application/application-use-cases.module";
-import { DeploymentConnectionUseCasesModule } from "./services/deployment-connection/deployment-connection-use-cases.module";
+import { ApikeyUseCasesModule } from "./services/apikey/apikey.module";
+import { ApplicationUseCasesModule } from "./services/application/application.module";
+import { DeploymentConnectionUseCasesModule } from "./services/deployment-connection/deployment-connection.module";
 import { DeploymentRecordUseCasesModule } from "./services/deployment-record/deployment-record.use-cases.module";
-import { PropertyUseCasesModule } from "./services/property/property-use-cases.module";
+import { PropertyUseCasesModule } from "./services/property/property.module";
 
 @Module({
   imports: [

@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { DataServicesModule } from "../data-services/data-services.module";
-import { ApikeyFactoryService } from "./apikey-factory.service";
-import { ApikeyUseCases } from "./apikey.use-case";
+import { ApikeyFactoryService } from "./apikey.factory";
+import { ApikeyUseCases } from "./apikey.service";
 
 @Module({
   imports: [DataServicesModule],

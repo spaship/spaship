@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Property } from "../../core/entities";
 import { IDataServices } from "../../core/abstracts";
 import { CreatePropertyDto } from "../../core/dtos";
-import { PropertyFactoryService } from "./property-factory.service";
+import { PropertyFactoryService } from "./property.factory";
 
 @Injectable()
 export class PropertyUseCases {

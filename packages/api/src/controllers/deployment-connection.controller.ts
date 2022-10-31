@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Post, Body, Put } from "@nestjs/common";
 import { CreateApikeyDto, DeploymentConnectionDTO, UpdateApikeyDto, UpdateDeploymentConnectionDTO } from "../core/dtos";
-import { DeploymentConnectionUseCases } from "../services/deployment-connection/deployment-connection.use-case";
+import { DeploymentConnectionUseCases } from "../services/deployment-connection/deployment-connection.service";
 
 @Controller("deployment-connection")
 export class DeploymentConnectionController {

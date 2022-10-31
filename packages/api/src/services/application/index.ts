@@ -1,3 +1,3 @@
-export * from "./application-factory.service";
-export * from "./application.use-case";
-export * from "./application-use-cases.module";
+export * from "./application.factory";
+export * from "./application.service";
+export * from "./application.module";
