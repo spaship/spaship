@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
+import { DeploymentConnection } from "src/repository/mongo/model";
 import { DeploymentConnectionDTO, UpdateDeploymentConnectionDTO } from "src/server/deployment-conncetion/deployment-connection.dto";
-import { IDataServices } from "../../core/abstracts";
-import { DeploymentConnection } from "../../core/entities";
+import { IDataServices } from "../../../core/abstracts";
 import { DeploymentConnectionFactoryService } from "./deployment-connection.factory";
 
 @Injectable()

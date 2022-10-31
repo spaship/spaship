@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { Property } from "../../core/entities";
-import { IDataServices } from "../../core/abstracts";
+import { IDataServices } from "../../../core/abstracts";
 import { PropertyFactoryService } from "./property.factory";
 import { CreatePropertyDto } from "src/server/property/property.dto";
+import { Property } from "src/repository/mongo/model";
 
 @Injectable()
 export class PropertyUseCases {

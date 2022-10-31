@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Post, Body, Put } from "@nestjs/common";
-import { DeploymentConnectionUseCases } from "../../services/deployment-connection/deployment-connection.service";
+import { DeploymentConnectionUseCases } from "./service/deployment-connection.service";
 import { DeploymentConnectionDTO, UpdateDeploymentConnectionDTO } from "./deployment-connection.dto";
 
 @Controller("deployment-connection")

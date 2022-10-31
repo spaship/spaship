@@ -1,14 +1,13 @@
-import {
-  DeploymentRecord,
-  Application,
-  Property,
-  Apikey,
-  DeploymentConnection,
-  Environment,
-  Event,
-  EventTimeTrace,
-} from "../entities";
+import { Apikey } from "../entities/apikey.entity";
+import { Application } from "../entities/application.entity";
+import { DeploymentConnection } from "../entities/deployment-connection.entity";
+import { DeploymentRecord } from "../entities/deployment-record.entity";
+import { Environment } from "../entities/environment.entity";
+import { EventTimeTrace } from "../entities/event-time-trace.entity";
+import { Event } from "../entities/event.entity";
+import { Property } from "../entities/property.entity";
 import { IGenericRepository } from "./generic-repository.abstract";
+
 
 export abstract class IDataServices {
   abstract applications: IGenericRepository<Application>;

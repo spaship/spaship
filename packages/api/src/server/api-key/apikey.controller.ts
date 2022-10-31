@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from "@nestjs/common";
-import { ApikeyUseCases } from "../../services/apikey/apikey.service";
 import { CreateApikeyDto } from "./apikey.dto";
+import { ApikeyUseCases } from "./service/apikey.service";
 
 @Controller("apikey")
 export class ApikeyController {

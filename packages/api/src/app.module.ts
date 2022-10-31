@@ -8,16 +8,16 @@ import {
   DeploymentRecordController,
 } from "./controllers";
 import { PropertyController } from "./server/property/property.controller";
-import { LoggerModule } from "./core/logger/logger.module";
+import { LoggerModule } from "./configuration/logger/logger.module";
 import { AuthModule } from "./services/auth/auth.module";
 import { DataServicesModule } from "./services/data-services/data-services.module";
-import { ExceptionsModule } from "./services/exceptions/exceptions.module";
-import { SSEConsumeModule } from "./services/sse-services/sse-consume.module";
-import { ApikeyUseCasesModule } from "./services/apikey/apikey.module";
-import { ApplicationUseCasesModule } from "./services/application/application.module";
-import { DeploymentConnectionUseCasesModule } from "./services/deployment-connection/deployment-connection.module";
-import { DeploymentRecordUseCasesModule } from "./services/deployment-record/deployment-record.use-cases.module";
-import { PropertyUseCasesModule } from "./services/property/property.module";
+import { ExceptionsModule } from "./configuration/exceptions/exceptions.module";
+import { ApikeyUseCasesModule } from "./server/api-key/service/apikey.module";
+import { ApplicationUseCasesModule } from "./server/application/service/application.module";
+import { DeploymentConnectionUseCasesModule } from "./server/deployment-conncetion/service/deployment-connection.module";
+import { DeploymentRecordUseCasesModule } from "./server/deployment-record/service/deployment-record.use-cases.module";
+import { PropertyUseCasesModule } from "./server/property/service/property.module";
+import { SSEConsumeModule } from "./server/sse-services/sse-consume.module";
 
 @Module({
   imports: [

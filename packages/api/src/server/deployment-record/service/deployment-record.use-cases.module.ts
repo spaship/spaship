@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { DataServicesModule } from "../data-services/data-services.module";
+import { DataServicesModule } from "../../../services/data-services/data-services.module";
 import { DeploymentRecordFactoryService } from "./deployment-record.service";
 import { DeploymentRecordUseCases } from "./deployment-record.use-case";
 

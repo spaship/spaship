@@ -3,11 +3,11 @@ import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import * as cookieParser from "cookie-parser";
 import { AppModule } from "./app.module";
-import { AllExceptionFilter } from "./core/filter/exception.filter";
-import { LoggingInterceptor } from "./core/interceptors/logger.interceptor";
-import { ResponseFormat, ResponseInterceptor } from "./core/interceptors/response.interceptor";
-import { LoggerService } from "./core/logger/logger.service";
-import { SSEConsumeService } from "./services/sse-services/sse-consume.service";
+import { AllExceptionFilter } from "./configuration/exceptions/exception.filter";
+import { LoggingInterceptor } from "./configuration/interceptors/logger.interceptor";
+import { ResponseFormat, ResponseInterceptor } from "./configuration/interceptors/response.interceptor";
+import { LoggerService } from "./configuration/logger/logger.service";
+import { SSEConsumeService } from "./server/sse-services/sse-consume.service";
 
 async function bootstrap() {
   const env = process.env.NODE_ENV;

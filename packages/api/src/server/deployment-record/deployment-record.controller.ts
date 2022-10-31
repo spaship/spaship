@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Post, Body, Put } from "@nestjs/common";
-import { DeploymentRecordUseCases } from "../../services/deployment-record/deployment-record.use-case";
+import { DeploymentRecordUseCases } from "./service/deployment-record.use-case";
 import { CreateDeploymentRecordDto, UpdateDeploymentRecordDto } from "./deploymenet-record.dto";
 
 @Controller("deployment-record")

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { IDataServices } from "../../core/abstracts";
-import { Application } from "../../core/entities";
+import { Application } from "src/core/entities/application.entity";
+import { IDataServices } from "../../../core/abstracts";
 
 @Injectable()
 /** @internal ApplicationUseCases is for depenednt operations on database */

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
+import { IDataServices } from "src/core/abstracts";
+import { Apikey } from "src/core/entities/apikey.entity";
 import { CreateApikeyDto } from "src/server/api-key/apikey.dto";
-import { IDataServices } from "../../core/abstracts";
-import { Apikey } from "../../core/entities";
 import { ApikeyFactoryService } from "./apikey.factory";
 
 @Injectable()

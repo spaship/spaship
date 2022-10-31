@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { LoggerModule } from "src/core/logger/logger.module";
-import { DataServicesModule } from "../data-services/data-services.module";
+import { LoggerModule } from "src/configuration/logger/logger.module";
+import { DataServicesModule } from "../../../services/data-services/data-services.module";
 import { ApplicationFactoryService } from "./application.factory";
 import { ApplicationUseCases } from "./application.service";
 
