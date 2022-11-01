@@ -13,6 +13,10 @@ export class CreateApplicationDto {
   @IsNotEmpty()
   path: string;
 
+  @ApiProperty()
+  @IsString()
+  ref: string;
+
   // /**
   //  * printng the name of the application
   //  */
@@ -21,4 +25,4 @@ export class CreateApplicationDto {
   // }
 }
 
-export class UpdateApplicationDto extends PartialType(CreateApplicationDto) {}
+export class UpdateApplicationDto extends PartialType(CreateApplicationDto) { }
