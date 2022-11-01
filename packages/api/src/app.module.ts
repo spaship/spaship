@@ -5,7 +5,7 @@ import { PropertyController } from "./server/property/property.controller";
 import { LoggerModule } from "./configuration/logger/logger.module";
 import { AuthModule } from "./server/auth/service/auth.module";
 import { DataServicesModule } from "./repository/data-services.module";
-import { ExceptionsModule } from "./configuration/exceptions/exceptions.module";
+import { ExceptionsModule } from "./server/exceptions/exceptions.module";
 import { ApikeyUseCasesModule } from "./server/api-key/service/apikey.module";
 import { ApplicationUseCasesModule } from "./server/application/service/application.module";
 import { DeploymentConnectionUseCasesModule } from "./server/deployment-conncetion/service/deployment-connection.module";

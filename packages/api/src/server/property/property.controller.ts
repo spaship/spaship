@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Post, Body, Put } from "@nestjs/common";
 import { ApiOperation } from "@nestjs/swagger";
 import { LoggerService } from "src/configuration/logger/logger.service";
-import { ExceptionsService } from "src/configuration/exceptions/exceptions.service";
+import { ExceptionsService } from "src/server/exceptions/exceptions.service";
 import { CreatePropertyDto } from "./property.dto";
 import { PropertyFactoryService } from "./service/property.factory";
 import { PropertyUseCases } from "./service/property.service";

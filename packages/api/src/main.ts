@@ -3,7 +3,7 @@ import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import * as cookieParser from "cookie-parser";
 import { AppModule } from "./app.module";
-import { AllExceptionFilter } from "./configuration/exceptions/exception.filter";
+import { AllExceptionFilter } from "./server/exceptions/exception.filter";
 import { LoggingInterceptor } from "./configuration/interceptors/logger.interceptor";
 import { ResponseFormat, ResponseInterceptor } from "./configuration/interceptors/response.interceptor";
 import { LoggerService } from "./configuration/logger/logger.service";

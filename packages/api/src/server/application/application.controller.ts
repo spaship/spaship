@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Post, Body, Put } from "@nestjs/common";
 import { ApiOperation } from "@nestjs/swagger";
 import { LoggerService } from "src/configuration/logger/logger.service";
-import { ExceptionsService } from "src/configuration/exceptions/exceptions.service";
+import { ExceptionsService } from "src/server/exceptions/exceptions.service";
 import { CreateApplicationDto, UpdateApplicationDto } from "./application.dto";
 import { ApplicationFactoryService } from "./service/application.factory";
 import { ApplicationUseCases } from "./service/application.service";
