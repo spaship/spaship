@@ -1,11 +1,13 @@
 import { Injectable } from "@nestjs/common";
+import { LoggerService } from "src/configuration/logger/logger.service";
 import { IDataServices } from "src/repository/data-services.abstract";
 import { Application } from "src/server/application/application.entity";
+import { CreateApplicationDto } from "../application.dto";
 
 @Injectable()
 /** @internal ApplicationUseCases is for depenednt operations on database */
-export class ApplicationUseCases {
-  constructor(private dataServices: IDataServices) {}
+export class ApplicationService {
+  constructor(private dataServices: IDataServices, private logger: LoggerService) { }
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.applications.getAll();
@@ -23,4 +25,13 @@ export class ApplicationUseCases {
   updateApplication(applicationId: string, application: Application): Promise<Application> {
     return this.dataServices.applications.update(applicationId, application);
   }
+
+  async deployApplication(applicationRequest: CreateApplicationDto, file: File): Promise<any> {
+    this.logger.log("applicationRequest", JSON.stringify(applicationRequest));
+    this.logger.log("file", JSON.stringify(file));
+    
+
+    return [];
+  }
+
 }
