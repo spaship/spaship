@@ -11,9 +11,9 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
 
   canActivate(context: ExecutionContext) {
     const secret: string = this.getSecret();
-    const bearerToken: string = context.getArgs()[0].headers["authorization"].split(" ")[1];
+    const bearerToken: string = context.getArgs()[0].headers.authorization.split(" ")[1];
     const options: any = {
-      secret: secret,
+      secret,
     };
     const check = this.jwtService.verify(bearerToken, options);
     return super.canActivate(context);

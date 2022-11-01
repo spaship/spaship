@@ -3,6 +3,7 @@ import { IGenericRepository } from "src/repository/generic-repository.abstract";
 
 export class MongoGenericRepository<T> implements IGenericRepository<T> {
   private _repository: Model<T>;
+
   private _populateOnFind: string[];
 
   constructor(repository: Model<T>, populateOnFind: string[] = []) {

@@ -1,6 +1,7 @@
 import { Injectable, OnApplicationBootstrap } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { IDataServices } from "src/repository/data-services.abstract";
 import { MongoGenericRepository } from "./mongo-generic-repository";
 import {
   DeploymentRecord,
@@ -20,17 +21,23 @@ import {
   Property,
   PropertyDocument,
 } from "./model";
-import { IDataServices } from "src/repository/data-services.abstract";
 
 @Injectable()
 export class MongoDataServices implements IDataServices, OnApplicationBootstrap {
   deploymentRecord: MongoGenericRepository<DeploymentRecord>;
+
   applications: MongoGenericRepository<Application>;
+
   apikeys: MongoGenericRepository<Apikey>;
+
   deploymentConnection: MongoGenericRepository<DeploymentConnection>;
+
   environment: MongoGenericRepository<Environment>;
+
   event: MongoGenericRepository<Event>;
+
   eventTimeTrace: MongoGenericRepository<EventTimeTrace>;
+
   property: MongoGenericRepository<Property>;
 
   constructor(

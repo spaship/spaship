@@ -27,6 +27,6 @@ export class PropertyController {
 
   @Post()
   async createProperty(@Body() propertyDto: CreatePropertyDto): Promise<any> {
-    return await this.propertyUseCases.createProperty(propertyDto);
+    return this.propertyUseCases.createProperty(propertyDto);
   }
 }

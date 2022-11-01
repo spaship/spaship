@@ -1,5 +1,6 @@
 export abstract class IFormatExceptionMessage {
   message: string;
+
   codeError?: number;
 }
 

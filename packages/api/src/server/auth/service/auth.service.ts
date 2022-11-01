@@ -14,8 +14,8 @@ export class AuthService implements IAuthService {
 
   createToken(payload: IAuthServicePayload, secret: string, expiresIn: string): string {
     return this.authService.sign(payload, {
-      secret: secret,
-      expiresIn: expiresIn,
+      secret,
+      expiresIn,
     });
   }
 }

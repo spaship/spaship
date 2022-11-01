@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { DeploymentRecordFactoryService } from "./deployment-record.service";
 import {
   CreateDeploymentRecordDto,
   UpdateDeploymentRecordDto,
 } from "src/server/deployment-record/deploymenet-record.dto";
 import { DeploymentRecord } from "src/repository/mongo/model";
 import { IDataServices } from "src/repository/data-services.abstract";
+import { DeploymentRecordFactoryService } from "./deployment-record.service";
 
 @Injectable()
 export class DeploymentRecordUseCases {

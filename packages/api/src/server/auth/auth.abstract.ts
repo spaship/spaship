@@ -1,8 +1,12 @@
 export abstract class IAuthServicePayload {
   propertyName: string;
+
   expiresIn: string;
+
   env: string[];
+
   label: string;
+
   createdBy: string;
 }
 
