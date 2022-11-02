@@ -1,17 +1,25 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Exclude } from "class-transformer";
 
 export type ApplicationDocument = Application & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Application {
-  @Prop({ required: true })
-  propertyName: string;
+
+  _id: string;
 
   @Prop({ required: true })
   identifier: string;
 
   @Prop({ required: true })
-  spaName: string;
+  propertyIdentifier: string;
+
+  @Prop({ required: true })
+  name: string;
+
+
+  @Prop({ required: true })
+  env: string;
 
   @Prop({ required: true })
   path: string;
@@ -19,11 +27,8 @@ export class Application {
   @Prop({})
   ref: string;
 
-  @Prop({})
-  nextRef: string;
-
   @Prop({ required: true })
-  namespace: string;
+  nextRef: string;
 
   @Prop({})
   accessUrl: string;
@@ -31,7 +36,7 @@ export class Application {
   @Prop({ required: true, default: true })
   isActive: boolean;
 
-  @Prop({ required: true })
+  @Prop({})
   createdBy: string;
 }
 

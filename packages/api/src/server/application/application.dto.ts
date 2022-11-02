@@ -16,13 +16,6 @@ export class CreateApplicationDto {
   @ApiProperty()
   @IsString()
   ref: string;
-
-  // /**
-  //  * printng the name of the application
-  //  */
-  // public toString(): Promise<string> {
-  //   return Promise.resolve(`CreateApplicationDto[ spaName = ${this.spaName}, path =  ${this.path}]`);
-  // }
 }
 
 export class UpdateApplicationDto extends PartialType(CreateApplicationDto) { }

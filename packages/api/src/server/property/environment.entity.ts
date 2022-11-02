@@ -1,6 +1,6 @@
 export class Environment {
   propertyIdentifier: string;
-  
+
   url: string;
 
   cluster: string;

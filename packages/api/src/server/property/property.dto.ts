@@ -1,25 +1,33 @@
 import { ApiProperty, PartialType } from "@nestjs/swagger";
-import { IsString } from "class-validator";
+import { IsNotEmpty, IsString } from "class-validator";
 import { Application } from "src/server/application/application.entity";
 
 export class CreatePropertyDto {
   @ApiProperty()
-  @IsString()
   title: string;
 
   @ApiProperty()
   @IsString()
+  @IsNotEmpty()
   identifier: string;
 
   @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   env: string;
 
   @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   cluster: string;
 
   @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   url: string;
 
   @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   createdBy: string;
 }

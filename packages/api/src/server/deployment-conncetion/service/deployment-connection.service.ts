@@ -12,7 +12,7 @@ export class DeploymentConnectionUseCases {
   constructor(
     private dataServices: IDataServices,
     private deploymentConnectionFactoryService: DeploymentConnectionFactoryService
-  ) {}
+  ) { }
 
   getAllRecords(): Promise<DeploymentConnection[]> {
     return this.dataServices.deploymentConnection.getAll();
@@ -33,6 +33,8 @@ export class DeploymentConnectionUseCases {
   ): Promise<DeploymentConnection> {
     const deploymentRecord =
       this.deploymentConnectionFactoryService.updateDeploymentConnection(updateDeploymentConnectionDTO);
-    return this.dataServices.deploymentConnection.update(deploymentConnectionId, deploymentRecord);
+    const res = this.dataServices.deploymentConnection.update(deploymentConnectionId, deploymentRecord);
+    console.log(res);
+    return res;
   }
 }

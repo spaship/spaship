@@ -1,17 +1,21 @@
+
 export class Application {
-  propertyName: string;
+
+  _id: string;
 
   identifier: string;
 
-  spaName: string;
+  propertyIdentifier: string;
+
+  name: string;
 
   path: string;
+
+  env: string;
 
   ref: string;
 
   nextRef: string;
-
-  namespace: string;
 
   accessUrl: string;
 
