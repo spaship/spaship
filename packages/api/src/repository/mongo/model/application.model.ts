@@ -1,11 +1,10 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Exclude } from "class-transformer";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Exclude } from 'class-transformer';
 
 export type ApplicationDocument = Application & Document;
 
 @Schema({ timestamps: true })
 export class Application {
-
   _id: string;
 
   @Prop({ required: true })
@@ -16,7 +15,6 @@ export class Application {
 
   @Prop({ required: true })
   name: string;
-
 
   @Prop({ required: true })
   env: string;

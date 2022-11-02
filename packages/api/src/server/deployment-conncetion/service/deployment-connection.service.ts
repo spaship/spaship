@@ -1,18 +1,12 @@
-import { Injectable } from "@nestjs/common";
-import { IDataServices } from "src/repository/data-services.abstract";
-import { DeploymentConnection } from "src/repository/mongo/model";
-import {
-  DeploymentConnectionDTO,
-  UpdateDeploymentConnectionDTO,
-} from "src/server/deployment-conncetion/deployment-connection.dto";
-import { DeploymentConnectionFactoryService } from "./deployment-connection.factory";
+import { Injectable } from '@nestjs/common';
+import { IDataServices } from 'src/repository/data-services.abstract';
+import { DeploymentConnection } from 'src/repository/mongo/model';
+import { DeploymentConnectionDTO, UpdateDeploymentConnectionDTO } from 'src/server/deployment-conncetion/deployment-connection.dto';
+import { DeploymentConnectionFactoryService } from './deployment-connection.factory';
 
 @Injectable()
 export class DeploymentConnectionUseCases {
-  constructor(
-    private dataServices: IDataServices,
-    private deploymentConnectionFactoryService: DeploymentConnectionFactoryService
-  ) { }
+  constructor(private dataServices: IDataServices, private deploymentConnectionFactoryService: DeploymentConnectionFactoryService) {}
 
   getAllRecords(): Promise<DeploymentConnection[]> {
     return this.dataServices.deploymentConnection.getAll();
@@ -31,8 +25,7 @@ export class DeploymentConnectionUseCases {
     deploymentConnectionId: string,
     updateDeploymentConnectionDTO: UpdateDeploymentConnectionDTO
   ): Promise<DeploymentConnection> {
-    const deploymentRecord =
-      this.deploymentConnectionFactoryService.updateDeploymentConnection(updateDeploymentConnectionDTO);
+    const deploymentRecord = this.deploymentConnectionFactoryService.updateDeploymentConnection(updateDeploymentConnectionDTO);
     const res = this.dataServices.deploymentConnection.update(deploymentConnectionId, deploymentRecord);
     console.log(res);
     return res;

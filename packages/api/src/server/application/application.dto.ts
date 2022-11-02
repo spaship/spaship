@@ -1,6 +1,6 @@
-import { IsString, IsNotEmpty, IsDate } from "class-validator";
-import { PartialType } from "@nestjs/mapped-types";
-import { ApiProperty } from "@nestjs/swagger";
+import { IsString, IsNotEmpty, IsDate } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateApplicationDto {
   @ApiProperty()
@@ -18,4 +18,4 @@ export class CreateApplicationDto {
   ref: string;
 }
 
-export class UpdateApplicationDto extends PartialType(CreateApplicationDto) { }
+export class UpdateApplicationDto extends PartialType(CreateApplicationDto) {}

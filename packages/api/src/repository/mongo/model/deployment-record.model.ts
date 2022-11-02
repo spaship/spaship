@@ -1,5 +1,5 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { PromiseProvider } from "mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { PromiseProvider } from 'mongoose';
 
 export type DeploymentRecordDocument = DeploymentRecord & Document;
 

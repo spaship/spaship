@@ -1,7 +1,7 @@
-import { Module } from "@nestjs/common";
-import { MongooseModule } from "@nestjs/mongoose";
-import { IDataServices } from "src/repository/data-services.abstract";
-import { DATA_BASE_CONFIGURATION } from "../../configuration";
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { IDataServices } from 'src/repository/data-services.abstract';
+import { DATA_BASE_CONFIGURATION } from '../../configuration';
 import {
   DeploymentRecord,
   DeploymentRecordSchema,
@@ -18,9 +18,9 @@ import {
   EventTimeTrace,
   EventTimeTraceSchema,
   Property,
-  PropertySchema,
-} from "./model";
-import { MongoDataServices } from "./mongo-data-services.service";
+  PropertySchema
+} from './model';
+import { MongoDataServices } from './mongo-data-services.service';
 
 @Module({
   imports: [
@@ -32,16 +32,16 @@ import { MongoDataServices } from "./mongo-data-services.service";
       { name: Environment.name, schema: EnvironmentSchema },
       { name: Event.name, schema: EventSchema },
       { name: EventTimeTrace.name, schema: EventTimeTraceSchema },
-      { name: Property.name, schema: PropertySchema },
+      { name: Property.name, schema: PropertySchema }
     ]),
-    MongooseModule.forRoot(DATA_BASE_CONFIGURATION.mongoConnectionString),
+    MongooseModule.forRoot(DATA_BASE_CONFIGURATION.mongoConnectionString)
   ],
   providers: [
     {
       provide: IDataServices,
-      useClass: MongoDataServices,
-    },
+      useClass: MongoDataServices
+    }
   ],
-  exports: [IDataServices],
+  exports: [IDataServices]
 })
 export class MongoDataServicesModule {}

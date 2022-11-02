@@ -1,9 +1,6 @@
-import { Injectable } from "@nestjs/common";
-import { DeploymentConnection } from "src/repository/mongo/model";
-import {
-  DeploymentConnectionDTO,
-  UpdateDeploymentConnectionDTO,
-} from "src/server/deployment-conncetion/deployment-connection.dto";
+import { Injectable } from '@nestjs/common';
+import { DeploymentConnection } from 'src/repository/mongo/model';
+import { DeploymentConnectionDTO, UpdateDeploymentConnectionDTO } from 'src/server/deployment-conncetion/deployment-connection.dto';
 
 @Injectable()
 export class DeploymentConnectionFactoryService {

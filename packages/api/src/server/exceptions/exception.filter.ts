@@ -1,5 +1,5 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from "@nestjs/common";
-import { LoggerService } from "../../configuration/logger/logger.service";
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { LoggerService } from '../../configuration/logger/logger.service';
 
 interface IError {
   message: string;
@@ -17,17 +17,15 @@ export class AllExceptionFilter implements ExceptionFilter {
 
     const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
     const message =
-      exception instanceof HttpException
-        ? (exception.getResponse() as IError)
-        : { message: (exception as Error).message, codeError: null };
+      exception instanceof HttpException ? (exception.getResponse() as IError) : { message: (exception as Error).message, codeError: null };
 
     const responseData = {
       ...{
         statusCode: status,
         timestamp: new Date().toISOString(),
-        path: request.url,
+        path: request.url
       },
-      ...message,
+      ...message
     };
 
     this.logMessage(request, message, status, exception);
@@ -42,7 +40,7 @@ export class AllExceptionFilter implements ExceptionFilter {
         `method=${request.method} status=${status} codeError=${message.codeError ? message.codeError : null} message=${
           message.message ? message.message : null
         }`,
-        status >= 500 ? exception.stack : ""
+        status >= 500 ? exception.stack : ''
       );
     } else {
       this.logger.warn(

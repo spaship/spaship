@@ -1,6 +1,4 @@
-
 export class Application {
-
   _id: string;
 
   identifier: string;

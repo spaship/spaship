@@ -1,7 +1,7 @@
-import { LoggerService } from "src/configuration/logger/logger.service";
-import { Injectable } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { IAuthService, IAuthServicePayload } from "src/server/auth/auth.abstract";
+import { LoggerService } from 'src/configuration/logger/logger.service';
+import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { IAuthService, IAuthServicePayload } from 'src/server/auth/auth.abstract';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -15,7 +15,7 @@ export class AuthService implements IAuthService {
   createToken(payload: IAuthServicePayload, secret: string, expiresIn: string): string {
     return this.authService.sign(payload, {
       secret,
-      expiresIn,
+      expiresIn
     });
   }
 }

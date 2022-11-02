@@ -1,8 +1,8 @@
-import { Controller, Get, Param, Post, Body, Put } from "@nestjs/common";
-import { DeploymentConnectionUseCases } from "./service/deployment-connection.service";
-import { DeploymentConnectionDTO, UpdateDeploymentConnectionDTO } from "./deployment-connection.dto";
+import { Controller, Get, Param, Post, Body, Put } from '@nestjs/common';
+import { DeploymentConnectionUseCases } from './service/deployment-connection.service';
+import { DeploymentConnectionDTO, UpdateDeploymentConnectionDTO } from './deployment-connection.dto';
 
-@Controller("deployment-connection")
+@Controller('deployment-connection')
 export class DeploymentConnectionController {
   constructor(private deploymentConnectionUseCases: DeploymentConnectionUseCases) {}
 
