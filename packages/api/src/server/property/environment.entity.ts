@@ -1,17 +1,17 @@
 export class Environment {
-  propertyName: string;
+  propertyIdentifier: string;
+  
+  url: string;
 
-  culster: string;
+  cluster: string;
+
+  env: string;
 
   isEph: boolean;
-
-  url: string;
 
   actionEnabled: boolean;
 
   actionId: string;
-
-  env: string;
 
   expiresIn: string;
 

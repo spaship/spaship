@@ -1,7 +1,7 @@
 export class Property {
-  propertyTitle: string;
+  title: string;
 
-  propertyName: string;
+  identifier: string;
 
   namespace: string;
 

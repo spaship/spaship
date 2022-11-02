@@ -5,16 +5,16 @@ export type EnvironmentDocument = Environment & Document;
 @Schema({ timestamps: true })
 export class Environment {
   @Prop({ required: true })
-  propertyName: string;
-
-  @Prop({ required: true })
-  culster: string;
-
-  @Prop({ required: true })
-  isEph: boolean;
+  propertyIdentifier: string;
 
   @Prop({})
   url: string;
+
+  @Prop({ required: true })
+  cluster: string;
+
+  @Prop({ required: true, default: false })
+  isEph: boolean;
 
   @Prop({})
   actionEnabled: boolean;
@@ -34,7 +34,7 @@ export class Environment {
   @Prop({ required: true })
   createdBy: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, default: true })
   isActive: boolean;
 }
 

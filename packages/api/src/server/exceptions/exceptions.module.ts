@@ -5,4 +5,4 @@ import { ExceptionsService } from "./exceptions.service";
   providers: [ExceptionsService],
   exports: [ExceptionsService],
 })
-export class ExceptionsModule {}
+export class ExceptionsModule { }

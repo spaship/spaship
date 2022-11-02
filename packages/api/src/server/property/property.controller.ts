@@ -12,7 +12,7 @@ export class PropertyController {
     private propertyUseCases: PropertyUseCases,
     private propertyFactoryService: PropertyFactoryService,
     private loggerService: LoggerService
-  ) {}
+  ) { }
 
   @Get()
   @ApiOperation({ description: "Get the list of all the SPAs" })
@@ -20,9 +20,9 @@ export class PropertyController {
     return this.propertyUseCases.getAllPropertys();
   }
 
-  @Get(":id")
-  async getById(@Param("id") id: any) {
-    return this.propertyUseCases.getPropertyById(id);
+  @Get(":identifier")
+  async getById(@Param("identifier") identifier: string) {
+    return this.propertyUseCases.getProperty(identifier);
   }
 
   @Post()

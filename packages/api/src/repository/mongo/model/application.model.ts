@@ -28,7 +28,7 @@ export class Application {
   @Prop({})
   accessUrl: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, default: true })
   isActive: boolean;
 
   @Prop({ required: true })

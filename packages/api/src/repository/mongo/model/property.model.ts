@@ -5,10 +5,10 @@ export type PropertyDocument = Property & Document;
 @Schema({ timestamps: true })
 export class Property {
   @Prop({ required: true })
-  propertyTitle: string;
+  title: string;
 
   @Prop({ required: true })
-  propertyName: string;
+  identifier: string;
 
   @Prop({ required: true })
   namespace: string;
@@ -19,7 +19,7 @@ export class Property {
   @Prop({ required: true })
   createdBy: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, default: true })
   isActive: boolean;
 }
 

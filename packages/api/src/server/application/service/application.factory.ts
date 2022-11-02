@@ -25,7 +25,7 @@ export class ApplicationFactoryService {
     const spaShipFile = {
       websiteVersion: ref || "v1",
       websiteName: 'ecosystem-catalog',
-      name: name,
+      name,
       mapping: appPath,
       environments: [{ name: 'revamp', updateRestriction: false, exclude: false, ns: 'spaship--ecosystem-catalog' }],
     };
@@ -35,15 +35,15 @@ export class ApplicationFactoryService {
     try {
       if (await fileExists(path.join(tmpDir, "dist"))) {
         await fs.writeFileSync(path.join(tmpDir, "dist/.spaship"), JSON.stringify(spaShipFile, null, "\t"));
-        zipPath = path.join(tmpDir, "../SPAship" + Date.now() + ".zip");
+        zipPath = path.join(tmpDir, `../SPAship${  Date.now()  }.zip`);
         await zip(path.join(tmpDir, "dist"), zipPath);
       } else if (await fileExists(path.join(tmpDir, "build"))) {
         await fs.writeFileSync(path.join(tmpDir, "build/.spaship"), JSON.stringify(spaShipFile, null, "\t"));
-        zipPath = path.join(tmpDir, "../SPAship" + Date.now() + ".zip");
+        zipPath = path.join(tmpDir, `../SPAship${  Date.now()  }.zip`);
         await zip(path.join(tmpDir, "build"), zipPath);
       } else {
         await fs.writeFileSync(path.join(tmpDir, ".spaship"), JSON.stringify(spaShipFile, null, "\t"));
-        zipPath = path.join(tmpDir, "../SPAship" + Date.now() + ".zip");
+        zipPath = path.join(tmpDir, `../SPAship${  Date.now()  }.zip`);
         await zip(tmpDir, zipPath);
       }
       this.logger.log("zippath", zipPath);
