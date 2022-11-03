@@ -10,4 +10,6 @@ export abstract class IGenericRepository<T> {
   abstract update(id: string, item: T);
 
   abstract updateOneByAny(obj: Object, item: T);
+
+  abstract delete(obj: Object);
 }

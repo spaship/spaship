@@ -1,7 +1,7 @@
 export class Apikey {
   label: string;
 
-  propertyName: string;
+  propertyIdentifier: string;
 
   shortKey: string;
 

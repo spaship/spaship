@@ -11,7 +11,7 @@ export class CreateApikeyDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  propertyName: string;
+  propertyIdentifier: string;
 
   @ApiProperty()
   @IsNotEmpty()

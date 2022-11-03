@@ -41,6 +41,6 @@ async function bootstrap() {
     SwaggerModule.setup('api', app, document);
   }
   new SSEConsumeService().consumeEvent();
-  await app.listen(3000);
+  await app.listen(2345);
 }
 bootstrap();

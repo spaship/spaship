@@ -5,12 +5,12 @@ export type ApikeyDocument = Apikey & Document;
 @Schema({ timestamps: true })
 export class Apikey {
   @Prop({ required: true })
-  propertyName: string;
+  propertyIdentifier: string;
 
   @Prop({ required: true })
   shortKey: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   key: string;
 
   @Prop({ required: true })

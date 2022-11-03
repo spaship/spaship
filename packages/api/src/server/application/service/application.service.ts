@@ -19,7 +19,7 @@ export class ApplicationService {
     private logger: LoggerService,
     private applicationFactoryService: ApplicationFactory,
     private exceptionService: ExceptionsService
-  ) { }
+  ) {}
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.applications.getAll();
