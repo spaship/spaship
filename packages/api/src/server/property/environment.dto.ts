@@ -1,5 +1,5 @@
-import { ApiProperty, PartialType } from "@nestjs/swagger";
-import { Application } from "src/server/application/application.entity";
+import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { Application } from 'src/server/application/application.entity';
 
 export class PropertyEnvDTO {
   @ApiProperty()

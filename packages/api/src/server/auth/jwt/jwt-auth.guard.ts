@@ -1,19 +1,19 @@
-import { ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
-import { AuthGuard } from "@nestjs/passport";
-import { JwtService } from "@nestjs/jwt";
+import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard("jwt") {
+export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(private jwtService: JwtService) {
     super();
   }
 
   canActivate(context: ExecutionContext) {
     const secret: string = this.getSecret();
-    const bearerToken: string = context.getArgs()[0].headers.authorization.split(" ")[1];
+    const bearerToken: string = context.getArgs()[0].headers.authorization.split(' ')[1];
     const options: any = {
-      secret,
+      secret
     };
     const check = this.jwtService.verify(bearerToken, options);
     return super.canActivate(context);
@@ -28,7 +28,7 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
   }
 
   getSecret() {
-    const publicKey = "publicKey";
+    const publicKey = 'publicKey';
 
     if (publicKey && publicKey.trim().length > 0) {
       return this.formatAsPem(publicKey);
@@ -36,14 +36,14 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
   }
 
   formatAsPem(str) {
-    const keyHeader = "-----BEGIN PUBLIC KEY-----";
-    const keyFooter = "-----END PUBLIC KEY-----";
-    let formatKey = "";
+    const keyHeader = '-----BEGIN PUBLIC KEY-----';
+    const keyFooter = '-----END PUBLIC KEY-----';
+    let formatKey = '';
     if (str.startsWith(keyHeader) && str.endsWith(keyFooter)) {
       return str;
     }
 
-    if (str.split("\n").length == 1) {
+    if (str.split('\n').length == 1) {
       while (str.length > 0) {
         formatKey += `${str.substring(0, 64)}\n`;
         str = str.substring(64);

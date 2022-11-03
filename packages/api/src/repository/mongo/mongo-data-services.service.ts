@@ -1,8 +1,8 @@
-import { Injectable, OnApplicationBootstrap } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { IDataServices } from "src/repository/data-services.abstract";
-import { MongoGenericRepository } from "./mongo-generic-repository";
+import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { IDataServices } from 'src/repository/data-services.abstract';
+import { MongoGenericRepository } from './mongo-generic-repository';
 import {
   DeploymentRecord,
   DeploymentRecordDocument,
@@ -19,8 +19,8 @@ import {
   Environment,
   EnvironmentDocument,
   Property,
-  PropertyDocument,
-} from "./model";
+  PropertyDocument
+} from './model';
 
 @Injectable()
 export class MongoDataServices implements IDataServices, OnApplicationBootstrap {

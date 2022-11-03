@@ -1,6 +1,6 @@
-import { IsString, IsNotEmpty, IsDate } from "class-validator";
-import { PartialType } from "@nestjs/mapped-types";
-import { ApiProperty } from "@nestjs/swagger";
+import { IsString, IsNotEmpty, IsDate } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateApplicationDto {
   @ApiProperty()
@@ -13,12 +13,9 @@ export class CreateApplicationDto {
   @IsNotEmpty()
   path: string;
 
-  // /**
-  //  * printng the name of the application
-  //  */
-  // public toString(): Promise<string> {
-  //   return Promise.resolve(`CreateApplicationDto[ spaName = ${this.spaName}, path =  ${this.path}]`);
-  // }
+  @ApiProperty()
+  @IsString()
+  ref: string;
 }
 
 export class UpdateApplicationDto extends PartialType(CreateApplicationDto) {}

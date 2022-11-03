@@ -1,5 +1,5 @@
-import { Model } from "mongoose";
-import { IGenericRepository } from "src/repository/generic-repository.abstract";
+import { Model } from 'mongoose';
+import { IGenericRepository } from 'src/repository/generic-repository.abstract';
 
 export class MongoGenericRepository<T> implements IGenericRepository<T> {
   private _repository: Model<T>;
@@ -15,12 +15,12 @@ export class MongoGenericRepository<T> implements IGenericRepository<T> {
     return this._repository.find().populate(this._populateOnFind).exec();
   }
 
-  get(id: any): Promise<T> {
+  get(id: string): Promise<T> {
     return this._repository.findById(id).populate(this._populateOnFind).exec();
   }
 
   getByAny(obj: T): Promise<T[]> {
-    return this._repository.find(obj).populate(this._populateOnFind).exec();
+    return this._repository.find(obj, null, { lean: true }).populate(this._populateOnFind).exec();
   }
 
   create(item: T): Promise<T> {
@@ -28,6 +28,10 @@ export class MongoGenericRepository<T> implements IGenericRepository<T> {
   }
 
   update(id: string, item: T) {
-    return this._repository.findByIdAndUpdate(id, item);
+    return this._repository.findByIdAndUpdate(id, item).exec();
+  }
+
+  updateOneByAny(obj: T, item: T) {
+    return this._repository.updateOne(obj, item).exec();
   }
 }

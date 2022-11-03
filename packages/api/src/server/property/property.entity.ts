@@ -1,19 +1,18 @@
 export class Property {
-  propertyTitle: string;
+  title: string;
 
-  propertyName: string;
+  identifier: string;
 
   namespace: string;
 
-  deploymentConnectionRecord: DeploymentConnectionRecord[];
+  deploymentRecord: DeploymentRecord[];
 
   createdBy: string;
 
   isActive: boolean;
 }
-
-export class DeploymentConnectionRecord {
-  deploymentConnectionName: string;
-
+export class DeploymentRecord {
   cluster: string;
+
+  name: string;
 }

@@ -1,42 +1,30 @@
-import { Controller, Get, Param, Post, Body, Put } from "@nestjs/common";
-import { ApiOperation } from "@nestjs/swagger";
-import { LoggerService } from "src/configuration/logger/logger.service";
-import { ExceptionsService } from "src/server/exceptions/exceptions.service";
-import { CreateApplicationDto, UpdateApplicationDto } from "./application.dto";
-import { ApplicationFactoryService } from "./service/application.factory";
-import { ApplicationUseCases } from "./service/application.service";
+import { Body, Controller, Get, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { LoggerService } from 'src/configuration/logger/logger.service';
+import { ApplicationService } from './service/application.service';
+import { DIRECTORY_CONFIGURATION } from '../../configuration';
 
-@Controller("application")
+@Controller('application')
 export class ApplicationController {
-  constructor(
-    private applicationUseCases: ApplicationUseCases,
-    private applicationFactoryService: ApplicationFactoryService,
-    private loggerService: LoggerService
-  ) {}
+  constructor(private applicationService: ApplicationService) {}
 
-  @Get()
-  @ApiOperation({ description: "Get the list of all the SPAs" })
-  async getAll() {
-    return this.applicationUseCases.getAllApplications();
+  @Get('/property/:identifier')
+  async getApplicationsByProperty(@Param('identifier') identifier: any) {
+    return this.applicationService.getApplicationsByProperty(identifier);
   }
 
-  @Get(":id")
-  async getById(@Param("id") id: any) {
-    return this.applicationUseCases.getApplicationById(id);
-  }
-
-  @Post("/deploy")
-  async createApplication(@Body() applicationDto: CreateApplicationDto): Promise<CreateApplicationDto> {
-    this.loggerService.log("applicationDto", JSON.stringify(applicationDto));
-    const createApplicationResponse = new CreateApplicationDto();
-    const application = this.applicationFactoryService.createNewApplication(createApplicationResponse);
-    await this.applicationUseCases.createApplication(application);
-    return new CreateApplicationDto();
-  }
-
-  @Put(":id")
-  updateApplication(@Param("id") applicationId: string, @Body() updateApplicationDto: UpdateApplicationDto) {
-    const application = this.applicationFactoryService.updateApplication(updateApplicationDto);
-    return this.applicationUseCases.updateApplication(applicationId, application);
+  @Post('/deploy/:propertyIdentifier/:env')
+  @UseInterceptors(
+    FileInterceptor('upload', {
+      dest: DIRECTORY_CONFIGURATION.baseDir,
+      fileFilter: (req, file, cb) => {
+        file.filename = `${Date.now()}-${file.originalname}`;
+        cb(null, true);
+      }
+    })
+  )
+  async createApplication(@UploadedFile() file, @Body() applicationDto: any, @Param() params): Promise<any> {
+    const application = this.applicationService.saveApplication(applicationDto, file.path, params.propertyIdentifier, params.env);
+    return application;
   }
 }

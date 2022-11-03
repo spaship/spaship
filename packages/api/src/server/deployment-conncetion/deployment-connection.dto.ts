@@ -1,6 +1,6 @@
-import { IsString, IsNotEmpty, IsDate, IsUrl } from "class-validator";
-import { PartialType } from "@nestjs/mapped-types";
-import { ApiProperty } from "@nestjs/swagger";
+import { IsString, IsNotEmpty, IsDate, IsUrl } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class DeploymentConnectionDTO {
   @ApiProperty()
@@ -16,12 +16,7 @@ export class DeploymentConnectionDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  alias: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  type: string;
+  cluster: string;
 }
 
 export class UpdateDeploymentConnectionDTO extends PartialType(DeploymentConnectionDTO) {
