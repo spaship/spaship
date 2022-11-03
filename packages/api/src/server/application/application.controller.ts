@@ -1,8 +1,7 @@
 import { Body, Controller, Get, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { LoggerService } from 'src/configuration/logger/logger.service';
-import { ApplicationService } from './service/application.service';
 import { DIRECTORY_CONFIGURATION } from '../../configuration';
+import { ApplicationService } from './service/application.service';
 
 @Controller('application')
 export class ApplicationController {

@@ -1,6 +1,4 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
-import { Application } from 'src/server/application/application.entity';
+import { ApiProperty } from '@nestjs/swagger';
 import { Environment } from './environment.entity';
 
 export class PropertyResponseDto {

@@ -1,4 +1,3 @@
-import { LoggerService } from 'src/configuration/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { IAuthService, IAuthServicePayload } from 'src/server/auth/auth.abstract';

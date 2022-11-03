@@ -1,7 +1,6 @@
-import { Controller, Get, Param, Post, Body, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { LoggerService } from 'src/configuration/logger/logger.service';
-import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { CreatePropertyDto } from './property.dto';
 import { PropertyFactory } from './service/property.factory';
 import { PropertyService } from './service/property.service';
