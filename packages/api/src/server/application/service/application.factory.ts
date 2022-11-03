@@ -35,7 +35,7 @@ export class ApplicationFactory {
       mapping: appPath,
       environments: [{ name: env, updateRestriction: false, exclude: false, ns: namespace }]
     };
-    this.logger.log('spaShipFile', JSON.stringify(spashipFile));
+    this.logger.log('SpashipFile', JSON.stringify(spashipFile));
     let zipPath;
     try {
       if (await fileExists(path.join(tmpDir, 'dist'))) {
@@ -51,15 +51,15 @@ export class ApplicationFactory {
         zipPath = path.join(tmpDir, `../SPAship${Date.now()}.zip`);
         await zip(tmpDir, zipPath);
       }
-      this.logger.log('zippath', zipPath);
+      this.logger.log('ZipPath', zipPath);
     } catch (err) {
       this.exceptionService.internalServerErrorException(err);
     }
     return zipPath;
   }
 
-  deploymentRequest(formData: FormData): Promise<AxiosResponse<any, any>> {
-    return this.httpService.axiosRef.post('https://operator-route.apps.int.mpp.preprod.iad2.dc.paas.redhat.com/api/upload', formData, {
+  deploymentRequest(formData: FormData, deploymentBaseURL: string): Promise<AxiosResponse<any, any>> {
+    return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/upload`, formData, {
       maxBodyLength: Infinity,
       headers: formData.getHeaders()
     });

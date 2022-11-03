@@ -8,8 +8,7 @@ export class DeploymentConnectionFactoryService {
     const obj = new DeploymentConnection();
     obj.name = res.name;
     obj.baseurl = res.baseurl;
-    obj.alias = res.alias;
-    obj.type = res.type;
+    obj.cluster = res.cluster;
     obj.isActive = true;
     return obj;
   }
@@ -17,7 +16,7 @@ export class DeploymentConnectionFactoryService {
   updateDeploymentConnection(res: UpdateDeploymentConnectionDTO) {
     const obj = new DeploymentConnection();
     obj.baseurl = res.baseurl;
-    obj.type = res.type;
+    obj.cluster = res.cluster;
     return obj;
   }
 }

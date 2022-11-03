@@ -16,12 +16,7 @@ export class DeploymentConnectionDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  alias: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  type: string;
+  cluster: string;
 }
 
 export class UpdateDeploymentConnectionDTO extends PartialType(DeploymentConnectionDTO) {

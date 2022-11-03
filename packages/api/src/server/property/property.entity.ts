@@ -5,15 +5,14 @@ export class Property {
 
   namespace: string;
 
-  deploymentConnectionRecord: DeploymentConnectionRecord[];
+  deploymentRecord: DeploymentRecord[];
 
   createdBy: string;
 
   isActive: boolean;
 }
-
-export class DeploymentConnectionRecord {
-  deploymentConnectionName: string;
-
+export class DeploymentRecord {
   cluster: string;
+
+  name: string;
 }

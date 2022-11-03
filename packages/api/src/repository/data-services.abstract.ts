@@ -1,7 +1,6 @@
 import { Apikey } from '../server/api-key/apikey.entity';
 import { Application } from '../server/application/application.entity';
 import { DeploymentConnection } from '../server/deployment-conncetion/deployment-connection.entity';
-import { DeploymentRecord } from '../server/deployment-record/deployment-record.entity';
 import { Environment } from '../server/property/environment.entity';
 import { EventTimeTrace } from '../server/sse-services/event-time-trace.entity';
 import { Event } from '../server/sse-services/event.entity';
@@ -14,8 +13,6 @@ export abstract class IDataServices {
   abstract apikeys: IGenericRepository<Apikey>;
 
   abstract deploymentConnection: IGenericRepository<DeploymentConnection>;
-
-  abstract deploymentRecord: IGenericRepository<DeploymentRecord>;
 
   abstract environment: IGenericRepository<Environment>;
 

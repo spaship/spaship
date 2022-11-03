@@ -10,7 +10,7 @@ import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { CreatePropertyDto } from 'src/server/property/property.dto';
 import { zip } from 'zip-a-folder';
 import { Environment } from '../environment.entity';
-import { DeploymentConnectionRecord, Property } from '../property.entity';
+import { DeploymentRecord, Property } from '../property.entity';
 
 @Injectable()
 export class PropertyFactory {
@@ -21,20 +21,14 @@ export class PropertyFactory {
     private applicationService: ApplicationService
   ) {}
 
-  createNewProperty(createPropertyDto: CreatePropertyDto): Property {
+  createNewProperty(createPropertyDto: CreatePropertyDto, deploymentRecord: DeploymentRecord): Property {
     const newProperty = new Property();
     newProperty.title = createPropertyDto.title || createPropertyDto.identifier;
     newProperty.identifier = createPropertyDto.identifier;
     newProperty.namespace = `spaship--${createPropertyDto.identifier}`;
     newProperty.createdBy = createPropertyDto.createdBy;
-
-    const newDeploymentConnection = new DeploymentConnectionRecord();
-    newDeploymentConnection.deploymentConnectionName = 'west2';
-    newDeploymentConnection.cluster = 'preprod';
-    newProperty.deploymentConnectionRecord = [newDeploymentConnection];
-
+    newProperty.deploymentRecord = [deploymentRecord];
     this.loggerService.log('NewProperty', JSON.stringify(newProperty));
-
     return newProperty;
   }
 
@@ -45,9 +39,7 @@ export class PropertyFactory {
     newEnvironment.url = createPropertyDto.url;
     newEnvironment.cluster = createPropertyDto.cluster;
     newEnvironment.createdBy = createPropertyDto.createdBy;
-
     this.loggerService.log('NewEnvironment', JSON.stringify(newEnvironment));
-
     return newEnvironment;
   }
 
@@ -65,7 +57,7 @@ export class PropertyFactory {
       environments: [{ name: environmentRequest.env, updateRestriction: false, exclude: false, ns: propertyRequest.namespace }]
     };
 
-    this.loggerService.log('spashipFile', JSON.stringify(spashipFile));
+    this.loggerService.log('SpashipFile', JSON.stringify(spashipFile));
     const { baseDir } = DIRECTORY_CONFIGURATION;
     const fileOriginalName = propertyRequest.identifier;
     const tmpDir = `${baseDir}/${fileOriginalName.split('.')[0]}-${Date.now()}`;

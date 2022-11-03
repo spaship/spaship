@@ -26,8 +26,7 @@ export class DeploymentConnectionUseCases {
     updateDeploymentConnectionDTO: UpdateDeploymentConnectionDTO
   ): Promise<DeploymentConnection> {
     const deploymentRecord = this.deploymentConnectionFactoryService.updateDeploymentConnection(updateDeploymentConnectionDTO);
-    const res = this.dataServices.deploymentConnection.update(deploymentConnectionId, deploymentRecord);
-    console.log(res);
-    return res;
+    const response = this.dataServices.deploymentConnection.update(deploymentConnectionId, deploymentRecord);
+    return response;
   }
 }

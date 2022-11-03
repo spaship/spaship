@@ -1,11 +1,11 @@
 export class DeploymentConnection {
   name: string;
 
-  alias: string;
-
   baseurl: string;
 
-  type: string;
+  cluster: string;
+
+  weight: number;
 
   isActive: boolean;
 }

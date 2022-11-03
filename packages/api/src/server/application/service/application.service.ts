@@ -29,33 +29,47 @@ export class ApplicationService {
     return this.dataServices.applications.getByAny({ propertyIdentifier });
   }
 
-  async saveApplication(applicationRequest: CreateApplicationDto, spaPath: string, propertyIdentifier: string, env: string): Promise<Application> {
+  async saveApplication(
+    applicationRequest: CreateApplicationDto,
+    applicationPath: string,
+    propertyIdentifier: string,
+    env: string
+  ): Promise<Application> {
     const identifier = this.applicationFactoryService.getIdentifier(applicationRequest.name);
-    await this.deployApplication(applicationRequest, spaPath, propertyIdentifier, env);
-    const spaDetails = (await this.dataServices.applications.getByAny({ propertyIdentifier, env, identifier }))[0];
-    if (!spaDetails) {
+    await this.deployApplication(applicationRequest, applicationPath, propertyIdentifier, env);
+    const applicationDetails = (await this.dataServices.applications.getByAny({ propertyIdentifier, env, identifier }))[0];
+    if (!applicationDetails) {
       const saveApplication = await this.applicationFactoryService.createApplicationRequest(propertyIdentifier, applicationRequest, identifier, env);
+      this.logger.log('NewApplicationDetails', JSON.stringify(saveApplication));
       return this.dataServices.applications.create(saveApplication);
     }
-    spaDetails.nextRef = applicationRequest.ref;
-    spaDetails.name = applicationRequest.name;
-    await this.dataServices.applications.updateOneByAny({ propertyIdentifier, env, identifier }, spaDetails);
-    return spaDetails;
+    applicationDetails.nextRef = applicationRequest.ref;
+    applicationDetails.name = applicationRequest.name;
+    this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
+    await this.dataServices.applications.updateOneByAny({ propertyIdentifier, env, identifier }, applicationDetails);
+    return applicationDetails;
   }
 
-  async deployApplication(applicationRequest: CreateApplicationDto, spaPath: string, propertyIdentifier: string, env: string): Promise<any> {
-    const environmentResponse = await this.dataServices.environment.getByAny({ identifier: propertyIdentifier, env });
-    if (environmentResponse.length === 0)
-      this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
-    const identifier = this.applicationFactoryService.getIdentifier(applicationRequest.name);
-    const propertyResponse = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
+  async deployApplication(applicationRequest: CreateApplicationDto, applicationPath: string, propertyIdentifier: string, env: string): Promise<any> {
+    const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+    if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
+    const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
+    this.logger.log('Environment', JSON.stringify(environment));
+    this.logger.log('Property', JSON.stringify(property));
+    const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === environment.cluster);
+    const deploymentConnection = (
+      await this.dataServices.deploymentConnection.getByAny({
+        name: deploymentRecord.name
+      })
+    )[0];
+    this.logger.log('DeploymentConnection', JSON.stringify(deploymentConnection));
     const { name, ref } = applicationRequest;
     const appPath = applicationRequest.path;
-    this.logger.log('applicationRequest', JSON.stringify(applicationRequest));
+    this.logger.log('ApplicationRequest', JSON.stringify(applicationRequest));
     const { baseDir } = DIRECTORY_CONFIGURATION;
     const tmpDir = `${baseDir}/${name.split('.')[0]}-${Date.now()}-extracted`;
     await fs.mkdirSync(`${tmpDir}`, { recursive: true });
-    await extract(path.resolve(spaPath), { dir: path.resolve(tmpDir) });
+    await extract(path.resolve(applicationPath), { dir: path.resolve(tmpDir) });
     const zipPath = await this.applicationFactoryService.createTemplateAndZip(
       appPath,
       ref,
@@ -63,7 +77,7 @@ export class ApplicationService {
       tmpDir,
       propertyIdentifier,
       env,
-      propertyResponse.namespace
+      property.namespace
     );
     const formData: any = new FormData();
     try {
@@ -71,8 +85,8 @@ export class ApplicationService {
       formData.append('spa', fileStream);
       formData.append('description', `${propertyIdentifier}_${env}`);
       formData.append('website', propertyIdentifier);
-      const response = await this.applicationFactoryService.deploymentRequest(formData);
-      this.logger.log('operatorRespobse', JSON.stringify(response.data));
+      const response = await this.applicationFactoryService.deploymentRequest(formData, deploymentConnection.baseurl);
+      this.logger.log('OperatorResponse', JSON.stringify(response.data));
       return response;
     } catch (err) {
       this.exceptionService.internalServerErrorException(err);
