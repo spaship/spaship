@@ -1,6 +1,6 @@
-import { IsString, IsNotEmpty } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateApikeyDto {
   @ApiProperty()
@@ -11,7 +11,7 @@ export class CreateApikeyDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  propertyName: string;
+  propertyIdentifier: string;
 
   @ApiProperty()
   @IsNotEmpty()

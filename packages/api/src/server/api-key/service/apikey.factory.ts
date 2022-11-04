@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
 import { CreateApikeyDto } from 'src/server/api-key/apikey.dto';
 import { Apikey } from 'src/server/api-key/apikey.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
-export class ApikeyFactoryService {
+export class ApikeyFactory {
   createNewApikey(createApikeyDto: CreateApikeyDto): Apikey {
     const apiKey = new Apikey();
-    apiKey.propertyName = createApikeyDto.propertyName;
+    apiKey.propertyIdentifier = createApikeyDto.propertyIdentifier;
     apiKey.createdBy = createApikeyDto.createdBy;
     apiKey.label = createApikeyDto.label;
     apiKey.env = createApikeyDto.env;
@@ -18,8 +18,9 @@ export class ApikeyFactoryService {
   }
 
   formatApikeyDate(expiration) {
-    const expiresIn = new Date();
-    expiresIn.setDate(expiresIn.getDate() + parseInt(expiration));
-    return expiresIn;
+    const currentDate = new Date();
+    const utcDate = new Date(currentDate.getTime() + currentDate.getTimezoneOffset() * 60000);
+    utcDate.setDate(utcDate.getDate() + parseInt(expiration));
+    return utcDate;
   }
 }

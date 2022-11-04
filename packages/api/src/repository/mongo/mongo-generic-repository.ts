@@ -34,4 +34,8 @@ export class MongoGenericRepository<T> implements IGenericRepository<T> {
   updateOneByAny(obj: T, item: T) {
     return this._repository.updateOne(obj, item).exec();
   }
+
+  delete(obj: T) {
+    return this._repository.findOneAndDelete(obj).exec();
+  }
 }

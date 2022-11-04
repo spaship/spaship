@@ -1,18 +1,23 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Delete } from '@nestjs/common';
 import { CreateApikeyDto } from './apikey.dto';
-import { ApikeyUseCases } from './service/apikey.service';
+import { ApikeyService } from './service/apikey.service';
 
 @Controller('apikey')
 export class ApikeyController {
-  constructor(private apikeyUseCases: ApikeyUseCases) {}
+  constructor(private apiKeyService: ApikeyService) {}
 
-  @Get(':propertyName')
-  async getById(@Param('propertyName') propertyName: any) {
-    return this.apikeyUseCases.getApikeyById(propertyName);
+  @Get(':propertyIdentifier')
+  async getApiKeyByProperty(@Param('propertyIdentifier') propertyIdentifier: string) {
+    return this.apiKeyService.getApikeyByProperty(propertyIdentifier);
   }
 
   @Post()
-  createApikey(@Body() apikeyDto: CreateApikeyDto) {
-    return this.apikeyUseCases.createApikey(apikeyDto);
+  createApiKey(@Body() apikeyDto: CreateApikeyDto) {
+    return this.apiKeyService.createApikey(apikeyDto);
+  }
+
+  @Delete(':shortKey')
+  deleteApiKey(@Param('shortKey') shortKey: string) {
+    return this.apiKeyService.deleteApiKey(shortKey);
   }
 }
