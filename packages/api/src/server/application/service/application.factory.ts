@@ -86,6 +86,8 @@ export class ApplicationFactory {
     saveApplication.nextRef = applicationRequest.ref;
     saveApplication.env = env;
     saveApplication.propertyIdentifier = propertyIdentifier;
+    saveApplication.ref = 'NA';
+    saveApplication.accessUrl = 'NA';
     return saveApplication;
   }
 

@@ -9,6 +9,9 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
+  "rules": {
+    "import/prefer-default-export": "off"
+  },
   "plugins": [
     "@typescript-eslint",
     "prettier"

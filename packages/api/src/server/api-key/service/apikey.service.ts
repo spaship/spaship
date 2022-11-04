@@ -9,7 +9,7 @@ export class ApikeyService {
   constructor(private dataServices: IDataServices, private apikeyFactoryService: ApikeyFactory) {}
 
   getApikeyByProperty(propertyIdentifier: string): Promise<Apikey[]> {
-    return this.dataServices.apikeys.getByAny({ propertyIdentifier: propertyIdentifier });
+    return this.dataServices.apikeys.getByAny({ propertyIdentifier });
   }
 
   createApikey(createApikeyDto: CreateApikeyDto): Promise<Apikey> {
@@ -18,6 +18,6 @@ export class ApikeyService {
   }
 
   deleteApiKey(shortKey: string): Promise<Apikey> {
-    return this.dataServices.apikeys.delete({ shortKey: shortKey });
+    return this.dataServices.apikeys.delete({ shortKey });
   }
 }
