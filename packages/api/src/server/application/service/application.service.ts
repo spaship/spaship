@@ -22,11 +22,11 @@ export class ApplicationService {
   ) {}
 
   getAllApplications(): Promise<Application[]> {
-    return this.dataServices.applications.getAll();
+    return this.dataServices.application.getAll();
   }
 
   getApplicationsByProperty(propertyIdentifier: string): Promise<Application[]> {
-    return this.dataServices.applications.getByAny({ propertyIdentifier });
+    return this.dataServices.application.getByAny({ propertyIdentifier });
   }
 
   async saveApplication(
@@ -37,16 +37,16 @@ export class ApplicationService {
   ): Promise<Application> {
     const identifier = this.applicationFactoryService.getIdentifier(applicationRequest.name);
     await this.deployApplication(applicationRequest, applicationPath, propertyIdentifier, env);
-    const applicationDetails = (await this.dataServices.applications.getByAny({ propertyIdentifier, env, identifier }))[0];
+    const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier }))[0];
     if (!applicationDetails) {
       const saveApplication = await this.applicationFactoryService.createApplicationRequest(propertyIdentifier, applicationRequest, identifier, env);
       this.logger.log('NewApplicationDetails', JSON.stringify(saveApplication));
-      return this.dataServices.applications.create(saveApplication);
+      return this.dataServices.application.create(saveApplication);
     }
     applicationDetails.nextRef = applicationRequest.ref;
     applicationDetails.name = applicationRequest.name;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
-    await this.dataServices.applications.updateOneByAny({ propertyIdentifier, env, identifier }, applicationDetails);
+    await this.dataServices.application.updateOneByAny({ propertyIdentifier, env, identifier }, applicationDetails);
     return applicationDetails;
   }
 

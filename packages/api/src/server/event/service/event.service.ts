@@ -6,7 +6,7 @@ import { EventTimeTrace } from '../event-time-trace.entity';
 import { Event } from '../event.entity';
 
 @Injectable()
-export class SSEConsumeService implements OnApplicationBootstrap {
+export class EventService implements OnApplicationBootstrap {
   constructor(private dataServices: IDataServices, private loggerService: LoggerService) {}
 
   async onApplicationBootstrap() {
@@ -25,11 +25,11 @@ export class SSEConsumeService implements OnApplicationBootstrap {
         await tmpDataService.event.create(event);
         if (event.code === 'APPLICATION_CREATED') {
           const searchApplication = { propertyIdentifier: event.propertyIdentifier, env: event.env, identifier: event.applicationName };
-          const latestApplication = (await tmpDataService.applications.getByAny(searchApplication))[0];
+          const latestApplication = (await tmpDataService.application.getByAny(searchApplication))[0];
           if (!latestApplication?.accessUrl) return;
           latestApplication.accessUrl = event.accessUrl;
           latestApplication.ref = latestApplication.nextRef;
-          await tmpDataService.applications.updateOneByAny(searchApplication, latestApplication);
+          await tmpDataService.application.updateOneByAny(searchApplication, latestApplication);
           tmpLoggerService.log('UpdatedApplication', JSON.stringify(latestApplication));
           const eventRequest = (await tmpDataService.event.getByAny({ traceId: response.uuid }))[0];
           const currentTime = new Date();

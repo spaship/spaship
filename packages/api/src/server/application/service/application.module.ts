@@ -11,4 +11,4 @@ import { ApplicationService } from './application.service';
   providers: [ApplicationFactory, ApplicationService, LoggerService, ExceptionsService],
   exports: [ApplicationFactory, ApplicationService]
 })
-export class ApplicationUseCasesModule {}
+export class ApplicationModule {}

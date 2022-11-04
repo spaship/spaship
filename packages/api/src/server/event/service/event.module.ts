@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { DataServicesModule } from 'src/repository/data-services.module';
-import { SSEConsumeService } from './sse-consume.service';
+import { EventService } from './event.service';
 
 @Module({
   imports: [DataServicesModule],
-  providers: [SSEConsumeModule, SSEConsumeService, LoggerService],
-  exports: [SSEConsumeModule, SSEConsumeService]
+  providers: [EventModule, EventService, LoggerService],
+  exports: [EventModule, EventService]
 })
-export class SSEConsumeModule {}
+export class EventModule {}

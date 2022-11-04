@@ -9,15 +9,15 @@ export class ApikeyService {
   constructor(private dataServices: IDataServices, private apikeyFactoryService: ApikeyFactory) {}
 
   getApikeyByProperty(propertyIdentifier: string): Promise<Apikey[]> {
-    return this.dataServices.apikeys.getByAny({ propertyIdentifier });
+    return this.dataServices.apikey.getByAny({ propertyIdentifier });
   }
 
   createApikey(createApikeyDto: CreateApikeyDto): Promise<Apikey> {
     const apikey = this.apikeyFactoryService.createNewApikey(createApikeyDto);
-    return this.dataServices.apikeys.create(apikey);
+    return this.dataServices.apikey.create(apikey);
   }
 
   deleteApiKey(shortKey: string): Promise<Apikey> {
-    return this.dataServices.apikeys.delete({ shortKey });
+    return this.dataServices.apikey.delete({ shortKey });
   }
 }

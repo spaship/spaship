@@ -8,4 +8,4 @@ import { ApikeyService } from './apikey.service';
   providers: [ApikeyFactory, ApikeyService],
   exports: [ApikeyFactory, ApikeyService]
 })
-export class ApikeyUseCasesModule {}
+export class ApikeyModule {}

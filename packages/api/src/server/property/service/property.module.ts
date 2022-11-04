@@ -13,4 +13,4 @@ import { PropertyService } from './property.service';
   providers: [PropertyFactory, PropertyService, ApplicationService, ApplicationFactory, ExceptionsService, LoggerService],
   exports: [PropertyFactory, PropertyService]
 })
-export class PropertyUseCasesModule {}
+export class PropertyModule {}
