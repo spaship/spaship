@@ -1,25 +1,27 @@
 export class Event {
   traceId: string;
 
-  propertyName: string;
+  propertyIdentifier: string;
 
-  spaName: string;
+  applicationName: string;
+
+  env: string;
 
   version: string;
 
-  env: string;
+  path: string;
+
+  accessUrl: string;
 
   branch: string;
 
   code: string;
 
-  accessUrl: string;
-
-  path: string;
-
   state: string;
 
-  failure: string;
+  failure: boolean;
 
   isActive: boolean;
+
+  createdAt: Date;
 }

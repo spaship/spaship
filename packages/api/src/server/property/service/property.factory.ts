@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { DIRECTORY_CONFIGURATION } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
-import { IDataServices } from 'src/repository/data-services.abstract';
 import { CreateApplicationDto } from 'src/server/application/application.dto';
 import { ApplicationService } from 'src/server/application/service/application.service';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
@@ -14,12 +13,7 @@ import { DeploymentRecord, Property } from '../property.entity';
 
 @Injectable()
 export class PropertyFactory {
-  constructor(
-    private dataServices: IDataServices,
-    private exceptionService: ExceptionsService,
-    private loggerService: LoggerService,
-    private applicationService: ApplicationService
-  ) {}
+  constructor(private exceptionService: ExceptionsService, private loggerService: LoggerService, private applicationService: ApplicationService) {}
 
   createNewProperty(createPropertyDto: CreatePropertyDto, deploymentRecord: DeploymentRecord): Property {
     const newProperty = new Property();

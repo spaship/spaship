@@ -8,16 +8,22 @@ export class Event {
   traceId: string;
 
   @Prop({ required: true })
-  propertyName: string;
+  propertyIdentifier: string;
 
   @Prop({ required: true })
-  spaName: string;
+  applicationName: string;
+
+  @Prop({ required: true })
+  env: string;
 
   @Prop({ required: true })
   version: string;
 
   @Prop({ required: true })
-  env: string;
+  path: string;
+
+  @Prop({ required: true })
+  accessUrl: string;
 
   @Prop({ required: true })
   branch: string;
@@ -26,19 +32,15 @@ export class Event {
   code: string;
 
   @Prop({ required: true })
-  accessUrl: string;
-
-  @Prop({ required: true })
-  path: string;
-
-  @Prop({ required: true })
   state: string;
 
-  @Prop({ required: true })
-  failure: string;
+  @Prop({ required: true, default: false })
+  failure: boolean;
 
-  @Prop({ required: true })
+  @Prop({ required: true, default: true })
   isActive: boolean;
+
+  createdAt: Date;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);

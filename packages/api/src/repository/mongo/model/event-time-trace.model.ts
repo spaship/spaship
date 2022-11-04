@@ -8,30 +8,21 @@ export class EventTimeTrace {
   traceId: string;
 
   @Prop({ required: true })
-  propertyName: string;
+  propertyIdentifier: string;
 
   @Prop({ required: true })
-  spaName: string;
-
-  @Prop({ required: true })
-  version: string;
+  applicationName: string;
 
   @Prop({ required: true })
   env: string;
 
   @Prop({ required: true })
-  initialCode: string;
-
-  @Prop({ required: true })
-  finalCode: string;
-
-  @Prop({ required: true })
-  failure: string;
-
-  @Prop({ required: true })
   consumedTime: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, default: false })
+  failure: boolean;
+
+  @Prop({ required: true, default: true })
   isActive: boolean;
 }
 

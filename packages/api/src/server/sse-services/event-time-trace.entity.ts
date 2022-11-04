@@ -1,21 +1,15 @@
 export class EventTimeTrace {
   traceId: string;
 
-  propertyName: string;
+  propertyIdentifier: string;
 
-  spaName: string;
-
-  version: string;
+  applicationName: string;
 
   env: string;
 
-  initialCode: string;
-
-  finalCode: string;
-
-  failure: string;
-
   consumedTime: string;
+
+  failure: boolean;
 
   isActive: boolean;
 }
