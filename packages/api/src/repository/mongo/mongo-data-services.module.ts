@@ -16,7 +16,9 @@ import {
   EventTimeTrace,
   EventTimeTraceSchema,
   Property,
-  PropertySchema
+  PropertySchema,
+  ActivityStream,
+  ActivityStreamSchema
 } from './model';
 import { MongoDataServices } from './mongo-data-services.service';
 
@@ -29,7 +31,8 @@ import { MongoDataServices } from './mongo-data-services.service';
       { name: Environment.name, schema: EnvironmentSchema },
       { name: Event.name, schema: EventSchema },
       { name: EventTimeTrace.name, schema: EventTimeTraceSchema },
-      { name: Property.name, schema: PropertySchema }
+      { name: Property.name, schema: PropertySchema },
+      { name: ActivityStream.name, schema: ActivityStreamSchema }
     ]),
     MongooseModule.forRoot(DATA_BASE_CONFIGURATION.mongoConnectionString)
   ],

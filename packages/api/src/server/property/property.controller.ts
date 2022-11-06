@@ -1,13 +1,12 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
-import { LoggerService } from 'src/configuration/logger/logger.service';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreatePropertyDto } from './property.dto';
-import { PropertyFactory } from './service/property.factory';
 import { PropertyService } from './service/property.service';
 
 @Controller('property')
+@ApiTags('Property')
 export class PropertyController {
-  constructor(private propertyService: PropertyService, private propertyFactoryService: PropertyFactory, private loggerService: LoggerService) {}
+  constructor(private readonly propertyService: PropertyService) {}
 
   @Get()
   @ApiOperation({ description: 'Get the Property Details.' })

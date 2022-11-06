@@ -6,6 +6,7 @@ import { EventTimeTrace } from '../server/event/event-time-trace.entity';
 import { Event } from '../server/event/event.entity';
 import { Property } from '../server/property/property.entity';
 import { IGenericRepository } from './generic-repository.abstract';
+import { ActivityStream } from 'src/server/analytics/activity-stream.entity';
 
 export abstract class IDataServices {
   abstract application: IGenericRepository<Application>;
@@ -21,4 +22,6 @@ export abstract class IDataServices {
   abstract eventTimeTrace: IGenericRepository<EventTimeTrace>;
 
   abstract property: IGenericRepository<Property>;
+
+  abstract activityStream: IGenericRepository<ActivityStream>;
 }

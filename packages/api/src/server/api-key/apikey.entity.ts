@@ -1,6 +1,4 @@
 export class Apikey {
-  label: string;
-
   propertyIdentifier: string;
 
   shortKey: string;
@@ -8,6 +6,8 @@ export class Apikey {
   key: string;
 
   env: string[];
+
+  label: string;
 
   expiredDate: Date;
 

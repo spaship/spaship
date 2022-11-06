@@ -17,7 +17,9 @@ import {
   Environment,
   EnvironmentDocument,
   Property,
-  PropertyDocument
+  PropertyDocument,
+  ActivityStream,
+  ActivityStreamDocument
 } from './model';
 
 @Injectable()
@@ -36,6 +38,8 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
 
   property: MongoGenericRepository<Property>;
 
+  activityStream: MongoGenericRepository<ActivityStream>;
+
   constructor(
     @InjectModel(Application.name)
     private ApplicationRepository: Model<ApplicationDocument>,
@@ -50,7 +54,9 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
     @InjectModel(EventTimeTrace.name)
     private EventTimeTraceRepository: Model<EventTimeTraceDocument>,
     @InjectModel(Property.name)
-    private PropertyRepository: Model<PropertyDocument>
+    private PropertyRepository: Model<PropertyDocument>,
+    @InjectModel(ActivityStream.name)
+    private ActivityStreamRepository: Model<ActivityStreamDocument>
   ) {}
 
   onApplicationBootstrap() {
@@ -61,5 +67,6 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
     this.eventTimeTrace = new MongoGenericRepository<EventTimeTrace>(this.EventTimeTraceRepository);
     this.environment = new MongoGenericRepository<Environment>(this.EnvironmentRepository);
     this.property = new MongoGenericRepository<Property>(this.PropertyRepository);
+    this.activityStream = new MongoGenericRepository<ActivityStream>(this.ActivityStreamRepository);
   }
 }

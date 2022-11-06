@@ -16,3 +16,9 @@ export class DeploymentRecord {
 
   name: string;
 }
+
+export enum Source {
+  MANAGER = 'MANAGER',
+  CLI = 'CLI',
+  OPERATOR = 'OPERATOR'
+}

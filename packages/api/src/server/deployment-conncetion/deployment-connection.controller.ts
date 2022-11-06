@@ -1,10 +1,12 @@
 import { Body, Controller, Get, Post, Put } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { DeploymentConnectionDTO, UpdateDeploymentConnectionDTO } from './deployment-connection.dto';
 import { DeploymentConnectionService } from './service/deployment-connection.service';
 
 @Controller('deployment-connection')
+@ApiTags('Deployment Connection')
 export class DeploymentConnectionController {
-  constructor(private deploymentConnectionService: DeploymentConnectionService) {}
+  constructor(private readonly deploymentConnectionService: DeploymentConnectionService) {}
 
   @Get()
   async getAll() {

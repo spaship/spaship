@@ -30,13 +30,13 @@ async function bootstrap() {
       .addBearerAuth()
       .setTitle('SPAship API Documentation')
       .setDescription('Doc for SPAship apis')
-      .setVersion('1.0')
+      .setVersion('3.0')
       .build();
     const document = SwaggerModule.createDocument(app, config, {
       extraModels: [ResponseFormat],
       deepScanRoutes: true
     });
-    SwaggerModule.setup('api', app, document);
+    SwaggerModule.setup('api-docs', app, document);
   }
   await app.listen(2345);
 }

@@ -6,7 +6,10 @@ import { DeploymentConnectionFactoryService } from './deployment-connection.fact
 
 @Injectable()
 export class DeploymentConnectionService {
-  constructor(private dataServices: IDataServices, private deploymentConnectionFactoryService: DeploymentConnectionFactoryService) {}
+  constructor(
+    private readonly dataServices: IDataServices,
+    private readonly deploymentConnectionFactoryService: DeploymentConnectionFactoryService
+  ) { }
 
   getAllRecords(): Promise<DeploymentConnection[]> {
     return this.dataServices.deploymentConnection.getAll();

@@ -1,8 +1,10 @@
 import { Body, Controller, Get, Param, Post, Delete } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateApikeyDto } from './apikey.dto';
 import { ApikeyService } from './service/apikey.service';
 
 @Controller('apikey')
+@ApiTags('Api Key')
 export class ApikeyController {
   constructor(private apiKeyService: ApikeyService) {}
 
@@ -12,12 +14,12 @@ export class ApikeyController {
   }
 
   @Post()
-  createApiKey(@Body() apikeyDto: CreateApikeyDto) {
+  async createApiKey(@Body() apikeyDto: CreateApikeyDto) {
     return this.apiKeyService.createApikey(apikeyDto);
   }
 
   @Delete(':shortKey')
-  deleteApiKey(@Param('shortKey') shortKey: string) {
-    return this.apiKeyService.deleteApiKey(shortKey);
+  async deleteApiKey(@Param('shortKey') shortKey: string) {
+    return await this.apiKeyService.deleteApiKey(shortKey);
   }
 }

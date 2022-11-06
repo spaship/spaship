@@ -11,7 +11,7 @@ export class EventTimeTrace {
   propertyIdentifier: string;
 
   @Prop({ required: true })
-  applicationName: string;
+  applicationIdentifier: string;
 
   @Prop({ required: true })
   env: string;

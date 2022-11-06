@@ -1,12 +1,12 @@
-import { Model } from 'mongoose';
+import { Model, PipelineStage } from 'mongoose';
 import { IGenericRepository } from 'src/repository/generic-repository.abstract';
 
 export class MongoGenericRepository<T> implements IGenericRepository<T> {
-  private _repository: Model<T>;
+  private _repository: Model<any>;
 
   private _populateOnFind: string[];
 
-  constructor(repository: Model<T>, populateOnFind: string[] = []) {
+  constructor(repository: Model<any>, populateOnFind: string[] = []) {
     this._repository = repository;
     this._populateOnFind = populateOnFind;
   }
@@ -37,5 +37,9 @@ export class MongoGenericRepository<T> implements IGenericRepository<T> {
 
   delete(obj: T) {
     return this._repository.findOneAndDelete(obj).exec();
+  }
+
+  aggregate(query: PipelineStage[]): Promise<Array<Object>> {
+    return this._repository.aggregate(query).exec();
   }
 }

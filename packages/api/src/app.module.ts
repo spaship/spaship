@@ -12,6 +12,8 @@ import { ExceptionsModule } from './server/exceptions/exceptions.module';
 import { PropertyController } from './server/property/property.controller';
 import { PropertyModule } from './server/property/service/property.module';
 import { EventModule } from './server/event/service/event.module';
+import { AnalyticsModule } from './server/analytics/service/analytics.module';
+import { AnalyticsController } from './server/analytics/analytics.controller';
 
 @Module({
   imports: [
@@ -23,9 +25,10 @@ import { EventModule } from './server/event/service/event.module';
     ApikeyModule,
     DeploymentConnectionModule,
     PropertyModule,
-    EventModule
+    EventModule,
+    AnalyticsModule
   ],
-  controllers: [ApplicationController, ApikeyController, DeploymentConnectionController, PropertyController],
+  controllers: [ApikeyController, ApplicationController, AnalyticsController, DeploymentConnectionController, PropertyController],
   providers: []
 })
 export class AppModule {}

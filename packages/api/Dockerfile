@@ -8,7 +8,7 @@ RUN apt-get install sudo
 
 RUN sudo apt-get install --yes curl
 RUN sudo apt update
-RUN sudo curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+RUN sudo curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 RUN sudo apt-get --force-yes install -y nodejs
 RUN sudo apt-get install --yes build-essential
 RUN sudo apt-get install --only-upgrade bash
@@ -22,7 +22,7 @@ RUN sudo apt-get update
 RUN sudo apt-get --force-yes install -y libstdc++6:i386 libgcc1:i386 libcurl4-gnutls-dev:i386
 RUN node -v
 
-RUN mkdir app && mkdir app/tmp && mkdir app/tmp/spaship_uploads && mkdir app/root
+RUN mkdir app && mkdir app/spaship_uploads && mkdir app/root
 RUN sudo chown -R $USER:$(id -gn $USER) /app
 USER $USER
 
