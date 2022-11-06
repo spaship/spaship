@@ -13,7 +13,7 @@ export class EventService implements OnApplicationBootstrap {
     private readonly dataServices: IDataServices,
     private readonly analyticsService: AnalyticsService,
     private readonly logger: LoggerService
-  ) {}
+  ) { }
 
   async onApplicationBootstrap() {
     const deploymentConnections = await this.dataServices.deploymentConnection.getAll();
@@ -21,14 +21,14 @@ export class EventService implements OnApplicationBootstrap {
       this.logger.log('DeploymentConnection', JSON.stringify(connection));
       const eventUrl = `${connection.baseurl}/api/event`;
       const tmpDataService = this.dataServices;
-      const tmpLoggerService = this.logger;
+      const tmpLogger = this.logger;
       const tmpAnalyticsService = this.analyticsService;
       new EventSource(eventUrl).onmessage = async function (eventResponse) {
-        tmpLoggerService.log('EventSource', eventUrl);
-        tmpLoggerService.log('EventResponse', eventResponse.data);
+        tmpLogger.log('EventSource', eventUrl);
+        tmpLogger.log('EventResponse', eventResponse.data);
         const response = JSON.parse(eventResponse.data);
         const event = processEvent(response);
-        tmpLoggerService.log('Event', JSON.stringify(event));
+        tmpLogger.log('Event', JSON.stringify(event));
         await tmpDataService.event.create(event);
         if (event.action === Action.APPLICATION_DEPLOYED) {
           const searchApplication = { propertyIdentifier: event.propertyIdentifier, env: event.env, identifier: event.applicationIdentifier };
@@ -36,13 +36,13 @@ export class EventService implements OnApplicationBootstrap {
           if (!latestApplication?.accessUrl) return;
           latestApplication.accessUrl = event.accessUrl;
           latestApplication.ref = latestApplication.nextRef;
-          await tmpDataService.application.updateOneByAny(searchApplication, latestApplication);
-          tmpLoggerService.log('UpdatedApplication', JSON.stringify(latestApplication));
+          await tmpDataService.application.updateOne(searchApplication, latestApplication);
+          tmpLogger.log('UpdatedApplication', JSON.stringify(latestApplication));
           const eventRequest = (await tmpDataService.event.getByAny({ traceId: response.uuid }))[0];
           const currentTime = new Date();
           const diff = (eventRequest.createdAt.getTime() - currentTime.getTime()) / 1000;
           const consumedTime = Math.abs(diff).toString();
-          tmpLoggerService.log('TimeToDeploy', `${consumedTime} seconds`);
+          tmpLogger.log('TimeToDeploy', `${consumedTime} seconds`);
           const eventTimeTrace = processDeploymentTime(event, consumedTime);
           const message = `Deployment Time : ${consumedTime} seconds`;
           await tmpDataService.eventTimeTrace.create(eventTimeTrace);

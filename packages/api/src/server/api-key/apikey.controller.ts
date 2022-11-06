@@ -6,7 +6,7 @@ import { ApikeyService } from './service/apikey.service';
 @Controller('apikey')
 @ApiTags('Api Key')
 export class ApikeyController {
-  constructor(private apiKeyService: ApikeyService) {}
+  constructor(private readonly apiKeyService: ApikeyService) { }
 
   @Get(':propertyIdentifier')
   async getApiKeyByProperty(@Param('propertyIdentifier') propertyIdentifier: string) {
@@ -20,6 +20,6 @@ export class ApikeyController {
 
   @Delete(':shortKey')
   async deleteApiKey(@Param('shortKey') shortKey: string) {
-    return await this.apiKeyService.deleteApiKey(shortKey);
+    return this.apiKeyService.deleteApiKey(shortKey);
   }
 }

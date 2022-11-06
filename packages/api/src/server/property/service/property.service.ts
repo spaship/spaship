@@ -18,7 +18,7 @@ export class PropertyService {
     private readonly logger: LoggerService,
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService
-  ) {}
+  ) { }
 
   getAllProperties(): Promise<Property[]> {
     return this.dataServices.property.getAll();
@@ -62,7 +62,7 @@ export class PropertyService {
     if (!checkDeploymentRecord) {
       const getDeploymentRecord = await this.getDeploymentRecord(createPropertyDto);
       property.deploymentRecord = [...property.deploymentRecord, getDeploymentRecord];
-      await this.dataServices.property.updateOneByAny({ identifier: createPropertyDto.identifier }, property);
+      await this.dataServices.property.updateOne({ identifier: createPropertyDto.identifier }, property);
     }
     this.logger.log('Property', JSON.stringify(property));
     const environment = this.propertyFactoryService.createNewEnvironment(createPropertyDto);
@@ -87,7 +87,7 @@ export class PropertyService {
       this.logger.log('NextDeploymentConnection', JSON.stringify(nextDeploymentConnection));
       deploymentRecord.name = deploymentConnection[0].name;
       deploymentRecord.cluster = createPropertyDto.cluster;
-      await this.dataServices.deploymentConnection.updateOneByAny({ name: nextDeploymentConnection.name }, nextDeploymentConnection);
+      await this.dataServices.deploymentConnection.updateOne({ name: nextDeploymentConnection.name }, nextDeploymentConnection);
     }
     this.logger.log('DeploymentRecord', JSON.stringify(deploymentRecord));
     return deploymentRecord;

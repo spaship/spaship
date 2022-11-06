@@ -23,7 +23,7 @@ export class ApplicationService {
     private readonly applicationFactoryService: ApplicationFactory,
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService
-  ) {}
+  ) { }
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.application.getAll();
@@ -50,7 +50,7 @@ export class ApplicationService {
     applicationDetails.nextRef = applicationRequest.ref;
     applicationDetails.name = applicationRequest.name;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
-    await this.dataServices.application.updateOneByAny({ propertyIdentifier, env, identifier }, applicationDetails);
+    await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier }, applicationDetails);
     await this.analyticsService.createActivityStream(
       propertyIdentifier,
       Action.APPLICATION_DEPLOYMENT_STARTED,

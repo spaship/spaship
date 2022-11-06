@@ -10,7 +10,7 @@ export class AnalyticsService {
     private readonly dataServices: IDataServices,
     private readonly analyticsFactory: AnalyticsFactory,
     private readonly logger: LoggerService
-  ) {}
+  ) { }
 
   createActivityStream(
     propertyIdentifier: string,
@@ -38,8 +38,8 @@ export class AnalyticsService {
   }
 
   async getActivityStream(propertyIdentifier: string): Promise<ActivityStream[]> {
-    if (!propertyIdentifier) return await this.dataServices.activityStream.getAll();
-    return await this.dataServices.activityStream.getByAny({ propertyIdentifier });
+    if (!propertyIdentifier) return this.dataServices.activityStream.getAll();
+    return this.dataServices.activityStream.getByAny({ propertyIdentifier });
   }
 
   async getDeploymentCount(propertyIdentifier: string): Promise<any> {
@@ -50,5 +50,30 @@ export class AnalyticsService {
   async getDeploymentCountForEnv(propertyIdentifier: string, applicationIdentifier: string): Promise<any> {
     const query = await this.analyticsFactory.getDeploymentCountForEnv(propertyIdentifier, applicationIdentifier);
     return await this.dataServices.activityStream.aggregate(query);
+  }
+
+  async getMonthlyDeploymentCount(propertyIdentifier: string, applicationIdentifier: string): Promise<Object> {
+    const response = {};
+    const monthlyCountResponse = [];
+    const [searchQuery, groupQuery, projectQuery] = await this.analyticsFactory.getMonthlyDeploymentCountQuery(
+      propertyIdentifier,
+      applicationIdentifier
+    );
+    const monthlyDateFrame = await this.analyticsFactory.buildWeeklyDateFrame();
+    for (const week of monthlyDateFrame) {
+      const element = { startDate: week.startDate, endDate: week.endDate };
+      const query = await this.analyticsFactory.buildMonthlyCountQuery(element.startDate, element.endDate, searchQuery, groupQuery, projectQuery);
+      const tmpResponse = await this.dataServices.activityStream.aggregate(query);
+      tmpResponse.forEach((item) => {
+        item.startDate = element.startDate;
+        item.endDate = element.endDate;
+      });
+      monthlyCountResponse.push(tmpResponse);
+    }
+    for (const week of monthlyCountResponse)
+      for (const obj of week)
+        if (response[obj.env]) response[obj.env].push(obj);
+        else response[obj.env] = [obj];
+    return response;
   }
 }
