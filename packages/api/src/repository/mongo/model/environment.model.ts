@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Cluster } from 'src/server/property/environment.entity';
+import { Cluster } from 'src/server/environment/environment.entity';
 
 export type EnvironmentDocument = Environment & Document;
 

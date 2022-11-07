@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Environment } from './environment.entity';
+import { Environment } from '../environment/environment.entity';
 
 export class PropertyResponseDto {
   @ApiProperty()

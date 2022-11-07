@@ -20,7 +20,7 @@ export class ApplicationService {
   constructor(
     private readonly dataServices: IDataServices,
     private readonly logger: LoggerService,
-    private readonly applicationFactoryService: ApplicationFactory,
+    private readonly applicationFactory: ApplicationFactory,
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService
   ) {}
@@ -39,11 +39,11 @@ export class ApplicationService {
     propertyIdentifier: string,
     env: string
   ): Promise<Application> {
-    const identifier = this.applicationFactoryService.getIdentifier(applicationRequest.name);
+    const identifier = this.applicationFactory.getIdentifier(applicationRequest.name);
     await this.deployApplication(applicationRequest, applicationPath, propertyIdentifier, env);
     const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier }))[0];
     if (!applicationDetails) {
-      const saveApplication = await this.applicationFactoryService.createApplicationRequest(propertyIdentifier, applicationRequest, identifier, env);
+      const saveApplication = await this.applicationFactory.createApplicationRequest(propertyIdentifier, applicationRequest, identifier, env);
       this.logger.log('NewApplicationDetails', JSON.stringify(saveApplication));
       return this.dataServices.application.create(saveApplication);
     }
@@ -83,22 +83,14 @@ export class ApplicationService {
     const tmpDir = `${baseDir}/${name.split('.')[0]}-${Date.now()}-extracted`;
     await fs.mkdirSync(`${tmpDir}`, { recursive: true });
     await extract(path.resolve(applicationPath), { dir: path.resolve(tmpDir) });
-    const zipPath = await this.applicationFactoryService.createTemplateAndZip(
-      appPath,
-      ref,
-      name,
-      tmpDir,
-      propertyIdentifier,
-      env,
-      property.namespace
-    );
+    const zipPath = await this.applicationFactory.createTemplateAndZip(appPath, ref, name, tmpDir, propertyIdentifier, env, property.namespace);
     const formData: any = new FormData();
     try {
       const fileStream = await fs.createReadStream(zipPath);
       formData.append('spa', fileStream);
       formData.append('description', `${propertyIdentifier}_${env}`);
       formData.append('website', propertyIdentifier);
-      const response = await this.applicationFactoryService.deploymentRequest(formData, deploymentConnection.baseurl);
+      const response = await this.applicationFactory.deploymentRequest(formData, deploymentConnection.baseurl);
       this.logger.log('OperatorResponse', JSON.stringify(response.data));
       return response;
     } catch (err) {
