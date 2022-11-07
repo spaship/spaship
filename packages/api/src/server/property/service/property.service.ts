@@ -18,7 +18,7 @@ export class PropertyService {
     private readonly logger: LoggerService,
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService
-  ) { }
+  ) {}
 
   getAllProperties(): Promise<Property[]> {
     return this.dataServices.property.getAll();

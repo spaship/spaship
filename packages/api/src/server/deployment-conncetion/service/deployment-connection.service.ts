@@ -9,7 +9,7 @@ export class DeploymentConnectionService {
   constructor(
     private readonly dataServices: IDataServices,
     private readonly deploymentConnectionFactoryService: DeploymentConnectionFactoryService
-  ) { }
+  ) {}
 
   getAllRecords(): Promise<DeploymentConnection[]> {
     return this.dataServices.deploymentConnection.getAll();

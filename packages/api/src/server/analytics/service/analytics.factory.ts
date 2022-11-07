@@ -3,7 +3,7 @@ import { Action } from '../activity-stream.entity';
 
 @Injectable()
 export class AnalyticsFactory {
-  constructor() { }
+  constructor() {}
 
   async buildAggregationQuery(searchQuery: Object, groupQuery: Object, projectionQuery: Object) {
     return [{ $match: searchQuery }, { $group: groupQuery }, { $project: projectionQuery }];
@@ -33,7 +33,9 @@ export class AnalyticsFactory {
   }
 
   async getMonthlyDeploymentCountQuery(propertyIdentifier: string, applicationIdentifier: string): Promise<Object[]> {
-    let searchQuery; let groupQuery; let projectQuery;
+    let searchQuery;
+    let groupQuery;
+    let projectQuery;
     if (!applicationIdentifier) {
       searchQuery = { action: Action.APPLICATION_DEPLOYED, propertyIdentifier };
       groupQuery = { propertyIdentifier, env: '$props.env' };

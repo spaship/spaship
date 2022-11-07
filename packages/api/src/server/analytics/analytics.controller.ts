@@ -6,7 +6,7 @@ import { AnalyticsService } from './service/analytics.service';
 @Controller('analyitics')
 @ApiTags('Analytics')
 export class AnalyticsController {
-  constructor(private readonly analyticsService: AnalyticsService) { }
+  constructor(private readonly analyticsService: AnalyticsService) {}
 
   @Get('/activity-stream')
   @ApiOperation({ description: 'Get the Activity Stream.' })

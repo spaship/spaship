@@ -23,7 +23,7 @@ export class ApplicationService {
     private readonly applicationFactoryService: ApplicationFactory,
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService
-  ) { }
+  ) {}
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.application.getAll();

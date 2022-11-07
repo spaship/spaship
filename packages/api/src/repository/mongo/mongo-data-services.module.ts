@@ -34,7 +34,10 @@ import { MongoDataServices } from './mongo-data-services.service';
       { name: Property.name, schema: PropertySchema },
       { name: ActivityStream.name, schema: ActivityStreamSchema }
     ]),
-    MongooseModule.forRoot(DATA_BASE_CONFIGURATION.mongoConnectionString)
+    MongooseModule.forRoot(DATA_BASE_CONFIGURATION.mongoConnectionString, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    })
   ],
   providers: [
     {

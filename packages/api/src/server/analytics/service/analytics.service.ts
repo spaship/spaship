@@ -10,7 +10,7 @@ export class AnalyticsService {
     private readonly dataServices: IDataServices,
     private readonly analyticsFactory: AnalyticsFactory,
     private readonly logger: LoggerService
-  ) { }
+  ) {}
 
   createActivityStream(
     propertyIdentifier: string,

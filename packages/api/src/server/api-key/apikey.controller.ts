@@ -6,7 +6,7 @@ import { ApikeyService } from './service/apikey.service';
 @Controller('apikey')
 @ApiTags('Api Key')
 export class ApikeyController {
-  constructor(private readonly apiKeyService: ApikeyService) { }
+  constructor(private readonly apiKeyService: ApikeyService) {}
 
   @Get(':propertyIdentifier')
   async getApiKeyByProperty(@Param('propertyIdentifier') propertyIdentifier: string) {
