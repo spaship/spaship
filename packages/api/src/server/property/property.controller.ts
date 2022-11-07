@@ -20,10 +20,4 @@ export class PropertyController {
   async createProperty(@Body() propertyDto: CreatePropertyDto): Promise<any> {
     return this.propertyService.createProperty(propertyDto);
   }
-
-  @Post('/environment')
-  @ApiOperation({ description: 'Create a New Environment.' })
-  async createEnvironment(@Body() propertyDto: CreatePropertyDto): Promise<any> {
-    return this.propertyService.createEnvironment(propertyDto);
-  }
 }

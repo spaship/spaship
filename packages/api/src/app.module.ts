@@ -14,6 +14,8 @@ import { PropertyModule } from './server/property/service/property.module';
 import { EventModule } from './server/event/service/event.module';
 import { AnalyticsModule } from './server/analytics/service/analytics.module';
 import { AnalyticsController } from './server/analytics/analytics.controller';
+import { EnvironmentModule } from './server/environment/service/environment.module';
+import { EnvironmentController } from './server/environment/environment.controller';
 
 @Module({
   imports: [
@@ -25,10 +27,18 @@ import { AnalyticsController } from './server/analytics/analytics.controller';
     ApikeyModule,
     DeploymentConnectionModule,
     PropertyModule,
+    EnvironmentModule,
     EventModule,
     AnalyticsModule
   ],
-  controllers: [ApikeyController, ApplicationController, AnalyticsController, DeploymentConnectionController, PropertyController],
+  controllers: [
+    ApikeyController,
+    ApplicationController,
+    AnalyticsController,
+    DeploymentConnectionController,
+    EnvironmentController,
+    PropertyController
+  ],
   providers: []
 })
 export class AppModule {}

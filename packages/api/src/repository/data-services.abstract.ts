@@ -2,7 +2,7 @@ import { ActivityStream } from 'src/server/analytics/activity-stream.entity';
 import { Apikey } from '../server/api-key/apikey.entity';
 import { Application } from '../server/application/application.entity';
 import { DeploymentConnection } from '../server/deployment-conncetion/deployment-connection.entity';
-import { Environment } from '../server/property/environment.entity';
+import { Environment } from '../server/environment/environment.entity';
 import { EventTimeTrace } from '../server/event/event-time-trace.entity';
 import { Event } from '../server/event/event.entity';
 import { Property } from '../server/property/property.entity';
