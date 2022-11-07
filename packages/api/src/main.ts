@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common';
+import { RequestMethod, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
@@ -24,6 +24,10 @@ async function bootstrap() {
   // interceptors
   app.useGlobalInterceptors(new LoggingInterceptor(new LoggerService()));
   app.useGlobalInterceptors(new ResponseInterceptor());
+  app.setGlobalPrefix('api/v1', {
+    exclude: [{ path: 'api-docs', method: RequestMethod.GET }]
+  });
+
   // swagger config
   if (env !== 'production') {
     const config = new DocumentBuilder()
@@ -38,6 +42,7 @@ async function bootstrap() {
     });
     SwaggerModule.setup('api-docs', app, document);
   }
+
   await app.listen(2345);
 }
 bootstrap();
