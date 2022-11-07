@@ -21,3 +21,8 @@ export class Environment {
 
   isActive: boolean;
 }
+
+export enum Cluster {
+  PROD = 'prod',
+  PREPROD = 'preprod'
+}

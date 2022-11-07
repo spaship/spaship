@@ -3,8 +3,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { DATA_BASE_CONFIGURATION } from '../../configuration';
 import {
-  DeploymentRecord,
-  DeploymentRecordSchema,
   Application,
   ApplicationSchema,
   DeploymentConnection,
@@ -18,7 +16,9 @@ import {
   EventTimeTrace,
   EventTimeTraceSchema,
   Property,
-  PropertySchema
+  PropertySchema,
+  ActivityStream,
+  ActivityStreamSchema
 } from './model';
 import { MongoDataServices } from './mongo-data-services.service';
 
@@ -28,13 +28,16 @@ import { MongoDataServices } from './mongo-data-services.service';
       { name: Application.name, schema: ApplicationSchema },
       { name: Apikey.name, schema: ApikeySchema },
       { name: DeploymentConnection.name, schema: DeploymentConnectionSchema },
-      { name: DeploymentRecord.name, schema: DeploymentRecordSchema },
       { name: Environment.name, schema: EnvironmentSchema },
       { name: Event.name, schema: EventSchema },
       { name: EventTimeTrace.name, schema: EventTimeTraceSchema },
-      { name: Property.name, schema: PropertySchema }
+      { name: Property.name, schema: PropertySchema },
+      { name: ActivityStream.name, schema: ActivityStreamSchema }
     ]),
-    MongooseModule.forRoot(DATA_BASE_CONFIGURATION.mongoConnectionString)
+    MongooseModule.forRoot(DATA_BASE_CONFIGURATION.mongoConnectionString, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    })
   ],
   providers: [
     {

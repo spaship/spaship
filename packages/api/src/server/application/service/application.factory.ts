@@ -13,7 +13,11 @@ import { zip } from 'zip-a-folder';
 @Injectable()
 /** @internal ApplicationFactoryService is for the business logics */
 export class ApplicationFactory {
-  constructor(private logger: LoggerService, private httpService: HttpService, private exceptionService: ExceptionsService) {}
+  constructor(
+    private readonly logger: LoggerService,
+    private readonly httpService: HttpService,
+    private readonly exceptionService: ExceptionsService
+  ) {}
 
   async createTemplateAndZip(
     appPath: string,

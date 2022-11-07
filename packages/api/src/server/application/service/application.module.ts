@@ -1,6 +1,8 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { LoggerService } from 'src/configuration/logger/logger.service';
+import { AnalyticsFactory } from 'src/server/analytics/service/analytics.factory';
+import { AnalyticsService } from 'src/server/analytics/service/analytics.service';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { DataServicesModule } from '../../../repository/data-services.module';
 import { ApplicationFactory } from './application.factory';
@@ -8,7 +10,7 @@ import { ApplicationService } from './application.service';
 
 @Module({
   imports: [DataServicesModule, HttpModule],
-  providers: [ApplicationFactory, ApplicationService, LoggerService, ExceptionsService],
+  providers: [ApplicationFactory, ApplicationService, AnalyticsService, AnalyticsFactory, LoggerService, ExceptionsService],
   exports: [ApplicationFactory, ApplicationService]
 })
-export class ApplicationUseCasesModule {}
+export class ApplicationModule {}

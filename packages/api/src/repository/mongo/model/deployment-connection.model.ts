@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Cluster } from 'src/server/property/environment.entity';
 
 export type DeploymentConnectionDocument = DeploymentConnection & Document;
 
@@ -10,7 +11,7 @@ export class DeploymentConnection {
   @Prop({ required: true })
   baseurl: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, enum: Cluster })
   cluster: string;
 
   @Prop({ required: true, default: 0 })

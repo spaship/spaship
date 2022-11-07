@@ -6,8 +6,11 @@ import * as path from 'path';
 import { DIRECTORY_CONFIGURATION } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
+import { Action } from 'src/server/analytics/activity-stream.entity';
+import { AnalyticsService } from 'src/server/analytics/service/analytics.service';
 import { Application } from 'src/server/application/application.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
+import { Source } from 'src/server/property/property.entity';
 import { CreateApplicationDto } from '../application.dto';
 import { ApplicationFactory } from './application.factory';
 
@@ -15,18 +18,19 @@ import { ApplicationFactory } from './application.factory';
 /** @internal ApplicationService is for depenedent operations on database */
 export class ApplicationService {
   constructor(
-    private dataServices: IDataServices,
-    private logger: LoggerService,
-    private applicationFactoryService: ApplicationFactory,
-    private exceptionService: ExceptionsService
+    private readonly dataServices: IDataServices,
+    private readonly logger: LoggerService,
+    private readonly applicationFactoryService: ApplicationFactory,
+    private readonly exceptionService: ExceptionsService,
+    private readonly analyticsService: AnalyticsService
   ) {}
 
   getAllApplications(): Promise<Application[]> {
-    return this.dataServices.applications.getAll();
+    return this.dataServices.application.getAll();
   }
 
   getApplicationsByProperty(propertyIdentifier: string): Promise<Application[]> {
-    return this.dataServices.applications.getByAny({ propertyIdentifier });
+    return this.dataServices.application.getByAny({ propertyIdentifier });
   }
 
   async saveApplication(
@@ -37,16 +41,25 @@ export class ApplicationService {
   ): Promise<Application> {
     const identifier = this.applicationFactoryService.getIdentifier(applicationRequest.name);
     await this.deployApplication(applicationRequest, applicationPath, propertyIdentifier, env);
-    const applicationDetails = (await this.dataServices.applications.getByAny({ propertyIdentifier, env, identifier }))[0];
+    const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier }))[0];
     if (!applicationDetails) {
       const saveApplication = await this.applicationFactoryService.createApplicationRequest(propertyIdentifier, applicationRequest, identifier, env);
       this.logger.log('NewApplicationDetails', JSON.stringify(saveApplication));
-      return this.dataServices.applications.create(saveApplication);
+      return this.dataServices.application.create(saveApplication);
     }
     applicationDetails.nextRef = applicationRequest.ref;
     applicationDetails.name = applicationRequest.name;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
-    await this.dataServices.applications.updateOneByAny({ propertyIdentifier, env, identifier }, applicationDetails);
+    await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier }, applicationDetails);
+    await this.analyticsService.createActivityStream(
+      propertyIdentifier,
+      Action.APPLICATION_DEPLOYMENT_STARTED,
+      env,
+      applicationRequest.name,
+      `Deployment started for ${applicationRequest.name} at ${env}`,
+      'NA',
+      Source.CLI
+    );
     return applicationDetails;
   }
 

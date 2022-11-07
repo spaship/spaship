@@ -5,8 +5,11 @@ import { DeploymentConnectionDTO, UpdateDeploymentConnectionDTO } from 'src/serv
 import { DeploymentConnectionFactoryService } from './deployment-connection.factory';
 
 @Injectable()
-export class DeploymentConnectionUseCases {
-  constructor(private dataServices: IDataServices, private deploymentConnectionFactoryService: DeploymentConnectionFactoryService) {}
+export class DeploymentConnectionService {
+  constructor(
+    private readonly dataServices: IDataServices,
+    private readonly deploymentConnectionFactoryService: DeploymentConnectionFactoryService
+  ) {}
 
   getAllRecords(): Promise<DeploymentConnection[]> {
     return this.dataServices.deploymentConnection.getAll();

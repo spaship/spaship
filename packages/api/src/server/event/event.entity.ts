@@ -3,7 +3,7 @@ export class Event {
 
   propertyIdentifier: string;
 
-  applicationName: string;
+  applicationIdentifier: string;
 
   env: string;
 
@@ -15,7 +15,7 @@ export class Event {
 
   branch: string;
 
-  code: string;
+  action: string;
 
   state: string;
 

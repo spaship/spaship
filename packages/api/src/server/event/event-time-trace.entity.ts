@@ -3,7 +3,7 @@ export class EventTimeTrace {
 
   propertyIdentifier: string;
 
-  applicationName: string;
+  applicationIdentifier: string;
 
   env: string;
 

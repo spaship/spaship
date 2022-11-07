@@ -13,7 +13,11 @@ import { DeploymentRecord, Property } from '../property.entity';
 
 @Injectable()
 export class PropertyFactory {
-  constructor(private exceptionService: ExceptionsService, private loggerService: LoggerService, private applicationService: ApplicationService) {}
+  constructor(
+    private readonly exceptionService: ExceptionsService,
+    private readonly logger: LoggerService,
+    private readonly applicationService: ApplicationService
+  ) {}
 
   createNewProperty(createPropertyDto: CreatePropertyDto, deploymentRecord: DeploymentRecord): Property {
     const newProperty = new Property();
@@ -22,7 +26,7 @@ export class PropertyFactory {
     newProperty.namespace = `spaship--${createPropertyDto.identifier}`;
     newProperty.createdBy = createPropertyDto.createdBy;
     newProperty.deploymentRecord = [deploymentRecord];
-    this.loggerService.log('NewProperty', JSON.stringify(newProperty));
+    this.logger.log('NewProperty', JSON.stringify(newProperty));
     return newProperty;
   }
 
@@ -33,7 +37,7 @@ export class PropertyFactory {
     newEnvironment.url = createPropertyDto.url;
     newEnvironment.cluster = createPropertyDto.cluster;
     newEnvironment.createdBy = createPropertyDto.createdBy;
-    this.loggerService.log('NewEnvironment', JSON.stringify(newEnvironment));
+    this.logger.log('NewEnvironment', JSON.stringify(newEnvironment));
     return newEnvironment;
   }
 
@@ -51,7 +55,7 @@ export class PropertyFactory {
       environments: [{ name: environmentRequest.env, updateRestriction: false, exclude: false, ns: propertyRequest.namespace }]
     };
 
-    this.loggerService.log('SpashipFile', JSON.stringify(spashipFile));
+    this.logger.log('SpashipFile', JSON.stringify(spashipFile));
     const { baseDir } = DIRECTORY_CONFIGURATION;
     const fileOriginalName = propertyRequest.identifier;
     const tmpDir = `${baseDir}/${fileOriginalName.split('.')[0]}-${Date.now()}`;

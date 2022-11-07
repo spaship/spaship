@@ -2,16 +2,18 @@ import { Module } from '@nestjs/common';
 import { LoggerModule } from './configuration/logger/logger.module';
 import { DataServicesModule } from './repository/data-services.module';
 import { ApikeyController } from './server/api-key/apikey.controller';
-import { ApikeyUseCasesModule } from './server/api-key/service/apikey.module';
+import { ApikeyModule } from './server/api-key/service/apikey.module';
 import { ApplicationController } from './server/application/application.controller';
-import { ApplicationUseCasesModule } from './server/application/service/application.module';
+import { ApplicationModule } from './server/application/service/application.module';
 import { AuthModule } from './server/auth/service/auth.module';
 import { DeploymentConnectionController } from './server/deployment-conncetion/deployment-connection.controller';
-import { DeploymentConnectionUseCasesModule } from './server/deployment-conncetion/service/deployment-connection.module';
+import { DeploymentConnectionModule } from './server/deployment-conncetion/service/deployment-connection.module';
 import { ExceptionsModule } from './server/exceptions/exceptions.module';
 import { PropertyController } from './server/property/property.controller';
-import { PropertyUseCasesModule } from './server/property/service/property.module';
-import { SSEConsumeModule } from './server/sse-services/service/sse-consume.module';
+import { PropertyModule } from './server/property/service/property.module';
+import { EventModule } from './server/event/service/event.module';
+import { AnalyticsModule } from './server/analytics/service/analytics.module';
+import { AnalyticsController } from './server/analytics/analytics.controller';
 
 @Module({
   imports: [
@@ -19,13 +21,14 @@ import { SSEConsumeModule } from './server/sse-services/service/sse-consume.modu
     DataServicesModule,
     LoggerModule,
     ExceptionsModule,
-    ApplicationUseCasesModule,
-    ApikeyUseCasesModule,
-    DeploymentConnectionUseCasesModule,
-    PropertyUseCasesModule,
-    SSEConsumeModule
+    ApplicationModule,
+    ApikeyModule,
+    DeploymentConnectionModule,
+    PropertyModule,
+    EventModule,
+    AnalyticsModule
   ],
-  controllers: [ApplicationController, ApikeyController, DeploymentConnectionController, PropertyController],
+  controllers: [ApikeyController, ApplicationController, AnalyticsController, DeploymentConnectionController, PropertyController],
   providers: []
 })
 export class AppModule {}

@@ -4,8 +4,6 @@ import { Model } from 'mongoose';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { MongoGenericRepository } from './mongo-generic-repository';
 import {
-  DeploymentRecord,
-  DeploymentRecordDocument,
   Application,
   ApplicationDocument,
   Apikey,
@@ -19,16 +17,16 @@ import {
   Environment,
   EnvironmentDocument,
   Property,
-  PropertyDocument
+  PropertyDocument,
+  ActivityStream,
+  ActivityStreamDocument
 } from './model';
 
 @Injectable()
 export class MongoDataServices implements IDataServices, OnApplicationBootstrap {
-  deploymentRecord: MongoGenericRepository<DeploymentRecord>;
+  application: MongoGenericRepository<Application>;
 
-  applications: MongoGenericRepository<Application>;
-
-  apikeys: MongoGenericRepository<Apikey>;
+  apikey: MongoGenericRepository<Apikey>;
 
   deploymentConnection: MongoGenericRepository<DeploymentConnection>;
 
@@ -40,9 +38,9 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
 
   property: MongoGenericRepository<Property>;
 
+  activityStream: MongoGenericRepository<ActivityStream>;
+
   constructor(
-    @InjectModel(DeploymentRecord.name)
-    private DeploymentRecordRepository: Model<DeploymentRecordDocument>,
     @InjectModel(Application.name)
     private ApplicationRepository: Model<ApplicationDocument>,
     @InjectModel(Apikey.name)
@@ -56,17 +54,19 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
     @InjectModel(EventTimeTrace.name)
     private EventTimeTraceRepository: Model<EventTimeTraceDocument>,
     @InjectModel(Property.name)
-    private PropertyRepository: Model<PropertyDocument>
+    private PropertyRepository: Model<PropertyDocument>,
+    @InjectModel(ActivityStream.name)
+    private ActivityStreamRepository: Model<ActivityStreamDocument>
   ) {}
 
   onApplicationBootstrap() {
-    this.deploymentRecord = new MongoGenericRepository<DeploymentRecord>(this.DeploymentRecordRepository);
-    this.applications = new MongoGenericRepository<Application>(this.ApplicationRepository);
-    this.apikeys = new MongoGenericRepository<Apikey>(this.ApikeyRepository);
+    this.application = new MongoGenericRepository<Application>(this.ApplicationRepository);
+    this.apikey = new MongoGenericRepository<Apikey>(this.ApikeyRepository);
     this.deploymentConnection = new MongoGenericRepository<DeploymentConnection>(this.DeploymentConnectionRepository);
     this.event = new MongoGenericRepository<Event>(this.EventRepository);
     this.eventTimeTrace = new MongoGenericRepository<EventTimeTrace>(this.EventTimeTraceRepository);
     this.environment = new MongoGenericRepository<Environment>(this.EnvironmentRepository);
     this.property = new MongoGenericRepository<Property>(this.PropertyRepository);
+    this.activityStream = new MongoGenericRepository<ActivityStream>(this.ActivityStreamRepository);
   }
 }

@@ -1,30 +1,29 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
-import { LoggerService } from 'src/configuration/logger/logger.service';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreatePropertyDto } from './property.dto';
-import { PropertyFactory } from './service/property.factory';
 import { PropertyService } from './service/property.service';
 
 @Controller('property')
+@ApiTags('Property')
 export class PropertyController {
-  constructor(private propertyUseCases: PropertyService, private propertyFactoryService: PropertyFactory, private loggerService: LoggerService) {}
+  constructor(private readonly propertyService: PropertyService) {}
 
   @Get()
   @ApiOperation({ description: 'Get the Property Details.' })
   async getById(@Query('identifier') identifier: string) {
-    if (!identifier) return this.propertyUseCases.getAllProperties();
-    return this.propertyUseCases.getPropertyDetails(identifier);
+    if (!identifier) return this.propertyService.getAllProperties();
+    return this.propertyService.getPropertyDetails(identifier);
   }
 
   @Post()
   @ApiOperation({ description: 'Create a New Property.' })
   async createProperty(@Body() propertyDto: CreatePropertyDto): Promise<any> {
-    return this.propertyUseCases.createProperty(propertyDto);
+    return this.propertyService.createProperty(propertyDto);
   }
 
   @Post('/environment')
   @ApiOperation({ description: 'Create a New Environment.' })
   async createEnvironment(@Body() propertyDto: CreatePropertyDto): Promise<any> {
-    return this.propertyUseCases.createEnvironment(propertyDto);
+    return this.propertyService.createEnvironment(propertyDto);
   }
 }

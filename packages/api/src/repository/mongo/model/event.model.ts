@@ -11,7 +11,7 @@ export class Event {
   propertyIdentifier: string;
 
   @Prop({ required: true })
-  applicationName: string;
+  applicationIdentifier: string;
 
   @Prop({ required: true })
   env: string;
@@ -29,7 +29,7 @@ export class Event {
   branch: string;
 
   @Prop({ required: true })
-  code: string;
+  action: string;
 
   @Prop({ required: true })
   state: string;
