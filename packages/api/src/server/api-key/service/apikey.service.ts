@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { Action } from 'src/server/analytics/activity-stream.entity';
 import { AnalyticsService } from 'src/server/analytics/service/analytics.service';
-import { CreateApikeyDto } from 'src/server/api-key/apikey.dto';
+import { CreateApikeyDto, ResponseApikeyDto } from 'src/server/api-key/apikey.dto';
 import { Apikey } from 'src/server/api-key/apikey.entity';
 import { Source } from 'src/server/property/property.entity';
 import { ApikeyFactory } from './apikey.factory';
-
+import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class ApikeyService {
   constructor(
@@ -15,14 +15,28 @@ export class ApikeyService {
     private readonly analyticsService: AnalyticsService
   ) {}
 
-  getApikeyByProperty(propertyIdentifier: string): Promise<Apikey[]> {
-    return this.dataServices.apikey.getByAny({ propertyIdentifier });
+  async getApikeyByProperty(propertyIdentifier: string): Promise<ResponseApikeyDto[]> {
+    const apiKeys = await this.dataServices.apikey.getByAny({ propertyIdentifier });
+    const apiKeysResponse: ResponseApikeyDto[] = [];
+    apiKeys.forEach(async (apiKey) => {
+      const tmpApiKey = new ResponseApikeyDto();
+      tmpApiKey.propertyIdentifier = apiKey.propertyIdentifier;
+      tmpApiKey.label = apiKey.label;
+      tmpApiKey.env = apiKey.env;
+      tmpApiKey.shortKey = apiKey.shortKey;
+      tmpApiKey.createdBy = apiKey.createdBy;
+      tmpApiKey.createdAt = apiKey.createdAt;
+      apiKeysResponse.push(tmpApiKey);
+    });
+    return apiKeysResponse;
   }
 
-  createApikey(createApikeyDto: CreateApikeyDto): Promise<Apikey> {
-    const apikey = this.apikeyFactoryService.createNewApikey(createApikeyDto);
+  createApikey(createApikeyDto: CreateApikeyDto): any {
+    const key = uuidv4();
+    const apikey = this.apikeyFactoryService.createNewApikey(createApikeyDto, key);
     this.analyticsService.createActivityStream(createApikeyDto.propertyIdentifier, Action.APIKEY_CREATED, createApikeyDto.env.toString());
-    return this.dataServices.apikey.create(apikey);
+    this.dataServices.apikey.create(apikey);
+    return { key };
   }
 
   async deleteApiKey(shortKey: string): Promise<Apikey> {

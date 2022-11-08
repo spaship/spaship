@@ -28,4 +28,11 @@ export class CreateApikeyDto {
   createdBy: string;
 }
 
-export class UpdateApikeyDto extends PartialType(CreateApikeyDto) {}
+export class ResponseApikeyDto extends PartialType(CreateApikeyDto) {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  shortKey: string;
+
+  createdAt: Date;
+}

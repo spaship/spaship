@@ -10,7 +10,7 @@ export class ApikeyController {
 
   @Get(':propertyIdentifier')
   async getApiKeyByProperty(@Param('propertyIdentifier') propertyIdentifier: string) {
-    return this.apiKeyService.getApikeyByProperty(propertyIdentifier);
+    return await this.apiKeyService.getApikeyByProperty(propertyIdentifier);
   }
 
   @Post()
