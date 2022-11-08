@@ -21,6 +21,9 @@ async function bootstrap() {
   // filter
   app.useGlobalFilters(new AllExceptionFilter(new LoggerService()));
 
+  // cors
+  app.enableCors();
+
   // interceptors
   app.useGlobalInterceptors(new LoggingInterceptor(new LoggerService()));
   app.useGlobalInterceptors(new ResponseInterceptor());
