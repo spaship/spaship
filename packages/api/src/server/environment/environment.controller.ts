@@ -17,8 +17,8 @@ export class EnvironmentController {
 
   @Get('/:propertyIdentifier')
   @ApiOperation({ description: 'Get Environments for the Property.' })
-  async getById(@Param('propertyIdentifier') propertyIdentifier: string, @Query('isEph') isEph: boolean): Promise<Environment[]> {
-    return this.environmentService.getEnvironmentByProperty(propertyIdentifier);
+  async getById(@Param('propertyIdentifier') propertyIdentifier: string, @Query('isEph') isEph: string): Promise<Environment[]> {
+    return this.environmentService.getEnvironmentByProperty(propertyIdentifier, isEph);
   }
 
   @Post()

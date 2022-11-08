@@ -26,8 +26,10 @@ export class EnvironmentService {
     return this.dataServices.environment.getAll();
   }
 
-  async getEnvironmentByProperty(propertyIdentifier: string): Promise<Environment[]> {
-    return this.dataServices.environment.getByAny({ propertyIdentifier, isEph: false });
+  async getEnvironmentByProperty(propertyIdentifier: string, isEphReq: string): Promise<Environment[]> {
+    let isEph = false;
+    if (isEphReq === 'true') isEph = true;
+    return this.dataServices.environment.getByAny({ propertyIdentifier, isEph });
   }
 
   async createEnvironment(createEnvironmentDto: CreateEnvironmentDto): Promise<any> {
