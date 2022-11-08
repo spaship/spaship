@@ -7,7 +7,7 @@ import { EnvironmentService } from './service/environment.service';
 @Controller('environment')
 @ApiTags('Environment')
 export class EnvironmentController {
-  constructor(private readonly environmentService: EnvironmentService) { }
+  constructor(private readonly environmentService: EnvironmentService) {}
 
   @Get()
   @ApiOperation({ description: 'Get the Environments.' })
@@ -25,5 +25,11 @@ export class EnvironmentController {
   @ApiOperation({ description: 'Create a New Environment.' })
   async createEnvironment(@Body() environmentDto: CreateEnvironmentDto): Promise<Environment> {
     return this.environmentService.createEnvironment(environmentDto);
+  }
+
+  @Get('/delete/:propertyIdentifier/:env')
+  @ApiOperation({ description: 'Delete environment for Property (Ephemeral).' })
+  async deleteProperty(@Param('propertyIdentifier') propertyIdentifier: string, @Param('env') env: string) {
+    return this.environmentService.deleteEnvironment(propertyIdentifier, env);
   }
 }

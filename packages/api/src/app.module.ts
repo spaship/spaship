@@ -16,6 +16,7 @@ import { AnalyticsModule } from './server/analytics/service/analytics.module';
 import { AnalyticsController } from './server/analytics/analytics.controller';
 import { EnvironmentModule } from './server/environment/service/environment.module';
 import { EnvironmentController } from './server/environment/environment.controller';
+import { AgendaModule } from './server/agenda/agenda.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { EnvironmentController } from './server/environment/environment.controll
     PropertyModule,
     EnvironmentModule,
     EventModule,
-    AnalyticsModule
+    AnalyticsModule,
+    AgendaModule
   ],
   controllers: [
     ApikeyController,

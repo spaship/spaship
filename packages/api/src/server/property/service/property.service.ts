@@ -55,7 +55,7 @@ export class PropertyService {
 
   async getDeploymentRecord(cluster: string) {
     const deploymentConnection = await this.dataServices.deploymentConnection.getByAny({
-      cluster: cluster
+      cluster
     });
     const deploymentRecord = new DeploymentRecord();
     if (deploymentConnection.length === 1) {

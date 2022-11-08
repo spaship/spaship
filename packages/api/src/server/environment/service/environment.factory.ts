@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { DIRECTORY_CONFIGURATION } from 'src/configuration';
@@ -16,6 +17,8 @@ export class EnvironmentFactory {
   constructor(
     private readonly exceptionService: ExceptionsService,
     private readonly logger: LoggerService,
+    private readonly httpService: HttpService,
+    @Inject(forwardRef(() => ApplicationService))
     private readonly applicationService: ApplicationService
   ) {}
 
@@ -63,5 +66,9 @@ export class EnvironmentFactory {
     } catch (err) {
       this.exceptionService.internalServerErrorException(err);
     }
+  }
+
+  deleteRequest(payload: Object, deploymentBaseURL: string): Promise<any> {
+    return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/environment/purge`, payload);
   }
 }
