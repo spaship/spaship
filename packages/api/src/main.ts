@@ -21,9 +21,6 @@ async function bootstrap() {
   // filter
   app.useGlobalFilters(new AllExceptionFilter(new LoggerService()));
 
-  // cors
-  app.enableCors();
-
   // interceptors
   app.useGlobalInterceptors(new LoggingInterceptor(new LoggerService()));
   app.useGlobalInterceptors(new ResponseInterceptor());
@@ -31,7 +28,7 @@ async function bootstrap() {
     exclude: [{ path: 'api-docs', method: RequestMethod.GET }]
   });
 
-  // swagger config
+  // swagger & cors config
   if (env !== 'production') {
     const config = new DocumentBuilder()
       .addBearerAuth()
@@ -44,6 +41,10 @@ async function bootstrap() {
       deepScanRoutes: true
     });
     SwaggerModule.setup('api-docs', app, document);
+    app.enableCors({
+      origin: ['http://localhost:2468'],
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS'
+    });
   }
 
   await app.listen(2345);
