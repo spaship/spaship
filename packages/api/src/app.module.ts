@@ -5,7 +5,7 @@ import { ApikeyController } from './server/api-key/apikey.controller';
 import { ApikeyModule } from './server/api-key/service/apikey.module';
 import { ApplicationController } from './server/application/application.controller';
 import { ApplicationModule } from './server/application/service/application.module';
-import { AuthModule } from './server/auth/service/auth.module';
+import { AuthModule } from './server/auth/auth.module';
 import { DeploymentConnectionController } from './server/deployment-conncetion/deployment-connection.controller';
 import { DeploymentConnectionModule } from './server/deployment-conncetion/service/deployment-connection.module';
 import { ExceptionsModule } from './server/exceptions/exceptions.module';
