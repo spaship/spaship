@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateApplicationDto {
   @ApiProperty()
@@ -15,7 +15,18 @@ export class CreateApplicationDto {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   ref: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  ephemeral: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  actionId: string;
 }
 
 export class UpdateApplicationDto extends PartialType(CreateApplicationDto) {}

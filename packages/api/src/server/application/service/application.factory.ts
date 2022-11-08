@@ -4,10 +4,13 @@ import { AxiosResponse } from 'axios';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
+import { EPHEMERAL_ENV } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { CreateApplicationDto, UpdateApplicationDto } from 'src/server/application/application.dto';
 import { Application } from 'src/server/application/application.entity';
+import { Cluster, Environment } from 'src/server/environment/environment.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
+import { v4 as uuidv4 } from 'uuid';
 import { zip } from 'zip-a-folder';
 
 @Injectable()
@@ -93,6 +96,24 @@ export class ApplicationFactory {
     saveApplication.ref = 'NA';
     saveApplication.accessUrl = 'NA';
     return saveApplication;
+  }
+
+  isEphemeral(applicationRequest: CreateApplicationDto) {
+    return applicationRequest.ephemeral == 'true';
+  }
+
+  createEphemeralPreview(propertyIdentifier: string, actionEnabled: boolean, actionId: string, createdBy: string): Environment {
+    const ephEnvironment = new Environment();
+    ephEnvironment.propertyIdentifier = propertyIdentifier;
+    ephEnvironment.env = `ephemeral-${uuidv4().substring(0, 4)}`;
+    ephEnvironment.url = 'NA';
+    ephEnvironment.cluster = Cluster.PREPROD;
+    ephEnvironment.isEph = true;
+    ephEnvironment.actionEnabled = actionEnabled;
+    ephEnvironment.actionId = actionId;
+    ephEnvironment.expiresIn = EPHEMERAL_ENV.expiresIn.toString();
+    ephEnvironment.createdBy = createdBy;
+    return ephEnvironment;
   }
 
   getIdentifier(identifier): string {

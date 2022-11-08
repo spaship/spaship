@@ -3,9 +3,10 @@ import * as extract from 'extract-zip';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
-import { DIRECTORY_CONFIGURATION } from 'src/configuration';
+import { DIRECTORY_CONFIGURATION, EPHEMERAL_ENV } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
+import { AgendaService, JOB } from 'src/server/agenda/agenda.service';
 import { Action } from 'src/server/analytics/activity-stream.entity';
 import { AnalyticsService } from 'src/server/analytics/service/analytics.service';
 import { Application } from 'src/server/application/application.entity';
@@ -22,7 +23,8 @@ export class ApplicationService {
     private readonly logger: LoggerService,
     private readonly applicationFactory: ApplicationFactory,
     private readonly exceptionService: ExceptionsService,
-    private readonly analyticsService: AnalyticsService
+    private readonly analyticsService: AnalyticsService,
+    private readonly agendaService: AgendaService
   ) {}
 
   getAllApplications(): Promise<Application[]> {
@@ -40,17 +42,35 @@ export class ApplicationService {
     env: string
   ): Promise<Application> {
     const identifier = this.applicationFactory.getIdentifier(applicationRequest.name);
-    await this.deployApplication(applicationRequest, applicationPath, propertyIdentifier, env);
-    const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier }))[0];
-    if (!applicationDetails) {
-      const saveApplication = await this.applicationFactory.createApplicationRequest(propertyIdentifier, applicationRequest, identifier, env);
-      this.logger.log('NewApplicationDetails', JSON.stringify(saveApplication));
-      return this.dataServices.application.create(saveApplication);
+    if (this.applicationFactory.isEphemeral(applicationRequest)) {
+      const actionEnabled = !!applicationRequest.actionId;
+      const { actionId } = applicationRequest;
+      const ephemeral = (await this.dataServices.environment.getByAny({ propertyIdentifier, actionEnabled: true, actionId, isActive: true }))[0];
+      if (ephemeral) {
+        env = ephemeral.env;
+        this.logger.log('Epehemral', JSON.stringify(ephemeral));
+      } else {
+        const tmpEph = this.applicationFactory.createEphemeralPreview(propertyIdentifier, actionEnabled, actionId, 'NA');
+        await this.dataServices.environment.create(tmpEph);
+        this.logger.log('NewEpehemral', JSON.stringify(tmpEph));
+        env = tmpEph.env;
+      }
+      await this.analyticsService.createActivityStream(
+        propertyIdentifier,
+        Action.ENV_CREATED,
+        env,
+        'NA',
+        `${env} created for ${propertyIdentifier}.`,
+        'NA',
+        Source.CLI
+      );
     }
-    applicationDetails.nextRef = applicationRequest.ref;
-    applicationDetails.name = applicationRequest.name;
-    this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
-    await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier }, applicationDetails);
+    try {
+      await this.deployApplication(applicationRequest, applicationPath, propertyIdentifier, env);
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err.message);
+    }
+    const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier }))[0];
     await this.analyticsService.createActivityStream(
       propertyIdentifier,
       Action.APPLICATION_DEPLOYMENT_STARTED,
@@ -60,6 +80,25 @@ export class ApplicationService {
       'NA',
       Source.CLI
     );
+    if (this.applicationFactory.isEphemeral(applicationRequest)) {
+      const expiresIn = Number(EPHEMERAL_ENV.expiresIn);
+      const scheduledDate = new Date();
+      scheduledDate.setSeconds(scheduledDate.getSeconds() + expiresIn);
+      const agendaResponse = await this.agendaService.agenda.schedule(scheduledDate, JOB.DELETE_EPH_ENV, {
+        propertyIdentifier,
+        env
+      });
+      console.log(agendaResponse);
+    }
+    if (!applicationDetails) {
+      const saveApplication = await this.applicationFactory.createApplicationRequest(propertyIdentifier, applicationRequest, identifier, env);
+      this.logger.log('NewApplicationDetails', JSON.stringify(saveApplication));
+      return this.dataServices.application.create(saveApplication);
+    }
+    applicationDetails.nextRef = applicationRequest.ref;
+    applicationDetails.name = applicationRequest.name;
+    this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
+    await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier }, applicationDetails);
     return applicationDetails;
   }
 
