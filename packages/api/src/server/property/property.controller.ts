@@ -1,10 +1,12 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/jwt.auth.guard';
 import { CreatePropertyDto } from './property.dto';
 import { PropertyService } from './service/property.service';
 
 @Controller('property')
 @ApiTags('Property')
+@UseGuards(JwtAuthGuard)
 export class PropertyController {
   constructor(private readonly propertyService: PropertyService) {}
 

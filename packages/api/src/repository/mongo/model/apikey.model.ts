@@ -11,7 +11,7 @@ export class Apikey {
   shortKey: string;
 
   @Prop({ required: true, unique: true })
-  key: string;
+  hashKey: string;
 
   @Prop({ required: true })
   env: string[];
@@ -24,6 +24,8 @@ export class Apikey {
 
   @Prop({ required: true })
   createdBy: string;
+
+  createdAt: Date;
 }
 
 export const ApikeySchema = SchemaFactory.createForClass(Apikey);

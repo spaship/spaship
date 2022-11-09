@@ -3,7 +3,7 @@ export class Apikey {
 
   shortKey: string;
 
-  key: string;
+  hashKey: string;
 
   env: string[];
 
@@ -12,4 +12,6 @@ export class Apikey {
   expiredDate: Date;
 
   createdBy: string;
+
+  createdAt: Date;
 }

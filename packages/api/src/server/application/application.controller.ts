@@ -1,12 +1,14 @@
-import { Body, Controller, Get, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DIRECTORY_CONFIGURATION } from '../../configuration';
+import { JwtAuthGuard } from '../auth/jwt.auth.guard';
 import { CreateApplicationDto } from './application.dto';
 import { ApplicationService } from './service/application.service';
 
 @Controller('application')
 @ApiTags('Application')
+@UseGuards(JwtAuthGuard)
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
