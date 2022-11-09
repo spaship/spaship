@@ -6,6 +6,7 @@ import { AppModule } from './app.module';
 import { LoggingInterceptor } from './configuration/interceptors/logger.interceptor';
 import { ResponseFormat, ResponseInterceptor } from './configuration/interceptors/response.interceptor';
 import { LoggerService } from './configuration/logger/logger.service';
+import { TrimPipe } from './configuration/pipe/trim-pipe.pipe';
 import { AllExceptionFilter } from './server/exceptions/exception.filter';
 
 async function bootstrap() {
@@ -17,6 +18,7 @@ async function bootstrap() {
 
   // pipes
   app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new TrimPipe());
 
   // filter
   app.useGlobalFilters(new AllExceptionFilter(new LoggerService()));
