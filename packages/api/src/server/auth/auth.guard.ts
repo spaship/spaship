@@ -8,7 +8,7 @@ import { IDataServices } from 'src/repository/data-services.abstract';
 import { ApikeyFactory } from '../api-key/service/apikey.factory';
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
+export class AuthenticationGuard extends AuthGuard('jwt') {
   constructor(
     private readonly jwtService: JwtService,
     private readonly dataServices: IDataServices,
@@ -21,9 +21,11 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   /* @internal
    * Validating JWT and API Key
    * Token Format : Bearer {JWT} / Bearer {APIKey}
+   * TODO : This should be imporovsed with Authorization
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
     let bearerToken: string;
+
     try {
       bearerToken = context.getArgs()[0].headers.authorization.split(' ')[1];
     } catch (err) {
@@ -34,6 +36,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       jwt_decode(bearerToken);
     } catch (err) {
       // Validating the API Key
+
       const { propertyIdentifier, env } = context.getArgs()[0].params;
       if (propertyIdentifier && env) {
         const hashKey = this.apikeyFactory.getHashKey(bearerToken);

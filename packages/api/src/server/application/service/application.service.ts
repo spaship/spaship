@@ -88,7 +88,7 @@ export class ApplicationService {
         propertyIdentifier,
         env
       });
-      console.log(agendaResponse);
+      this.logger.log('Agenda', JSON.stringify(agendaResponse));
     }
     if (!applicationDetails) {
       const saveApplication = await this.applicationFactory.createApplicationRequest(propertyIdentifier, applicationRequest, identifier, env);

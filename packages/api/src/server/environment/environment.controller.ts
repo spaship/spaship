@@ -1,13 +1,13 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/jwt.auth.guard';
+import { AuthenticationGuard } from '../auth/auth.guard';
 import { CreateEnvironmentDto } from './environment.dto';
 import { Environment } from './environment.entity';
 import { EnvironmentService } from './service/environment.service';
 
 @Controller('environment')
 @ApiTags('Environment')
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthenticationGuard)
 export class EnvironmentController {
   constructor(private readonly environmentService: EnvironmentService) {}
 
