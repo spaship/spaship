@@ -26,6 +26,10 @@ export class PropertyService {
     return this.dataServices.property.getAll();
   }
 
+  /* @internal
+   * Get the property details based on the propertyIdentifier
+   * It'll append the environment details linked with the particular property
+   */
   async getPropertyDetails(propertyIdentifier: string): Promise<PropertyResponseDto> {
     const propertyResponse = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
     const environmentResponse = await this.dataServices.environment.getByAny({ propertyIdentifier });
@@ -37,6 +41,12 @@ export class PropertyService {
     return response;
   }
 
+  /* @internal
+   * This will create the property
+   * Transform the request to property and environment entity
+   * Initialize the deployment record for the new property
+   * Save the details related to property
+   */
   async createProperty(createPropertyDto: CreatePropertyDto): Promise<PropertyResponseDto> {
     const checkProperty = await this.dataServices.property.getByAny({
       identifier: createPropertyDto.identifier
@@ -53,10 +63,12 @@ export class PropertyService {
     return this.getPropertyDetails(createPropertyDto.identifier);
   }
 
+  /* @internal
+   * This function will provide the deployment records for a particular Property
+   * If it has the deployment-connection mapping for the particular cluster
+   */
   async getDeploymentRecord(cluster: string) {
-    const deploymentConnection = await this.dataServices.deploymentConnection.getByAny({
-      cluster
-    });
+    const deploymentConnection = await this.dataServices.deploymentConnection.getByAny({ cluster });
     const deploymentRecord = new DeploymentRecord();
     if (deploymentConnection.length === 1) {
       deploymentRecord.name = deploymentConnection[0].name;

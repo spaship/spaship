@@ -5,8 +5,9 @@ import { AnalyticsService } from 'src/server/analytics/service/analytics.service
 import { CreateApikeyDto, ResponseApikeyDto } from 'src/server/api-key/apikey.dto';
 import { Apikey } from 'src/server/api-key/apikey.entity';
 import { Source } from 'src/server/property/property.entity';
-import { ApikeyFactory } from './apikey.factory';
 import { v4 as uuidv4 } from 'uuid';
+import { ApikeyFactory } from './apikey.factory';
+
 @Injectable()
 export class ApikeyService {
   constructor(

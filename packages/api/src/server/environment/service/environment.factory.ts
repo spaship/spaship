@@ -33,12 +33,15 @@ export class EnvironmentFactory {
     return newEnvironment;
   }
 
+  /* @internal
+   * Environment initialization and the config creation
+   * Creation of environment in the cluster
+   */
   async initializeEnvironment(propertyRequest: Property, environmentRequest: Environment): Promise<any> {
     const initializeEnvironment = new CreateApplicationDto();
     initializeEnvironment.name = 'envInit';
     initializeEnvironment.ref = '0.0.0';
     initializeEnvironment.path = '.';
-
     const spashipFile = {
       websiteVersion: 'v1',
       websiteName: propertyRequest.identifier,
@@ -46,7 +49,6 @@ export class EnvironmentFactory {
       mapping: initializeEnvironment.path,
       environments: [{ name: environmentRequest.env, updateRestriction: false, exclude: false, ns: propertyRequest.namespace }]
     };
-
     this.logger.log('SpashipFile', JSON.stringify(spashipFile));
     const { baseDir } = DIRECTORY_CONFIGURATION;
     const fileOriginalName = propertyRequest.identifier;
@@ -68,6 +70,7 @@ export class EnvironmentFactory {
     }
   }
 
+  // @internal Delete the environment from the property namespace
   deleteRequest(payload: Object, deploymentBaseURL: string): Promise<any> {
     return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/environment/purge`, payload);
   }

@@ -26,12 +26,22 @@ export class EnvironmentService {
     return this.dataServices.environment.getAll();
   }
 
+  /* @internal
+   * Get the environment details based on the propertyIdentifier & ephemeral preview
+   * Need to pass the isEph as true for the ephemeral record
+   */
   async getEnvironmentByProperty(propertyIdentifier: string, isEphReq: string): Promise<Environment[]> {
     let isEph = false;
     if (isEphReq === 'true') isEph = true;
     return this.dataServices.environment.getByAny({ propertyIdentifier, isEph });
   }
 
+  /* @internal
+   * Create environment for the property
+   * Create the deployment record for the cluster if it's not available
+   * Initialize environment in the cluster for the property
+   * Save the details related to environment (property details & activity stream)
+   */
   async createEnvironment(createEnvironmentDto: CreateEnvironmentDto): Promise<any> {
     const checkPropertyAndEnv = await this.dataServices.environment.getByAny({
       propertyIdentifier: createEnvironmentDto.propertyIdentifier,
@@ -54,6 +64,11 @@ export class EnvironmentService {
     return environment;
   }
 
+  /* @internal
+   * Delete environment for the property (only ephemeral environments deletion are allowed)
+   * Start deleting the environment and the related application
+   * Save the deleted environment and application details into activity stream
+   */
   async deleteEnvironment(propertyIdentifier: string, env: string, createdBy?: string): Promise<any> {
     if (!env.includes('ephemeral'))
       this.exceptionService.badRequestException({ message: 'Only Ephemeral Environment can be deleted, please contact SPAship team.' });

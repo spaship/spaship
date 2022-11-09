@@ -14,7 +14,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { zip } from 'zip-a-folder';
 
 @Injectable()
-/** @internal ApplicationFactoryService is for the business logics */
 export class ApplicationFactory {
   constructor(
     private readonly logger: LoggerService,
@@ -22,6 +21,12 @@ export class ApplicationFactory {
     private readonly exceptionService: ExceptionsService
   ) {}
 
+  /* @internal
+   * Create the spaship config (.spaship) from the application
+   * Check the distribution folder from the archive
+   * Write the .spaship file in the distribution folder
+   * Zip the distribution folder
+   */
   async createTemplateAndZip(
     appPath: string,
     ref: string,
@@ -65,6 +70,7 @@ export class ApplicationFactory {
     return zipPath;
   }
 
+  // @internal Upload the distribution folder to the deployment engine
   deploymentRequest(formData: FormData, deploymentBaseURL: string): Promise<AxiosResponse<any, any>> {
     return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/upload`, formData, {
       maxBodyLength: Infinity,
@@ -76,11 +82,6 @@ export class ApplicationFactory {
     const newApplication = new Application();
     newApplication.name = createApplicationDto.name;
     newApplication.path = createApplicationDto.path;
-    return newApplication;
-  }
-
-  updateApplication(updateApplicationDto: UpdateApplicationDto) {
-    const newApplication = new Application();
     return newApplication;
   }
 
@@ -116,6 +117,7 @@ export class ApplicationFactory {
     return ephEnvironment;
   }
 
+  // @internal generate the application identifier
   getIdentifier(identifier): string {
     return (
       encodeURIComponent(identifier)

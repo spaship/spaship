@@ -1,23 +1,23 @@
 import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
-import { Action, ActivityStream, Props } from '../activity-stream.entity';
-import { AnalyticsFactory } from './analytics.factory';
 import { fromEvent, interval, map } from 'rxjs';
 import { EventEmitter } from 'events';
+import { Action, ActivityStream, Props } from '../activity-stream.entity';
+import { AnalyticsFactory } from './analytics.factory';
 
 @Injectable()
 export class AnalyticsService {
-
   // @internal This emitter will be sharable for all the instances
   private static readonly emitter: EventEmitter = new EventEmitter();
-  private static readonly channel: string = 'activity_stream'
+
+  private static readonly channel: string = 'activity_stream';
 
   constructor(
     private readonly dataServices: IDataServices,
     private readonly analyticsFactory: AnalyticsFactory,
     private readonly logger: LoggerService
-  ) { }
+  ) {}
 
   createActivityStream(
     propertyIdentifier: string,
