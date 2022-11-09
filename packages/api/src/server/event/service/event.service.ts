@@ -13,7 +13,7 @@ export class EventService implements OnApplicationBootstrap {
     private readonly dataServices: IDataServices,
     private readonly analyticsService: AnalyticsService,
     private readonly logger: LoggerService
-  ) {}
+  ) { }
 
   async onApplicationBootstrap() {
     const deploymentConnections = await this.dataServices.deploymentConnection.getAll();

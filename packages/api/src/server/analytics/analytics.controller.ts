@@ -1,19 +1,24 @@
-import { Body, Controller, Get, Param, Post, Delete, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, Sse, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from '../auth/auth.guard';
 import { ActivityStream } from './activity-stream.entity';
 import { AnalyticsService } from './service/analytics.service';
 
-@Controller('analyitics')
+@Controller('analytics')
 @ApiTags('Analytics')
 @UseGuards(AuthenticationGuard)
 export class AnalyticsController {
-  constructor(private readonly analyticsService: AnalyticsService) {}
+  constructor(private readonly analyticsService: AnalyticsService) { }
 
   @Get('/activity-stream')
   @ApiOperation({ description: 'Get the Activity Stream.' })
   async getApiKeyByProperty(@Query('propertyIdentifier') propertyIdentifier: string): Promise<ActivityStream[]> {
     return this.analyticsService.getActivityStream(propertyIdentifier);
+  }
+
+  @Sse('events')
+  events() {
+    return this.analyticsService.subscribe();
   }
 
   @Get('/deployment/count')
