@@ -3,10 +3,10 @@ import * as extract from 'extract-zip';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
-import { DIRECTORY_CONFIGURATION, EPHEMERAL_ENV } from 'src/configuration';
+import { DIRECTORY_CONFIGURATION, EPHEMERAL_ENV, JOB } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
-import { AgendaService, JOB } from 'src/server/agenda/agenda.service';
+import { AgendaService } from 'src/server/agenda/agenda.service';
 import { Action } from 'src/server/analytics/activity-stream.entity';
 import { AnalyticsService } from 'src/server/analytics/service/analytics.service';
 import { Application } from 'src/server/application/application.entity';
@@ -145,5 +145,6 @@ export class ApplicationService {
     } catch (err) {
       this.exceptionService.internalServerErrorException(err);
     }
+    return applicationRequest;
   }
 }

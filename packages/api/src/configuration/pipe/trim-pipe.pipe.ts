@@ -1,4 +1,4 @@
-import { Injectable, PipeTransform, ArgumentMetadata, BadRequestException } from '@nestjs/common';
+import { Injectable, PipeTransform } from '@nestjs/common';
 
 @Injectable()
 export class TrimPipe implements PipeTransform {
@@ -14,7 +14,7 @@ export class TrimPipe implements PipeTransform {
     return values;
   }
 
-  transform(values: any, metadata: ArgumentMetadata) {
+  transform(values: any) {
     if (this.isObj(values)) return this.trim(values);
     return values;
   }

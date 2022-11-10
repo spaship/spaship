@@ -1,9 +1,9 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { Action } from 'src/server/analytics/activity-stream.entity';
 import { AnalyticsService } from 'src/server/analytics/service/analytics.service';
+import { Application } from 'src/server/application/application.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { Source } from 'src/server/property/property.entity';
 import { PropertyService } from 'src/server/property/service/property.service';
@@ -32,8 +32,23 @@ export class EnvironmentService {
    */
   async getEnvironmentByProperty(propertyIdentifier: string, isEphReq: string): Promise<Environment[]> {
     let isEph = false;
-    if (isEphReq === 'true') isEph = true;
-    return this.dataServices.environment.getByAny({ propertyIdentifier, isEph });
+    let applications: Application[];
+    if (isEphReq === 'true') {
+      isEph = true;
+      applications = await this.dataServices.application.getByAny({ propertyIdentifier });
+    }
+    const environments = await this.dataServices.environment.getByAny({ propertyIdentifier, isEph });
+    if (!isEph) return environments;
+    const ephEnvs = [];
+    environments.forEach((environment) => {
+      const tmpEphApps = [];
+      /* eslint-disable array-callback-return */
+      applications.find((app) => {
+        if (app.env === environment.env) tmpEphApps.push(app);
+      });
+      ephEnvs.push({ ...environment, applications: tmpEphApps });
+    });
+    return ephEnvs;
   }
 
   /* @internal

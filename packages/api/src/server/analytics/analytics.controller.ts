@@ -12,8 +12,11 @@ export class AnalyticsController {
 
   @Get('/activity-stream')
   @ApiOperation({ description: 'Get the Activity Stream.' })
-  async getApiKeyByProperty(@Query('propertyIdentifier') propertyIdentifier: string): Promise<ActivityStream[]> {
-    return this.analyticsService.getActivityStream(propertyIdentifier);
+  async getApiKeyByProperty(
+    @Query('propertyIdentifier') propertyIdentifier: string,
+    @Query('applicationIdentifier') applicationIdentifier: string
+  ): Promise<ActivityStream[]> {
+    return this.analyticsService.getActivityStream(propertyIdentifier, applicationIdentifier);
   }
 
   @Sse('events')

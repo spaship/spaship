@@ -1,10 +1,10 @@
-import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AUTH_DETAILS } from 'src/configuration';
-import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
+import { AuthGuard } from '@nestjs/passport';
 import jwt_decode from 'jwt-decode';
+import { AUTH_DETAILS } from 'src/configuration';
 import { IDataServices } from 'src/repository/data-services.abstract';
+import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { ApikeyFactory } from '../api-key/service/apikey.factory';
 
 @Injectable()
@@ -26,6 +26,7 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     let bearerToken: string;
     try {
+      /* eslint-disable prefer-destructuring */
       bearerToken = context.getArgs()[0].headers.authorization.split(' ')[1];
     } catch (err) {
       this.exceptionsService.badRequestException({ message: 'Authentication token missing.' });
@@ -45,7 +46,7 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
             this.exceptionsService.badRequestException({ message: 'API Key is expired.' });
           return true;
         }
-        this.exceptionsService.badRequestException({ message: 'Invalid Token.' });
+        this.exceptionsService.UnauthorizedException(err.message);
       }
     }
     const secret: string = this.getSecretKey();
@@ -64,7 +65,8 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
   // @internal Get the Secret key for the JWT Validation
   private getSecretKey(): string {
     const publicKey = AUTH_DETAILS.pubkey;
-    if (publicKey && publicKey.trim().length > 0) return this.formatAsPem(publicKey);
+    if (!publicKey || publicKey.trim().length === 0) this.exceptionsService.internalServerErrorException({ message: 'Public Key not found.' });
+    return this.formatAsPem(publicKey);
   }
 
   // @internal Construction of PEM for the JWT Secret

@@ -1,6 +1,6 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { Agenda } from 'agenda';
-import { DATA_BASE_CONFIGURATION } from 'src/configuration';
+import { DATA_BASE_CONFIGURATION, JOB } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { EnvironmentService } from '../environment/service/environment.service';
 import { ExceptionsService } from '../exceptions/exceptions.service';
@@ -35,8 +35,4 @@ export class AgendaService implements OnApplicationBootstrap {
       }
     });
   }
-}
-
-export enum JOB {
-  DELETE_EPH_ENV = 'DELETE_EPH_ENV'
 }

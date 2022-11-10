@@ -1,9 +1,9 @@
-import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { EventEmitter } from 'events';
+import { fromEvent } from 'rxjs';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
-import { fromEvent, interval, map } from 'rxjs';
-import { EventEmitter } from 'events';
-import { Action, ActivityStream, Props } from '../activity-stream.entity';
+import { ActivityStream, Props } from '../activity-stream.entity';
 import { AnalyticsFactory } from './analytics.factory';
 
 @Injectable()
@@ -45,19 +45,21 @@ export class AnalyticsService {
     return this.dataServices.activityStream.create(activityStream);
   }
 
-  async getActivityStream(propertyIdentifier: string): Promise<ActivityStream[]> {
+  async getActivityStream(propertyIdentifier: string, applicationIdentifier: string): Promise<ActivityStream[]> {
+    if (propertyIdentifier && applicationIdentifier)
+      return this.dataServices.activityStream.getByAny({ propertyIdentifier, 'props.applicationIdentifier': applicationIdentifier });
     if (!propertyIdentifier) return this.dataServices.activityStream.getAll();
     return this.dataServices.activityStream.getByAny({ propertyIdentifier });
   }
 
   async getDeploymentCount(propertyIdentifier: string): Promise<any> {
     const query = await this.analyticsFactory.getDeploymentCountQuery(propertyIdentifier);
-    return await this.dataServices.activityStream.aggregate(query);
+    return Promise.resolve(this.dataServices.activityStream.aggregate(query));
   }
 
   async getDeploymentCountForEnv(propertyIdentifier: string, applicationIdentifier: string): Promise<any> {
     const query = await this.analyticsFactory.getDeploymentCountForEnv(propertyIdentifier, applicationIdentifier);
-    return await this.dataServices.activityStream.aggregate(query);
+    return Promise.resolve(this.dataServices.activityStream.aggregate(query));
   }
 
   async getMonthlyDeploymentCount(propertyIdentifier: string, applicationIdentifier: string): Promise<Object> {
