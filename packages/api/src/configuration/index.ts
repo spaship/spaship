@@ -1,13 +1,9 @@
-export const DATA_BASE_CONFIGURATION = {
-  mongoConnectionString: getDatabaseConfiguration()
-};
-
 export const DIRECTORY_CONFIGURATION = {
   baseDir: './spaship_uploads'
 };
 
 export const EPHEMERAL_ENV = {
-  expiresIn: process.env.SPASHIP_EPH__TTL || 3600
+  expiresIn: process.env.SPASHIP_EPH__TTL || 100
 };
 
 export const AUTH_DETAILS = {
@@ -18,9 +14,13 @@ export const AUTH_DETAILS = {
 };
 
 function getDatabaseConfiguration() {
-  const SPASHIP_DB__MONGO__URL = process.env.SPASHIP_DB__MONGO__URL || 'localhost:27017/nest';
-  return `mongodb://${SPASHIP_DB__MONGO__URL}`;
+  const spashipMongoUrl = process.env.SPASHIP_DB__MONGO__URL || 'localhost:27017/nest';
+  return `mongodb://${spashipMongoUrl}`;
 }
+
+export const DATA_BASE_CONFIGURATION = {
+  mongoConnectionString: getDatabaseConfiguration()
+};
 
 export enum MIN {
   DEFAULT = 2,
@@ -65,3 +65,7 @@ export const VALIDATION = {
   REF: /^[_a-zA-Z0-9/ -.]+$/,
   EXPIRESIN: /^[a-zA-Z0-9]+$/
 };
+
+export enum JOB {
+  DELETE_EPH_ENV = 'DELETE_EPH_ENV'
+}

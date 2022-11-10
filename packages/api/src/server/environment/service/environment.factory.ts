@@ -66,7 +66,7 @@ export class EnvironmentFactory {
       );
       return response;
     } catch (err) {
-      this.exceptionService.internalServerErrorException(err);
+      return this.exceptionService.internalServerErrorException(err);
     }
   }
 

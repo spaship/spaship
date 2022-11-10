@@ -1,4 +1,3 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';

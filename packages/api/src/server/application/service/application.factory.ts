@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { EPHEMERAL_ENV } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
-import { CreateApplicationDto, UpdateApplicationDto } from 'src/server/application/application.dto';
+import { CreateApplicationDto } from 'src/server/application/application.dto';
 import { Application } from 'src/server/application/application.entity';
 import { Cluster, Environment } from 'src/server/environment/environment.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
@@ -36,10 +36,10 @@ export class ApplicationFactory {
     env: string,
     namespace: string
   ): Promise<string> {
-    const fileExists = async (path) => !!(await fs.promises.stat(path).catch((e) => false));
+    const fileExists = async (filePath) => !!(await fs.promises.stat(filePath).catch(() => false));
     const rootspa = 'ROOTSPA';
-    if (appPath.charAt(0) == '/' && appPath.length === 1) appPath = rootspa;
-    else if (appPath.charAt(0) == '/') appPath = appPath.substr(1);
+    if (appPath.charAt(0) === '/' && appPath.length === 1) appPath = rootspa;
+    else if (appPath.charAt(0) === '/') appPath = appPath.substr(1);
     const spashipFile = {
       websiteVersion: ref || 'v1',
       websiteName: propertyIdentifier,
@@ -100,7 +100,7 @@ export class ApplicationFactory {
   }
 
   isEphemeral(applicationRequest: CreateApplicationDto) {
-    return applicationRequest.ephemeral == 'true';
+    return applicationRequest.ephemeral === 'true';
   }
 
   createEphemeralPreview(propertyIdentifier: string, actionEnabled: boolean, actionId: string, createdBy: string): Environment {

@@ -52,6 +52,6 @@ export class ApikeyService {
       Source.MANAGER,
       JSON.stringify(apiKey)
     );
-    return await this.dataServices.apikey.delete({ shortKey });
+    return Promise.resolve(this.dataServices.apikey.delete({ shortKey }));
   }
 }

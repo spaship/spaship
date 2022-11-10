@@ -29,7 +29,7 @@ export class EventService implements OnApplicationBootstrap {
       const tmpDataService = this.dataServices;
       const tmpLogger = this.logger;
       const tmpAnalyticsService = this.analyticsService;
-      new EventSource(eventUrl).onmessage = async function (eventResponse) {
+      new EventSource(eventUrl).onmessage = async function consume(eventResponse) {
         tmpLogger.log('EventSource', eventUrl);
         tmpLogger.log('EventResponse', eventResponse.data);
         const response = JSON.parse(eventResponse.data);

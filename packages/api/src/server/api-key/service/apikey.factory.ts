@@ -20,7 +20,7 @@ export class ApikeyFactory {
   formatApikeyDate(expiration) {
     const currentDate = new Date();
     const utcDate = new Date(currentDate.getTime() + currentDate.getTimezoneOffset() * 60000);
-    utcDate.setDate(utcDate.getDate() + parseInt(expiration));
+    utcDate.setDate(utcDate.getDate() + parseInt(expiration, 10));
     return utcDate;
   }
 

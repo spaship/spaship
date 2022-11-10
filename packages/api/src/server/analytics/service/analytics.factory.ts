@@ -3,8 +3,6 @@ import { Action } from '../activity-stream.entity';
 
 @Injectable()
 export class AnalyticsFactory {
-  constructor() {}
-
   async buildAggregationQuery(searchQuery: Object, groupQuery: Object, projectionQuery: Object) {
     return [{ $match: searchQuery }, { $group: groupQuery }, { $project: projectionQuery }];
   }
@@ -55,7 +53,7 @@ export class AnalyticsFactory {
   async buildWeeklyDateFrame(): Promise<any[]> {
     const dateFrame = [];
     let recentDate = new Date();
-    for (let i = 1; i <= 4; i++) {
+    for (let i = 1; i <= 4; i += 1) {
       const endDate = recentDate;
       const startDate = new Date(recentDate);
       startDate.setDate(recentDate.getDate() - 7);

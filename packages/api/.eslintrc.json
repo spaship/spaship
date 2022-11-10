@@ -16,7 +16,9 @@
     "no-underscore-dangle": "off",
     "no-restricted-syntax": "off",
     "no-useless-escape": "off",
-    "max-classes-per-file": "off"
+    "max-classes-per-file": "off", // easy to maintain the files (eg: request & response dto in one file)
+    "no-param-reassign": "off", // handled in global pipe
+    "@typescript-eslint/no-use-before-define": "off"
   },
   "plugins": [
     "@typescript-eslint",
