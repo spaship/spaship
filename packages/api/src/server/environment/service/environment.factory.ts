@@ -60,7 +60,7 @@ export class EnvironmentFactory {
     try {
       await this.applicationService.deployApplication(initializeEnvironment, zipPath, propertyRequest.identifier, environmentRequest.env);
     } catch (err) {
-      return this.exceptionService.internalServerErrorException(err);
+      this.exceptionService.internalServerErrorException(err);
     }
   }
 
