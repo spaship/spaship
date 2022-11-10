@@ -45,7 +45,9 @@ export class AnalyticsService {
     return this.dataServices.activityStream.create(activityStream);
   }
 
-  async getActivityStream(propertyIdentifier: string): Promise<ActivityStream[]> {
+  async getActivityStream(propertyIdentifier: string, applicationIdentifier: string): Promise<ActivityStream[]> {
+    if (propertyIdentifier && applicationIdentifier)
+      return this.dataServices.activityStream.getByAny({ propertyIdentifier, 'props.applicationIdentifier': applicationIdentifier });
     if (!propertyIdentifier) return this.dataServices.activityStream.getAll();
     return this.dataServices.activityStream.getByAny({ propertyIdentifier });
   }
