@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { CreateApikeyDto } from 'src/server/api-key/apikey.dto';
 import { Apikey } from 'src/server/api-key/apikey.entity';
+
 @Injectable()
 export class ApikeyFactory {
   createNewApikey(createApikeyDto: CreateApikeyDto, key: string): Apikey {

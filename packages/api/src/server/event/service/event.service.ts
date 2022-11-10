@@ -15,6 +15,12 @@ export class EventService implements OnApplicationBootstrap {
     private readonly logger: LoggerService
   ) {}
 
+  /* @internal
+   * It'll open the connection for all the registered deployment url
+   * All the events related to deployment will be consumed and saved
+   * Process event for activity stream and final acknowledgement of deployment
+   * Calculate deployment time for the application
+   */
   async onApplicationBootstrap() {
     const deploymentConnections = await this.dataServices.deploymentConnection.getAll();
     deploymentConnections.forEach((connection) => {
@@ -30,6 +36,11 @@ export class EventService implements OnApplicationBootstrap {
         const event = processEvent(response);
         tmpLogger.log('Event', JSON.stringify(event));
         await tmpDataService.event.create(event);
+        /* @internal
+         * Post deployment jobs
+         * Update the lasted deployed version & access url to the application
+         * Calculate the time consumed for deploying an application
+         */
         if (event.action === Action.APPLICATION_DEPLOYED) {
           const searchApplication = { propertyIdentifier: event.propertyIdentifier, env: event.env, identifier: event.applicationIdentifier };
           const latestApplication = (await tmpDataService.application.getByAny(searchApplication))[0];
@@ -69,16 +80,21 @@ function processDeploymentTime(event: Event, consumedTime: string): EventTimeTra
   return eventTimeTrace;
 }
 
+/* @internal
+ * '/' is mapped with 'ROOTSPA' in the deployment Engine
+ * Rest all paths will be added followed by '/'
+ */
 function getPath(contextPath: string): string {
-  if (contextPath == null) return 'NA';
-  if (contextPath == 'ROOTSPA') return '/';
+  if (contextPath === null) return 'NA';
+  if (contextPath === 'ROOTSPA') return '/';
   return `/${contextPath}`;
 }
 
 function getUrl(accessUrl: string): string {
-  return accessUrl == null ? 'NA' : accessUrl;
+  return accessUrl === null ? 'NA' : accessUrl;
 }
 
+// @internal Final acknowledgement for application deployment
 function getAction(state: string): string {
   if (state === 'spa deployment ops performed') return Action.APPLICATION_DEPLOYED;
   return Action.APPLICATION_DEPLOYMENT_STARTED;

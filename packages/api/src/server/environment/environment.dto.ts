@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
 import { MAX, MESSAGE, MIN, VALIDATION } from 'src/configuration';
+
 export class CreateEnvironmentDto {
   @ApiProperty()
   @IsString()

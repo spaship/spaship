@@ -2,6 +2,7 @@ import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString, Matches, Length } from 'class-validator';
 import { MAX, MESSAGE, MIN, VALIDATION } from 'src/configuration';
+
 export class CreateApplicationDto {
   @ApiProperty()
   @IsString()

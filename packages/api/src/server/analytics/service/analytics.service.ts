@@ -1,11 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
+import { fromEvent, interval, map } from 'rxjs';
+import { EventEmitter } from 'events';
 import { Action, ActivityStream, Props } from '../activity-stream.entity';
 import { AnalyticsFactory } from './analytics.factory';
 
 @Injectable()
 export class AnalyticsService {
+  // @internal This emitter will be sharable for all the instances
+  private static readonly emitter: EventEmitter = new EventEmitter();
+
+  private static readonly channel: string = 'activity_stream';
+
   constructor(
     private readonly dataServices: IDataServices,
     private readonly analyticsFactory: AnalyticsFactory,
@@ -34,6 +41,7 @@ export class AnalyticsService {
     activityStream.createdBy = createdBy;
     activityStream.source = source;
     this.logger.log('ActivityStream', JSON.stringify(activityStream));
+    this.emit({ activityStream });
     return this.dataServices.activityStream.create(activityStream);
   }
 
@@ -75,5 +83,13 @@ export class AnalyticsService {
         if (response[obj.env]) response[obj.env].push(obj);
         else response[obj.env] = [obj];
     return response;
+  }
+
+  subscribe() {
+    return fromEvent(AnalyticsService.emitter, AnalyticsService.channel);
+  }
+
+  emit(data) {
+    AnalyticsService.emitter.emit(AnalyticsService.channel, data);
   }
 }
