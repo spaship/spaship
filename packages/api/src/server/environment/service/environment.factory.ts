@@ -37,7 +37,7 @@ export class EnvironmentFactory {
    * Environment initialization and the config creation
    * Creation of environment in the cluster
    */
-  async initializeEnvironment(propertyRequest: Property, environmentRequest: Environment): Promise<any> {
+  async initializeEnvironment(propertyRequest: Property, environmentRequest: Environment) {
     const initializeEnvironment = new CreateApplicationDto();
     initializeEnvironment.name = 'envInit';
     initializeEnvironment.ref = '0.0.0';
@@ -58,15 +58,9 @@ export class EnvironmentFactory {
     const zipPath = path.join(tmpDir, `../SPAship${Date.now()}.zip`);
     await zip(tmpDir, zipPath);
     try {
-      const response = await this.applicationService.deployApplication(
-        initializeEnvironment,
-        zipPath,
-        propertyRequest.identifier,
-        environmentRequest.env
-      );
-      return response;
+      await this.applicationService.deployApplication(initializeEnvironment, zipPath, propertyRequest.identifier, environmentRequest.env);
     } catch (err) {
-      return this.exceptionService.internalServerErrorException(err);
+      this.exceptionService.internalServerErrorException(err);
     }
   }
 
