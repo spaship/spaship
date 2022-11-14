@@ -6,6 +6,7 @@ import { DIRECTORY_CONFIGURATION } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { CreateApplicationDto } from 'src/server/application/application.dto';
 import { ApplicationService } from 'src/server/application/service/application.service';
+import { AuthFactory } from 'src/server/auth/auth.factory';
 import { Environment } from 'src/server/environment/environment.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { Property } from 'src/server/property/property.entity';
@@ -65,13 +66,15 @@ export class EnvironmentFactory {
   }
 
   // @internal Delete the environment from the property namespace
-  deleteRequest(payload: Object, deploymentBaseURL: string): Promise<any> {
-    return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/environment/purge`, payload);
+  async deleteRequest(payload: Object, deploymentBaseURL: string): Promise<any> {
+    const headers = { Authorization: await AuthFactory.getAccessToken() };
+    return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/environment/purge`, payload, { headers });
   }
 
   // @internal Sync the environment with the updated configuration
-  syncRequest(payload: Object, deploymentBaseURL: string, propertyIdentifier: string, env: string, namespace: string): Promise<any> {
-    const params: Object = { envName: env, websiteName: propertyIdentifier, namespace: namespace };
-    return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/environment/sync`, payload, { params: params });
+  async syncRequest(payload: Object, deploymentBaseURL: string, propertyIdentifier: string, env: string, namespace: string): Promise<any> {
+    const headers = { Authorization: await AuthFactory.getAccessToken() };
+    const params: Object = { envName: env, websiteName: propertyIdentifier, namespace };
+    return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/environment/sync`, payload, { params, headers });
   }
 }

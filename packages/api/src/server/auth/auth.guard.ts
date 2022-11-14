@@ -1,18 +1,17 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
+import * as crypto from 'crypto';
 import jwt_decode from 'jwt-decode';
 import { AUTH_DETAILS } from 'src/configuration';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
-import { ApikeyFactory } from '../api-key/service/apikey.factory';
 
 @Injectable()
 export class AuthenticationGuard extends AuthGuard('jwt') {
   constructor(
     private readonly jwtService: JwtService,
     private readonly dataServices: IDataServices,
-    private readonly apikeyFactory: ApikeyFactory,
     private readonly exceptionsService: ExceptionsService
   ) {
     super();
@@ -38,7 +37,7 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
       // @internal Validating the API Key
       const { propertyIdentifier, env } = context.getArgs()[0].params;
       if (propertyIdentifier && env) {
-        const hashKey = this.apikeyFactory.getHashKey(bearerToken);
+        const hashKey = this.getHashKeyForValidation(bearerToken);
         const response = (await this.dataServices.apikey.getByAny({ propertyIdentifier, env, hashKey }))[0];
         if (response) {
           const { expiredDate } = response;
@@ -46,7 +45,7 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
             this.exceptionsService.badRequestException({ message: 'API Key is expired.' });
           return true;
         }
-        this.exceptionsService.UnauthorizedException(err.message);
+        this.exceptionsService.UnauthorizedException({ message: 'Invalid API Key.' });
       }
     }
     const secret: string = this.getSecretKey();
@@ -84,5 +83,9 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
       }
     }
     return `${keyHeader}\n${formatKey}${keyFooter}`;
+  }
+
+  getHashKeyForValidation(key: string): string {
+    return crypto.createHash('sha256').update(key).digest('hex');
   }
 }

@@ -3,6 +3,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DIRECTORY_CONFIGURATION } from '../../configuration';
 import { AuthenticationGuard } from '../auth/auth.guard';
+import { ExceptionsService } from '../exceptions/exceptions.service';
 import { CreateApplicationDto } from './application.dto';
 import { ApplicationService } from './service/application.service';
 
@@ -10,7 +11,7 @@ import { ApplicationService } from './service/application.service';
 @ApiTags('Application')
 @UseGuards(AuthenticationGuard)
 export class ApplicationController {
-  constructor(private readonly applicationService: ApplicationService) {}
+  constructor(private readonly applicationService: ApplicationService, private readonly exceptionService: ExceptionsService) {}
 
   @Get('/property/:identifier')
   @ApiOperation({ description: 'Get the list of Properties.' })
@@ -30,6 +31,8 @@ export class ApplicationController {
   )
   @ApiOperation({ description: 'Deploy an application.' })
   async createApplication(@UploadedFile() file, @Body() applicationDto: CreateApplicationDto, @Param() params): Promise<any> {
+    const types = ['zip', 'tgz', 'gz', 'bz2', 'tar'];
+    if (!types.includes(file.mimetype.split('/')[1])) this.exceptionService.badRequestException({ message: 'Invalid file type.' });
     const application = this.applicationService.saveApplication(applicationDto, file.path, params.propertyIdentifier, params.env);
     return application;
   }
