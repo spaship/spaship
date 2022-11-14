@@ -3,7 +3,7 @@ export const DIRECTORY_CONFIGURATION = {
 };
 
 export const EPHEMERAL_ENV = {
-  expiresIn: process.env.SPASHIP_EPH__TTL || 100
+  expiresIn: process.env.SPASHIP_EPH__TTL || 3600
 };
 
 export const AUTH_DETAILS = {
@@ -11,6 +11,12 @@ export const AUTH_DETAILS = {
   realm: process.env.SPASHIP_AUTH__KEYCLOAK__REALM,
   pubkey: process.env.SPASHIP_AUTH__KEYCLOAK__PUBKEY,
   id_prop: process.env.SPASHIP_AUTH__KEYCLOAK__ID_PROP
+};
+
+export const DE_AUTH = {
+  clientId: process.env.SPASHIP_DE__CLIENT__ID,
+  clientSecret: process.env.SPASHIP_DE__CLIENT__SECRECT,
+  authTokenUrl: process.env.SPASHIP_DE__AUTH_TOKEN__URL
 };
 
 function getDatabaseConfiguration() {

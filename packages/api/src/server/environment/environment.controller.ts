@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from '../auth/auth.guard';
-import { CreateEnvironmentDto } from './environment.dto';
+import { CreateEnvironmentDto, SyncEnvironmentDto } from './environment.dto';
 import { Environment } from './environment.entity';
 import { EnvironmentService } from './service/environment.service';
 
@@ -27,6 +27,16 @@ export class EnvironmentController {
   @ApiOperation({ description: 'Create a New Environment.' })
   async createEnvironment(@Body() environmentDto: CreateEnvironmentDto): Promise<Environment> {
     return this.environmentService.createEnvironment(environmentDto);
+  }
+
+  @Post('/sync/:propertyIdentifier/:env')
+  @ApiOperation({ description: 'Sync Environment.' })
+  async syncEnvironment(
+    @Param('propertyIdentifier') propertyIdentifier: string,
+    @Param('env') env: string,
+    @Body() syncEnvironmentDto: SyncEnvironmentDto
+  ): Promise<Environment> {
+    return this.environmentService.syncEnvironment(propertyIdentifier, env, syncEnvironmentDto);
   }
 
   @Get('/delete/:propertyIdentifier/:env')

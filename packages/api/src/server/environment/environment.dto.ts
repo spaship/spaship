@@ -36,3 +36,15 @@ export class CreateEnvironmentDto {
   @IsNotEmpty()
   createdBy: string;
 }
+
+export class SyncEnvironmentDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  sync: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  createdBy: string;
+}

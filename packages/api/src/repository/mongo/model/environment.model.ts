@@ -17,6 +17,9 @@ export class Environment {
   @Prop({ required: true, default: false })
   isEph: boolean;
 
+  @Prop({ default: 'NA' })
+  sync: string;
+
   @Prop({})
   actionEnabled: boolean;
 

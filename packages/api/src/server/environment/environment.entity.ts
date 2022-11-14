@@ -7,6 +7,8 @@ export class Environment {
 
   env: string;
 
+  sync: string;
+
   isEph: boolean;
 
   actionEnabled: boolean;

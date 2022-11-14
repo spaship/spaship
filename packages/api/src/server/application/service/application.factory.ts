@@ -8,6 +8,7 @@ import { EPHEMERAL_ENV } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { CreateApplicationDto } from 'src/server/application/application.dto';
 import { Application } from 'src/server/application/application.entity';
+import { AuthFactory } from 'src/server/auth/auth.factory';
 import { Cluster, Environment } from 'src/server/environment/environment.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -71,10 +72,11 @@ export class ApplicationFactory {
   }
 
   // @internal Upload the distribution folder to the deployment engine
-  deploymentRequest(formData: FormData, deploymentBaseURL: string): Promise<AxiosResponse<any, any>> {
+  async deploymentRequest(formData: FormData, deploymentBaseURL: string): Promise<AxiosResponse<any, any>> {
+    const headers = { Authorization: await AuthFactory.getAccessToken(), ...formData.getHeaders() };
     return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/upload`, formData, {
       maxBodyLength: Infinity,
-      headers: formData.getHeaders()
+      headers
     });
   }
 
