@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
@@ -38,7 +39,8 @@ import {
 } from '@patternfly/react-icons';
 
 import { Banner, DeleteConfirmationModal, TableRowSkeleton } from '@app/components';
-import { useAddWebPropery, useGetEnvList } from '@app/services/webProperty';
+import { useAddWebProperty } from '@app/services/webProperty';
+import { useGetEnvList } from '@app/services/persistent';
 import { useCreateAPIKey, useDeleteAPIKey, useGetApiKeys } from '@app/services/apiKeys';
 import { useFormatDate, usePopUp } from '@app/hooks';
 import { pageLinks } from '@app/links';
@@ -59,17 +61,17 @@ function getExpiryDayDiff(expiry: string) {
 
 export const WebPropertyEnvPage = (): JSX.Element => {
   const { query } = useRouter();
-  const propertyName = query.propertyName as string;
+  const propertyIdentifier = query.propertyIdentifier as string;
   const { data: session } = useSession();
   const formatDate = useFormatDate();
 
-  const envList = useGetEnvList(propertyName);
-  const createAWebProp = useAddWebPropery(propertyName);
-  const apiKeys = useGetApiKeys(propertyName);
-  const createAPIKey = useCreateAPIKey(propertyName);
-  const deleteAPIKey = useDeleteAPIKey(propertyName);
+  const envList = useGetEnvList(propertyIdentifier);
+  const createAWebProp = useAddWebProperty(propertyIdentifier);
+  const apiKeys = useGetApiKeys(propertyIdentifier);
+  const createAPIKey = useCreateAPIKey(propertyIdentifier);
+  const deleteAPIKey = useDeleteAPIKey(propertyIdentifier);
 
-  const propertyTitle = envList?.data?.[0]?.propertyTitle;
+  const propertyTitle = envList?.data?.[0]?.propertyIdentifier;
 
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
     'createEnv',
@@ -83,10 +85,9 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     try {
       await createAWebProp.mutateAsync({
         ...data,
-        propertyName,
+        identifier: propertyIdentifier,
         createdBy: session?.user.email || '',
-        type: 'operator',
-        propertyTitle
+        title: propertyTitle
       });
       toast.success('Environment Created');
       handlePopUpClose('createEnv');
@@ -99,7 +100,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     try {
       const res = await createAPIKey.mutateAsync({
         ...data,
-        propertyName,
+        propertyIdentifier,
         createdBy: session?.user.email || '',
         expiresIn: getExpiryDayDiff(data.expiresIn)
       });
@@ -113,7 +114,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
   const handleDeleteAPIKey = async () => {
     try {
       await deleteAPIKey.mutateAsync({
-        propertyName,
+        propertyIdentifier,
         shortKey: popUp.deleteApiKey.data as string
       });
       handlePopUpClose('deleteApiKey');
@@ -126,8 +127,11 @@ export const WebPropertyEnvPage = (): JSX.Element => {
   return (
     <>
       <Banner
-        title={propertyName.replace('-', ' ')}
-        backRef={{ pathname: pageLinks.webPropertyDetailPage, query: { propertyName } }}
+        title={propertyIdentifier.replace('-', ' ')}
+        backRef={{
+          pathname: pageLinks.webPropertyDetailPage,
+          query: { propertyIdentifier }
+        }}
       />
       <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
         <Stack hasGutter>
@@ -173,7 +177,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                     )}
                     {envList.isSuccess &&
                       envList.data?.map((env) => (
-                        <Tr key={env.id}>
+                        <Tr key={env._id}>
                           <Td dataLabel={env.env}>{env.env}</Td>
                           <Td dataLabel={env.createdAt}>
                             <Text component={TextVariants.small}>
@@ -196,7 +200,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                               variant="inline-compact"
                               isCode
                             >
-                              {`${window.location.origin}/api/v1/applications/deploy/${env?.propertyName}/${env?.env}`}
+                              {`${window.location.origin}/api/v1/applications/deploy/${env?.propertyIdentifier}/${env?.env}`}
                             </ClipboardCopy>
                           </Td>
                         </Tr>
@@ -356,11 +360,11 @@ export const WebPropertyEnvPage = (): JSX.Element => {
       </Modal>
       <DeleteConfirmationModal
         title="Are Your Sure ? "
-        description="You are deleting this Web Property from SPAship. This operation will delete all data permanenetly."
+        description="You are deleting this Web Property from SPAship. This operation will delete all data permanently."
         variant={ModalVariant.medium}
         isOpen={popUp.deleteWebProp.isOpen}
         onClose={() => handlePopUpClose('deleteWebProp')}
-        confirmationToken={propertyName}
+        confirmationToken={propertyIdentifier}
         onSubmit={() => {}}
       />
       <DeleteConfirmationModal

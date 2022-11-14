@@ -1,6 +1,6 @@
 export type TEphemeralEnv = {
-  id: string;
-  propertyName: string;
+  _id: string;
+  propertyIdentifier: string;
   actionEnabled: boolean;
   actionId: string;
   expiresIn: number;
@@ -9,14 +9,13 @@ export type TEphemeralEnv = {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  spa: TPreviewSPA[];
+  applications: TPreviewSPA[];
 };
 
 export type TPreviewSPA = {
   _id: string;
-  propertyName: string;
+  propertyIdentifier: string;
   identifier: string;
-  name: string;
   path: string;
   userId: string;
   env: string;

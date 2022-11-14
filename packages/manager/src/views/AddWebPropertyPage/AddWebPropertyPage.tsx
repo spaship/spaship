@@ -18,7 +18,7 @@ import {
 } from '@patternfly/react-core';
 
 import { Banner, CustomRadio, CustomRadioContainer } from '@app/components';
-import { useAddWebPropery } from '@app/services/webProperty';
+import { useAddWebProperty } from '@app/services/webProperty';
 import { pageLinks } from '@app/links';
 
 import { addNewWebPropertySchema, FormData } from './AddWebProperty.utils';
@@ -33,23 +33,24 @@ export const AddWebPropertyPage = (): JSX.Element => {
     mode: 'onBlur',
     resolver: yupResolver(addNewWebPropertySchema)
   });
-  const createWebPropertyMutation = useAddWebPropery();
+  const createWebPropertyMutation = useAddWebProperty();
   const { data: session } = useSession();
   const router = useRouter();
 
-  const propertyTitle = watch('propertyTitle');
-  const propertyID = propertyTitle?.toLowerCase().replaceAll(' ', '-') || '';
+  const title = watch('title');
+  const propertyID = title?.toLowerCase().replaceAll(' ', '-') || '';
 
   const onFormSubmit = async (data: FormData) => {
     try {
       await createWebPropertyMutation.mutateAsync({
         ...data,
-        propertyName: propertyID,
+        identifier: propertyID,
         createdBy: session?.user.email || '',
-        type: 'operator'
+        title: '',
+        cluster: ''
       });
       toast.success('Web Property Created');
-      router.push(pageLinks.webPropertyDetailPage.replace('[propertyName]', propertyID));
+      router.push(pageLinks.webPropertyDetailPage.replace('[propertyIdentifier]', propertyID));
     } catch (error) {
       toast.error('Failed to create property');
     }
@@ -62,7 +63,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
         <Form onSubmit={handleSubmit(onFormSubmit)} style={{ maxWidth: '720px' }}>
           <Controller
             control={control}
-            name="propertyTitle"
+            name="title"
             defaultValue=""
             render={({ field, fieldState: { error } }) => (
               <FormGroup
@@ -144,7 +145,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
             <SplitItem>
               <Controller
                 control={control}
-                name="deploymentConnectionType"
+                name="cluster"
                 defaultValue="preprod"
                 render={({ field: { onChange, value } }) => (
                   <FormGroup

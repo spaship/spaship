@@ -1,1 +1,1 @@
-export { useGetEphemeralList } from './queries';
+export { useGetEphemeralListForProperty } from './queries';

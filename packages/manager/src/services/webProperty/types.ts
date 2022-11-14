@@ -1,11 +1,11 @@
 export type TWebProperty = {
   _id: string;
-  propertyTitle: string;
-  propertyName: string;
-  env: string;
-  deploymentConnectionType: string;
-  namespace: string;
+  title: string;
+  identifier: string;
+  cluster: string;
+  isEph: boolean;
   url: string;
+  env: string;
   type: string;
   createdBy: string;
   isActive: boolean;
@@ -14,19 +14,11 @@ export type TWebProperty = {
   id: string;
 };
 
-export type TUniqueWebProperty = {
-  propertyTitle: string;
-  propertyName: string;
-  url: string;
-  createdBy: string;
-};
-
 export type TCreateWebPropertyDTO = {
-  propertyTitle: string;
-  propertyName: string;
-  deploymentConnectionType: string;
-  url: string;
+  title: string;
+  identifier: string;
   env: string;
+  url: string;
   createdBy: string;
-  type: string;
+  cluster: string;
 };

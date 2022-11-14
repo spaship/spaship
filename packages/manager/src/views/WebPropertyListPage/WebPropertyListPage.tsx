@@ -21,12 +21,13 @@ import {
 } from '@patternfly/react-core';
 import { CubesIcon, PlusIcon } from '@patternfly/react-icons';
 
-import { useGetUniqueWebProperties } from '@app/services/webProperty';
+import { useGetWebProperties } from '@app/services/webProperty';
 import { useGetDeploymentCounts } from '@app/services/analytics';
 import { Banner } from '@app/components';
 import { useDebounce, useToggle } from '@app/hooks';
 import { pageLinks } from '@app/links';
 
+import { TWebProperty } from '@app/services/webProperty/types';
 import { WebPropertyCard } from './components/WebPropertyCard';
 import { WebPropertyCardSkeleton } from './components/WebPropertyCardSkeleton';
 
@@ -40,7 +41,7 @@ export const WebPropertyListPage = (): JSX.Element => {
   const [isFilterOpen, setIsFilterOpen] = useToggle();
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
 
-  const webProperties = useGetUniqueWebProperties();
+  const webProperties = useGetWebProperties();
   const webPropertyDeloymentCount = useGetDeploymentCounts();
 
   // loading state skeletion cards
@@ -66,12 +67,14 @@ export const WebPropertyListPage = (): JSX.Element => {
   }
 
   // search filter debounced
-  const filteredWebProperties = webProperties?.data?.filter(({ propertyTitle, createdBy }) => {
-    if (filter === MY_PROPERTY_LABEL && createdBy !== session?.user.email) {
-      return false;
+  const filteredWebProperties = (webProperties?.data as []).filter(
+    ({ title, createdBy }: TWebProperty) => {
+      if (filter === MY_PROPERTY_LABEL && createdBy !== session?.user.email) {
+        return false;
+      }
+      return title.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
     }
-    return propertyTitle.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
-  });
+  );
 
   const isWebPropertiesEmpty = filteredWebProperties?.length === 0;
 
@@ -149,22 +152,29 @@ export const WebPropertyListPage = (): JSX.Element => {
               </Link>
             </GalleryItem>
             {/* List of Properties */}
-            {filteredWebProperties?.map(({ propertyName, propertyTitle, url, createdBy }) => (
-              <GalleryItem key={propertyName}>
-                <Link href={{ pathname: pageLinks.webPropertyDetailPage, query: { propertyName } }}>
-                  <a className="text-decoration-none">
-                    <WebPropertyCard
-                      title={propertyTitle}
-                      subtitle={url}
-                      isSelected={createdBy === session?.user?.email}
-                      footer={`${
-                        webPropertyDeloymentCount?.data?.[propertyName] || 0
-                      } Deployment(s)`}
-                    />
-                  </a>
-                </Link>
-              </GalleryItem>
-            ))}
+            {filteredWebProperties?.map(
+              ({ identifier, title, url, createdBy }: Partial<TWebProperty>) => (
+                <GalleryItem key={identifier}>
+                  <Link
+                    href={{
+                      pathname: pageLinks.webPropertyDetailPage,
+                      query: { slug: identifier }
+                    }}
+                  >
+                    <a className="text-decoration-none">
+                      <WebPropertyCard
+                        title={title}
+                        subtitle={url}
+                        isSelected={createdBy === session?.user?.email}
+                        footer={`${
+                          webPropertyDeloymentCount?.data?.[identifier || ''] || 0
+                        } Deployment(s)`}
+                      />
+                    </a>
+                  </Link>
+                </GalleryItem>
+              )
+            )}
           </Gallery>
         )}
       </PageSection>
