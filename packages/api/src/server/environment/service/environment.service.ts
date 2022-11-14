@@ -7,7 +7,7 @@ import { Application } from 'src/server/application/application.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { Source } from 'src/server/property/property.entity';
 import { PropertyService } from 'src/server/property/service/property.service';
-import { CreateEnvironmentDto } from '../environment.dto';
+import { CreateEnvironmentDto, SyncEnvironmentDto } from '../environment.dto';
 import { Environment } from '../environment.entity';
 import { EnvironmentFactory } from './environment.factory';
 
@@ -139,5 +139,53 @@ export class EnvironmentService {
       this.exceptionService.internalServerErrorException(err);
     }
     return { environment, applications };
+  }
+
+  /* @internal
+   * Accept new configuration for the Sync
+   * Update the new sync configuration for the particular environment
+   */
+  async syncEnvironment(propertyIdentifier: string, env: string, syncEnvironment: SyncEnvironmentDto): Promise<Environment> {
+    const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+    this.logger.log('Environment', JSON.stringify(environment));
+    if (!environment) this.exceptionService.badRequestException({ message: 'Property and Env not found.' });
+    const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
+    const applications = await this.dataServices.application.getByAny({ propertyIdentifier, env });
+    this.logger.log('Property', JSON.stringify(property));
+    this.logger.log('Applications', JSON.stringify(applications));
+    const operatorPayload = JSON.parse(syncEnvironment.sync);
+    this.logger.log('OperatorPayload', JSON.stringify(operatorPayload));
+    const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === environment.cluster);
+    const deploymentConnection = (await this.dataServices.deploymentConnection.getByAny({ name: deploymentRecord.name }))[0];
+    this.logger.log('DeploymentConnection', JSON.stringify(deploymentConnection));
+    try {
+      const response = await this.environmentFactory.syncRequest(
+        operatorPayload,
+        deploymentConnection.baseurl,
+        propertyIdentifier,
+        env,
+        property.namespace
+      );
+      this.logger.log('OperatorResponse', JSON.stringify(response.data));
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err.message);
+    }
+    environment.sync = syncEnvironment.sync;
+    try {
+      await this.dataServices.environment.updateOne({ propertyIdentifier, env }, environment);
+      await this.analyticsService.createActivityStream(
+        propertyIdentifier,
+        Action.ENV_SYNCHED,
+        env,
+        'NA',
+        `${env} synced for ${propertyIdentifier}`,
+        syncEnvironment.createdBy,
+        Source.MANAGER,
+        JSON.stringify(syncEnvironment.sync)
+      );
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err);
+    }
+    return environment;
   }
 }

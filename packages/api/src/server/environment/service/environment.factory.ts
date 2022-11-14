@@ -68,4 +68,10 @@ export class EnvironmentFactory {
   deleteRequest(payload: Object, deploymentBaseURL: string): Promise<any> {
     return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/environment/purge`, payload);
   }
+
+  // @internal Sync the environment with the updated configuration
+  syncRequest(payload: Object, deploymentBaseURL: string, propertyIdentifier: string, env: string, namespace: string): Promise<any> {
+    const params: Object = { envName: env, websiteName: propertyIdentifier, namespace: namespace };
+    return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/environment/sync`, payload, { params: params });
+  }
 }
