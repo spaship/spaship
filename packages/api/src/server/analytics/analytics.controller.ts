@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Sse, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, Sse, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from '../auth/auth.guard';
 import { ActivityStream } from './activity-stream.entity';
@@ -19,9 +19,9 @@ export class AnalyticsController {
     return this.analyticsService.getActivityStream(propertyIdentifier, applicationIdentifier);
   }
 
-  @Sse('events')
-  events() {
-    return this.analyticsService.subscribe();
+  @Sse('events/:propertyIdentifier')
+  events(@Param('propertyIdentifier') propertyIdentifier: string) {
+    return this.analyticsService.subscribe(propertyIdentifier);
   }
 
   @Get('/deployment/count')
