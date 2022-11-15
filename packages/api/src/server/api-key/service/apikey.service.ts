@@ -24,6 +24,7 @@ export class ApikeyService {
       tmpApiKey.propertyIdentifier = apiKey.propertyIdentifier;
       tmpApiKey.label = apiKey.label;
       tmpApiKey.env = apiKey.env;
+      tmpApiKey.expiredDate = apiKey.expiredDate;
       tmpApiKey.shortKey = apiKey.shortKey;
       tmpApiKey.createdBy = apiKey.createdBy;
       tmpApiKey.createdAt = apiKey.createdAt;
