@@ -13,8 +13,6 @@ import {
   LevelItem,
   List,
   PageSection,
-  ProgressStep,
-  ProgressStepper,
   SearchInput,
   Split,
   SplitItem,
@@ -22,9 +20,6 @@ import {
   Tabs,
   TabTitleIcon,
   TabTitleText,
-  Text,
-  TextContent,
-  TextVariants,
   Title
 } from '@patternfly/react-core';
 
@@ -51,10 +46,10 @@ import {
   SearchIcon
 } from '@patternfly/react-icons';
 import { useDebounce, useFormatDate, useTabs } from '@app/hooks';
-import { useGetWebPropActivityStream } from '@app/services/analytics';
 import { pageLinks } from '@app/links';
 
 import toast from 'react-hot-toast';
+import { ActivityStream } from '@app/components/ActivityStream';
 import { Ephemeral } from './components/Ephemeral';
 import { EmptyInfo } from './components/EmptyInfo';
 
@@ -65,9 +60,6 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const [isRowExpanded, setIsRowExpanded] = useState<Record<string, boolean>>({});
   const propertyIdentifier = (query?.propertyIdentifier as string) || '';
   const formatDate = useFormatDate();
-  // TODO: To be removed once backend has a date standard
-  const dateFormatter = (date: string) =>
-    formatDate(`${date.slice(9)} ${date.split(' ')[0]}`, 'MMM DD, hh:mm a');
   const { openTab, handleTabChange } = useTabs(3);
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
@@ -75,7 +67,6 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   // api calls
   const spaProperties = useGetSPAPropGroupByName(propertyIdentifier);
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
-  const activityStream = useGetWebPropActivityStream(propertyIdentifier);
   const ephemeralPreview = useGetEphemeralListForProperty(propertyIdentifier);
 
   useEffect(() => {
@@ -293,31 +284,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
               aria-label="SPA activity"
             >
               <List>
-                <ProgressStepper isVertical>
-                  {activityStream?.data?.map((activity) => (
-                    <ProgressStep
-                      id={activity.createdAt}
-                      titleId={activity.createdAt}
-                      key={activity.createdAt}
-                      variant="success"
-                      // Description does not support elements yet. Hence they are rendered as text.
-                      description={dateFormatter(activity.createdAt)}
-                    >
-                      <TextContent className="pf-u-mb-sm">
-                        <Text component={TextVariants.small}>
-                          <Label color="blue" isCompact>
-                            {activity.props.applicationIdentifier}
-                          </Label>{' '}
-                          has been deployed for
-                          <Label color="blue" isCompact>
-                            {activity.propertyIdentifier}
-                          </Label>{' '}
-                          on {activity.env}
-                        </Text>
-                      </TextContent>
-                    </ProgressStep>
-                  ))}
-                </ProgressStepper>
+                <ActivityStream propertyIdentifier={propertyIdentifier} />
               </List>
             </Tab>
             <Tab

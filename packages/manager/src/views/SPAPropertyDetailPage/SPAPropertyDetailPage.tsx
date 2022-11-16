@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { useMemo } from 'react';
 import {
   Button,
@@ -7,13 +8,10 @@ import {
   CardTitle,
   EmptyState,
   EmptyStateIcon,
-  Label,
   Level,
   LevelItem,
   List,
   PageSection,
-  ProgressStep,
-  ProgressStepper,
   Skeleton,
   Split,
   SplitItem,
@@ -21,9 +19,6 @@ import {
   Tabs,
   TabTitleIcon,
   TabTitleText,
-  Text,
-  TextContent,
-  TextVariants,
   Title
 } from '@patternfly/react-core';
 import Link from 'next/link';
@@ -41,26 +36,21 @@ import {
 } from '@patternfly/react-charts';
 import {
   useGetMonthlyDeploymentChart,
-  useGetTotalDeploymentsForApps,
-  useGetWebPropActivityStream
+  useGetTotalDeploymentsForApps
 } from '@app/services/analytics';
-import { useFormatDate, useTabs } from '@app/hooks';
+import { useTabs } from '@app/hooks';
 import { Banner } from '@app/components';
 import { pageLinks } from '@app/links';
 import toast from 'react-hot-toast';
+import { ActivityStream } from '@app/components/ActivityStream';
 
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
-  const formatDate = useFormatDate();
-  // TODO: To be removed once backend has a date standard
-  const dateFormatter = (date: string) =>
-    formatDate(`${date.slice(9)} ${date.split(' ')[0]}`, 'MMM DD, hh:mm a');
   const propertyIdentifier = router.query.propertyIdentifier as string;
   const spaProperty = router.query.spaProperty as string;
 
   const deploymentCount = useGetTotalDeploymentsForApps(propertyIdentifier, spaProperty);
   const monthlyDeployChart = useGetMonthlyDeploymentChart(propertyIdentifier, spaProperty);
-  const activityStream = useGetWebPropActivityStream(propertyIdentifier, spaProperty);
   if (deploymentCount.isError === true) {
     toast.error(`Sorry cannot find ${spaProperty}`);
     router.push(`/properties/${propertyIdentifier}`);
@@ -250,32 +240,10 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             aria-label="SPA activity"
           >
             <List className="pf-u-mt-lg">
-              <ProgressStepper isVertical>
-                {activityStream?.data?.map((activity) => (
-                  <ProgressStep
-                    id={activity.createdAt}
-                    titleId={activity.createdAt}
-                    key={activity.createdAt}
-                    variant="success"
-                    // Description does not support elements yet. Hence they are rendered as text.
-                    description={dateFormatter(activity.createdAt)}
-                  >
-                    <TextContent className="pf-u-mb-sm">
-                      <Text component={TextVariants.small}>
-                        <Label color="blue" isCompact>
-                          {activity.props.applicationIdentifier}
-                        </Label>{' '}
-                        has been deployed for
-                        <Label color="blue" isCompact>
-                          {activity.props.env}
-                        </Label>{' '}
-                        on {activity.props.env}
-                        with {activity.message}
-                      </Text>
-                    </TextContent>
-                  </ProgressStep>
-                ))}
-              </ProgressStepper>
+              <ActivityStream
+                propertyIdentifier={propertyIdentifier}
+                applicationIdentifier={spaProperty}
+              />
             </List>
           </Tab>
         </Tabs>
