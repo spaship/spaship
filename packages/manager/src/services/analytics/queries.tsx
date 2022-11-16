@@ -19,7 +19,6 @@ const analyticsKeys = {
 };
 
 const fetchDeploymentCounts = async (): Promise<TDeploymentCount[]> => {
-  // TODO: Change to correct spelling
   const { data } = await orchestratorReq.get('/analytics/deployment/count');
   return data.data;
 };
