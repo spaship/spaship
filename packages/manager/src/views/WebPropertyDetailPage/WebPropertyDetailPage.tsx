@@ -30,8 +30,8 @@ import {
 
 import { Banner, TableRowSkeleton } from '@app/components';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
-import { useGetWebPropertyGroupedByEnv } from '@app/services/webProperty';
-import { useGetEphemeralList } from '@app/services/ephemeral';
+import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
+import { useGetEphemeralListForProperty } from '@app/services/ephemeral';
 import {
   Caption,
   ExpandableRowContent,
@@ -63,7 +63,7 @@ const URL_LENGTH_LIMIT = 50;
 export const WebPropertyDetailPage = (): JSX.Element => {
   const { query } = useRouter();
   const [isRowExpanded, setIsRowExpanded] = useState<Record<string, boolean>>({});
-  const propertyName = (query?.propertyName as string) || '';
+  const propertyIdentifier = (query?.propertyIdentifier as string) || '';
   const formatDate = useFormatDate();
   // TODO: To be removed once backend has a date standard
   const dateFormatter = (date: string) =>
@@ -73,17 +73,17 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
 
   // api calls
-  const spaProperties = useGetSPAPropGroupByName(propertyName);
-  const webProperties = useGetWebPropertyGroupedByEnv(propertyName);
-  const activityStream = useGetWebPropActivityStream(propertyName);
-  const ephemeralPreview = useGetEphemeralList(propertyName);
+  const spaProperties = useGetSPAPropGroupByName(propertyIdentifier);
+  const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
+  const activityStream = useGetWebPropActivityStream(propertyIdentifier);
+  const ephemeralPreview = useGetEphemeralListForProperty(propertyIdentifier);
 
   useEffect(() => {
     if (spaProperties.isError) {
-      toast.error(`Sorry cannot find ${propertyName}`);
+      toast.error(`Sorry cannot find ${propertyIdentifier}`);
       Router.push('/properties');
     }
-  }, [spaProperties.isError, propertyName]);
+  }, [spaProperties.isError, propertyIdentifier]);
 
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
@@ -101,7 +101,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   return (
     <>
       <Banner
-        title={propertyName.replace('-', ' ')}
+        title={propertyIdentifier.replace('-', ' ')}
         backRef={{
           pathname: pageLinks.webPropertyListPage
         }}
@@ -109,19 +109,22 @@ export const WebPropertyDetailPage = (): JSX.Element => {
         <Level>
           <LevelItem />
           <LevelItem>
-            <Link href={{ pathname: pageLinks.webPropertySettingPage, query: { propertyName } }}>
-              <a>
-                <Button variant="link" icon={<CogIcon />}>
-                  Settings
-                </Button>
-              </a>
+            <Link
+              href={{
+                pathname: pageLinks.webPropertySettingPage,
+                query: { propertyIdentifier }
+              }}
+            >
+              <Button variant="link" icon={<CogIcon />}>
+                Settings
+              </Button>
             </Link>
           </LevelItem>
         </Level>
       </Banner>
       <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
         {!spaProperties.isLoading && isSpaPropertyListEmpty ? (
-          <EmptyInfo propertyName={propertyName} />
+          <EmptyInfo propertyIdentifier={propertyIdentifier} />
         ) : (
           <Tabs activeKey={openTab} onSelect={(_, tab) => handleTabChange(tab as number)}>
             <Tab
@@ -192,8 +195,8 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                           <Td>
                             <Link
                               href={{
-                                pathname: '/properties/[propertyName]/[spaProperty]',
-                                query: { propertyName, spaProperty: identifier }
+                                pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+                                query: { propertyIdentifier, spaProperty: identifier }
                               }}
                             >
                               {spaProperties.data[identifier]?.[0]?.name}
@@ -202,8 +205,8 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                           <Td>{spaProperties.data[identifier]?.[0]?.path}</Td>
                           <Td>
                             <Split hasGutter>
-                              {spaProperties.data[identifier].map(({ id, env }) => (
-                                <SplitItem key={id}>
+                              {spaProperties.data[identifier].map(({ _id, env }) => (
+                                <SplitItem key={_id}>
                                   <Label color="gold" isCompact>
                                     {env}
                                   </Label>
@@ -230,42 +233,44 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                   </Tr>
                                 </Thead>
                                 <Tbody>
-                                  {spaProperties?.data?.[identifier].map((prop) => (
-                                    <Tr key={`expandable-property${prop.id}`}>
-                                      <Td>
-                                        <Label color="gold" isCompact>
-                                          {prop.env}
-                                        </Label>
-                                      </Td>
-                                      <Td>{prop.ref}</Td>
-                                      <Td>
-                                        <a
-                                          href={`https://${webProperties?.data?.[prop.env]?.url}`}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                        >
-                                          <ExternalLinkAltIcon />{' '}
-                                          {webProperties?.data?.[prop.env]?.url}
-                                        </a>
-                                      </Td>
+                                  {spaProperties?.data?.[identifier].map(
+                                    ({ _id, env, ref, accessUrl, updatedAt }) => (
+                                      <Tr key={_id}>
+                                        <Td>
+                                          <Label color="gold" isCompact>
+                                            {env}
+                                          </Label>
+                                        </Td>
+                                        <Td>{ref}</Td>
+                                        <Td>
+                                          <a
+                                            href={`https://${webProperties?.data?.[env]?.url}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                          >
+                                            <ExternalLinkAltIcon />{' '}
+                                            {webProperties?.data?.[env]?.url}
+                                          </a>
+                                        </Td>
 
-                                      <Td>
-                                        <a
-                                          href={prop.accessUrl}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                        >
-                                          <ExternalLinkAltIcon />{' '}
-                                          {`${prop.accessUrl.slice(0, URL_LENGTH_LIMIT)} ${
-                                            prop.accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
-                                          }`}
-                                        </a>
-                                      </Td>
-                                      <Td>
-                                        {formatDate(prop.updatedAt, 'MMM DD, YYYY - hh:mm:ss A')}
-                                      </Td>
-                                    </Tr>
-                                  ))}
+                                        <Td>
+                                          <a
+                                            href={accessUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                          >
+                                            <ExternalLinkAltIcon />{' '}
+                                            {`${accessUrl.slice(0, URL_LENGTH_LIMIT)} ${
+                                              accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
+                                            }`}
+                                          </a>
+                                        </Td>
+                                        <Td>
+                                          {formatDate(updatedAt, 'MMM DD, YYYY - hh:mm:ss A')}
+                                        </Td>
+                                      </Tr>
+                                    )
+                                  )}
                                 </Tbody>
                               </TableComposable>
                             </ExpandableRowContent>
@@ -289,33 +294,29 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             >
               <List>
                 <ProgressStepper isVertical>
-                  {activityStream?.data?.map((activity) => {
-                    // This should be changed to more activities in the future.
-                    const variant = activity.code === 'WEBSITE_CREATED' ? 'success' : 'danger';
-                    return (
-                      <ProgressStep
-                        id={activity.id}
-                        titleId={activity.id}
-                        key={activity.id}
-                        variant={variant}
-                        // Description does not support elements yet. Hence they are rendered as text.
-                        description={dateFormatter(activity.createdAt)}
-                      >
-                        <TextContent className="pf-u-mb-sm">
-                          <Text component={TextVariants.small}>
-                            <Label color="blue" isCompact>
-                              {activity.spaName}
-                            </Label>{' '}
-                            has been deployed for
-                            <Label color="blue" isCompact>
-                              {activity.propertyName}
-                            </Label>{' '}
-                            on {activity.env}
-                          </Text>
-                        </TextContent>
-                      </ProgressStep>
-                    );
-                  })}
+                  {activityStream?.data?.map((activity) => (
+                    <ProgressStep
+                      id={activity.createdAt}
+                      titleId={activity.createdAt}
+                      key={activity.createdAt}
+                      variant="success"
+                      // Description does not support elements yet. Hence they are rendered as text.
+                      description={dateFormatter(activity.createdAt)}
+                    >
+                      <TextContent className="pf-u-mb-sm">
+                        <Text component={TextVariants.small}>
+                          <Label color="blue" isCompact>
+                            {activity.props.applicationIdentifier}
+                          </Label>{' '}
+                          has been deployed for
+                          <Label color="blue" isCompact>
+                            {activity.propertyIdentifier}
+                          </Label>{' '}
+                          on {activity.env}
+                        </Text>
+                      </TextContent>
+                    </ProgressStep>
+                  ))}
                 </ProgressStepper>
               </List>
             </Tab>

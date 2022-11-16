@@ -19,18 +19,16 @@ const analyticsKeys = {
 };
 
 const fetchDeploymentCounts = async (): Promise<TDeploymentCount[]> => {
-  const { data } = await orchestratorReq.post('/event/fetch/analytics/all', {
-    count: {
-      all: true
-    }
-  });
+  const { data } = await orchestratorReq.get('/analytics/deployment/count');
   return data.data;
 };
 
-const groupDeploymentCountByPropertyName = (data: TDeploymentCount[]): Record<string, number> => {
+const groupDeploymentCountByPropertyIdentifier = (
+  data: TDeploymentCount[]
+): Record<string, number> => {
   const groupedData: Record<string, number> = {};
-  data.forEach(({ count, propertyName }) => {
-    groupedData[propertyName] = count;
+  data.forEach(({ count, propertyIdentifier }) => {
+    groupedData[propertyIdentifier] = count;
   });
 
   return groupedData;
@@ -38,16 +36,16 @@ const groupDeploymentCountByPropertyName = (data: TDeploymentCount[]): Record<st
 
 export const useGetDeploymentCounts = () =>
   useQuery(analyticsKeys.deploy, fetchDeploymentCounts, {
-    select: groupDeploymentCountByPropertyName
+    select: groupDeploymentCountByPropertyIdentifier
   });
 
 const fetchWebPropertyActivityStream = async (
   webProperty: string,
   spaName?: string
 ): Promise<TWebPropActivityStream[]> => {
-  const { data } = await orchestratorReq.post('/event/fetch/analytics/filter', {
-    activities: {
-      propertyName: webProperty,
+  const { data } = await orchestratorReq.get('/analytics/activity-stream', {
+    params: {
+      propertyIdentifier: webProperty,
       spaName
     }
   });
@@ -59,14 +57,10 @@ export const useGetWebPropActivityStream = (webProperty: string, spaName?: strin
     fetchWebPropertyActivityStream(webProperty, spaName)
   );
 
-const fetchTotalDeployment = async (
-  webProperty: string,
-  spaName?: string
-): Promise<TSPADeploymentCount[]> => {
-  const { data } = await orchestratorReq.post('/event/fetch/analytics/filter', {
-    count: {
-      propertyName: webProperty,
-      spaName
+const fetchTotalDeploymentForApps = async (webProperty: string): Promise<TSPADeploymentCount[]> => {
+  const { data } = await orchestratorReq.get('analytics/deployment/env', {
+    params: {
+      propertyIdentifier: webProperty
     }
   });
   // TODO: To be removed after backend revamp
@@ -76,20 +70,19 @@ const fetchTotalDeployment = async (
   return data.data;
 };
 
-export const useGetTotalDeployments = (webProperty: string, spaName?: string) =>
+export const useGetTotalDeploymentsForApps = (webProperty: string, spaName?: string) =>
   useQuery(analyticsKeys.spaDeployments(webProperty, spaName), () =>
-    fetchTotalDeployment(webProperty, spaName)
+    fetchTotalDeploymentForApps(webProperty)
   );
 
 const fetchMonthlyDeploymentChart = async (
   webProperty: string,
   spaName?: string
 ): Promise<Record<string, TSPAMonthlyDeploymentCount[]>> => {
-  const { data } = await orchestratorReq.post('/event/fetch/analytics/filter', {
-    chart: {
-      month: true,
-      propertyName: webProperty,
-      spaName
+  const { data } = await orchestratorReq.get('/analytics/deployment/env/month', {
+    params: {
+      propertyIdentifier: webProperty,
+      applicationIdentifier: spaName
     }
   });
   // TODO: Remove this once backend has been revamped
@@ -104,7 +97,7 @@ const fetchMonthlyDeploymentChart = async (
   return data.data;
 };
 
-export const useGetMonthyDeploymentChart = (webProperty: string, spaName?: string) =>
+export const useGetMonthlyDeploymentChart = (webProperty: string, spaName?: string) =>
   useQuery(analyticsKeys.spaMonthyDeploymentChart(webProperty, spaName), () =>
     fetchMonthlyDeploymentChart(webProperty, spaName)
   );
