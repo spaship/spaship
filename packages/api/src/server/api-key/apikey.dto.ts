@@ -41,5 +41,7 @@ export class ResponseApikeyDto extends PartialType(CreateApikeyDto) {
   @IsString()
   shortKey: string;
 
+  expiredDate: Date;
+
   createdAt: Date;
 }

@@ -41,7 +41,7 @@ export class AnalyticsService {
     activityStream.createdBy = createdBy;
     activityStream.source = source;
     this.logger.log('ActivityStream', JSON.stringify(activityStream));
-    this.emit({ activityStream });
+    this.emit(propertyIdentifier, { activityStream });
     return this.dataServices.activityStream.create(activityStream);
   }
 
@@ -87,11 +87,11 @@ export class AnalyticsService {
     return response;
   }
 
-  subscribe() {
-    return fromEvent(AnalyticsService.emitter, AnalyticsService.channel);
+  subscribe(channel: string) {
+    return fromEvent(AnalyticsService.emitter, channel);
   }
 
-  emit(data) {
-    AnalyticsService.emitter.emit(AnalyticsService.channel, data);
+  emit(channel, data) {
+    AnalyticsService.emitter.emit(channel, data);
   }
 }
