@@ -77,7 +77,6 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const activityStream = useGetWebPropActivityStream(propertyIdentifier);
   const ephemeralPreview = useGetEphemeralListForProperty(propertyIdentifier);
-  // debugger;
 
   useEffect(() => {
     if (spaProperties.isError) {

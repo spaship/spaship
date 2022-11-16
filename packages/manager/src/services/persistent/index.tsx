@@ -1,1 +1,6 @@
-export { useGetPersistentEnvList, useGetEnvList, useGetWebPropertyGroupedByEnv } from './queries';
+export {
+  useGetPersistentEnvList,
+  useGetEnvList,
+  useGetWebPropertyGroupedByEnv,
+  useAddEnv
+} from './queries';

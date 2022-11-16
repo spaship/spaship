@@ -20,7 +20,7 @@ export const useGetApiKeys = (webPropertyIdentifier: string) =>
 
 // POST Operations
 export const createAPIKey = async (dto: TCreateApiKeyDTO): Promise<TCreateApiKeyRes> => {
-  const { data } = await orchestratorReq.post('/applications/validate', dto);
+  const { data } = await orchestratorReq.post('/apikey/', dto);
   return data.data;
 };
 
@@ -36,9 +36,7 @@ export const useCreateAPIKey = (property: string) => {
 
 // DELETE OPERATIONS
 export const deleteAPIKey = async (dto: TDeleteApiKeyDTO) => {
-  const { data } = await orchestratorReq.delete(
-    `/apikey/${dto.propertyIdentifier}/${dto.shortKey}`
-  );
+  const { data } = await orchestratorReq.delete(`/apikey/${dto.shortKey}`);
   return data.data;
 };
 

@@ -158,7 +158,7 @@ export const WebPropertyListPage = (): JSX.Element => {
                   <Link
                     href={{
                       pathname: pageLinks.webPropertyDetailPage,
-                      query: { slug: identifier }
+                      query: { propertyIdentifier: identifier }
                     }}
                   >
                     <a className="text-decoration-none">

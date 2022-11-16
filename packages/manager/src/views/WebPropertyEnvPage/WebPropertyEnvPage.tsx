@@ -39,8 +39,7 @@ import {
 } from '@patternfly/react-icons';
 
 import { Banner, DeleteConfirmationModal, TableRowSkeleton } from '@app/components';
-import { useAddWebProperty } from '@app/services/webProperty';
-import { useGetEnvList } from '@app/services/persistent';
+import { useGetEnvList, useAddEnv } from '@app/services/persistent';
 import { useCreateAPIKey, useDeleteAPIKey, useGetApiKeys } from '@app/services/apiKeys';
 import { useFormatDate, usePopUp } from '@app/hooks';
 import { pageLinks } from '@app/links';
@@ -66,7 +65,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
   const formatDate = useFormatDate();
 
   const envList = useGetEnvList(propertyIdentifier);
-  const createAWebProp = useAddWebProperty(propertyIdentifier);
+  const createEnv = useAddEnv(propertyIdentifier);
   const apiKeys = useGetApiKeys(propertyIdentifier);
   const createAPIKey = useCreateAPIKey(propertyIdentifier);
   const deleteAPIKey = useDeleteAPIKey(propertyIdentifier);
@@ -83,11 +82,10 @@ export const WebPropertyEnvPage = (): JSX.Element => {
   const handleCreateEnv = async (data: EnvForm) => {
     if (!propertyTitle) return;
     try {
-      await createAWebProp.mutateAsync({
+      await createEnv.mutateAsync({
         ...data,
-        identifier: propertyIdentifier,
-        createdBy: session?.user.email || '',
-        title: propertyTitle
+        propertyIdentifier,
+        createdBy: session?.user.email || ''
       });
       toast.success('Environment Created');
       handlePopUpClose('createEnv');
@@ -104,7 +102,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
         createdBy: session?.user.email || '',
         expiresIn: getExpiryDayDiff(data.expiresIn)
       });
-      handlePopUpOpen('createApiKey', res.token);
+      handlePopUpOpen('createApiKey', res.key);
       toast.success('API Key Created');
     } catch (error) {
       toast.error('Failed to create API Key');
@@ -114,7 +112,6 @@ export const WebPropertyEnvPage = (): JSX.Element => {
   const handleDeleteAPIKey = async () => {
     try {
       await deleteAPIKey.mutateAsync({
-        propertyIdentifier,
         shortKey: popUp.deleteApiKey.data as string
       });
       handlePopUpClose('deleteApiKey');

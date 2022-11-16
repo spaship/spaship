@@ -10,3 +10,11 @@ export type TEnv = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type TCreateEnvDTO = {
+  propertyIdentifier: string;
+  env: string;
+  url: string;
+  createdBy: string;
+  cluster: string;
+};

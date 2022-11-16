@@ -45,9 +45,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
       await createWebPropertyMutation.mutateAsync({
         ...data,
         identifier: propertyID,
-        createdBy: session?.user.email || '',
-        title: '',
-        cluster: ''
+        createdBy: session?.user.email || ''
       });
       toast.success('Web Property Created');
       router.push(pageLinks.webPropertyDetailPage.replace('[propertyIdentifier]', propertyID));

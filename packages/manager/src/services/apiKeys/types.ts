@@ -17,11 +17,9 @@ export type TCreateApiKeyDTO = {
 };
 
 export type TCreateApiKeyRes = {
-  propertyIdentifier: string;
-  token: string;
+  key: string;
 };
 
 export type TDeleteApiKeyDTO = {
-  propertyIdentifier: string;
   shortKey: string;
 };
