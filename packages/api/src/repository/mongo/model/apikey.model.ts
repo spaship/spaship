@@ -20,7 +20,7 @@ export class Apikey {
   label: string;
 
   @Prop({ required: true })
-  expiredDate: Date;
+  expirationDate: Date;
 
   @Prop({ required: true })
   createdBy: string;

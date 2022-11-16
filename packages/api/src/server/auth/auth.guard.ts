@@ -40,8 +40,8 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
         const hashKey = this.getHashKeyForValidation(bearerToken);
         const response = (await this.dataServices.apikey.getByAny({ propertyIdentifier, env, hashKey }))[0];
         if (response) {
-          const { expiredDate } = response;
-          if (expiredDate && expiredDate.getTime() <= new Date().getTime())
+          const { expirationDate } = response;
+          if (expirationDate && expirationDate.getTime() <= new Date().getTime())
             this.exceptionsService.badRequestException({ message: 'API Key is expired.' });
           return true;
         }
