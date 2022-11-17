@@ -33,7 +33,7 @@ export class Application {
   @Prop({ required: true, default: true })
   isActive: boolean;
 
-  @Prop({})
+  @Prop({ default: 'NA' })
   createdBy: string;
 }
 

@@ -14,7 +14,7 @@ export class ApikeyService {
     private readonly dataServices: IDataServices,
     private readonly apikeyFactoryService: ApikeyFactory,
     private readonly analyticsService: AnalyticsService
-  ) { }
+  ) {}
 
   async getApikeyByProperty(propertyIdentifier: string): Promise<ResponseApikeyDto[]> {
     const apiKeys = await this.dataServices.apikey.getByAny({ propertyIdentifier });

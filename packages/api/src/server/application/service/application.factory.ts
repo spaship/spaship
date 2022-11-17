@@ -87,7 +87,13 @@ export class ApplicationFactory {
     return newApplication;
   }
 
-  createApplicationRequest(propertyIdentifier: string, applicationRequest: CreateApplicationDto, identifier: string, env: string): Application {
+  createApplicationRequest(
+    propertyIdentifier: string,
+    applicationRequest: CreateApplicationDto,
+    identifier: string,
+    env: string,
+    createdBy: string
+  ): Application {
     const saveApplication = new Application();
     saveApplication.propertyIdentifier = propertyIdentifier;
     saveApplication.name = applicationRequest.name;
@@ -98,6 +104,7 @@ export class ApplicationFactory {
     saveApplication.propertyIdentifier = propertyIdentifier;
     saveApplication.ref = 'NA';
     saveApplication.accessUrl = 'NA';
+    saveApplication.createdBy = createdBy;
     return saveApplication;
   }
 

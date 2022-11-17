@@ -45,7 +45,8 @@ export class ApplicationService {
     applicationRequest: CreateApplicationDto,
     applicationPath: string,
     propertyIdentifier: string,
-    env: string
+    env: string,
+    createdBy: string
   ): Promise<Application> {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
@@ -69,7 +70,7 @@ export class ApplicationService {
         env,
         'NA',
         `${env} created for ${propertyIdentifier}.`,
-        'NA',
+        createdBy,
         Source.CLI
       );
     }
@@ -85,7 +86,7 @@ export class ApplicationService {
       env,
       applicationRequest.name,
       `Deployment started for ${applicationRequest.name} at ${env}`,
-      'NA',
+      createdBy,
       Source.CLI
     );
     if (this.applicationFactory.isEphemeral(applicationRequest)) {
@@ -99,12 +100,19 @@ export class ApplicationService {
       this.logger.log('Agenda', JSON.stringify(agendaResponse));
     }
     if (!applicationDetails) {
-      const saveApplication = await this.applicationFactory.createApplicationRequest(propertyIdentifier, applicationRequest, identifier, env);
+      const saveApplication = await this.applicationFactory.createApplicationRequest(
+        propertyIdentifier,
+        applicationRequest,
+        identifier,
+        env,
+        createdBy
+      );
       this.logger.log('NewApplicationDetails', JSON.stringify(saveApplication));
       return this.dataServices.application.create(saveApplication);
     }
     applicationDetails.nextRef = applicationRequest.ref;
     applicationDetails.name = applicationRequest.name;
+    applicationDetails.createdBy = createdBy;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
     await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier }, applicationDetails);
     return applicationDetails;
