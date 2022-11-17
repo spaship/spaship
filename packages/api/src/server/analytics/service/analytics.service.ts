@@ -47,9 +47,12 @@ export class AnalyticsService {
 
   async getActivityStream(propertyIdentifier: string, applicationIdentifier: string): Promise<ActivityStream[]> {
     if (propertyIdentifier && applicationIdentifier)
-      return this.dataServices.activityStream.getByAny({ propertyIdentifier, 'props.applicationIdentifier': applicationIdentifier });
+      return this.dataServices.activityStream.getByAnyAndSorted(
+        { propertyIdentifier, 'props.applicationIdentifier': applicationIdentifier },
+        { createdAt: -1 }
+      );
     if (!propertyIdentifier) return this.dataServices.activityStream.getAll();
-    return this.dataServices.activityStream.getByAny({ propertyIdentifier });
+    return this.dataServices.activityStream.getByAnyAndSorted({ propertyIdentifier }, { createdAt: -1 });
   }
 
   async getDeploymentCount(propertyIdentifier: string): Promise<any> {
