@@ -14,6 +14,7 @@ export class PropertyFactory {
     newProperty.identifier = createPropertyDto.identifier;
     newProperty.namespace = `spaship--${createPropertyDto.identifier}`;
     newProperty.createdBy = createPropertyDto.createdBy;
+    newProperty.updatedBy = createPropertyDto.createdBy;
     newProperty.deploymentRecord = [deploymentRecord];
     this.logger.log('NewProperty', JSON.stringify(newProperty));
     return newProperty;

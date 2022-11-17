@@ -112,7 +112,7 @@ export class ApplicationService {
     }
     applicationDetails.nextRef = applicationRequest.ref;
     applicationDetails.name = applicationRequest.name;
-    applicationDetails.createdBy = createdBy;
+    applicationDetails.updatedBy = createdBy;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
     await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier }, applicationDetails);
     return applicationDetails;

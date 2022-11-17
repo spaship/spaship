@@ -146,8 +146,8 @@ export class EnvironmentService {
    * Update the new sync configuration for the particular environment
    */
   async syncEnvironment(syncEnvironment: SyncEnvironmentDto): Promise<Environment> {
-    const {propertyIdentifier} = syncEnvironment;
-    const {env} = syncEnvironment;
+    const { propertyIdentifier } = syncEnvironment;
+    const { env } = syncEnvironment;
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     this.logger.log('Environment', JSON.stringify(environment));
     if (!environment) this.exceptionService.badRequestException({ message: 'Property and Env not found.' });
@@ -173,11 +173,12 @@ export class EnvironmentService {
       this.exceptionService.internalServerErrorException(err.message);
     }
     environment.sync = syncEnvironment.sync;
+    environment.updatedBy = syncEnvironment.createdBy;
     try {
       await this.dataServices.environment.updateOne({ propertyIdentifier, env }, environment);
       await this.analyticsService.createActivityStream(
         propertyIdentifier,
-        Action.ENV_SYNCHED,
+        Action.ENV_SYNCED,
         env,
         'NA',
         `${env} synced for ${propertyIdentifier}`,

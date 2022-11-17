@@ -105,6 +105,7 @@ export class ApplicationFactory {
     saveApplication.ref = 'NA';
     saveApplication.accessUrl = 'NA';
     saveApplication.createdBy = createdBy;
+    saveApplication.updatedBy = createdBy;
     return saveApplication;
   }
 

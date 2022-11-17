@@ -20,6 +20,9 @@ export class Property {
   @Prop({ required: true })
   createdBy: string;
 
+  @Prop({ default: 'NA' })
+  updatedBy: string;
+
   @Prop({ required: true, default: true })
   isActive: boolean;
 }

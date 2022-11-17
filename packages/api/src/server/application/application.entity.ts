@@ -20,4 +20,6 @@ export class Application {
   isActive: boolean;
 
   createdBy: string;
+
+  updatedBy: string;
 }

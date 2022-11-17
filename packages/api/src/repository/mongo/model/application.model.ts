@@ -35,6 +35,9 @@ export class Application {
 
   @Prop({ default: 'NA' })
   createdBy: string;
+
+  @Prop({ default: 'NA' })
+  updatedBy: string;
 }
 
 export const ApplicationSchema = SchemaFactory.createForClass(Application);
