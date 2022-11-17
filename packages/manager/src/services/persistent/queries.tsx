@@ -29,8 +29,9 @@ export const useGetPersistentEnvList = (webPropertyIdentifier: string) =>
   );
 
 const webPropertyKeys = {
-  list: ['web-properties'] as const,
-  id: (propertyIdentifier: string) => [...webPropertyKeys.list, propertyIdentifier, 'envs'] as const
+  list: ['persistent-env'] as const,
+  id: (propertyIdentifier: string) =>
+    [...webPropertyKeys.list, propertyIdentifier, 'persistent-env'] as const
 };
 
 type UseQuerySelect<K extends any> = {

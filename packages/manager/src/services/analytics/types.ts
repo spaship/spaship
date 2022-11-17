@@ -8,7 +8,6 @@ export type TWebPropActivityStream = {
   propertyIdentifier: string;
   action: string;
   branch: string;
-  env: string;
   createdAt: string;
   _id: string;
   message: string;

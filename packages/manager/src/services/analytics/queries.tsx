@@ -40,13 +40,13 @@ export const useGetDeploymentCounts = () =>
   });
 
 const fetchWebPropertyActivityStream = async (
-  webProperty: string,
-  spaName?: string
+  propertyIdentifier: string,
+  applicationIdentifier?: string
 ): Promise<TWebPropActivityStream[]> => {
   const { data } = await orchestratorReq.get('/analytics/activity-stream', {
     params: {
-      propertyIdentifier: webProperty,
-      spaName
+      propertyIdentifier,
+      applicationIdentifier
     }
   });
   return data.data;
