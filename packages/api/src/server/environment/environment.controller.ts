@@ -29,14 +29,10 @@ export class EnvironmentController {
     return this.environmentService.createEnvironment(environmentDto);
   }
 
-  @Post('/sync/:propertyIdentifier/:env')
+  @Post('/sync')
   @ApiOperation({ description: 'Sync Environment.' })
-  async syncEnvironment(
-    @Param('propertyIdentifier') propertyIdentifier: string,
-    @Param('env') env: string,
-    @Body() syncEnvironmentDto: SyncEnvironmentDto
-  ): Promise<Environment> {
-    return this.environmentService.syncEnvironment(propertyIdentifier, env, syncEnvironmentDto);
+  async syncEnvironment(@Body() syncEnvironmentDto: SyncEnvironmentDto): Promise<Environment> {
+    return this.environmentService.syncEnvironment(syncEnvironmentDto);
   }
 
   @Get('/delete/:propertyIdentifier/:env')

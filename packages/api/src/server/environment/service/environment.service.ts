@@ -145,7 +145,9 @@ export class EnvironmentService {
    * Accept new configuration for the Sync
    * Update the new sync configuration for the particular environment
    */
-  async syncEnvironment(propertyIdentifier: string, env: string, syncEnvironment: SyncEnvironmentDto): Promise<Environment> {
+  async syncEnvironment(syncEnvironment: SyncEnvironmentDto): Promise<Environment> {
+    const {propertyIdentifier} = syncEnvironment;
+    const {env} = syncEnvironment;
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     this.logger.log('Environment', JSON.stringify(environment));
     if (!environment) this.exceptionService.badRequestException({ message: 'Property and Env not found.' });
