@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import * as crypto from 'crypto';
 import jwt_decode from 'jwt-decode';
-import { AUTH_DETAILS } from 'src/configuration';
+import { AUTH_DETAILS, AUTH_LISTING } from 'src/configuration';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 
@@ -36,17 +36,9 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
     } catch (err) {
       // @internal Validating the API Key
       const { propertyIdentifier, env } = context.getArgs()[0].params;
-      if (propertyIdentifier && env) {
-        const hashKey = this.getHashKeyForValidation(bearerToken);
-        const response = (await this.dataServices.apikey.getByAny({ propertyIdentifier, env, hashKey }))[0];
-        if (response) {
-          const { expiredDate } = response;
-          if (expiredDate && expiredDate.getTime() <= new Date().getTime())
-            this.exceptionsService.badRequestException({ message: 'API Key is expired.' });
-          return true;
-        }
-        this.exceptionsService.UnauthorizedException({ message: 'Invalid API Key.' });
-      }
+      const url = context.getArgs()[0].url;
+      if (url.startsWith(AUTH_LISTING.deploymentBaseURL)) return this.validateDeploymentRequest(propertyIdentifier, env, bearerToken, context);
+      if (url.startsWith(AUTH_LISTING.eventsBaseURL)) return this.validateEventRequest(propertyIdentifier, bearerToken);
     }
     const secret: string = this.getSecretKey();
     const options: Object = { secret, algorithms: ['RS256'] };
@@ -57,6 +49,39 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
       if (validated) return true;
     } catch (err) {
       this.exceptionsService.UnauthorizedException(err.message);
+    }
+    return false;
+  }
+
+  // @internal Request authentication for deployment api
+  private async validateDeploymentRequest(propertyIdentifier: string, env: string, bearerToken: string, context) {
+    if (propertyIdentifier && env) {
+      const hashKey = this.getHashKeyForValidation(bearerToken);
+      const response = (await this.dataServices.apikey.getByAny({ propertyIdentifier, env, hashKey }))[0];
+      if (response) {
+        context.getArgs()[0].query.createdBy = response.createdBy;
+        const { expirationDate } = response;
+        if (expirationDate && expirationDate.getTime() <= new Date().getTime())
+          this.exceptionsService.badRequestException({ message: 'API Key is expired.' });
+        return true;
+      }
+      this.exceptionsService.UnauthorizedException({ message: 'Invalid API Key.' });
+    }
+    return false;
+  }
+
+  // @internal Request authentication for events api
+  private async validateEventRequest(propertyIdentifier: string, bearerToken: string) {
+    if (propertyIdentifier) {
+      const hashKey = this.getHashKeyForValidation(bearerToken);
+      const response = (await this.dataServices.apikey.getByAny({ propertyIdentifier, hashKey }))[0];
+      if (response) {
+        const { expirationDate } = response;
+        if (expirationDate && expirationDate.getTime() <= new Date().getTime())
+          this.exceptionsService.badRequestException({ message: 'API Key is expired.' });
+        return true;
+      }
+      this.exceptionsService.UnauthorizedException({ message: 'Invalid API Key.' });
     }
     return false;
   }

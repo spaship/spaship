@@ -38,6 +38,8 @@ export class CreateApplicationDto {
   @Length(MIN.DEFAULT, MAX.DEFAULT, { message: MESSAGE.INVALID_LENGTH, always: true })
   @Matches(VALIDATION.ACTIONID, { message: MESSAGE.INVALID_ACTION_ID, always: true })
   actionId: string;
+
+  createdBy: string;
 }
 
 export class UpdateApplicationDto extends PartialType(CreateApplicationDto) {}

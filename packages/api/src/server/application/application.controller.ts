@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors, Query } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DIRECTORY_CONFIGURATION } from '../../configuration';
@@ -30,10 +30,10 @@ export class ApplicationController {
     })
   )
   @ApiOperation({ description: 'Deploy an application.' })
-  async createApplication(@UploadedFile() file, @Body() applicationDto: CreateApplicationDto, @Param() params): Promise<any> {
+  async createApplication(@UploadedFile() file, @Body() applicationDto: CreateApplicationDto, @Param() params, @Query() queries): Promise<any> {
     const types = ['zip', 'tgz', 'gz', 'bz2', 'tar'];
-    if (!types.includes(file.mimetype.split('/')[1])) this.exceptionService.badRequestException({ message: 'Invalid file type.' });
-    const application = this.applicationService.saveApplication(applicationDto, file.path, params.propertyIdentifier, params.env);
+    if (!types.includes(file?.mimetype.split('/')[1])) this.exceptionService.badRequestException({ message: 'Invalid file type.' });
+    const application = this.applicationService.saveApplication(applicationDto, file.path, params.propertyIdentifier, params.env, queries.createdBy);
     return application;
   }
 }

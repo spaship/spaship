@@ -28,6 +28,11 @@ export const DATA_BASE_CONFIGURATION = {
   mongoConnectionString: getDatabaseConfiguration()
 };
 
+export const AUTH_LISTING = {
+  deploymentBaseURL: '/api/v1/application/deploy',
+  eventsBaseURL: '/api/v1/analytics/events'
+};
+
 export enum MIN {
   DEFAULT = 2,
   URL = 3

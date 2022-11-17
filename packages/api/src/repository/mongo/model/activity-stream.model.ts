@@ -23,7 +23,7 @@ export class ActivityStream {
   @Prop({ required: true, default: 'Manager' })
   source: string;
 
-  @Prop({ required: false })
+  @Prop({ default: 'NA' })
   createdBy: string;
 }
 

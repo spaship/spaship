@@ -9,7 +9,7 @@ export class Apikey {
 
   label: string;
 
-  expiredDate: Date;
+  expirationDate: Date;
 
   createdBy: string;
 

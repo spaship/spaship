@@ -13,7 +13,7 @@ export class ApikeyFactory {
     apiKey.env = createApikeyDto.env;
     apiKey.hashKey = this.getHashKey(key);
     apiKey.shortKey = key.substring(0, 7);
-    apiKey.expiredDate = this.formatApikeyDate(createApikeyDto.expiresIn);
+    apiKey.expirationDate = this.formatApikeyDate(createApikeyDto.expiresIn);
     return apiKey;
   }
 
