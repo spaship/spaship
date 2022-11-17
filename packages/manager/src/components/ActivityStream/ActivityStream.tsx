@@ -16,6 +16,7 @@ import {
   CubeIcon,
   CubesIcon,
   OutlinedClockIcon,
+  SyncAltIcon,
   TimesIcon
 } from '@patternfly/react-icons';
 
@@ -125,7 +126,21 @@ const DeploymentKind = ({ activity }: DeploymentKindProps) => {
       </Text>
     );
   }
-  return <Text component={TextVariants.small}>Activity completed</Text>;
+  if (activity.action === 'ENV_SYNCED') {
+    return (
+      <Text component={TextVariants.small}>
+        <Label icon={<SyncAltIcon />} color="blue" isCompact>
+          Sync
+        </Label>
+        completed for
+        <Label icon={<ClusterIcon />} color="blue" isCompact>
+          {activity.props.env}
+        </Label>{' '}
+        environment
+      </Text>
+    );
+  }
+  return <Text component={TextVariants.small}>Activity completed - {activity.message}</Text>;
 };
 
 export const ActivityStream = ({
