@@ -1,0 +1,1 @@
+export { useUpdateSync } from './queries';

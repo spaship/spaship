@@ -34,6 +34,7 @@ import {
   LockIcon,
   OutlinedCalendarAltIcon,
   PlusIcon,
+  SyncAltIcon,
   TimesCircleIcon,
   TrashIcon
 } from '@patternfly/react-icons';
@@ -49,6 +50,7 @@ import {
   CreateAPIKeyForm,
   FormData as APIKeyForm
 } from './components/CreateAPIKeyForm/CreateAPIKeyForm';
+import { SyncServiceForm } from './components/SyncServiceForm';
 
 function getExpiryDayDiff(expiry: string) {
   const currentDate = new Date();
@@ -76,7 +78,8 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     'createEnv',
     'createApiKey',
     'deleteApiKey',
-    'deleteWebProp'
+    'deleteWebProp',
+    'updateSync'
   ] as const);
 
   const handleCreateEnv = async (data: EnvForm) => {
@@ -138,6 +141,17 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                 <CardTitle>Environments</CardTitle>
                 <CardActions>
                   <Button
+                    variant="primary"
+                    style={{
+                      color: '#000'
+                    }}
+                    icon={<SyncAltIcon />}
+                    isSmall
+                    onClick={() => handlePopUpOpen('updateSync')}
+                  >
+                    Update Sync
+                  </Button>
+                  <Button
                     variant="secondary"
                     icon={<PlusIcon />}
                     isSmall
@@ -155,6 +169,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                       <Th>Created</Th>
                       <Th>Publish Domain</Th>
                       <Th>Deploy URL</Th>
+                      <Th>Sync config Updated At</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -199,6 +214,11 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                             >
                               {`${window.location.origin}/api/v1/applications/deploy/${env?.propertyIdentifier}/${env?.env}`}
                             </ClipboardCopy>
+                          </Td>
+                          <Td dataLabel={env.updatedAt}>
+                            <Text component={TextVariants.small}>
+                              {new Date(env.updatedAt).toUTCString()}
+                            </Text>
                           </Td>
                         </Tr>
                       ))}
@@ -373,6 +393,19 @@ export const WebPropertyEnvPage = (): JSX.Element => {
       >
         Do you want to delete this API Key
       </DeleteConfirmationModal>
+      <Modal
+        title="Sync Service"
+        description="Add your sync service information here!"
+        variant={ModalVariant.medium}
+        isOpen={popUp.updateSync.isOpen}
+        onClose={() => handlePopUpClose('updateSync')}
+      >
+        <SyncServiceForm
+          propertyIdentifier={propertyIdentifier}
+          onClose={() => handlePopUpClose('updateSync')}
+          env={envList?.data?.length ? envList.data : []}
+        />
+      </Modal>
     </>
   );
 };
