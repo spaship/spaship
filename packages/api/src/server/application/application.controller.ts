@@ -7,7 +7,7 @@ import { ExceptionsService } from '../exceptions/exceptions.service';
 import { CreateApplicationDto } from './application.dto';
 import { ApplicationService } from './service/application.service';
 
-@Controller('application')
+@Controller('applications')
 @ApiTags('Application')
 @UseGuards(AuthenticationGuard)
 export class ApplicationController {
