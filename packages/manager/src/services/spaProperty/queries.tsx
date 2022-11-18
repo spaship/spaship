@@ -9,7 +9,7 @@ const spaPropertyKeys = {
 
 // GET Operations
 const fetchAppsForProperties = async (propertyIdentifier: string) => {
-  const { data } = await orchestratorReq.get(`/application/property/${propertyIdentifier}`);
+  const { data } = await orchestratorReq.get(`/applications/property/${propertyIdentifier}`);
   // TODO: To be removed after backend revamp
   if (data.data) {
     data.data = data.data.filter((spa: any) => !spa.env.startsWith('ephemeral'));
