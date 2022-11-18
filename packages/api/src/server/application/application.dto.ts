@@ -14,7 +14,7 @@ export class CreateApplicationDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Length(MIN.DEFAULT, MAX.DEFAULT, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Length(MIN.PATH, MAX.DEFAULT, { message: MESSAGE.INVALID_LENGTH, always: true })
   @Matches(VALIDATION.PATH, { message: MESSAGE.INVALID_PATH, always: true })
   path: string;
 
@@ -42,4 +42,4 @@ export class CreateApplicationDto {
   createdBy: string;
 }
 
-export class UpdateApplicationDto extends PartialType(CreateApplicationDto) {}
+export class UpdateApplicationDto extends PartialType(CreateApplicationDto) { }
