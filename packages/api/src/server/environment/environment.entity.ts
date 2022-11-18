@@ -21,6 +21,8 @@ export class Environment {
 
   createdBy: string;
 
+  updatedBy: string;
+
   isActive: boolean;
 }
 

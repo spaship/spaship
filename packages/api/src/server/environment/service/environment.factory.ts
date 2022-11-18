@@ -30,6 +30,7 @@ export class EnvironmentFactory {
     newEnvironment.url = createEnvironmentDto.url;
     newEnvironment.cluster = createEnvironmentDto.cluster;
     newEnvironment.createdBy = createEnvironmentDto.createdBy;
+    newEnvironment.updatedBy = createEnvironmentDto.createdBy;
     this.logger.log('NewEnvironment', JSON.stringify(newEnvironment));
     return newEnvironment;
   }

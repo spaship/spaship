@@ -9,6 +9,8 @@ export class Property {
 
   createdBy: string;
 
+  updatedBy: string;
+
   isActive: boolean;
 }
 export class DeploymentRecord {

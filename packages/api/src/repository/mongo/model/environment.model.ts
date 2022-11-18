@@ -38,6 +38,9 @@ export class Environment {
   @Prop({ required: true })
   createdBy: string;
 
+  @Prop({ default: 'NA' })
+  updatedBy: string;
+
   @Prop({ required: true, default: true })
   isActive: boolean;
 }
