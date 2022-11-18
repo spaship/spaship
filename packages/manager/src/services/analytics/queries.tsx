@@ -57,10 +57,14 @@ export const useGetWebPropActivityStream = (webProperty: string, spaName?: strin
     fetchWebPropertyActivityStream(webProperty, spaName)
   );
 
-const fetchTotalDeploymentForApps = async (webProperty: string): Promise<TSPADeploymentCount[]> => {
+const fetchTotalDeploymentForApps = async (
+  webProperty: string,
+  spaName = ''
+): Promise<TSPADeploymentCount[]> => {
   const { data } = await orchestratorReq.get('analytics/deployment/env', {
     params: {
-      propertyIdentifier: webProperty
+      propertyIdentifier: webProperty,
+      applicationIdentifier: spaName
     }
   });
   // TODO: To be removed after backend revamp
@@ -72,7 +76,7 @@ const fetchTotalDeploymentForApps = async (webProperty: string): Promise<TSPADep
 
 export const useGetTotalDeploymentsForApps = (webProperty: string, spaName?: string) =>
   useQuery(analyticsKeys.spaDeployments(webProperty, spaName), () =>
-    fetchTotalDeploymentForApps(webProperty)
+    fetchTotalDeploymentForApps(webProperty, spaName)
   );
 
 const fetchMonthlyDeploymentChart = async (
