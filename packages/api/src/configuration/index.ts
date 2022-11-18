@@ -29,7 +29,7 @@ export const DATA_BASE_CONFIGURATION = {
 };
 
 export const AUTH_LISTING = {
-  deploymentBaseURL: '/api/v1/application/deploy',
+  deploymentBaseURL: '/api/v1/applications/deploy',
   eventsBaseURL: '/api/v1/analytics/events'
 };
 
