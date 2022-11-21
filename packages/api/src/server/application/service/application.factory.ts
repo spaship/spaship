@@ -99,7 +99,7 @@ export class ApplicationFactory {
     saveApplication.name = applicationRequest.name;
     saveApplication.path = applicationRequest.path;
     saveApplication.identifier = identifier;
-    saveApplication.nextRef = applicationRequest.ref || 'NA';
+    saveApplication.nextRef = this.getNextRef(applicationRequest.ref) || 'NA';
     saveApplication.env = env;
     saveApplication.propertyIdentifier = propertyIdentifier;
     saveApplication.ref = 'NA';
@@ -107,6 +107,11 @@ export class ApplicationFactory {
     saveApplication.createdBy = createdBy;
     saveApplication.updatedBy = createdBy;
     return saveApplication;
+  }
+
+  getNextRef(ref: string): string {
+    if (ref === 'undefined') return 'NA';
+    return ref;
   }
 
   createApplicationResponse(application: Application): ApplicationResponse {

@@ -111,7 +111,7 @@ export class ApplicationService {
       this.dataServices.application.create(saveApplication);
       return this.applicationFactory.createApplicationResponse(saveApplication);
     }
-    applicationDetails.nextRef = applicationRequest?.ref || 'NA';
+    applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
     applicationDetails.name = applicationRequest.name;
     applicationDetails.updatedBy = createdBy;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
