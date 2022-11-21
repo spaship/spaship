@@ -36,6 +36,7 @@ export const AUTH_LISTING = {
 export enum MIN {
   DEFAULT = 2,
   PATH = 1,
+  ACTIONID = 1,
   URL = 3
 }
 

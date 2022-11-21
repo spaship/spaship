@@ -2,19 +2,20 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { ApiProperty } from '@nestjs/swagger';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AUTH_LISTING } from '..';
 
 export class ResponseFormat<T> {
   @ApiProperty()
-  isArray: boolean;
+  isArray?: boolean;
 
   @ApiProperty()
-  path: string;
+  path?: string;
 
   @ApiProperty()
-  duration: string;
+  duration?: string;
 
   @ApiProperty()
-  method: string;
+  method?: string;
 
   data: T;
 }
@@ -25,6 +26,9 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, ResponseFormat
     const now = Date.now();
     const httpContext = context.switchToHttp();
     const request = httpContext.getRequest();
+
+    // TODO : Custom ResponseInterceptor to be removed after the `data` handled from CLI for deployment application.
+    if (request.originalUrl.startsWith(AUTH_LISTING.deploymentBaseURL)) return next.handle().pipe(map((data) => ({ data })));
 
     return next.handle().pipe(
       map((data) => ({
