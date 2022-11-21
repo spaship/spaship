@@ -35,11 +35,31 @@ export class CreateApplicationDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  @Length(MIN.DEFAULT, MAX.DEFAULT, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Length(MIN.ACTIONID, MAX.DEFAULT, { message: MESSAGE.INVALID_LENGTH, always: true })
   @Matches(VALIDATION.ACTIONID, { message: MESSAGE.INVALID_ACTION_ID, always: true })
   actionId: string;
 
   createdBy: string;
 }
 
-export class UpdateApplicationDto extends PartialType(CreateApplicationDto) { }
+export class UpdateApplicationDto extends PartialType(CreateApplicationDto) {}
+
+export class ApplicationResponse {
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  path: string;
+
+  @ApiProperty()
+  ref: string;
+
+  @ApiProperty()
+  env: string;
+
+  @ApiProperty()
+  accessUrl: string;
+
+  @ApiProperty()
+  deployedBy: string;
+}

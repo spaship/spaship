@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { EPHEMERAL_ENV } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
-import { CreateApplicationDto } from 'src/server/application/application.dto';
+import { ApplicationResponse, CreateApplicationDto } from 'src/server/application/application.dto';
 import { Application } from 'src/server/application/application.entity';
 import { AuthFactory } from 'src/server/auth/auth.factory';
 import { Cluster, Environment } from 'src/server/environment/environment.entity';
@@ -99,7 +99,7 @@ export class ApplicationFactory {
     saveApplication.name = applicationRequest.name;
     saveApplication.path = applicationRequest.path;
     saveApplication.identifier = identifier;
-    saveApplication.nextRef = applicationRequest.ref;
+    saveApplication.nextRef = applicationRequest.ref || 'NA';
     saveApplication.env = env;
     saveApplication.propertyIdentifier = propertyIdentifier;
     saveApplication.ref = 'NA';
@@ -107,6 +107,27 @@ export class ApplicationFactory {
     saveApplication.createdBy = createdBy;
     saveApplication.updatedBy = createdBy;
     return saveApplication;
+  }
+
+  createApplicationResponse(application: Application): ApplicationResponse {
+    const applicationResponse = new ApplicationResponse();
+    applicationResponse.name = application.name;
+    applicationResponse.path = application.path;
+    applicationResponse.env = application.env;
+    applicationResponse.ref = this.getRef(application.nextRef);
+    applicationResponse.accessUrl = this.getAccessUrl(application.accessUrl);
+    applicationResponse.deployedBy = application.updatedBy;
+    return applicationResponse;
+  }
+
+  private getRef(nextRef: string): string {
+    if (nextRef === 'NA') return 'Ref is not present for this Deployment.';
+    return nextRef;
+  }
+
+  private getAccessUrl(accessUrl: string): string {
+    if (accessUrl === 'NA') return 'Please check the access url from the Manager.';
+    return accessUrl;
   }
 
   isEphemeral(applicationRequest: CreateApplicationDto) {

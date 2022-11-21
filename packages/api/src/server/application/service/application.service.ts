@@ -12,7 +12,7 @@ import { AnalyticsService } from 'src/server/analytics/service/analytics.service
 import { Application } from 'src/server/application/application.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { Source } from 'src/server/property/property.entity';
-import { CreateApplicationDto } from '../application.dto';
+import { ApplicationResponse, CreateApplicationDto } from '../application.dto';
 import { ApplicationFactory } from './application.factory';
 
 @Injectable()
@@ -47,7 +47,7 @@ export class ApplicationService {
     propertyIdentifier: string,
     env: string,
     createdBy: string
-  ): Promise<Application> {
+  ): Promise<ApplicationResponse> {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
     const identifier = this.applicationFactory.getIdentifier(applicationRequest.name);
@@ -108,14 +108,15 @@ export class ApplicationService {
         createdBy
       );
       this.logger.log('NewApplicationDetails', JSON.stringify(saveApplication));
-      return this.dataServices.application.create(saveApplication);
+      this.dataServices.application.create(saveApplication);
+      return this.applicationFactory.createApplicationResponse(saveApplication);
     }
-    applicationDetails.nextRef = applicationRequest.ref;
+    applicationDetails.nextRef = applicationRequest?.ref || 'NA';
     applicationDetails.name = applicationRequest.name;
     applicationDetails.updatedBy = createdBy;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
     await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier }, applicationDetails);
-    return applicationDetails;
+    return this.applicationFactory.createApplicationResponse(applicationDetails);
   }
 
   /* @internal

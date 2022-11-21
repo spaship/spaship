@@ -65,6 +65,14 @@ export class EventService implements OnApplicationBootstrap {
             message
           );
         }
+        if (event.action === Action.APPLICATION_DEPLOYMENT_FAILED) {
+          await tmpAnalyticsService.createActivityStream(
+            event.propertyIdentifier,
+            Action.APPLICATION_DEPLOYMENT_FAILED,
+            event.env,
+            event.applicationIdentifier
+          );
+        }
       };
     });
   }
@@ -97,6 +105,7 @@ function getUrl(accessUrl: string): string {
 // @internal Final acknowledgement for application deployment
 function getAction(state: string): string {
   if (state === 'spa deployment ops performed') return Action.APPLICATION_DEPLOYED;
+  if (state === 'spa deployment ops failed') return Action.APPLICATION_DEPLOYMENT_FAILED;
   return Action.APPLICATION_DEPLOYMENT_STARTED;
 }
 
