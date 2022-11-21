@@ -13,7 +13,7 @@ export class EventService implements OnApplicationBootstrap {
     private readonly dataServices: IDataServices,
     private readonly analyticsService: AnalyticsService,
     private readonly logger: LoggerService
-  ) {}
+  ) { }
 
   /* @internal
    * It'll open the connection for all the registered deployment url
