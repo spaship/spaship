@@ -23,7 +23,6 @@ export const useGetEphemeralListForProperty = (webPropertyIdentifier: string) =>
     ephemeralQueryKeys.list(webPropertyIdentifier),
     () => fetchEphemeralEnvironments(webPropertyIdentifier),
     {
-      // TODO: Change back to 5000
-      refetchInterval: 50000
+      refetchInterval: 5000
     }
   );
