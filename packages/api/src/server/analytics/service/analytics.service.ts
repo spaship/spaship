@@ -13,6 +13,10 @@ export class AnalyticsService {
 
   private static readonly channel: string = 'activity_stream';
 
+  private static readonly defaultSkip: number = 0;
+
+  private static readonly defaultLimit: number = 100;
+
   constructor(
     private readonly dataServices: IDataServices,
     private readonly analyticsFactory: AnalyticsFactory,
@@ -45,14 +49,21 @@ export class AnalyticsService {
     return this.dataServices.activityStream.create(activityStream);
   }
 
-  async getActivityStream(propertyIdentifier: string, applicationIdentifier: string): Promise<ActivityStream[]> {
+  async getActivityStream(
+    propertyIdentifier: string,
+    applicationIdentifier: string,
+    skip: number = AnalyticsService.defaultSkip,
+    limit: number = AnalyticsService.defaultLimit
+  ): Promise<ActivityStream[]> {
     if (propertyIdentifier && applicationIdentifier)
-      return this.dataServices.activityStream.getByAnyAndSorted(
+      return this.dataServices.activityStream.getByOptions(
         { propertyIdentifier, 'props.applicationIdentifier': applicationIdentifier },
-        { createdAt: -1 }
+        { createdAt: -1 },
+        skip,
+        limit
       );
     if (!propertyIdentifier) return this.dataServices.activityStream.getAll();
-    return this.dataServices.activityStream.getByAnyAndSorted({ propertyIdentifier }, { createdAt: -1 });
+    return this.dataServices.activityStream.getByOptions({ propertyIdentifier }, { createdAt: -1 }, skip, limit);
   }
 
   async getDeploymentCount(propertyIdentifier: string): Promise<any> {
