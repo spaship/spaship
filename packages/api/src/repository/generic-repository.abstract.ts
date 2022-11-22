@@ -5,7 +5,7 @@ export abstract class IGenericRepository<T> {
 
   abstract getByAny(obj: Object): Promise<T[]>;
 
-  abstract getByAnyAndSorted(obj: Object, sort: Object): Promise<T[]>;
+  abstract getByOptions(obj: Object, sort: Object, skip: number, limit: number): Promise<T[]>;
 
   abstract create(item: T): Promise<T>;
 
