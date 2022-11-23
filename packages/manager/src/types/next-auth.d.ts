@@ -10,5 +10,7 @@ declare module 'next-auth' {
       /** The user's postal address. */
       address: string;
     } & DefaultSession['user'];
+    // TODO: The following should be improved later
+    error: any;
   }
 }
