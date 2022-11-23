@@ -66,7 +66,7 @@ export const useGetWebPropActivityStream = (
     ({ pageParam = 0 }) =>
       fetchWebPropertyActivityStream(propertyIdentifier, applicationIdentifier, pageParam),
     {
-      getNextPageParam: (lastPage: any, allPages) =>
+      getNextPageParam: (lastPage, allPages) =>
         lastPage.length ? allPages.length * LIMIT : undefined
     }
   );

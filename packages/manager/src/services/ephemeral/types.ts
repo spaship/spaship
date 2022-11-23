@@ -17,7 +17,8 @@ export type TPreviewSPA = {
   propertyIdentifier: string;
   identifier: string;
   path: string;
-  userId: string;
+  createdBy: string;
+  updatedBy: string;
   env: string;
   ref: string;
   nextRef: string;
