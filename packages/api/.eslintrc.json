@@ -1,0 +1,27 @@
+{
+  "extends": [
+    "airbnb",
+    "airbnb-typescript",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "import/prefer-default-export": "off",
+    "class-methods-use-this": "off",
+    "no-await-in-loop": "off", // only added in async data processing
+    "no-underscore-dangle": "off",
+    "no-restricted-syntax": "off",
+    "no-useless-escape": "off",
+    "max-classes-per-file": "off", // easy to maintain the files (eg: request & response dto in one file)
+    "no-param-reassign": "off", // handled in global pipe
+    "@typescript-eslint/no-use-before-define": "off"
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "prettier"
+  ]
+}

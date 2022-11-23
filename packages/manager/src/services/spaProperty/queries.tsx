@@ -4,12 +4,12 @@ import { orchestratorReq } from '@app/config/orchestratorReq';
 import { TSpaProperty } from './types';
 
 const spaPropertyKeys = {
-  list: (webProperyName: string) => ['spa-properties', webProperyName] as const
+  list: (webPropertyIdentifier: string) => ['spa-properties', webPropertyIdentifier] as const
 };
 
 // GET Operations
-const fetchSpaProperties = async (propertName: string) => {
-  const { data } = await orchestratorReq.get(`/webproperty/get/applications/${propertName}`);
+const fetchAppsForProperties = async (propertyIdentifier: string) => {
+  const { data } = await orchestratorReq.get(`/applications/property/${propertyIdentifier}`);
   // TODO: To be removed after backend revamp
   if (data.data) {
     data.data = data.data.filter((spa: any) => !spa.env.startsWith('ephemeral'));
@@ -18,12 +18,16 @@ const fetchSpaProperties = async (propertName: string) => {
 };
 
 export const useGetSPAProperties = <T extends unknown>(
-  webProperyName: string,
+  webPropertyIdentifier: string,
   select?: (data: TSpaProperty[]) => T
 ) =>
-  useQuery(spaPropertyKeys.list(webProperyName), () => fetchSpaProperties(webProperyName), {
-    select
-  });
+  useQuery(
+    spaPropertyKeys.list(webPropertyIdentifier),
+    () => fetchAppsForProperties(webPropertyIdentifier),
+    {
+      select
+    }
+  );
 
 const groupSpaPropertyByName = (spaProperty: TSpaProperty[]) => {
   const groupBy: Record<string, TSpaProperty[]> = {};
@@ -38,5 +42,5 @@ const groupSpaPropertyByName = (spaProperty: TSpaProperty[]) => {
   return groupBy;
 };
 
-export const useGetSPAPropGroupByName = (webProperyName: string) =>
-  useGetSPAProperties(webProperyName, groupSpaPropertyByName);
+export const useGetSPAPropGroupByName = (webPropertyIdentifier: string) =>
+  useGetSPAProperties(webPropertyIdentifier, groupSpaPropertyByName);

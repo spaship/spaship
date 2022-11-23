@@ -1,5 +1,5 @@
 export type TSpaProperty = {
-  propertyName: string;
+  propertyIdentifier: string;
   name: string;
   path: string;
   ref: string;
@@ -8,5 +8,5 @@ export type TSpaProperty = {
   nextRef: string;
   accessUrl: string;
   updatedAt: string;
-  id: number;
+  _id: number;
 };

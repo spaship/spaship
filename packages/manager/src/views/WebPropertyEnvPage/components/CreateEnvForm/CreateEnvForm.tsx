@@ -25,11 +25,7 @@ export const schema = yup.object({
     .max(50)
     .alphabetsOnly()
     .required(),
-  deploymentConnectionType: yup
-    .string()
-    .label('Environment Type')
-    .oneOf(['preprod', 'prod'])
-    .required()
+  cluster: yup.string().label('Environment Type').oneOf(['preprod', 'prod']).required()
 });
 
 export interface FormData extends yup.InferType<typeof schema> {}
@@ -80,7 +76,7 @@ export const CreateEnvForm = ({ onSubmit, onClose }: Props): JSX.Element => {
         <SplitItem>
           <Controller
             control={control}
-            name="deploymentConnectionType"
+            name="cluster"
             defaultValue="preprod"
             render={({ field: { onChange, value } }) => (
               <FormGroup

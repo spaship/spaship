@@ -1,23 +1,23 @@
 export type TDeploymentCount = {
-  propertyName: string;
+  propertyIdentifier: string;
   code: string;
   count: number;
 };
 
 export type TWebPropActivityStream = {
-  spaName: string;
-  propertyName: string;
-  code: string;
+  propertyIdentifier: string;
+  action: string;
   branch: string;
-  env: string;
   createdAt: string;
-  id: string;
+  _id: string;
+  message: string;
   latestActivityHead: string;
   latestActivityTail: string;
+  props: Props;
 };
 
 export type TSPADeploymentCount = {
-  propertyName: string;
+  propertyIdentifier: string;
   spaName: string;
   code: string;
   env: string;
@@ -30,4 +30,9 @@ export type TSPAMonthlyDeploymentCount = {
   count: number;
   startDate: string;
   endDate: string;
+};
+
+export type Props = {
+  applicationIdentifier: string;
+  env: string;
 };

@@ -135,7 +135,7 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
             fieldId="property-env"
             validated={error ? 'error' : 'default'}
             helperTextInvalid={error?.message}
-            helperText="Select atleast 1 environment"
+            helperText="Select at least 1 environment"
           >
             <Split hasGutter isWrappable className="pf-u-mb-md">
               {envs.map((env) => (

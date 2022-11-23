@@ -3,22 +3,24 @@ import { orchestratorReq } from '@app/config/orchestratorReq';
 import { TApiKey, TCreateApiKeyDTO, TCreateApiKeyRes, TDeleteApiKeyDTO } from './types';
 
 const apiKeyQueryKeys = {
-  list: (webPropertyName: string) => ['api-keys', webPropertyName] as const
+  list: (webPropertyIdentifier: string) => ['api-keys', webPropertyIdentifier] as const
 };
 
 // GET Operations
-const fetchSpaProperties = async (propertyName: string): Promise<TApiKey[]> => {
-  const { data } = await orchestratorReq.get(`/apikeys/${propertyName}`);
+const fetchSpaProperties = async (propertyIdentifier: string): Promise<TApiKey[]> => {
+  const { data } = await orchestratorReq.get(`/apikey/${propertyIdentifier}`);
   return data.data;
 };
 
 // TODO: Backend returns 404 not found error for empty list of api keys causing retry
-export const useGetApiKeys = (webPropertyName: string) =>
-  useQuery(apiKeyQueryKeys.list(webPropertyName), () => fetchSpaProperties(webPropertyName));
+export const useGetApiKeys = (webPropertyIdentifier: string) =>
+  useQuery(apiKeyQueryKeys.list(webPropertyIdentifier), () =>
+    fetchSpaProperties(webPropertyIdentifier)
+  );
 
 // POST Operations
 export const createAPIKey = async (dto: TCreateApiKeyDTO): Promise<TCreateApiKeyRes> => {
-  const { data } = await orchestratorReq.post('/applications/validate', dto);
+  const { data } = await orchestratorReq.post('/apikey/', dto);
   return data.data;
 };
 
@@ -34,7 +36,7 @@ export const useCreateAPIKey = (property: string) => {
 
 // DELETE OPERATIONS
 export const deleteAPIKey = async (dto: TDeleteApiKeyDTO) => {
-  const { data } = await orchestratorReq.delete(`/apikeys/${dto.propertyName}/${dto.shortKey}`);
+  const { data } = await orchestratorReq.delete(`/apikey/${dto.shortKey}`);
   return data.data;
 };
 

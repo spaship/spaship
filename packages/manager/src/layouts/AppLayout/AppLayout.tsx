@@ -30,7 +30,7 @@ export const AppLayout = ({ children }: Props): JSX.Element => (
       >
         <a
           target="_blank"
-          href="https://source.redhat.com/groups/public/dxp/exd_digital_experience_platforms_dxp_blog/ephemeral_preview_feature_in_spaship"
+          href="https://source.redhat.com/groups/public/spaship/blog_article/whats_new_in_spaship_"
           rel="noreferrer"
         >
           <ExternalLinkAltIcon
@@ -38,7 +38,7 @@ export const AppLayout = ({ children }: Props): JSX.Element => (
               marginRight: '0.5rem'
             }}
           />
-          Introducing Ephemeral Preview feature in SPAship
+          What&apos;s new in SPAship?
         </a>
       </Flex>
     </Banner>

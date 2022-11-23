@@ -26,10 +26,10 @@ import {
 import Link from 'next/link';
 
 type Props = {
-  propertyName: string;
+  propertyIdentifier: string;
 };
 
-export const EmptyInfo = ({ propertyName }: Props): JSX.Element => (
+export const EmptyInfo = ({ propertyIdentifier }: Props): JSX.Element => (
   <EmptyState variant={EmptyStateVariant.large}>
     <EmptyStateIcon icon={CubesIcon} />
     <Title headingLevel="h4" size="lg">
@@ -41,7 +41,12 @@ export const EmptyInfo = ({ propertyName }: Props): JSX.Element => (
       <List isPlain>
         <ListItem icon={<PlusIcon />}>
           Create a new environment
-          <Link href={{ pathname: pageLinks.webPropertySettingPage, query: { propertyName } }}>
+          <Link
+            href={{
+              pathname: pageLinks.webPropertySettingPage,
+              query: { propertyIdentifier }
+            }}
+          >
             <a>
               <Text>(Environment Configuration)</Text>
             </a>
@@ -49,7 +54,12 @@ export const EmptyInfo = ({ propertyName }: Props): JSX.Element => (
         </ListItem>
         <ListItem icon={<PficonTemplateIcon />}>
           Generate API Key
-          <Link href={{ pathname: pageLinks.webPropertySettingPage, query: { propertyName } }}>
+          <Link
+            href={{
+              pathname: pageLinks.webPropertySettingPage,
+              query: { propertyIdentifier }
+            }}
+          >
             <a>
               <Text>(Environment Configuration)</Text>
             </a>
@@ -59,7 +69,7 @@ export const EmptyInfo = ({ propertyName }: Props): JSX.Element => (
         <ListItem icon={<KeyIcon />}>Setup your environment</ListItem>
         <CodeBlock>
           <CodeBlockCode>
-            {`spaship env --name=<new-env-name> --url=${window.location.origin}/applications/deploy/${propertyName}/<env-name> --apikey=<your-api-key>`}
+            {`spaship env --name=<new-env-name> --url=${window.location.origin}/applications/deploy/${propertyIdentifier}/<env-name> --apikey=<your-api-key>`}
           </CodeBlockCode>
         </CodeBlock>
         <ListItem icon={<AutomationIcon />}>Initialize spaship.yaml </ListItem>

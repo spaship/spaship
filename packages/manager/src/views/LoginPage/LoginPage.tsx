@@ -65,6 +65,7 @@ export const LoginPage = (): JSX.Element => {
                     backgroundColor: '#025891',
                     border: 'hidden'
                   }}
+                  allowFullScreen
                 />
               )}
               <Title headingLevel="h1" size={TitleSizes['4xl']} style={{ fontSize: '2.4rem' }}>

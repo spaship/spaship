@@ -3,13 +3,13 @@ import { useQuery } from '@tanstack/react-query';
 import { TEphemeralEnv } from './types';
 
 const ephemeralQueryKeys = {
-  list: (webPropertyName: string) => ['ephemeral-env', webPropertyName] as const
+  list: (webPropertyIdentifier: string) => ['ephemeral-env', webPropertyIdentifier] as const
 };
 
-const fetchEphemeralEnvironments = async (propertyName: string): Promise<TEphemeralEnv[]> => {
-  const { data } = await orchestratorReq.get(`/webproperty/eph/list`, {
+const fetchEphemeralEnvironments = async (propertyIdentifier: string): Promise<TEphemeralEnv[]> => {
+  const { data } = await orchestratorReq.get(`environment/${propertyIdentifier}`, {
     params: {
-      propertyName
+      isEph: true
     }
   });
   if (data.message) {
@@ -18,10 +18,10 @@ const fetchEphemeralEnvironments = async (propertyName: string): Promise<TEpheme
   return data.data;
 };
 
-export const useGetEphemeralList = (webPropertyName: string) =>
+export const useGetEphemeralListForProperty = (webPropertyIdentifier: string) =>
   useQuery(
-    ephemeralQueryKeys.list(webPropertyName),
-    () => fetchEphemeralEnvironments(webPropertyName),
+    ephemeralQueryKeys.list(webPropertyIdentifier),
+    () => fetchEphemeralEnvironments(webPropertyIdentifier),
     {
       refetchInterval: 5000
     }

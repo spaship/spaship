@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   TableComposable,
   Thead,
@@ -102,27 +103,29 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
       {isSuccess &&
         !isEnvEmpty &&
         ephemeralEnvs?.map((environment, rowIndex) => (
-          <Tbody key={environment.id} isExpanded={Boolean(isRowExpanded?.[environment.id])}>
+          <Tbody key={environment._id} isExpanded={Boolean(isRowExpanded?.[environment._id])}>
             <Tr>
               <Td>{environment.env}</Td>
               <Td
                 compoundExpand={{
                   rowIndex,
-                  isExpanded: Boolean(isRowExpanded?.[environment.id]),
-                  onToggle: () => onToggleRowExpanded(environment.id),
+                  isExpanded: Boolean(isRowExpanded?.[environment._id]),
+                  onToggle: () => onToggleRowExpanded(environment._id),
                   expandId: 'composable-ephemeral-table'
                 }}
               >
                 <Label isCompact color="blue" icon={<AngleDownIcon />}>
-                  {`${environment?.spa[0]?.name.slice(0, 20)} ${
-                    environment?.spa[0]?.name.length > 20 ? '...' : ''
+                  {`${environment?.applications[0]?.identifier.slice(0, 20)} ${
+                    environment?.applications[0]?.identifier.length > 20 ? '...' : ''
                   }`}
                 </Label>
-                {environment.spa.length > 1 ? ` +${environment.spa.length} SPA(s)` : ''}
+                {environment.applications.length > 1
+                  ? ` +${environment.applications.length} SPA(s)`
+                  : ''}
               </Td>
               <Td>{formatDate(environment.createdAt, 'MMM DD, YYYY - hh:mm:ss A')}</Td>
               <Td>
-                <CodeBranchIcon /> {environment.actionId}
+                <CodeBranchIcon /> {environment.actionEnabled ? environment.actionId : 'NA'}
               </Td>
               <Td>
                 <Label color="gold" icon={<OutlinedClockIcon />}>
@@ -130,7 +133,7 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
                 </Label>
               </Td>
             </Tr>
-            <Tr isExpanded={Boolean(isRowExpanded?.[environment.id])}>
+            <Tr isExpanded={Boolean(isRowExpanded?.[environment._id])}>
               <Td colSpan={5} noPadding={false}>
                 <ExpandableRowContent>
                   <TableComposable variant="compact" borders={false}>
@@ -143,9 +146,9 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
                       </Tr>
                     </Thead>
                     <Tbody>
-                      {environment.spa.map((application, index) => (
+                      {environment.applications.map((application, index) => (
                         <Tr key={`${index + 1}-${application.createdAt}`}>
-                          <Td>{application.name}</Td>
+                          <Td>{application.identifier}</Td>
                           <Td>
                             <a
                               href={application.accessUrl}
@@ -158,7 +161,7 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
                               }`}
                             </a>
                           </Td>
-                          <Td>{application.userId}</Td>
+                          <Td>{application.createdBy}</Td>
                           <Td>
                             <Label isCompact>{application.ref ? application.ref : 'NA'}</Label>
                           </Td>

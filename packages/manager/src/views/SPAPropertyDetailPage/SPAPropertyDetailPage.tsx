@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { useMemo } from 'react';
 import {
   Button,
@@ -7,13 +8,10 @@ import {
   CardTitle,
   EmptyState,
   EmptyStateIcon,
-  Label,
   Level,
   LevelItem,
   List,
   PageSection,
-  ProgressStep,
-  ProgressStepper,
   Skeleton,
   Split,
   SplitItem,
@@ -21,9 +19,6 @@ import {
   Tabs,
   TabTitleIcon,
   TabTitleText,
-  Text,
-  TextContent,
-  TextVariants,
   Title
 } from '@patternfly/react-core';
 import Link from 'next/link';
@@ -40,30 +35,25 @@ import {
   ChartVoronoiContainer
 } from '@patternfly/react-charts';
 import {
-  useGetMonthyDeploymentChart,
-  useGetTotalDeployments,
-  useGetWebPropActivityStream
+  useGetMonthlyDeploymentChart,
+  useGetTotalDeploymentsForApps
 } from '@app/services/analytics';
-import { useFormatDate, useTabs } from '@app/hooks';
+import { useTabs } from '@app/hooks';
 import { Banner } from '@app/components';
 import { pageLinks } from '@app/links';
 import toast from 'react-hot-toast';
+import { ActivityStream } from '@app/components/ActivityStream';
 
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
-  const formatDate = useFormatDate();
-  // TODO: To be removed once backend has a date standard
-  const dateFormatter = (date: string) =>
-    formatDate(`${date.slice(9)} ${date.split(' ')[0]}`, 'MMM DD, hh:mm a');
-  const propertyName = router.query.propertyName as string;
+  const propertyIdentifier = router.query.propertyIdentifier as string;
   const spaProperty = router.query.spaProperty as string;
 
-  const deploymentCount = useGetTotalDeployments(propertyName, spaProperty);
-  const monthlyDeployChart = useGetMonthyDeploymentChart(propertyName, spaProperty);
-  const activityStream = useGetWebPropActivityStream(propertyName, spaProperty);
+  const deploymentCount = useGetTotalDeploymentsForApps(propertyIdentifier, spaProperty);
+  const monthlyDeployChart = useGetMonthlyDeploymentChart(propertyIdentifier, spaProperty);
   if (deploymentCount.isError === true) {
     toast.error(`Sorry cannot find ${spaProperty}`);
-    router.push(`/properties/${propertyName}`);
+    router.push(`/properties/${propertyIdentifier}`);
   }
 
   const { handleTabChange, openTab } = useTabs(2);
@@ -89,18 +79,23 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
   return (
     <>
       <Banner
-        title={propertyName.replace('-', ' ')}
+        title={propertyIdentifier.replace('-', ' ')}
         backRef={{
           pathname: pageLinks.webPropertyDetailPage,
           query: {
-            propertyName
+            propertyIdentifier
           }
         }}
       >
         <Level>
           <LevelItem />
           <LevelItem>
-            <Link href={{ pathname: pageLinks.webPropertySettingPage, query: { propertyName } }}>
+            <Link
+              href={{
+                pathname: pageLinks.webPropertySettingPage,
+                query: { propertyIdentifier }
+              }}
+            >
               <a>
                 <Button variant="link" icon={<CogIcon />}>
                   Settings
@@ -245,35 +240,10 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             aria-label="SPA activity"
           >
             <List className="pf-u-mt-lg">
-              <ProgressStepper isVertical>
-                {activityStream?.data?.map((activity) => {
-                  // This should be changed to more activities in the future.
-                  const variant = activity.code === 'WEBSITE_CREATED' ? 'success' : 'danger';
-                  return (
-                    <ProgressStep
-                      id={activity.id}
-                      titleId={activity.id}
-                      key={activity.id}
-                      variant={variant}
-                      // Description does not support elements yet. Hence they are rendered as text.
-                      description={dateFormatter(activity.createdAt)}
-                    >
-                      <TextContent className="pf-u-mb-sm">
-                        <Text component={TextVariants.small}>
-                          <Label color="blue" isCompact>
-                            {activity.spaName}
-                          </Label>{' '}
-                          has been deployed for
-                          <Label color="blue" isCompact>
-                            {activity.propertyName}
-                          </Label>{' '}
-                          on {activity.env}
-                        </Text>
-                      </TextContent>
-                    </ProgressStep>
-                  );
-                })}
-              </ProgressStepper>
+              <ActivityStream
+                propertyIdentifier={propertyIdentifier}
+                applicationIdentifier={spaProperty}
+              />
             </List>
           </Tab>
         </Tabs>

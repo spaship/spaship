@@ -1,8 +1,8 @@
 export const pageLinks = {
   webPropertyListPage: '/properties',
-  webPropertyDetailPage: '/properties/[propertyName]',
+  webPropertyDetailPage: '/properties/[propertyIdentifier]',
   newWebPropertyPage: '/properties/new',
-  spaDetailPage: '/properties/[propertyName]/[spaName]',
-  webPropertySettingPage: '/properties/[propertyName]/settings',
+  spaDetailPage: '/properties/[propertyIdentifier]/[spaName]',
+  webPropertySettingPage: '/properties/[propertyIdentifier]/settings',
   loginPage: '/login'
 };

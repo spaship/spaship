@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
@@ -33,12 +34,13 @@ import {
   LockIcon,
   OutlinedCalendarAltIcon,
   PlusIcon,
+  SyncAltIcon,
   TimesCircleIcon,
   TrashIcon
 } from '@patternfly/react-icons';
 
 import { Banner, DeleteConfirmationModal, TableRowSkeleton } from '@app/components';
-import { useAddWebPropery, useGetEnvList } from '@app/services/webProperty';
+import { useGetEnvList, useAddEnv } from '@app/services/persistent';
 import { useCreateAPIKey, useDeleteAPIKey, useGetApiKeys } from '@app/services/apiKeys';
 import { useFormatDate, usePopUp } from '@app/hooks';
 import { pageLinks } from '@app/links';
@@ -48,6 +50,7 @@ import {
   CreateAPIKeyForm,
   FormData as APIKeyForm
 } from './components/CreateAPIKeyForm/CreateAPIKeyForm';
+import { SyncServiceForm } from './components/SyncServiceForm';
 
 function getExpiryDayDiff(expiry: string) {
   const currentDate = new Date();
@@ -59,34 +62,33 @@ function getExpiryDayDiff(expiry: string) {
 
 export const WebPropertyEnvPage = (): JSX.Element => {
   const { query } = useRouter();
-  const propertyName = query.propertyName as string;
+  const propertyIdentifier = query.propertyIdentifier as string;
   const { data: session } = useSession();
   const formatDate = useFormatDate();
 
-  const envList = useGetEnvList(propertyName);
-  const createAWebProp = useAddWebPropery(propertyName);
-  const apiKeys = useGetApiKeys(propertyName);
-  const createAPIKey = useCreateAPIKey(propertyName);
-  const deleteAPIKey = useDeleteAPIKey(propertyName);
+  const envList = useGetEnvList(propertyIdentifier);
+  const createEnv = useAddEnv(propertyIdentifier);
+  const apiKeys = useGetApiKeys(propertyIdentifier);
+  const createAPIKey = useCreateAPIKey(propertyIdentifier);
+  const deleteAPIKey = useDeleteAPIKey(propertyIdentifier);
 
-  const propertyTitle = envList?.data?.[0]?.propertyTitle;
+  const propertyTitle = envList?.data?.[0]?.propertyIdentifier;
 
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
     'createEnv',
     'createApiKey',
     'deleteApiKey',
-    'deleteWebProp'
+    'deleteWebProp',
+    'updateSync'
   ] as const);
 
   const handleCreateEnv = async (data: EnvForm) => {
     if (!propertyTitle) return;
     try {
-      await createAWebProp.mutateAsync({
+      await createEnv.mutateAsync({
         ...data,
-        propertyName,
-        createdBy: session?.user.email || '',
-        type: 'operator',
-        propertyTitle
+        propertyIdentifier,
+        createdBy: session?.user.email || ''
       });
       toast.success('Environment Created');
       handlePopUpClose('createEnv');
@@ -99,11 +101,11 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     try {
       const res = await createAPIKey.mutateAsync({
         ...data,
-        propertyName,
+        propertyIdentifier,
         createdBy: session?.user.email || '',
         expiresIn: getExpiryDayDiff(data.expiresIn)
       });
-      handlePopUpOpen('createApiKey', res.token);
+      handlePopUpOpen('createApiKey', res.key);
       toast.success('API Key Created');
     } catch (error) {
       toast.error('Failed to create API Key');
@@ -113,7 +115,6 @@ export const WebPropertyEnvPage = (): JSX.Element => {
   const handleDeleteAPIKey = async () => {
     try {
       await deleteAPIKey.mutateAsync({
-        propertyName,
         shortKey: popUp.deleteApiKey.data as string
       });
       handlePopUpClose('deleteApiKey');
@@ -126,8 +127,11 @@ export const WebPropertyEnvPage = (): JSX.Element => {
   return (
     <>
       <Banner
-        title={propertyName.replace('-', ' ')}
-        backRef={{ pathname: pageLinks.webPropertyDetailPage, query: { propertyName } }}
+        title={propertyIdentifier.replace('-', ' ')}
+        backRef={{
+          pathname: pageLinks.webPropertyDetailPage,
+          query: { propertyIdentifier }
+        }}
       />
       <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
         <Stack hasGutter>
@@ -136,6 +140,17 @@ export const WebPropertyEnvPage = (): JSX.Element => {
               <CardHeader>
                 <CardTitle>Environments</CardTitle>
                 <CardActions>
+                  <Button
+                    variant="primary"
+                    style={{
+                      color: '#000'
+                    }}
+                    icon={<SyncAltIcon />}
+                    isSmall
+                    onClick={() => handlePopUpOpen('updateSync')}
+                  >
+                    Update Sync
+                  </Button>
                   <Button
                     variant="secondary"
                     icon={<PlusIcon />}
@@ -154,6 +169,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                       <Th>Created</Th>
                       <Th>Publish Domain</Th>
                       <Th>Deploy URL</Th>
+                      <Th>Sync config Updated At</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -173,7 +189,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                     )}
                     {envList.isSuccess &&
                       envList.data?.map((env) => (
-                        <Tr key={env.id}>
+                        <Tr key={env._id}>
                           <Td dataLabel={env.env}>{env.env}</Td>
                           <Td dataLabel={env.createdAt}>
                             <Text component={TextVariants.small}>
@@ -196,8 +212,13 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                               variant="inline-compact"
                               isCode
                             >
-                              {`${window.location.origin}/api/v1/applications/deploy/${env?.propertyName}/${env?.env}`}
+                              {`${window.location.origin}/api/v1/applications/deploy/${env?.propertyIdentifier}/${env?.env}`}
                             </ClipboardCopy>
+                          </Td>
+                          <Td dataLabel={env.updatedAt}>
+                            <Text component={TextVariants.small}>
+                              {new Date(env.updatedAt).toUTCString()}
+                            </Text>
                           </Td>
                         </Tr>
                       ))}
@@ -356,11 +377,11 @@ export const WebPropertyEnvPage = (): JSX.Element => {
       </Modal>
       <DeleteConfirmationModal
         title="Are Your Sure ? "
-        description="You are deleting this Web Property from SPAship. This operation will delete all data permanenetly."
+        description="You are deleting this Web Property from SPAship. This operation will delete all data permanently."
         variant={ModalVariant.medium}
         isOpen={popUp.deleteWebProp.isOpen}
         onClose={() => handlePopUpClose('deleteWebProp')}
-        confirmationToken={propertyName}
+        confirmationToken={propertyIdentifier}
         onSubmit={() => {}}
       />
       <DeleteConfirmationModal
@@ -372,6 +393,19 @@ export const WebPropertyEnvPage = (): JSX.Element => {
       >
         Do you want to delete this API Key
       </DeleteConfirmationModal>
+      <Modal
+        title="Sync Service"
+        description="Add your sync service information here!"
+        variant={ModalVariant.medium}
+        isOpen={popUp.updateSync.isOpen}
+        onClose={() => handlePopUpClose('updateSync')}
+      >
+        <SyncServiceForm
+          propertyIdentifier={propertyIdentifier}
+          onClose={() => handlePopUpClose('updateSync')}
+          env={envList?.data?.length ? envList.data : []}
+        />
+      </Modal>
     </>
   );
 };
