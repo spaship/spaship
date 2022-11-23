@@ -161,7 +161,7 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
                               }`}
                             </a>
                           </Td>
-                          <Td>{application.userId}</Td>
+                          <Td>{application.createdBy}</Td>
                           <Td>
                             <Label isCompact>{application.ref ? application.ref : 'NA'}</Label>
                           </Td>
