@@ -5,6 +5,7 @@ export type TEnv = {
   cluster: string;
   isEph: boolean;
   env: string;
+  sync?: string;
   createdBy: string;
   isActive: boolean;
   createdAt: string;
