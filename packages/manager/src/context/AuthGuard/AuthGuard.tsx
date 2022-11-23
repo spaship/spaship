@@ -22,7 +22,7 @@ export const AuthGuard = ({ children }: Props) => {
   // set the access token header when available for orchestrator requests
   useEffect(() => {
     if (session?.accessToken) {
-      setOrchestratorAuthorizationHeader(session?.accessToken as string);
+      setOrchestratorAuthorizationHeader(session?.accessToken);
     }
   }, [session?.accessToken]);
 
