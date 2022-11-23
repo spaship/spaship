@@ -16,6 +16,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useUpdateSync } from '@app/services/sync';
 import toast from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
+import { useState } from 'react';
 
 type Props = {
   env: TEnv[];
@@ -46,6 +47,11 @@ export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JS
   }));
   const updateSync = useUpdateSync(propertyIdentifier);
   const { data: session } = useSession();
+  const [currentEnvConfig, setCurrentEnvConfig] = useState('');
+  const updateSyncModal = (event: string) => {
+    const syncConfig = env.find((envObject) => envObject.env === event)?.sync;
+    setCurrentEnvConfig(syncConfig || '');
+  };
 
   const onSubmit = async (formData: FormData) => {
     try {
@@ -77,7 +83,10 @@ export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JS
             <FormSelect
               label="Select Environment"
               aria-label="FormSelect Input"
-              onChange={onChange}
+              onChange={(event) => {
+                updateSyncModal(event);
+                onChange(event);
+              }}
               value={value}
             >
               <FormSelectOption key={1} label="Please select an environment" isDisabled />
@@ -91,10 +100,9 @@ export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JS
       <Controller
         control={control}
         name="sync"
-        defaultValue=""
         render={({ field, fieldState: { error } }) => (
           <FormGroup
-            label="Enter Sync Config"
+            label="Sync Config"
             name="sync-config"
             fieldId="sync-config"
             validated={error ? 'error' : 'default'}
@@ -102,8 +110,10 @@ export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JS
           >
             <TextArea
               placeholder="Please enter sync config"
-              id="sync-config"
               aria-label="textarea to add sync config"
+              id="sync-config"
+              resizeOrientation="vertical"
+              defaultValue={currentEnvConfig}
               {...field}
             />
           </FormGroup>
