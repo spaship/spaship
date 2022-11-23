@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 import { orchestratorReq } from '@app/config/orchestratorReq';
 import {
@@ -39,22 +39,36 @@ export const useGetDeploymentCounts = () =>
     select: groupDeploymentCountByPropertyIdentifier
   });
 
+const LIMIT = 10;
+
 const fetchWebPropertyActivityStream = async (
   propertyIdentifier: string,
-  applicationIdentifier?: string
+  applicationIdentifier?: string,
+  skip?: number
 ): Promise<TWebPropActivityStream[]> => {
   const { data } = await orchestratorReq.get('/analytics/activity-stream', {
     params: {
       propertyIdentifier,
-      applicationIdentifier
+      applicationIdentifier,
+      limit: LIMIT,
+      skip
     }
   });
   return data.data;
 };
 
-export const useGetWebPropActivityStream = (webProperty: string, spaName?: string) =>
-  useQuery(analyticsKeys.propertyActivityStream(webProperty), () =>
-    fetchWebPropertyActivityStream(webProperty, spaName)
+export const useGetWebPropActivityStream = (
+  propertyIdentifier: string,
+  applicationIdentifier?: string
+) =>
+  useInfiniteQuery(
+    analyticsKeys.propertyActivityStream(propertyIdentifier),
+    ({ pageParam = 0 }) =>
+      fetchWebPropertyActivityStream(propertyIdentifier, applicationIdentifier, pageParam),
+    {
+      getNextPageParam: (lastPage: any, allPages) =>
+        lastPage.length ? allPages.length * LIMIT : undefined
+    }
   );
 
 const fetchTotalDeploymentForApps = async (
