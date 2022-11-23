@@ -36,6 +36,6 @@
   },
   "devDependencies": {
     "axios": "0.27.2",
-    "memfs": "3.4.10"
+    "memfs": "3.4.12"
   }
 }
