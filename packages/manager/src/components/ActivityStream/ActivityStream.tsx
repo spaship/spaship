@@ -6,6 +6,7 @@ import {
   Label,
   ProgressStep,
   ProgressStepper,
+  Skeleton,
   Spinner,
   Text,
   TextContent,
@@ -220,7 +221,23 @@ export const ActivityStream = ({
             ))
           )}
       </ProgressStepper>
-      {isFetchingNextPage && <Spinner isSVG aria-label="Activity stream loading" />}
+      {isFetchingNextPage && (
+        <ProgressStepper isVertical>
+          {Array.from(Array(5).keys()).map((key) => (
+            <ProgressStep
+              key={key}
+              variant="success"
+              description={
+                <Skeleton width="15%" fontSize="md" screenreaderText="Loading activity stream" />
+              }
+            >
+              <TextContent className="pf-u-mb-sm">
+                <Skeleton width="60%" fontSize="md" screenreaderText="Loading activity stream" />
+              </TextContent>
+            </ProgressStep>
+          ))}
+        </ProgressStepper>
+      )}
       <div ref={ref} />
     </>
   );

@@ -16,7 +16,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useUpdateSync } from '@app/services/sync';
 import toast from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
 
 type Props = {
   env: TEnv[];
@@ -35,22 +34,23 @@ export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JS
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { isSubmitting }
   } = useForm<FormData>({
     mode: 'onSubmit',
     resolver: yupResolver(schema)
   });
-  const options = env.map((environment: TEnv) => ({
-    ...environment,
-    value: environment.env,
-    label: environment.env
-  }));
   const updateSync = useUpdateSync(propertyIdentifier);
   const { data: session } = useSession();
-  const [currentEnvConfig, setCurrentEnvConfig] = useState('');
+  // TODO: This could be improved to O(1)
+  // by something like this before
+  // reduce((acc, env) => {
+  //     acc[env.env] = { ...env };
+  //     return acc;
+  // }, {})
   const updateSyncModal = (event: string) => {
     const syncConfig = env.find((envObject) => envObject.env === event)?.sync;
-    setCurrentEnvConfig(syncConfig || '');
+    setValue('sync', syncConfig || '');
   };
 
   const onSubmit = async (formData: FormData) => {
@@ -90,8 +90,8 @@ export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JS
               value={value}
             >
               <FormSelectOption key={1} label="Please select an environment" isDisabled />
-              {options.map((option) => (
-                <FormSelectOption key={option._id} value={option.value} label={option.label} />
+              {env.map((option) => (
+                <FormSelectOption key={option._id} value={option.env} label={option.env} />
               ))}
             </FormSelect>
           </FormGroup>
@@ -109,11 +109,11 @@ export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JS
             helperTextInvalid={error?.message}
           >
             <TextArea
+              style={{ minHeight: '16rem' }}
               placeholder="Please enter sync config"
               aria-label="textarea to add sync config"
               id="sync-config"
               resizeOrientation="vertical"
-              defaultValue={currentEnvConfig}
               {...field}
             />
           </FormGroup>

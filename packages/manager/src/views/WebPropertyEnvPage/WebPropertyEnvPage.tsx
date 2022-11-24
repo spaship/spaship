@@ -13,6 +13,7 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
+  Flex,
   Label,
   Modal,
   ModalVariant,
@@ -23,13 +24,15 @@ import {
   StackItem,
   Text,
   TextVariants,
-  Title
+  Title,
+  Tooltip
 } from '@patternfly/react-core';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import {
   CheckCircleIcon,
   CubesIcon,
   ExternalLinkAltIcon,
+  InfoCircleIcon,
   KeyIcon,
   LockIcon,
   OutlinedCalendarAltIcon,
@@ -394,7 +397,32 @@ export const WebPropertyEnvPage = (): JSX.Element => {
         Do you want to delete this API Key
       </DeleteConfirmationModal>
       <Modal
-        title="Sync Service"
+        title={
+          (
+            <Flex alignItems={{ default: 'alignItemsCenter' }}>
+              <Tooltip
+                content={
+                  <div>
+                    SPAship sync is a process in which a schedular pulls HTML pages (from a remote
+                    location) into a specific directory of an environment periodically,
+                    <a
+                      target="_blank"
+                      href="https://source.redhat.com/groups/public/dxp/exd_digital_experience_platforms_dxp_blog/introducing_sync_service_in_spaship"
+                      rel="noreferrer"
+                    >
+                      Click here to know more!
+                    </a>
+                  </div>
+                }
+              >
+                <span style={{ marginRight: '0.5rem', color: '#2c9af3', fontSize: '16px' }}>
+                  <InfoCircleIcon />
+                </span>
+              </Tooltip>
+              Sync Service
+            </Flex>
+          ) as unknown as string
+        }
         description="Add your sync service information here!"
         variant={ModalVariant.medium}
         isOpen={popUp.updateSync.isOpen}
