@@ -42,6 +42,12 @@ export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JS
   });
   const updateSync = useUpdateSync(propertyIdentifier);
   const { data: session } = useSession();
+  // TODO: This could be improved to O(1)
+  // by something like this before
+  // reduce((acc, env) => {
+  //     acc[env.env] = { ...env };
+  //     return acc;
+  // }, {})
   const updateSyncModal = (event: string) => {
     const syncConfig = env.find((envObject) => envObject.env === event)?.sync;
     setValue('sync', syncConfig || '');
