@@ -40,11 +40,6 @@ export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JS
     mode: 'onSubmit',
     resolver: yupResolver(schema)
   });
-  const options = env.map((environment: TEnv) => ({
-    ...environment,
-    value: environment.env,
-    label: environment.env
-  }));
   const updateSync = useUpdateSync(propertyIdentifier);
   const { data: session } = useSession();
   const updateSyncModal = (event: string) => {
@@ -89,8 +84,8 @@ export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JS
               value={value}
             >
               <FormSelectOption key={1} label="Please select an environment" isDisabled />
-              {options.map((option) => (
-                <FormSelectOption key={option._id} value={option.value} label={option.label} />
+              {env.map((option) => (
+                <FormSelectOption key={option._id} value={option.env} label={option.env} />
               ))}
             </FormSelect>
           </FormGroup>
