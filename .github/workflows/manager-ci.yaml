@@ -43,7 +43,7 @@ jobs:
       - name: Dev Build and push into repository
         if: github.event.inputs.env == 'Dev'
         id: docker_build_dev
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: ./packages/manager
           push: ${{ github.event_name != 'pull_request' }}
@@ -59,7 +59,7 @@ jobs:
       - name: Qa Build and push into repository
         if: github.event.inputs.env == 'Qa'
         id: docker_build_qa
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: ./packages/manager
           push: ${{ github.event_name != 'pull_request' }}
@@ -75,7 +75,7 @@ jobs:
       - name: Stage Build and push into repository
         if: github.event.inputs.env == 'Stage'
         id: docker_build_stage
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: ./packages/manager
           push: ${{ github.event_name != 'pull_request' }}
@@ -91,7 +91,7 @@ jobs:
       - name: Prod Build and push into repository
         if: github.event.inputs.env == 'Prod'
         id: docker_build_prod
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: ./packages/manager
           push: ${{ github.event_name != 'pull_request' }}

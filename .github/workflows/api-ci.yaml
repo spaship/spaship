@@ -37,7 +37,7 @@ jobs:
 
       - name: Build and push into repository
         id: docker_build
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: ./packages/api
           file: ./packages/api/Dockerfile
