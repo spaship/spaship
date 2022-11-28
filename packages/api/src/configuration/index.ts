@@ -45,6 +45,7 @@ export enum MAX {
   PROPERTY = 24,
   EXPIRESIN = 4,
   ENV = 12,
+  REF = 100,
   CLUSTER = 12
 }
 

@@ -21,8 +21,7 @@ export class CreateApplicationDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  @Length(MIN.DEFAULT, MAX.DEFAULT, { message: MESSAGE.INVALID_LENGTH, always: true })
-  @Matches(VALIDATION.REF, { message: MESSAGE.INVALID_REF, always: true })
+  @Length(MIN.DEFAULT, MAX.REF, { message: MESSAGE.INVALID_LENGTH, always: true })
   ref: string;
 
   @ApiProperty()
