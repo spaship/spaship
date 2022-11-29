@@ -36,8 +36,11 @@ export class ApplicationController {
     @Param() params,
     @Query() queries
   ): Promise<ApplicationResponse> {
-    const types = ['zip', 'tgz', 'gzip', 'gz', 'x-bzip', 'x-bzip2', 'vnd.rar', 'x-7z-compressed', 'tar', 'x-tar'];
-    if (!types.includes(file?.mimetype.split('/')[1])) this.exceptionService.badRequestException({ message: 'Invalid file type.' });
+    const types = ['zip', 'tgz', 'gzip', 'gz', 'bzip2', 'bzip', '7z', 'rar', 'tar'];
+    const fileFilter = file?.originalname.split('.');
+    if (!types.includes(fileFilter[fileFilter.length - 1])) {
+      this.exceptionService.badRequestException({ message: 'Invalid file type.' });
+    }
     const application = this.applicationService.saveApplication(applicationDto, file.path, params.propertyIdentifier, params.env, queries.createdBy);
     return application;
   }
