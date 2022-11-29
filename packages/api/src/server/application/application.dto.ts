@@ -21,6 +21,7 @@ export class CreateApplicationDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
+  // TODO : Validations to be added post CLI fix
   ref: string;
 
   @ApiProperty()
