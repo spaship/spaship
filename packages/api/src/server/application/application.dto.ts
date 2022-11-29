@@ -21,7 +21,7 @@ export class CreateApplicationDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  @Length(MIN.DEFAULT, MAX.REF, { message: MESSAGE.INVALID_LENGTH, always: true })
+  // TODO : Validations to be added post CLI fix
   ref: string;
 
   @ApiProperty()
