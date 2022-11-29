@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as extract from 'extract-zip';
+import * as decompress from 'decompress';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -140,7 +140,7 @@ export class ApplicationService {
     const { baseDir } = DIRECTORY_CONFIGURATION;
     const tmpDir = `${baseDir}/${name.split('.')[0]}-${Date.now()}-extracted`;
     await fs.mkdirSync(`${tmpDir}`, { recursive: true });
-    await extract(path.resolve(applicationPath), { dir: path.resolve(tmpDir) });
+    await decompress(path.resolve(applicationPath), path.resolve(tmpDir));
     const zipPath = await this.applicationFactory.createTemplateAndZip(appPath, ref, name, tmpDir, propertyIdentifier, env, property.namespace);
     const formData: any = new FormData();
     try {
