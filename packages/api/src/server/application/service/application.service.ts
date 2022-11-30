@@ -24,7 +24,7 @@ export class ApplicationService {
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService,
     private readonly agendaService: AgendaService
-  ) {}
+  ) { }
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.application.getAll();
@@ -84,7 +84,7 @@ export class ApplicationService {
       propertyIdentifier,
       Action.APPLICATION_DEPLOYMENT_STARTED,
       env,
-      applicationRequest.name,
+      identifier,
       `Deployment started for ${applicationRequest.name} at ${env}`,
       createdBy,
       Source.CLI
@@ -127,6 +127,7 @@ export class ApplicationService {
    */
   async deployApplication(applicationRequest: CreateApplicationDto, applicationPath: string, propertyIdentifier: string, env: string): Promise<any> {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+    const identifier = this.applicationFactory.getIdentifier(applicationRequest.name);
     if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
     const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
     this.logger.log('Environment', JSON.stringify(environment));
@@ -134,14 +135,14 @@ export class ApplicationService {
     const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === environment.cluster);
     const deploymentConnection = (await this.dataServices.deploymentConnection.getByAny({ name: deploymentRecord.name }))[0];
     this.logger.log('DeploymentConnection', JSON.stringify(deploymentConnection));
-    const { name, ref } = applicationRequest;
+    const { ref } = applicationRequest;
     const appPath = applicationRequest.path;
     this.logger.log('ApplicationRequest', JSON.stringify(applicationRequest));
     const { baseDir } = DIRECTORY_CONFIGURATION;
-    const tmpDir = `${baseDir}/${name.split('.')[0]}-${Date.now()}-extracted`;
+    const tmpDir = `${baseDir}/${identifier.split('.')[0]}-${Date.now()}-extracted`;
     await fs.mkdirSync(`${tmpDir}`, { recursive: true });
     await decompress(path.resolve(applicationPath), path.resolve(tmpDir));
-    const zipPath = await this.applicationFactory.createTemplateAndZip(appPath, ref, name, tmpDir, propertyIdentifier, env, property.namespace);
+    const zipPath = await this.applicationFactory.createTemplateAndZip(appPath, ref, identifier, tmpDir, propertyIdentifier, env, property.namespace);
     const formData: any = new FormData();
     try {
       const fileStream = await fs.createReadStream(zipPath);

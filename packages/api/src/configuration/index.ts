@@ -45,24 +45,24 @@ export enum MAX {
   PROPERTY = 24,
   EXPIRESIN = 4,
   ENV = 12,
-  REF = 100,
+  REF = 500,
   CLUSTER = 12
 }
 
 export enum MESSAGE {
-  INVALID_LENGTH = 'Length is Invalid.',
+  INVALID_LENGTH = 'Length is Invalid',
   INVALID_PROPERTY_TITLE = 'Invalid Property Title.',
   INVALID_PROPERTY_IDENTIFIER = 'Invalid Property Identifier.',
   INVALID_CLUSTER = 'Invalid Cluster [Must be Prod/Preprod].',
   INVALID_EPHEMREAL = 'Invalid Ephemeral [Must be true/false].',
-  INVALID_PATH = 'Invalid Path [Example : /home, /test-app].',
-  INVALID_URL = 'Invalid URL [Example : spaship.redhat.com].',
-  INVALID_EXPIRESIN = 'Invalid ExpiresIn [Example : 1d, 5d, 100d].',
-  INVALID_ACTION_ID = 'Invalid Action Id [Please provide the Pull Request ID, Ex: 101].',
-  INVALID_APPLICATION = 'Invalid Application name.',
-  INVALID_REF = 'Invalid Reference.',
-  INVALID_ENV = 'Invalid Environment',
-  INVALID_LABEL = 'Invalid Label.'
+  INVALID_PATH = 'Invalid Path.',
+  INVALID_URL = 'Invalid URL [Correct format : spaship.redhat.com].',
+  INVALID_EXPIRESIN = 'Invalid ExpiresIn [Correct format : 1d, 5d, 100d].',
+  INVALID_ACTION_ID = 'Invalid Action Id [Please provide the Pull Request ID, Correct format: 101].',
+  INVALID_APPLICATION = 'Invalid Application name [Correct format : home, doc].',
+  INVALID_REF = 'Invalid Reference [Correct format : 1.2, v1@1.2.3].',
+  INVALID_ENV = 'Invalid Environment [Correct format : prod, stage, dev]',
+  INVALID_LABEL = 'Invalid Label [Correct format : all-access, prod-key].'
 }
 
 export const VALIDATION = {
@@ -76,7 +76,7 @@ export const VALIDATION = {
   LABEL: /^[_a-zA-Z0-9 -.]+$/,
   URL: /^[_a-zA-Z0-9-.]+$/,
   ENV: /^[a-zA-Z0-9-]+$/,
-  REF: /^[_a-zA-Z0-9/ -.]+$/,
+  REF: /^[_a-zA-Z0-9/@ -.]+$/,
   EXPIRESIN: /^[a-zA-Z0-9]+$/
 };
 

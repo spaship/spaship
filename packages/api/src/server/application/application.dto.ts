@@ -7,21 +7,21 @@ export class CreateApplicationDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Length(MIN.DEFAULT, MAX.DEFAULT, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Length(MIN.DEFAULT, MAX.DEFAULT, { message: `Name ${MESSAGE.INVALID_LENGTH} [Min : ${MIN.DEFAULT}, Max : ${MAX.DEFAULT}]`, always: true })
   @Matches(VALIDATION.APPLICATION_NAME, { message: MESSAGE.INVALID_APPLICATION, always: true })
   name: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Length(MIN.PATH, MAX.DEFAULT, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Length(MIN.PATH, MAX.DEFAULT, { message: `Path ${MESSAGE.INVALID_LENGTH} [Min : ${MIN.PATH}, Max : ${MAX.DEFAULT}]`, always: true })
   @Matches(VALIDATION.PATH, { message: MESSAGE.INVALID_PATH, always: true })
   path: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  // TODO : Validations to be added post CLI fix
+  @Length(MIN.DEFAULT, MAX.REF, { message: `Ref ${MESSAGE.INVALID_LENGTH} [Min : ${MIN.ACTIONID}, Max : ${MAX.REF}]`, always: true })
   ref: string;
 
   @ApiProperty()
@@ -34,7 +34,7 @@ export class CreateApplicationDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  @Length(MIN.ACTIONID, MAX.DEFAULT, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Length(MIN.ACTIONID, MAX.DEFAULT, { message: `ActionId ${MESSAGE.INVALID_LENGTH} [Min : ${MIN.ACTIONID}, Max : ${MAX.DEFAULT}]`, always: true })
   @Matches(VALIDATION.ACTIONID, { message: MESSAGE.INVALID_ACTION_ID, always: true })
   actionId: string;
 
