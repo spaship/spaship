@@ -15,8 +15,14 @@ export class ApplicationController {
 
   @Get('/property/:identifier')
   @ApiOperation({ description: 'Get the list of Properties.' })
-  async getApplicationsByProperty(@Param('identifier') identifier: any) {
-    return this.applicationService.getApplicationsByProperty(identifier);
+  async getApplicationsByProperty(
+    @Param('identifier') identifier: any,
+    @Query('applicationIdentifier') applicationIdentifier: string,
+    @Query('env') env: string,
+    @Query('skip') skip: number,
+    @Query('limit') limit: number
+  ) {
+    return this.applicationService.getApplicationsByProperty(identifier, applicationIdentifier, env, skip, limit);
   }
 
   @Post('/deploy/:propertyIdentifier/:env')
