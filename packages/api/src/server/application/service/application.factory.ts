@@ -20,7 +20,7 @@ export class ApplicationFactory {
     private readonly logger: LoggerService,
     private readonly httpService: HttpService,
     private readonly exceptionService: ExceptionsService
-  ) { }
+  ) {}
 
   /* @internal
    * Create the spaship config (.spaship) from the application
@@ -172,8 +172,8 @@ export class ApplicationFactory {
   }
 
   // @internal generate the application identifier
-  getPath(path: string): string {
-    const appPath = path.replace(/^\/+/g, '').replace(/\/+$/, '');
+  getPath(requestPath: string): string {
+    const appPath = requestPath.replace(/^\/+/g, '').replace(/\/+$/, '');
     return `/${appPath}`;
   }
 }

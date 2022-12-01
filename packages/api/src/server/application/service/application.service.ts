@@ -24,7 +24,7 @@ export class ApplicationService {
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService,
     private readonly agendaService: AgendaService
-  ) { }
+  ) {}
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.application.getAll();
@@ -50,6 +50,7 @@ export class ApplicationService {
   ): Promise<ApplicationResponse> {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
+    applicationRequest.path = this.applicationFactory.getPath(applicationRequest.path);
     const identifier = this.applicationFactory.getIdentifier(applicationRequest.name);
     if (this.applicationFactory.isEphemeral(applicationRequest)) {
       const actionEnabled = !!applicationRequest.actionId;
