@@ -52,18 +52,13 @@ export class AnalyticsService {
   async getActivityStream(
     propertyIdentifier: string,
     applicationIdentifier: string,
+    action: string,
     skip: number = AnalyticsService.defaultSkip,
     limit: number = AnalyticsService.defaultLimit
   ): Promise<ActivityStream[]> {
-    if (propertyIdentifier && applicationIdentifier)
-      return this.dataServices.activityStream.getByOptions(
-        { propertyIdentifier, 'props.applicationIdentifier': applicationIdentifier },
-        { createdAt: -1 },
-        skip,
-        limit
-      );
-    if (!propertyIdentifier) return this.dataServices.activityStream.getAll();
-    return this.dataServices.activityStream.getByOptions({ propertyIdentifier }, { createdAt: -1 }, skip, limit);
+    const keys = { propertyIdentifier, 'props.applicationIdentifier': applicationIdentifier, action };
+    Object.keys(keys).forEach((key) => keys[key] === undefined && delete keys[key]);
+    return this.dataServices.activityStream.getByOptions(keys, { createdAt: -1 }, skip, limit);
   }
 
   async getDeploymentCount(propertyIdentifier: string): Promise<any> {

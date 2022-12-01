@@ -15,10 +15,11 @@ export class AnalyticsController {
   async getApiKeyByProperty(
     @Query('propertyIdentifier') propertyIdentifier: string,
     @Query('applicationIdentifier') applicationIdentifier: string,
+    @Query('action') action: string,
     @Query('skip') skip: number,
     @Query('limit') limit: number
   ): Promise<ActivityStream[]> {
-    return this.analyticsService.getActivityStream(propertyIdentifier, applicationIdentifier, skip, limit);
+    return this.analyticsService.getActivityStream(propertyIdentifier, applicationIdentifier, action, skip, limit);
   }
 
   @Sse('events/:propertyIdentifier')
