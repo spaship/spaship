@@ -114,6 +114,7 @@ export class ApplicationFactory {
     return ref;
   }
 
+  // TODO : Add the deployed-by post RBAC Implementation
   createApplicationResponse(application: Application): ApplicationResponse {
     const applicationResponse = new ApplicationResponse();
     applicationResponse.name = application.name;
@@ -121,7 +122,6 @@ export class ApplicationFactory {
     applicationResponse.env = application.env;
     applicationResponse.ref = this.getRef(application.nextRef);
     applicationResponse.accessUrl = this.getAccessUrl(application.accessUrl);
-    applicationResponse.deployedBy = application.updatedBy;
     return applicationResponse;
   }
 
@@ -169,5 +169,11 @@ export class ApplicationFactory {
         /* Removing multiple consecutive `-`s */
         .replace(/--+/g, '-')
     );
+  }
+
+  // @internal generate the application identifier
+  getPath(requestPath: string): string {
+    const appPath = requestPath.replace(/^\/+/g, '').replace(/\/+$/, '');
+    return `/${appPath}`;
   }
 }
