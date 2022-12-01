@@ -17,6 +17,10 @@ import { ApplicationFactory } from './application.factory';
 
 @Injectable()
 export class ApplicationService {
+  private static readonly defaultSkip: number = 0;
+
+  private static readonly defaultLimit: number = 500;
+
   constructor(
     private readonly dataServices: IDataServices,
     private readonly logger: LoggerService,
@@ -30,8 +34,16 @@ export class ApplicationService {
     return this.dataServices.application.getAll();
   }
 
-  getApplicationsByProperty(propertyIdentifier: string): Promise<Application[]> {
-    return this.dataServices.application.getByAny({ propertyIdentifier });
+  getApplicationsByProperty(
+    propertyIdentifier: string,
+    identifier: string,
+    env: string,
+    skip: number = ApplicationService.defaultSkip,
+    limit: number = ApplicationService.defaultLimit
+  ): Promise<Application[]> {
+    const keys = { propertyIdentifier, identifier, env };
+    Object.keys(keys).forEach((key) => keys[key] === undefined && delete keys[key]);
+    return this.dataServices.application.getByOptions(keys, { identifier: 1, updatedAt: -1 }, skip, limit);
   }
 
   /* @internal
