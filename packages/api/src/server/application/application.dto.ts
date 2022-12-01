@@ -7,14 +7,13 @@ export class CreateApplicationDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Length(MIN.DEFAULT, MAX.DEFAULT, { message: `Name ${MESSAGE.INVALID_LENGTH} [Min : ${MIN.DEFAULT}, Max : ${MAX.DEFAULT}]`, always: true })
-  @Matches(VALIDATION.APPLICATION_NAME, { message: MESSAGE.INVALID_APPLICATION, always: true })
+  @Length(MIN.DEFAULT, MAX.NAME, { message: `Name ${MESSAGE.INVALID_LENGTH} [Min : ${MIN.DEFAULT}, Max : ${MAX.NAME}]`, always: true })
   name: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Length(MIN.PATH, MAX.DEFAULT, { message: `Path ${MESSAGE.INVALID_LENGTH} [Min : ${MIN.PATH}, Max : ${MAX.DEFAULT}]`, always: true })
+  @Length(MIN.PATH, MAX.PATH, { message: `Path ${MESSAGE.INVALID_LENGTH} [Min : ${MIN.PATH}, Max : ${MAX.PATH}]`, always: true })
   @Matches(VALIDATION.PATH, { message: MESSAGE.INVALID_PATH, always: true })
   path: string;
 
