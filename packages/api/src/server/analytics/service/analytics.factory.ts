@@ -17,15 +17,17 @@ export class AnalyticsFactory {
   }
 
   async getDeploymentCountForEnv(propertyIdentifier: string, applicationIdentifier: string): Promise<Object> {
-    let searchQuery;
-    if (!applicationIdentifier) searchQuery = { action: Action.APPLICATION_DEPLOYED, propertyIdentifier };
-    else
-      searchQuery = {
-        action: Action.APPLICATION_DEPLOYED,
-        propertyIdentifier,
-        'props.applicationIdentifier': applicationIdentifier
-      };
-    const groupQuery = { _id: { applicationIdentifier: '$props.applicationIdentifier', env: '$props.env' }, count: { $sum: 1 } };
+    const searchQuery = {
+      action: Action.APPLICATION_DEPLOYED,
+      propertyIdentifier,
+      'props.applicationIdentifier': applicationIdentifier
+    };
+    Object.keys(searchQuery).forEach((key) => searchQuery[key] === undefined && delete searchQuery[key]);
+    let groupQuery;
+    if (applicationIdentifier && propertyIdentifier)
+      groupQuery = { _id: { applicationIdentifier: '$props.applicationIdentifier', env: '$props.env' }, count: { $sum: 1 } };
+    else if (propertyIdentifier) groupQuery = { _id: { propertyIdentifier, env: '$props.env' }, count: { $sum: 1 } };
+    else groupQuery = { _id: { env: '$props.env' }, count: { $sum: 1 } };
     const projectionQuery = { _id: 0, env: '$_id.env', count: '$count' };
     return this.buildAggregationQuery(searchQuery, groupQuery, projectionQuery);
   }
@@ -34,11 +36,7 @@ export class AnalyticsFactory {
     let searchQuery;
     let groupQuery;
     let projectQuery;
-    if (!applicationIdentifier) {
-      searchQuery = { action: Action.APPLICATION_DEPLOYED, propertyIdentifier };
-      groupQuery = { propertyIdentifier, env: '$props.env' };
-      projectQuery = { _id: 0, propertyIdentifier: '$_id.propertyIdentifier', env: '$_id.env', count: '$count' };
-    } else {
+    if (applicationIdentifier && propertyIdentifier) {
       searchQuery = {
         action: Action.APPLICATION_DEPLOYED,
         propertyIdentifier,
@@ -46,6 +44,14 @@ export class AnalyticsFactory {
       };
       groupQuery = { applicationIdentifier, env: '$props.env' };
       projectQuery = { _id: 0, applicationIdentifier: '$_id.applicationIdentifier', env: '$_id.env', count: '$count' };
+    } else if (propertyIdentifier) {
+      searchQuery = { action: Action.APPLICATION_DEPLOYED, propertyIdentifier };
+      groupQuery = { propertyIdentifier, env: '$props.env' };
+      projectQuery = { _id: 0, propertyIdentifier: '$_id.propertyIdentifier', env: '$_id.env', count: '$count' };
+    } else {
+      searchQuery = { action: Action.APPLICATION_DEPLOYED };
+      groupQuery = { env: '$props.env' };
+      projectQuery = { _id: 0, env: '$_id.env', count: '$count' };
     }
     return [searchQuery, groupQuery, projectQuery];
   }
