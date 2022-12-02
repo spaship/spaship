@@ -133,10 +133,11 @@ export class ApplicationFactory {
   private getAccessUrl(application: Application, baseUrl: string): string {
     let generatedAccessURL = application.accessUrl;
     if (generatedAccessURL === 'NA') {
+      const protocol = 'http';
       const { hostname } = new URL(baseUrl);
       const appPrefix = hostname.split('.')[4];
       const domain = hostname.split('.').slice(1).join('.');
-      generatedAccessURL = `http://${appPrefix}.spaship--${application.propertyIdentifier}.${application.propertyIdentifier}.${
+      generatedAccessURL = `${protocol}://${appPrefix}.spaship--${application.propertyIdentifier}.${application.propertyIdentifier}.${
         application.env
       }.${domain}${this.getGeneratedPath(application.path)}`;
     }
@@ -144,7 +145,8 @@ export class ApplicationFactory {
   }
 
   private getGeneratedPath(reqPath: string) {
-    if (reqPath === '/') return '/ROOTSPA';
+    const basePath = '/ROOTSPA';
+    if (reqPath === '/') return basePath;
     return reqPath;
   }
 
