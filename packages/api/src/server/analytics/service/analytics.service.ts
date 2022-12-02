@@ -57,7 +57,7 @@ export class AnalyticsService {
     limit: number = AnalyticsService.defaultLimit
   ): Promise<ActivityStream[]> {
     const keys = { propertyIdentifier, 'props.applicationIdentifier': applicationIdentifier, action };
-    Object.keys(keys).forEach((key) => keys[key] === undefined && delete keys[key]);
+    Object.keys(keys).forEach((key) => (keys[key] === undefined || keys[key] === '') && delete keys[key]);
     return this.dataServices.activityStream.getByOptions(keys, { createdAt: -1 }, skip, limit);
   }
 
