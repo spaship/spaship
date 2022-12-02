@@ -115,13 +115,13 @@ export class ApplicationFactory {
   }
 
   // TODO : Add the deployed-by post RBAC Implementation
-  createApplicationResponse(application: Application): ApplicationResponse {
+  createApplicationResponse(application: Application, baseUrl: string): ApplicationResponse {
     const applicationResponse = new ApplicationResponse();
     applicationResponse.name = application.name;
     applicationResponse.path = application.path;
     applicationResponse.env = application.env;
     applicationResponse.ref = this.getRef(application.nextRef);
-    applicationResponse.accessUrl = this.getAccessUrl(application.accessUrl);
+    applicationResponse.accessUrl = this.getAccessUrl(application, baseUrl);
     return applicationResponse;
   }
 
@@ -130,9 +130,22 @@ export class ApplicationFactory {
     return nextRef;
   }
 
-  private getAccessUrl(accessUrl: string): string {
-    if (accessUrl === 'NA') return 'Please check the access url from the Manager.';
-    return accessUrl;
+  private getAccessUrl(application: Application, baseUrl: string): string {
+    let generatedAccessURL = application.accessUrl;
+    if (generatedAccessURL === 'NA') {
+      const { hostname } = new URL(baseUrl);
+      const appPrefix = hostname.split('.')[4];
+      const domain = hostname.split('.').slice(1).join('.');
+      generatedAccessURL = `http://${appPrefix}.spaship--${application.propertyIdentifier}.${application.propertyIdentifier}.${
+        application.env
+      }.${domain}${this.getGeneratedPath(application.path)}`;
+    }
+    return `This is the access ${generatedAccessURL}. The application should be available on this URL once it is deployed.`;
+  }
+
+  private getGeneratedPath(reqPath: string) {
+    if (reqPath === '/') return '/ROOTSPA';
+    return reqPath;
   }
 
   isEphemeral(applicationRequest: CreateApplicationDto) {

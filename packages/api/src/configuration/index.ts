@@ -43,7 +43,7 @@ export enum MIN {
 export enum MAX {
   PATH = 100,
   NAME = 100,
-  DEFAULT = 36,
+  DEFAULT = 100,
   PROPERTY = 50,
   EXPIRESIN = 4,
   ENV = 12,
