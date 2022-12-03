@@ -93,6 +93,9 @@ export class ApplicationService {
       this.exceptionService.internalServerErrorException(err.message);
     }
     const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier }))[0];
+    const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
+    const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === environment.cluster);
+    const deploymentConnection = (await this.dataServices.deploymentConnection.getByAny({ name: deploymentRecord.name }))[0];
     await this.analyticsService.createActivityStream(
       propertyIdentifier,
       Action.APPLICATION_DEPLOYMENT_STARTED,
@@ -122,14 +125,14 @@ export class ApplicationService {
       );
       this.logger.log('NewApplicationDetails', JSON.stringify(saveApplication));
       this.dataServices.application.create(saveApplication);
-      return this.applicationFactory.createApplicationResponse(saveApplication);
+      return this.applicationFactory.createApplicationResponse(saveApplication, deploymentConnection.baseurl);
     }
     applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
     applicationDetails.name = applicationRequest.name;
     applicationDetails.updatedBy = createdBy;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
     await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier }, applicationDetails);
-    return this.applicationFactory.createApplicationResponse(applicationDetails);
+    return this.applicationFactory.createApplicationResponse(applicationDetails, deploymentConnection.baseurl);
   }
 
   /* @internal
