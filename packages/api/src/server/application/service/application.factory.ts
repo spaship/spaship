@@ -20,7 +20,7 @@ export class ApplicationFactory {
     private readonly logger: LoggerService,
     private readonly httpService: HttpService,
     private readonly exceptionService: ExceptionsService
-  ) {}
+  ) { }
 
   /* @internal
    * Create the spaship config (.spaship) from the application
@@ -59,6 +59,11 @@ export class ApplicationFactory {
         await fs.writeFileSync(path.join(tmpDir, 'build/.spaship'), JSON.stringify(spashipFile, null, '\t'));
         zipPath = path.join(tmpDir, `../SPAship${Date.now()}.zip`);
         await zip(path.join(tmpDir, 'build'), zipPath);
+      } else if (await fileExists(path.join(tmpDir, 'package'))) {
+        // @internal npm pack support added
+        await fs.writeFileSync(path.join(tmpDir, 'package/.spaship'), JSON.stringify(spashipFile, null, '\t'));
+        zipPath = path.join(tmpDir, `../SPAship${Date.now()}.zip`);
+        await zip(path.join(tmpDir, 'package'), zipPath);
       } else {
         await fs.writeFileSync(path.join(tmpDir, '.spaship'), JSON.stringify(spashipFile, null, '\t'));
         zipPath = path.join(tmpDir, `../SPAship${Date.now()}.zip`);
@@ -137,9 +142,8 @@ export class ApplicationFactory {
       const { hostname } = new URL(baseUrl);
       const appPrefix = hostname.split('.')[4];
       const domain = hostname.split('.').slice(1).join('.');
-      generatedAccessURL = `${protocol}://${appPrefix}.spaship--${application.propertyIdentifier}.${application.propertyIdentifier}.${
-        application.env
-      }.${domain}${this.getGeneratedPath(application.path)}`;
+      generatedAccessURL = `${protocol}://${appPrefix}.spaship--${application.propertyIdentifier}.${application.propertyIdentifier}.${application.env
+        }.${domain}${this.getGeneratedPath(application.path)}`;
     }
     return `This is the access ${generatedAccessURL}. The application should be available on this URL once it is deployed.`;
   }
