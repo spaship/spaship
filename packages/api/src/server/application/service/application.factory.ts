@@ -41,8 +41,9 @@ export class ApplicationFactory {
     const rootspa = 'ROOTSPA';
     if (appPath.charAt(0) === '/' && appPath.length === 1) appPath = rootspa;
     else if (appPath.charAt(0) === '/') appPath = appPath.substr(1);
+    const websiteVersion = ref || 'v1';
     const spashipFile = {
-      websiteVersion: ref || 'v1',
+      websiteVersion: this.getIdentifier(websiteVersion),
       websiteName: propertyIdentifier,
       name,
       mapping: appPath,
@@ -151,7 +152,8 @@ export class ApplicationFactory {
   private getGeneratedPath(reqPath: string) {
     const basePath = '/ROOTSPA';
     if (reqPath === '/') return basePath;
-    return reqPath;
+    const finalPath = `/${reqPath.split('/').slice(1).join('_')}`;
+    return finalPath;
   }
 
   isEphemeral(applicationRequest: CreateApplicationDto) {
