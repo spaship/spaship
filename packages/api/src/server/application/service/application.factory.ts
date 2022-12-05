@@ -145,7 +145,7 @@ export class ApplicationFactory {
       generatedAccessURL = `${protocol}://${appPrefix}.spaship--${application.propertyIdentifier}.${application.propertyIdentifier}.${application.env
         }.${domain}${this.getGeneratedPath(application.path)}`;
     }
-    return `This is the access ${generatedAccessURL}. The application should be available on this URL once it is deployed.`;
+    return generatedAccessURL;
   }
 
   private getGeneratedPath(reqPath: string) {

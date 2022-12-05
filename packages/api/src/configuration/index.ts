@@ -57,7 +57,7 @@ export enum MESSAGE {
   INVALID_PROPERTY_IDENTIFIER = 'Invalid Property Identifier.',
   INVALID_CLUSTER = 'Invalid Cluster [Must be Prod/Preprod].',
   INVALID_EPHEMREAL = 'Invalid Ephemeral [Must be true/false].',
-  INVALID_PATH = 'Invalid Context Path [Special Characters are not allowed other than forward-slash(/) and dot(.)].',
+  INVALID_PATH = 'Invalid Context Path [Special Characters are not allowed other than forward-slash(/) and hyphen(-)].',
   INVALID_URL = 'Invalid URL [Correct format : spaship.redhat.com].',
   INVALID_EXPIRESIN = 'Invalid ExpiresIn [Correct format : 1d, 5d, 100d].',
   INVALID_ACTION_ID = 'Invalid Action Id [Special Characters are not allowed other than forward-slash(/), @ and dot(.)].',
