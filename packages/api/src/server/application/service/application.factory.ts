@@ -20,7 +20,7 @@ export class ApplicationFactory {
     private readonly logger: LoggerService,
     private readonly httpService: HttpService,
     private readonly exceptionService: ExceptionsService
-  ) { }
+  ) {}
 
   /* @internal
    * Create the spaship config (.spaship) from the application
@@ -41,9 +41,10 @@ export class ApplicationFactory {
     const rootspa = 'ROOTSPA';
     if (appPath.charAt(0) === '/' && appPath.length === 1) appPath = rootspa;
     else if (appPath.charAt(0) === '/') appPath = appPath.substr(1);
-    const websiteVersion = ref || 'v1';
+    const tmpWebsiteVersion = ref || 'v1';
+    const websiteVersion = this.getIdentifier(tmpWebsiteVersion);
     const spashipFile = {
-      websiteVersion: this.getIdentifier(websiteVersion),
+      websiteVersion: this.trimWebsiteVersion(websiteVersion),
       websiteName: propertyIdentifier,
       name,
       mapping: appPath,
@@ -143,8 +144,9 @@ export class ApplicationFactory {
       const { hostname } = new URL(baseUrl);
       const appPrefix = hostname.split('.')[4];
       const domain = hostname.split('.').slice(1).join('.');
-      generatedAccessURL = `${protocol}://${appPrefix}.spaship--${application.propertyIdentifier}.${application.propertyIdentifier}.${application.env
-        }.${domain}${this.getGeneratedPath(application.path)}`;
+      generatedAccessURL = `${protocol}://${appPrefix}.spaship--${application.propertyIdentifier}.${application.propertyIdentifier}.${
+        application.env
+      }.${domain}${this.getGeneratedPath(application.path)}`;
     }
     return generatedAccessURL;
   }
@@ -190,6 +192,13 @@ export class ApplicationFactory {
         /* Removing multiple consecutive `-`s */
         .replace(/--+/g, '-')
     );
+  }
+
+  // @internal max length in openshfit to deploy
+  trimWebsiteVersion(version): string {
+    const maxLength = 60;
+    if (version.length > maxLength) return version.substr(0, maxLength);
+    return version;
   }
 
   // @internal generate the application identifier
