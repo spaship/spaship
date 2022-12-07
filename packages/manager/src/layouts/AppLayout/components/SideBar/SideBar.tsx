@@ -39,12 +39,12 @@ export const SideBar = () => {
                 />
               </a>
             </Link>
-            <Link href="/coming-soon">
+            <Link href="/dashboard">
               <a className="text-decoration-none">
                 <SidebarNavItem
                   title="Dashboard"
                   icon={<ChartLineIcon size="sm" />}
-                  isActive={pathname === '/dashboard'}
+                  isActive={pathname === pageLinks.dashboardPage}
                 />
               </a>
             </Link>
