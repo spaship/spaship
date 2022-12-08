@@ -60,7 +60,7 @@ export class AnalyticsFactory {
     let searchQuery;
     let groupQuery;
     let projectQuery;
-    const [startDate, endDate] = await this.getDateDiffrence(days);
+    const [startDate, endDate] = await this.getStartAndEndDate(days);
     if (isEph === 'true') searchQuery = { env: { $regex: /^ephemeral/ } };
     else searchQuery = { env: { $not: /ephemeral/ } };
     const groupOperations = { count: { $sum: 1 }, totalTime: { $sum: { $toDecimal: '$consumedTime' } } };
@@ -110,7 +110,7 @@ export class AnalyticsFactory {
     ];
   }
 
-  async getDateDiffrence(days: number): Promise<Date[]> {
+  async getStartAndEndDate(days: number): Promise<Date[]> {
     const endDate = new Date();
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
