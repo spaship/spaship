@@ -17,6 +17,8 @@ export class AnalyticsService {
 
   private static readonly defaultLimit: number = 100;
 
+  private static readonly defaultDays: number = 120;
+
   constructor(
     private readonly dataServices: IDataServices,
     private readonly analyticsFactory: AnalyticsFactory,
@@ -102,5 +104,20 @@ export class AnalyticsService {
 
   emit(channel, data) {
     AnalyticsService.emitter.emit(channel, data);
+  }
+
+  async getAverageDeploymentTime(propertyIdentifier: string, isEph: string, days: number = AnalyticsService.defaultDays): Promise<Object> {
+    const query = await this.analyticsFactory.getAverageDeploymentTimeQuery(propertyIdentifier, days, isEph);
+    const response = await this.dataServices.eventTimeTrace.aggregate(query);
+    let sumOfAverageTime = 0;
+    for (const key in response) {
+      if (Object.prototype.hasOwnProperty.call(response, key)) {
+        response[key].totalTime = parseFloat(response[key].totalTime);
+        response[key].averageTime = parseFloat(response[key].averageTime);
+        sumOfAverageTime += response[key].averageTime;
+      }
+    }
+    const averageTime = parseFloat((sumOfAverageTime / response.length).toFixed(2));
+    return { averageTime, days, isEph, deploymentDetails: response };
   }
 }

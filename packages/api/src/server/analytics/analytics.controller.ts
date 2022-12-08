@@ -50,4 +50,14 @@ export class AnalyticsController {
   ): Promise<any> {
     return this.analyticsService.getMonthlyDeploymentCount(propertyIdentifier, applicationIdentifier);
   }
+
+  @Get('/deployment/time')
+  @ApiOperation({ description: 'Get the Average time for the Deployments.' })
+  async getAverageDeploymentTime(
+    @Query('propertyIdentifier') propertyIdentifier: string,
+    @Query('days') days: number,
+    @Query('isEph') isEph: string
+  ): Promise<any> {
+    return this.analyticsService.getAverageDeploymentTime(propertyIdentifier, isEph, days);
+  }
 }
