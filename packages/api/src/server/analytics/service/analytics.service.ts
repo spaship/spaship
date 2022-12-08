@@ -4,6 +4,7 @@ import { fromEvent } from 'rxjs';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { ActivityStream, Props } from '../activity-stream.entity';
+import { AverageDeploymentDetails, DeploymentTime } from '../deployment-time-response.dto';
 import { AnalyticsFactory } from './analytics.factory';
 
 @Injectable()
@@ -106,18 +107,27 @@ export class AnalyticsService {
     AnalyticsService.emitter.emit(channel, data);
   }
 
-  async getAverageDeploymentTime(propertyIdentifier: string, isEph: string, days: number = AnalyticsService.defaultDays): Promise<Object> {
+  async getAverageDeploymentTime(propertyIdentifier: string, isEph: string, days: number = AnalyticsService.defaultDays): Promise<DeploymentTime> {
     const query = await this.analyticsFactory.getAverageDeploymentTimeQuery(propertyIdentifier, days, isEph);
     const response = await this.dataServices.eventTimeTrace.aggregate(query);
     let sumOfAverageTime = 0;
+    const deploymentTimeResponse = new DeploymentTime();
+    const averageTimeDetails: AverageDeploymentDetails[] = [];
     for (const key in response) {
       if (Object.prototype.hasOwnProperty.call(response, key)) {
-        response[key].totalTime = parseFloat(response[key].totalTime);
-        response[key].averageTime = parseFloat(response[key].averageTime);
-        sumOfAverageTime += response[key].averageTime;
+        const tmpDetails = new AverageDeploymentDetails();
+        tmpDetails.propertyIdentifier = response[key].propertyIdentifier;
+        tmpDetails.applicationIdentifier = response[key].applicationIdentifier;
+        tmpDetails.count = response[key].count;
+        tmpDetails.totalTime = parseFloat(response[key].totalTime);
+        tmpDetails.averageTime = parseFloat(response[key].averageTime);
+        averageTimeDetails.push(tmpDetails);
+        sumOfAverageTime += tmpDetails.averageTime;
       }
     }
-    const averageTime = parseFloat((sumOfAverageTime / response.length).toFixed(2));
-    return { averageTime, days, isEph, deploymentDetails: response };
+    deploymentTimeResponse.averageTime = parseFloat((sumOfAverageTime / response.length).toFixed(2));
+    deploymentTimeResponse.deploymentDetails = averageTimeDetails;
+    deploymentTimeResponse.days = days;
+    return deploymentTimeResponse;
   }
 }

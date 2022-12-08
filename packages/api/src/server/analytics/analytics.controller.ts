@@ -1,7 +1,8 @@
 import { Controller, Get, Param, Query, Sse, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from '../auth/auth.guard';
 import { ActivityStream } from './activity-stream.entity';
+import { DeploymentTime } from './deployment-time-response.dto';
 import { AnalyticsService } from './service/analytics.service';
 
 @Controller('analytics')
@@ -52,12 +53,13 @@ export class AnalyticsController {
   }
 
   @Get('/deployment/time')
+  @ApiCreatedResponse({ status: 200, description: 'Details for the average time to deployment.', type: DeploymentTime })
   @ApiOperation({ description: 'Get the Average time for the Deployments.' })
   async getAverageDeploymentTime(
     @Query('propertyIdentifier') propertyIdentifier: string,
     @Query('days') days: number,
     @Query('isEph') isEph: string
-  ): Promise<any> {
+  ): Promise<DeploymentTime> {
     return this.analyticsService.getAverageDeploymentTime(propertyIdentifier, isEph, days);
   }
 }
