@@ -56,6 +56,37 @@ export class AnalyticsFactory {
     return [searchQuery, groupQuery, projectQuery];
   }
 
+  async getAverageDeploymentTimeQuery(propertyIdentifier: string, days: number, isEph: string): Promise<Object> {
+    let searchQuery;
+    let groupQuery;
+    let projectQuery;
+    const [startDate, endDate] = await this.getStartAndEndDate(days);
+    if (isEph === 'true') searchQuery = { env: { $regex: /^ephemeral/ } };
+    else searchQuery = { env: { $not: /ephemeral/ } };
+    const groupOperations = { count: { $sum: 1 }, totalTime: { $sum: { $toDecimal: '$consumedTime' } } };
+    const projectOperations = {
+      count: '$count',
+      totalTime: { $round: ['$totalTime', 2] },
+      averageTime: { $round: [{ $divide: ['$totalTime', '$count'] }, 2] }
+    };
+    if (propertyIdentifier) {
+      searchQuery = { ...searchQuery, propertyIdentifier };
+      groupQuery = { $group: { _id: { applicationIdentifier: '$applicationIdentifier' }, ...groupOperations } };
+      projectQuery = { $project: { _id: 0, applicationIdentifier: '$_id.applicationIdentifier', ...projectOperations } };
+    } else {
+      groupQuery = { $group: { _id: { propertyIdentifier: '$propertyIdentifier' }, ...groupOperations } };
+      projectQuery = { $project: { _id: 0, propertyIdentifier: '$_id.propertyIdentifier', ...projectOperations } };
+    }
+    const query = [
+      { $match: { createdAt: { $gte: startDate, $lt: endDate } } },
+      { $match: searchQuery },
+      groupQuery,
+      projectQuery,
+      { $sort: { propertyIdentifier: 1, applicationIdentifier: 1 } }
+    ];
+    return query;
+  }
+
   async buildWeeklyDateFrame(): Promise<any[]> {
     const dateFrame = [];
     let recentDate = new Date();
@@ -77,5 +108,12 @@ export class AnalyticsFactory {
       { $project: projectRequest },
       { $sort: { env: 1 } }
     ];
+  }
+
+  async getStartAndEndDate(days: number): Promise<Date[]> {
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+    return [startDate, endDate];
   }
 }

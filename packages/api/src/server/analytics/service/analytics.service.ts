@@ -4,6 +4,7 @@ import { fromEvent } from 'rxjs';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { ActivityStream, Props } from '../activity-stream.entity';
+import { AverageDeploymentDetails, DeploymentTime } from '../deployment-time-response.dto';
 import { AnalyticsFactory } from './analytics.factory';
 
 @Injectable()
@@ -16,6 +17,8 @@ export class AnalyticsService {
   private static readonly defaultSkip: number = 0;
 
   private static readonly defaultLimit: number = 100;
+
+  private static readonly defaultDays: number = 120;
 
   constructor(
     private readonly dataServices: IDataServices,
@@ -102,5 +105,29 @@ export class AnalyticsService {
 
   emit(channel, data) {
     AnalyticsService.emitter.emit(channel, data);
+  }
+
+  async getAverageDeploymentTime(propertyIdentifier: string, isEph: string, days: number = AnalyticsService.defaultDays): Promise<DeploymentTime> {
+    const query = await this.analyticsFactory.getAverageDeploymentTimeQuery(propertyIdentifier, days, isEph);
+    const response = await this.dataServices.eventTimeTrace.aggregate(query);
+    let sumOfAverageTime = 0;
+    const deploymentTimeResponse = new DeploymentTime();
+    const averageTimeDetails: AverageDeploymentDetails[] = [];
+    for (const key in response) {
+      if (Object.prototype.hasOwnProperty.call(response, key)) {
+        const tmpDetails = new AverageDeploymentDetails();
+        tmpDetails.propertyIdentifier = response[key].propertyIdentifier;
+        tmpDetails.applicationIdentifier = response[key].applicationIdentifier;
+        tmpDetails.count = response[key].count;
+        tmpDetails.totalTime = parseFloat(response[key].totalTime);
+        tmpDetails.averageTime = parseFloat(response[key].averageTime);
+        averageTimeDetails.push(tmpDetails);
+        sumOfAverageTime += tmpDetails.averageTime;
+      }
+    }
+    deploymentTimeResponse.averageTime = parseFloat((sumOfAverageTime / response.length).toFixed(2));
+    deploymentTimeResponse.deploymentDetails = averageTimeDetails;
+    deploymentTimeResponse.days = days;
+    return deploymentTimeResponse;
   }
 }
