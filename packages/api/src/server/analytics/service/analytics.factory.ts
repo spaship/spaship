@@ -3,6 +3,8 @@ import { Action } from '../activity-stream.entity';
 
 @Injectable()
 export class AnalyticsFactory {
+  private static readonly ephemeral: string = 'ephemeral';
+
   async buildAggregationQuery(searchQuery: Object, groupQuery: Object, projectionQuery: Object) {
     return [{ $match: searchQuery }, { $group: groupQuery }, { $project: projectionQuery }];
   }
@@ -115,5 +117,19 @@ export class AnalyticsFactory {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
     return [startDate, endDate];
+  }
+
+  groupEphemeral(response: Object, obj: any) {
+    const result = response[AnalyticsFactory.ephemeral].findIndex((element) => element.startDate === obj.startDate);
+    if (result !== -1) response[AnalyticsFactory.ephemeral][result].count += obj.count;
+    else {
+      obj.env = AnalyticsFactory.ephemeral;
+      response[AnalyticsFactory.ephemeral].push(obj);
+    }
+  }
+
+  getEnv(env: string): string {
+    if (env.includes(AnalyticsFactory.ephemeral)) return AnalyticsFactory.ephemeral;
+    return env;
   }
 }

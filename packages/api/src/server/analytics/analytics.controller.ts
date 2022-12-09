@@ -2,6 +2,7 @@ import { Controller, Get, Param, Query, Sse, UseGuards } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from '../auth/auth.guard';
 import { ActivityStream } from './activity-stream.entity';
+import { DeploymentCount } from './deployment-count-response.dto';
 import { DeploymentTime } from './deployment-time-response.dto';
 import { AnalyticsService } from './service/analytics.service';
 
@@ -29,22 +30,29 @@ export class AnalyticsController {
   }
 
   @Get('/deployment/count')
-  @ApiOperation({ description: 'Get the Deployment Count.' })
-  async getDeploymentCount(@Query('propertyIdentifier') propertyIdentifier: string): Promise<any> {
+  @ApiCreatedResponse({ status: 200, description: 'Get the Deployment Count for all the Properties.', type: DeploymentCount, isArray: true })
+  @ApiOperation({ description: 'Get the Deployment Count for all the Properties.' })
+  async getDeploymentCount(@Query('propertyIdentifier') propertyIdentifier: string): Promise<DeploymentCount[]> {
     return this.analyticsService.getDeploymentCount(propertyIdentifier);
   }
 
   @Get('/deployment/env')
-  @ApiOperation({ description: 'Get the Deployment Count for the Environment.' })
+  @ApiCreatedResponse({
+    status: 200,
+    description: 'Get the Deployment Count for the Environments of the Properties.',
+    type: DeploymentCount,
+    isArray: true
+  })
+  @ApiOperation({ description: 'Get the Deployment Count for the Environments of the Properties.' })
   async getDeploymentCountForEnv(
     @Query('propertyIdentifier') propertyIdentifier: string,
     @Query('applicationIdentifier') applicationIdentifier: string
-  ): Promise<any> {
+  ): Promise<DeploymentCount[]> {
     return this.analyticsService.getDeploymentCountForEnv(propertyIdentifier, applicationIdentifier);
   }
 
   @Get('/deployment/env/month')
-  @ApiOperation({ description: 'Get the Deployment Count for the Environment.' })
+  @ApiOperation({ description: 'Get the Deployment Count for the Environment for a monhth.' })
   async getMonthlyDeploymentCount(
     @Query('propertyIdentifier') propertyIdentifier: string,
     @Query('applicationIdentifier') applicationIdentifier: string
