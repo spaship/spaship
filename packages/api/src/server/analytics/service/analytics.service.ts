@@ -67,7 +67,7 @@ export class AnalyticsService {
     return this.dataServices.activityStream.getByOptions(keys, { createdAt: -1 }, skip, limit);
   }
 
-  async getDeploymentCount(propertyIdentifier: string): Promise<any> {
+  async getDeploymentCount(propertyIdentifier: string): Promise<DeploymentCount[]> {
     const query = await this.analyticsFactory.getDeploymentCountQuery(propertyIdentifier);
     return Promise.resolve(this.dataServices.activityStream.aggregate(query));
   }

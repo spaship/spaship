@@ -30,14 +30,20 @@ export class AnalyticsController {
   }
 
   @Get('/deployment/count')
-  @ApiOperation({ description: 'Get the Deployment Count.' })
-  async getDeploymentCount(@Query('propertyIdentifier') propertyIdentifier: string): Promise<any> {
+  @ApiCreatedResponse({ status: 200, description: 'Get the Deployment Count for all the Properties.', type: DeploymentCount, isArray: true })
+  @ApiOperation({ description: 'Get the Deployment Count for all the Properties.' })
+  async getDeploymentCount(@Query('propertyIdentifier') propertyIdentifier: string): Promise<DeploymentCount[]> {
     return this.analyticsService.getDeploymentCount(propertyIdentifier);
   }
 
   @Get('/deployment/env')
-  @ApiCreatedResponse({ status: 200, description: 'Get the Deployment Count for the Environment.', type: DeploymentCount, isArray: true })
-  @ApiOperation({ description: 'Get the Deployment Count for the Environment.' })
+  @ApiCreatedResponse({
+    status: 200,
+    description: 'Get the Deployment Count for the Environments of the Properties.',
+    type: DeploymentCount,
+    isArray: true
+  })
+  @ApiOperation({ description: 'Get the Deployment Count for the Environments of the Properties.' })
   async getDeploymentCountForEnv(
     @Query('propertyIdentifier') propertyIdentifier: string,
     @Query('applicationIdentifier') applicationIdentifier: string
