@@ -41,7 +41,8 @@ export class ApplicationService {
     skip: number = ApplicationService.defaultSkip,
     limit: number = ApplicationService.defaultLimit
   ): Promise<Application[]> {
-    const keys = { propertyIdentifier, identifier, env };
+    let keys = { propertyIdentifier, identifier };
+    if (env) keys = { ...keys, ...{ env: { $in: env.split(',') } } };
     Object.keys(keys).forEach((key) => keys[key] === undefined && delete keys[key]);
     return this.dataServices.application.getByOptions(keys, { identifier: 1, updatedAt: -1 }, skip, limit);
   }

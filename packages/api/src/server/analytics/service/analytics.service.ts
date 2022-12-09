@@ -110,7 +110,8 @@ export class AnalyticsService {
   async getAverageDeploymentTime(propertyIdentifier: string, isEph: string, days: number = AnalyticsService.defaultDays): Promise<DeploymentTime> {
     const query = await this.analyticsFactory.getAverageDeploymentTimeQuery(propertyIdentifier, days, isEph);
     const response = await this.dataServices.eventTimeTrace.aggregate(query);
-    let sumOfAverageTime = 0;
+    let sumOfDeploymentTime = 0;
+    let sumOfDeploymentCount = 0;
     const deploymentTimeResponse = new DeploymentTime();
     const averageTimeDetails: AverageDeploymentDetails[] = [];
     for (const key in response) {
@@ -122,10 +123,14 @@ export class AnalyticsService {
         tmpDetails.totalTime = parseFloat(response[key].totalTime);
         tmpDetails.averageTime = parseFloat(response[key].averageTime);
         averageTimeDetails.push(tmpDetails);
-        sumOfAverageTime += tmpDetails.averageTime;
+        sumOfDeploymentTime += tmpDetails.totalTime;
+        sumOfDeploymentCount += tmpDetails.count;
       }
     }
-    deploymentTimeResponse.averageTime = parseFloat((sumOfAverageTime / response.length).toFixed(2));
+    deploymentTimeResponse.averageTime = parseFloat((sumOfDeploymentTime / sumOfDeploymentCount).toFixed(2));
+    deploymentTimeResponse.totalTime = parseFloat(sumOfDeploymentTime.toFixed(2));
+    deploymentTimeResponse.count = sumOfDeploymentCount;
+    deploymentTimeResponse.propertyIdentifier = propertyIdentifier;
     deploymentTimeResponse.deploymentDetails = averageTimeDetails;
     deploymentTimeResponse.days = days;
     return deploymentTimeResponse;
