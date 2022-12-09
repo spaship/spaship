@@ -4,6 +4,7 @@ import { fromEvent } from 'rxjs';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { ActivityStream, Props } from '../activity-stream.entity';
+import { DeploymentCount } from '../deployment-count-response.dto';
 import { AverageDeploymentDetails, DeploymentTime } from '../deployment-time-response.dto';
 import { AnalyticsFactory } from './analytics.factory';
 
@@ -13,6 +14,8 @@ export class AnalyticsService {
   private static readonly emitter: EventEmitter = new EventEmitter();
 
   private static readonly channel: string = 'activity_stream';
+
+  private static readonly ephemeral: string = 'ephemeral';
 
   private static readonly defaultSkip: number = 0;
 
@@ -69,9 +72,23 @@ export class AnalyticsService {
     return Promise.resolve(this.dataServices.activityStream.aggregate(query));
   }
 
-  async getDeploymentCountForEnv(propertyIdentifier: string, applicationIdentifier: string): Promise<any> {
+  async getDeploymentCountForEnv(propertyIdentifier: string, applicationIdentifier: string): Promise<DeploymentCount[]> {
     const query = await this.analyticsFactory.getDeploymentCountForEnv(propertyIdentifier, applicationIdentifier);
-    return Promise.resolve(this.dataServices.activityStream.aggregate(query));
+    const response = await this.dataServices.activityStream.aggregate(query);
+    const deploymentCount = [];
+    const ephemeralCount = new DeploymentCount();
+    ephemeralCount.env = AnalyticsService.ephemeral;
+    response.forEach((deployment) => {
+      if (deployment.env.includes(AnalyticsService.ephemeral)) ephemeralCount.count += deployment.count;
+      else {
+        const tmpDetails = new DeploymentCount();
+        tmpDetails.env = deployment.env;
+        tmpDetails.count = deployment.count;
+        deploymentCount.push(tmpDetails);
+      }
+    });
+    deploymentCount.push(ephemeralCount);
+    return deploymentCount;
   }
 
   async getMonthlyDeploymentCount(propertyIdentifier: string, applicationIdentifier: string): Promise<Object> {
@@ -94,8 +111,14 @@ export class AnalyticsService {
     }
     for (const week of monthlyCountResponse)
       for (const obj of week)
-        if (response[obj.env]) response[obj.env].push(obj);
-        else response[obj.env] = [obj];
+        if (response[this.analyticsFactory.getEnv(obj.env)]) {
+          if (obj.env.includes(AnalyticsService.ephemeral)) {
+            this.analyticsFactory.groupEphemeral(response, obj);
+          } else response[this.analyticsFactory.getEnv(obj.env)].push(obj);
+        } else {
+          if (obj.env.includes(AnalyticsService.ephemeral)) obj.env = AnalyticsService.ephemeral;
+          response[this.analyticsFactory.getEnv(obj.env)] = [obj];
+        }
     return response;
   }
 
