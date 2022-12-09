@@ -5,6 +5,15 @@ export class DeploymentTime {
   averageTime: number;
 
   @ApiProperty()
+  propertyIdentifier: string;
+
+  @ApiProperty()
+  totalTime: number;
+
+  @ApiProperty()
+  count: number;
+
+  @ApiProperty()
   days: number;
 
   @ApiProperty({ isArray: true, type: () => AverageDeploymentDetails })
