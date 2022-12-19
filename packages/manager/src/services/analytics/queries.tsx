@@ -5,7 +5,8 @@ import {
   TDeploymentCount,
   TSPADeploymentCount,
   TSPAMonthlyDeploymentCount,
-  TWebPropActivityStream
+  TWebPropActivityStream,
+  TDashboardActivityStream
 } from './types';
 
 const analyticsKeys = {
@@ -119,3 +120,36 @@ export const useGetMonthlyDeploymentChart = (webProperty: string, spaName?: stri
   useQuery(analyticsKeys.spaMonthyDeploymentChart(webProperty, spaName), () =>
     fetchMonthlyDeploymentChart(webProperty, spaName)
   );
+
+
+  const fetchDashboardActivityStream = async (
+    propertyIdentifier: string,
+    applicationIdentifier?: string,
+    skip?: number,
+    action?: string
+  ): Promise<TDashboardActivityStream[]> => {
+    const { data } = await orchestratorReq.get('/analytics/activity-stream', {
+      params: {
+        propertyIdentifier,
+        applicationIdentifier,
+        limit: LIMIT,
+        action :'APPLICATION_DEPLOYED',
+        skip
+      }
+    });
+    return data.data;
+  };
+  
+  export const useGetDashboardActivityStream = (
+    propertyIdentifier: string,
+    applicationIdentifier?: string
+  ) =>
+    useInfiniteQuery(
+      analyticsKeys.propertyActivityStream(propertyIdentifier),
+      ({ pageParam = 0 }) =>
+      fetchDashboardActivityStream(propertyIdentifier, applicationIdentifier, pageParam),
+      {
+        getNextPageParam: (lastPage, allPages) =>
+          lastPage.length ? allPages.length * LIMIT : undefined
+      }
+    );

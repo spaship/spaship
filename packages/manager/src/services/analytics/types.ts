@@ -36,3 +36,13 @@ export type Props = {
   applicationIdentifier: string;
   env: string;
 };
+
+export type TDashboardActivityStream = {
+  propertyIdentifier: string;
+  action: string;
+  branch: string;
+  createdAt: string;
+  _id: string;
+  message: string;
+  props: Props;
+};
