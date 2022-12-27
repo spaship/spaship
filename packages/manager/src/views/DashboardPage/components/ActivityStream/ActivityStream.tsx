@@ -105,10 +105,10 @@ export const ActivityStream = ({
     }
   }, [fetchNextPage, inView]);
   const formatDate = useFormatDate();
-  const refresh = () => {
-	window.location.reload();  
-	console.log("page refreshed")
-  };
+  // const refresh = () => {
+	// window.location.reload();  
+	// console.log("page refreshed")
+  // };
   
   return (
     <>
@@ -122,7 +122,7 @@ export const ActivityStream = ({
   >
 	<div style={{marginTop:'10px',marginLeft:'10px'}} >
 		<div style={{marginRight:'2px',marginLeft:'575px'}}>
-		<Button
+		{/* <Button
           aria-label="SyncAltIcon "
           icon={<SyncAltIcon />}
         //   href={env.PUBLIC_GITHUB_URL}
@@ -132,7 +132,7 @@ export const ActivityStream = ({
 		  onClick={refresh}
           component="a"
         >
-        </Button>
+        </Button> */}
 		</div>
       <ProgressStepper isVertical>
         {isLoading && <Spinner isSVG aria-label="Activity stream loading" />}
