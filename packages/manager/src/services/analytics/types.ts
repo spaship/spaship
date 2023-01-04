@@ -36,3 +36,20 @@ export type Props = {
   applicationIdentifier: string;
   env: string;
 };
+
+export type TSPADeploymentTime = {
+  averageTime: number;
+  propertyIdentifier: string;
+  totalTime: number;
+  count: number;
+  days: number;
+  deploymentDetails: [
+    {
+      propertyIdentifier: string;
+      applicationIdentifier: string;
+      count: number;
+      totalTime: number;
+      averageTime: number;
+    }
+  ];
+};
