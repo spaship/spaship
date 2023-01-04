@@ -1,4 +1,4 @@
-import { DashboardPage } from '@app/views/DashboardPage'
+import { DashboardPage } from '@app/views/DashboardPage';
 import { NextPageWithLayout } from '@app/types';
 import { getAppLayout } from '@app/layouts/AppLayout';
 

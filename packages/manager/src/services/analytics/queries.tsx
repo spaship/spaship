@@ -5,11 +5,13 @@ import {
   TDeploymentCount,
   TSPADeploymentCount,
   TSPAMonthlyDeploymentCount,
-  TWebPropActivityStream
+  TWebPropActivityStream,
+  TSPADeploymentTime
 } from './types';
 
 const analyticsKeys = {
   deploy: ['deployment-count'] as const,
+  deploymentTime: ['deployment-time'] as const,
   propertyActivityStream: (id: string, spaId?: string) => ['activity-stream', id, spaId] as const,
   totalDeployments: (propertyId: string) => ['total-deployment', propertyId] as const,
   spaDeployments: (propertyId: string, spaID?: string) =>
@@ -94,7 +96,8 @@ export const useGetTotalDeploymentsForApps = (webProperty: string, spaName?: str
   );
 
 const fetchMonthlyDeploymentChart = async (
-  webProperty: string,
+  filterEphemeral = true,
+  webProperty?: string,
   spaName?: string
 ): Promise<Record<string, TSPAMonthlyDeploymentCount[]>> => {
   const { data } = await orchestratorReq.get('/analytics/deployment/env/month', {
@@ -104,7 +107,7 @@ const fetchMonthlyDeploymentChart = async (
     }
   });
   // TODO: Remove this once backend has been revamped
-  if (data.data) {
+  if (data.data && filterEphemeral) {
     data.data = Object.keys(data.data).reduce((acc: any, key: string) => {
       if (!key.startsWith('ephemeral')) {
         acc[key] = data.data[key];
@@ -115,7 +118,29 @@ const fetchMonthlyDeploymentChart = async (
   return data.data;
 };
 
-export const useGetMonthlyDeploymentChart = (webProperty: string, spaName?: string) =>
+export const useGetMonthlyDeploymentChart = (
+  webProperty = '',
+  spaName?: string,
+  filterEphemeral?: boolean
+) =>
   useQuery(analyticsKeys.spaMonthyDeploymentChart(webProperty, spaName), () =>
-    fetchMonthlyDeploymentChart(webProperty, spaName)
+    webProperty && spaName
+      ? fetchMonthlyDeploymentChart(filterEphemeral, webProperty, spaName)
+      : fetchMonthlyDeploymentChart(filterEphemeral)
   );
+
+const fetchTotalDeployment = async (): Promise<TSPADeploymentCount[]> => {
+  const { data } = await orchestratorReq.get('analytics/deployment/env');
+  return data.data;
+};
+
+export const useGetTotalDeployments = () =>
+  useQuery(analyticsKeys.spaDeployments(''), () => fetchTotalDeployment());
+
+const fetchTotalDeploymentTime = async (): Promise<TSPADeploymentTime> => {
+  const { data } = await orchestratorReq.get('analytics/deployment/time');
+  return data.data;
+};
+
+export const useGetDeploymentsTime = () =>
+  useQuery(analyticsKeys.deploymentTime, () => fetchTotalDeploymentTime());
