@@ -1,4 +1,1 @@
-
-export const ActivityStream = () => (
-	<div>Activity Stream</div>
-);
+export const ActivityStream = () => <div>Activity Stream</div>;
