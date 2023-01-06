@@ -5,7 +5,7 @@ import { Card, CardTitle, CardBody, CardHeader } from '@patternfly/react-core';
 import { Chart, ChartAxis, ChartGroup, ChartLine, ChartThemeColor } from '@patternfly/react-charts';
 import { VictoryZoomContainer } from 'victory-zoom-container';
 
-interface LineChartPoint {
+interface IDeploymentData {
   env: string;
   count: number;
   startDate: string;
@@ -15,32 +15,32 @@ interface LineChartPoint {
 export const LineChart = () => {
   const TotalMonthlyDeploymentData = useGetMonthlyDeploymentChart('', undefined, false).data;
   const QAData = TotalMonthlyDeploymentData?.qa
-    .sort((a: LineChartPoint, b: LineChartPoint) => (a.startDate > b.startDate ? 1 : -1))
-    .map((ele: LineChartPoint, index: number) => ({
+    .sort((a: IDeploymentData, b: IDeploymentData) => (a.startDate > b.startDate ? 1 : -1))
+    .map((ele: IDeploymentData, index: number) => ({
       name: 'QA',
       x: `Week ${index + 1}`,
       y: ele.count
     }));
 
   const StageData = TotalMonthlyDeploymentData?.stage
-    .sort((a: LineChartPoint, b: LineChartPoint) => (a.startDate > b.startDate ? 1 : -1))
-    .map((ele: LineChartPoint, index: number) => ({
+    .sort((a: IDeploymentData, b: IDeploymentData) => (a.startDate > b.startDate ? 1 : -1))
+    .map((ele: IDeploymentData, index: number) => ({
       name: 'Stage',
       x: `Week ${index + 1}`,
       y: ele.count
     }));
 
   const DevData = TotalMonthlyDeploymentData?.dev
-    .sort((a: LineChartPoint, b: LineChartPoint) => (a.startDate > b.startDate ? 1 : -1))
-    .map((ele: LineChartPoint, index: number) => ({
+    .sort((a: IDeploymentData, b: IDeploymentData) => (a.startDate > b.startDate ? 1 : -1))
+    .map((ele: IDeploymentData, index: number) => ({
       name: 'Dev',
       x: `Week ${index + 1}`,
       y: ele.count
     }));
 
   const ProdData = TotalMonthlyDeploymentData?.uatprod
-    .sort((a: LineChartPoint, b: LineChartPoint) => (a.startDate > b.startDate ? 1 : -1))
-    .map((ele: LineChartPoint, index: number) => ({
+    .sort((a: IDeploymentData, b: IDeploymentData) => (a.startDate > b.startDate ? 1 : -1))
+    .map((ele: IDeploymentData, index: number) => ({
       name: 'Prod',
       x: `Week ${index + 1}`,
       y: ele.count
