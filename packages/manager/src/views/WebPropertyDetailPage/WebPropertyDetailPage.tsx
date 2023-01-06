@@ -54,7 +54,6 @@ import { pageLinks } from '@app/links';
 
 import toast from 'react-hot-toast';
 import { ActivityStream } from '@app/components/ActivityStream';
-import uuid from 'react-uuid';
 import { Ephemeral } from './components/Ephemeral';
 import { EmptyInfo } from './components/EmptyInfo';
 
@@ -79,7 +78,6 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
   const webPropertiesKeys = Object.keys(webProperties.data || {});
   const isWebPropertiesListEmpty = webPropertiesKeys.length === 0;
-  webPropertiesKeys.unshift('Select Enviroment');
 
   useEffect(() => {
     if (spaProperties.isError || webProperties.isError) {
@@ -171,12 +169,12 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                         }
                         setIsFilterOpen.off();
                       }}
-                      // selections={filtervalue} //To be kept as Select
+                      selections="Select Enviroment" // To be kept as Select
                       isOpen={isFilterOpen}
                       aria-labelledby="filter"
                     >
-                      {webPropertiesKeys.map((envName) => (
-                        <SelectOption key={uuid()} value={envName} />
+                      {webPropertiesKeys.map((envName, index) => (
+                        <SelectOption key={`${envName} + ${index + 1}`} value={envName} />
                       ))}
                     </Select>
                   </SplitItem>
@@ -214,10 +212,15 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                     <Th>Environments</Th>
                   </Tr>
                 </Thead>
+
                 {((spaProperties.isSuccess && isSpaPropertyListEmpty) ||
-                  spaProperties.isLoading) && (
+                  (webProperties.isSuccess && isWebPropertiesListEmpty) ||
+                  spaProperties.isLoading ||
+                  webProperties.isLoading) && (
                   <Tbody>
-                    {spaProperties.isLoading && <TableRowSkeleton rows={3} columns={4} />}
+                    {(spaProperties.isLoading || webProperties.isLoading) && (
+                      <TableRowSkeleton rows={3} columns={4} />
+                    )}
                     {spaProperties.isSuccess && isSpaPropertyListEmpty && (
                       <Tr>
                         <Td colSpan={4}>

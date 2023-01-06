@@ -4,7 +4,8 @@ import { orchestratorReq } from '@app/config/orchestratorReq';
 import { TSpaProperty } from './types';
 
 const spaPropertyKeys = {
-  list: (webPropertyIdentifier: string) => ['spa-properties', webPropertyIdentifier] as const
+  list: (webPropertyIdentifier: string, env: string = '') =>
+    ['spa-properties', webPropertyIdentifier, env] as const
 };
 const LIMIT = 10;
 // GET Operations
@@ -30,7 +31,7 @@ export const useGetSPAProperties = <T extends unknown>(
   select?: (data: TSpaProperty[]) => T
 ) =>
   useQuery(
-    spaPropertyKeys.list(webPropertyIdentifier),
+    spaPropertyKeys.list(webPropertyIdentifier, env),
     () => fetchAppsForProperties(webPropertyIdentifier, env, skip),
     {
       select,
