@@ -9,7 +9,7 @@ const spaPropertyKeys = {
 };
 const LIMIT = 10;
 // GET Operations
-const fetchAppsForProperties = async (propertyIdentifier: string, env: String, skip?: number) => {
+const fetchAppsForProperties = async (propertyIdentifier: string, env: string, skip?: number) => {
   const { data } = await orchestratorReq.get(`/applications/property/${propertyIdentifier}`, {
     params: {
       env,
