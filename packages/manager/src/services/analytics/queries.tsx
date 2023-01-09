@@ -5,13 +5,13 @@ import {
   TDeploymentCount,
   TSPADeploymentCount,
   TSPAMonthlyDeploymentCount,
-  TWebPropActivityStream,
-  TDashboardActivityStream
+  TWebPropActivityStream
 } from './types';
 
 const analyticsKeys = {
   deploy: ['deployment-count'] as const,
-  propertyActivityStream: (id: string, spaId?: string) => ['activity-stream', id, spaId] as const,
+  propertyActivityStream: (id: string, spaId?: string, action?: string) =>
+    ['activity-stream', id, spaId, action] as const,
   totalDeployments: (propertyId: string) => ['total-deployment', propertyId] as const,
   spaDeployments: (propertyId: string, spaID?: string) =>
     [...analyticsKeys.propertyActivityStream(propertyId), spaID] as const,
@@ -45,14 +45,16 @@ const LIMIT = 10;
 const fetchWebPropertyActivityStream = async (
   propertyIdentifier: string,
   applicationIdentifier?: string,
-  skip?: number
+  skip?: number,
+  action?: string
 ): Promise<TWebPropActivityStream[]> => {
   const { data } = await orchestratorReq.get('/analytics/activity-stream', {
     params: {
       propertyIdentifier,
       applicationIdentifier,
       limit: LIMIT,
-      skip
+      skip,
+      action
     }
   });
   return data.data;
@@ -60,12 +62,13 @@ const fetchWebPropertyActivityStream = async (
 
 export const useGetWebPropActivityStream = (
   propertyIdentifier: string,
-  applicationIdentifier?: string
+  applicationIdentifier?: string,
+  action?: string
 ) =>
   useInfiniteQuery(
     analyticsKeys.propertyActivityStream(propertyIdentifier),
     ({ pageParam = 0 }) =>
-      fetchWebPropertyActivityStream(propertyIdentifier, applicationIdentifier, pageParam),
+      fetchWebPropertyActivityStream(propertyIdentifier, applicationIdentifier, pageParam, action),
     {
       getNextPageParam: (lastPage, allPages) =>
         lastPage.length ? allPages.length * LIMIT : undefined
@@ -120,36 +123,3 @@ export const useGetMonthlyDeploymentChart = (webProperty: string, spaName?: stri
   useQuery(analyticsKeys.spaMonthyDeploymentChart(webProperty, spaName), () =>
     fetchMonthlyDeploymentChart(webProperty, spaName)
   );
-
-
-  const fetchDashboardActivityStream = async (
-    propertyIdentifier: string,
-    applicationIdentifier?: string,
-    skip?: number,
-    action?: string
-  ): Promise<TDashboardActivityStream[]> => {
-    const { data } = await orchestratorReq.get('/analytics/activity-stream', {
-      params: {
-        propertyIdentifier,
-        applicationIdentifier,
-        limit: LIMIT,
-        action :'APPLICATION_DEPLOYED',
-        skip
-      }
-    });
-    return data.data;
-  };
-  
-  export const useGetDashboardActivityStream = (
-    propertyIdentifier: string,
-    applicationIdentifier?: string
-  ) =>
-    useInfiniteQuery(
-      analyticsKeys.propertyActivityStream(propertyIdentifier),
-      ({ pageParam = 0 }) =>
-      fetchDashboardActivityStream(propertyIdentifier, applicationIdentifier, pageParam),
-      {
-        getNextPageParam: (lastPage, allPages) =>
-          lastPage.length ? allPages.length * LIMIT : undefined
-      }
-    );

@@ -28,6 +28,7 @@ import { useInView } from 'react-intersection-observer';
 type Props = {
   propertyIdentifier: string;
   applicationIdentifier?: string;
+  action?: string;
 };
 
 type DeploymentKindProps = {
@@ -188,10 +189,11 @@ const DeploymentKind = ({ activity }: DeploymentKindProps) => {
 
 export const ActivityStream = ({
   propertyIdentifier,
-  applicationIdentifier
+  applicationIdentifier,
+  action
 }: Props): JSX.Element => {
   const { isLoading, isSuccess, data, isFetchingNextPage, fetchNextPage } =
-    useGetWebPropActivityStream(propertyIdentifier, applicationIdentifier);
+    useGetWebPropActivityStream(propertyIdentifier, applicationIdentifier, action);
   const { ref, inView } = useInView();
   useEffect(() => {
     if (inView) {
@@ -244,5 +246,6 @@ export const ActivityStream = ({
 };
 
 ActivityStream.defaultProps = {
-  applicationIdentifier: ''
+  applicationIdentifier: '',
+  action: ''
 };

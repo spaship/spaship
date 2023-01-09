@@ -1,4 +1,1 @@
-
-export const Analytics = () => (
-	<div>Analytics</div>
-);
+export const Analytics = () => <div>Analytics</div>;
