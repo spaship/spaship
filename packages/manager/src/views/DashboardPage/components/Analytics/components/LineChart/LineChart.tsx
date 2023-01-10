@@ -1,4 +1,3 @@
-import React from 'react';
 import { useGetMonthlyDeploymentChart } from '@app/services/analytics';
 
 import { Card, CardTitle, CardBody, CardHeader } from '@patternfly/react-core';

@@ -1,6 +1,5 @@
 import { Card, CardTitle, CardBody, Grid, GridItem } from '@patternfly/react-core';
 
-import React from 'react';
 import {
   useGetTotalDeployments,
   useGetDeploymentCounts,
