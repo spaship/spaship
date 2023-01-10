@@ -71,7 +71,7 @@ const upload = (url, data, apiKey, onUploadProgress) => {
           } else if (res.statusCode >= 400 && res.statusCode < 500) {
             switch (res.statusCode) {
               case 400:
-                reject("Failed to deploy, Please check the Deployment URL or File type. [400]");
+                reject(`Failed to deploy [400].\n${getErrorMessage(parsedData)}`);
                 break;
               case 401:
                 reject(`The API key was not accepted by ${url} [401]`);
@@ -109,6 +109,14 @@ const upload = (url, data, apiKey, onUploadProgress) => {
   });
 };
 module.exports = { upload };
+
+function getErrorMessage(parsedData) {
+  try {
+    return parsedData.message.join('\n');
+  } catch (e) {
+    return parsedData.message;
+  }
+}
 
 function getAuthToken(apiKey) {
   const API_KEY_LENGTH = 36;
