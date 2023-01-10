@@ -1,11 +1,14 @@
 import { Card } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
-
 import { ActivityStream } from '../../../../components/ActivityStream/ActivityStream';
-
+import SimpleBarReact from "simplebar-react";
+import "simplebar/src/simplebar.css";
 export const ActivityStreamDashboard = () => (
   <>
-    <h2 style={{ marginTop: '20px', marginBottom: '10px', marginLeft: '40px' }}>Activity Stream</h2>
+    <div style={{ marginTop: '20px', marginBottom: '10px', marginLeft: '50px' }}>
+      Activity Stream
+    </div>
+    
     <Card
       isSelectable
       isFullHeight
@@ -15,16 +18,18 @@ export const ActivityStreamDashboard = () => (
         marginTop: '10px',
         marginLeft: '40px',
         height: '650px',
-        overflow: 'auto',
-        scrollbarWidth: 'none'
+        overflow: 'hidden',
       }}
       isRounded
       className={css('pf-u-px-sm rounded-md transition hover:shadow-sm')}
     >
-      <div style={{ marginTop: '10px', marginLeft: '10px' }}>
+      <SimpleBarReact style={{ maxHeight: 650 ,padding:'10px'}}>
+      <div style={{ marginTop: '20px', marginLeft: '10px' }}>
         <ActivityStream propertyIdentifier="" action="APPLICATION_DEPLOYED" />
       </div>
+      </SimpleBarReact>
     </Card>
+    
   </>
 );
 
