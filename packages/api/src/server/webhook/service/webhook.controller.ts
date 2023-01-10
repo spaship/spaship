@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from 'src/server/auth/auth.guard';
 import { CreateWebhookDto, UpdateWebhookDto } from '../webhook.dto';
 import { Webhook } from '../webhook.entity';
@@ -9,7 +9,7 @@ import { WebhookService } from './webhook.service';
 @ApiTags('Webhook')
 @UseGuards(AuthenticationGuard)
 export class WebhookController {
-  constructor(private readonly webhookService: WebhookService) {}
+  constructor(private readonly webhookService: WebhookService) { }
 
   @Get()
   @ApiOperation({ description: 'Get the Webhook Details.' })

@@ -45,8 +45,8 @@ export class WebhookService {
     await this.analyticsService.createActivityStream(
       createWebhookDto.propertyIdentifier,
       Action.WEBHOOK_CREATED,
-      Action.NA,
-      Action.NA,
+      'NA',
+      'NA',
       `Webhook created for ${createWebhookDto.actions.toString()}`,
       createWebhookDto.createdBy,
       Source.MANAGER,
@@ -74,8 +74,8 @@ export class WebhookService {
     await this.analyticsService.createActivityStream(
       updateWebhookDto.propertyIdentifier,
       Action.WEBHOOK_UPDATED,
-      Action.NA,
-      Action.NA,
+      'NA',
+      'NA',
       `Webhook updated for ${updateWebhookDto.identifier}`,
       updateWebhookDto.updatedBy,
       Source.MANAGER,
@@ -92,10 +92,10 @@ export class WebhookService {
     await this.analyticsService.createActivityStream(
       propertyIdentifier,
       Action.WEBHOOK_DELETED,
-      Action.NA,
-      Action.NA,
+      'NA',
+      'NA',
       `${identifier} webhook deleted for ${propertyIdentifier}`,
-      Action.NA,
+      'NA',
       JSON.stringify(response)
     );
     return response;
