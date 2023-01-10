@@ -19,7 +19,9 @@ import {
   Property,
   PropertyDocument,
   ActivityStream,
-  ActivityStreamDocument
+  ActivityStreamDocument,
+  Webhook,
+  WebhookDocument
 } from './model';
 
 @Injectable()
@@ -40,6 +42,8 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
 
   activityStream: MongoGenericRepository<ActivityStream>;
 
+  webhook: MongoGenericRepository<Webhook>;
+
   constructor(
     @InjectModel(Application.name)
     private ApplicationRepository: Model<ApplicationDocument>,
@@ -56,7 +60,9 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
     @InjectModel(Property.name)
     private PropertyRepository: Model<PropertyDocument>,
     @InjectModel(ActivityStream.name)
-    private ActivityStreamRepository: Model<ActivityStreamDocument>
+    private ActivityStreamRepository: Model<ActivityStreamDocument>,
+    @InjectModel(Webhook.name)
+    private WebhookRepository: Model<WebhookDocument>
   ) {}
 
   onApplicationBootstrap() {
@@ -68,5 +74,6 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
     this.environment = new MongoGenericRepository<Environment>(this.EnvironmentRepository);
     this.property = new MongoGenericRepository<Property>(this.PropertyRepository);
     this.activityStream = new MongoGenericRepository<ActivityStream>(this.ActivityStreamRepository);
+    this.webhook = new MongoGenericRepository<Webhook>(this.WebhookRepository);
   }
 }
