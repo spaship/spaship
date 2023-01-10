@@ -10,7 +10,8 @@ import {
 
 const analyticsKeys = {
   deploy: ['deployment-count'] as const,
-  propertyActivityStream: (id: string, spaId?: string) => ['activity-stream', id, spaId] as const,
+  propertyActivityStream: (id: string, spaId?: string, action?: string) =>
+    ['activity-stream', id, spaId, action] as const,
   totalDeployments: (propertyId: string) => ['total-deployment', propertyId] as const,
   spaDeployments: (propertyId: string, spaID?: string) =>
     [...analyticsKeys.propertyActivityStream(propertyId), spaID] as const,
@@ -44,14 +45,16 @@ const LIMIT = 10;
 const fetchWebPropertyActivityStream = async (
   propertyIdentifier: string,
   applicationIdentifier?: string,
-  skip?: number
+  skip?: number,
+  action?: string
 ): Promise<TWebPropActivityStream[]> => {
   const { data } = await orchestratorReq.get('/analytics/activity-stream', {
     params: {
       propertyIdentifier,
       applicationIdentifier,
       limit: LIMIT,
-      skip
+      skip,
+      action
     }
   });
   return data.data;
@@ -59,12 +62,13 @@ const fetchWebPropertyActivityStream = async (
 
 export const useGetWebPropActivityStream = (
   propertyIdentifier: string,
-  applicationIdentifier?: string
+  applicationIdentifier?: string,
+  action?: string
 ) =>
   useInfiniteQuery(
     analyticsKeys.propertyActivityStream(propertyIdentifier),
     ({ pageParam = 0 }) =>
-      fetchWebPropertyActivityStream(propertyIdentifier, applicationIdentifier, pageParam),
+      fetchWebPropertyActivityStream(propertyIdentifier, applicationIdentifier, pageParam, action),
     {
       getNextPageParam: (lastPage, allPages) =>
         lastPage.length ? allPages.length * LIMIT : undefined
