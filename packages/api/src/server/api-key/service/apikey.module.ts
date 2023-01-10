@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { AnalyticsFactory } from 'src/server/analytics/service/analytics.factory';
@@ -7,7 +8,7 @@ import { ApikeyFactory } from './apikey.factory';
 import { ApikeyService } from './apikey.service';
 
 @Module({
-  imports: [DataServicesModule],
+  imports: [DataServicesModule, HttpModule],
   providers: [ApikeyFactory, ApikeyService, AnalyticsService, AnalyticsFactory, LoggerService],
   exports: [ApikeyFactory, ApikeyService]
 })

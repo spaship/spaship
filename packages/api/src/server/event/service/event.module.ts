@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { DataServicesModule } from 'src/repository/data-services.module';
@@ -6,7 +7,7 @@ import { AnalyticsService } from 'src/server/analytics/service/analytics.service
 import { EventService } from './event.service';
 
 @Module({
-  imports: [DataServicesModule],
+  imports: [DataServicesModule, HttpModule],
   providers: [EventModule, EventService, AnalyticsService, AnalyticsFactory, LoggerService],
   exports: [EventModule, EventService]
 })

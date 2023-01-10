@@ -1,3 +1,4 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { fromEvent } from 'rxjs';
@@ -26,10 +27,11 @@ export class AnalyticsService {
   constructor(
     private readonly dataServices: IDataServices,
     private readonly analyticsFactory: AnalyticsFactory,
-    private readonly logger: LoggerService
+    private readonly logger: LoggerService,
+    private readonly httpService: HttpService
   ) {}
 
-  createActivityStream(
+  async createActivityStream(
     propertyIdentifier: string,
     action: string,
     env?: string,
@@ -51,8 +53,14 @@ export class AnalyticsService {
     activityStream.createdBy = createdBy;
     activityStream.source = source;
     this.logger.log('ActivityStream', JSON.stringify(activityStream));
-    this.emit(propertyIdentifier, { activityStream });
-    return this.dataServices.activityStream.create(activityStream);
+    await this.emit(propertyIdentifier, { activityStream });
+    const savedAnalytics = await this.dataServices.activityStream.create(activityStream);
+    const webhooks = await this.dataServices.webhook.getByAny({ propertyIdentifier, actions: action });
+    for (const webhook of webhooks)
+      await this.httpService.axiosRef.post(webhook.url, { ...activityStream }).catch((err) => {
+        this.logger.error('Webhook', err);
+      });
+    return savedAnalytics;
   }
 
   async getActivityStream(

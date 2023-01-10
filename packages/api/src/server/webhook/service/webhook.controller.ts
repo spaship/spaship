@@ -9,7 +9,7 @@ import { WebhookService } from './webhook.service';
 @ApiTags('Webhook')
 @UseGuards(AuthenticationGuard)
 export class WebhookController {
-  constructor(private readonly webhookService: WebhookService) { }
+  constructor(private readonly webhookService: WebhookService) {}
 
   @Get()
   @ApiOperation({ description: 'Get the Webhook Details.' })
