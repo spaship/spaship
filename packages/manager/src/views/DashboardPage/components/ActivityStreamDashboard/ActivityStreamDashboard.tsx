@@ -1,7 +1,7 @@
 import { Card } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import SimpleBarReact from 'simplebar-react';
-import { ActivityStream } from '../../../../components/ActivityStream/ActivityStream';
+import { ActivityStream } from '@app/components/ActivityStream';
 import 'simplebar/src/simplebar.css';
 
 export const ActivityStreamDashboard = () => (
