@@ -12,6 +12,7 @@ import {
 const analyticsKeys = {
   deploy: ['deployment-count'] as const,
   deploymentTime: ['deployment-time'] as const,
+  spaMonthyDeploymentChartWithEphemeral: ['deployment-time-with-ephemeral'] as const,
   propertyActivityStream: (id: string, spaId?: string) => ['activity-stream', id, spaId] as const,
   totalDeployments: (propertyId: string) => ['total-deployment', propertyId] as const,
   spaDeployments: (propertyId: string, spaID?: string) =>
@@ -96,8 +97,7 @@ export const useGetTotalDeploymentsForApps = (webProperty: string, spaName?: str
   );
 
 const fetchMonthlyDeploymentChart = async (
-  filterEphemeral = true,
-  webProperty?: string,
+  webProperty: string,
   spaName?: string
 ): Promise<Record<string, TSPAMonthlyDeploymentCount[]>> => {
   const { data } = await orchestratorReq.get('/analytics/deployment/env/month', {
@@ -107,7 +107,7 @@ const fetchMonthlyDeploymentChart = async (
     }
   });
   // TODO: Remove this once backend has been revamped
-  if (data.data && filterEphemeral) {
+  if (data.data) {
     data.data = Object.keys(data.data).reduce((acc: any, key: string) => {
       if (!key.startsWith('ephemeral')) {
         acc[key] = data.data[key];
@@ -118,15 +118,21 @@ const fetchMonthlyDeploymentChart = async (
   return data.data;
 };
 
-export const useGetMonthlyDeploymentChart = (
-  webProperty = '',
-  spaName?: string,
-  filterEphemeral?: boolean
-) =>
+export const useGetMonthlyDeploymentChart = (webProperty: string, spaName?: string) =>
   useQuery(analyticsKeys.spaMonthyDeploymentChart(webProperty, spaName), () =>
-    webProperty && spaName
-      ? fetchMonthlyDeploymentChart(filterEphemeral, webProperty, spaName)
-      : fetchMonthlyDeploymentChart(filterEphemeral)
+    fetchMonthlyDeploymentChart(webProperty, spaName)
+  );
+
+const fetchMonthlyDeploymentChartWithEphemeral = async (): Promise<
+  Record<string, TSPAMonthlyDeploymentCount[]>
+> => {
+  const { data } = await orchestratorReq.get('/analytics/deployment/env/month');
+  return data.data;
+};
+
+export const useGetMonthlyDeploymentChartWithEphemeral = () =>
+  useQuery(analyticsKeys.spaMonthyDeploymentChartWithEphemeral, () =>
+    fetchMonthlyDeploymentChartWithEphemeral()
   );
 
 const fetchTotalDeployment = async (): Promise<TSPADeploymentCount[]> => {

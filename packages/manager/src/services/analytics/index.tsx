@@ -1,7 +1,7 @@
 export {
   useGetDeploymentCounts,
   useGetWebPropActivityStream,
-  useGetMonthlyDeploymentChart,
+  useGetMonthlyDeploymentChartWithEphemeral,
   useGetTotalDeploymentsForApps,
   useGetTotalDeployments,
   useGetDeploymentsTime
