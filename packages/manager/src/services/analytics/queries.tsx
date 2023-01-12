@@ -9,6 +9,13 @@ import {
   TSPADeploymentTime
 } from './types';
 
+interface IDeploymentData {
+  env: string;
+  count: number;
+  startDate: string;
+  endDate: string;
+}
+
 const analyticsKeys = {
   deploy: ['deployment-count'] as const,
   deploymentTime: ['deployment-time'] as const,
@@ -130,10 +137,22 @@ const fetchMonthlyDeploymentChartWithEphemeral = async (): Promise<
   return data.data;
 };
 
+const sortWeeklyDeployments = (arr: IDeploymentData[]) =>
+  arr
+    .sort((a: IDeploymentData, b: IDeploymentData) => (a.startDate > b.startDate ? 1 : -1))
+    .map((ele: IDeploymentData, index: number) => ({
+      name: `${ele.env.toLocaleUpperCase()}`,
+      x: `Week ${index + 1}`,
+      y: ele.count
+    }));
+
 export const useGetMonthlyDeploymentChartWithEphemeral = () =>
-  useQuery(analyticsKeys.spaMonthyDeploymentChartWithEphemeral, () =>
-    fetchMonthlyDeploymentChartWithEphemeral()
-  );
+  useQuery({
+    queryKey: analyticsKeys.spaMonthyDeploymentChartWithEphemeral,
+    queryFn: () => fetchMonthlyDeploymentChartWithEphemeral(),
+    select: (data) =>
+      Object.keys(data).map((key) => ({ env: key, data: sortWeeklyDeployments(data[key]) }))
+  });
 
 const fetchTotalDeployment = async (): Promise<TSPADeploymentCount[]> => {
   const { data } = await orchestratorReq.get('analytics/deployment/env');
