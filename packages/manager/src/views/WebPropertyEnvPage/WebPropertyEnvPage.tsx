@@ -89,7 +89,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     if (!propertyTitle) return;
     try {
       await createEnv.mutateAsync({
-        ...data,
+        ...data,env:data["env"].toLowerCase(),
         propertyIdentifier,
         createdBy: session?.user.email || ''
       });

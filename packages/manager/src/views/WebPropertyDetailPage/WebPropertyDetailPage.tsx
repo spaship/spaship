@@ -114,9 +114,6 @@ export const WebPropertyDetailPage = (): JSX.Element => {
         </Level>
       </Banner>
       <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
-        {!spaProperties.isLoading && isSpaPropertyListEmpty ? (
-          <EmptyInfo propertyIdentifier={propertyIdentifier} />
-        ) : (
           <Tabs activeKey={openTab} onSelect={(_, tab) => handleTabChange(tab as number)}>
             <Tab
               eventKey={0}
@@ -130,14 +127,18 @@ export const WebPropertyDetailPage = (): JSX.Element => {
               }
               aria-label="SPA listing"
             >
-              <div className="pf-u-w-33 pf-u-mb-lg pf-u-mt-md">
-                <SearchInput
-                  placeholder="Search by name"
-                  value={searchTerm}
-                  onChange={(value) => setSearchTerm(value?.toLowerCase())}
-                  onClear={() => setSearchTerm('')}
-                />
-              </div>
+              {!spaProperties.isLoading && isSpaPropertyListEmpty ? (
+          <EmptyInfo propertyIdentifier={propertyIdentifier} />
+        ) : ( 
+          <>
+          <div className="pf-u-w-33 pf-u-mb-lg pf-u-mt-md">
+          <SearchInput
+            placeholder="Search by name"
+            value={searchTerm}
+            onChange={(value) => setSearchTerm(value?.toLowerCase())}
+            onClear={() => setSearchTerm('')}
+          />
+        </div>
               <TableComposable aria-label="spa-property-list" className="">
                 <Caption>SPA&apos;s DEPLOYED</Caption>
                 <Thead>
@@ -270,6 +271,8 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                       </Tbody>
                     ))}
               </TableComposable>
+              </>
+        )}
             </Tab>
             <Tab
               eventKey={1}
@@ -310,7 +313,6 @@ export const WebPropertyDetailPage = (): JSX.Element => {
               />
             </Tab>
           </Tabs>
-        )}
       </PageSection>
     </>
   );
