@@ -43,13 +43,8 @@ class DeployCommand extends Command {
     const ephemeral = flags?.preview || false;
     const actionId = flags?.prid;
 
-
-    if (actionId) {
-      this.validateActionId(actionId);
-    }
-
     if (actionId && !ephemeral) {
-      this.error("You need to provide --preview or -P to use this --prid option");
+      this.error("You need to provide --preview or -P to use this --prid option [example : --preview --prid=10 or -P --prid=10]");
     }
 
 
@@ -91,8 +86,8 @@ class DeployCommand extends Command {
     }
 
     try {
-      if(host.endsWith("/api/v1")) { host = `${host}/applications/deploy`}
-      else if(!host.includes(apiPath)) { host = `${host}${apiPath}`}
+      if (host.endsWith("/api/v1")) { host = `${host}/applications/deploy` }
+      else if (!host.includes(apiPath)) { host = `${host}${apiPath}` }
       host = new URL(host);
     } catch (error) {
       this.error(`The API url ${host} is invalid`);
@@ -156,7 +151,7 @@ class DeployCommand extends Command {
         }
       }
       if (!fs.existsSync(args.archive)) {
-        spinner.fail(`${args.archive} not found in the directory, Please provide a valid file.`);
+        spinner.fail(`${args.archive} cannot be found, Please check the path of the ${args.archive} or provide a valid file.`);
         return;
       }
       data.append("upload", fs.createReadStream(args.archive));
@@ -181,17 +176,18 @@ class DeployCommand extends Command {
       this.log(`Process file took ${Math.round((endTime - processTime) / 1000)} seconds`);
       this.log(`Total: ${Math.round((endTime - startTime) / 1000)} seconds`);
       this.log(response);
+      this.log("* Please note that the deployment takes a few seconds; the access URL becomes available or reflects changes once the distribution is uploaded successfully into the target environment.")
     } catch (e) {
       spinner.fail(e.message);
       e.includes("ENOTFOUND")
-        ? this.error(`${host} is not valid, please check the Deployment URL`, { exit: 1 })
+        ? this.error(`Unable to Connect to ${host}.`, { exit: 1 })
         : this.error(e, { exit: 1 });
     }
   }
 
   validateActionId(actionId) {
-    if (actionId.trim().toLowerCase().match(validPRId) || actionId.length > 10) {
-      this.error("Please provide a valid prid");
+    if (actionId.trim().toLowerCase().match(validPRId) || actionId.length > 36) {
+      this.error("Please provide a valid prid  ");
     }
   }
 

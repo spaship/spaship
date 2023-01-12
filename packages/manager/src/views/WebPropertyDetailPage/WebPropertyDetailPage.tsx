@@ -20,7 +20,10 @@ import {
   Tabs,
   TabTitleIcon,
   TabTitleText,
-  Title
+  Title,
+  Select,
+  SelectOption,
+  SelectVariant
 } from '@patternfly/react-core';
 
 import { Banner, TableRowSkeleton } from '@app/components';
@@ -43,9 +46,10 @@ import {
   ExternalLinkAltIcon,
   PackageIcon,
   RunningIcon,
-  SearchIcon
+  SearchIcon,
+  TimesCircleIcon
 } from '@patternfly/react-icons';
-import { useDebounce, useFormatDate, useTabs } from '@app/hooks';
+import { useDebounce, useFormatDate, useTabs, useToggle } from '@app/hooks';
 import { pageLinks } from '@app/links';
 
 import toast from 'react-hot-toast';
@@ -58,26 +62,29 @@ const URL_LENGTH_LIMIT = 50;
 export const WebPropertyDetailPage = (): JSX.Element => {
   const { query } = useRouter();
   const [isRowExpanded, setIsRowExpanded] = useState<Record<string, boolean>>({});
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterByEnv, setFilterByEnv] = useState('');
   const propertyIdentifier = (query?.propertyIdentifier as string) || '';
   const formatDate = useFormatDate();
   const { openTab, handleTabChange } = useTabs(3);
-  const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
+  const [isFilterOpen, setIsFilterOpen] = useToggle();
 
   // api calls
-  const spaProperties = useGetSPAPropGroupByName(propertyIdentifier);
+  const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, filterByEnv);
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const ephemeralPreview = useGetEphemeralListForProperty(propertyIdentifier);
+  const spaPropertyKeys = Object.keys(spaProperties.data || {});
+  const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
+  const webPropertiesKeys = Object.keys(webProperties.data || {});
+  const isWebPropertiesListEmpty = webPropertiesKeys.length === 0;
 
   useEffect(() => {
-    if (spaProperties.isError) {
+    if (spaProperties.isError || webProperties.isError) {
       toast.error(`Sorry cannot find ${propertyIdentifier}`);
       Router.push('/properties');
     }
-  }, [spaProperties.isError, propertyIdentifier]);
-
-  const spaPropertyKeys = Object.keys(spaProperties.data || {});
-  const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
+  }, [spaProperties.isError, webProperties.isError, propertyIdentifier]);
 
   const onToggleRowExpanded = (name: string) => {
     const state = { ...isRowExpanded };
@@ -87,6 +94,9 @@ export const WebPropertyDetailPage = (): JSX.Element => {
       state[name] = true;
     }
     setIsRowExpanded(state);
+  };
+  const removeValues = () => {
+    setFilterByEnv('' as string);
   };
 
   return (
@@ -131,14 +141,73 @@ export const WebPropertyDetailPage = (): JSX.Element => {
           <EmptyInfo propertyIdentifier={propertyIdentifier} />
         ) : ( 
           <>
-          <div className="pf-u-w-33 pf-u-mb-lg pf-u-mt-md">
+          {/* <div className="pf-u-w-33 pf-u-mb-lg pf-u-mt-md">
           <SearchInput
             placeholder="Search by name"
             value={searchTerm}
             onChange={(value) => setSearchTerm(value?.toLowerCase())}
             onClear={() => setSearchTerm('')}
           />
-        </div>
+        </div> */}
+              <div className="pf-u-w-33 pf-u-mb-lg pf-u-mt-md">
+                <Split hasGutter className="pf-u-mb-md">
+                  <SplitItem className="pf-u-w-33">
+                    <SearchInput
+                      placeholder="Search by name"
+                      value={searchTerm}
+                      onChange={(value) => setSearchTerm(value?.toLowerCase())}
+                      onClear={() => setSearchTerm('')}
+                    />
+                  </SplitItem>
+                  <SplitItem isFilled />
+                  <SplitItem isFilled />
+                  <SplitItem>
+                    <Select
+                      variant={SelectVariant.single}
+                      aria-label="filter Input"
+                      value="Select Enviroment"
+                      onToggle={setIsFilterOpen.toggle}
+                      onSelect={(e, value) => {
+                        if (value === 'Select Enviroment') {
+                          setFilterByEnv('' as string);
+                        } else {
+                          setFilterByEnv(value as string);
+                        }
+                        setIsFilterOpen.off();
+                      }}
+                      selections="Select Enviroment" // To be kept as Select
+                      isOpen={isFilterOpen}
+                      aria-labelledby="filter"
+                    >
+                      {webPropertiesKeys.map((envName, index) => (
+                        <SelectOption key={`${envName} + ${index + 1}`} value={envName} />
+                      ))}
+                    </Select>
+                  </SplitItem>
+                </Split>
+                {filterByEnv === 'Select Enviroment' || filterByEnv === '' ? (
+                  <p />
+                ) : (
+                  <div
+                    style={{
+                      backgroundColor: '#F1F1F1',
+                      height: '40px',
+                      width: '120px',
+                      borderRadius: '25px',
+                      display: 'flex',
+                      flexDirection: 'row'
+                    }}
+                  >
+                    <div style={{ marginLeft: '20px', marginRight: '15px', marginTop: '7px' }}>
+                      {filterByEnv}
+                    </div>
+                    <TimesCircleIcon
+                      style={{ marginTop: '11px', marginLeft: '6px' }}
+                      onClick={removeValues}
+                    />
+                  </div>
+                )}
+              </div>
               <TableComposable aria-label="spa-property-list" className="">
                 <Caption>SPA&apos;s DEPLOYED</Caption>
                 <Thead>
@@ -149,10 +218,15 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                     <Th>Environments</Th>
                   </Tr>
                 </Thead>
+
                 {((spaProperties.isSuccess && isSpaPropertyListEmpty) ||
-                  spaProperties.isLoading) && (
+                  (webProperties.isSuccess && isWebPropertiesListEmpty) ||
+                  spaProperties.isLoading ||
+                  webProperties.isLoading) && (
                   <Tbody>
-                    {spaProperties.isLoading && <TableRowSkeleton rows={3} columns={4} />}
+                    {(spaProperties.isLoading || webProperties.isLoading) && (
+                      <TableRowSkeleton rows={3} columns={4} />
+                    )}
                     {spaProperties.isSuccess && isSpaPropertyListEmpty && (
                       <Tr>
                         <Td colSpan={4}>
@@ -171,6 +245,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                   </Tbody>
                 )}
                 {spaProperties.isSuccess &&
+                  webPropertiesKeys &&
                   spaPropertyKeys
                     .filter((el) => el.toLowerCase().includes(debouncedSearchTerm))
                     .map((identifier, rowIndex) => (

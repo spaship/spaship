@@ -110,7 +110,7 @@ InitCommand.flags = {
   }),
   file: flags.string({
     char: "m",
-    description: "the URL path for .spaship file",
+    description: "the URL path for spaship.yaml file",
   }),
   builddir: flags.string({
     char: "b",

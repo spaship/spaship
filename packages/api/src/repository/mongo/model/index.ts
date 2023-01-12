@@ -6,3 +6,4 @@ export * from './event.model';
 export * from './event-time-trace.model';
 export * from './property.model';
 export * from './activity-stream.model';
+export * from './webhook.model';

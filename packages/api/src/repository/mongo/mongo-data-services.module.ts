@@ -18,7 +18,9 @@ import {
   Property,
   PropertySchema,
   ActivityStream,
-  ActivityStreamSchema
+  ActivityStreamSchema,
+  Webhook,
+  WebhookSchema
 } from './model';
 import { MongoDataServices } from './mongo-data-services.service';
 
@@ -32,7 +34,8 @@ import { MongoDataServices } from './mongo-data-services.service';
       { name: Event.name, schema: EventSchema },
       { name: EventTimeTrace.name, schema: EventTimeTraceSchema },
       { name: Property.name, schema: PropertySchema },
-      { name: ActivityStream.name, schema: ActivityStreamSchema }
+      { name: ActivityStream.name, schema: ActivityStreamSchema },
+      { name: Webhook.name, schema: WebhookSchema }
     ]),
     MongooseModule.forRoot(DATA_BASE_CONFIGURATION.mongoConnectionString, {
       useNewUrlParser: true,

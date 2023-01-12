@@ -17,6 +17,8 @@ import { AnalyticsController } from './server/analytics/analytics.controller';
 import { EnvironmentModule } from './server/environment/service/environment.module';
 import { EnvironmentController } from './server/environment/environment.controller';
 import { AgendaModule } from './server/agenda/agenda.module';
+import { WebhookModule } from './server/webhook/service/webhook.module';
+import { WebhookController } from './server/webhook/service/webhook.controller';
 
 @Module({
   imports: [
@@ -31,7 +33,8 @@ import { AgendaModule } from './server/agenda/agenda.module';
     EnvironmentModule,
     EventModule,
     AnalyticsModule,
-    AgendaModule
+    AgendaModule,
+    WebhookModule
   ],
   controllers: [
     ApikeyController,
@@ -39,7 +42,8 @@ import { AgendaModule } from './server/agenda/agenda.module';
     AnalyticsController,
     DeploymentConnectionController,
     EnvironmentController,
-    PropertyController
+    PropertyController,
+    WebhookController
   ],
   providers: []
 })

@@ -1,4 +1,5 @@
 import { ActivityStream } from 'src/server/analytics/activity-stream.entity';
+import { Webhook } from 'src/server/webhook/webhook.entity';
 import { Apikey } from '../server/api-key/apikey.entity';
 import { Application } from '../server/application/application.entity';
 import { DeploymentConnection } from '../server/deployment-connection/deployment-connection.entity';
@@ -24,4 +25,6 @@ export abstract class IDataServices {
   abstract property: IGenericRepository<Property>;
 
   abstract activityStream: IGenericRepository<ActivityStream>;
+
+  abstract webhook: IGenericRepository<Webhook>;
 }
