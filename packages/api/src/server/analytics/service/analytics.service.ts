@@ -164,11 +164,15 @@ export class AnalyticsService {
     return deploymentTimeResponse;
   }
 
-
   private publishWebhookEvents(webhooks, activityStream: ActivityStream) {
     for (const webhook of webhooks)
-      this.httpService.axiosRef.post(webhook.url, { ...activityStream }).catch((err) => {
-        this.logger.error('Webhook', err);
-      });
+      this.httpService.axiosRef
+        .post(webhook.url, { ...activityStream })
+        .then((response) => {
+          this.logger.log('WebhookResponse', JSON.stringify(response?.data));
+        })
+        .catch((err) => {
+          this.logger.error('WebhookError', err);
+        });
   }
 }
