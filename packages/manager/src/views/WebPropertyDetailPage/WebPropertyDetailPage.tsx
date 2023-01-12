@@ -124,270 +124,262 @@ export const WebPropertyDetailPage = (): JSX.Element => {
         </Level>
       </Banner>
       <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
-          <Tabs activeKey={openTab} onSelect={(_, tab) => handleTabChange(tab as number)}>
-            <Tab
-              eventKey={0}
-              title={
-                <>
-                  <TabTitleIcon>
-                    <PackageIcon />
-                  </TabTitleIcon>
-                  <TabTitleText>SPAs</TabTitleText>{' '}
-                </>
-              }
-              aria-label="SPA listing"
-            >
-              {!spaProperties.isLoading && isSpaPropertyListEmpty ? (
-          <EmptyInfo propertyIdentifier={propertyIdentifier} />
-        ) : ( 
-          <>
-          {/* <div className="pf-u-w-33 pf-u-mb-lg pf-u-mt-md">
-          <SearchInput
-            placeholder="Search by name"
-            value={searchTerm}
-            onChange={(value) => setSearchTerm(value?.toLowerCase())}
-            onClear={() => setSearchTerm('')}
-          />
-        </div> */}
-              <div className="pf-u-w-33 pf-u-mb-lg pf-u-mt-md">
-                <Split hasGutter className="pf-u-mb-md">
-                  <SplitItem className="pf-u-w-33">
-                    <SearchInput
-                      placeholder="Search by name"
-                      value={searchTerm}
-                      onChange={(value) => setSearchTerm(value?.toLowerCase())}
-                      onClear={() => setSearchTerm('')}
-                    />
-                  </SplitItem>
-                  <SplitItem isFilled />
-                  <SplitItem isFilled />
-                  <SplitItem>
-                    <Select
-                      variant={SelectVariant.single}
-                      aria-label="filter Input"
-                      value="Select Enviroment"
-                      onToggle={setIsFilterOpen.toggle}
-                      onSelect={(e, value) => {
-                        if (value === 'Select Enviroment') {
-                          setFilterByEnv('' as string);
-                        } else {
-                          setFilterByEnv(value as string);
-                        }
-                        setIsFilterOpen.off();
-                      }}
-                      selections="Select Enviroment" // To be kept as Select
-                      isOpen={isFilterOpen}
-                      aria-labelledby="filter"
-                    >
-                      {webPropertiesKeys.map((envName, index) => (
-                        <SelectOption key={`${envName} + ${index + 1}`} value={envName} />
-                      ))}
-                    </Select>
-                  </SplitItem>
-                </Split>
-                {filterByEnv === 'Select Enviroment' || filterByEnv === '' ? (
-                  <p />
-                ) : (
-                  <div
-                    style={{
-                      backgroundColor: '#F1F1F1',
-                      height: '40px',
-                      width: '120px',
-                      borderRadius: '25px',
-                      display: 'flex',
-                      flexDirection: 'row'
-                    }}
-                  >
-                    <div style={{ marginLeft: '20px', marginRight: '15px', marginTop: '7px' }}>
-                      {filterByEnv}
-                    </div>
-                    <TimesCircleIcon
-                      style={{ marginTop: '11px', marginLeft: '6px' }}
-                      onClick={removeValues}
-                    />
-                  </div>
-                )}
-              </div>
-              <TableComposable aria-label="spa-property-list" className="">
-                <Caption>SPA&apos;s DEPLOYED</Caption>
-                <Thead>
-                  <Tr>
-                    <Th />
-                    <Th>Name</Th>
-                    <Th>URL Path</Th>
-                    <Th>Environments</Th>
-                  </Tr>
-                </Thead>
-
-                {((spaProperties.isSuccess && isSpaPropertyListEmpty) ||
-                  (webProperties.isSuccess && isWebPropertiesListEmpty) ||
-                  spaProperties.isLoading ||
-                  webProperties.isLoading) && (
-                  <Tbody>
-                    {(spaProperties.isLoading || webProperties.isLoading) && (
-                      <TableRowSkeleton rows={3} columns={4} />
-                    )}
-                    {spaProperties.isSuccess && isSpaPropertyListEmpty && (
-                      <Tr>
-                        <Td colSpan={4}>
-                          <Bullseye>
-                            <EmptyState variant={EmptyStateVariant.small}>
-                              <EmptyStateIcon icon={SearchIcon} />
-                              <Title headingLevel="h2" size="lg">
-                                No results found
-                              </Title>
-                              <Button>Clear all filters</Button>
-                            </EmptyState>
-                          </Bullseye>
-                        </Td>
-                      </Tr>
-                    )}
-                  </Tbody>
-                )}
-                {spaProperties.isSuccess &&
-                  webPropertiesKeys &&
-                  spaPropertyKeys
-                    .filter((el) => el.toLowerCase().includes(debouncedSearchTerm))
-                    .map((identifier, rowIndex) => (
-                      <Tbody isExpanded={Boolean(isRowExpanded?.[identifier])} key={identifier}>
-                        <Tr isStriped={Boolean(rowIndex % 2)}>
-                          <Td
-                            expand={{
-                              rowIndex,
-                              isExpanded: Boolean(isRowExpanded?.[identifier]),
-                              onToggle: () => onToggleRowExpanded(identifier),
-                              expandId: 'composable-property-table'
-                            }}
-                          />
-                          <Td>
-                            <Link
-                              href={{
-                                pathname: '/properties/[propertyIdentifier]/[spaProperty]',
-                                query: { propertyIdentifier, spaProperty: identifier }
-                              }}
-                            >
-                              {spaProperties.data[identifier]?.[0]?.name}
-                            </Link>
-                          </Td>
-                          <Td>{spaProperties.data[identifier]?.[0]?.path}</Td>
-                          <Td>
-                            <Split hasGutter>
-                              {spaProperties.data[identifier].map(({ _id, env }) => (
-                                <SplitItem key={_id}>
-                                  <Label color="gold" isCompact>
-                                    {env}
-                                  </Label>
-                                </SplitItem>
-                              ))}
-                            </Split>
-                          </Td>
-                        </Tr>
-                        <Tr isExpanded={Boolean(isRowExpanded?.[identifier])}>
-                          <Td colSpan={4} noPadding={false}>
-                            <ExpandableRowContent>
-                              <TableComposable
-                                variant="compact"
-                                aria-label="expandable-table"
-                                borders={false}
-                              >
-                                <Thead>
-                                  <Tr>
-                                    <Th>Environment Name</Th>
-                                    <Th>Ref</Th>
-                                    <Th>Publish Domain</Th>
-                                    <Th>Internal Access URL</Th>
-                                    <Th>Updated At</Th>
-                                  </Tr>
-                                </Thead>
-                                <Tbody>
-                                  {spaProperties?.data?.[identifier].map(
-                                    ({ _id, env, ref, accessUrl, updatedAt }) => (
-                                      <Tr key={_id}>
-                                        <Td>
-                                          <Label color="gold" isCompact>
-                                            {env}
-                                          </Label>
-                                        </Td>
-                                        <Td>{ref}</Td>
-                                        <Td>
-                                          <a
-                                            href={`https://${webProperties?.data?.[env]?.url}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                          >
-                                            <ExternalLinkAltIcon />{' '}
-                                            {webProperties?.data?.[env]?.url}
-                                          </a>
-                                        </Td>
-
-                                        <Td>
-                                          <a
-                                            href={accessUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                          >
-                                            <ExternalLinkAltIcon />{' '}
-                                            {`${accessUrl.slice(0, URL_LENGTH_LIMIT)} ${
-                                              accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
-                                            }`}
-                                          </a>
-                                        </Td>
-                                        <Td>
-                                          {formatDate(updatedAt, 'MMM DD, YYYY - hh:mm:ss A')}
-                                        </Td>
-                                      </Tr>
-                                    )
-                                  )}
-                                </Tbody>
-                              </TableComposable>
-                            </ExpandableRowContent>
-                          </Td>
-                        </Tr>
-                      </Tbody>
-                    ))}
-              </TableComposable>
+        <Tabs activeKey={openTab} onSelect={(_, tab) => handleTabChange(tab as number)}>
+          <Tab
+            eventKey={0}
+            title={
+              <>
+                <TabTitleIcon>
+                  <PackageIcon />
+                </TabTitleIcon>
+                <TabTitleText>SPAs</TabTitleText>{' '}
               </>
-        )}
-            </Tab>
-            <Tab
-              eventKey={1}
-              title={
-                <>
-                  <TabTitleIcon>
-                    <RunningIcon />
-                  </TabTitleIcon>
-                  <TabTitleText>Activity Stream</TabTitleText>{' '}
-                </>
-              }
-              aria-label="SPA activity"
-            >
-              <List>
-                <ActivityStream propertyIdentifier={propertyIdentifier} />
-              </List>
-            </Tab>
-            <Tab
-              eventKey={2}
-              title={
-                <>
-                  <TabTitleIcon>
-                    <CubeIcon />
-                  </TabTitleIcon>
-                  <TabTitleText>
-                    Ephemeral Preview{' '}
-                    <Badge isRead={!ephemeralPreview.data?.length}>
-                      {ephemeralPreview.data?.length}
-                    </Badge>
-                  </TabTitleText>
-                </>
-              }
-              aria-label="Ephemeral Environment"
-            >
-              <Ephemeral
-                isSuccess={ephemeralPreview.isSuccess}
-                ephemeralEnvs={ephemeralPreview.data}
-              />
-            </Tab>
-          </Tabs>
+            }
+            aria-label="SPA listing"
+          >
+            {!spaProperties.isLoading && isSpaPropertyListEmpty ? (
+              <EmptyInfo propertyIdentifier={propertyIdentifier} />
+            ) : (
+              <>
+                <div className="pf-u-w-33 pf-u-mb-lg pf-u-mt-md">
+                  <Split hasGutter className="pf-u-mb-md">
+                    <SplitItem className="pf-u-w-33">
+                      <SearchInput
+                        placeholder="Search by name"
+                        value={searchTerm}
+                        onChange={(value) => setSearchTerm(value?.toLowerCase())}
+                        onClear={() => setSearchTerm('')}
+                      />
+                    </SplitItem>
+                    <SplitItem isFilled />
+                    <SplitItem isFilled />
+                    <SplitItem>
+                      <Select
+                        variant={SelectVariant.single}
+                        aria-label="filter Input"
+                        value="Select Enviroment"
+                        onToggle={setIsFilterOpen.toggle}
+                        onSelect={(e, value) => {
+                          if (value === 'Select Enviroment') {
+                            setFilterByEnv('' as string);
+                          } else {
+                            setFilterByEnv(value as string);
+                          }
+                          setIsFilterOpen.off();
+                        }}
+                        selections="Select Enviroment" // To be kept as Select
+                        isOpen={isFilterOpen}
+                        aria-labelledby="filter"
+                      >
+                        {webPropertiesKeys.map((envName, index) => (
+                          <SelectOption key={`${envName} + ${index + 1}`} value={envName} />
+                        ))}
+                      </Select>
+                    </SplitItem>
+                  </Split>
+                  {filterByEnv === 'Select Enviroment' || filterByEnv === '' ? (
+                    <p />
+                  ) : (
+                    <div
+                      style={{
+                        backgroundColor: '#F1F1F1',
+                        height: '40px',
+                        width: '120px',
+                        borderRadius: '25px',
+                        display: 'flex',
+                        flexDirection: 'row'
+                      }}
+                    >
+                      <div style={{ marginLeft: '20px', marginRight: '15px', marginTop: '7px' }}>
+                        {filterByEnv}
+                      </div>
+                      <TimesCircleIcon
+                        style={{ marginTop: '11px', marginLeft: '6px' }}
+                        onClick={removeValues}
+                      />
+                    </div>
+                  )}
+                </div>
+                <TableComposable aria-label="spa-property-list" className="">
+                  <Caption>SPA&apos;s DEPLOYED</Caption>
+                  <Thead>
+                    <Tr>
+                      <Th />
+                      <Th>Name</Th>
+                      <Th>URL Path</Th>
+                      <Th>Environments</Th>
+                    </Tr>
+                  </Thead>
+
+                  {((spaProperties.isSuccess && isSpaPropertyListEmpty) ||
+                    (webProperties.isSuccess && isWebPropertiesListEmpty) ||
+                    spaProperties.isLoading ||
+                    webProperties.isLoading) && (
+                    <Tbody>
+                      {(spaProperties.isLoading || webProperties.isLoading) && (
+                        <TableRowSkeleton rows={3} columns={4} />
+                      )}
+                      {spaProperties.isSuccess && isSpaPropertyListEmpty && (
+                        <Tr>
+                          <Td colSpan={4}>
+                            <Bullseye>
+                              <EmptyState variant={EmptyStateVariant.small}>
+                                <EmptyStateIcon icon={SearchIcon} />
+                                <Title headingLevel="h2" size="lg">
+                                  No results found
+                                </Title>
+                                <Button>Clear all filters</Button>
+                              </EmptyState>
+                            </Bullseye>
+                          </Td>
+                        </Tr>
+                      )}
+                    </Tbody>
+                  )}
+                  {spaProperties.isSuccess &&
+                    webPropertiesKeys &&
+                    spaPropertyKeys
+                      .filter((el) => el.toLowerCase().includes(debouncedSearchTerm))
+                      .map((identifier, rowIndex) => (
+                        <Tbody isExpanded={Boolean(isRowExpanded?.[identifier])} key={identifier}>
+                          <Tr isStriped={Boolean(rowIndex % 2)}>
+                            <Td
+                              expand={{
+                                rowIndex,
+                                isExpanded: Boolean(isRowExpanded?.[identifier]),
+                                onToggle: () => onToggleRowExpanded(identifier),
+                                expandId: 'composable-property-table'
+                              }}
+                            />
+                            <Td>
+                              <Link
+                                href={{
+                                  pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+                                  query: { propertyIdentifier, spaProperty: identifier }
+                                }}
+                              >
+                                {spaProperties.data[identifier]?.[0]?.name}
+                              </Link>
+                            </Td>
+                            <Td>{spaProperties.data[identifier]?.[0]?.path}</Td>
+                            <Td>
+                              <Split hasGutter>
+                                {spaProperties.data[identifier].map(({ _id, env }) => (
+                                  <SplitItem key={_id}>
+                                    <Label color="gold" isCompact>
+                                      {env}
+                                    </Label>
+                                  </SplitItem>
+                                ))}
+                              </Split>
+                            </Td>
+                          </Tr>
+                          <Tr isExpanded={Boolean(isRowExpanded?.[identifier])}>
+                            <Td colSpan={4} noPadding={false}>
+                              <ExpandableRowContent>
+                                <TableComposable
+                                  variant="compact"
+                                  aria-label="expandable-table"
+                                  borders={false}
+                                >
+                                  <Thead>
+                                    <Tr>
+                                      <Th>Environment Name</Th>
+                                      <Th>Ref</Th>
+                                      <Th>Publish Domain</Th>
+                                      <Th>Internal Access URL</Th>
+                                      <Th>Updated At</Th>
+                                    </Tr>
+                                  </Thead>
+                                  <Tbody>
+                                    {spaProperties?.data?.[identifier].map(
+                                      ({ _id, env, ref, accessUrl, updatedAt }) => (
+                                        <Tr key={_id}>
+                                          <Td>
+                                            <Label color="gold" isCompact>
+                                              {env}
+                                            </Label>
+                                          </Td>
+                                          <Td>{ref}</Td>
+                                          <Td>
+                                            <a
+                                              href={`https://${webProperties?.data?.[env]?.url}`}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                            >
+                                              <ExternalLinkAltIcon />{' '}
+                                              {webProperties?.data?.[env]?.url}
+                                            </a>
+                                          </Td>
+
+                                          <Td>
+                                            <a
+                                              href={accessUrl}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                            >
+                                              <ExternalLinkAltIcon />{' '}
+                                              {`${accessUrl.slice(0, URL_LENGTH_LIMIT)} ${
+                                                accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
+                                              }`}
+                                            </a>
+                                          </Td>
+                                          <Td>
+                                            {formatDate(updatedAt, 'MMM DD, YYYY - hh:mm:ss A')}
+                                          </Td>
+                                        </Tr>
+                                      )
+                                    )}
+                                  </Tbody>
+                                </TableComposable>
+                              </ExpandableRowContent>
+                            </Td>
+                          </Tr>
+                        </Tbody>
+                      ))}
+                </TableComposable>
+              </>
+            )}
+          </Tab>
+          <Tab
+            eventKey={1}
+            title={
+              <>
+                <TabTitleIcon>
+                  <RunningIcon />
+                </TabTitleIcon>
+                <TabTitleText>Activity Stream</TabTitleText>{' '}
+              </>
+            }
+            aria-label="SPA activity"
+          >
+            <List>
+              <ActivityStream propertyIdentifier={propertyIdentifier} />
+            </List>
+          </Tab>
+          <Tab
+            eventKey={2}
+            title={
+              <>
+                <TabTitleIcon>
+                  <CubeIcon />
+                </TabTitleIcon>
+                <TabTitleText>
+                  Ephemeral Preview{' '}
+                  <Badge isRead={!ephemeralPreview.data?.length}>
+                    {ephemeralPreview.data?.length}
+                  </Badge>
+                </TabTitleText>
+              </>
+            }
+            aria-label="Ephemeral Environment"
+          >
+            <Ephemeral
+              isSuccess={ephemeralPreview.isSuccess}
+              ephemeralEnvs={ephemeralPreview.data}
+            />
+          </Tab>
+        </Tabs>
       </PageSection>
     </>
   );

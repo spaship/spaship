@@ -43,7 +43,8 @@ export const AddWebPropertyPage = (): JSX.Element => {
   const onFormSubmit = async (data: FormData) => {
     try {
       await createWebPropertyMutation.mutateAsync({
-        ...data,env:data["env"].toLowerCase(),
+        ...data,
+        env: data.env.toLowerCase(),
         identifier: propertyID,
         createdBy: session?.user.email || ''
       });
@@ -129,7 +130,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
                     helperTextInvalid={error?.message}
                     helperText="Environment Name shouldn't contain any space, numbers, special-character "
                   >
-                  <TextInput
+                    <TextInput
                       isRequired
                       placeholder="Default Environment Name"
                       type="text"
