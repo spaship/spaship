@@ -143,14 +143,12 @@ export const WebPropertyDetailPage = (): JSX.Element => {
               <>
                 <div className="pf-u-w-50 pf-u-mb-lg pf-u-mt-md">
                   <Split hasGutter className="pf-u-mb-md">
-                    {/* <SplitItem className="pf-u-w-33"> */}
                     <SearchInput
                       placeholder="Search by name"
                       value={searchTerm}
                       onChange={(value) => setSearchTerm(value?.toLowerCase())}
                       onClear={() => setSearchTerm('')}
                     />
-                    {/* </SplitItem> */}
                     <SplitItem isFilled />
                     <SplitItem isFilled />
                     <SplitItem>
