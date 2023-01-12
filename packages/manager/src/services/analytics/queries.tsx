@@ -6,7 +6,8 @@ import {
   TSPADeploymentCount,
   TSPAMonthlyDeploymentCount,
   TWebPropActivityStream,
-  TSPADeploymentTime
+  TSPADeploymentTime,
+  TSPAMonthlyDeploymentChart
 } from './types';
 
 interface IDeploymentData {
@@ -131,7 +132,7 @@ export const useGetMonthlyDeploymentChart = (webProperty: string, spaName?: stri
   );
 
 const fetchMonthlyDeploymentChartWithEphemeral = async (): Promise<
-  Record<string, TSPAMonthlyDeploymentCount[]>
+  Record<string, TSPAMonthlyDeploymentChart[]>
 > => {
   const { data } = await orchestratorReq.get('/analytics/deployment/env/month');
   return data.data;
@@ -150,8 +151,42 @@ export const useGetMonthlyDeploymentChartWithEphemeral = () =>
   useQuery({
     queryKey: analyticsKeys.spaMonthyDeploymentChartWithEphemeral,
     queryFn: () => fetchMonthlyDeploymentChartWithEphemeral(),
-    select: (data) =>
-      Object.keys(data).map((key) => ({ env: key, data: sortWeeklyDeployments(data[key]) }))
+    select: (data: {
+      qa?: IDeploymentData[];
+      stage?: IDeploymentData[];
+      dev?: IDeploymentData[];
+      uatprod?: IDeploymentData[];
+      ephemeral?: IDeploymentData[];
+    }) => {
+      const monthlyDelpoymentData: {
+        qa?: any[];
+        stage?: any[];
+        dev?: any[];
+        uatprod?: any[];
+        lastMonthEphemeral?: number;
+        maxDeploymentCount?: number;
+        minDeploymentCount?: number;
+      } = {};
+      monthlyDelpoymentData.qa = sortWeeklyDeployments(data.qa || []);
+      monthlyDelpoymentData.stage = sortWeeklyDeployments(data.stage || []);
+      monthlyDelpoymentData.dev = sortWeeklyDeployments(data.dev || []);
+      monthlyDelpoymentData.uatprod = sortWeeklyDeployments(data.uatprod || []);
+      monthlyDelpoymentData.lastMonthEphemeral =
+        data.ephemeral?.reduce((acc, obj) => acc + obj.count, 0) || 0;
+      monthlyDelpoymentData.minDeploymentCount = Math.min(
+        data.qa?.reduce((acc, obj) => Math.min(acc, obj.count), data?.qa?.[0]?.count) || 0,
+        data.stage?.reduce((acc, obj) => Math.min(acc, obj.count), data?.stage?.[0]?.count) || 0,
+        data.dev?.reduce((acc, obj) => Math.min(acc, obj.count), data?.dev?.[0]?.count) || 0,
+        data.uatprod?.reduce((acc, obj) => Math.min(acc, obj.count), data?.uatprod?.[0]?.count) || 0
+      );
+      monthlyDelpoymentData.maxDeploymentCount = Math.max(
+        data.qa?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0,
+        data.stage?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0,
+        data.dev?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0,
+        data.uatprod?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0
+      );
+      return monthlyDelpoymentData;
+    }
   });
 
 const fetchTotalDeployment = async (): Promise<TSPADeploymentCount[]> => {

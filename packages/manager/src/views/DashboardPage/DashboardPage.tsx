@@ -15,57 +15,22 @@ export const DashboardPage = (): JSX.Element => {
   const TotalDeploymentsTimeData = useGetDeploymentsTime();
   const averageTime = TotalDeploymentsTimeData.data?.averageTime;
   const TotalMonthlyDeploymentData = useGetMonthlyDeploymentChartWithEphemeral().data;
-  const QADeployments = TotalMonthlyDeploymentData?.filter((ele) => ele.env === 'qa');
-  const StageDeployments = TotalMonthlyDeploymentData?.filter((ele) => ele.env === 'stage');
-  const DevDeployments = TotalMonthlyDeploymentData?.filter((ele) => ele.env === 'dev');
-  const ProdDeployments = TotalMonthlyDeploymentData?.filter((ele) => ele.env === 'uatprod');
-  const lastMonthEphemeral =
-    TotalMonthlyDeploymentData?.filter((ele) => ele.env === 'ephemeral')?.[0]?.data.reduce(
-      (acc, obj) => acc + obj.y,
-      0
-    ) || 0;
-
-  const minCount = Math.min(
-    QADeployments?.[0]?.data.reduce(
-      (acc, obj) => Math.min(acc, obj.y),
-      QADeployments?.[0]?.data?.[0]?.y
-    ) || 0,
-    StageDeployments?.[0]?.data.reduce(
-      (acc, obj) => Math.min(acc, obj.y),
-      StageDeployments?.[0]?.data?.[0]?.y
-    ) || 0,
-    DevDeployments?.[0]?.data.reduce(
-      (acc, obj) => Math.min(acc, obj.y),
-      DevDeployments?.[0]?.data?.[0]?.y
-    ) || 0,
-    ProdDeployments?.[0]?.data.reduce(
-      (acc, obj) => Math.min(acc, obj.y),
-      ProdDeployments?.[0]?.data?.[0]?.y
-    ) || 0
-  );
-
-  const maxCount = Math.max(
-    QADeployments?.[0]?.data.reduce((acc, obj) => Math.max(acc, obj.y), 0) || 0,
-    StageDeployments?.[0]?.data.reduce((acc, obj) => Math.max(acc, obj.y), 0) || 0,
-    DevDeployments?.[0]?.data.reduce((acc, obj) => Math.max(acc, obj.y), 0) || 0,
-    ProdDeployments?.[0]?.data.reduce((acc, obj) => Math.max(acc, obj.y), 0) || 0
-  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row', height: '10%' }}>
       <div style={{ width: '55%' }}>
         <Analytics
-          QAData={QADeployments?.[0]?.data}
-          ProdData={ProdDeployments?.[0]?.data}
-          DevData={DevDeployments?.[0]?.data}
-          StageData={StageDeployments?.[0]?.data}
+          QAData={TotalMonthlyDeploymentData?.qa}
+          ProdData={TotalMonthlyDeploymentData?.uatprod}
+          DevData={TotalMonthlyDeploymentData?.dev}
+          StageData={TotalMonthlyDeploymentData?.stage}
           Totaldeployment={Totaldeployment}
           TotalProperty={TotalProperty}
           averageTime={averageTime}
-          lastMonthEphemeral={lastMonthEphemeral}
+          lastMonthEphemeral={TotalMonthlyDeploymentData?.lastMonthEphemeral}
           TotalDeploymentData={TotalDeploymentData}
-          minCount={minCount}
-          maxCount={maxCount}
+          minCount={TotalMonthlyDeploymentData?.minDeploymentCount || 0}
+          maxCount={TotalMonthlyDeploymentData?.maxDeploymentCount || 0}
         />
       </div>
       <div style={{ width: '45%' }}>

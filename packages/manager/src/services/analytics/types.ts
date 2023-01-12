@@ -53,3 +53,13 @@ export type TSPADeploymentTime = {
     }
   ];
 };
+
+export type TSPAMonthlyDeploymentChart = {
+  lastMonthEphemeral: number;
+  maxDeploymentCount: number;
+  minDeploymentCount: number;
+  qa?: { name: 'string'; x: number; y: number }[];
+  stage?: { name: 'string'; x: number; y: number }[];
+  dev?: { name: 'string'; x: number; y: number }[];
+  uatprod?: { name: 'string'; x: number; y: number }[];
+};
