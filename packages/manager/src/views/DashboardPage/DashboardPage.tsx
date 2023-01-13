@@ -4,7 +4,7 @@ import {
   useGetDeploymentsTime,
   useGetMonthlyDeploymentChartWithEphemeral
 } from '@app/services/analytics';
-import { ActivityStream } from './components/ActivityStream';
+import { ActivityStreamDashboard } from './components/ActivityStreamDashboard';
 import { Analytics } from './components/Analytics';
 
 export const DashboardPage = (): JSX.Element => {
@@ -34,7 +34,7 @@ export const DashboardPage = (): JSX.Element => {
         />
       </div>
       <div style={{ width: '45%' }}>
-        <ActivityStream />
+        <ActivityStreamDashboard />
       </div>
     </div>
   );
