@@ -28,6 +28,7 @@ import { useInView } from 'react-intersection-observer';
 type Props = {
   propertyIdentifier: string;
   applicationIdentifier?: string;
+  action?: string;
 };
 
 type DeploymentKindProps = {
@@ -38,18 +39,18 @@ const activities = {
   APPLICATION_DEPLOYED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
       Deployment{' '}
-      <Label color="blue" icon={<CheckIcon />} variant="outline">
+      <Label color="blue" icon={<CheckIcon />} variant="outline" isCompact>
         completed
       </Label>{' '}
-      for
+      for{' '}
       <Label icon={<CubeIcon />} color="blue" isCompact>
         {props.applicationIdentifier}
       </Label>{' '}
-      in
+      in{' '}
       <Label icon={<ClusterIcon />} color="blue" isCompact>
         {props.env}
       </Label>{' '}
-      env with
+      env with{' '}
       <Label icon={<OutlinedClockIcon />} color="blue" isCompact>
         {message}.
       </Label>
@@ -60,7 +61,7 @@ const activities = {
       <Label icon={<CubesIcon />} color="blue" isCompact>
         {propertyIdentifier}
       </Label>{' '}
-      has been created.
+      has been created.{' '}
     </Text>
   ),
   ENV_CREATED: ({ props }: TWebPropActivityStream): JSX.Element => (
@@ -68,7 +69,7 @@ const activities = {
       <Label icon={<ClusterIcon />} color="blue" isCompact>
         {props.env}
       </Label>{' '}
-      environment has been created.
+      environment has been created.{' '}
     </Text>
   ),
   APPLICATION_DEPLOYMENT_STARTED: ({ props }: TWebPropActivityStream): JSX.Element => (
@@ -94,42 +95,42 @@ const activities = {
       <Label color="blue" icon={<CheckIcon />} variant="outline">
         created
       </Label>{' '}
-      for
+      for{' '}
       <Label icon={<CubeIcon />} color="blue" isCompact>
         {propertyIdentifier}
       </Label>{' '}
-      with scope
+      with scope{' '}
       <Label icon={<OutlinedClockIcon />} color="blue" isCompact>
-        {props.env}.
+        {props.env}.{' '}
       </Label>
     </Text>
   ),
   APIKEY_DELETED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
-      API key has been
+      API key has been{' '}
       <Label color="red" icon={<TimesIcon />} variant="outline">
-        deleted
+        deleted{' '}
       </Label>{' '}
-      for
+      for{' '}
       <Label icon={<CubeIcon />} color="blue" isCompact>
         {propertyIdentifier}
       </Label>{' '}
-      with scope
+      with scope{' '}
       <Label icon={<OutlinedClockIcon />} color="blue" isCompact>
-        {props.env}.
+        {props.env}.{' '}
       </Label>
     </Text>
   ),
   ENV_SYNCED: ({ props }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
       <Label icon={<SyncAltIcon />} color="blue" isCompact>
-        Sync
+        Sync{' '}
       </Label>
-      completed for
+      completed for{' '}
       <Label icon={<ClusterIcon />} color="blue" isCompact>
         {props.env}
       </Label>{' '}
-      environment
+      environment{' '}
     </Text>
   ),
   APPLICATION_DELETED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
@@ -145,7 +146,7 @@ const activities = {
       <Label icon={<ClusterIcon />} color="blue" isCompact>
         {props.env}
       </Label>{' '}
-      Misc:
+      Misc:{' '}
       <Label icon={<OutlinedClockIcon />} color="blue" isCompact>
         {message}.
       </Label>
@@ -156,13 +157,13 @@ const activities = {
       <Label icon={<CubeIcon />} color="blue" isCompact>
         {props.applicationIdentifier}
       </Label>{' '}
-      has
+      has{' '}
       <Label color="red" icon={<ExclamationCircleIcon />} variant="outline">
-        failed to deploy
+        failed to deploy{' '}
       </Label>{' '}
-      in
+      in{' '}
       <Label icon={<OutlinedClockIcon />} color="blue" isCompact>
-        {props.env}.
+        {props.env}.{' '}
       </Label>
     </Text>
   ),
@@ -171,9 +172,10 @@ const activities = {
       <Label icon={<ClusterIcon />} color="blue" isCompact>
         {props.env}
       </Label>{' '}
-      environment has been
+      environment has been{' '}
       <Label color="red" icon={<TimesIcon />} variant="outline">
-        deleted
+        {' '}
+        deleted{' '}
       </Label>
     </Text>
   )
@@ -188,10 +190,11 @@ const DeploymentKind = ({ activity }: DeploymentKindProps) => {
 
 export const ActivityStream = ({
   propertyIdentifier,
-  applicationIdentifier
+  applicationIdentifier,
+  action
 }: Props): JSX.Element => {
   const { isLoading, isSuccess, data, isFetchingNextPage, fetchNextPage } =
-    useGetWebPropActivityStream(propertyIdentifier, applicationIdentifier);
+    useGetWebPropActivityStream(propertyIdentifier, applicationIdentifier, action);
   const { ref, inView } = useInView();
   useEffect(() => {
     if (inView) {
@@ -244,5 +247,6 @@ export const ActivityStream = ({
 };
 
 ActivityStream.defaultProps = {
-  applicationIdentifier: ''
+  applicationIdentifier: '',
+  action: ''
 };
