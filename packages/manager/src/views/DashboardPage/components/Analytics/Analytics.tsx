@@ -41,7 +41,9 @@ export const Analytics = ({
   maxCount
 }: Props) => (
   <>
-    <h2 style={{ marginTop: '24px', marginLeft: '24px', fontSize: '20px' }}>Stats</h2>
+    <h2 style={{ marginBottom: '10px', marginTop: '24px', marginLeft: '24px', fontSize: '20px' }}>
+      Stats
+    </h2>
     <Grid style={{ padding: '12px 12px' }}>
       <GridItem span={6}>
         <Card

@@ -6,9 +6,9 @@ import 'simplebar/src/simplebar.css';
 
 export const ActivityStreamDashboard = () => (
   <>
-    <div style={{ marginTop: '20px', marginBottom: '10px', marginLeft: '50px' }}>
+    <h2 style={{ marginTop: '20px', marginBottom: '10px', marginLeft: '50px', fontSize: '20px' }}>
       Activity Stream
-    </div>
+    </h2>
 
     <Card
       isSelectable
