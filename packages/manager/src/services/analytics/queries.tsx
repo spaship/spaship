@@ -5,11 +5,22 @@ import {
   TDeploymentCount,
   TSPADeploymentCount,
   TSPAMonthlyDeploymentCount,
-  TWebPropActivityStream
+  TWebPropActivityStream,
+  TSPADeploymentTime,
+  TSPAMonthlyDeploymentChart
 } from './types';
+
+interface IDeploymentData {
+  env: string;
+  count: number;
+  startDate: string;
+  endDate: string;
+}
 
 const analyticsKeys = {
   deploy: ['deployment-count'] as const,
+  deploymentTime: ['deployment-time'] as const,
+  spaMonthyDeploymentChartWithEphemeral: ['deployment-time-with-ephemeral'] as const,
   propertyActivityStream: (id: string, spaId?: string, action?: string) =>
     ['activity-stream', id, spaId, action] as const,
   totalDeployments: (propertyId: string) => ['total-deployment', propertyId] as const,
@@ -123,3 +134,77 @@ export const useGetMonthlyDeploymentChart = (webProperty: string, spaName?: stri
   useQuery(analyticsKeys.spaMonthyDeploymentChart(webProperty, spaName), () =>
     fetchMonthlyDeploymentChart(webProperty, spaName)
   );
+
+const fetchMonthlyDeploymentChartWithEphemeral = async (): Promise<
+  Record<string, TSPAMonthlyDeploymentChart[]>
+> => {
+  const { data } = await orchestratorReq.get('/analytics/deployment/env/month');
+  return data.data;
+};
+
+const sortWeeklyDeployments = (arr: IDeploymentData[]) =>
+  arr
+    .sort((a: IDeploymentData, b: IDeploymentData) => (a.startDate > b.startDate ? 1 : -1))
+    .map((ele: IDeploymentData, index: number) => ({
+      name: `${ele.env.toLocaleUpperCase()}`,
+      x: `Week ${index + 1}`,
+      y: ele.count
+    }));
+
+export const useGetMonthlyDeploymentChartWithEphemeral = () =>
+  useQuery({
+    queryKey: analyticsKeys.spaMonthyDeploymentChartWithEphemeral,
+    queryFn: () => fetchMonthlyDeploymentChartWithEphemeral(),
+    select: (data: {
+      qa?: IDeploymentData[];
+      stage?: IDeploymentData[];
+      dev?: IDeploymentData[];
+      uatprod?: IDeploymentData[];
+      ephemeral?: IDeploymentData[];
+    }) => {
+      const monthlyDelpoymentData: {
+        qa?: any[];
+        stage?: any[];
+        dev?: any[];
+        uatprod?: any[];
+        lastMonthEphemeral?: number;
+        maxDeploymentCount?: number;
+        minDeploymentCount?: number;
+      } = {};
+      monthlyDelpoymentData.qa = sortWeeklyDeployments(data.qa || []);
+      monthlyDelpoymentData.stage = sortWeeklyDeployments(data.stage || []);
+      monthlyDelpoymentData.dev = sortWeeklyDeployments(data.dev || []);
+      monthlyDelpoymentData.uatprod = sortWeeklyDeployments(data.uatprod || []);
+      monthlyDelpoymentData.lastMonthEphemeral =
+        data.ephemeral?.reduce((acc, obj) => acc + obj.count, 0) || 0;
+      monthlyDelpoymentData.minDeploymentCount = Math.min(
+        data.qa?.reduce((acc, obj) => Math.min(acc, obj.count), data?.qa?.[0]?.count) || 0,
+        data.stage?.reduce((acc, obj) => Math.min(acc, obj.count), data?.stage?.[0]?.count) || 0,
+        data.dev?.reduce((acc, obj) => Math.min(acc, obj.count), data?.dev?.[0]?.count) || 0,
+        data.uatprod?.reduce((acc, obj) => Math.min(acc, obj.count), data?.uatprod?.[0]?.count) || 0
+      );
+      monthlyDelpoymentData.maxDeploymentCount = Math.max(
+        data.qa?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0,
+        data.stage?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0,
+        data.dev?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0,
+        data.uatprod?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0
+      );
+      return monthlyDelpoymentData;
+    }
+  });
+
+const fetchTotalDeployment = async (): Promise<TSPADeploymentCount[]> => {
+  const { data } = await orchestratorReq.get('analytics/deployment/env');
+  return data.data;
+};
+
+export const useGetTotalDeployments = () =>
+  useQuery(analyticsKeys.spaDeployments(''), () => fetchTotalDeployment());
+
+const fetchTotalDeploymentTime = async (): Promise<TSPADeploymentTime> => {
+  const { data } = await orchestratorReq.get('analytics/deployment/time');
+  return data.data;
+};
+
+export const useGetDeploymentsTime = () =>
+  useQuery(analyticsKeys.deploymentTime, () => fetchTotalDeploymentTime());

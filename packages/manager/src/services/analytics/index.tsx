@@ -1,6 +1,8 @@
 export {
   useGetDeploymentCounts,
   useGetWebPropActivityStream,
-  useGetMonthlyDeploymentChart,
-  useGetTotalDeploymentsForApps
+  useGetMonthlyDeploymentChartWithEphemeral,
+  useGetTotalDeploymentsForApps,
+  useGetTotalDeployments,
+  useGetDeploymentsTime
 } from './queries';
