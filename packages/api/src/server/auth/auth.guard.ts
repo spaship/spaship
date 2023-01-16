@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import * as crypto from 'crypto';
 import jwt_decode from 'jwt-decode';
-import { AUTH_DETAILS, AUTH_LISTING } from 'src/configuration';
+import { AUTH_DETAILS, AUTH_LISTING, GLOBAL_PREFIX } from 'src/configuration';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 
@@ -46,11 +46,31 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
     try {
       // @internal Validating the JWT Token
       validated = Boolean(this.jwtService.verify(bearerToken, options));
-      if (validated) return true;
+      if (validated) {
+        await this.isAuthorized(bearerToken, context);
+        return true;
+      }
     } catch (err) {
       this.exceptionsService.UnauthorizedException(err.message);
     }
     return false;
+  }
+
+  private async isAuthorized(bearerToken: string, context: ExecutionContext) {
+    const payload = jwt_decode(bearerToken);
+    const resource = context.getArgs()[0].route.path.split(GLOBAL_PREFIX)[1];
+    const method = context.getArgs()[0].method;
+    const propertyIdentifier = context.getArgs()[0].body.propertyIdentifier || context.getArgs()[0].params.propertyIdentifier;
+    const checkResource = (await this.dataServices.authActionLookup.getByAny({ resource, method }))[0];
+    if (checkResource) {
+      const email = JSON.parse(JSON.stringify(payload)).email;
+      const authorized = (await this.dataServices.permission.getByAny({ propertyIdentifier, email, action: checkResource.name }))[0];
+      if (!authorized)
+        this.exceptionsService.badRequestException({
+          message: `${email} is not authorized to perform this action, please connect with ${propertyIdentifier} owner.`
+        });
+      context.getArgs()[0].body.createdBy = email;
+    }
   }
 
   // @internal Request authentication for deployment api
