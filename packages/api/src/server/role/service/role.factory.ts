@@ -7,7 +7,7 @@ export class RoleFactory {
   createNewRole(createRoleDto: RoleDto): Role {
     const role = new Role();
     role.name = createRoleDto.name;
-    role.authActions = createRoleDto.authActions;
+    role.actions = createRoleDto.actions;
     return role;
   }
 }

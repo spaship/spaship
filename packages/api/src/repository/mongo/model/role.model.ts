@@ -8,7 +8,7 @@ export class Role {
   name: string;
 
   @Prop({ required: true })
-  authActions: string[];
+  actions: string[];
 
   @Prop({ required: true, default: true })
   isActive: boolean;

@@ -9,5 +9,5 @@ export class RoleDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  authActions: string[];
+  actions: string[];
 }

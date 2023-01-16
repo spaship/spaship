@@ -31,7 +31,7 @@ export class RoleController {
 
   @Delete('/:name')
   @ApiOperation({ description: 'Delete a Auth Action.' })
-  async deleteApiKey(@Param('name') name: string): Promise<Role> {
+  async deleteRole(@Param('name') name: string): Promise<Role> {
     return this.roleService.deleteRole(name);
   }
 }

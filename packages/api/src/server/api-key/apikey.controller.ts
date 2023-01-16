@@ -23,9 +23,9 @@ export class ApikeyController {
     return this.apiKeyService.createApikey(apikeyDto);
   }
 
-  @Delete('/:propertyIdentifier/:shortKey')
+  @Delete(':shortKey')
   @ApiOperation({ description: 'Delete an API Key.' })
-  async deleteApiKey(@Param() params): Promise<Apikey> {
-    return this.apiKeyService.deleteApiKey(params.shortKey);
+  async deleteApiKey(@Param('shortKey') shortKey: string): Promise<Apikey> {
+    return this.apiKeyService.deleteApiKey(shortKey);
   }
 }

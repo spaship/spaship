@@ -36,7 +36,7 @@ export class RoleService {
   async updateRole(updateRoleDto: RoleDto): Promise<Role> {
     const updateRole = (await this.dataServices.role.getByAny({ name: updateRoleDto.name }))[0];
     if (!updateRole) this.exceptionService.badRequestException({ message: `Role doesn't exist.` });
-    updateRole.authActions = updateRoleDto.authActions;
+    updateRole.actions = updateRoleDto.actions;
     await this.dataServices.role.updateOne({ pname: updateRoleDto.name }, updateRole);
     return updateRole;
   }

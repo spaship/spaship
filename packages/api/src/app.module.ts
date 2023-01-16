@@ -19,6 +19,12 @@ import { EnvironmentController } from './server/environment/environment.controll
 import { AgendaModule } from './server/agenda/agenda.module';
 import { WebhookModule } from './server/webhook/service/webhook.module';
 import { WebhookController } from './server/webhook/service/webhook.controller';
+import { SearchModule } from './server/search/service/search.module';
+import { SearchController } from './server/search/search.controller';
+import { AuthActionLookupModule } from './server/auth-action-lookup/service/auth-action-lookup.module';
+import { AuthActionLookupController } from './server/auth-action-lookup/auth-action-lookup.controller';
+import { RoleModule } from './server/role/service/role.module';
+import { RoleController } from './server/role/role.controller';
 
 @Module({
   imports: [
@@ -34,7 +40,10 @@ import { WebhookController } from './server/webhook/service/webhook.controller';
     EventModule,
     AnalyticsModule,
     AgendaModule,
-    WebhookModule
+    WebhookModule,
+    SearchModule,
+    AuthActionLookupModule,
+    RoleModule,
   ],
   controllers: [
     ApikeyController,
@@ -43,8 +52,11 @@ import { WebhookController } from './server/webhook/service/webhook.controller';
     DeploymentConnectionController,
     EnvironmentController,
     PropertyController,
-    WebhookController
+    WebhookController,
+    SearchController,
+    AuthActionLookupController,
+    RoleController
   ],
   providers: []
 })
-export class AppModule {}
+export class AppModule { }

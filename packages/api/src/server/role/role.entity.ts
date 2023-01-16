@@ -1,7 +1,7 @@
 export class Role {
   name: string;
 
-  authActions: string[];
+  actions: string[];
 
   isActive: boolean;
 }

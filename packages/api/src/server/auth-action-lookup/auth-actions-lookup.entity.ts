@@ -1,4 +1,4 @@
-export class AuthAction {
+export class AuthActionLookup {
   name: string;
 
   resource: string;
