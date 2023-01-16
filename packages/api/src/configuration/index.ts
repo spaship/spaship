@@ -33,6 +33,21 @@ export const AUTH_LISTING = {
   eventsBaseURL: '/api/v1/analytics/events'
 };
 
+const ROVER_AUTH_DETAILS = {
+  username: process.env.SPASHIP_ROVER_USERNAME,
+  password: process.env.SPASHIP_ROVER_PASSWORD
+};
+
+function getRoverAuth() {
+  const base64EncodedCreds = Buffer.from(`${ROVER_AUTH_DETAILS.username}:${ROVER_AUTH_DETAILS.password}`);
+  return base64EncodedCreds.toString('base64');
+}
+
+export const ROVER_AUTH = {
+  cred: getRoverAuth(),
+  baseUrl: process.env.SPASHIP_ROVER_BASE_URL
+};
+
 export enum MIN {
   DEFAULT = 2,
   PATH = 1,
@@ -85,3 +100,5 @@ export const VALIDATION = {
 export enum JOB {
   DELETE_EPH_ENV = 'DELETE_EPH_ENV'
 }
+
+export const GLOBAL_PREFIX = '/api/v1';
