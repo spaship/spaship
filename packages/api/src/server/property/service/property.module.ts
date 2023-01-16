@@ -9,6 +9,8 @@ import { ApplicationService } from 'src/server/application/service/application.s
 import { EnvironmentFactory } from 'src/server/environment/service/environment.factory';
 import { EnvironmentService } from 'src/server/environment/service/environment.service';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
+import { PermissionFactory } from 'src/server/permission/service/permission.factory';
+import { PermissionService } from 'src/server/permission/service/permission.service';
 import { DataServicesModule } from '../../../repository/data-services.module';
 import { PropertyFactory } from './property.factory';
 import { PropertyService } from './property.service';
@@ -26,7 +28,9 @@ import { PropertyService } from './property.service';
     EnvironmentFactory,
     EnvironmentService,
     AgendaService,
-    LoggerService
+    LoggerService,
+    PermissionService,
+    PermissionFactory
   ],
   exports: [PropertyFactory, PropertyService]
 })

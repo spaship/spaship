@@ -9,3 +9,4 @@ export * from './activity-stream.model';
 export * from './webhook.model';
 export * from './auth-action-lookup.model';
 export * from './role.model';
+export * from './permission.model';

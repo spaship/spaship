@@ -1,5 +1,6 @@
 import { ActivityStream } from 'src/server/analytics/activity-stream.entity';
 import { AuthActionLookup } from 'src/server/auth-action-lookup/auth-actions-lookup.entity';
+import { Permission } from 'src/server/permission/permission.entity';
 import { Role } from 'src/server/role/role.entity';
 import { Webhook } from 'src/server/webhook/webhook.entity';
 import { Apikey } from '../server/api-key/apikey.entity';
@@ -33,4 +34,6 @@ export abstract class IDataServices {
   abstract authActionLookup: IGenericRepository<AuthActionLookup>;
 
   abstract role: IGenericRepository<Role>;
+
+  abstract permission: IGenericRepository<Permission>;
 }

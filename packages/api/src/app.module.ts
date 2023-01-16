@@ -25,6 +25,8 @@ import { AuthActionLookupModule } from './server/auth-action-lookup/service/auth
 import { AuthActionLookupController } from './server/auth-action-lookup/auth-action-lookup.controller';
 import { RoleModule } from './server/role/service/role.module';
 import { RoleController } from './server/role/role.controller';
+import { PermissionModule } from './server/permission/service/permission.module';
+import { PermissionController } from './server/permission/permission.controller';
 
 @Module({
   imports: [
@@ -43,7 +45,8 @@ import { RoleController } from './server/role/role.controller';
     WebhookModule,
     RoverModule,
     AuthActionLookupModule,
-    RoleModule
+    RoleModule,
+    PermissionModule
   ],
   controllers: [
     ApikeyController,
@@ -55,7 +58,8 @@ import { RoleController } from './server/role/role.controller';
     WebhookController,
     RoverController,
     AuthActionLookupController,
-    RoleController
+    RoleController,
+    PermissionController
   ],
   providers: []
 })
