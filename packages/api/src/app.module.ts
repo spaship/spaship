@@ -19,8 +19,8 @@ import { EnvironmentController } from './server/environment/environment.controll
 import { AgendaModule } from './server/agenda/agenda.module';
 import { WebhookModule } from './server/webhook/service/webhook.module';
 import { WebhookController } from './server/webhook/service/webhook.controller';
-import { SearchModule } from './server/search/service/search.module';
-import { SearchController } from './server/search/search.controller';
+import { RoverModule } from './server/sot/rover/service/rover.module';
+import { RoverController } from './server/sot/rover/rover.controller';
 import { AuthActionLookupModule } from './server/auth-action-lookup/service/auth-action-lookup.module';
 import { AuthActionLookupController } from './server/auth-action-lookup/auth-action-lookup.controller';
 import { RoleModule } from './server/role/service/role.module';
@@ -41,9 +41,9 @@ import { RoleController } from './server/role/role.controller';
     AnalyticsModule,
     AgendaModule,
     WebhookModule,
-    SearchModule,
+    RoverModule,
     AuthActionLookupModule,
-    RoleModule,
+    RoleModule
   ],
   controllers: [
     ApikeyController,
@@ -53,10 +53,10 @@ import { RoleController } from './server/role/role.controller';
     EnvironmentController,
     PropertyController,
     WebhookController,
-    SearchController,
+    RoverController,
     AuthActionLookupController,
     RoleController
   ],
   providers: []
 })
-export class AppModule { }
+export class AppModule {}

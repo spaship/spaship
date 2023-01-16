@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { UserDetails } from '../user-detaills.response.dto';
-import { SearchFactory } from './search.factory';
+import { Subject } from '../subject.response.dto';
+import { RoverFactory } from './rover.factory';
 
 @Injectable()
-export class SearchService {
-  constructor(private readonly searchFactory: SearchFactory) {}
+export class RoverService {
+  constructor(private readonly searchFactory: RoverFactory) { }
 
   /* @internal
    *  Search the User Details from Rover
    *  Details will be searched from the Rover Group based on uid, name & email
    *  Transform the response to User Details
    */
-  async getRoverUserDetails(key: string): Promise<UserDetails[]> {
+  async getRoverUserDetails(key: string): Promise<Subject[]> {
     return this.searchFactory.getRoverUserDetails(key);
   }
 
@@ -20,7 +20,7 @@ export class SearchService {
    *  It'll search the details from a Perticular Rover Group
    *  Transform the response to User Details
    */
-  async getRoverGroupDetails(key: string): Promise<UserDetails[]> {
+  async getRoverGroupDetails(key: string): Promise<Subject[]> {
     return this.searchFactory.getRoverGroupDetails(key);
   }
 }
