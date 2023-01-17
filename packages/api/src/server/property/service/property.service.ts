@@ -60,7 +60,7 @@ export class PropertyService {
     const environment = this.environmentFactory.createNewEnvironment(environmentDTO);
     await Promise.all([this.dataServices.property.create(property), this.dataServices.environment.create(environment)]);
     await this.environmentFactory.initializeEnvironment(property, environment);
-    await this.permissionService.provideInitialAccess(property.identifier, createPropertyDto.createdBy);
+    await this.permissionService.provideInitialAccess(property.identifier, createPropertyDto.createdBy, createPropertyDto.creatorName);
     await this.analyticsService.createActivityStream(createPropertyDto.identifier, Action.PROPERTY_CREATED);
     await this.analyticsService.createActivityStream(createPropertyDto.identifier, Action.ENV_CREATED, createPropertyDto.env);
     return this.getPropertyDetails(createPropertyDto.identifier);

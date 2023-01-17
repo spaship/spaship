@@ -76,11 +76,11 @@ export class PermissionService {
   }
 
   // @internal Provide intial access for the Property Creator
-  async provideInitialAccess(propertyIdentifier: string, createdBy: string): Promise<Permission[]> {
+  async provideInitialAccess(propertyIdentifier: string, createdBy: string, creatorName: string): Promise<Permission[]> {
     const name = 'OWNER';
     const role = (await this.dataServices.role.getByAny({ name }))[0];
     const createPermissionDto = new CreatePermissionDto();
-    createPermissionDto.name = createdBy;
+    createPermissionDto.name = creatorName;
     createPermissionDto.propertyIdentifier = propertyIdentifier;
     createPermissionDto.actions = role.actions;
     createPermissionDto.email = createdBy;

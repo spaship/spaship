@@ -20,7 +20,6 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
   /* @internal
    * Validating JWT and API Key
    * Token Format : Bearer {JWT} / Bearer {APIKey}
-   * TODO : This should be improvised with Authorization
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
     let bearerToken: string;
@@ -71,6 +70,9 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
         });
       context.getArgs()[0].body.createdBy = email;
     }
+    // @internal It'll extract the Name of the Creator specificly for the Property Creation Request
+    if (context.getArgs()[0].route.path === AUTH_LISTING.propertyBaseURL)
+      context.getArgs()[0].body.creatorName = JSON.parse(JSON.stringify(payload)).name;
   }
 
   // @internal Request authentication for deployment api
