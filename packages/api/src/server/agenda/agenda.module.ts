@@ -9,6 +9,8 @@ import { ApplicationService } from '../application/service/application.service';
 import { EnvironmentFactory } from '../environment/service/environment.factory';
 import { EnvironmentService } from '../environment/service/environment.service';
 import { ExceptionsService } from '../exceptions/exceptions.service';
+import { PermissionFactory } from '../permission/service/permission.factory';
+import { PermissionService } from '../permission/service/permission.service';
 import { PropertyFactory } from '../property/service/property.factory';
 import { PropertyService } from '../property/service/property.service';
 import { AgendaService } from './agenda.service';
@@ -26,7 +28,9 @@ import { AgendaService } from './agenda.service';
     AnalyticsFactory,
     AnalyticsService,
     PropertyService,
-    PropertyFactory
+    PropertyFactory,
+    PermissionService,
+    PermissionFactory
   ],
   exports: [AgendaService]
 })

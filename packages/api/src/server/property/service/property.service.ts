@@ -6,6 +6,7 @@ import { Action } from 'src/server/analytics/activity-stream.entity';
 import { AnalyticsService } from 'src/server/analytics/service/analytics.service';
 import { EnvironmentFactory } from 'src/server/environment/service/environment.factory';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
+import { PermissionService } from 'src/server/permission/service/permission.service';
 import { CreatePropertyDto } from 'src/server/property/property.dto';
 import { DeploymentRecord } from '../property.entity';
 import { PropertyResponseDto } from '../property.response.dto';
@@ -19,7 +20,8 @@ export class PropertyService {
     private readonly environmentFactory: EnvironmentFactory,
     private readonly logger: LoggerService,
     private readonly exceptionService: ExceptionsService,
-    private readonly analyticsService: AnalyticsService
+    private readonly analyticsService: AnalyticsService,
+    private readonly permissionService: PermissionService
   ) {}
 
   getAllProperties(): Promise<Property[]> {
@@ -58,6 +60,7 @@ export class PropertyService {
     const environment = this.environmentFactory.createNewEnvironment(environmentDTO);
     await Promise.all([this.dataServices.property.create(property), this.dataServices.environment.create(environment)]);
     await this.environmentFactory.initializeEnvironment(property, environment);
+    await this.permissionService.provideInitialAccess(property.identifier, createPropertyDto.createdBy);
     await this.analyticsService.createActivityStream(createPropertyDto.identifier, Action.PROPERTY_CREATED);
     await this.analyticsService.createActivityStream(createPropertyDto.identifier, Action.ENV_CREATED, createPropertyDto.env);
     return this.getPropertyDetails(createPropertyDto.identifier);

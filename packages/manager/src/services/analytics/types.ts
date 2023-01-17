@@ -36,3 +36,30 @@ export type Props = {
   applicationIdentifier: string;
   env: string;
 };
+
+export type TSPADeploymentTime = {
+  averageTime: number;
+  propertyIdentifier: string;
+  totalTime: number;
+  count: number;
+  days: number;
+  deploymentDetails: [
+    {
+      propertyIdentifier: string;
+      applicationIdentifier: string;
+      count: number;
+      totalTime: number;
+      averageTime: number;
+    }
+  ];
+};
+
+export type TSPAMonthlyDeploymentChart = {
+  lastMonthEphemeral: number;
+  maxDeploymentCount: number;
+  minDeploymentCount: number;
+  qa?: { name: 'string'; x: number; y: number }[];
+  stage?: { name: 'string'; x: number; y: number }[];
+  dev?: { name: 'string'; x: number; y: number }[];
+  uatprod?: { name: 'string'; x: number; y: number }[];
+};
