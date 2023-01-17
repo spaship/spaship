@@ -48,6 +48,7 @@ export const ROVER_AUTH = {
   baseUrl: process.env.SPASHIP_ROVER_BASE_URL
 };
 
+// @internal this is for validating the minimum length for the Specific requests
 export enum MIN {
   DEFAULT = 2,
   PATH = 1,
@@ -55,6 +56,7 @@ export enum MIN {
   URL = 3
 }
 
+// @internal this is for validating the maximum length for the Specific requests
 export enum MAX {
   PATH = 100,
   NAME = 100,

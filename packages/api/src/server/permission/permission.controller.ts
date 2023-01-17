@@ -32,7 +32,7 @@ export class PermissionController {
 
   @Delete()
   @ApiOperation({ description: 'Delete a Permission.' })
-  async deleteApiKey(@Body() deletePermissionDto: DeletePermissionDto): Promise<Permission[]> {
+  async deletePermission(@Body() deletePermissionDto: DeletePermissionDto): Promise<Permission[]> {
     return this.permissionService.deletePermission(deletePermissionDto);
   }
 }
