@@ -1,7 +1,13 @@
 /* eslint-disable react/require-default-props */
 import { Card, CardTitle, CardBody, CardHeader, Grid, GridItem } from '@patternfly/react-core';
-import { Chart, ChartAxis, ChartGroup, ChartLine, ChartThemeColor } from '@patternfly/react-charts';
-import { VictoryZoomContainer } from 'victory-zoom-container';
+import {
+  Chart,
+  ChartAxis,
+  ChartGroup,
+  ChartLine,
+  ChartThemeColor,
+  ChartVoronoiContainer
+} from '@patternfly/react-charts';
 import { TSPADeploymentCount } from '@app/services/analytics/types';
 import { UseQueryResult } from '@tanstack/react-query';
 
@@ -179,7 +185,12 @@ export const Analytics = ({
           <Chart
             ariaDesc="Average number of pets"
             ariaTitle="Line chart example"
-            containerComponent={<VictoryZoomContainer zoomDimension="x" />}
+            containerComponent={
+              <ChartVoronoiContainer
+                labels={({ datum }) => `${datum.name}: ${datum.y}`}
+                constrainToVisibleArea
+              />
+            }
             legendData={[
               { name: 'Prod' },
               { name: 'Stage', symbol: { type: 'dash' } },
