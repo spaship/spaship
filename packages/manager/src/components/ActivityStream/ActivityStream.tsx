@@ -10,7 +10,8 @@ import {
   Spinner,
   Text,
   TextContent,
-  TextVariants
+  TextVariants,
+  LabelGroup
 } from '@patternfly/react-core';
 import {
   CheckIcon,
@@ -20,10 +21,12 @@ import {
   ExclamationCircleIcon,
   OutlinedClockIcon,
   SyncAltIcon,
-  TimesIcon
+  TimesIcon,
 } from '@patternfly/react-icons';
+import Link from 'next/link';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { NextRouter, useRouter } from 'next/router';
 
 type Props = {
   propertyIdentifier: string;
@@ -34,27 +37,52 @@ type Props = {
 type DeploymentKindProps = {
   activity: TWebPropActivityStream;
 };
-
+let path: string | NextRouter
 const activities = {
-  APPLICATION_DEPLOYED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      Deployment{' '}
-      <Label color="blue" icon={<CheckIcon />} variant="outline" isCompact>
-        completed
-      </Label>{' '}
-      for{' '}
-      <Label icon={<CubeIcon />} color="blue" isCompact>
-        {props.applicationIdentifier}
-      </Label>{' '}
-      in{' '}
-      <Label icon={<ClusterIcon />} color="blue" isCompact>
-        {props.env}
-      </Label>{' '}
-      env with{' '}
-      <Label icon={<OutlinedClockIcon />} color="blue" isCompact>
-        {message}.
-      </Label>
-    </Text>
+  APPLICATION_DEPLOYED: ({ props, message,propertyIdentifier}: TWebPropActivityStream): JSX.Element => (
+                      <Text component={TextVariants.small}>
+                      Deployment{' '}
+                      <Label color="blue" icon={<CheckIcon />} variant="outline" isCompact>
+                        completed
+                      </Label>{' '}
+                      for{' '}
+                      { window.location.pathname == "/dashboard"
+                      ? 
+                     <>
+                        <Label color='blue' icon={<CubesIcon />} variant="outline" isCompact >
+                      <Link
+                              href={{
+                                pathname: '/properties/[propertyIdentifier]',
+                                query: { propertyIdentifier}
+                              }}
+                            >
+                        {propertyIdentifier} 
+                        </Link>
+                      </Label> 
+                      {' -> '}
+                      </>
+                       : "" }
+                      <Label icon={<CubeIcon />} color="blue" isCompact>
+                      <Link
+                              href={{
+                                pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+                                query: { propertyIdentifier , spaProperty :props.applicationIdentifier }
+                              }}
+                            >
+                       {props.applicationIdentifier}
+                      </Link>
+                      </Label>{' '}
+                      in{' '}
+                      <Label icon={<ClusterIcon />} color="blue" isCompact>
+                        {props.env}
+                      </Label>{' '}
+                      env with{' '}
+                      <Label icon={<OutlinedClockIcon />} color="blue" isCompact>
+                        {message}.
+                      </Label>
+                    </Text>
+                        
+                
   ),
   PROPERTY_CREATED: ({ propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
@@ -185,13 +213,14 @@ const DeploymentKind = ({ activity }: DeploymentKindProps) => {
   if (Object.prototype.hasOwnProperty.call(activities, activity.action)) {
     return activities[activity.action](activity);
   }
+ 
   return <Text component={TextVariants.small}>Activity message - {activity.message}</Text>;
 };
 
 export const ActivityStream = ({
   propertyIdentifier,
   applicationIdentifier,
-  action
+  action,
 }: Props): JSX.Element => {
   const { isLoading, isSuccess, data, isFetchingNextPage, fetchNextPage } =
     useGetWebPropActivityStream(propertyIdentifier, applicationIdentifier, action);
@@ -202,6 +231,7 @@ export const ActivityStream = ({
     }
   }, [fetchNextPage, inView]);
   const formatDate = useFormatDate();
+ path =useRouter()
   return (
     <>
       <ProgressStepper isVertical>
@@ -218,10 +248,11 @@ export const ActivityStream = ({
                 description={formatDate(activity.createdAt, 'MMM DD YY, hh:mm a')}
               >
                 <TextContent className="pf-u-mb-sm">
-                  <DeploymentKind activity={activity} />
+                  <DeploymentKind activity={activity} ></DeploymentKind>
                 </TextContent>
               </ProgressStep>
             ))
+            
           )}
       </ProgressStepper>
       {isFetchingNextPage && (
@@ -248,5 +279,5 @@ export const ActivityStream = ({
 
 ActivityStream.defaultProps = {
   applicationIdentifier: '',
-  action: ''
+  action: '',
 };

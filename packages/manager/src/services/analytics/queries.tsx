@@ -57,7 +57,8 @@ const fetchWebPropertyActivityStream = async (
   propertyIdentifier: string,
   applicationIdentifier?: string,
   skip?: number,
-  action?: string
+  action?: string,
+
 ): Promise<TWebPropActivityStream[]> => {
   const { data } = await orchestratorReq.get('/analytics/activity-stream', {
     params: {
@@ -65,7 +66,8 @@ const fetchWebPropertyActivityStream = async (
       applicationIdentifier,
       limit: LIMIT,
       skip,
-      action
+      action,
+
     }
   });
   return data.data;
@@ -74,7 +76,7 @@ const fetchWebPropertyActivityStream = async (
 export const useGetWebPropActivityStream = (
   propertyIdentifier: string,
   applicationIdentifier?: string,
-  action?: string
+  action?: string,
 ) =>
   useInfiniteQuery(
     analyticsKeys.propertyActivityStream(propertyIdentifier),
