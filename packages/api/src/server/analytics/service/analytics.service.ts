@@ -29,7 +29,7 @@ export class AnalyticsService {
     private readonly analyticsFactory: AnalyticsFactory,
     private readonly logger: LoggerService,
     private readonly httpService: HttpService
-  ) { }
+  ) {}
 
   async createActivityStream(
     propertyIdentifier: string,
