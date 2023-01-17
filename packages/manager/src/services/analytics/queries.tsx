@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-
+import dayjs from 'dayjs';
 import { orchestratorReq } from '@app/config/orchestratorReq';
 import {
   TDeploymentCount,
@@ -145,9 +145,9 @@ const fetchMonthlyDeploymentChartWithEphemeral = async (): Promise<
 const sortWeeklyDeployments = (arr: IDeploymentData[]) =>
   arr
     .sort((a: IDeploymentData, b: IDeploymentData) => (a.startDate > b.startDate ? 1 : -1))
-    .map((ele: IDeploymentData, index: number) => ({
+    .map((ele: IDeploymentData) => ({
       name: `${ele.env.toLocaleUpperCase()}`,
-      x: `Week ${index + 1}`,
+      x: `${dayjs(ele.startDate).format('DD MMM')} - ${dayjs(ele.endDate).format('DD MMM')}`,
       y: ele.count
     }));
 
