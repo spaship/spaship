@@ -41,8 +41,8 @@ export class ApikeyService {
     return { key };
   }
 
-  async deleteApiKey(shortKey: string): Promise<Apikey> {
-    const apiKey = (await this.dataServices.apikey.getByAny({ shortKey }))[0];
+  async deleteApiKey(propertyIdentifier: string, shortKey: string): Promise<Apikey> {
+    const apiKey = (await this.dataServices.apikey.getByAny({ propertyIdentifier, shortKey }))[0];
     await this.analyticsService.createActivityStream(
       apiKey.propertyIdentifier,
       Action.APIKEY_DELETED,
@@ -53,6 +53,6 @@ export class ApikeyService {
       Source.MANAGER,
       JSON.stringify(apiKey)
     );
-    return Promise.resolve(this.dataServices.apikey.delete({ shortKey }));
+    return Promise.resolve(this.dataServices.apikey.delete({ propertyIdentifier, shortKey }));
   }
 }
