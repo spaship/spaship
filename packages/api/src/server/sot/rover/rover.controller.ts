@@ -9,7 +9,7 @@ import { RoverService } from './service/rover.service';
 @UseGuards(AuthenticationGuard)
 // @internal TODO : We'll implement the Interface when there will be more than one SOT
 export class RoverController {
-  constructor(private readonly searchService: RoverService) { }
+  constructor(private readonly searchService: RoverService) {}
 
   @Get('/rover/user/:username')
   @ApiCreatedResponse({ status: 201, description: 'List for the users in Rover.', type: Subject, isArray: true })
