@@ -14,7 +14,6 @@ export type TWebPropActivityStream = {
   latestActivityHead: string;
   latestActivityTail: string;
   props: Props;
-  
 };
 
 export type TSPADeploymentCount = {
