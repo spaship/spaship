@@ -182,7 +182,6 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                     {monthlyDeployChart.isSuccess && (
                       <Chart
                         ariaDesc="Average number of pets"
-                        ariaTitle="Line chart example"
                         containerComponent={
                           <ChartVoronoiContainer
                             labels={({ datum }) => `${datum.name}: ${datum.y}`}

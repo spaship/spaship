@@ -1,7 +1,10 @@
 import {
   useGetTotalDeployments,
   useGetDeploymentCounts,
-  useGetDeploymentsTime,
+  useGetMonthlyDeploymentsTime,
+  useGetQuarterlyDeploymentsTime,
+  useGetHalfYearlyDeploymentsTime,
+  useGetYearlyDeploymentsTime,
   useGetMonthlyDeploymentChartWithEphemeral
 } from '@app/services/analytics';
 import { ActivityStreamDashboard } from './components/ActivityStreamDashboard';
@@ -12,10 +15,17 @@ export const DashboardPage = (): JSX.Element => {
   const Totaldeployment = TotalDeploymentData.data?.reduce((acc, obj) => acc + obj.count, 0);
   const TotalDeploymentCountsData = useGetDeploymentCounts();
   const TotalProperty = Object.keys(TotalDeploymentCountsData.data || {}).length;
-  const TotalDeploymentsTimeData = useGetDeploymentsTime();
-  const averageTime = TotalDeploymentsTimeData.data?.averageTime;
   const TotalMonthlyDeploymentData = useGetMonthlyDeploymentChartWithEphemeral().data;
-
+  const averageDeploymentTime = [
+    useGetMonthlyDeploymentsTime().data,
+    useGetQuarterlyDeploymentsTime().data,
+    useGetHalfYearlyDeploymentsTime().data,
+    useGetYearlyDeploymentsTime().data
+  ];
+  const bestDeploymentTime = Math.min(...averageDeploymentTime.map((time) => time || 0));
+  const bestDeploymentTimeIndex = averageDeploymentTime.findIndex(
+    (time) => time === bestDeploymentTime
+  );
   return (
     <div style={{ display: 'flex', flexDirection: 'row', height: '10%' }}>
       <div style={{ width: '55%' }}>
@@ -26,8 +36,9 @@ export const DashboardPage = (): JSX.Element => {
           StageData={TotalMonthlyDeploymentData?.stage}
           Totaldeployment={Totaldeployment}
           TotalProperty={TotalProperty}
-          averageTime={averageTime}
-          lastMonthEphemeral={TotalMonthlyDeploymentData?.lastMonthEphemeral}
+          averageDeploymentTime={averageDeploymentTime}
+          bestDeploymentTime={bestDeploymentTime}
+          bestDeploymentTimeIndex={bestDeploymentTimeIndex || 0}
           TotalDeploymentData={TotalDeploymentData}
           minCount={TotalMonthlyDeploymentData?.minDeploymentCount || 0}
           maxCount={TotalMonthlyDeploymentData?.maxDeploymentCount || 0}

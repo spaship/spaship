@@ -5,5 +5,8 @@ export {
   useGetMonthlyDeploymentChart,
   useGetTotalDeploymentsForApps,
   useGetTotalDeployments,
-  useGetDeploymentsTime
+  useGetMonthlyDeploymentsTime,
+  useGetQuarterlyDeploymentsTime,
+  useGetHalfYearlyDeploymentsTime,
+  useGetYearlyDeploymentsTime
 } from './queries';

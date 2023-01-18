@@ -42,4 +42,6 @@ export class CreatePropertyDto {
   @IsString()
   @IsNotEmpty()
   createdBy: string;
+
+  creatorName: string;
 }

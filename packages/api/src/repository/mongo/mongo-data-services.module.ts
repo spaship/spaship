@@ -20,7 +20,13 @@ import {
   ActivityStream,
   ActivityStreamSchema,
   Webhook,
-  WebhookSchema
+  WebhookSchema,
+  AuthActionLookup,
+  AuthActionLookupSchema,
+  Role,
+  RoleSchema,
+  Permission,
+  PermissionSchema
 } from './model';
 import { MongoDataServices } from './mongo-data-services.service';
 
@@ -35,7 +41,10 @@ import { MongoDataServices } from './mongo-data-services.service';
       { name: EventTimeTrace.name, schema: EventTimeTraceSchema },
       { name: Property.name, schema: PropertySchema },
       { name: ActivityStream.name, schema: ActivityStreamSchema },
-      { name: Webhook.name, schema: WebhookSchema }
+      { name: Webhook.name, schema: WebhookSchema },
+      { name: AuthActionLookup.name, schema: AuthActionLookupSchema },
+      { name: Role.name, schema: RoleSchema },
+      { name: Permission.name, schema: PermissionSchema }
     ]),
     MongooseModule.forRoot(DATA_BASE_CONFIGURATION.mongoConnectionString, {
       useNewUrlParser: true,

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from '../auth/auth.guard';
 import { CreateEnvironmentDto, SyncEnvironmentDto } from './environment.dto';
@@ -35,9 +35,9 @@ export class EnvironmentController {
     return this.environmentService.syncEnvironment(syncEnvironmentDto);
   }
 
-  @Get('/delete/:propertyIdentifier/:env')
+  @Delete('/:propertyIdentifier/:env')
   @ApiOperation({ description: 'Delete environment for Property (Ephemeral).' })
-  async deleteProperty(@Param('propertyIdentifier') propertyIdentifier: string, @Param('env') env: string) {
+  async deleteEnvironment(@Param('propertyIdentifier') propertyIdentifier: string, @Param('env') env: string) {
     return this.environmentService.deleteEnvironment(propertyIdentifier, env);
   }
 }

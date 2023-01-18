@@ -30,9 +30,26 @@ export const DATA_BASE_CONFIGURATION = {
 
 export const AUTH_LISTING = {
   deploymentBaseURL: '/api/v1/applications/deploy',
-  eventsBaseURL: '/api/v1/analytics/events'
+  eventsBaseURL: '/api/v1/analytics/events',
+  propertyBaseURL: '/api/v1/property'
 };
 
+const ROVER_AUTH_DETAILS = {
+  username: process.env.SPASHIP_ROVER_USERNAME,
+  password: process.env.SPASHIP_ROVER_PASSWORD
+};
+
+function getRoverAuth() {
+  const base64EncodedCreds = Buffer.from(`${ROVER_AUTH_DETAILS.username}:${ROVER_AUTH_DETAILS.password}`);
+  return base64EncodedCreds.toString('base64');
+}
+
+export const ROVER_AUTH = {
+  cred: getRoverAuth(),
+  baseUrl: process.env.SPASHIP_ROVER_BASE_URL
+};
+
+// @internal this is for validating the minimum length for the Specific requests
 export enum MIN {
   DEFAULT = 2,
   PATH = 1,
@@ -40,6 +57,7 @@ export enum MIN {
   URL = 3
 }
 
+// @internal this is for validating the maximum length for the Specific requests
 export enum MAX {
   PATH = 100,
   NAME = 100,
@@ -85,3 +103,5 @@ export const VALIDATION = {
 export enum JOB {
   DELETE_EPH_ENV = 'DELETE_EPH_ENV'
 }
+
+export const GLOBAL_PREFIX = '/api/v1';

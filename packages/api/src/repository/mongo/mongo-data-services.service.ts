@@ -21,7 +21,13 @@ import {
   ActivityStream,
   ActivityStreamDocument,
   Webhook,
-  WebhookDocument
+  WebhookDocument,
+  AuthActionLookup,
+  AuthActionLookupDocument,
+  Role,
+  RoleDocument,
+  Permission,
+  PermissionDocument
 } from './model';
 
 @Injectable()
@@ -44,6 +50,12 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
 
   webhook: MongoGenericRepository<Webhook>;
 
+  authActionLookup: MongoGenericRepository<AuthActionLookup>;
+
+  role: MongoGenericRepository<Role>;
+
+  permission: MongoGenericRepository<Permission>;
+
   constructor(
     @InjectModel(Application.name)
     private ApplicationRepository: Model<ApplicationDocument>,
@@ -62,7 +74,13 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
     @InjectModel(ActivityStream.name)
     private ActivityStreamRepository: Model<ActivityStreamDocument>,
     @InjectModel(Webhook.name)
-    private WebhookRepository: Model<WebhookDocument>
+    private WebhookRepository: Model<WebhookDocument>,
+    @InjectModel(AuthActionLookup.name)
+    private AuthActionLookupRepository: Model<AuthActionLookupDocument>,
+    @InjectModel(Role.name)
+    private RoleRepository: Model<RoleDocument>,
+    @InjectModel(Permission.name)
+    private PermissionRepository: Model<PermissionDocument>
   ) {}
 
   onApplicationBootstrap() {
@@ -75,5 +93,8 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
     this.property = new MongoGenericRepository<Property>(this.PropertyRepository);
     this.activityStream = new MongoGenericRepository<ActivityStream>(this.ActivityStreamRepository);
     this.webhook = new MongoGenericRepository<Webhook>(this.WebhookRepository);
+    this.authActionLookup = new MongoGenericRepository<AuthActionLookup>(this.AuthActionLookupRepository);
+    this.role = new MongoGenericRepository<Role>(this.RoleRepository);
+    this.permission = new MongoGenericRepository<Permission>(this.PermissionRepository);
   }
 }
