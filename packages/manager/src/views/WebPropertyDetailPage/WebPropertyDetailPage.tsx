@@ -48,7 +48,6 @@ import { pageLinks } from '@app/links';
 
 import toast from 'react-hot-toast';
 import { ActivityStream } from '@app/components/ActivityStream';
-import { useGetDeploymentCounts } from '@app/services/analytics';
 import { Ephemeral } from './components/Ephemeral';
 import { EmptyInfo } from './components/EmptyInfo';
 
@@ -72,12 +71,8 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
   const webPropertiesKeys = Object.keys(webProperties.data || {});
-  const isWebPropertiesListEmpty = webPropertiesKeys.length === 0;
-  const webPropertyDeloymentCountData = useGetDeploymentCounts();
-
-  const webPropertyDeloymentCount = Object.keys(webPropertyDeloymentCountData?.data || {});
-  const isDeloymentCountDataEmpty = webPropertyDeloymentCount.length === 0;
-
+  const countOfSpas = useGetSPAPropGroupByName(propertyIdentifier, '');
+  const countOfSpasListEmpty = Object.keys(countOfSpas).length === 0;
   useEffect(() => {
     if (spaProperties.isError || webProperties.isError) {
       toast.error(`Sorry cannot find ${propertyIdentifier}`);
@@ -137,8 +132,8 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             aria-label="SPA listing"
           >
             {!spaProperties.isLoading &&
-            isSpaPropertyListEmpty &&
-            !webPropertyDeloymentCount.includes(propertyIdentifier) ? (
+            !countOfSpasListEmpty &&
+            Object.values(countOfSpas.data || {}).flat().length === 0 ? (
               <EmptyInfo propertyIdentifier={propertyIdentifier} />
             ) : (
               <>
@@ -190,7 +185,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                       }}
                     >
                       <div style={{ marginLeft: '20px', marginRight: '15px', marginTop: '7px' }}>
-                        {filterByEnv}
+                        {filterByEnv}ˀˀˀ
                       </div>
                       <TimesCircleIcon
                         style={{ marginTop: '11px', marginLeft: '6px' }}
