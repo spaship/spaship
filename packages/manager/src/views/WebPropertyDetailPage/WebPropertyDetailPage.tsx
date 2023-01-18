@@ -21,7 +21,7 @@ import {
   SelectVariant
 } from '@patternfly/react-core';
 
-import { Banner } from '@app/components';
+import { Banner, TableRowSkeleton } from '@app/components';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useGetEphemeralListForProperty } from '@app/services/ephemeral';
@@ -72,6 +72,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
   const webPropertiesKeys = Object.keys(webProperties.data || {});
   const countOfSpas = useGetSPAPropGroupByName(propertyIdentifier, '');
+  console.log("LLL",countOfSpas, webPropertiesKeys)
   const countOfSpasListEmpty = Object.keys(countOfSpas).length === 0;
   useEffect(() => {
     if (spaProperties.isError || webProperties.isError) {
@@ -132,8 +133,8 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             aria-label="SPA listing"
           >
             {!spaProperties.isLoading &&
-            !countOfSpasListEmpty &&
-            Object.values(countOfSpas.data || {}).flat().length === 0 ? (
+              !countOfSpasListEmpty &&
+              Object.values(countOfSpas.data || {}).flat().length === 0 ? (
               <EmptyInfo propertyIdentifier={propertyIdentifier} />
             ) : (
               <>
@@ -213,99 +214,104 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                         .filter((el) => el.toLowerCase().includes(debouncedSearchTerm))
                         .map((identifier, rowIndex) => (
                           <Tbody isExpanded={Boolean(isRowExpanded?.[identifier])} key={identifier}>
-                            <Tr isStriped={Boolean(rowIndex % 2)}>
-                              <Td
-                                expand={{
-                                  rowIndex,
-                                  isExpanded: Boolean(isRowExpanded?.[identifier]),
-                                  onToggle: () => onToggleRowExpanded(identifier),
-                                  expandId: 'composable-property-table'
-                                }}
-                              />
-                              <Td>
-                                <Link
-                                  href={{
-                                    pathname: '/properties/[propertyIdentifier]/[spaProperty]',
-                                    query: { propertyIdentifier, spaProperty: identifier }
+                            
+                            {(spaProperties.isLoading || webProperties.isLoading) ? (
+                              <TableRowSkeleton rows={3} columns={4} />
+                            ) : <>
+                              <Tr isStriped={Boolean(rowIndex % 2)}>
+                                <Td
+                                  expand={{
+                                    rowIndex,
+                                    isExpanded: Boolean(isRowExpanded?.[identifier]),
+                                    onToggle: () => onToggleRowExpanded(identifier),
+                                    expandId: 'composable-property-table'
                                   }}
-                                >
-                                  {spaProperties.data[identifier]?.[0]?.name}
-                                </Link>
-                              </Td>
-                              <Td>{spaProperties.data[identifier]?.[0]?.path}</Td>
-                              <Td>
-                                <Split hasGutter>
-                                  {spaProperties.data[identifier].map(({ _id, env }) => (
-                                    <SplitItem key={_id}>
-                                      <Label color="gold" isCompact>
-                                        {env}
-                                      </Label>
-                                    </SplitItem>
-                                  ))}
-                                </Split>
-                              </Td>
-                            </Tr>
-                            <Tr isExpanded={Boolean(isRowExpanded?.[identifier])}>
-                              <Td colSpan={4} noPadding={false}>
-                                <ExpandableRowContent>
-                                  <TableComposable
-                                    variant="compact"
-                                    aria-label="expandable-table"
-                                    borders={false}
+                                />
+                                <Td>
+                                  <Link
+                                    href={{
+                                      pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+                                      query: { propertyIdentifier, spaProperty: identifier }
+                                    }}
                                   >
-                                    <Thead>
-                                      <Tr>
-                                        <Th>Environment Name</Th>
-                                        <Th>Ref</Th>
-                                        <Th>Publish Domain</Th>
-                                        <Th>Internal Access URL</Th>
-                                        <Th>Updated At</Th>
-                                      </Tr>
-                                    </Thead>
-                                    <Tbody>
-                                      {spaProperties?.data?.[identifier].map(
-                                        ({ _id, env, ref, accessUrl, updatedAt }) => (
-                                          <Tr key={_id}>
-                                            <Td>
-                                              <Label color="gold" isCompact>
-                                                {env}
-                                              </Label>
-                                            </Td>
-                                            <Td>{ref}</Td>
-                                            <Td>
-                                              <a
-                                                href={`https://${webProperties?.data?.[env]?.url}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                              >
-                                                <ExternalLinkAltIcon />{' '}
-                                                {webProperties?.data?.[env]?.url}
-                                              </a>
-                                            </Td>
+                                    {spaProperties.data[identifier]?.[0]?.name}
+                                  </Link>
+                                </Td>
+                                <Td>{spaProperties.data[identifier]?.[0]?.path}</Td>
+                                <Td>
+                                  <Split hasGutter>
+                                    {spaProperties.data[identifier].map(({ _id, env }) => (
+                                      <SplitItem key={_id}>
+                                        <Label color="gold" isCompact>
+                                          {env}
+                                        </Label>
+                                      </SplitItem>
+                                    ))}
+                                  </Split>
+                                </Td>
+                              </Tr>
+                              <Tr isExpanded={Boolean(isRowExpanded?.[identifier])}>
+                                <Td colSpan={4} noPadding={false}>
+                                  <ExpandableRowContent>
+                                    <TableComposable
+                                      variant="compact"
+                                      aria-label="expandable-table"
+                                      borders={false}
+                                    >
+                                      <Thead>
+                                        <Tr>
+                                          <Th>Environment Name</Th>
+                                          <Th>Ref</Th>
+                                          <Th>Publish Domain</Th>
+                                          <Th>Internal Access URL</Th>
+                                          <Th>Updated At</Th>
+                                        </Tr>
+                                      </Thead>
+                                      <Tbody>
+                                        {spaProperties?.data?.[identifier].map(
+                                          ({ _id, env, ref, accessUrl, updatedAt }) => (
+                                            <Tr key={_id}>
+                                              <Td>
+                                                <Label color="gold" isCompact>
+                                                  {env}
+                                                </Label>
+                                              </Td>
+                                              <Td>{ref}</Td>
+                                              <Td>
+                                                <a
+                                                  href={`https://${webProperties?.data?.[env]?.url}`}
+                                                  target="_blank"
+                                                  rel="noopener noreferrer"
+                                                >
+                                                  <ExternalLinkAltIcon />{' '}
+                                                  {webProperties?.data?.[env]?.url}
+                                                </a>
+                                              </Td>
 
-                                            <Td>
-                                              <a
-                                                href={accessUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                              >
-                                                <ExternalLinkAltIcon />{' '}
-                                                {`${accessUrl.slice(0, URL_LENGTH_LIMIT)} ${
-                                                  accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
-                                                }`}
-                                              </a>
-                                            </Td>
-                                            <Td>
-                                              {formatDate(updatedAt, 'MMM DD, YYYY - hh:mm:ss A')}
-                                            </Td>
-                                          </Tr>
-                                        )
-                                      )}
-                                    </Tbody>
-                                  </TableComposable>
-                                </ExpandableRowContent>
-                              </Td>
-                            </Tr>
+                                              <Td>
+                                                <a
+                                                  href={accessUrl}
+                                                  target="_blank"
+                                                  rel="noopener noreferrer"
+                                                >
+                                                  <ExternalLinkAltIcon />{' '}
+                                                  {`${accessUrl.slice(0, URL_LENGTH_LIMIT)} ${accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
+                                                    }`}
+                                                </a>
+                                              </Td>
+                                              <Td>
+                                                {formatDate(updatedAt, 'MMM DD, YYYY - hh:mm:ss A')}
+                                              </Td>
+                                            </Tr>
+                                          )
+                                        )}
+                                      </Tbody>
+                                    </TableComposable>
+                                  </ExpandableRowContent>
+                                </Td>
+                              </Tr>
+                            </>}
+
                           </Tbody>
                         ))}
                   </TableComposable>
