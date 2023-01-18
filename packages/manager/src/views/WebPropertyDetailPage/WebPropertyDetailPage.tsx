@@ -185,7 +185,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                       }}
                     >
                       <div style={{ marginLeft: '20px', marginRight: '15px', marginTop: '7px' }}>
-                        {filterByEnv}ˀˀˀ
+                        {filterByEnv}
                       </div>
                       <TimesCircleIcon
                         style={{ marginTop: '11px', marginLeft: '6px' }}
