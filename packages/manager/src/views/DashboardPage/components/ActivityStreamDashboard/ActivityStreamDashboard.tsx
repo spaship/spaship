@@ -1,4 +1,4 @@
-import { Card } from '@patternfly/react-core';
+import { Card, TextContent, Text, TextVariants } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import SimpleBarReact from 'simplebar-react';
 import { ActivityStream } from '@app/components/ActivityStream';
@@ -6,10 +6,11 @@ import 'simplebar/src/simplebar.css';
 
 export const ActivityStreamDashboard = () => (
   <>
-    <h2 style={{ marginTop: '20px', marginBottom: '10px', marginLeft: '50px', fontSize: '20px' }}>
-      Activity Stream
-    </h2>
-
+    <TextContent
+      style={{ marginTop: '20px', marginBottom: '10px', marginLeft: '50px', fontSize: '20px' }}
+    >
+      <Text component={TextVariants.h1}>Activity Stream</Text>
+    </TextContent>
     <Card
       isSelectable
       isFullHeight
