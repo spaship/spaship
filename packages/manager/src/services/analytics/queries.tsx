@@ -19,7 +19,10 @@ interface IDeploymentData {
 
 const analyticsKeys = {
   deploy: ['deployment-count'] as const,
-  deploymentTime: ['deployment-time'] as const,
+  deploymentTimeMonthly: ['deployment-time-monthly'] as const,
+  deploymentTimeQuarterly: ['deployment-time-quarterly'] as const,
+  deploymentTimeHalfYearly: ['deployment-time-halfYearly'] as const,
+  deploymentTimeYearly: ['deployment-time-yearly'] as const,
   spaMonthyDeploymentChartWithEphemeral: ['deployment-time-with-ephemeral'] as const,
   propertyActivityStream: (id: string, spaId?: string, action?: string) =>
     ['activity-stream', id, spaId, action] as const,
@@ -201,10 +204,50 @@ const fetchTotalDeployment = async (): Promise<TSPADeploymentCount[]> => {
 export const useGetTotalDeployments = () =>
   useQuery(analyticsKeys.spaDeployments(''), () => fetchTotalDeployment());
 
-const fetchTotalDeploymentTime = async (): Promise<TSPADeploymentTime> => {
-  const { data } = await orchestratorReq.get('analytics/deployment/time');
+const fetchTotalMonthlyDeploymentTime = async (): Promise<TSPADeploymentTime> => {
+  const { data } = await orchestratorReq.get('analytics/deployment/time?days=30');
   return data.data;
 };
 
-export const useGetDeploymentsTime = () =>
-  useQuery(analyticsKeys.deploymentTime, () => fetchTotalDeploymentTime());
+export const useGetMonthlyDeploymentsTime = () =>
+  useQuery({
+    queryKey: analyticsKeys.deploymentTimeMonthly,
+    queryFn: () => fetchTotalMonthlyDeploymentTime(),
+    select: (data) => data.averageTime
+  });
+
+const fetchTotalQuarterlyDeploymentTime = async (): Promise<TSPADeploymentTime> => {
+  const { data } = await orchestratorReq.get('analytics/deployment/time?days=120');
+  return data.data;
+};
+
+export const useGetQuarterlyDeploymentsTime = () =>
+  useQuery({
+    queryKey: analyticsKeys.deploymentTimeQuarterly,
+    queryFn: () => fetchTotalQuarterlyDeploymentTime(),
+    select: (data) => data.averageTime
+  });
+
+const fetchTotalHalfYearlyDeploymentTime = async (): Promise<TSPADeploymentTime> => {
+  const { data } = await orchestratorReq.get('analytics/deployment/time?days=180');
+  return data.data;
+};
+
+export const useGetHalfYearlyDeploymentsTime = () =>
+  useQuery({
+    queryKey: analyticsKeys.deploymentTimeHalfYearly,
+    queryFn: () => fetchTotalHalfYearlyDeploymentTime(),
+    select: (data) => data.averageTime
+  });
+
+const fetchTotalYearlyDeploymentTime = async (): Promise<TSPADeploymentTime> => {
+  const { data } = await orchestratorReq.get('analytics/deployment/time?days=365');
+  return data.data;
+};
+
+export const useGetYearlyDeploymentsTime = () =>
+  useQuery({
+    queryKey: analyticsKeys.deploymentTimeYearly,
+    queryFn: () => fetchTotalYearlyDeploymentTime(),
+    select: (data) => data.averageTime
+  });

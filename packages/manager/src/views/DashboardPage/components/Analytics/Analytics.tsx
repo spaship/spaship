@@ -1,5 +1,15 @@
 /* eslint-disable react/require-default-props */
-import { Card, CardTitle, CardBody, CardHeader, Grid, GridItem } from '@patternfly/react-core';
+import {
+  Card,
+  CardTitle,
+  CardBody,
+  CardHeader,
+  Grid,
+  GridItem,
+  TextContent,
+  Text,
+  TextVariants
+} from '@patternfly/react-core';
 import {
   Chart,
   ChartAxis,
@@ -12,6 +22,7 @@ import { TSPADeploymentCount } from '@app/services/analytics/types';
 import { UseQueryResult } from '@tanstack/react-query';
 
 const TotalDeploymentCardFields = ['Dev', 'QA', 'Stage', 'Prod'];
+const DeploymentTimeFrames = ['month', 'quarter', 'half year', 'year'];
 
 type IGraphData = {
   name: string;
@@ -26,8 +37,9 @@ type Props = {
   DevData: IGraphData[] | undefined;
   Totaldeployment: number | undefined;
   TotalProperty: number;
-  averageTime: number | undefined;
-  lastMonthEphemeral: number | undefined;
+  averageDeploymentTime: (number | undefined)[];
+  bestDeploymentTime: number | undefined;
+  bestDeploymentTimeIndex: number;
   TotalDeploymentData: UseQueryResult<TSPADeploymentCount[]>;
   minCount: number;
   maxCount: number;
@@ -40,16 +52,19 @@ export const Analytics = ({
   DevData,
   Totaldeployment,
   TotalProperty,
-  averageTime,
-  lastMonthEphemeral,
+  averageDeploymentTime,
+  bestDeploymentTime,
+  bestDeploymentTimeIndex,
   TotalDeploymentData,
   minCount,
   maxCount
 }: Props) => (
   <>
-    <h2 style={{ marginBottom: '10px', marginTop: '24px', marginLeft: '24px', fontSize: '20px' }}>
-      Stats
-    </h2>
+    <TextContent
+      style={{ marginBottom: '10px', marginTop: '24px', marginLeft: '24px', fontSize: '20px' }}
+    >
+      <Text component={TextVariants.h1}>Stats</Text>
+    </TextContent>
     <Grid style={{ padding: '12px 12px' }}>
       <GridItem span={6}>
         <Card
@@ -106,18 +121,22 @@ export const Analytics = ({
           }}
           isRounded
         >
-          <CardTitle>Total Ephemeral Deployment</CardTitle>
+          <CardTitle>Average time to deploy</CardTitle>
           <CardBody>
-            <h1 style={{ color: '#0066CC', fontSize: '28px' }}>
-              {TotalDeploymentData.data
-                ?.filter((ele) => ele.env === 'ephemeral')
-                .reduce((acc, ele) => acc + ele.count, 0)}
-            </h1>
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}>
+              <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{bestDeploymentTime}s</h1>
+              <h1 style={{ fontSize: '14px', paddingLeft: '8px' }}>
+                in last {DeploymentTimeFrames[bestDeploymentTimeIndex]}
+              </h1>
+            </div>
+
             <div style={{ display: 'flex', flexDirection: 'row', gap: '35px', marginTop: '24px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <h1 style={{ fontSize: '12px' }}>Last month</h1>
-                <h1 style={{ fontSize: '12px' }}>{lastMonthEphemeral}</h1>
-              </div>
+              {DeploymentTimeFrames.map((field, index) => (
+                <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <h1 style={{ fontSize: '12px' }}>{`Last ${field}`}</h1>
+                  <h1 style={{ fontSize: '12px' }}>{averageDeploymentTime[index]}</h1>
+                </div>
+              ))}
             </div>
           </CardBody>
         </Card>
@@ -145,27 +164,27 @@ export const Analytics = ({
           isSelectable
           isFullHeight
           style={{
-            marginLeft: '12px',
-            marginRight: '12px',
-            marginTop: '12px',
-            marginBottom: '12px',
+            margin: '12px 12px',
             overflow: 'auto',
             scrollbarWidth: 'none',
             height: '130px'
           }}
           isRounded
         >
-          <CardTitle>Average time to deploy</CardTitle>
-          <CardBody style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}>
-            <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{`${averageTime}s`} </h1>
-            <h1 style={{ fontSize: '12px' }}>/ per property</h1>
+          <CardTitle>Total Ephemeral Deployment</CardTitle>
+          <CardBody>
+            <h1 style={{ color: '#0066CC', fontSize: '28px' }}>
+              {TotalDeploymentData.data
+                ?.filter((ele) => ele.env === 'ephemeral')
+                .reduce((acc, ele) => acc + ele.count, 0)}
+            </h1>
           </CardBody>
         </Card>
       </GridItem>
     </Grid>
-    <h2 style={{ marginTop: '24px', marginLeft: '24px', fontSize: '20px' }}>
-      SPAship Deployment History
-    </h2>
+    <TextContent style={{ marginTop: '24px', marginLeft: '24px', fontSize: '20px' }}>
+      <Text component={TextVariants.h1}>SPAship Deployment History</Text>
+    </TextContent>
     <Card
       isSelectable
       isFullHeight
