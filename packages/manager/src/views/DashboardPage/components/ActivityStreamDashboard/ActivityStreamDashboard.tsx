@@ -30,9 +30,8 @@ export const ActivityStreamDashboard = () => (
       <SimpleBarReact style={{ maxHeight: 830, padding: '10px' }}>
         <div style={{ marginTop: '20px', marginLeft: '10px' }}>
           <ActivityStream
-            propertyIdentifier=""
-            applicationIdentifier=""
             action="APPLICATION_DEPLOYED"
+            isGlobal={true}
           />
         </div>
       </SimpleBarReact>

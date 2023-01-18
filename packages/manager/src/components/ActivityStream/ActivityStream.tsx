@@ -27,28 +27,33 @@ import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 type Props = {
-  propertyIdentifier: string;
+  propertyIdentifier?: string;
   applicationIdentifier?: string;
   action?: string;
+  isGlobal?:boolean
 };
 
+interface IWebPropertyStream extends TWebPropActivityStream {
+  isGlobal?:boolean
+}
 type DeploymentKindProps = {
-  activity: TWebPropActivityStream;
+  activity: IWebPropertyStream;
 };
 
 const activities = {
   APPLICATION_DEPLOYED: ({
     props,
     message,
-    propertyIdentifier
-  }: TWebPropActivityStream): JSX.Element => (
+    propertyIdentifier,
+    isGlobal
+  }: IWebPropertyStream): JSX.Element => (
     <Text component={TextVariants.small}>
       Deployment{' '}
       <Label color="blue" icon={<CheckIcon />} variant="outline" isCompact>
         completed
       </Label>{' '}
       for{' '}
-      {window.location.pathname === '/dashboard' ? (
+      { isGlobal ? (
         <>
           <Label color="blue" icon={<CubesIcon />} variant="outline" isCompact>
             <Link
@@ -219,9 +224,10 @@ const DeploymentKind = ({ activity }: DeploymentKindProps) => {
 };
 
 export const ActivityStream = ({
-  propertyIdentifier,
-  applicationIdentifier,
-  action
+  propertyIdentifier = '',
+  applicationIdentifier= '',
+  action,
+  isGlobal = false ,
 }: Props): JSX.Element => {
   const { isLoading, isSuccess, data, isFetchingNextPage, fetchNextPage } =
     useGetWebPropActivityStream(propertyIdentifier, applicationIdentifier, action);
@@ -238,8 +244,9 @@ export const ActivityStream = ({
         {isLoading && <Spinner isSVG aria-label="Activity stream loading" />}
         {isSuccess &&
           data.pages?.map((page) =>
-            page.map((activity: TWebPropActivityStream) => (
-              <ProgressStep
+           page.map((activity: IWebPropertyStream) => {
+            activity.isGlobal=isGlobal
+             return <ProgressStep
                 id={activity._id}
                 titleId={activity._id}
                 key={activity._id}
@@ -251,7 +258,7 @@ export const ActivityStream = ({
                   <DeploymentKind activity={activity} />
                 </TextContent>
               </ProgressStep>
-            ))
+})
           )}
       </ProgressStepper>
       {isFetchingNextPage && (

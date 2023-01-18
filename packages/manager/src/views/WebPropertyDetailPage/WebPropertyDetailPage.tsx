@@ -354,9 +354,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             <List>
               <ActivityStream
                 propertyIdentifier={propertyIdentifier}
-                applicationIdentifier=""
-                action=""
-              />
+                />
             </List>
           </Tab>
           <Tab
