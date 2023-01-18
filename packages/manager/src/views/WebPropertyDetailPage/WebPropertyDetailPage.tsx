@@ -337,7 +337,9 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             aria-label="SPA activity"
           >
             <List>
-              <ActivityStream propertyIdentifier={propertyIdentifier} />
+              <ActivityStream
+                propertyIdentifier={propertyIdentifier}
+                />
             </List>
           </Tab>
           <Tab

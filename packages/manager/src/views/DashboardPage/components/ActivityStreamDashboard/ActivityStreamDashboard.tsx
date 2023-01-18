@@ -19,21 +19,20 @@ export const ActivityStreamDashboard = () => (
         marginRight: '30px',
         marginTop: '10px',
         marginLeft: '40px',
-        height: '650px',
+        height: '830px',
         overflow: 'hidden'
       }}
       isRounded
       className={css('pf-u-px-sm rounded-md transition hover:shadow-sm')}
     >
-      <SimpleBarReact style={{ maxHeight: 650, padding: '10px' }}>
+      <SimpleBarReact style={{ maxHeight: 830, padding: '10px' }}>
         <div style={{ marginTop: '20px', marginLeft: '10px' }}>
-          <ActivityStream propertyIdentifier="" action="APPLICATION_DEPLOYED" />
+          <ActivityStream
+            action="APPLICATION_DEPLOYED"
+            isGlobal={true}
+          />
         </div>
       </SimpleBarReact>
     </Card>
   </>
 );
-
-ActivityStreamDashboard.defaultProps = {
-  applicationIdentifier: ''
-};

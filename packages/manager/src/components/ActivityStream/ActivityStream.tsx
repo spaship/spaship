@@ -22,29 +22,63 @@ import {
   SyncAltIcon,
   TimesIcon
 } from '@patternfly/react-icons';
+import Link from 'next/link';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 type Props = {
-  propertyIdentifier: string;
+  propertyIdentifier?: string;
   applicationIdentifier?: string;
   action?: string;
+  isGlobal?:boolean
 };
 
+interface IWebPropertyStream extends TWebPropActivityStream {
+  isGlobal?:boolean
+}
 type DeploymentKindProps = {
-  activity: TWebPropActivityStream;
+  activity: IWebPropertyStream;
 };
 
 const activities = {
-  APPLICATION_DEPLOYED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
+  APPLICATION_DEPLOYED: ({
+    props,
+    message,
+    propertyIdentifier,
+    isGlobal
+  }: IWebPropertyStream): JSX.Element => (
     <Text component={TextVariants.small}>
       Deployment{' '}
       <Label color="blue" icon={<CheckIcon />} variant="outline" isCompact>
         completed
       </Label>{' '}
       for{' '}
+      { isGlobal ? (
+        <>
+          <Label color="blue" icon={<CubesIcon />} variant="outline" isCompact>
+            <Link
+              href={{
+                pathname: '/properties/[propertyIdentifier]',
+                query: { propertyIdentifier }
+              }}
+            >
+              {propertyIdentifier}
+            </Link>
+          </Label>
+          {' -> '}
+        </>
+      ) : (
+        ''
+      )}
       <Label icon={<CubeIcon />} color="blue" isCompact>
-        {props.applicationIdentifier}
+        <Link
+          href={{
+            pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+            query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+          }}
+        >
+          {props.applicationIdentifier}
+        </Link>
       </Label>{' '}
       in{' '}
       <Label icon={<ClusterIcon />} color="blue" isCompact>
@@ -185,13 +219,15 @@ const DeploymentKind = ({ activity }: DeploymentKindProps) => {
   if (Object.prototype.hasOwnProperty.call(activities, activity.action)) {
     return activities[activity.action](activity);
   }
+
   return <Text component={TextVariants.small}>Activity message - {activity.message}</Text>;
 };
 
 export const ActivityStream = ({
-  propertyIdentifier,
-  applicationIdentifier,
-  action
+  propertyIdentifier = '',
+  applicationIdentifier= '',
+  action,
+  isGlobal = false ,
 }: Props): JSX.Element => {
   const { isLoading, isSuccess, data, isFetchingNextPage, fetchNextPage } =
     useGetWebPropActivityStream(propertyIdentifier, applicationIdentifier, action);
@@ -208,8 +244,9 @@ export const ActivityStream = ({
         {isLoading && <Spinner isSVG aria-label="Activity stream loading" />}
         {isSuccess &&
           data.pages?.map((page) =>
-            page.map((activity: TWebPropActivityStream) => (
-              <ProgressStep
+           page.map((activity: IWebPropertyStream) => {
+            activity.isGlobal=isGlobal
+             return <ProgressStep
                 id={activity._id}
                 titleId={activity._id}
                 key={activity._id}
@@ -221,7 +258,7 @@ export const ActivityStream = ({
                   <DeploymentKind activity={activity} />
                 </TextContent>
               </ProgressStep>
-            ))
+})
           )}
       </ProgressStepper>
       {isFetchingNextPage && (
