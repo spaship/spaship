@@ -4,7 +4,7 @@ import { RoverFactory } from './rover.factory';
 
 @Injectable()
 export class RoverService {
-  constructor(private readonly searchFactory: RoverFactory) { }
+  constructor(private readonly searchFactory: RoverFactory) {}
 
   /* @internal
    *  Search the User Details from Rover
