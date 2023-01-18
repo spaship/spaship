@@ -22,7 +22,7 @@ import {
 } from '@patternfly/react-core';
 
 import { Banner, TableRowSkeleton } from '@app/components';
-import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
+import { useGetSPAPropGroupByName, useGetSPAProperties } from '@app/services/spaProperty';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useGetEphemeralListForProperty } from '@app/services/ephemeral';
 import {
@@ -71,8 +71,8 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
   const webPropertiesKeys = Object.keys(webProperties.data || {});
-  const countOfSpas = useGetSPAPropGroupByName(propertyIdentifier, '');
-  const countOfSpasListEmpty = Object.keys(countOfSpas).length === 0;
+  const countOfSpas = useGetSPAProperties(propertyIdentifier, '');
+  const isCountOfSpasListEmpty = Object.keys(countOfSpas).length === 0;
   useEffect(() => {
     if (spaProperties.isError || webProperties.isError) {
       toast.error(`Sorry cannot find ${propertyIdentifier}`);
@@ -132,8 +132,8 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             aria-label="SPA listing"
           >
             {!spaProperties.isLoading &&
-            !countOfSpasListEmpty &&
-            Object.values(countOfSpas.data || {}).flat().length === 0 ? (
+            !isCountOfSpasListEmpty &&
+            Object.values(countOfSpas.data || {}).length === 0 ? (
               <EmptyInfo propertyIdentifier={propertyIdentifier} />
             ) : (
               <>
