@@ -13,7 +13,7 @@ export class EventService implements OnApplicationBootstrap {
     private readonly dataServices: IDataServices,
     private readonly analyticsService: AnalyticsService,
     private readonly logger: LoggerService
-  ) {}
+  ) { }
 
   /* @internal
    * It'll open the connection for all the registered deployment url
@@ -52,7 +52,7 @@ export class EventService implements OnApplicationBootstrap {
           const eventRequest = (await tmpDataService.event.getByAny({ traceId: response.uuid }))[0];
           const currentTime = new Date();
           const diff = (eventRequest.createdAt.getTime() - currentTime.getTime()) / 1000;
-          const consumedTime = Math.abs(diff).toString();
+          const consumedTime = Math.abs(diff).toFixed(2).toString();
           tmpLogger.log('TimeToDeploy', `${consumedTime} seconds`);
           const eventTimeTrace = processDeploymentTime(event, consumedTime);
           const message = `Deployment Time : ${consumedTime} seconds`;
