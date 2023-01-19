@@ -55,8 +55,12 @@ export class AnalyticsService {
     this.logger.log('ActivityStream', JSON.stringify(activityStream));
     await this.emit(propertyIdentifier, { activityStream });
     const savedAnalytics = await this.dataServices.activityStream.create(activityStream);
-    const webhooks = await this.dataServices.webhook.getByAny({ propertyIdentifier, actions: action });
-    this.publishWebhookEvents(webhooks, activityStream);
+    try{
+      const webhooks = await this.dataServices.webhook.getByAny({ propertyIdentifier, actions: action });
+      this.publishWebhookEvents(webhooks, activityStream);
+    }catch(err){
+      this.logger.debug('WebhookError', err);
+    }
     return savedAnalytics;
   }
 
