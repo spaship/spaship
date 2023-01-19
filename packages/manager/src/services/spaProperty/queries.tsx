@@ -7,14 +7,12 @@ const spaPropertyKeys = {
   list: (webPropertyIdentifier: string, env: string = '') =>
     ['spa-properties', webPropertyIdentifier, env] as const
 };
-const LIMIT = 10;
+
 // GET Operations
-const fetchAppsForProperties = async (propertyIdentifier: string, env: string, skip?: number) => {
+const fetchAppsForProperties = async (propertyIdentifier: string, env: string) => {
   const { data } = await orchestratorReq.get(`/applications/property/${propertyIdentifier}`, {
     params: {
-      env,
-      limit: LIMIT,
-      skip
+      env
     }
   });
   // TODO: To be removed after backend revamp
@@ -27,12 +25,11 @@ const fetchAppsForProperties = async (propertyIdentifier: string, env: string, s
 export const useGetSPAProperties = <T extends unknown>(
   webPropertyIdentifier: string,
   env: string,
-  skip?: number,
   select?: (data: TSpaProperty[]) => T
 ) =>
   useQuery(
     spaPropertyKeys.list(webPropertyIdentifier, env),
-    () => fetchAppsForProperties(webPropertyIdentifier, env, skip),
+    () => fetchAppsForProperties(webPropertyIdentifier, env),
     {
       select,
       refetchInterval: 20
@@ -52,8 +49,5 @@ const groupSpaPropertyByName = (spaProperty: TSpaProperty[]) => {
   return groupBy;
 };
 
-export const useGetSPAPropGroupByName = (
-  webPropertyIdentifier: string,
-  env: string,
-  skip?: number
-) => useGetSPAProperties(webPropertyIdentifier, env, skip, groupSpaPropertyByName);
+export const useGetSPAPropGroupByName = (webPropertyIdentifier: string, env: string) =>
+  useGetSPAProperties(webPropertyIdentifier, env, groupSpaPropertyByName);
