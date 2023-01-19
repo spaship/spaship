@@ -207,7 +207,6 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                               rel="noopener noreferrer"
                             >
                               <ExternalLinkAltIcon />
-                              {/* {env.url} */}
                               {`${env.url.slice(0, URL_LENGTH_LIMIT)} ${
                                 env.url.length > URL_LENGTH_LIMIT ? '...' : ''
                               }`}
