@@ -11,7 +11,8 @@ import {
   List,
   ListItem,
   Text,
-  Title
+  Title,
+  ClipboardCopy
 } from '@patternfly/react-core';
 import {
   AutomationIcon,
@@ -69,20 +70,34 @@ export const EmptyInfo = ({ propertyIdentifier }: Props): JSX.Element => (
         <ListItem icon={<KeyIcon />}>Setup your environment</ListItem>
         <CodeBlock>
           <CodeBlockCode>
-            {`spaship env --name=<new-env-name> --url=${window.location.origin}/applications/deploy/${propertyIdentifier}/<env-name> --apikey=<your-api-key>`}
+            <ClipboardCopy hoverTip="Copy" clickTip="Copied" variant="inline-compact" isCode>
+              {`spaship env --name=<new-env-name> --url=${window.location.origin}/applications/deploy/${propertyIdentifier}/<env-name> --apikey=<your-api-key>`}
+            </ClipboardCopy>
           </CodeBlockCode>
         </CodeBlock>
         <ListItem icon={<AutomationIcon />}>Initialize spaship.yaml </ListItem>
         <CodeBlock>
-          <CodeBlockCode>spaship init</CodeBlockCode>
+          <CodeBlockCode>
+            <ClipboardCopy hoverTip="Copy" clickTip="Copied" variant="inline-compact" isCode>
+              spaship init
+            </ClipboardCopy>
+          </CodeBlockCode>
         </CodeBlock>
         <ListItem icon={<BundleIcon />}>Pack your build (npm pack)</ListItem>
         <CodeBlock>
-          <CodeBlockCode>npm pack</CodeBlockCode>
+          <CodeBlockCode>
+            <ClipboardCopy hoverTip="Copy" clickTip="Copied" variant="inline-compact" isCode>
+              npm pack
+            </ClipboardCopy>
+          </CodeBlockCode>
         </CodeBlock>
-        <ListItem icon={<CubeIcon />}>Deploy your spa </ListItem>
+        <ListItem icon={<CubeIcon />}>Deploy your spa</ListItem>
         <CodeBlock>
-          <CodeBlockCode>{`spaship deploy --env=<env> <your-archive-file-name>`}</CodeBlockCode>
+          <CodeBlockCode>
+            <ClipboardCopy hoverTip="Copy" clickTip="Copied" variant="inline-compact" isCode>
+              {`spaship deploy --env=<env> <your-archive-file-name>`}
+            </ClipboardCopy>
+          </CodeBlockCode>
         </CodeBlock>
       </List>
     </EmptyStateBody>

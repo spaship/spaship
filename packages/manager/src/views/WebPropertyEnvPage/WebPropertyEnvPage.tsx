@@ -62,7 +62,7 @@ function getExpiryDayDiff(expiry: string) {
   const dateDiff: number = timeDiff / (1000 * 3600 * 24);
   return `${Math.ceil(dateDiff)}d`;
 }
-
+const URL_LENGTH_LIMIT = 25;
 export const WebPropertyEnvPage = (): JSX.Element => {
   const { query } = useRouter();
   const propertyIdentifier = query.propertyIdentifier as string;
@@ -206,7 +206,10 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              <ExternalLinkAltIcon /> {env.url}
+                              <ExternalLinkAltIcon />
+                              {`${env.url.slice(0, URL_LENGTH_LIMIT)} ${
+                                env.url.length > URL_LENGTH_LIMIT ? '...' : ''
+                              }`}
                             </a>
                           </Td>
                           <Td>
