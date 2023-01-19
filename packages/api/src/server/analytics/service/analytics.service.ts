@@ -55,10 +55,10 @@ export class AnalyticsService {
     this.logger.log('ActivityStream', JSON.stringify(activityStream));
     await this.emit(propertyIdentifier, { activityStream });
     const savedAnalytics = await this.dataServices.activityStream.create(activityStream);
-    try{
+    try {
       const webhooks = await this.dataServices.webhook.getByAny({ propertyIdentifier, actions: action });
       this.publishWebhookEvents(webhooks, activityStream);
-    }catch(err){
+    } catch (err) {
       this.logger.debug('WebhookError', err);
     }
     return savedAnalytics;
@@ -169,9 +169,10 @@ export class AnalyticsService {
   }
 
   private publishWebhookEvents(webhooks, activityStream: ActivityStream) {
+    const webhookData = this.analyticsFactory.generateWebhookData(activityStream);
     for (const webhook of webhooks)
       this.httpService.axiosRef
-        .post(webhook.url, { ...activityStream })
+        .post(webhook.url, { ...webhookData })
         .then((response) => {
           this.logger.log('WebhookResponse', JSON.stringify(response?.data));
         })
