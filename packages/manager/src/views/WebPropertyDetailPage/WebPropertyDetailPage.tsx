@@ -51,7 +51,7 @@ import { ActivityStream } from '@app/components/ActivityStream';
 import { Ephemeral } from './components/Ephemeral';
 import { EmptyInfo } from './components/EmptyInfo';
 
-const URL_LENGTH_LIMIT = 50;
+const URL_LENGTH_LIMIT = 30;
 
 export const WebPropertyDetailPage = (): JSX.Element => {
   const { query } = useRouter();
@@ -283,7 +283,16 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                                     rel="noopener noreferrer"
                                                   >
                                                     <ExternalLinkAltIcon />{' '}
-                                                    {webProperties?.data?.[env]?.url}
+                                                    {`${webProperties?.data?.[env]?.url.slice(
+                                                      0,
+                                                      URL_LENGTH_LIMIT
+                                                    )} ${
+                                                      webProperties?.data?.[env]?.url &&
+                                                      webProperties?.data?.[env]?.url.length >
+                                                        URL_LENGTH_LIMIT
+                                                        ? '...'
+                                                        : ''
+                                                    }`}
                                                   </a>
                                                 </Td>
 
