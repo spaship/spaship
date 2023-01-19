@@ -7,7 +7,7 @@ import 'simplebar/src/simplebar.css';
 export const ActivityStreamDashboard = () => (
   <>
     <TextContent
-      style={{ marginTop: '20px', marginBottom: '10px', marginLeft: '50px', fontSize: '20px' }}
+      style={{ marginBottom: '28px', marginTop: '24px', marginLeft: '40px', fontSize: '15px' }}
     >
       <Text component={TextVariants.h1}>Activity Stream</Text>
     </TextContent>
