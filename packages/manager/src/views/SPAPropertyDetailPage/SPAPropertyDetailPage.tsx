@@ -242,6 +242,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
               <ActivityStream
                 propertyIdentifier={propertyIdentifier}
                 applicationIdentifier={spaProperty}
+                isGlobal={false}
               />
             </List>
           </Tab>
