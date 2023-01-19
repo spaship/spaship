@@ -13,6 +13,7 @@ export type TWebPropActivityStream = {
   message: string;
   latestActivityHead: string;
   latestActivityTail: string;
+  isGlobal?: boolean;
   props: Props;
 };
 
