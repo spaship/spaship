@@ -30,14 +30,11 @@ type Props = {
   propertyIdentifier?: string;
   applicationIdentifier?: string;
   action?: string;
-  isGlobal?:boolean
+  isGlobal?: boolean;
 };
 
-interface IWebPropertyStream extends TWebPropActivityStream {
-  isGlobal?:boolean
-}
 type DeploymentKindProps = {
-  activity: IWebPropertyStream;
+  activity: TWebPropActivityStream;
 };
 
 const activities = {
@@ -46,14 +43,14 @@ const activities = {
     message,
     propertyIdentifier,
     isGlobal
-  }: IWebPropertyStream): JSX.Element => (
+  }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
       Deployment{' '}
       <Label color="blue" icon={<CheckIcon />} variant="outline" isCompact>
         completed
       </Label>{' '}
       for{' '}
-      { isGlobal ? (
+      {isGlobal ? (
         <>
           <Label color="blue" icon={<CubesIcon />} variant="outline" isCompact>
             <Link
@@ -225,9 +222,9 @@ const DeploymentKind = ({ activity }: DeploymentKindProps) => {
 
 export const ActivityStream = ({
   propertyIdentifier = '',
-  applicationIdentifier= '',
+  applicationIdentifier = '',
   action,
-  isGlobal = false ,
+  isGlobal = false
 }: Props): JSX.Element => {
   const { isLoading, isSuccess, data, isFetchingNextPage, fetchNextPage } =
     useGetWebPropActivityStream(propertyIdentifier, applicationIdentifier, action);
@@ -244,21 +241,24 @@ export const ActivityStream = ({
         {isLoading && <Spinner isSVG aria-label="Activity stream loading" />}
         {isSuccess &&
           data.pages?.map((page) =>
-           page.map((activity: IWebPropertyStream) => {
-            activity.isGlobal=isGlobal
-             return <ProgressStep
-                id={activity._id}
-                titleId={activity._id}
-                key={activity._id}
-                variant="success"
-                // Description does not support elements yet. Hence they are rendered as text.
-                description={formatDate(activity.createdAt, 'MMM DD YY, hh:mm a')}
-              >
-                <TextContent className="pf-u-mb-sm">
-                  <DeploymentKind activity={activity} />
-                </TextContent>
-              </ProgressStep>
-})
+            page.map((activity: TWebPropActivityStream) => {
+              // eslint-disable-next-line no-param-reassign
+              activity.isGlobal = isGlobal;
+              return (
+                <ProgressStep
+                  id={activity._id}
+                  titleId={activity._id}
+                  key={activity._id}
+                  variant="success"
+                  // Description does not support elements yet. Hence they are rendered as text.
+                  description={formatDate(activity.createdAt, 'MMM DD YY, hh:mm a')}
+                >
+                  <TextContent className="pf-u-mb-sm">
+                    <DeploymentKind activity={activity} />
+                  </TextContent>
+                </ProgressStep>
+              );
+            })
           )}
       </ProgressStepper>
       {isFetchingNextPage && (
@@ -284,6 +284,8 @@ export const ActivityStream = ({
 };
 
 ActivityStream.defaultProps = {
+  propertyIdentifier: '',
   applicationIdentifier: '',
-  action: ''
+  action: '',
+  isGlobal: false
 };

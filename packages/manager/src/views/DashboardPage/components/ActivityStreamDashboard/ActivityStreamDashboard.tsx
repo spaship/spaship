@@ -27,10 +27,7 @@ export const ActivityStreamDashboard = () => (
     >
       <SimpleBarReact style={{ maxHeight: 830, padding: '10px' }}>
         <div style={{ marginTop: '20px', marginLeft: '10px' }}>
-          <ActivityStream
-            action="APPLICATION_DEPLOYED"
-            isGlobal={true}
-          />
+          <ActivityStream action="APPLICATION_DEPLOYED" isGlobal />
         </div>
       </SimpleBarReact>
     </Card>
