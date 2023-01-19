@@ -75,7 +75,16 @@ export class EnvironmentService {
     const environment = this.environmentFactory.createNewEnvironment(createEnvironmentDto);
     Promise.all([this.dataServices.environment.create(environment)]);
     await this.environmentFactory.initializeEnvironment(property, environment);
-    await this.analyticsService.createActivityStream(createEnvironmentDto.propertyIdentifier, Action.ENV_CREATED, createEnvironmentDto.env);
+    await this.analyticsService.createActivityStream(
+      createEnvironmentDto.propertyIdentifier,
+      Action.ENV_CREATED,
+      createEnvironmentDto.env,
+      'NA',
+      `${createEnvironmentDto.env} created for ${createEnvironmentDto.propertyIdentifier}.`,
+      createEnvironmentDto.createdBy,
+      Source.MANAGER,
+      JSON.stringify(environment)
+    );
     return environment;
   }
 

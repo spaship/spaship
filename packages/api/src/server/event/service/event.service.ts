@@ -62,7 +62,10 @@ export class EventService implements OnApplicationBootstrap {
             Action.APPLICATION_DEPLOYED,
             event.env,
             event.applicationIdentifier,
-            message
+            message,
+            'EventStream',
+            'OPERATOR',
+            JSON.stringify({ accessUrl: event.accessUrl, path: event.path })
           );
         }
         if (event.action === Action.APPLICATION_DEPLOYMENT_FAILED) {

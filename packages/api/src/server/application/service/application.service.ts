@@ -85,7 +85,8 @@ export class ApplicationService {
         'NA',
         `${env} created for ${propertyIdentifier}.`,
         createdBy,
-        Source.CLI
+        Source.CLI,
+        JSON.stringify(environment)
       );
     }
     try {
@@ -104,7 +105,8 @@ export class ApplicationService {
       identifier,
       `Deployment started for ${applicationRequest.name} at ${env}`,
       createdBy,
-      Source.CLI
+      Source.CLI,
+      JSON.stringify(applicationRequest)
     );
     if (this.applicationFactory.isEphemeral(applicationRequest)) {
       const expiresIn = Number(EPHEMERAL_ENV.expiresIn);
