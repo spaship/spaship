@@ -96,6 +96,7 @@ export class WebhookService {
       'NA',
       `${identifier} webhook deleted for ${propertyIdentifier}`,
       'NA',
+      Source.MANAGER,
       JSON.stringify(response)
     );
     return response;

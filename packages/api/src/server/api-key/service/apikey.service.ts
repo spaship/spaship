@@ -36,7 +36,16 @@ export class ApikeyService {
   createApikey(createApikeyDto: CreateApikeyDto): any {
     const key = uuidv4();
     const apikey = this.apikeyFactoryService.createNewApikey(createApikeyDto, key);
-    this.analyticsService.createActivityStream(createApikeyDto.propertyIdentifier, Action.APIKEY_CREATED, createApikeyDto.env.toString());
+    this.analyticsService.createActivityStream(
+      createApikeyDto.propertyIdentifier,
+      Action.APIKEY_CREATED,
+      createApikeyDto.env.toString(),
+      'NA',
+      `${apikey.shortKey} Created for ${apikey.propertyIdentifier}`,
+      apikey.createdBy,
+      Source.MANAGER,
+      JSON.stringify(apikey)
+    );
     this.dataServices.apikey.create(apikey);
     return { key };
   }

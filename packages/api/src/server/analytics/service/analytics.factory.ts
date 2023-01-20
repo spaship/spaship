@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Action } from '../activity-stream.entity';
+import { WebhookApikey, WebhookApplication, WebhookDetails, WebhookResponse } from 'src/server/webhook/webhook-response.dto';
+import { Action, ActivityStream } from '../activity-stream.entity';
 
 @Injectable()
 export class AnalyticsFactory {
@@ -131,5 +132,53 @@ export class AnalyticsFactory {
   getEnv(env: string): string {
     if (env.includes(AnalyticsFactory.ephemeral)) return AnalyticsFactory.ephemeral;
     return env;
+  }
+
+  // @internal generate the data for the webhook based on the details
+  generateWebhookData(activityStream: ActivityStream): WebhookResponse {
+    const tmpWebhook = new WebhookResponse();
+    const tmpProps = JSON.parse(activityStream?.payload);
+    tmpWebhook.propertyIdentifier = activityStream.propertyIdentifier;
+    tmpWebhook.action = activityStream.action;
+    tmpWebhook.actor = activityStream.createdBy;
+    tmpWebhook.source = activityStream.source;
+    tmpWebhook.environment = activityStream.props.env;
+    tmpWebhook.message = activityStream.message;
+    tmpWebhook.triggeredAt = new Date();
+
+    if (activityStream.action === Action.APIKEY_CREATED || activityStream.action === Action.APIKEY_DELETED) {
+      const tmpApikey = new WebhookApikey();
+      tmpApikey.shortKey = tmpProps.shortKey;
+      tmpApikey.label = tmpProps.label;
+      tmpApikey.expirationDate = tmpProps.expirationDate;
+      tmpWebhook.apiKey = tmpApikey;
+    }
+
+    if (
+      activityStream.action === Action.APPLICATION_DEPLOYED ||
+      activityStream.action === Action.APPLICATION_DEPLOYMENT_STARTED ||
+      activityStream.action === Action.APPLICATION_DEPLOYMENT_FAILED ||
+      activityStream.action === Action.APPLICATION_DELETED
+    ) {
+      const tmpApplication = new WebhookApplication();
+      tmpApplication.name = activityStream.props.applicationIdentifier;
+      tmpApplication.path = tmpProps.path;
+      tmpApplication.ref = tmpProps.ref;
+      tmpApplication.accessUrl = tmpProps?.accessUrl;
+      tmpWebhook.application = tmpApplication;
+    }
+
+    if (
+      activityStream.action === Action.WEBHOOK_CREATED ||
+      activityStream.action === Action.WEBHOOK_DELETED ||
+      activityStream.action === Action.WEBHOOK_UPDATED
+    ) {
+      const tmpDetails = new WebhookDetails();
+      tmpDetails.name = tmpProps.name;
+      tmpDetails.actions = tmpProps.actions;
+      tmpDetails.url = tmpProps.url;
+      tmpWebhook.webhook = tmpDetails;
+    }
+    return tmpWebhook;
   }
 }
