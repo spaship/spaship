@@ -140,11 +140,11 @@ export class AnalyticsFactory {
     const tmpProps = JSON.parse(activityStream?.payload);
     tmpWebhook.propertyIdentifier = activityStream.propertyIdentifier;
     tmpWebhook.action = activityStream.action;
-    tmpWebhook.sourceUser = activityStream.createdBy;
+    tmpWebhook.actor = activityStream.createdBy;
     tmpWebhook.source = activityStream.source;
     tmpWebhook.environment = activityStream.props.env;
     tmpWebhook.message = activityStream.message;
-    tmpWebhook.createdAt = new Date();
+    tmpWebhook.triggeredAt = new Date();
 
     if (activityStream.action === Action.APIKEY_CREATED || activityStream.action === Action.APIKEY_DELETED) {
       const tmpApikey = new WebhookApikey();

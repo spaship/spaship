@@ -3,7 +3,7 @@ export class WebhookResponse {
 
   action: string;
 
-  sourceUser: string;
+  actor: string;
 
   source: string;
 
@@ -17,7 +17,7 @@ export class WebhookResponse {
 
   message: string;
 
-  createdAt: Date;
+  triggeredAt: Date;
 }
 
 export class WebhookApplication {
