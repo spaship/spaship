@@ -151,17 +151,17 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                       <Select
                         variant={SelectVariant.single}
                         aria-label="filter Input"
-                        value="Select Enviroment"
+                        value="Select Environment"
                         onToggle={setIsFilterOpen.toggle}
                         onSelect={(e, value) => {
-                          if (value === 'Select Enviroment') {
+                          if (value === 'Select Environment') {
                             setFilterByEnv('' as string);
                           } else {
                             setFilterByEnv(value as string);
                           }
                           setIsFilterOpen.off();
                         }}
-                        selections="Select Enviroment" // To be kept as Select
+                        selections="Select Environment" // To be kept as Select
                         isOpen={isFilterOpen}
                         aria-labelledby="filter"
                       >
@@ -171,7 +171,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                       </Select>
                     </SplitItem>
                   </Split>
-                  {filterByEnv === 'Select Enviroment' || filterByEnv === '' ? (
+                  {filterByEnv === 'Select Environment' || filterByEnv === '' ? (
                     <p />
                   ) : (
                     <div
