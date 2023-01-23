@@ -5,7 +5,7 @@ import { Action } from 'src/server/analytics/activity-stream.entity';
 import { AnalyticsService } from 'src/server/analytics/service/analytics.service';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { Source } from 'src/server/property/property.entity';
-import { CreatePermissionDto, DeletePermissionDto } from '../permission.dto';
+import { CreatePermissionDto, DeletePermissionDto, PermissionDetailsDto } from '../permission.dto';
 import { Permission } from '../permission.entity';
 import { PermissionFactory } from './permission.factory';
 
@@ -31,11 +31,11 @@ export class PermissionService {
     propertyIdentifier: string,
     name: string,
     email: string,
-    authActionLookup: string,
+    action: string,
     skip: number = PermissionService.defaultSkip,
     limit: number = PermissionService.defaultLimit
   ): Promise<Permission[]> {
-    const keys = { propertyIdentifier, name, email, authActionLookup };
+    const keys = { propertyIdentifier, name, email, action };
     Object.keys(keys).forEach((key) => (keys[key] === undefined || keys[key] === '') && delete keys[key]);
     return this.dataServices.permission.getByOptions(keys, { createdAt: -1 }, skip, limit);
   }
@@ -62,16 +62,18 @@ export class PermissionService {
         this.loggerService.error('CreatePermissions', err);
       }
     }
-    await this.analyticsService.createActivityStream(
-      createPermissionDto.propertyIdentifier,
-      Action.PERMISSION_CREATED,
-      'NA',
-      'NA',
-      `${createPermissionDto.actions.toString()} access provided for ${createPermissionDto.email}`,
-      createPermissionDto.createdBy,
-      Source.MANAGER,
-      JSON.stringify(permissions)
-    );
+    for (const tmpPermission of createPermissionDto.permissionDetails) {
+      await this.analyticsService.createActivityStream(
+        createPermissionDto.propertyIdentifier,
+        Action.PERMISSION_CREATED,
+        'NA',
+        'NA',
+        `${tmpPermission.actions.toString()} access provided for ${tmpPermission.email}`,
+        createPermissionDto.createdBy,
+        Source.MANAGER,
+        JSON.stringify(tmpPermission)
+      );
+    }
     return permissions;
   }
 
@@ -80,10 +82,12 @@ export class PermissionService {
     const name = 'OWNER';
     const role = (await this.dataServices.role.getByAny({ name }))[0];
     const createPermissionDto = new CreatePermissionDto();
-    createPermissionDto.name = creatorName;
+    const permissionDetails = new PermissionDetailsDto();
+    permissionDetails.name = creatorName;
+    permissionDetails.actions = role.actions;
+    permissionDetails.email = createdBy;
+    createPermissionDto.permissionDetails = [permissionDetails];
     createPermissionDto.propertyIdentifier = propertyIdentifier;
-    createPermissionDto.actions = role.actions;
-    createPermissionDto.email = createdBy;
     createPermissionDto.createdBy = createdBy;
     this.loggerService.log('InitialPermission', JSON.stringify(createPermissionDto));
     return this.createPermission(createPermissionDto);
@@ -101,25 +105,27 @@ export class PermissionService {
           action: permission.action,
           propertyIdentifier: permission.propertyIdentifier
         });
-        if (response) deletedRecords.push(permission);
+        if (response) {
+          deletedRecords.push(permission);
+          await this.analyticsService.createActivityStream(
+            deletePermissionDto.propertyIdentifier,
+            Action.PERMISSION_DELETED,
+            'NA',
+            'NA',
+            `${permission.action.toString()} access deleted for ${permission.email}`,
+            deletePermissionDto.createdBy,
+            Source.MANAGER,
+            JSON.stringify(permission)
+          );
+        }
       } catch (err) {
         this.loggerService.error('DeletePermission', err);
       }
     }
     if (deletedRecords.length === 0)
       this.exceptionService.badRequestException({
-        message: `No Permission exists for ${deletePermissionDto.email} in ${deletePermissionDto.propertyIdentifier}.`
+        message: `No Permission found for ${deletePermissionDto.propertyIdentifier}.`
       });
-    await this.analyticsService.createActivityStream(
-      deletePermissionDto.propertyIdentifier,
-      Action.PERMISSION_DELETED,
-      'NA',
-      'NA',
-      `${deletePermissionDto.actions.toString()} access deleted for ${deletePermissionDto.email}`,
-      deletePermissionDto.createdBy,
-      Source.MANAGER,
-      JSON.stringify(deletedRecords)
-    );
     return deletedRecords;
   }
 }

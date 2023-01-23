@@ -17,11 +17,11 @@ export class PermissionController {
     @Query('propertyIdentifier') propertyIdentifier: string,
     @Query('name') name: string,
     @Query('email') email: string,
-    @Query('authActionLookup') authActionLookup: string,
+    @Query('action') action: string,
     @Query('skip') skip: number,
     @Query('limit') limit: number
   ) {
-    return this.permissionService.getPermissions(propertyIdentifier, name, email, authActionLookup, skip, limit);
+    return this.permissionService.getPermissions(propertyIdentifier, name, email, action, skip, limit);
   }
 
   @Post()

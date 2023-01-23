@@ -6,27 +6,31 @@ import { Permission } from '../permission.entity';
 export class PermissionFactory {
   createNewPermissions(createPermissionDto: CreatePermissionDto): Permission[] {
     const permissions = [];
-    for (const action of createPermissionDto.actions) {
-      const permission = new Permission();
-      permission.name = createPermissionDto?.name;
-      permission.email = createPermissionDto.email;
-      permission.propertyIdentifier = createPermissionDto.propertyIdentifier;
-      permission.action = action;
-      permission.createdBy = createPermissionDto.createdBy;
-      permission.updatedBy = createPermissionDto.createdBy;
-      permissions.push(permission);
+    for (const permission of createPermissionDto.permissionDetails) {
+      for (const action of permission.actions) {
+        const tmpPermission = new Permission();
+        tmpPermission.name = permission?.name;
+        tmpPermission.email = permission.email;
+        tmpPermission.propertyIdentifier = createPermissionDto.propertyIdentifier;
+        tmpPermission.action = action;
+        tmpPermission.createdBy = createPermissionDto.createdBy;
+        tmpPermission.updatedBy = createPermissionDto.createdBy;
+        permissions.push(tmpPermission);
+      }
     }
     return permissions;
   }
 
   deletePermissions(deletePermissionDto: DeletePermissionDto): Permission[] {
     const permissions = [];
-    for (const authActionLookup of deletePermissionDto.actions) {
-      const permission = new Permission();
-      permission.email = deletePermissionDto.email;
-      permission.propertyIdentifier = deletePermissionDto.propertyIdentifier;
-      permission.action = authActionLookup;
-      permissions.push(permission);
+    for (const permission of deletePermissionDto.permissionDetails) {
+      for (const authActionLookup of permission.actions) {
+        const tmpPermission = new Permission();
+        tmpPermission.email = permission.email;
+        tmpPermission.propertyIdentifier = deletePermissionDto.propertyIdentifier;
+        tmpPermission.action = authActionLookup;
+        permissions.push(tmpPermission);
+      }
     }
     return permissions;
   }
