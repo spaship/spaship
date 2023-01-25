@@ -5,3 +5,8 @@ export class Role {
 
   isActive: boolean;
 }
+
+export enum ROLE {
+  OWNER = 'OWNER',
+  USER = 'USER'
+}
