@@ -18,10 +18,11 @@ export class PermissionController {
     @Query('name') name: string,
     @Query('email') email: string,
     @Query('action') action: string,
+    @Query('group') group: string,
     @Query('skip') skip: number,
     @Query('limit') limit: number
   ) {
-    return this.permissionService.getPermissions(propertyIdentifier, name, email, action, skip, limit);
+    return this.permissionService.getPermissions(propertyIdentifier, name, email, action, group, skip, limit);
   }
 
   @Post()

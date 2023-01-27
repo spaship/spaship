@@ -5,6 +5,7 @@ import { Action } from 'src/server/analytics/activity-stream.entity';
 import { AnalyticsService } from 'src/server/analytics/service/analytics.service';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { Source } from 'src/server/property/property.entity';
+import { ROLE } from 'src/server/role/role.entity';
 import { CreatePermissionDto, DeletePermissionDto, PermissionDetailsDto } from '../permission.dto';
 import { Permission } from '../permission.entity';
 import { PermissionFactory } from './permission.factory';
@@ -32,12 +33,18 @@ export class PermissionService {
     name: string,
     email: string,
     action: string,
+    group: string,
     skip: number = PermissionService.defaultSkip,
     limit: number = PermissionService.defaultLimit
   ): Promise<Permission[]> {
     const keys = { propertyIdentifier, name, email, action };
     Object.keys(keys).forEach((key) => (keys[key] === undefined || keys[key] === '') && delete keys[key]);
-    return this.dataServices.permission.getByOptions(keys, { createdAt: -1 }, skip, limit);
+    const response = await this.dataServices.permission.getByOptions(keys, { createdAt: -1 }, skip, limit);
+    if (group === 'email') {
+      const role = (await this.dataServices.role.getByAny({ name: ROLE.OWNER }))[0];
+      return this.permissionFactory.groupPermission(response, role.actions.length);
+    }
+    return response;
   }
 
   /* @internal
