@@ -63,7 +63,7 @@ export const Analytics = ({
     <TextContent
       style={{ marginBottom: '10px', marginTop: '24px', marginLeft: '24px', fontSize: '20px' }}
     >
-      <Text component={TextVariants.h1}>Stats</Text>
+      <Text component={TextVariants.h1}>SPAship Deployment Analysis</Text>
     </TextContent>
     <Grid style={{ padding: '12px 12px' }}>
       <GridItem span={6}>
@@ -183,7 +183,7 @@ export const Analytics = ({
       </GridItem>
     </Grid>
     <TextContent style={{ marginTop: '24px', marginLeft: '24px', fontSize: '20px' }}>
-      <Text component={TextVariants.h1}>SPAship Deployment History</Text>
+      <Text component={TextVariants.h1}>Past 30 days Deployment History</Text>
     </TextContent>
     <Card
       isSelectable
