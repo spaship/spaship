@@ -59,35 +59,6 @@ export const Analytics = ({
   TotalDeploymentData,
   minCount,
   maxCount
-<<<<<<< Updated upstream
-}: Props) => (
-  <>
-    <TextContent
-      style={{ marginBottom: '10px', marginTop: '24px', marginLeft: '24px', fontSize: '20px' }}
-    >
-      <Text component={TextVariants.h1}>Stats</Text>
-    </TextContent>
-    <Grid style={{ padding: '12px 12px' }}>
-      <GridItem span={6}>
-        <Card
-          isSelectable
-          isFullHeight
-          style={{
-            margin: '12px 12px',
-            overflow: 'auto',
-            scrollbarWidth: 'none',
-            height: '190px'
-          }}
-          isRounded
-        >
-          <CardTitle>Total Deployment</CardTitle>
-          <CardBody>
-            <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{Totaldeployment}</h1>
-            <div style={{ display: 'flex', flexDirection: 'row', gap: '35px', marginTop: '24px' }}>
-              {TotalDeploymentCardFields.map((field) => (
-                <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
-                  <h1 style={{ fontSize: '12px' }}>{field}</h1>
-=======
 }: Props) => {
   const lineChartLegend = Object.keys(TotalMonthlyDeploymentData || {}).map((key) => ({
     name: key
@@ -130,7 +101,6 @@ export const Analytics = ({
                 ))}
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <h1 style={{ fontSize: '12px' }}>Others</h1>
->>>>>>> Stashed changes
                   <h1 style={{ fontSize: '12px' }}>
                     {TotalDeploymentData.data
                       ?.filter(
@@ -167,98 +137,6 @@ export const Analytics = ({
                 </h1>
               </div>
 
-<<<<<<< Updated upstream
-            <div style={{ display: 'flex', flexDirection: 'row', gap: '35px', marginTop: '24px' }}>
-              {DeploymentTimeFrames.map((field, index) => (
-                <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
-                  <h1 style={{ fontSize: '12px' }}>{`Last ${field}`}</h1>
-                  <h1 style={{ fontSize: '12px' }}>{averageDeploymentTime[index]}</h1>
-                </div>
-              ))}
-            </div>
-          </CardBody>
-        </Card>
-      </GridItem>
-      <GridItem span={6}>
-        <Card
-          isSelectable
-          isFullHeight
-          style={{
-            margin: '12px 12px',
-            overflow: 'auto',
-            scrollbarWidth: 'none',
-            height: '130px'
-          }}
-          isRounded
-        >
-          <CardTitle>Total Property</CardTitle>
-          <CardBody>
-            <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{TotalProperty}</h1>
-          </CardBody>
-        </Card>
-      </GridItem>
-      <GridItem span={6}>
-        <Card
-          isSelectable
-          isFullHeight
-          style={{
-            margin: '12px 12px',
-            overflow: 'auto',
-            scrollbarWidth: 'none',
-            height: '130px'
-          }}
-          isRounded
-        >
-          <CardTitle>Total Ephemeral Deployment</CardTitle>
-          <CardBody>
-            <h1 style={{ color: '#0066CC', fontSize: '28px' }}>
-              {TotalDeploymentData.data
-                ?.filter((ele) => ele.env === 'ephemeral')
-                .reduce((acc, ele) => acc + ele.count, 0)}
-            </h1>
-          </CardBody>
-        </Card>
-      </GridItem>
-    </Grid>
-    <TextContent style={{ marginTop: '24px', marginLeft: '24px', fontSize: '20px' }}>
-      <Text component={TextVariants.h1}>SPAship Deployment History</Text>
-    </TextContent>
-    <Card
-      isSelectable
-      isFullHeight
-      style={{
-        margin: '24px 24px',
-        overflow: 'auto',
-        scrollbarWidth: 'none',
-        height: '380px'
-      }}
-      isRounded
-    >
-      <CardHeader>
-        <CardTitle>Total Deployment</CardTitle>
-      </CardHeader>
-      <CardBody>
-        <div style={{ height: '275px' }}>
-          <Chart
-            ariaDesc="Average number of pets"
-            containerComponent={
-              <ChartVoronoiContainer
-                labels={({ datum }) => `${datum.name}: ${datum.y}`}
-                constrainToVisibleArea
-              />
-            }
-            legendData={[{ name: 'prod' }, { name: 'dev' }, { name: 'qa' }, { name: 'stage' }]}
-            legendPosition="bottom-left"
-            height={275}
-            maxDomain={{ y: maxCount + (maxCount - minCount) * 0.2 }}
-            minDomain={{ y: 0 }}
-            name="chart3"
-            padding={{
-              bottom: 75,
-              left: 50,
-              right: 50,
-              top: 50
-=======
               <div
                 style={{ display: 'flex', flexDirection: 'row', gap: '35px', marginTop: '24px' }}
               >
@@ -281,7 +159,6 @@ export const Analytics = ({
               overflow: 'auto',
               scrollbarWidth: 'none',
               height: '130px'
->>>>>>> Stashed changes
             }}
             isRounded
           >
