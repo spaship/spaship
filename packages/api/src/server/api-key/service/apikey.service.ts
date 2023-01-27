@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { Action } from 'src/server/analytics/activity-stream.entity';
 import { AnalyticsService } from 'src/server/analytics/service/analytics.service';
-import { CreateApikeyDto, ResponseApikeyDto } from 'src/server/api-key/apikey.dto';
+import { CreateApikeyDto, DeleteApikeyDto, ResponseApikeyDto } from 'src/server/api-key/apikey.dto';
 import { Apikey } from 'src/server/api-key/apikey.entity';
+import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { Source } from 'src/server/property/property.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { ApikeyFactory } from './apikey.factory';
@@ -13,7 +14,8 @@ export class ApikeyService {
   constructor(
     private readonly dataServices: IDataServices,
     private readonly apikeyFactoryService: ApikeyFactory,
-    private readonly analyticsService: AnalyticsService
+    private readonly analyticsService: AnalyticsService,
+    private readonly exceptionsService: ExceptionsService
   ) {}
 
   async getApikeyByProperty(propertyIdentifier: string): Promise<ResponseApikeyDto[]> {
@@ -50,18 +52,25 @@ export class ApikeyService {
     return { key };
   }
 
-  async deleteApiKey(propertyIdentifier: string, shortKey: string): Promise<Apikey> {
-    const apiKey = (await this.dataServices.apikey.getByAny({ propertyIdentifier, shortKey }))[0];
+  async deleteApiKey(deleteApikeyDto: DeleteApikeyDto): Promise<Apikey> {
+    const apiKey = (
+      await this.dataServices.apikey.getByAny({ propertyIdentifier: deleteApikeyDto.propertyIdentifier, shortKey: deleteApikeyDto.shortKey })
+    )[0];
+    if (!apiKey) {
+      this.exceptionsService.badRequestException({ message: `Requested API Key doesn't exist for ${deleteApikeyDto.propertyIdentifier}` });
+    }
     await this.analyticsService.createActivityStream(
       apiKey.propertyIdentifier,
       Action.APIKEY_DELETED,
       apiKey.env.toString(),
       'NA',
-      `${shortKey} Deleted for ${apiKey.propertyIdentifier}`,
-      apiKey.createdBy,
+      `${deleteApikeyDto.shortKey} Deleted for ${apiKey.propertyIdentifier}`,
+      deleteApikeyDto.createdBy,
       Source.MANAGER,
       JSON.stringify(apiKey)
     );
-    return Promise.resolve(this.dataServices.apikey.delete({ propertyIdentifier, shortKey }));
+    return Promise.resolve(
+      this.dataServices.apikey.delete({ propertyIdentifier: deleteApikeyDto.propertyIdentifier, shortKey: deleteApikeyDto.shortKey })
+    );
   }
 }
