@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Delete, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from '../auth/auth.guard';
-import { CreateApikeyDto } from './apikey.dto';
+import { CreateApikeyDto, DeleteApikeyDto } from './apikey.dto';
 import { Apikey } from './apikey.entity';
 import { ApikeyService } from './service/apikey.service';
 
@@ -23,9 +23,9 @@ export class ApikeyController {
     return this.apiKeyService.createApikey(apikeyDto);
   }
 
-  @Delete('/:propertyIdentifier/:shortKey')
+  @Delete()
   @ApiOperation({ description: 'Delete an API Key.' })
-  async deleteApiKey(@Param('propertyIdentifier') propertyIdentifier: string, @Param('shortKey') shortKey: string): Promise<Apikey> {
-    return this.apiKeyService.deleteApiKey(propertyIdentifier, shortKey);
+  async deleteApiKey(@Body() deleteApikeyDto: DeleteApikeyDto): Promise<Apikey> {
+    return this.apiKeyService.deleteApiKey(deleteApikeyDto);
   }
 }

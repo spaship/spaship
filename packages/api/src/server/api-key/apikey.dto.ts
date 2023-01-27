@@ -45,3 +45,19 @@ export class ResponseApikeyDto extends PartialType(CreateApikeyDto) {
 
   createdAt: Date;
 }
+
+export class DeleteApikeyDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  shortKey: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @Length(MIN.DEFAULT, MAX.PROPERTY, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Matches(VALIDATION.PROPERTY_IDENTIFIER, { message: MESSAGE.INVALID_PROPERTY_IDENTIFIER, always: true })
+  propertyIdentifier: string;
+
+  createdBy: string;
+}
