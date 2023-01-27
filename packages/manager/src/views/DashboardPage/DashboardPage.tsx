@@ -31,7 +31,7 @@ export const DashboardPage = (): JSX.Element => {
       <div style={{ width: '55%' }}>
         <Analytics
           QAData={TotalMonthlyDeploymentData?.qa}
-          ProdData={TotalMonthlyDeploymentData?.uatprod}
+          ProdData={TotalMonthlyDeploymentData?.prod}
           DevData={TotalMonthlyDeploymentData?.dev}
           StageData={TotalMonthlyDeploymentData?.stage}
           Totaldeployment={Totaldeployment}

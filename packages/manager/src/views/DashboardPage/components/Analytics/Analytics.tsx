@@ -203,19 +203,13 @@ export const Analytics = ({
         <div style={{ height: '275px' }}>
           <Chart
             ariaDesc="Average number of pets"
-            ariaTitle="Line chart example"
             containerComponent={
               <ChartVoronoiContainer
                 labels={({ datum }) => `${datum.name}: ${datum.y}`}
                 constrainToVisibleArea
               />
             }
-            legendData={[
-              { name: 'Prod' },
-              { name: 'Stage', symbol: { type: 'dash' } },
-              { name: 'QA' },
-              { name: 'Dev' }
-            ]}
+            legendData={[{ name: 'prod' }, { name: 'dev' }, { name: 'qa' }, { name: 'stage' }]}
             legendPosition="bottom-left"
             height={275}
             maxDomain={{ y: maxCount + (maxCount - minCount) * 0.2 }}
@@ -239,8 +233,8 @@ export const Analytics = ({
             <ChartGroup>
               {ProdData && <ChartLine data={ProdData} />}
               {StageData && <ChartLine data={StageData} />}
-              {QAData && <ChartLine data={QAData} />}
               {DevData && <ChartLine data={DevData} />}
+              {QAData && <ChartLine data={QAData} />}
             </ChartGroup>
           </Chart>
         </div>
