@@ -45,10 +45,12 @@ export class PermissionFactory {
     const emails = Array.from(new Set(permissions.map((item) => item.email)));
     const groupedResponse = [];
     for (const item of emails) {
+      const tmpPermissions = groupedPermissions[item];
       const data = {
         email: item,
-        role: groupedPermissions[item].length === matchRole ? ROLE.OWNER : ROLE.USER,
-        details: groupedPermissions[item]
+        name: tmpPermissions[0].name,
+        role: tmpPermissions.length === matchRole ? ROLE.OWNER : ROLE.USER,
+        details: tmpPermissions
       };
       groupedResponse.push(data);
     }
