@@ -36,7 +36,7 @@ export class PermissionFactory {
     return permissions;
   }
 
-  groupPermission(permissions: Permission[], allPermissions: number) {
+  groupPermission(permissions: Permission[], allPermissionsLength: number) {
     const groupedPermissions = permissions.reduce((acc, obj) => {
       const key = obj.email;
       const group = acc[key] ?? [];
@@ -49,7 +49,7 @@ export class PermissionFactory {
       const data = {
         email: item,
         name: allowedPermissions[0].name,
-        role: allowedPermissions.length === allPermissions ? ROLE.OWNER : ROLE.USER,
+        role: allowedPermissions.length === allPermissionsLength ? ROLE.OWNER : ROLE.USER,
         details: allowedPermissions
       };
       groupedResponse.push(data);
