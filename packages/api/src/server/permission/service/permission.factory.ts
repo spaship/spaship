@@ -36,7 +36,7 @@ export class PermissionFactory {
     return permissions;
   }
 
-  groupPermission(permissions: Permission[], matchRole: number) {
+  groupPermission(permissions: Permission[], allPermissionsLength: number) {
     const groupedPermissions = permissions.reduce((acc, obj) => {
       const key = obj.email;
       const group = acc[key] ?? [];
@@ -45,10 +45,12 @@ export class PermissionFactory {
     const emails = Array.from(new Set(permissions.map((item) => item.email)));
     const groupedResponse = [];
     for (const item of emails) {
+      const allowedPermissions = groupedPermissions[item];
       const data = {
         email: item,
-        role: groupedPermissions[item].length === matchRole ? ROLE.OWNER : ROLE.USER,
-        details: groupedPermissions[item]
+        name: allowedPermissions[0].name,
+        role: allowedPermissions.length === allPermissionsLength ? ROLE.OWNER : ROLE.USER,
+        details: allowedPermissions
       };
       groupedResponse.push(data);
     }
