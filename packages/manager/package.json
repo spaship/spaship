@@ -39,7 +39,7 @@
     "lint": "eslint --fix --ext js,ts,tsx ./src"
   },
   "dependencies": {
-    "@formkit/auto-animate": "1.0.0-beta.5",
+    "@formkit/auto-animate": "1.0.0-beta.6",
     "@hookform/resolvers": "2.9.10",
     "@patternfly/react-charts": "6.94.12",
     "@patternfly/react-core": "4.264.0",
