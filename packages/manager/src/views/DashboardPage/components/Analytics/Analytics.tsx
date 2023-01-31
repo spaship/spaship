@@ -83,7 +83,7 @@ export const Analytics = ({
             }}
             isRounded
           >
-            <CardTitle>Total Deployment</CardTitle>
+            <CardTitle>Total Deployments</CardTitle>
             <CardBody>
               <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{Totaldeployment}</h1>
               <div
@@ -133,7 +133,7 @@ export const Analytics = ({
               <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}>
                 <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{bestDeploymentTime}s</h1>
                 <h1 style={{ fontSize: '14px', paddingLeft: '8px' }}>
-                  in last {DeploymentTimeFrames[bestDeploymentTimeIndex]}
+                  in past {DeploymentTimeFrames[bestDeploymentTimeIndex]}
                 </h1>
               </div>
 
@@ -142,7 +142,7 @@ export const Analytics = ({
               >
                 {DeploymentTimeFrames.map((field, index) => (
                   <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
-                    <h1 style={{ fontSize: '12px' }}>{`Last ${field}`}</h1>
+                    <h1 style={{ fontSize: '12px' }}>{`Past ${field}`}</h1>
                     <h1 style={{ fontSize: '12px' }}>{averageDeploymentTime[index]}</h1>
                   </div>
                 ))}
@@ -162,7 +162,7 @@ export const Analytics = ({
             }}
             isRounded
           >
-            <CardTitle>Total Property</CardTitle>
+            <CardTitle>Total Properties</CardTitle>
             <CardBody>
               <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{TotalProperty}</h1>
             </CardBody>
@@ -180,7 +180,7 @@ export const Analytics = ({
             }}
             isRounded
           >
-            <CardTitle>Total Ephemeral Deployment</CardTitle>
+            <CardTitle>Total Ephemeral Deployments</CardTitle>
             <CardBody>
               <h1 style={{ color: '#0066CC', fontSize: '28px' }}>
                 {TotalDeploymentData.data
@@ -206,7 +206,7 @@ export const Analytics = ({
         isRounded
       >
         <CardHeader>
-          <CardTitle>Total Deployment</CardTitle>
+          <CardTitle>Total Deployments</CardTitle>
         </CardHeader>
         <CardBody>
           <div style={{ height: '275px' }}>
