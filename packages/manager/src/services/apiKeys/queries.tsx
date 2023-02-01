@@ -36,7 +36,10 @@ export const useCreateAPIKey = (property: string) => {
 
 // DELETE OPERATIONS
 export const deleteAPIKey = async (dto: TDeleteApiKeyDTO) => {
-  const { data } = await orchestratorReq.delete(`/apikey/${dto.shortKey}`);
+  const { data } = await orchestratorReq.delete(`/apikey`, {
+    data: { propertyIdentifier: `${dto.propertyIdentifier}`, shortKey: `${dto.shortKey}` },
+    headers: { 'Content-Type': 'application/json' }
+  });
   return data.data;
 };
 

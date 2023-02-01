@@ -119,7 +119,8 @@ export const WebPropertyEnvPage = (): JSX.Element => {
   const handleDeleteAPIKey = async () => {
     try {
       await deleteAPIKey.mutateAsync({
-        shortKey: popUp.deleteApiKey.data as string
+        shortKey: popUp.deleteApiKey.data as string,
+        propertyIdentifier
       });
       handlePopUpClose('deleteApiKey');
       toast.success('API Key deleted');
