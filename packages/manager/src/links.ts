@@ -5,5 +5,6 @@ export const pageLinks = {
   spaDetailPage: '/properties/[propertyIdentifier]/[spaName]',
   webPropertySettingPage: '/properties/[propertyIdentifier]/settings',
   loginPage: '/login',
-  dashboardPage: '/dashboard'
+  dashboardPage: '/dashboard',
+  documentsPage: '/document'
 };

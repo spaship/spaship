@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 import { Nav, NavItem, NavList, PageSidebar, Split, SplitItem } from '@patternfly/react-core';
-import { ChartLineIcon, CommentAltIcon, KeyIcon, ThIcon } from '@patternfly/react-icons';
+import { ChartLineIcon, CommentAltIcon, FolderIcon, ThIcon } from '@patternfly/react-icons';
 import { pageLinks } from '@app/links';
 
 type SNProps = {
@@ -48,12 +48,12 @@ export const SideBar = () => {
                 />
               </a>
             </Link>
-            <Link href="/coming-soon">
+            <Link href="/document">
               <a className="text-decoration-none">
                 <SidebarNavItem
-                  title="Authentication"
-                  icon={<KeyIcon size="sm" />}
-                  isActive={pathname === '/auth'}
+                  title="Documents"
+                  icon={<FolderIcon size="sm" />}
+                  isActive={pathname === pageLinks.documentsPage}
                 />
               </a>
             </Link>
