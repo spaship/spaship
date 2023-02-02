@@ -56,7 +56,7 @@
     "chai": "4.3.7",
     "eslint-config-oclif": "4.0.0",
     "globby": "11.1.0",
-    "mocha": "9.1.2",
+    "mocha": "10.2.0",
     "nock": "13.3.0",
     "nyc": "15.1.0",
     "shortid": "2.2.16",
