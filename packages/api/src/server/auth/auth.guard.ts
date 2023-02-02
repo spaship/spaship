@@ -63,6 +63,10 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
     const checkResource = (await this.dataServices.authActionLookup.getByAny({ resource, method }))[0];
     if (checkResource) {
       const email = JSON.parse(JSON.stringify(payload)).email;
+      if (!propertyIdentifier)
+        this.exceptionsService.badRequestException({
+          message: `Please provide the PropertyIdentifier.`
+        });
       const authorized = (await this.dataServices.permission.getByAny({ propertyIdentifier, email, action: checkResource.name }))[0];
       if (!authorized)
         this.exceptionsService.badRequestException({

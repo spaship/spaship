@@ -22,7 +22,7 @@ export class PermissionService {
     private readonly permissionFactory: PermissionFactory,
     private readonly loggerService: LoggerService,
     private readonly analyticsService: AnalyticsService
-  ) {}
+  ) { }
 
   /* @internal
    * Get the list of the Permissions
@@ -54,6 +54,7 @@ export class PermissionService {
    */
   async createPermission(createPermissionDto: CreatePermissionDto): Promise<Permission[]> {
     const permissions = this.permissionFactory.createNewPermissions(createPermissionDto);
+    const savedPermissions = [];
     this.loggerService.log('CreatePermissions', JSON.stringify(permissions));
     for (const permission of permissions) {
       try {
@@ -64,7 +65,10 @@ export class PermissionService {
             propertyIdentifier: permission.propertyIdentifier
           })
         )[0];
-        if (!checkUserPermission) await this.dataServices.permission.create(permission);
+        if (!checkUserPermission) {
+          await this.dataServices.permission.create(permission);
+          savedPermissions.push(permission);
+        }
       } catch (err) {
         this.loggerService.error('CreatePermissions', err);
       }
@@ -81,7 +85,7 @@ export class PermissionService {
         JSON.stringify(tmpPermission)
       );
     }
-    return permissions;
+    return savedPermissions;
   }
 
   // @internal Provide intial access for the Property Creator
@@ -131,7 +135,7 @@ export class PermissionService {
     }
     if (deletedRecords.length === 0)
       this.exceptionService.badRequestException({
-        message: `No Permission found for ${deletePermissionDto.propertyIdentifier}.`
+        message: `No Deletable Permission found for ${deletePermissionDto.propertyIdentifier}.`
       });
     return deletedRecords;
   }
