@@ -43,7 +43,7 @@
     "@hookform/resolvers": "2.9.10",
     "@patternfly/react-charts": "6.94.18",
     "@patternfly/react-core": "4.267.6",
-    "@patternfly/react-icons": "4.93.3",
+    "@patternfly/react-icons": "4.93.6",
     "@patternfly/react-styles": "4.92.3",
     "@patternfly/react-table": "4.112.6",
     "@tanstack/react-query": "4.24.4",
