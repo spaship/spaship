@@ -22,7 +22,7 @@ export class PermissionService {
     private readonly permissionFactory: PermissionFactory,
     private readonly loggerService: LoggerService,
     private readonly analyticsService: AnalyticsService
-  ) { }
+  ) {}
 
   /* @internal
    * Get the list of the Permissions
@@ -73,13 +73,13 @@ export class PermissionService {
         this.loggerService.error('CreatePermissions', err);
       }
     }
-    for (const tmpPermission of createPermissionDto.permissionDetails) {
+    for (const tmpPermission of savedPermissions) {
       await this.analyticsService.createActivityStream(
         createPermissionDto.propertyIdentifier,
         Action.PERMISSION_CREATED,
         'NA',
         'NA',
-        `${tmpPermission.actions.toString()} access provided for ${tmpPermission.email}`,
+        `${tmpPermission.action} access provided for ${tmpPermission.email}`,
         createPermissionDto.createdBy,
         Source.MANAGER,
         JSON.stringify(tmpPermission)
@@ -123,7 +123,7 @@ export class PermissionService {
             Action.PERMISSION_DELETED,
             'NA',
             'NA',
-            `${permission.action.toString()} access deleted for ${permission.email}`,
+            `${permission.action} access removed for ${permission.email}`,
             deletePermissionDto.createdBy,
             Source.MANAGER,
             JSON.stringify(permission)
