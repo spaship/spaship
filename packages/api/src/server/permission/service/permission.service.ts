@@ -54,6 +54,7 @@ export class PermissionService {
    */
   async createPermission(createPermissionDto: CreatePermissionDto): Promise<Permission[]> {
     const permissions = this.permissionFactory.createNewPermissions(createPermissionDto);
+    const authActionLookup = new Set((await this.dataServices.authActionLookup.getAll()).map((action) => action.name));
     const savedPermissions = [];
     this.loggerService.log('CreatePermissions', JSON.stringify(permissions));
     for (const permission of permissions) {
@@ -65,7 +66,7 @@ export class PermissionService {
             propertyIdentifier: permission.propertyIdentifier
           })
         )[0];
-        if (!checkUserPermission) {
+        if (!checkUserPermission && authActionLookup.has(permission.action)) {
           await this.dataServices.permission.create(permission);
           savedPermissions.push(permission);
         }
