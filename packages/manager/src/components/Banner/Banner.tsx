@@ -85,11 +85,11 @@ export const Banner = ({ children, backRef, title }: Props): JSX.Element => {
           <Breadcrumb>
             <BreadcrumbItem isActive={asPath === '/properties'}>
               {asPath === '/properties' ? (
-                <HomeIcon />
+                <HomeIcon color="#030303" />
               ) : (
                 <Link href="/properties">
                   <a>
-                    <HomeIcon />
+                    <HomeIcon color="030303" />
                   </a>
                 </Link>
               )}
