@@ -146,13 +146,11 @@ const fetchMonthlyDeploymentChartWithEphemeral = async (): Promise<
 };
 
 const sortWeeklyDeployments = (arr: IDeploymentData[]) =>
-  arr
-    .sort((a: IDeploymentData, b: IDeploymentData) => (a.startDate > b.startDate ? 1 : -1))
-    .map((ele: IDeploymentData) => ({
-      name: `${ele.env.toLocaleUpperCase()}`,
-      x: `${dayjs(ele.startDate).format('DD MMM')} - ${dayjs(ele.endDate).format('DD MMM')}`,
-      y: ele.count
-    }));
+  arr.map((ele: IDeploymentData) => ({
+    name: `${ele.env}`,
+    x: `${dayjs(ele.startDate).format('DD MMM')} - ${dayjs(ele.endDate).format('DD MMM')}`,
+    y: ele.count
+  }));
 
 export const useGetMonthlyDeploymentChartWithEphemeral = () =>
   useQuery({
@@ -162,14 +160,14 @@ export const useGetMonthlyDeploymentChartWithEphemeral = () =>
       qa?: IDeploymentData[];
       stage?: IDeploymentData[];
       dev?: IDeploymentData[];
-      uatprod?: IDeploymentData[];
+      prod?: IDeploymentData[];
       ephemeral?: IDeploymentData[];
     }) => {
       const monthlyDelpoymentData: {
         qa?: any[];
         stage?: any[];
         dev?: any[];
-        uatprod?: any[];
+        prod?: any[];
         lastMonthEphemeral?: number;
         maxDeploymentCount?: number;
         minDeploymentCount?: number;
@@ -177,20 +175,20 @@ export const useGetMonthlyDeploymentChartWithEphemeral = () =>
       monthlyDelpoymentData.qa = sortWeeklyDeployments(data.qa || []);
       monthlyDelpoymentData.stage = sortWeeklyDeployments(data.stage || []);
       monthlyDelpoymentData.dev = sortWeeklyDeployments(data.dev || []);
-      monthlyDelpoymentData.uatprod = sortWeeklyDeployments(data.uatprod || []);
+      monthlyDelpoymentData.prod = sortWeeklyDeployments(data.prod || []);
       monthlyDelpoymentData.lastMonthEphemeral =
         data.ephemeral?.reduce((acc, obj) => acc + obj.count, 0) || 0;
       monthlyDelpoymentData.minDeploymentCount = Math.min(
         data.qa?.reduce((acc, obj) => Math.min(acc, obj.count), data?.qa?.[0]?.count) || 0,
         data.stage?.reduce((acc, obj) => Math.min(acc, obj.count), data?.stage?.[0]?.count) || 0,
         data.dev?.reduce((acc, obj) => Math.min(acc, obj.count), data?.dev?.[0]?.count) || 0,
-        data.uatprod?.reduce((acc, obj) => Math.min(acc, obj.count), data?.uatprod?.[0]?.count) || 0
+        data.prod?.reduce((acc, obj) => Math.min(acc, obj.count), data?.prod?.[0]?.count) || 0
       );
       monthlyDelpoymentData.maxDeploymentCount = Math.max(
         data.qa?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0,
         data.stage?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0,
         data.dev?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0,
-        data.uatprod?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0
+        data.prod?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0
       );
       return monthlyDelpoymentData;
     }

@@ -30,10 +30,12 @@ export const DashboardPage = (): JSX.Element => {
     <div style={{ display: 'flex', flexDirection: 'row', height: '10%' }}>
       <div style={{ width: '55%' }}>
         <Analytics
-          QAData={TotalMonthlyDeploymentData?.qa}
-          ProdData={TotalMonthlyDeploymentData?.uatprod}
-          DevData={TotalMonthlyDeploymentData?.dev}
-          StageData={TotalMonthlyDeploymentData?.stage}
+          TotalMonthlyDeploymentData={{
+            qa: TotalMonthlyDeploymentData?.qa,
+            prod: TotalMonthlyDeploymentData?.prod,
+            dev: TotalMonthlyDeploymentData?.dev,
+            stage: TotalMonthlyDeploymentData?.stage
+          }}
           Totaldeployment={Totaldeployment}
           TotalProperty={TotalProperty}
           averageDeploymentTime={averageDeploymentTime}

@@ -5,6 +5,7 @@ import { Action } from 'src/server/analytics/activity-stream.entity';
 import { AnalyticsService } from 'src/server/analytics/service/analytics.service';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { Source } from 'src/server/property/property.entity';
+import { ROLE } from 'src/server/role/role.entity';
 import { CreatePermissionDto, DeletePermissionDto, PermissionDetailsDto } from '../permission.dto';
 import { Permission } from '../permission.entity';
 import { PermissionFactory } from './permission.factory';
@@ -32,12 +33,18 @@ export class PermissionService {
     name: string,
     email: string,
     action: string,
+    group: string,
     skip: number = PermissionService.defaultSkip,
     limit: number = PermissionService.defaultLimit
   ): Promise<Permission[]> {
     const keys = { propertyIdentifier, name, email, action };
     Object.keys(keys).forEach((key) => (keys[key] === undefined || keys[key] === '') && delete keys[key]);
-    return this.dataServices.permission.getByOptions(keys, { createdAt: -1 }, skip, limit);
+    const response = await this.dataServices.permission.getByOptions(keys, { createdAt: -1 }, skip, limit);
+    if (group === 'email') {
+      const role = (await this.dataServices.role.getByAny({ name: ROLE.OWNER }))[0];
+      return this.permissionFactory.groupPermission(response, role.actions.length);
+    }
+    return response;
   }
 
   /* @internal
@@ -47,6 +54,8 @@ export class PermissionService {
    */
   async createPermission(createPermissionDto: CreatePermissionDto): Promise<Permission[]> {
     const permissions = this.permissionFactory.createNewPermissions(createPermissionDto);
+    const authActionLookup = new Set((await this.dataServices.authActionLookup.getAll()).map((action) => action.name));
+    const savedPermissions = [];
     this.loggerService.log('CreatePermissions', JSON.stringify(permissions));
     for (const permission of permissions) {
       try {
@@ -57,24 +66,27 @@ export class PermissionService {
             propertyIdentifier: permission.propertyIdentifier
           })
         )[0];
-        if (!checkUserPermission) await this.dataServices.permission.create(permission);
+        if (!checkUserPermission && authActionLookup.has(permission.action)) {
+          await this.dataServices.permission.create(permission);
+          savedPermissions.push(permission);
+        }
       } catch (err) {
         this.loggerService.error('CreatePermissions', err);
       }
     }
-    for (const tmpPermission of createPermissionDto.permissionDetails) {
+    for (const tmpPermission of savedPermissions) {
       await this.analyticsService.createActivityStream(
         createPermissionDto.propertyIdentifier,
         Action.PERMISSION_CREATED,
         'NA',
         'NA',
-        `${tmpPermission.actions.toString()} access provided for ${tmpPermission.email}`,
+        `${tmpPermission.action} access provided for ${tmpPermission.email}`,
         createPermissionDto.createdBy,
         Source.MANAGER,
         JSON.stringify(tmpPermission)
       );
     }
-    return permissions;
+    return savedPermissions;
   }
 
   // @internal Provide intial access for the Property Creator
@@ -112,7 +124,7 @@ export class PermissionService {
             Action.PERMISSION_DELETED,
             'NA',
             'NA',
-            `${permission.action.toString()} access deleted for ${permission.email}`,
+            `${permission.action} access removed for ${permission.email}`,
             deletePermissionDto.createdBy,
             Source.MANAGER,
             JSON.stringify(permission)
@@ -124,7 +136,7 @@ export class PermissionService {
     }
     if (deletedRecords.length === 0)
       this.exceptionService.badRequestException({
-        message: `No Permission found for ${deletePermissionDto.propertyIdentifier}.`
+        message: `No Deletable Permission found for ${deletePermissionDto.propertyIdentifier}.`
       });
     return deletedRecords;
   }

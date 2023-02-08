@@ -45,12 +45,16 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
     try {
       // @internal Validating the JWT Token
       validated = Boolean(this.jwtService.verify(bearerToken, options));
+    } catch (err) {
+      this.exceptionsService.UnauthorizedException(err.message);
+    }
+    try {
       if (validated) {
         await this.isAuthorized(bearerToken, context);
         return true;
       }
     } catch (err) {
-      this.exceptionsService.UnauthorizedException(err.message);
+      this.exceptionsService.forbiddenException(err.message);
     }
     return false;
   }
@@ -63,9 +67,13 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
     const checkResource = (await this.dataServices.authActionLookup.getByAny({ resource, method }))[0];
     if (checkResource) {
       const email = JSON.parse(JSON.stringify(payload)).email;
+      if (!propertyIdentifier)
+        this.exceptionsService.badRequestException({
+          message: `Please provide the PropertyIdentifier.`
+        });
       const authorized = (await this.dataServices.permission.getByAny({ propertyIdentifier, email, action: checkResource.name }))[0];
       if (!authorized)
-        this.exceptionsService.badRequestException({
+        this.exceptionsService.UnauthorizedException({
           message: `${email} is not authorized to perform this action, please connect with ${propertyIdentifier} owner.`
         });
       context.getArgs()[0].body.createdBy = email;
