@@ -52,7 +52,7 @@ type Props = {
   token?: string;
 };
 
-export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props): JSX.Element => {
+export const CreateAPIKeyForm = ({ onSubmit, onClose, envs, token }: Props): JSX.Element => {
   const {
     control,
     handleSubmit,
