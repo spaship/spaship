@@ -4,23 +4,27 @@ import { DocumentCard } from './components/DocumentCard';
 
 const gettingStartedData = [
   {
+    id: 1,
     title: 'On-Boarding to SPAship Cloud Native Version ',
     linkhere:
       'https://source.redhat.com/groups/public/spaship/blog_article/onboarding_to_spaship_cloud_native_version',
     footer: 'Getting-Started'
   },
   {
+    id: 2,
     title: 'SPAship CLI Guide ',
     linkhere: 'https://spaship.io/docs/guide/user-guide/cli/',
     footer: 'CLI Instructions'
   },
   {
+    id: 3,
     title: 'SPAship Manager & CLI Guide',
     linkhere: 'https://drive.google.com/file/d/150OyktZdmqMXKwNS1mDkqIo7ZvgyCCGp/view',
     footer: 'Manager and CLI Workflow',
     isIcon: true
   },
   {
+    id: 4,
     title: 'SPAship CLI Instruction ',
     linkhere:
       'https://drive.google.com/file/d/1G4B8AKu_8M6fVEMd8WtXHgLhf__Xl2mt/view?usp=share_link',
@@ -30,12 +34,14 @@ const gettingStartedData = [
 ];
 const aboutAllData = [
   {
+    id: 1,
     title: 'SPAship, a quickest way to deploy your SPAs ',
     linkhere:
       'https://source.redhat.com/groups/public/dxp/exd_digital_experience_platforms_dxp_blog/spaship_a_quickest_way_to_deploy_your_spas',
     footer: 'SPAship 2.0'
   },
   {
+    id: 2,
     title: 'SPAship: Baremetal vs Operator ',
     linkhere:
       'https://source.redhat.com/groups/public/dxp/exd_digital_experience_platforms_dxp_blog/draft_spaship_baremetal_vs_operator',
@@ -44,30 +50,35 @@ const aboutAllData = [
 ];
 const newFeaturesData = [
   {
+    id: 1,
     title: 'Introducing Ephemeral Preview feature in SPAship ',
     linkhere:
       'https://source.redhat.com/groups/public/dxp/exd_digital_experience_platforms_dxp_blog/ephemeral_preview_feature_in_spaship',
     footer: 'Preview Enviroment for Deployment'
   },
   {
+    id: 2,
     title: 'Getting Deployment Status in Reltime',
     linkhere:
       'https://source.redhat.com/groups/public/dxp/exd_digital_experience_platforms_dxp_blog/get_your_deployment_status_in_realtime',
     footer: 'SSE & Notifications'
   },
   {
+    id: 3,
     title: 'Introducing Sync service in SPAship ',
     linkhere:
       'https://source.redhat.com/groups/public/dxp/exd_digital_experience_platforms_dxp_blog/introducing_sync_service_in_spaship',
     footer: 'SSI Configuration'
   },
   {
+    id: 4,
     title: 'SPAship Release Logs ',
     linkhere:
       'https://docs.google.com/document/u/1/d/1tdwBCT9d3n3lJnjpiD7B67304Tgl2URwnKwSwGasNHk/edit',
     footer: 'Version Update '
   },
   {
+    id: 5,
     title: 'SPAship FAQ',
     linkhere:
       'https://docs.google.com/document/d/143ezNXxfujOiTe3VD0cc0ZBYL92F_fSpYCFJUzzDoiQ/edit',
@@ -82,9 +93,8 @@ export const DocumentsPage = (): JSX.Element => (
     </Title>
     <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
       <Gallery hasGutter>
-        {gettingStartedData.map(({ title, linkhere, footer, isIcon }) => (
-          // eslint-disable-next-line react/jsx-key
-          <GalleryItem>
+        {gettingStartedData.map(({ title, linkhere, footer, isIcon, id }) => (
+          <GalleryItem key={id}>
             <DocumentCard title={title} linkhere={linkhere} footer={footer} isIcon={isIcon} />
           </GalleryItem>
         ))}
@@ -95,9 +105,8 @@ export const DocumentsPage = (): JSX.Element => (
     </Title>
     <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
       <Gallery hasGutter>
-        {newFeaturesData.map(({ title, linkhere, footer }) => (
-          // eslint-disable-next-line react/jsx-key
-          <GalleryItem>
+        {newFeaturesData.map(({ title, linkhere, footer, id }) => (
+          <GalleryItem key={id}>
             <DocumentCard title={title} linkhere={linkhere} footer={footer} />
           </GalleryItem>
         ))}
@@ -108,9 +117,8 @@ export const DocumentsPage = (): JSX.Element => (
     </Title>
     <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
       <Gallery hasGutter>
-        {aboutAllData.map(({ title, linkhere, footer }) => (
-          // eslint-disable-next-line react/jsx-key
-          <GalleryItem>
+        {aboutAllData.map(({ title, linkhere, footer, id }) => (
+          <GalleryItem key={id}>
             <DocumentCard title={title} linkhere={linkhere} footer={footer} />
           </GalleryItem>
         ))}
