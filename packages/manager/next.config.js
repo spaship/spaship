@@ -4,8 +4,8 @@ const withConfig = withGlobalCss();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
+  reactStrictMode: false,
+  swcMinify: false,
   output: 'standalone'
 };
 

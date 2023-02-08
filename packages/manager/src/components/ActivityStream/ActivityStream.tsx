@@ -20,7 +20,8 @@ import {
   ExclamationCircleIcon,
   OutlinedClockIcon,
   SyncAltIcon,
-  TimesIcon
+  TimesIcon,
+  UserIcon
 } from '@patternfly/react-icons';
 import Link from 'next/link';
 import { useEffect } from 'react';
@@ -208,6 +209,31 @@ const activities = {
         {' '}
         deleted{' '}
       </Label>
+    </Text>
+  ),
+
+  PERMISSION_CREATED: ({ message }: TWebPropActivityStream): JSX.Element => (
+    <Text component={TextVariants.small}>
+      <Label icon={<CubeIcon />} color="cyan" isCompact>
+        {message.split(' ')[0].replace('_', ' ')}
+      </Label>{' '}
+      access{' '}
+      <Label color="green" icon={<CheckIcon />} variant="outline" isCompact>
+        {message.split(' ')[2]}
+      </Label>{' '}
+      for <UserIcon /> {message.split(' ')[4]}
+    </Text>
+  ),
+  PERMISSION_DELETED: ({ message }: TWebPropActivityStream): JSX.Element => (
+    <Text component={TextVariants.small}>
+      <Label icon={<CubeIcon />} color="cyan" isCompact>
+        {message.split(' ')[0].replace('_', ' ')}
+      </Label>{' '}
+      access{' '}
+      <Label color="red" icon={<TimesIcon />} variant="outline" isCompact>
+        {message.split(' ')[2]}
+      </Label>{' '}
+      for <UserIcon /> {message.split(' ')[4]}
     </Text>
   )
 } as any;
