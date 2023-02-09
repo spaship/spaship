@@ -36,6 +36,8 @@ import {
   Tr
 } from '@patternfly/react-table';
 import toast from 'react-hot-toast';
+import { toPascalCase } from '@app/utils/toPascalConvert';
+
 
 export const schema = yup.object({
   // TODO: change this to URL validation, after server supports http protocol append
@@ -85,12 +87,12 @@ export const EditMemberAccess = ({
   const columnNames2 = {
     NAME: 'Name',
     ROLE: 'Role',
-    APIKEY_CREATION: 'APIKEY CREATION',
-    APIKEY_DELETION: 'APIKEY DELETION',
-    PERMISSION_CREATION: 'PERMISSION CREATION',
-    PERMISSION_DELETION: 'PERMISSION DELETION',
-    ENV_CREATION: 'ENV CREATION',
-    ENV_SYNC: 'ENV SYNC'
+    APIKEY_CREATION: 'APIKEY_CREATION',
+    APIKEY_DELETION: 'APIKEY_DELETION',
+    PERMISSION_CREATION: 'PERMISSION_CREATION',
+    PERMISSION_DELETION: 'PERMISSION_DELETION',
+    ENV_CREATION: 'ENV_CREATION',
+    ENV_SYNC: 'ENV_SYNC'
   };
   const onToggleAccordian = async (id: string) => {
     if (id === expanded) {
@@ -112,6 +114,7 @@ export const EditMemberAccess = ({
     const addAccess1: any = addAccess;
     const deleteAccess1: any = deleteAccess;
     temp.filter((e: any) => e.email === email)[0][target.name] = checked;
+    console.log(temp, "temp")
     setGroup({ data: temp });
     if (checked) {
       addAccess1.push(target.name as never);
@@ -123,6 +126,7 @@ export const EditMemberAccess = ({
     setaddAccess(addAccess1);
     setdeleteAccess(deleteAccess1);
   };
+
   const onToggleDropdown = (isOpen: boolean, event: any) => {
     // event.stopPropagation()
     setIsOpenDropdown(isOpen);
@@ -135,6 +139,7 @@ export const EditMemberAccess = ({
     setIsOpenDropdown(false);
     onFocusDropdown();
   };
+
   const dropdownItems = [
     <DropdownItem key="link" tooltip="Tooltip for enabled link">
       Link
@@ -165,22 +170,44 @@ export const EditMemberAccess = ({
         }
       ]
     };
-    try {
-      useDeletePermission(removeResult as any);
-      toast.success('Permission deleted successfully');
-    } catch (error) {
-      toast.error('Permission not deletd ');
+
+
+    if (deleteAccess.length !== 0) {
+      try {
+        useDeletePermission(removeResult as any);
+        onClose()
+        toast.success('Permission updated successfully');
+      } catch (error) {
+        toast.error('Permission not deletd ');
+      }
     }
-    //  useAddPermission(addresult)
-    try {
-      useAddPermission1.mutateAsync({
-        ...addresult as any
-      });
-      toast.success('Permission added successfully');
-    } catch (error) {
-      toast.error('Permission not added ');
+    if (addAccess.length !== 0) {
+
+      //  useAddPermission(addresult)
+      try {
+        useAddPermission1.mutateAsync({
+          ...addresult as any
+        });
+        onClose()
+        toast.success('Permission updated successfully');
+      } catch (error) {
+        toast.error('Permission not added ');
+      }
     }
   };
+
+
+  // const toPascalCase = (sentence) => sentence
+  // .toLowerCase()
+  // .replace(new RegExp(/[^\w\s]/, 'g'), '')
+  // .replace('_', ' ')
+  // .trim()
+  // .split(' ')
+  // .map(word => word[0]
+  // .toUpperCase()
+  // .concat(word.slice(1)))
+  // .join(' ');
+
   return (
     <div>
       <div>
@@ -199,7 +226,7 @@ export const EditMemberAccess = ({
                   {editMemberName}
                 </SplitItem>
                 <SplitItem style={{ display: 'flex', justifyContent: 'end' }} isFilled>
-                  {group.data[0].role}
+                  {toPascalCase(group.data[0].role)}
                 </SplitItem>
               </Split>
             </AccordionToggle>
@@ -208,16 +235,16 @@ export const EditMemberAccess = ({
               isHidden={expanded !== `def-list-toggle1_${editMemberName}`}
             >
               <TableComposable>
-                <Thead>
+                <Thead noWrap={true}>
                   <Tr>
                     <Th>{columnNames2.NAME}</Th>
                     {/* <Th>{columnNames2.ROLE}</Th> */}
-                    <Th>{columnNames2.APIKEY_CREATION}</Th>
-                    <Th>{columnNames2.APIKEY_DELETION}</Th>
-                    <Th>{columnNames2.PERMISSION_CREATION}</Th>
-                    <Th>{columnNames2.PERMISSION_DELETION}</Th>
-                    <Th>{columnNames2.ENV_CREATION}</Th>
-                    <Th>{columnNames2.ENV_SYNC}</Th>
+                    <Th>{toPascalCase(columnNames2.APIKEY_CREATION)}</Th>
+                    <Th>{toPascalCase(columnNames2.APIKEY_DELETION)}</Th>
+                    <Th>{toPascalCase(columnNames2.PERMISSION_CREATION)}</Th>
+                    <Th>{toPascalCase(columnNames2.PERMISSION_DELETION)}</Th>
+                    <Th>{toPascalCase(columnNames2.ENV_CREATION)}</Th>
+                    <Th>{toPascalCase(columnNames2.ENV_SYNC)}</Th>
                   </Tr>
                 </Thead>
                 <Tbody>

@@ -38,8 +38,11 @@ import {
   PlusIcon,
   SyncAltIcon,
   TimesCircleIcon,
-  TrashIcon
+  TrashIcon,
+  UserIcon
 } from '@patternfly/react-icons';
+
+
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
@@ -63,6 +66,7 @@ import { SyncServiceForm } from './components/SyncServiceForm';
 import { AddMembers } from './components/AddMembers/AddMembers';
 import { ConfigureAccess } from './components/ConfigureAccess/ConfigureAccess';
 import { EditMemberAccess } from './components/EditAccess/EditMemberAccess';
+import { toPascalCase } from '@app/utils/toPascalConvert';
 
 function getExpiryDayDiff(expiry: string) {
   const currentDate = new Date();
@@ -435,6 +439,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
           </StackItem>
 
           {/* RBAC */}
+          
           <StackItem>
             <Card className="pf-u-mt-lg">
               <CardHeader>
@@ -459,7 +464,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                 </CardActions>
               </CardHeader>
               <CardBody>
-                {memberList.isLoading && <TableRowSkeleton columns={7} rows={3} />}
+              {memberList.isLoading && <TableRowSkeleton columns={7} rows={3} />}
                 {!memberList.isLoading &&
                   (memberList?.data?.length === 0 || memberList.isError) && (
                     <div>
@@ -496,13 +501,18 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                               </SplitItem>
                             </Split>
                           </Td>
+                          {/* <Td>
+                          <b><UserIcon/> {key.role} &nbsp;&nbsp;</b> 
+                          </Td> */}
                           {key.role !== 'ADMIN' ? (
                             <Td
                               className="pf-u-display-flex pf-u-justify-content-flex-end"
                               dataLabel={key.role}
                             >
-                              {key.role} &nbsp;&nbsp;
-                              <Button
+                              <Split hasGutter>
+                              <SplitItem style={{color:"#333333"}} ><b><UserIcon/> {toPascalCase(key.role)} &nbsp;&nbsp;</b> </SplitItem>
+                               <SplitItem> 
+                                <Button
                                 variant="tertiary"
                                 icon={<PencilAltIcon />}
                                 onClick={() => {
@@ -516,13 +526,20 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                               <Button
                                 variant="secondary"
                                 isDanger
+                                isDisabled={key.email===session?.user.email}
                                 icon={<TrashIcon />}
                                 onClick={() => {
                                   handlePopUpOpen('deleteMember'), setDeleteMemberName(key.name);
                                 }}
                               >
+                                
                                 Delete
                               </Button>
+                              </SplitItem>
+                              </Split>
+                             
+                             
+                             
                             </Td>
                           ) : (
                             <Td dataLabel={key.role}>{key.role} </Td>
@@ -591,7 +608,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
 
       <Modal
         title="Add Members"
-        variant={ModalVariant.medium}
+        variant={ModalVariant.large}
         isOpen={popUp.addMembers.isOpen}
         onClose={() => handlePopUpClose('addMembers')}
       >
@@ -600,22 +617,26 @@ export const WebPropertyEnvPage = (): JSX.Element => {
 
       <Modal
         title="Configure Access"
-        variant={ModalVariant.medium}
+        variant={ModalVariant.large}
         isOpen={popUp.configureAccess.isOpen}
         onClose={() => handlePopUpClose('configureAccess')}
       >
+      
         <ConfigureAccess
-          onClose={() => handlePopUpClose('configureAccess')}
-          // onSubmit={handleConfigureAccess}
+          onClose={() => {handlePopUpClose('configureAccess')}}
+       
           editMemberName={editMemberName}
           propertyIdentifier={propertyIdentifier}
-          memberList={memberList}
+          memberList={new Object(memberList)}
+          flagOpen={popUp.configureAccess.isOpen}
+       
         />
+        {/* {console.log("memberlist in web",memberList['data'])} */}
       </Modal>
 
       <Modal
         title={`Editing Access for ${editMemberName}`}
-        variant={ModalVariant.medium}
+        variant={ModalVariant.large}
         isOpen={popUp.editMemberAccess.isOpen}
         onClose={() => handlePopUpClose('editMemberAccess')}
       >
