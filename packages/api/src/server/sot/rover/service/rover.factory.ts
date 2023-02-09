@@ -13,7 +13,7 @@ export class RoverFactory {
     const headers = { Authorization: `Basic ${ROVER_AUTH.cred}`, rejectUnauthorized: false };
     let response;
     try {
-      response = await this.httpService.axiosRef.get(`${ROVER_AUTH.baseUrl}/groups/api/v1/users?fields=uid,cn,mail&criteria=${key}`, {
+      response = await this.httpService.axiosRef.get(`${ROVER_AUTH.baseUrl}/groups/api/v1/users?fields=mail,cn&criteria=${key}`, {
         headers
       });
       return await this.transformSubject(response.data.result.result);

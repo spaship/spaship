@@ -58,7 +58,9 @@ export class PermissionFactory {
         name: allowedPermissions[0].name,
         role: allowedPermissions.length === allPermissionsLength ? ROLE.OWNER : ROLE.USER
       };
-      allowedPermissions.forEach(key => { data[key.action] = true });
+      allowedPermissions.forEach((key) => {
+        data[key.action] = true;
+      });
       groupedResponse.push(data);
     }
     return groupedResponse;
