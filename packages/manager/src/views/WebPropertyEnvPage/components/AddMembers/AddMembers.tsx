@@ -15,14 +15,15 @@ import {
   SplitItem,
   Tab,
   Tabs,
-  TabTitleText
+  TabTitleText,
+  Spinner
 } from '@patternfly/react-core';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import * as yup from 'yup';
-
+import { toPascalCase } from '@app/utils/toPascalConvert';
 export const schema = yup.object({
   // TODO: change this to URL validation, after server supports http protocol append
   url: yup.string().label('Hostname URL').trim().required().max(250),
@@ -198,6 +199,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
   }, [JSON.stringify(newUserDetails), selected, roverList]);
 
   const onToggle = (isOpen: boolean) => {
+    console.log("onToggle", isOpen, userList)
     userList.length && setIsOpen(isOpen);
   };
   const onSelect: SelectProps['onSelect'] = (event, selection) => {
@@ -219,12 +221,12 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
   const columnNames2 = {
     NAME: 'Name',
     ROLE: 'Role',
-    APIKEY_CREATION: 'APIKEY CREATION',
-    APIKEY_DELETION: 'APIKEY DELETION',
-    PERMISSION_CREATION: 'PERMISSION CREATION',
-    PERMISSION_DELETION: 'PERMISSION DELETION',
-    ENV_CREATION: 'ENV CREATION',
-    ENV_SYNC: 'ENV SYNC'
+    APIKEY_CREATION: 'APIKEY_CREATION',
+    APIKEY_DELETION: 'APIKEY_DELETION',
+    PERMISSION_CREATION: 'PERMISSION_CREATION',
+    PERMISSION_DELETION: 'PERMISSION_DELETION',
+    ENV_CREATION: 'ENV_CREATION',
+    ENV_SYNC: 'ENV_SYNC'
   };
   const onToggleAccordian = async (id: string) => {
     if (id === expanded) {
@@ -248,16 +250,21 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
 
   const debounceCustom = (delay: number): SelectProps['onFilter'] => {
     let timer: any;
+    console.log("In debounce", timer, delay)
     return (
       e: React.ChangeEvent<HTMLInputElement> | null,
       value: string
     ): React.ReactElement[] | undefined => {
       clearInterval(timer);
       timer = setTimeout(async () => {
-        setUserList(await fetchUserlist(value));
-        return fetchUserlist(value);
+        if (value.length >= 3) {
+          console.log("inside dounce if", new Date(), value)
+          const res = await fetchUserlist(value)
+          await setUserList(res);
+          setIsOpen(true)
+        }
       }, delay);
-      return [];
+      return
     };
   };
 
@@ -303,7 +310,6 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
         v[a] && a !== 'name' && a !== 'email' && a !== 'role' && tempActions.push(a);
       });
       temp.actions = tempActions;
-      console.log('temoactions', tempActions, temp);
       addPerm = [...addPerm, temp];
     });
     addData.propertyIdentifier = propertyIdentifier;
@@ -351,10 +357,12 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
     ): React.ReactElement[] | undefined => {
       clearInterval(timer);
       timer = setTimeout(async () => {
-        addRoletoroverGroup(await fetchRoverGroup(value));
-        return fetchRoverGroup(value);
+        const res = await fetchRoverGroup(value)
+        addRoletoroverGroup(res);
+        // return fetchRoverGroup(value);
+        setIsOpenRover(true)
       }, delay);
-      return [];
+      return 
     };
   };
 
@@ -371,11 +379,14 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
         title={<TabTitleText>Email</TabTitleText>}
         aria-label="Default content - users"
       >
+
         <div>
           <br />
           Email
           <br />
           <br />
+          
+      
           <Select
             variant={SelectVariant.typeaheadMulti}
             onFilter={debounceCustom(500)}
@@ -387,6 +398,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             aria-labelledby={titleId}
             placeholderText="Kindly enter an email"
           >
+
             {(userList || []).map((option, index) => (
               <SelectOption
                 key={index}
@@ -395,6 +407,8 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
               />
             ))}
           </Select>
+        
+         
           <br />
           <Button
             style={{ display: 'flex', float: 'right' }}
@@ -412,16 +426,16 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
           <br />
           {isShowAdvancedViewEnabled && Object.keys(columnNames2).length ? (
             <TableComposable>
-              <Thead>
+              <Thead noWrap={true}>
                 <Tr>
                   <Th>{columnNames2.NAME}</Th>
                   {/* <Th>{columnNames2.ROLE}</Th> */}
-                  <Th>{columnNames2.APIKEY_CREATION}</Th>
-                  <Th>{columnNames2.APIKEY_DELETION}</Th>
-                  <Th>{columnNames2.PERMISSION_CREATION}</Th>
-                  <Th>{columnNames2.PERMISSION_DELETION}</Th>
-                  <Th>{columnNames2.ENV_CREATION}</Th>
-                  <Th>{columnNames2.ENV_SYNC}</Th>
+                  <Th>{toPascalCase(columnNames2.APIKEY_CREATION)}</Th>
+                  <Th>{toPascalCase(columnNames2.APIKEY_DELETION)}</Th>
+                  <Th>{toPascalCase(columnNames2.PERMISSION_CREATION)}</Th>
+                  <Th>{toPascalCase(columnNames2.PERMISSION_DELETION)}</Th>
+                  <Th>{toPascalCase(columnNames2.ENV_CREATION)}</Th>
+                  <Th>{toPascalCase(columnNames2.ENV_SYNC)}</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -528,16 +542,16 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                       isHidden={expanded !== `def-list-toggle1_${v.email}`}
                     >
                       <TableComposable>
-                        <Thead>
+                        <Thead noWrap={true}>
                           <Tr>
-                            <Th>{columnNames2.NAME}</Th>
-                            {/* <Th>{columnNames2.ROLE}</Th> */}
-                            <Th>{columnNames2.APIKEY_CREATION}</Th>
-                            <Th>{columnNames2.APIKEY_DELETION}</Th>
-                            <Th>{columnNames2.PERMISSION_CREATION}</Th>
-                            <Th>{columnNames2.PERMISSION_DELETION}</Th>
-                            <Th>{columnNames2.ENV_CREATION}</Th>
-                            <Th>{columnNames2.ENV_SYNC}</Th>
+                            <Th>{toPascalCase(columnNames2.NAME)}</Th>
+                            {/* <toPascalCase(Th>{columnNames2.ROLE}</T)h> */}
+                            <Th>{toPascalCase(columnNames2.APIKEY_CREATION)}</Th>
+                            <Th>{toPascalCase(columnNames2.APIKEY_DELETION)}</Th>
+                            <Th>{toPascalCase(columnNames2.PERMISSION_CREATION)}</Th>
+                            <Th>{toPascalCase(columnNames2.PERMISSION_DELETION)}</Th>
+                            <Th>{toPascalCase(columnNames2.ENV_CREATION)}</Th>
+                            <Th>{toPascalCase(columnNames2.ENV_SYNC)}</Th>
                           </Tr>
                         </Thead>
                         <Tbody>
@@ -637,6 +651,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
           Add Rover Group
           <br />
           <br />
+        
           <Select
             variant={SelectVariant.typeaheadMulti}
             onFilter={debounceCustomRover(500)}
@@ -644,7 +659,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             onSelect={onSelectRover}
             onClear={clearSelectionRover}
             selections={selected}
-            isOpen={isOpen}
+            isOpen={isOpenRover}
             aria-labelledby={titleId}
             placeholderText="Kindly enter an full rover group name"
           >
@@ -673,7 +688,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
           <br />
           {isShowAdvancedViewEnabledRover && Object.keys(columnNames2).length ? (
             <TableComposable>
-              <Thead>
+              <Thead noWrap={true}>
                 <Tr>
                   <Th>{columnNames2.NAME}</Th>
                   {/* <Th>{columnNames2.ROLE}</Th> */}
@@ -770,7 +785,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                       isHidden={expanded !== `def-list-toggle1_${v.email}`}
                     >
                       <TableComposable>
-                        <Thead>
+                        <Thead noWrap={true}>
                           <Tr>
                             <Th>{columnNames2.NAME}</Th>
                             {/* <Th>{columnNames2.ROLE}</Th> */}
