@@ -36,10 +36,12 @@ import {
   OutlinedCalendarAltIcon,
   PencilAltIcon,
   PlusIcon,
+  SecurityIcon,
   SyncAltIcon,
   TimesCircleIcon,
   TrashIcon,
-  UserIcon
+  UserIcon,
+  WrenchIcon
 } from '@patternfly/react-icons';
 
 
@@ -459,12 +461,14 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                     isSmall
                     onClick={() => handlePopUpOpen('configureAccess')}
                   >
-                    Configure Access
+                   <WrenchIcon /> Configure Access
                   </Button>
                 </CardActions>
               </CardHeader>
               <CardBody>
-              {memberList.isLoading && <TableRowSkeleton columns={7} rows={3} />}
+              {memberList.isLoading && 
+               <TableComposable isStriped><TableRowSkeleton columns={7} rows={3} /></TableComposable>}
+
                 {!memberList.isLoading &&
                   (memberList?.data?.length === 0 || memberList.isError) && (
                     <div>
@@ -501,16 +505,15 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                               </SplitItem>
                             </Split>
                           </Td>
-                          {/* <Td>
-                          <b><UserIcon/> {key.role} &nbsp;&nbsp;</b> 
-                          </Td> */}
+                         
                           {key.role !== 'ADMIN' ? (
                             <Td
                               className="pf-u-display-flex pf-u-justify-content-flex-end"
                               dataLabel={key.role}
                             >
                               <Split hasGutter>
-                              <SplitItem style={{color:"#333333"}} ><b><UserIcon/> {toPascalCase(key.role)} &nbsp;&nbsp;</b> </SplitItem>
+                              <SplitItem isFilled/> 
+                              <SplitItem style={{color:"#333333"}} ><b> {toPascalCase(key.role) === "Owner"? <SecurityIcon/>:<UserIcon/>} {toPascalCase(key.role)} &nbsp;&nbsp;</b> </SplitItem>
                                <SplitItem> 
                                 <Button
                                 variant="tertiary"
@@ -631,7 +634,6 @@ export const WebPropertyEnvPage = (): JSX.Element => {
           flagOpen={popUp.configureAccess.isOpen}
        
         />
-        {/* {console.log("memberlist in web",memberList['data'])} */}
       </Modal>
 
       <Modal
