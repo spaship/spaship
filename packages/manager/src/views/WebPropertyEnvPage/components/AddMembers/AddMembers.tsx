@@ -109,6 +109,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
   const [selectedRover, setSelectedRover] = React.useState<any[]>([]);
   const [roverList, setRoverList] = React.useState<any[]>([]);
 
+
   const propertyIdentifier = query.propertyIdentifier as string;
 
   const handleTabClick = (
@@ -322,9 +323,9 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
         ...addData as any
       });
       onClose()
-      toast.success('Members added successfully');
+      // toast.success('Members added successfully');
     } catch (error) {
-      toast.error('Members not added ');
+      // toast.error('Members not added ');
     }
   };
 
@@ -348,19 +349,26 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
   };
 
   const addRoletoroverGroup = (roverGroupList: any) => {
-    roverGroupList.map((item: RoverGropListItem) => {
-      item.role = 'User';
-      item.isOpen = false;
-    });
-    setRoverList(roverGroupList);
+    if (roverGroupList!==undefined){
+      roverGroupList.map((item: RoverGropListItem) => {
+        item.role = 'User';
+        item.isOpen = false;
+      });
+      setRoverList(roverGroupList);
+    }
+   else{
+    toast.error("Please enter a valid Rover Group Common Name (cn)")
+   }
   };
   const debounceCustomRover = (delay: number): SelectProps['onFilter'] => {
     let timer: any;
+
     return (
       e: React.ChangeEvent<HTMLInputElement> | null,
       value: string
     ): React.ReactElement[] | undefined => {
       clearInterval(timer);
+   
       timer = setTimeout(async () => {
         if (value.length >= 3) {
           const res = await fetchRoverGroup(value)
@@ -662,7 +670,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
 
           <Select
             variant={SelectVariant.typeaheadMulti}
-            onFilter={debounceCustomRover(500)}
+            onFilter={debounceCustomRover(1000)}
             onToggle={onToggleRover}
             onSelect={onSelectRover}
             onClear={clearSelectionRover}
@@ -670,7 +678,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             // isOpen={isOpenRover}
 
             aria-labelledby={titleId}
-            placeholderText="Kindly enter an full rover group name"
+            placeholderText="Kindly put 'Rover group Common Name'"
           >
             {(roverList || []).map((option, index) => (
               <SelectOption

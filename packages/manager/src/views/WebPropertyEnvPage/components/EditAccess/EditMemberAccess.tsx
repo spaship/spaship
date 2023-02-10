@@ -7,7 +7,8 @@ import {
   fetchRoleForIndividual,
   useAddPermission,
   useGetRoleForIndividual,
-  useDeletePermission
+  useDeletePermission,
+  useDeleteMember
 } from '@app/services/rbac';
 import {
   Button,
@@ -148,7 +149,10 @@ export const EditMemberAccess = ({
     </DropdownItem>
   ];
   const useAddPermission1 = useAddPermission(propertyIdentifier);
+  const deleteMember = useDeleteMember(propertyIdentifier);
   const handleSubmit = () => {
+
+
     const addresult = {
       propertyIdentifier,
       permissionDetails: [
@@ -173,11 +177,14 @@ export const EditMemberAccess = ({
 
     if (deleteAccess.length !== 0) {
       try {
-        useDeletePermission(removeResult as any);
+        deleteMember.mutateAsync({
+          ...removeResult as any
+        });
+        // useDeletePermission(removeResult as any);
         onClose()
-        toast.success('Permission updated successfully');
+        // toast.success('Permission updated successfully');
       } catch (error) {
-        toast.error('Permission not deletd ');
+        // toast.error('Permission not deletd ');
       }
     }
     if (addAccess.length !== 0) {
@@ -188,9 +195,9 @@ export const EditMemberAccess = ({
           ...addresult as any
         });
         onClose()
-        toast.success('Permission updated successfully');
+        // toast.success('Permission updated successfully');
       } catch (error) {
-        toast.error('Permission not added ');
+        // toast.error('Permission not added ');
       }
     }
   };
@@ -309,7 +316,7 @@ export const EditMemberAccess = ({
       </div>
       <br />
       <Button variant="primary" onClick={handleSubmit}>
-        Edit Access
+        Submit
       </Button>
     </div>
   );
