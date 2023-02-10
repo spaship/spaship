@@ -130,12 +130,16 @@ export const Analytics = ({
           >
             <CardTitle>Average time to deploy</CardTitle>
             <CardBody>
-              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}>
-                <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{bestDeploymentTime}s</h1>
-                <h1 style={{ fontSize: '14px', paddingLeft: '8px' }}>
-                  in past {DeploymentTimeFrames[bestDeploymentTimeIndex]}
-                </h1>
-              </div>
+              {bestDeploymentTime ? (
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}>
+                  <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{bestDeploymentTime}s</h1>
+                  <h1 style={{ fontSize: '14px', paddingLeft: '8px' }}>
+                    in past {DeploymentTimeFrames[bestDeploymentTimeIndex]}
+                  </h1>
+                </div>
+              ) : (
+                ''
+              )}
 
               <div
                 style={{ display: 'flex', flexDirection: 'row', gap: '35px', marginTop: '24px' }}
@@ -143,7 +147,9 @@ export const Analytics = ({
                 {DeploymentTimeFrames.map((field, index) => (
                   <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
                     <h1 style={{ fontSize: '12px' }}>{`Past ${field}`}</h1>
-                    <h1 style={{ fontSize: '12px' }}>{averageDeploymentTime[index]}s</h1>
+                    <h1 style={{ fontSize: '12px' }}>
+                      {averageDeploymentTime[index] ? `${averageDeploymentTime[index]}s` : ''}
+                    </h1>
                   </div>
                 ))}
               </div>
