@@ -177,7 +177,6 @@ export const ConfigureAccess = ({
     deleteData.propertyIdentifier = propertyIdentifier;
     deleteData.permissionDetails = deletePerm;
 
-
     try {
       if (addPerm.length !== 0) {
         useAddPermission1.mutateAsync({

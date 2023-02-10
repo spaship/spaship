@@ -114,7 +114,6 @@ export const EditMemberAccess = ({
     const addAccess1: any = addAccess;
     const deleteAccess1: any = deleteAccess;
     temp.filter((e: any) => e.email === email)[0][target.name] = checked;
-    
     setGroup({ data: temp });
     if (checked) {
       addAccess1.push(target.name as never);

@@ -20,12 +20,15 @@ import {
   Label
 } from '@patternfly/react-core';
 import { Table, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import * as yup from 'yup';
 import { toPascalCase } from '@app/utils/toPascalConvert';
+
 import { UserIcon, UsersIcon, InfoCircleIcon } from '@patternfly/react-icons';
+
 export const schema = yup.object({
   // TODO: change this to URL validation, after server supports http protocol append
   url: yup.string().label('Hostname URL').trim().required().max(250),
@@ -249,11 +252,9 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
     setGroup({ data: temp });
   };
 
-
-
-
   const debounceCustom = (delay: number): SelectProps['onFilter'] => {
     let timer: any;
+
     return (
       e: React.ChangeEvent<HTMLInputElement> | null,
       value: string
@@ -269,10 +270,6 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
       return
     };
   };
-
-
-
-
 
   const onToggleAccess = (isOpenAccess: boolean, email: string) => {
     setIsOpenAccess(isOpenAccess);
@@ -333,6 +330,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
 
   const onToggleRover = (isOpenR: boolean) => {
     // setIsOpenRover(isOpenR);
+
   };
 
   const onSelectRover: SelectProps['onSelect'] = (event, selection) => {
@@ -353,10 +351,8 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
     roverGroupList.map((item: RoverGropListItem) => {
       item.role = 'User';
       item.isOpen = false;
-    })
-    setRoverList(roverGroupList)
-
-
+    });
+    setRoverList(roverGroupList);
   };
   const debounceCustomRover = (delay: number): SelectProps['onFilter'] => {
     let timer: any;
@@ -395,7 +391,6 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
           <br />
           <br />
 
-
           <Select
             variant={SelectVariant.typeaheadMulti}
             onFilter={debounceCustom(500)}
@@ -406,6 +401,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             isOpen={isOpen}
             aria-labelledby={titleId}
             placeholderText="Kindly enter name or email"
+
           >
 
             {(userList || []).map((option, index) => (
@@ -416,8 +412,6 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
               />
             ))}
           </Select>
-
-
           <br />
           <Button
             style={{ display: 'flex', float: 'right' }}
@@ -518,8 +512,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                     >
                       <Split>
 
-
-                        <SplitItem onClick={(e) => e.stopPropagation()}>
+                        <SplitItem isFilled onClick={(e) => e.stopPropagation()}>
                           {v.name}
                           <br />
                           {v.email}
@@ -647,6 +640,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
           )}
           <br />
           <Button isDisabled={selected.length === 0} variant="primary" onClick={handleSubmit}>
+
             Add Members
           </Button>
         </div>
@@ -655,7 +649,9 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
       </Tab>
       <Tab
         eventKey={1}
+
         title={<TabTitleText><UsersIcon /> Rover Group</TabTitleText>}
+
         aria-label="Default content - users"
       >
         <div>
@@ -672,6 +668,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             onClear={clearSelectionRover}
             // selections={selected}
             // isOpen={isOpenRover}
+
             aria-labelledby={titleId}
             placeholderText="Kindly enter an full rover group name"
           >
@@ -686,6 +683,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
           <Label isCompact variant="filled" icon={<InfoCircleIcon />} color="blue">
             Please select all roles to make a user OWNER
           </Label>{' '}
+
           <Button
             style={{ display: 'flex', float: 'right' }}
             variant="link"
@@ -696,15 +694,14 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
           >
             Show Advance Access Rover
           </Button>
-          <br />
-
-
+          
           <br />
           <br />
           {isShowAdvancedViewEnabledRover && Object.keys(columnNames2).length ? (
             <TableComposable>
               <Thead noWrap={true}>
                 <Tr>
+
                   <Th>{toPascalCase(columnNames2.NAME)}</Th>
                   <Th>{toPascalCase(columnNames2.APIKEY_CREATION)}</Th>
                   <Th>{toPascalCase(columnNames2.APIKEY_DELETION)}</Th>
@@ -712,6 +709,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                   <Th>{toPascalCase(columnNames2.PERMISSION_DELETION)}</Th>
                   <Th>{toPascalCase(columnNames2.ENV_CREATION)}</Th>
                   <Th>{toPascalCase(columnNames2.ENV_SYNC)}</Th>
+
                 </Tr>
               </Thead>
               <Tbody>
@@ -804,6 +802,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                         <SplitItem isFilled></SplitItem>
                         <SplitItem onClick={(e) => e.stopPropagation()}>
                           <b>{v.role}</b>
+
                         </SplitItem>
                       </Split>
                     </AccordionToggle>
@@ -816,12 +815,14 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                           <Tr>
                             <Th>{columnNames2.NAME}</Th>
                             {/* <Th>{columnNames2.ROLE}</Th> */}
+
                             <Th>{toPascalCase(columnNames2.APIKEY_CREATION)}</Th>
                             <Th>{toPascalCase(columnNames2.APIKEY_DELETION)}</Th>
                             <Th>{toPascalCase(columnNames2.PERMISSION_CREATION)}</Th>
                             <Th>{toPascalCase(columnNames2.PERMISSION_DELETION)}</Th>
                             <Th>{toPascalCase(columnNames2.ENV_CREATION)}</Th>
                             <Th>{toPascalCase(columnNames2.ENV_SYNC)}</Th>
+
                           </Tr>
                         </Thead>
                         <Tbody>
@@ -904,7 +905,9 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             </div>
           )}
           <br />
+
           <Button isDisabled={Object.keys(group).length && group?.data.length === 0} variant="primary" onClick={handleSubmit}>
+
             Add Members
           </Button>
         </div>

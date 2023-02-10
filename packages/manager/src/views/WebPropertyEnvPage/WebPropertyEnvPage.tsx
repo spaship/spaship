@@ -42,6 +42,7 @@ import {
   TrashIcon,
   UserIcon,
   WrenchIcon
+
 } from '@patternfly/react-icons';
 
 
@@ -466,8 +467,10 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                 </CardActions>
               </CardHeader>
               <CardBody>
+
               {memberList.isLoading && 
                <TableComposable isStriped><TableRowSkeleton columns={7} rows={3} /></TableComposable>}
+
 
                 {!memberList.isLoading &&
                   (memberList?.data?.length === 0 || memberList.isError) && (
@@ -505,15 +508,17 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                               </SplitItem>
                             </Split>
                           </Td>
-                         
+
                           {key.role !== 'ADMIN' ? (
                             <Td
                               className="pf-u-display-flex pf-u-justify-content-flex-end"
                               dataLabel={key.role}
                             >
                               <Split hasGutter>
+
                               <SplitItem isFilled/> 
                               <SplitItem style={{color:"#333333"}} ><b> {toPascalCase(key.role) === "Owner"? <SecurityIcon/>:<UserIcon/>} {toPascalCase(key.role)} &nbsp;&nbsp;</b> </SplitItem>
+
                                <SplitItem> 
                                 <Button
                                 variant="tertiary"

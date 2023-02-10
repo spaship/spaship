@@ -25,6 +25,7 @@ export const fetchUserlist = async (name: string): Promise<TUserList[]> => {
 export const fetchRoverGroup = async (group_name: string): Promise<TRoverGroupList[]> => {
   const { data } = await orchestratorReq.get(`/sot/rover/group/${group_name}`);
   return data.data || [];
+
 };
 
 // fetches details from individual
