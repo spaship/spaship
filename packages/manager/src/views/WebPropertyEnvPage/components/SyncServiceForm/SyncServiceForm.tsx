@@ -62,8 +62,13 @@ export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JS
       });
       toast.success('Successfully updated Sync');
       onClose();
-    } catch (error) {
-      toast.error('Failed to update Sync');
+    } catch (error: any) {
+      if (error.response.status === 403) {
+        toast.error("You don't have access to perform this action");
+        onClose();
+      } else {
+        toast.error('Failed to update Sync');
+      }
     }
   };
 

@@ -11,7 +11,7 @@ import {
   TDeletePermissionDTO,
   TRoleforMember
 } from './types';
-
+import toast from 'react-hot-toast';
 const rbacKeyQueryKeys = {
   list: (webPropertyIdentifier: string) => ['rbac-keys', webPropertyIdentifier] as const
 };
@@ -25,7 +25,7 @@ export const fetchUserlist = async (name: string): Promise<TUserList[]> => {
 // fetches rover group from rover
 export const fetchRoverGroup = async (group_name: string): Promise<TRoverGroupList[]> => {
   const { data } = await orchestratorReq.get(`/sot/rover/group/${group_name}`);
-  return data.data || [];
+  return data.data;
 };
 
 // fetches details from individual
@@ -82,6 +82,15 @@ export const useAddPermission = (property: string) => {
   return useMutation(addPermission, {
     onSuccess: () => {
       queryClient.invalidateQueries(rbacKeyQueryKeys.list(property));
+      toast.success('User added successfully');
+    },
+    onError: (error:any) => {
+      if (error.response.status === 403) {
+        toast.error("You don't have access to perform this action");
+      } else {
+        toast.error('User not added ');
+      }
+    
     }
   });
 };
@@ -97,6 +106,15 @@ export const useDeleteMember = (property: string) => {
   return useMutation(useDeletePermission, {
     onSuccess: () => {
       queryClient.invalidateQueries(rbacKeyQueryKeys.list(property));
+      toast.success('User deleted successfully');
+    },
+    onError: (error:any) => {
+      if (error.response.status === 403) {
+        toast.error("You don't have access to perform this action");
+      } else {
+        toast.error('User not deleted ');
+      }
+    
     }
   });
 };

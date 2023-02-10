@@ -148,6 +148,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     } catch (error: any) {
       if (error.response.status === 403) {
         toast.error("You don't have access to perform this action");
+        handlePopUpClose('createEnv');
       } else {
         toast.error('Failed to create environment');
       }
@@ -167,6 +168,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     } catch (error: any) {
       if (error.response.status === 403) {
         toast.error("You don't have access to perform this action");
+        handlePopUpOpen('createApiKey');
       } else {
         toast.error('Failed to create API Key');
       }
@@ -219,20 +221,24 @@ export const WebPropertyEnvPage = (): JSX.Element => {
       });
     deleteData.propertyIdentifier = propertyIdentifier;
     deleteData.permissionDetails = deletePerm;
-    handlePopUpClose('deleteMember');
+
 
     try {
       // useDeleteMember(deleteData)
       deleteMember.mutateAsync({
         ...deleteData
       });
-      toast.success('User deleted successfully');
+      // toast.success('User deleted successfully');
+      handlePopUpClose('deleteMember');
+      console.log("in try in delete ")
     } catch (error: any) {
-      if (error.response.status === 403) {
-        toast.error("You don't have access to perform this action");
-      } else {
-        toast.error('User not deletd ');
-      }
+      console.log("error in delete ",error)
+      // if (error.response.status === 403) {
+      //   toast.error(error.message);
+      //   handlePopUpClose('deleteMember');
+      // } else {
+      //   toast.error('User not deletd ');
+      // }
     }
   };
 
@@ -315,9 +321,8 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                               rel="noopener noreferrer"
                             >
                               <ExternalLinkAltIcon />
-                              {`${env.url.slice(0, URL_LENGTH_LIMIT)} ${
-                                env.url.length > URL_LENGTH_LIMIT ? '...' : ''
-                              }`}
+                              {`${env.url.slice(0, URL_LENGTH_LIMIT)} ${env.url.length > URL_LENGTH_LIMIT ? '...' : ''
+                                }`}
                             </a>
                           </Td>
                           <Td>
@@ -396,10 +401,10 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                           <Td>
                             {key.env
                               ? key.env.slice(0, 5).map((environment: any) => (
-                                  <Label key={environment} isCompact>
-                                    {environment}
-                                  </Label>
-                                ))
+                                <Label key={environment} isCompact>
+                                  {environment}
+                                </Label>
+                              ))
                               : 'N/A'}
                           </Td>
                           <Td dataLabel={key.shortKey}>
@@ -442,7 +447,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
           </StackItem>
 
           {/* RBAC */}
-          
+
           <StackItem>
             <Card className="pf-u-mt-lg">
               <CardHeader>
@@ -462,14 +467,14 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                     isSmall
                     onClick={() => handlePopUpOpen('configureAccess')}
                   >
-                   <WrenchIcon /> Configure Access
+                    <WrenchIcon /> Configure Access
                   </Button>
                 </CardActions>
               </CardHeader>
               <CardBody>
 
-              {memberList.isLoading && 
-               <TableComposable isStriped><TableRowSkeleton columns={7} rows={3} /></TableComposable>}
+                {memberList.isLoading &&
+                  <TableComposable isStriped><TableRowSkeleton columns={7} rows={3} /></TableComposable>}
 
 
                 {!memberList.isLoading &&
@@ -516,38 +521,38 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                             >
                               <Split hasGutter>
 
-                              <SplitItem isFilled/> 
-                              <SplitItem style={{color:"#333333"}} ><b> {toPascalCase(key.role) === "Owner"? <SecurityIcon/>:<UserIcon/>} {toPascalCase(key.role)} &nbsp;&nbsp;</b> </SplitItem>
+                                <SplitItem isFilled />
+                                <SplitItem style={{ color: "#333333" }} ><b> {toPascalCase(key.role) === "Owner" ? <SecurityIcon /> : <UserIcon />} {toPascalCase(key.role)} &nbsp;&nbsp;</b> </SplitItem>
 
-                               <SplitItem> 
-                                <Button
-                                variant="tertiary"
-                                icon={<PencilAltIcon />}
-                                onClick={() => {
-                                  handlePopUpOpen('editMemberAccess'), setEditMemberName(key.name);
-                                  // handleEditMemberAccess;
-                                }}
-                              >
-                                Edit
-                              </Button>
-                              &nbsp;&nbsp;
-                              <Button
-                                variant="secondary"
-                                isDanger
-                                isDisabled={key.email===session?.user.email}
-                                icon={<TrashIcon />}
-                                onClick={() => {
-                                  handlePopUpOpen('deleteMember'), setDeleteMemberName(key.name);
-                                }}
-                              >
-                                
-                                Delete
-                              </Button>
-                              </SplitItem>
+                                <SplitItem>
+                                  <Button
+                                    variant="tertiary"
+                                    icon={<PencilAltIcon />}
+                                    onClick={() => {
+                                      handlePopUpOpen('editMemberAccess'), setEditMemberName(key.name);
+                                      // handleEditMemberAccess;
+                                    }}
+                                  >
+                                    Edit
+                                  </Button>
+                                  &nbsp;&nbsp;
+                                  <Button
+                                    variant="secondary"
+                                    isDanger
+                                    isDisabled={key.email === session?.user.email}
+                                    icon={<TrashIcon />}
+                                    onClick={() => {
+                                      handlePopUpOpen('deleteMember'), setDeleteMemberName(key.name);
+                                    }}
+                                  >
+
+                                    Delete
+                                  </Button>
+                                </SplitItem>
                               </Split>
-                             
-                             
-                             
+
+
+
                             </Td>
                           ) : (
                             <Td dataLabel={key.role}>{key.role} </Td>
@@ -629,15 +634,15 @@ export const WebPropertyEnvPage = (): JSX.Element => {
         isOpen={popUp.configureAccess.isOpen}
         onClose={() => handlePopUpClose('configureAccess')}
       >
-      
+
         <ConfigureAccess
-          onClose={() => {handlePopUpClose('configureAccess')}}
-       
+          onClose={() => { handlePopUpClose('configureAccess') }}
+
           editMemberName={editMemberName}
           propertyIdentifier={propertyIdentifier}
           memberList={new Object(memberList)}
           flagOpen={popUp.configureAccess.isOpen}
-       
+
         />
       </Modal>
 
@@ -662,7 +667,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
         isOpen={popUp.deleteWebProp.isOpen}
         onClose={() => handlePopUpClose('deleteWebProp')}
         confirmationToken={propertyIdentifier}
-        onSubmit={() => {}}
+        onSubmit={() => { }}
       />
 
       <DeleteConfirmationModal
@@ -680,7 +685,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
         isOpen={popUp.deleteMember.isOpen}
         onClose={() => handlePopUpClose('deleteMember')}
         onSubmit={() => handleDeleteMember()}
-        // isLoading={.isLoading}
+      // isLoading={.isLoading}
       >
         Do you want to delete <b>{deleteMemberName}</b> from <b>{propertyIdentifier}</b> ?
       </DeleteConfirmationModal>

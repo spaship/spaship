@@ -189,7 +189,7 @@ export const ConfigureAccess = ({
         });
       }
       onClose()
-      toast.success('Permission updated successfully');
+      // toast.success('Permission updated successfully');
     } catch (error) {
       toast.error('Permission not deletd ');
     }
@@ -304,7 +304,7 @@ export const ConfigureAccess = ({
                         {i.name}
                       </SplitItem>
                       <SplitItem style={{ display: 'flex', justifyContent: 'end' }} isFilled>
-                        {/* {group['data'][0]['role']} */}
+                        {/* {group['data'][0]['role']} */}{i.role}
                       </SplitItem>
                     </Split>
                   </AccordionToggle>
