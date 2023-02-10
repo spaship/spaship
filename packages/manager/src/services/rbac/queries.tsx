@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { orchestratorReq } from '@app/config/orchestratorReq';
 import {
@@ -25,7 +26,6 @@ export const fetchUserlist = async (name: string): Promise<TUserList[]> => {
 export const fetchRoverGroup = async (group_name: string): Promise<TRoverGroupList[]> => {
   const { data } = await orchestratorReq.get(`/sot/rover/group/${group_name}`);
   return data.data || [];
-
 };
 
 // fetches details from individual
