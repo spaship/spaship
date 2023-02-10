@@ -176,7 +176,6 @@ export const ConfigureAccess = ({
 
     deleteData.propertyIdentifier = propertyIdentifier;
     deleteData.permissionDetails = deletePerm;
-    console.log("data c", deleteData, addData)
 
     try {
       if (addPerm.length !== 0) {
