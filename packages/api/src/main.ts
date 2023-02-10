@@ -36,7 +36,7 @@ async function bootstrap() {
       .addBearerAuth()
       .setTitle('SPAship API Documentation')
       .setDescription('Doc for SPAship apis')
-      .setVersion('3.0')
+      .setVersion('3.1.0')
       .build();
     const document = SwaggerModule.createDocument(app, config, {
       extraModels: [ResponseFormat],
