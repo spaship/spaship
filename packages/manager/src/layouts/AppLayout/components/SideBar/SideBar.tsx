@@ -5,7 +5,13 @@ import { ReactNode } from 'react';
 
 import { pageLinks } from '@app/links';
 import { Nav, NavItem, NavList, PageSidebar, Split, SplitItem } from '@patternfly/react-core';
-import { ChartLineIcon, CommentAltIcon, FolderIcon, OutlinedClockIcon, ThIcon } from '@patternfly/react-icons';
+import {
+  ChartLineIcon,
+  CommentAltIcon,
+  FolderIcon,
+  OutlinedClockIcon,
+  ThIcon
+} from '@patternfly/react-icons';
 
 type SNProps = {
   title: string;
