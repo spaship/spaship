@@ -38,8 +38,6 @@ import {
 } from '@patternfly/react-table';
 import toast from 'react-hot-toast';
 import { toPascalCase } from '@app/utils/toPascalConvert';
-
-
 export const schema = yup.object({
   // TODO: change this to URL validation, after server supports http protocol append
   url: yup.string().label('Hostname URL').trim().required().max(250),
@@ -71,14 +69,14 @@ export const EditMemberAccess = ({
   propertyIdentifier,
   memberList
 }: Props): JSX.Element => {
-  // const {
-  //   control,
-  //   handleSubmit,
-  //   formState: { isSubmitting }
-  // } = useForm<FormData>({
-  //   mode: 'onBlur',
-  //   resolver: yupResolver(schema)
-  // });
+  
+  
+  
+  
+  
+  
+  
+  
   const [isOpenDropdown, setIsOpenDropdown] = React.useState(false);
   const [expanded, setExpanded] = React.useState('def-list-toggle2');
   const [addAccess, setaddAccess] = React.useState([]);
@@ -102,7 +100,6 @@ export const EditMemberAccess = ({
       setExpanded(id);
     }
   };
-
   const handleChange = (
     checked: boolean,
     event: React.FormEvent<HTMLInputElement>,
@@ -116,25 +113,18 @@ export const EditMemberAccess = ({
     const deleteAccess1: any = deleteAccess;
     temp.filter((e: any) => e.email === email)[0][target.name] = checked;
     setGroup({ data: temp });
-
-    // if (checked) {
-    //   addAccess1.push(target.name as never);
-    //   deleteAccess1.pop(target.name);
-    // } else {
-    //   deleteAccess1.push(target.name as never);
-    //   addAccess1.pop(target.name);
-    // }
-
-
-
-    // setaddAccess(addAccess1);
-    // setdeleteAccess(deleteAccess1);
-
-
+    if (checked) {
+      addAccess1.push(target.name as never);
+      deleteAccess1.pop(target.name);
+    } else {
+      deleteAccess1.push(target.name as never);
+      addAccess1.pop(target.name);
+    }
+    setaddAccess(addAccess1);
+    setdeleteAccess(deleteAccess1);
   };
-
   const onToggleDropdown = (isOpen: boolean, event: any) => {
-    // event.stopPropagation()
+    
     setIsOpenDropdown(isOpen);
   };
   const onFocusDropdown = () => {
@@ -145,7 +135,6 @@ export const EditMemberAccess = ({
     setIsOpenDropdown(false);
     onFocusDropdown();
   };
-
   const dropdownItems = [
     <DropdownItem key="link" tooltip="Tooltip for enabled link">
       Link
@@ -157,7 +146,6 @@ export const EditMemberAccess = ({
   const useAddPermission1 = useAddPermission(propertyIdentifier);
   const deleteMember = useDeleteMember(propertyIdentifier);
   const handleSubmit = () => {
-
     const addData: any = {};
     const addPerm: any = [];
     let addflag = false
@@ -177,7 +165,6 @@ export const EditMemberAccess = ({
     });
     addData.propertyIdentifier = propertyIdentifier;
     addData.permissionDetails = addPerm;
-
     const deleteData: any = {};
     const deletePerm: any = [];
     let deleteflag = false
@@ -194,91 +181,27 @@ export const EditMemberAccess = ({
       tempDelete.actions = tempActionsDelete;
       deletePerm.push(tempDelete);
     });
-
-
     deleteData.propertyIdentifier = propertyIdentifier;
     deleteData.permissionDetails = deletePerm;
-
-    try {
-
-
-      if (addPerm.length !== 0) {
+      try {
+      if (addAccess.length) {
         useAddPermission1.mutateAsync({
           ...addData
+        }).then((res) => {
+          toast.success('Permission updated successfully');
+          return res;
         });
       }
-      if (deleteflag) {
+      if (deleteAccess.length) {
         deleteMember.mutateAsync({
           ...deleteData
+        }).then(() => {
+          toast.success('Permission updated successfully');
         });
       }
       onClose()
-      toast.success('Permission updated successfully');
-    } catch (error) {
-      toast.error('Permission not deleted ');
+    } catch (err) {}  
     }
-    //     const addresult = {
-    //       propertyIdentifier,
-    //       permissionDetails: [
-    //         {
-    //           name: editMemberName,
-    //           email: group.data[0].email,
-    //           actions: addAccess
-    //         }
-    //       ]
-    //     };
-    //     const removeResult = {
-    //       propertyIdentifier,
-    //       permissionDetails: [
-    //         {
-    //           name: editMemberName,
-    //           email: group.data[0].email,
-    //           actions: deleteAccess
-    //         }
-    //       ]
-    //     };
-
-
-
-
-    //     if (deleteAccess.length !== 0) {
-    //       try {
-    //         deleteMember.mutateAsync({
-    //           ...removeResult as any
-    //         });
-    //         // useDeletePermission(removeResult as any);
-    //         onClose()
-    //         toast.success('Permission updated successfully');
-    //       } catch (error) {
-    //         toast.error('Permission not deleted for the user');
-    //       }
-    //     }
-    //     if (addAccess.length !== 0) {
-
-    //       //  useAddPermission(addresult)
-    //       try {
-    //         useAddPermission1.mutateAsync({
-    //           ...addresult as any
-    //         });
-    //         onClose()
-    //         toast.success('Permission updated successfully');
-    //       } catch (error) {
-    //         toast.error('Permission not added for the user');
-    //       }
-    //     }
-  };
-
-
-  // const toPascalCase = (sentence) => sentence
-  // .toLowerCase()
-  // .replace(new RegExp(/[^\w\s]/, 'g'), '')
-  // .replace('_', ' ')
-  // .trim()
-  // .split(' ')
-  // .map(word => word[0]
-  // .toUpperCase()
-  // .concat(word.slice(1)))
-  // .join(' ');
 
   return (
     <div>
@@ -387,4 +310,3 @@ export const EditMemberAccess = ({
     </div>
   );
 };
-// send data of the songle member
