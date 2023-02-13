@@ -27,7 +27,7 @@ import toast from 'react-hot-toast';
 import * as yup from 'yup';
 import { toPascalCase } from '@app/utils/toPascalConvert';
 
-import { UserIcon, UsersIcon, InfoCircleIcon } from '@patternfly/react-icons';
+import { UserIcon, UsersIcon, InfoCircleIcon, IntegrationIconConfig } from '@patternfly/react-icons';
 
 export const schema = yup.object({
   // TODO: change this to URL validation, after server supports http protocol append
@@ -108,8 +108,6 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
   const [isOpenRover, setIsOpenRover] = React.useState(false);
   const [selectedRover, setSelectedRover] = React.useState<any[]>([]);
   const [roverList, setRoverList] = React.useState<any[]>([]);
-
-
   const propertyIdentifier = query.propertyIdentifier as string;
 
   const handleTabClick = (
@@ -208,12 +206,25 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
     userList.length && setIsOpen(isOpen);
   };
   const onSelect: SelectProps['onSelect'] = (event, selection) => {
+    let temp = group
     if (selected.includes(selection)) {
+
       setSelected((prevState) => prevState.filter((item) => item !== selection));
       setGroup({ data: group.data.filter((n: GroupItem1) => n.name !== selection) });
       setnewUserDetails(newUserDetails.filter((n) => n.name !== selection));
+
+
     } else {
+
       setSelected((prevState) => [...prevState, selection]);
+      // setnewUserDetails(newUserDetails.filter((n) => n.name !== selection));
+
+      // let c = newUserDetails.filter((value, index, self) =>
+      //   index === self.findIndex((t) => (
+      //     t.email === value.email && t.name === value.name
+      //   ))
+      // )
+
     }
   };
   const clearSelection = () => {
@@ -273,9 +284,11 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
   };
 
   const onToggleAccess = (isOpenAccess: boolean, email: string) => {
+    console.log("togggleaccess", email, "---->", isOpenAccess)
     setIsOpenAccess(isOpenAccess);
     const temp = newUserDetails;
-    temp.filter((m) => m.email === email)[0].isOpen = true;
+    temp.filter((m) => m.email === email)[0].isOpen = isOpenAccess;
+
     setnewUserDetails(temp);
   };
 
@@ -286,7 +299,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
     email: string
   ) => {
     setIsOpenAccess(false);
-
+    console.log("selectaccess", email, "---->", selection)
     const temp = newUserDetails;
     temp.filter((m) => m.email === email)[0].isOpen = false;
     temp.filter((m) => m.email === email)[0].role = selection;
@@ -297,7 +310,13 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
     const temp = newUserDetails;
     option.role = 'User';
     option.isOpen = false;
-    temp.push(option);
+    const check = temp.find(key => key.name == option.name)
+    if (!check) {
+      temp.push(option);
+    }
+
+
+
     setnewUserDetails(temp);
   };
 
@@ -323,9 +342,9 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
         ...addData as any
       });
       onClose()
-      // toast.success('Members added successfully');
+      toast.success('Members added successfully');
     } catch (error) {
-      // toast.error('Members not added ');
+      toast.error('Members not added ');
     }
   };
 
@@ -349,16 +368,16 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
   };
 
   const addRoletoroverGroup = (roverGroupList: any) => {
-    if (roverGroupList!==undefined){
+    if (roverGroupList !== undefined) {
       roverGroupList.map((item: RoverGropListItem) => {
         item.role = 'User';
         item.isOpen = false;
       });
       setRoverList(roverGroupList);
     }
-   else{
-    toast.error("Please enter a valid Rover Group Common Name (cn)")
-   }
+    else {
+      toast.error("Please enter a valid Rover Group Common Name (cn)")
+    }
   };
   const debounceCustomRover = (delay: number): SelectProps['onFilter'] => {
     let timer: any;
@@ -368,7 +387,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
       value: string
     ): React.ReactElement[] | undefined => {
       clearInterval(timer);
-   
+
       timer = setTimeout(async () => {
         if (value.length >= 3) {
           const res = await fetchRoverGroup(value)
@@ -702,7 +721,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
           >
             Show Advance Access Rover
           </Button>
-          
+
           <br />
           <br />
           {isShowAdvancedViewEnabledRover && Object.keys(columnNames2).length ? (

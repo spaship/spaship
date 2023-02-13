@@ -116,15 +116,21 @@ export const EditMemberAccess = ({
     const deleteAccess1: any = deleteAccess;
     temp.filter((e: any) => e.email === email)[0][target.name] = checked;
     setGroup({ data: temp });
-    if (checked) {
-      addAccess1.push(target.name as never);
-      deleteAccess1.pop(target.name);
-    } else {
-      deleteAccess1.push(target.name as never);
-      addAccess1.pop(target.name);
-    }
-    setaddAccess(addAccess1);
-    setdeleteAccess(deleteAccess1);
+    // console.log("temp")
+    // if (checked) {
+    //   addAccess1.push(target.name as never);
+    //   deleteAccess1.pop(target.name);
+    // } else {
+    //   deleteAccess1.push(target.name as never);
+    //   addAccess1.pop(target.name);
+    // }
+    // console.log("addaccess in handke", addAccess1)
+    // console.log("deleteAccess1 in handke", deleteAccess1)
+
+    // setaddAccess(addAccess1);
+    // setdeleteAccess(deleteAccess1);
+    // console.log("addaccess in handke", addAccess1)
+    // console.log("deleteAccess1 in handke", deleteAccess1)
   };
 
   const onToggleDropdown = (isOpen: boolean, event: any) => {
@@ -151,55 +157,115 @@ export const EditMemberAccess = ({
   const useAddPermission1 = useAddPermission(propertyIdentifier);
   const deleteMember = useDeleteMember(propertyIdentifier);
   const handleSubmit = () => {
-
-
-    const addresult = {
-      propertyIdentifier,
-      permissionDetails: [
-        {
-          name: editMemberName,
-          email: group.data[0].email,
-          actions: addAccess
-        }
-      ]
-    };
-    const removeResult = {
-      propertyIdentifier,
-      permissionDetails: [
-        {
-          name: editMemberName,
-          email: group.data[0].email,
-          actions: deleteAccess
-        }
-      ]
-    };
-
-
-    if (deleteAccess.length !== 0) {
-      try {
-        deleteMember.mutateAsync({
-          ...removeResult as any
-        });
-        // useDeletePermission(removeResult as any);
-        onClose()
-        // toast.success('Permission updated successfully');
-      } catch (error) {
-        // toast.error('Permission not deletd ');
+    console.log("group data", group)
+    const addData: any = {};
+    const addPerm: any = [];
+    let addflag = false
+    group.data.map((v: any, k: number) => {
+      const temp: any = {};
+      const tempActions: string[] = [];
+      temp.name = v.name;
+      temp.email = v.email;
+      Object.keys(v).map((a: string, i: number) => {
+        v[a] && a !== 'name' && a !== 'email' && a !== 'role' && tempActions.push(a);
+      });
+      if (tempActions.length !== 0) {
+        addflag = true
       }
-    }
-    if (addAccess.length !== 0) {
+      temp.actions = tempActions;
+      addPerm.push(temp);
+    });
+    addData.propertyIdentifier = propertyIdentifier;
+    addData.permissionDetails = addPerm;
 
-      //  useAddPermission(addresult)
-      try {
+    const deleteData: any = {};
+    const deletePerm: any = [];
+    let deleteflag = false
+    group.data.map((v: any, k: number) => {
+      const tempDelete: any = {};
+      const tempActionsDelete: string[] = [];
+      tempDelete.email = v.email;
+      Object.keys(v).map((a: string, i: number) => {
+        !v[a] && a !== 'name' && a !== 'email' && a !== 'role' && tempActionsDelete.push(a);
+      });
+      if (tempActionsDelete.length !== 0) {
+        deleteflag = true
+      }
+      tempDelete.actions = tempActionsDelete;
+      deletePerm.push(tempDelete);
+    });
+
+
+    deleteData.propertyIdentifier = propertyIdentifier;
+    deleteData.permissionDetails = deletePerm;
+
+    try {
+      console.log("addPerm", addPerm)
+      console.log("deleted perm", deletePerm, "flag", deleteflag)
+      if (addPerm.length !== 0) {
         useAddPermission1.mutateAsync({
-          ...addresult as any
+          ...addData
         });
-        onClose()
-        // toast.success('Permission updated successfully');
-      } catch (error) {
-        // toast.error('Permission not added ');
       }
+      if (deleteflag) {
+        deleteMember.mutateAsync({
+          ...deleteData
+        });
+      }
+      onClose()
+      toast.success('Permission updated successfully');
+    } catch (error) {
+      toast.error('Permission not deleted ');
     }
+    //     const addresult = {
+    //       propertyIdentifier,
+    //       permissionDetails: [
+    //         {
+    //           name: editMemberName,
+    //           email: group.data[0].email,
+    //           actions: addAccess
+    //         }
+    //       ]
+    //     };
+    //     const removeResult = {
+    //       propertyIdentifier,
+    //       permissionDetails: [
+    //         {
+    //           name: editMemberName,
+    //           email: group.data[0].email,
+    //           actions: deleteAccess
+    //         }
+    //       ]
+    //     };
+
+    // console.log("in edit addaccess 0066",addresult, addAccess)
+    // console.log("in edit deleteacc 0066",removeResult,deleteAccess)
+
+    //     if (deleteAccess.length !== 0) {
+    //       try {
+    //         deleteMember.mutateAsync({
+    //           ...removeResult as any
+    //         });
+    //         // useDeletePermission(removeResult as any);
+    //         onClose()
+    //         toast.success('Permission updated successfully');
+    //       } catch (error) {
+    //         toast.error('Permission not deleted for the user');
+    //       }
+    //     }
+    //     if (addAccess.length !== 0) {
+
+    //       //  useAddPermission(addresult)
+    //       try {
+    //         useAddPermission1.mutateAsync({
+    //           ...addresult as any
+    //         });
+    //         onClose()
+    //         toast.success('Permission updated successfully');
+    //       } catch (error) {
+    //         toast.error('Permission not added for the user');
+    //       }
+    //     }
   };
 
 

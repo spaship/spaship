@@ -83,6 +83,7 @@ export const ConfigureAccess = ({
   const [addAccess, setaddAccess] = React.useState([]);
   const [deleteAccess, setdeleteAccess] = React.useState([]);
   const [isShowAdvancedViewEnabled, setIsShowAdvancedViewEnabled] = React.useState(false);
+
   let memberCopy = new Object(memberList)
 
 
@@ -134,6 +135,7 @@ export const ConfigureAccess = ({
   const handleSubmit = () => {
     const addData: any = {};
     const addPerm: any = [];
+    let addflag = false
     group.data.map((v: any, k: number) => {
       const temp: any = {};
       const tempActions: string[] = [];
@@ -142,26 +144,18 @@ export const ConfigureAccess = ({
       Object.keys(v).map((a: string, i: number) => {
         v[a] && a !== 'name' && a !== 'email' && a !== 'role' && tempActions.push(a);
       });
+      if (tempActions.length !== 0) {
+        addflag = true
+      }
       temp.actions = tempActions;
       addPerm.push(temp);
     });
     addData.propertyIdentifier = propertyIdentifier;
     addData.permissionDetails = addPerm;
-    // if (addPerm.length !== 0) {
-    //   try {
-    //     useAddPermission1.mutateAsync({
-    //       ...addData
-    //     });
-    //     toast.success('Permission updated successfully');
-    //   } catch (error) {
-    //     toast.error('Permission not added ');
-    //   }
-    // }
 
-    /// /=========delte
     const deleteData: any = {};
     const deletePerm: any = [];
-
+    let deleteflag = false
     group.data.map((v: any, k: number) => {
       const tempDelete: any = {};
       const tempActionsDelete: string[] = [];
@@ -169,6 +163,9 @@ export const ConfigureAccess = ({
       Object.keys(v).map((a: string, i: number) => {
         !v[a] && a !== 'name' && a !== 'email' && a !== 'role' && tempActionsDelete.push(a);
       });
+      if (tempActionsDelete.length !== 0) {
+        deleteflag = true
+      }
       tempDelete.actions = tempActionsDelete;
       deletePerm.push(tempDelete);
     });
@@ -178,20 +175,22 @@ export const ConfigureAccess = ({
     deleteData.permissionDetails = deletePerm;
 
     try {
+      console.log("addPerm", addPerm)
+      console.log("deleted perm", deletePerm, "flag", deleteflag)
       if (addPerm.length !== 0) {
         useAddPermission1.mutateAsync({
           ...addData
         });
       }
-      if (deletePerm.length !== 0) {
+      if (deleteflag) {
         deleteMember.mutateAsync({
           ...deleteData
         });
       }
       onClose()
-      // toast.success('Permission updated successfully');
+      toast.success('Permission updated successfully');
     } catch (error) {
-      toast.error('Permission not deletd ');
+      toast.error('Permission not deleted ');
     }
 
 
@@ -304,7 +303,7 @@ export const ConfigureAccess = ({
                         {i.name}
                       </SplitItem>
                       <SplitItem style={{ display: 'flex', justifyContent: 'end' }} isFilled>
-                        {/* {group['data'][0]['role']} */}{i.role}
+                        {/* {group['data'][0]['role']} */}{toPascalCase(i.role)}
                       </SplitItem>
                     </Split>
                   </AccordionToggle>
