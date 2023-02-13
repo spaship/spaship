@@ -7,5 +7,5 @@ export const pageLinks = {
   loginPage: '/login',
   dashboardPage: '/dashboard',
   documentsPage: '/document',
-  slaPage:'/sla'
+  slaPage: '/sla'
 };
