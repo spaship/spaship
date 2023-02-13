@@ -74,6 +74,7 @@ export const useGetMemberforSPA = (webPropertyIdentifier: string) =>
 
 // Adds permission for the user POST Operations
 export const addPermission = async (dto: TAddPermissionDTO): Promise<TCreateApiKeyRes> => {
+  console.log("dtooo",dto)
   const { data } = await orchestratorReq.post('/permission', dto);
   return data.data;
 };
@@ -82,14 +83,15 @@ export const useAddPermission = (property: string) => {
   return useMutation(addPermission, {
     onSuccess: () => {
       queryClient.invalidateQueries(rbacKeyQueryKeys.list(property));
-      toast.success('User added successfully');
+      // toast.success('User added successfully');
     },
     onError: (error:any) => {
       if (error.response.status === 403) {
         toast.error("You don't have access to perform this action");
-      } else {
-        toast.error('User not added ');
-      }
+      } 
+      // else {
+      //   // toast.error('User not added ');
+      // }
     
     }
   });
@@ -97,6 +99,7 @@ export const useAddPermission = (property: string) => {
 
 // Deletes permission for the user
 export const useDeletePermission = async (dto: TDeletePermissionDTO): Promise<TUserList[]> => {
+  console.log("indelted dto",dto)
   const { data } = await orchestratorReq.delete('/permission', { data: dto });
   return data.data;
 };
@@ -106,14 +109,15 @@ export const useDeleteMember = (property: string) => {
   return useMutation(useDeletePermission, {
     onSuccess: () => {
       queryClient.invalidateQueries(rbacKeyQueryKeys.list(property));
-      toast.success('User deleted successfully');
+      // toast.success('User deleted successfully');
     },
     onError: (error:any) => {
       if (error.response.status === 403) {
         toast.error("You don't have access to perform this action");
-      } else {
-        toast.error('User not deleted ');
-      }
+      } 
+      // else {
+      //   toast.error('User not deleted ');
+      // }
     
     }
   });
