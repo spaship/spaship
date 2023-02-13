@@ -227,13 +227,14 @@ export const WebPropertyEnvPage = (): JSX.Element => {
       // useDeleteMember(deleteData)
       deleteMember.mutateAsync({
         ...deleteData
-      });
-      toast.success('User deleted successfully');
+      }).then(()=>{
+      toast.success('Member deleted successfully');
+       });
       handlePopUpClose('deleteMember');
-      // console.log("in try in delete ")
+
     } catch (error: any) {
-      console.log("error in delete ", error)
-      toast.error('User not deleted ');
+
+      toast.error('Member not deleted ');
       // if (error.response.status === 403) {
       //   toast.error(error.message);
       //   handlePopUpClose('deleteMember');

@@ -284,7 +284,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
   };
 
   const onToggleAccess = (isOpenAccess: boolean, email: string) => {
-    console.log("togggleaccess", email, "---->", isOpenAccess)
+
     setIsOpenAccess(isOpenAccess);
     const temp = newUserDetails;
     temp.filter((m) => m.email === email)[0].isOpen = isOpenAccess;
@@ -299,7 +299,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
     email: string
   ) => {
     setIsOpenAccess(false);
-    console.log("selectaccess", email, "---->", selection)
+
     const temp = newUserDetails;
     temp.filter((m) => m.email === email)[0].isOpen = false;
     temp.filter((m) => m.email === email)[0].role = selection;
@@ -338,16 +338,23 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
     addData.propertyIdentifier = propertyIdentifier;
     addData.permissionDetails = addPerm;
     try {
+      let flag = false
       useAddPermission1.mutateAsync({
         ...addData as any
+      }).then(()=>{
+       toast.success('Members added successfully');
       });
       onClose()
-      toast.success('Members added successfully');
-    } catch (error) {
-      toast.error('Members not added ');
+   
+    } 
+    catch (error) {
+      // toast.error('Members not added ');
     }
   };
+  // .catch(() => {
+  //   toast.error('Members not added successfully');
 
+  //   });
   const onToggleRover = (isOpenR: boolean) => {
     // setIsOpenRover(isOpenR);
 

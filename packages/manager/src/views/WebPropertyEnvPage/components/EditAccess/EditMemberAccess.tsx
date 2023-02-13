@@ -116,7 +116,7 @@ export const EditMemberAccess = ({
     const deleteAccess1: any = deleteAccess;
     temp.filter((e: any) => e.email === email)[0][target.name] = checked;
     setGroup({ data: temp });
-    // console.log("temp")
+
     // if (checked) {
     //   addAccess1.push(target.name as never);
     //   deleteAccess1.pop(target.name);
@@ -124,13 +124,13 @@ export const EditMemberAccess = ({
     //   deleteAccess1.push(target.name as never);
     //   addAccess1.pop(target.name);
     // }
-    // console.log("addaccess in handke", addAccess1)
-    // console.log("deleteAccess1 in handke", deleteAccess1)
+
+
 
     // setaddAccess(addAccess1);
     // setdeleteAccess(deleteAccess1);
-    // console.log("addaccess in handke", addAccess1)
-    // console.log("deleteAccess1 in handke", deleteAccess1)
+
+
   };
 
   const onToggleDropdown = (isOpen: boolean, event: any) => {
@@ -157,7 +157,7 @@ export const EditMemberAccess = ({
   const useAddPermission1 = useAddPermission(propertyIdentifier);
   const deleteMember = useDeleteMember(propertyIdentifier);
   const handleSubmit = () => {
-    console.log("group data", group)
+
     const addData: any = {};
     const addPerm: any = [];
     let addflag = false
@@ -200,8 +200,8 @@ export const EditMemberAccess = ({
     deleteData.permissionDetails = deletePerm;
 
     try {
-      console.log("addPerm", addPerm)
-      console.log("deleted perm", deletePerm, "flag", deleteflag)
+
+
       if (addPerm.length !== 0) {
         useAddPermission1.mutateAsync({
           ...addData
@@ -238,8 +238,8 @@ export const EditMemberAccess = ({
     //       ]
     //     };
 
-    // console.log("in edit addaccess 0066",addresult, addAccess)
-    // console.log("in edit deleteacc 0066",removeResult,deleteAccess)
+
+
 
     //     if (deleteAccess.length !== 0) {
     //       try {
