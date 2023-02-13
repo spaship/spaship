@@ -58,7 +58,7 @@ const newFeaturesData = [
   },
   {
     id: 2,
-    title: 'Getting Deployment Status in Real Time',
+    title: 'Getting Deployment Status in Reltime',
     linkhere:
       'https://source.redhat.com/groups/public/dxp/exd_digital_experience_platforms_dxp_blog/get_your_deployment_status_in_realtime',
     footer: 'SSE & Notifications'
