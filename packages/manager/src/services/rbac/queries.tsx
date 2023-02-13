@@ -74,11 +74,12 @@ export const useGetMemberforSPA = (webPropertyIdentifier: string) =>
 
 // Adds permission for the user POST Operations
 export const addPermission = async (dto: TAddPermissionDTO): Promise<TCreateApiKeyRes> => {
-  console.log("dtooo",dto)
+
   const { data } = await orchestratorReq.post('/permission', dto);
   return data.data;
 };
 export const useAddPermission = (property: string) => {
+  let flag = true
   const queryClient = useQueryClient();
   return useMutation(addPermission, {
     onSuccess: () => {
@@ -99,7 +100,7 @@ export const useAddPermission = (property: string) => {
 
 // Deletes permission for the user
 export const useDeletePermission = async (dto: TDeletePermissionDTO): Promise<TUserList[]> => {
-  console.log("indelted dto",dto)
+
   const { data } = await orchestratorReq.delete('/permission', { data: dto });
   return data.data;
 };

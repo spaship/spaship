@@ -175,8 +175,8 @@ export const ConfigureAccess = ({
     deleteData.permissionDetails = deletePerm;
 
     try {
-      console.log("addPerm", addPerm)
-      console.log("deleted perm", deletePerm, "flag", deleteflag)
+
+
       if (addPerm.length !== 0) {
         useAddPermission1.mutateAsync({
           ...addData
