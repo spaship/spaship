@@ -51,34 +51,49 @@ const aboutAllData = [
 const newFeaturesData = [
   {
     id: 1,
-    title: 'Introducing Ephemeral Preview feature in SPAship ',
+    title: 'SPAship Access Management using RBAC',
     linkhere:
-      'https://source.redhat.com/groups/public/dxp/exd_digital_experience_platforms_dxp_blog/ephemeral_preview_feature_in_spaship',
-    footer: 'Preview Enviroment for Deployment'
+      'https://source.redhat.com/groups/public/spaship/blog_article/introduction_to_rbac_feature_in_spaship',
+    footer: 'Access Management'
   },
   {
     id: 2,
+    title: 'RBAC Complete Workflow',
+    linkhere:
+      'https://drive.google.com/file/d/1xgN55mPjIG_CdLaT1G7wE1l9NnbqNZCC/view?usp=share_link',
+    footer: 'Access Management',
+    isIcon: true
+  },
+  {
+    id: 3,
+    title: 'Introducing Ephemeral Preview',
+    linkhere:
+      'https://source.redhat.com/groups/public/dxp/exd_digital_experience_platforms_dxp_blog/ephemeral_preview_feature_in_spaship',
+    footer: 'Deployment Preview'
+  },
+  {
+    id: 4,
     title: 'Getting Deployment Status in Real Time',
     linkhere:
       'https://source.redhat.com/groups/public/dxp/exd_digital_experience_platforms_dxp_blog/get_your_deployment_status_in_realtime',
     footer: 'SSE & Notifications'
   },
   {
-    id: 3,
+    id: 5,
     title: 'Introducing Sync service in SPAship ',
     linkhere:
       'https://source.redhat.com/groups/public/dxp/exd_digital_experience_platforms_dxp_blog/introducing_sync_service_in_spaship',
     footer: 'SSI Configuration'
   },
   {
-    id: 4,
+    id: 6,
     title: 'SPAship Release Logs ',
     linkhere:
       'https://docs.google.com/document/u/1/d/1tdwBCT9d3n3lJnjpiD7B67304Tgl2URwnKwSwGasNHk/edit',
     footer: 'Version Update '
   },
   {
-    id: 5,
+    id: 7,
     title: 'SPAship FAQ',
     linkhere:
       'https://docs.google.com/document/d/143ezNXxfujOiTe3VD0cc0ZBYL92F_fSpYCFJUzzDoiQ/edit',
@@ -105,9 +120,9 @@ export const DocumentsPage = (): JSX.Element => (
     </Title>
     <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
       <Gallery hasGutter>
-        {newFeaturesData.map(({ title, linkhere, footer, id }) => (
+        {newFeaturesData.map(({ title, linkhere, footer, id, isIcon }) => (
           <GalleryItem key={id}>
-            <DocumentCard title={title} linkhere={linkhere} footer={footer} />
+            <DocumentCard title={title} linkhere={linkhere} footer={footer} isIcon={isIcon} />
           </GalleryItem>
         ))}
       </Gallery>
