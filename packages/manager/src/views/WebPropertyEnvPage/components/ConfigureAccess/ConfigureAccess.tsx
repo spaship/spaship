@@ -125,9 +125,19 @@ export const ConfigureAccess = ({
   ) => {
     const target = event.currentTarget;
     const temp = group.data;
-
+    const addAccess1: any = addAccess;
+    const deleteAccess1: any = deleteAccess;
     temp.filter((e: GroupItem) => e.email === email)[0][target.name] = checked;
     setGroup({ data: temp });
+    if (checked) {
+      addAccess1.push(target.name as never);
+      deleteAccess1.pop(target.name);
+    } else {
+      deleteAccess1.push(target.name as never);
+      addAccess1.pop(target.name);
+    }
+    setaddAccess(addAccess1);
+    setdeleteAccess(deleteAccess1);
 
   };
 
@@ -173,24 +183,29 @@ export const ConfigureAccess = ({
 
     deleteData.propertyIdentifier = propertyIdentifier;
     deleteData.permissionDetails = deletePerm;
-
+    
     try {
 
 
-      if (addPerm.length !== 0) {
+      if (addAccess.length) {
         useAddPermission1.mutateAsync({
           ...addData
+        }).then((res) => {
+          toast.success('Permission updated successfully');
+          return res;
         });
       }
-      if (deleteflag) {
+      if (deleteAccess.length) {
         deleteMember.mutateAsync({
           ...deleteData
+        }).then((res) => {
+          toast.success('Permission updated successfully');
+          return res;
         });
       }
       onClose()
-      toast.success('Permission updated successfully');
     } catch (error) {
-      toast.error('Permission not deleted ');
+      // toast.error('Permission not deleted ');
     }
 
 
