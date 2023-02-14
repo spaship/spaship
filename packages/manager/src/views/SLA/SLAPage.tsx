@@ -53,7 +53,11 @@ export const SLAPage = (): JSX.Element => (
               <b>Email : </b>spaship-dev@redhat.com <br />
               <b>Slack : </b>forum-spaship - Internal Red Hat - Slack
             </Td>
-            <Td>npatil@redhat.com arbhatta@redhat.com</Td>
+            <Td>
+              npatil@redhat.com
+              <br />
+              arbhatta@redhat.com
+            </Td>
             <Td>
               Critical issue that impacts a high number of end users or critical business functions.
             </Td>
@@ -77,7 +81,11 @@ export const SLAPage = (): JSX.Element => (
               <br />
               <b>Slack : </b>forum-spaship - Internal Red Hat - Slack
             </Td>
-            <Td>arbhatta@redhat.com schowd@redhat.com</Td>
+            <Td>
+              arbhatta@redhat.com
+              <br />
+              schowd@redhat.com
+            </Td>
             <Td>
               Significant issue that impacts some end users or non-critical business functions.
             </Td>
@@ -99,7 +107,11 @@ export const SLAPage = (): JSX.Element => (
               <br />
               <b>Slack : </b>forum-spaship - Internal Red Hat - Slack
             </Td>
-            <Td>schowd@redhat.com spaship-dev@redhat.com </Td>
+            <Td>
+              schowd@redhat.com
+              <br />
+              spaship-dev@redhat.com{' '}
+            </Td>
             <Td>
               Minor issue that affects a small number of end users or non-critical business
               functions.{' '}
@@ -122,7 +134,11 @@ export const SLAPage = (): JSX.Element => (
               <b>Slack</b> : forum-spaship - Internal Red Hat - Slack
             </Td>
 
-            <Td>nmore@redhat.com spaship-dev@redhat.com </Td>
+            <Td>
+              nmore@redhat.com
+              <br />
+              spaship-dev@redhat.com{' '}
+            </Td>
             <Td>Low priority issue that does not impact end users or business functions. </Td>
             <Td>
               <li>Don&apos;t have access to SPAship or a particular property</li>
