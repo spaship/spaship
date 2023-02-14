@@ -87,7 +87,11 @@ export const WebPropertyListPage = (): JSX.Element => {
             <SearchInput
               placeholder="Search by name"
               value={searchTerm}
+<<<<<<< HEAD
               onChange={(value) => setSearchTerm(value.currentTarget.value.toLowerCase())}
+=======
+              onChange={(value) => setSearchTerm(value.toLowerCase())}
+>>>>>>> 6fb06d056025370fef0dc3f7f01795964fbd410e
               onClear={() => setSearchTerm('')}
             />
           </SplitItem>

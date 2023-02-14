@@ -142,7 +142,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                     <SearchInput
                       placeholder="Search by name"
                       value={searchTerm}
-                      onChange={(value) => setSearchTerm(value.currentTarget.value.toLowerCase())}
+                      onChange={(value) => setSearchTerm(value.toLowerCase())}
                       onClear={() => setSearchTerm('')}
                     />
                     <SplitItem isFilled />

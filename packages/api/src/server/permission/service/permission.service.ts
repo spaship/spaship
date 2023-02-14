@@ -39,7 +39,7 @@ export class PermissionService {
   ): Promise<Permission[]> {
     const keys = { propertyIdentifier, name, email, action };
     Object.keys(keys).forEach((key) => (keys[key] === undefined || keys[key] === '') && delete keys[key]);
-    const response = await this.dataServices.permission.getByOptions(keys, { createdAt: -1 }, skip, limit);
+    const response = await this.dataServices.permission.getByOptions(keys, { email: 1 }, skip, limit);
     if (group === 'email') {
       const role = (await this.dataServices.role.getByAny({ name: ROLE.OWNER }))[0];
       return this.permissionFactory.groupPermission(response, role.actions.length);
