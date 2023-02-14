@@ -14,7 +14,7 @@ import { PermissionFactory } from './permission.factory';
 export class PermissionService {
   private static readonly defaultSkip: number = 0;
 
-  private static readonly defaultLimit: number = 100;
+  private static readonly defaultLimit: number = 2000;
 
   constructor(
     private readonly dataServices: IDataServices,
