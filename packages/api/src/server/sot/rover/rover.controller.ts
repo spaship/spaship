@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, Query } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from 'src/server/auth/auth.guard';
 import { Subject } from './subject.response.dto';
@@ -21,7 +21,9 @@ export class RoverController {
   @Get('/rover/group/:groupname')
   @ApiCreatedResponse({ status: 201, description: 'List for the users in Rover Group.', type: Subject, isArray: true })
   @ApiOperation({ description: 'Search the user details from Rover Group.' })
-  async getRoverGroupDetails(@Param('groupname') groupname: string): Promise<Subject[]> {
+  async getRoverGroupDetails(@Param('groupname') groupname: string, @Query('list') list: string,): Promise<Subject[]> {
+    if (list === 'group') return this.searchService.getRoverGroupList(groupname);
     return this.searchService.getRoverGroupDetails(groupname);
   }
+
 }

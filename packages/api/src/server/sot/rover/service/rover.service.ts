@@ -23,4 +23,12 @@ export class RoverService {
   async getRoverGroupDetails(key: string): Promise<Subject[]> {
     return this.searchFactory.getRoverGroupDetails(key);
   }
+
+    /* @internal
+   *  Search the Rover Groups from the List
+   *  Transform the response to Group List Details
+   */
+    async getRoverGroupList(key: string): Promise<Subject[]> {
+      return this.searchFactory.getRoverGroupList(key);
+    }
 }

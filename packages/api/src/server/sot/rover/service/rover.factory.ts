@@ -6,7 +6,7 @@ import { Subject } from '../subject.response.dto';
 
 @Injectable()
 export class RoverFactory {
-  constructor(private readonly logger: LoggerService, private readonly httpService: HttpService) {}
+  constructor(private readonly logger: LoggerService, private readonly httpService: HttpService) { }
 
   // @internal fetch the user details from the Rover
   async getRoverUserDetails(key: string): Promise<Subject[]> {
@@ -29,6 +29,21 @@ export class RoverFactory {
     let response;
     try {
       response = await this.httpService.axiosRef.get(`${ROVER_AUTH.baseUrl}/groups/api/v1/groups/${key}/users`, {
+        headers
+      });
+      return await this.transformSubject(response.data.result.result);
+    } catch (err) {
+      this.logger.error('RoverError', err);
+    }
+    return response;
+  }
+
+  // @internal fetch the list of the Groups contains the key
+  async getRoverGroupList(key: string): Promise<Subject[]> {
+    const headers = { Authorization: `Basic ${ROVER_AUTH.cred}`, rejectUnauthorized: false };
+    let response;
+    try {
+      response = await this.httpService.axiosRef.get(`${ROVER_AUTH.baseUrl}/groups/api/v1/groups?criteria=${key}`, {
         headers
       });
       return await this.transformSubject(response.data.result.result);
