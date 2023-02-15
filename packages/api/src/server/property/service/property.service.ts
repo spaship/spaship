@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
-import { Property } from 'src/repository/mongo/model';
 import { Action } from 'src/server/analytics/activity-stream.entity';
 import { AnalyticsService } from 'src/server/analytics/service/analytics.service';
 import { EnvironmentFactory } from 'src/server/environment/service/environment.factory';
@@ -22,10 +21,26 @@ export class PropertyService {
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService,
     private readonly permissionService: PermissionService
-  ) {}
+  ) { }
 
-  getAllProperties(): Promise<Property[]> {
-    return this.dataServices.property.getAll();
+
+  /* @internal
+  * Get all the Property Details from the SPAship
+  * It'll group the environments with the perticular Property 
+  */
+  async getAllProperties(): Promise<PropertyResponseDto[]> {
+    const propertyDetails = await this.dataServices.property.getAll();
+    const environmentDetails = await this.dataServices.environment.getAll();
+    const response: PropertyResponseDto[] = []
+    for (const prop of propertyDetails) {
+      const groupedDetails = new PropertyResponseDto();
+      groupedDetails.title = prop.title;
+      groupedDetails.identifier = prop.identifier;
+      groupedDetails.createdBy = prop.createdBy;
+      groupedDetails.env = environmentDetails.filter(key => key.propertyIdentifier === prop.identifier);
+      response.push(groupedDetails)
+    }
+    return response;
   }
 
   /* @internal
