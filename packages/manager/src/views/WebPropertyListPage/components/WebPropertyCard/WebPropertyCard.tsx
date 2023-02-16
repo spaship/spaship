@@ -24,7 +24,7 @@ export const WebPropertyCard = ({ title, subtitle, children, footer, isSelected 
       <Title headingLevel="h3" size="xl" className="capitalize">
         {title}
       </Title>
-      <Text component="small" className="pf-u-color-400">
+      <Text component="h1" style={{ fontSize: '20px', marginTop: '10px', color: '#F4C145' }}>
         {subtitle}
       </Text>
     </CardTitle>
