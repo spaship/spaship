@@ -166,8 +166,8 @@ export const WebPropertyListPage = (): JSX.Element => {
                       <WebPropertyCard
                         title={title}
                         subtitle={
-                          env?.find((x) => x.env === 'prod')?.url ||
-                          env?.find((x) => x.env === 'stage')?.url ||
+                          env?.find((envArray) => envArray.env === 'prod')?.url ||
+                          env?.find((envArray) => envArray.env === 'stage')?.url ||
                           env?.at(0)?.url
                         }
                         isSelected={createdBy === session?.user?.email}
