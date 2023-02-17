@@ -1,5 +1,5 @@
-/* eslint-disable  */
 import { useAddPermission, useDeleteMember } from '@app/services/rbac';
+import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
   Accordion,
   AccordionContent,
@@ -10,25 +10,16 @@ import {
   Split,
   SplitItem
 } from '@patternfly/react-core';
-import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import React, { useEffect } from 'react';
+import {
+  TableComposable,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr
+} from '@patternfly/react-table';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import * as yup from 'yup';
-import { toPascalCase } from '@app/utils/toPascalConvert';
-export const schema = yup.object({
-  // TODO: change this to URL validation, after server supports http protocol append
-  url: yup.string().label('Hostname URL').trim().required().max(250),
-  env: yup
-    .string()
-    .label('Environment Name')
-    .noWhitespace()
-    .trim()
-    .max(50)
-    .alphabetsOnly()
-    .required(),
-  cluster: yup.string().label('Environment Type').oneOf(['preprod', 'prod']).required()
-});
-export interface FormData extends yup.InferType<typeof schema> { }
 
 type GroupItem = {
   email: string;
@@ -43,32 +34,34 @@ type GroupItem = {
 };
 
 type AddPermType = {
-  actions: [];
+  actions: string[];
   email: string;
   name: string;
 };
 
 type AddDataType = {
   propertyIdentifier: string;
-  permissionDetails: AddPermType;
+  permissionDetails: AddPermType[];
 };
+
 type DeletePermType = {
-  actions: [];
+  actions: string[];
   email: string;
   name: string;
 };
 
 type DeleteDataType = {
   propertyIdentifier: string;
-  permissionDetails: DeletePermType;
+  permissionDetails: DeletePermType[];
 };
 
 type Props = {
-  // onSubmit: (data: FormData) => void;
   onClose: () => void;
   editMemberName: string;
   propertyIdentifier: string;
+  // memberList: GroupItem[];
   memberList: any;
+
   flagOpen: boolean;
 };
 
@@ -79,43 +72,27 @@ export const ConfigureAccess = ({
   memberList,
   flagOpen
 }: Props): JSX.Element => {
-  const [expanded, setExpanded] = React.useState('def-list-toggle2');
-  const [addAccess, setaddAccess] = React.useState([]);
-  const [deleteAccess, setdeleteAccess] = React.useState([]);
-  const [isShowAdvancedViewEnabled, setIsShowAdvancedViewEnabled] = React.useState(false);
-
-  let memberCopy = new Object(memberList)
-
-
-  const [group, setGroup] = React.useState<any>(memberList);
-  const deleteMember = useDeleteMember(propertyIdentifier);
-
+  const [expanded, setExpanded] = useState<string>('def-list-toggle2');
+  const [addAccess, setAddAccess] = useState<string[]>([]);
+  const [deleteAccess, setDeleteAccess] = useState<string[]>([]);
+  const [isShowAdvancedViewEnabled, setIsShowAdvancedViewEnabled] = useState<boolean>(false);
+  const [group, setGroup] = useState<any>(memberList);
 
   useEffect(() => {
-    // 
-    setGroup(memberCopy)
+    setGroup(memberList);
+  }, [flagOpen]);
 
-
-  }, [flagOpen])
-
-
-
-  const columnNames2 = {
+  const deleteMember = useDeleteMember(propertyIdentifier);
+  const useAddPermission1 = useAddPermission(propertyIdentifier);
+  const columnNames = {
     NAME: 'Name',
     ROLE: 'Role',
-    APIKEY_CREATION: 'APIKEY CREATION',
-    APIKEY_DELETION: 'APIKEY DELETION',
-    PERMISSION_CREATION: 'PERMISSION CREATION',
-    PERMISSION_DELETION: 'PERMISSION DELETION',
-    ENV_CREATION: 'ENV CREATION',
-    ENV_SYNC: 'ENV SYNC'
-  };
-  const onToggleAccordian = async (id: string) => {
-    if (id === expanded) {
-      setExpanded('');
-    } else {
-      setExpanded(id);
-    }
+    APIKEY_CREATION: 'APIKEY_CREATION',
+    APIKEY_DELETION: 'APIKEY_DELETION',
+    PERMISSION_CREATION: 'PERMISSION_CREATION',
+    PERMISSION_DELETION: 'PERMISSION_DELETION',
+    ENV_CREATION: 'ENV_CREATION',
+    ENV_SYNC: 'ENV_SYNC'
   };
   const handleChange = (
     checked: boolean,
@@ -124,91 +101,98 @@ export const ConfigureAccess = ({
     email: string
   ) => {
     const target = event.currentTarget;
-    const temp = group.data;
-    const addAccess1: any = addAccess;
-    const deleteAccess1: any = deleteAccess;
-    temp.filter((e: GroupItem) => e.email === email)[0][target.name] = checked;
+
+    const temp = [...group.data];
+    const addAccess1 = [...addAccess];
+    const deleteAccess1 = [...deleteAccess];
+    const index = temp.findIndex((e) => e.email === email);
+    temp[index][target.name] = checked;
     setGroup({ data: temp });
     if (checked) {
-      addAccess1.push(target.name as never);
-      deleteAccess1.pop(target.name);
+      addAccess1.push(target.name);
+      deleteAccess1.splice(deleteAccess1.indexOf(target.name), 1);
     } else {
-      deleteAccess1.push(target.name as never);
-      addAccess1.pop(target.name);
+      deleteAccess1.push(target.name);
+      addAccess1.splice(addAccess1.indexOf(target.name), 1);
     }
-    setaddAccess(addAccess1);
-    setdeleteAccess(deleteAccess1);
-
+    setAddAccess(addAccess1);
+    setDeleteAccess(deleteAccess1);
   };
 
-  const useAddPermission1 = useAddPermission(propertyIdentifier);
-  const handleSubmit = () => {
-    const addData: any = {};
-    const addPerm: any = [];
-    let addflag = false
-    group.data.map((v: any, k: number) => {
-      const temp: any = {};
-      const tempActions: string[] = [];
-      temp.name = v.name;
-      temp.email = v.email;
-      Object.keys(v).map((a: string, i: number) => {
-        v[a] && a !== 'name' && a !== 'email' && a !== 'role' && tempActions.push(a);
+  interface GroupData {
+    name: string;
+    email: string;
+    [key: string]: any;
+  }
+
+  interface PermissionData {
+    name: string;
+    email: string;
+    actions: string[];
+  }
+  const onToggleAccordian = async (id: string) => {
+    if (id === expanded) {
+      setExpanded('');
+    } else {
+      setExpanded(id);
+    }
+  };
+  const handleSubmit = (): void => {
+    const addPerm: PermissionData[] = [];
+    let addFlag = false;
+    const deletePerm: PermissionData[] = [];
+    let deleteFlag = false;
+
+    group.data.forEach((v: GroupData, k: number) => {
+      const temp: PermissionData = {
+        name: v.name,
+        email: v.email,
+        actions: [],
+      };
+      Object.keys(v).forEach((a: string, i: number) => {
+        if (v[a] && a !== 'name' && a !== 'email' && a !== 'role') {
+          temp.actions.push(a);
+        }
+        if (!v[a] && a !== 'name' && a !== 'email' && a !== 'role') {
+          deleteFlag = true;
+        }
       });
-      if (tempActions.length !== 0) {
-        addflag = true
+      if (temp.actions.length !== 0) {
+        addFlag = true;
       }
-      temp.actions = tempActions;
-      addPerm.push(temp);
-    });
-    addData.propertyIdentifier = propertyIdentifier;
-    addData.permissionDetails = addPerm;
-
-    const deleteData: any = {};
-    const deletePerm: any = [];
-    let deleteflag = false
-    group.data.map((v: any, k: number) => {
-      const tempDelete: any = {};
-      const tempActionsDelete: string[] = [];
-      tempDelete.email = v.email;
-      Object.keys(v).map((a: string, i: number) => {
-        !v[a] && a !== 'name' && a !== 'email' && a !== 'role' && tempActionsDelete.push(a);
-      });
-      if (tempActionsDelete.length !== 0) {
-        deleteflag = true
+      if (temp.actions.length !== 0 || deleteFlag) {
+        addPerm.push(temp);
+        deletePerm.push({ name: v.name, email: v.email, actions: temp.actions });
       }
-      tempDelete.actions = tempActionsDelete;
-      deletePerm.push(tempDelete);
     });
 
+    const addData = {
+      propertyIdentifier: propertyIdentifier,
+      permissionDetails: addPerm,
+    };
 
-    deleteData.propertyIdentifier = propertyIdentifier;
-    deleteData.permissionDetails = deletePerm;
-    
+    const deleteData = {
+      propertyIdentifier: propertyIdentifier,
+      permissionDetails: deletePerm,
+    };
     try {
-
-
       if (addAccess.length) {
-        useAddPermission1.mutateAsync({
-          ...addData
-        }).then((res) => {
+
+        useAddPermission1.mutateAsync(addData).then((res) => {
           toast.success('Permission updated successfully');
           return res;
         });
       }
       if (deleteAccess.length) {
-        deleteMember.mutateAsync({
-          ...deleteData
-        }).then((res) => {
+        deleteMember.mutateAsync(deleteData).then((res) => {
           toast.success('Permission updated successfully');
           return res;
         });
       }
-      onClose()
+      onClose();
     } catch (error) {
       // toast.error('Permission not deleted ');
     }
-
-
   };
   return (
     <div>
@@ -222,18 +206,18 @@ export const ConfigureAccess = ({
       >
         Show Advance Access
       </Button>
-      {isShowAdvancedViewEnabled && Object.keys(columnNames2).length ? (
+      {isShowAdvancedViewEnabled && Object.keys(columnNames).length ? (
         <TableComposable>
           <Thead noWrap={true}>
             <Tr>
-              <Th>{columnNames2.NAME}</Th>
-              {/* <Th>{columnNames2.ROLE}</Th> */}
-              <Th>{toPascalCase(columnNames2.APIKEY_CREATION)}</Th>
-              <Th>{toPascalCase(columnNames2.APIKEY_DELETION)}</Th>
-              <Th>{toPascalCase(columnNames2.PERMISSION_CREATION)}</Th>
-              <Th>{toPascalCase(columnNames2.PERMISSION_DELETION)}</Th>
-              <Th>{toPascalCase(columnNames2.ENV_CREATION)}</Th>
-              <Th>{toPascalCase(columnNames2.ENV_SYNC)}</Th>
+              <Th>{columnNames.NAME}</Th>
+              {/* <Th>{columnNames.ROLE}</Th> */}
+              <Th>{toPascalCase(columnNames.APIKEY_CREATION)}</Th>
+              <Th>{toPascalCase(columnNames.APIKEY_DELETION)}</Th>
+              <Th>{toPascalCase(columnNames.PERMISSION_CREATION)}</Th>
+              <Th>{toPascalCase(columnNames.PERMISSION_DELETION)}</Th>
+              <Th>{toPascalCase(columnNames.ENV_CREATION)}</Th>
+              <Th>{toPascalCase(columnNames.ENV_SYNC)}</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -247,7 +231,6 @@ export const ConfigureAccess = ({
                       onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
                       id="APIKEY_CREATION"
                       name="APIKEY_CREATION"
-                    // onClick={(e) => handleChange1(i.name, i.email, e)}
                     />
                   </Td>
                   <Td>
@@ -256,7 +239,6 @@ export const ConfigureAccess = ({
                       onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
                       id="APIKEY_DELETION"
                       name="APIKEY_DELETION"
-                    // onClick={(e) => handleChange1(i.name, i.email, e)}
                     />
                   </Td>
                   <Td>
@@ -265,7 +247,6 @@ export const ConfigureAccess = ({
                       onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
                       id="PERMISSION_CREATION"
                       name="PERMISSION_CREATION"
-                    // onClick={handleChange1(i)}
                     />
                   </Td>
                   <Td>
@@ -274,7 +255,6 @@ export const ConfigureAccess = ({
                       onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
                       id="PERMISSION_DELETION"
                       name="PERMISSION_DELETION"
-                    // onClick={handleChange1(i)}
                     />
                   </Td>
                   <Td>
@@ -283,7 +263,6 @@ export const ConfigureAccess = ({
                       onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
                       id="ENV_CREATION"
                       name="ENV_CREATION"
-                    // onClick={handleChange1(i)}
                     />
                   </Td>
                   <Td>
@@ -292,7 +271,6 @@ export const ConfigureAccess = ({
                       onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
                       id="ENV_SYNC"
                       name="ENV_SYNC"
-                    // onClick={handleChange1(i)}
                     />
                   </Td>
                 </Tr>
@@ -329,14 +307,14 @@ export const ConfigureAccess = ({
                     <TableComposable>
                       <Thead noWrap={true}>
                         <Tr>
-                          <Th>{columnNames2.NAME}</Th>
-                          {/* <Th>{columnNames2.ROLE}</Th> */}
-                          <Th>{toPascalCase(columnNames2.APIKEY_CREATION)}</Th>
-                          <Th>{toPascalCase(columnNames2.APIKEY_DELETION)}</Th>
-                          <Th>{toPascalCase(columnNames2.PERMISSION_CREATION)}</Th>
-                          <Th>{toPascalCase(columnNames2.PERMISSION_DELETION)}</Th>
-                          <Th>{toPascalCase(columnNames2.ENV_CREATION)}</Th>
-                          <Th>{toPascalCase(columnNames2.ENV_SYNC)}</Th>
+                          <Th>{columnNames.NAME}</Th>
+                          {/* <Th>{columnNames.ROLE}</Th> */}
+                          <Th>{toPascalCase(columnNames.APIKEY_CREATION)}</Th>
+                          <Th>{toPascalCase(columnNames.APIKEY_DELETION)}</Th>
+                          <Th>{toPascalCase(columnNames.PERMISSION_CREATION)}</Th>
+                          <Th>{toPascalCase(columnNames.PERMISSION_DELETION)}</Th>
+                          <Th>{toPascalCase(columnNames.ENV_CREATION)}</Th>
+                          <Th>{toPascalCase(columnNames.ENV_SYNC)}</Th>
                         </Tr>
                       </Thead>
                       <Tbody>
@@ -407,5 +385,4 @@ export const ConfigureAccess = ({
       </Button>
     </div>
   );
-};
-// send data of the songle member
+}

@@ -1,91 +1,57 @@
-/* eslint-disable */
-import { useForm } from 'react-hook-form';
-import React from 'react';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import React, { useState } from 'react';
+import { useAddPermission, useDeleteMember } from '@app/services/rbac';
+import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
-  fetchRoleForIndividual,
-  useAddPermission,
-  useGetRoleForIndividual,
-  useDeletePermission,
-  useDeleteMember
-} from '@app/services/rbac';
-import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionToggle,
   Button,
   Checkbox,
   Split,
-  SplitItem,
-  Dropdown,
-  DropdownItem,
-  SelectProps,
-  DropdownToggle,
-  Select,
-  SelectOption,
-  SelectVariant,
-  Accordion,
-  AccordionItem,
-  AccordionContent,
-  AccordionToggle
+  SplitItem
 } from '@patternfly/react-core';
-import {
-  CustomActionsToggleProps,
-  TableComposable,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr
-} from '@patternfly/react-table';
+import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import toast from 'react-hot-toast';
-import { toPascalCase } from '@app/utils/toPascalConvert';
-export const schema = yup.object({
-  // TODO: change this to URL validation, after server supports http protocol append
-  url: yup.string().label('Hostname URL').trim().required().max(250),
-  env: yup
-    .string()
-    .label('Environment Name')
-    .noWhitespace()
-    .trim()
-    .max(50)
-    .alphabetsOnly()
-    .required(),
-  cluster: yup.string().label('Environment Type').oneOf(['preprod', 'prod']).required()
-});
-export interface FormData extends yup.InferType<typeof schema> { }
-interface groupType {
-  [key: string]: Object;
-}
-type Props = {
-  onSubmit?: (data: FormData) => void;
+
+interface Props {
   onClose?: () => void;
   editMemberName: string;
   propertyIdentifier: string;
   memberList: any;
+}
+
+type GroupItem1 = {
+  email: string;
+  name: string;
+  role: string;
+  PERMISSION_CREATION: boolean;
+  PERMISSION_DELETION: boolean;
+  ENV_SYNC: boolean;
+  ENV_CREATION: boolean;
+  APIKEY_DELETION: boolean;
+  APIKEY_CREATION: boolean;
 };
+
+
 export const EditMemberAccess = ({
-  onSubmit,
   onClose,
   editMemberName,
   propertyIdentifier,
   memberList
 }: Props): JSX.Element => {
-  
-  
-  
-  
-  
-  
-  
-  
-  const [isOpenDropdown, setIsOpenDropdown] = React.useState(false);
-  const [expanded, setExpanded] = React.useState('def-list-toggle2');
-  const [addAccess, setaddAccess] = React.useState([]);
-  const [deleteAccess, setdeleteAccess] = React.useState([]);
+  const [expanded, setExpanded] = useState('def-list-toggle2');
+  const [addAccess, setAddAccess] = useState<string[]>([]);
+  const [deleteAccess, setDeleteAccess] = useState<string[]>([]);
+  const useAddPermission1 = useAddPermission(propertyIdentifier);
+  const deleteMember = useDeleteMember(propertyIdentifier);
   const data1 = memberList.data.filter((e: any) => e.name === editMemberName);
-  const [group, setGroup] = React.useState({ data: data1 });
-  const columnNames2 = {
+  const [group, setGroup] = useState({ data: data1 });
+
+
+  const columnNames = {
     NAME: 'Name',
-    ROLE: 'Role',
+    // ROLE: 'Role',
     APIKEY_CREATION: 'APIKEY_CREATION',
     APIKEY_DELETION: 'APIKEY_DELETION',
     PERMISSION_CREATION: 'PERMISSION_CREATION',
@@ -93,6 +59,7 @@ export const EditMemberAccess = ({
     ENV_CREATION: 'ENV_CREATION',
     ENV_SYNC: 'ENV_SYNC'
   };
+
   const onToggleAccordian = async (id: string) => {
     if (id === expanded) {
       setExpanded('');
@@ -100,210 +67,134 @@ export const EditMemberAccess = ({
       setExpanded(id);
     }
   };
+
   const handleChange = (
     checked: boolean,
     event: React.FormEvent<HTMLInputElement>,
-    name: string,
     email: string
   ) => {
-    let target: any;
-    target = event.currentTarget;
+    const target: any = event.currentTarget;
     const temp = group.data;
-    const addAccess1: any = addAccess;
-    const deleteAccess1: any = deleteAccess;
-    temp.filter((e: any) => e.email === email)[0][target.name] = checked;
+    const objIndex = temp.findIndex((e: any) => e.email === email);
+    temp[objIndex][target.name] = checked;
     setGroup({ data: temp });
+
     if (checked) {
-      addAccess1.push(target.name as never);
-      deleteAccess1.pop(target.name);
+      setAddAccess([...addAccess, target.name]);
+      setDeleteAccess(deleteAccess.filter((value) => value !== target.name));
     } else {
-      deleteAccess1.push(target.name as never);
-      addAccess1.pop(target.name);
+      setDeleteAccess([...deleteAccess, target.name]);
+      setAddAccess(addAccess.filter((value) => value !== target.name));
     }
-    setaddAccess(addAccess1);
-    setdeleteAccess(deleteAccess1);
   };
-  const onToggleDropdown = (isOpen: boolean, event: any) => {
-    
-    setIsOpenDropdown(isOpen);
-  };
-  const onFocusDropdown = () => {
-    const element: any = document.getElementById('role-dropdown');
-    element.focus();
-  };
-  const onSelectDropdown = () => {
-    setIsOpenDropdown(false);
-    onFocusDropdown();
-  };
-  const dropdownItems = [
-    <DropdownItem key="link" tooltip="Tooltip for enabled link">
-      Link
-    </DropdownItem>,
-    <DropdownItem key="action" component="button" tooltip="Tooltip for enabled button">
-      Action
-    </DropdownItem>
-  ];
-  const useAddPermission1 = useAddPermission(propertyIdentifier);
-  const deleteMember = useDeleteMember(propertyIdentifier);
+
+
   const handleSubmit = () => {
-    const addData: any = {};
-    const addPerm: any = [];
-    let addflag = false
-    group.data.map((v: any, k: number) => {
-      const temp: any = {};
-      const tempActions: string[] = [];
-      temp.name = v.name;
-      temp.email = v.email;
-      Object.keys(v).map((a: string, i: number) => {
-        v[a] && a !== 'name' && a !== 'email' && a !== 'role' && tempActions.push(a);
-      });
-      if (tempActions.length !== 0) {
-        addflag = true
-      }
-      temp.actions = tempActions;
-      addPerm.push(temp);
-    });
-    addData.propertyIdentifier = propertyIdentifier;
-    addData.permissionDetails = addPerm;
-    const deleteData: any = {};
-    const deletePerm: any = [];
-    let deleteflag = false
-    group.data.map((v: any, k: number) => {
-      const tempDelete: any = {};
-      const tempActionsDelete: string[] = [];
-      tempDelete.email = v.email;
-      Object.keys(v).map((a: string, i: number) => {
-        !v[a] && a !== 'name' && a !== 'email' && a !== 'role' && tempActionsDelete.push(a);
-      });
-      if (tempActionsDelete.length !== 0) {
-        deleteflag = true
-      }
-      tempDelete.actions = tempActionsDelete;
-      deletePerm.push(tempDelete);
-    });
-    deleteData.propertyIdentifier = propertyIdentifier;
-    deleteData.permissionDetails = deletePerm;
-      try {
+    const addPerm = group.data.map(({ email, name, role, ...rand }) => ({
+      email,
+      name,
+      actions: Object.keys(rand)
+    }));
+
+    const addData = { propertyIdentifier, permissionDetails: addPerm };
+
+    const deletePerm = group.data.map(({ email, name, role, ...rand }) => ({
+      email,
+      name,
+      actions: Object.keys(rand).filter((value) => rand[value] === false)
+    }));
+
+    const deleteData = { propertyIdentifier, permissionDetails: deletePerm };
+
+    try {
       if (addAccess.length) {
-        useAddPermission1.mutateAsync({
-          ...addData
-        }).then((res) => {
-          toast.success('Permission updated successfully');
-          return res;
-        });
+        useAddPermission1
+          .mutateAsync({
+            ...addData
+          })
+          .then((res) => {
+            toast.success('Permission updated successfully');
+            return res;
+          });
       }
+
       if (deleteAccess.length) {
-        deleteMember.mutateAsync({
-          ...deleteData
-        }).then(() => {
-          toast.success('Permission updated successfully');
-        });
+        deleteMember
+          .mutateAsync({
+            ...deleteData
+          })
+          .then(() => {
+            toast.success('Permission updated successfully');
+          });
       }
-      onClose()
-    } catch (err) {}  
+
+      onClose();
+    } catch (err) {
+      console.error(err)
     }
+  };
 
   return (
     <div>
-      <div>
-        <Accordion asDefinitionList>
-          <AccordionItem>
-            <AccordionToggle
-              style={{ width: '100%' }}
-              onClick={() => {
-                onToggleAccordian(`def-list-toggle1_${editMemberName}`);
-              }}
-              isExpanded={expanded === `def-list-toggle1_${editMemberName}`}
-              id="def-list-toggle1_"
-            >
-              <Split>
-                <SplitItem style={{ display: 'flex', justifyContent: 'start' }} isFilled>
-                  {editMemberName}
-                </SplitItem>
-                <SplitItem style={{ display: 'flex', justifyContent: 'end' }} isFilled>
-                  {toPascalCase(group.data[0].role)}
-                </SplitItem>
-              </Split>
-            </AccordionToggle>
-            <AccordionContent
-              id={`def-list-expand1${editMemberName}`}
-              isHidden={expanded !== `def-list-toggle1_${editMemberName}`}
-            >
-              <TableComposable>
-                <Thead noWrap={true}>
-                  <Tr>
-                    <Th>{columnNames2.NAME}</Th>
-                    {/* <Th>{columnNames2.ROLE}</Th> */}
-                    <Th>{toPascalCase(columnNames2.APIKEY_CREATION)}</Th>
-                    <Th>{toPascalCase(columnNames2.APIKEY_DELETION)}</Th>
-                    <Th>{toPascalCase(columnNames2.PERMISSION_CREATION)}</Th>
-                    <Th>{toPascalCase(columnNames2.PERMISSION_DELETION)}</Th>
-                    <Th>{toPascalCase(columnNames2.ENV_CREATION)}</Th>
-                    <Th>{toPascalCase(columnNames2.ENV_SYNC)}</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {Object.keys(group).length &&
-                    group.data.map((i: any) => (
-                      <Tr key={i.name}>
-                        <Td>{i.name}</Td>
-                        <Td>
-                          <Checkbox
-                            isChecked={i.APIKEY_CREATION}
-                            onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                            id="APIKEY_CREATION"
-                            name="APIKEY_CREATION"
-                          />
-                        </Td>
-                        <Td>
-                          <Checkbox
-                            isChecked={i.APIKEY_DELETION}
-                            onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                            id="APIKEY_DELETION"
-                            name="APIKEY_DELETION"
-                          />
-                        </Td>
-                        <Td>
-                          <Checkbox
-                            isChecked={i.PERMISSION_CREATION}
-                            onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                            id="PERMISSION_CREATION"
-                            name="PERMISSION_CREATION"
-                          />
-                        </Td>
-                        <Td>
-                          <Checkbox
-                            isChecked={i.PERMISSION_DELETION}
-                            onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                            id="PERMISSION_DELETION"
-                            name="PERMISSION_DELETION"
-                          />
-                        </Td>
-                        <Td>
-                          <Checkbox
-                            isChecked={i.ENV_CREATION}
-                            onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                            id="ENV_CREATION"
-                            name="ENV_CREATION"
-                          />
-                        </Td>
-                        <Td>
-                          <Checkbox
-                            isChecked={i.ENV_SYNC}
-                            onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                            id="ENV_SYNC"
-                            name="ENV_SYNC"
-                          />
-                        </Td>
-                      </Tr>
+      <Accordion asDefinitionList>
+        <AccordionItem>
+          <AccordionToggle
+            style={{ width: '100%' }}
+            onClick={() => {
+              onToggleAccordian(`def-list-toggle1_${editMemberName}`);
+            }}
+            isExpanded={expanded === `def-list-toggle1_${editMemberName}`}
+            id="def-list-toggle1_"
+          >
+            <Split>
+              <SplitItem style={{ display: 'flex', justifyContent: 'start' }} isFilled>
+                {editMemberName}
+              </SplitItem>
+              <SplitItem style={{ display: 'flex', justifyContent: 'end' }} isFilled>
+                {toPascalCase(group.data[0].role)}
+              </SplitItem>
+            </Split>
+          </AccordionToggle>
+
+          <AccordionContent
+            id={`def-list-expand1${editMemberName}`}
+            isHidden={expanded !== `def-list-toggle1_${editMemberName}`}
+          >
+            <TableComposable>
+              <Thead noWrap>
+                <Tr>
+                  <Th>{columnNames.NAME}</Th>
+                  <Th>{toPascalCase(columnNames.APIKEY_CREATION)}</Th>
+                  <Th>{toPascalCase(columnNames.APIKEY_DELETION)}</Th>
+                  <Th>{toPascalCase(columnNames.PERMISSION_CREATION)}</Th>
+                  <Th>{toPascalCase(columnNames.PERMISSION_DELETION)}</Th>
+                  <Th>{toPascalCase(columnNames.ENV_CREATION)}</Th>
+                  <Th>{toPascalCase(columnNames.ENV_SYNC)}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {Object.keys(group).length && group.data.map((i: GroupItem1) => (
+                  <Tr key={i.name}>
+                    <Td>{i.name}</Td>
+                    {[i.APIKEY_CREATION, i.APIKEY_DELETION, i.PERMISSION_CREATION, i.PERMISSION_DELETION, i.ENV_CREATION, i.ENV_SYNC].map((isChecked, index) => (
+                      <Td key={index}>
+                        <Checkbox
+                          isChecked={isChecked}
+                          onChange={(checked, e) => handleChange(checked, e, i.email,)}
+                          id={`${columnNames[Object.keys(columnNames)[index + 1]]}`}
+                          name={`${columnNames[Object.keys(columnNames)[index + 1]]}`}
+                        />
+                      </Td>
                     ))}
-                </Tbody>
-              </TableComposable>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </div>
-      <br />
+                  </Tr>
+                ))}
+              </Tbody>
+            </TableComposable>
+
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+      
       <Button variant="primary" onClick={handleSubmit}>
         Submit
       </Button>

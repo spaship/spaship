@@ -65,7 +65,6 @@ import {
 } from './components/CreateAPIKeyForm/CreateAPIKeyForm';
 import { CreateEnvForm, FormData as EnvForm } from './components/CreateEnvForm/CreateEnvForm';
 import { SyncServiceForm } from './components/SyncServiceForm';
-// import { Avatar } from '@patternfly/react-core';
 import { AddMembers } from './components/AddMembers/AddMembers';
 import { ConfigureAccess } from './components/ConfigureAccess/ConfigureAccess';
 import { EditMemberAccess } from './components/EditAccess/EditMemberAccess';
@@ -191,57 +190,31 @@ export const WebPropertyEnvPage = (): JSX.Element => {
       }
     }
   };
-  // const handleAddMembers = async () => {
-  //   if (!propertyTitle) return;
-  // };
-  // const handleConfigureAccess = async () => {
-  //   if (!propertyTitle) return;
-  // };
-  // const handleEditMemberAccess = async () => {
-  //   if (!propertyTitle) return;
-  // };
-  // const [deleteMem, setDeleteMember] = React.useState('');
 
   const handleDeleteMember = async () => {
-    if (!propertyTitle) return;
-
-    const deleteData: any = {};
-    const deletePerm: any = [];
-    memberList.data
-      .filter((e: any) => (e.name as any) === deleteMemberName)
-      .map((v: any, k: number) => {
-        const tempDelete: any = {};
-        const tempActionsDelete: string[] = [];
-        tempDelete.email = v.email;
-        Object.keys(v).map((a: string, i: number) => {
-          a !== 'name' && a !== 'email' && a !== 'role' && tempActionsDelete.push(a);
-        });
-        tempDelete.actions = tempActionsDelete;
-        deletePerm.push(tempDelete);
-      });
-    deleteData.propertyIdentifier = propertyIdentifier;
-    deleteData.permissionDetails = deletePerm;
-
-
-    try {
-      // useDeleteMember(deleteData)
-      deleteMember.mutateAsync({
-        ...deleteData
-      }).then(()=>{
-      toast.success('Member deleted successfully');
-       });
-      handlePopUpClose('deleteMember');
-
-    } catch (error: any) {
-
-      toast.error('Member not deleted ');
-      // if (error.response.status === 403) {
-      //   toast.error(error.message);
-      //   handlePopUpClose('deleteMember');
-      // } else {
-      //   toast.error('User not deletd ');
-      // }
+    if (!propertyTitle) {
+      return;
     }
+  
+    const deletePerm: { email: string; actions: string[] }[] = memberList.data
+      .filter((e: any) => e.name === deleteMemberName)
+      .map((v: any) => {
+        const tempActionsDelete: string[] = [];
+        Object.keys(v)
+          .filter((a) => !['name', 'email', 'role'].includes(a))
+          .forEach((a) => tempActionsDelete.push(a));
+        return { email: v.email, actions: tempActionsDelete };
+      });
+  
+    const deleteData = {
+      propertyIdentifier: propertyIdentifier,
+      permissionDetails: deletePerm,
+    };
+
+      await deleteMember.mutateAsync(deleteData);
+      toast.success('Member deleted successfully');
+      handlePopUpClose('deleteMember');
+    
   };
 
   return (

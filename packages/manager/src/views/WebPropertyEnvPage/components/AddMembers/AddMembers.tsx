@@ -15,42 +15,19 @@ import {
   SplitItem,
   Tab,
   Tabs,
-  TabTitleText,
-  Spinner,
-  Label
+  TabTitleText, Label
 } from '@patternfly/react-core';
-import { Table, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import toast from 'react-hot-toast';
-import * as yup from 'yup';
 import { toPascalCase } from '@app/utils/toPascalConvert';
 
-import { UserIcon, UsersIcon, InfoCircleIcon, IntegrationIconConfig } from '@patternfly/react-icons';
+import { UserIcon, UsersIcon, InfoCircleIcon } from '@patternfly/react-icons';
+// import TableHeader from '../RBACEditForm';
 
-export const schema = yup.object({
-  // TODO: change this to URL validation, after server supports http protocol append
-  url: yup.string().label('Hostname URL').trim().required().max(250),
-  env: yup
-    .string()
-    .label('Environment Name')
-    .noWhitespace()
-    .trim()
-    .max(50)
-    .alphabetsOnly()
-    .required(),
-  cluster: yup.string().label('Environment Type').oneOf(['preprod', 'prod']).required()
-});
-export interface FormData extends yup.InferType<typeof schema> { }
 
-// interface GroupChild {
-//   name: string;
-//   email: string;
-// }
-// interface GroupType {
-//   data: GroupChild[];
-// }
 type RoverGropListItem = {
   email: string;
   isOpen: boolean;
@@ -85,11 +62,6 @@ type AddDataType = {
   permissionDetails: AddPermType;
 };
 
-type NewUserItem = {
-  name: string;
-  email: string;
-  role: string;
-};
 export const AddMembers = ({ onClose }: Props): JSX.Element => {
   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(0);
   // const [isBox, setIsBox] = React.useState<boolean>(false);
@@ -105,7 +77,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
   const [newUserDetails, setnewUserDetails] = React.useState<any[]>([]);
   const [expanded, setExpanded] = React.useState('def-list-toggle2');
   const { query } = useRouter();
-  const [isOpenRover, setIsOpenRover] = React.useState(false);
+  // const [isOpenRover, setIsOpenRover] = React.useState(false);
   const [selectedRover, setSelectedRover] = React.useState<any[]>([]);
   const [roverList, setRoverList] = React.useState<any[]>([]);
   const propertyIdentifier = query.propertyIdentifier as string;
@@ -116,45 +88,18 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
   ) => {
     setActiveTabKey(tabIndex);
   };
-  // const onChange = (value: string) => {
-  //   setValue(value);
-  // };
 
-  // const individualRole = {
-  //   data: [
-  //     {
-  //       email: 'nmore@redhat.com',
-  //       name: 'Nikhita More',
-  //       role: 'OWNER',
-  //       PERMISSION_CREATION: true,
-  //       PERMISSION_DELETION: true,
-  //       ENV_SYNC: true,
-  //       ENV_CREATION: true,
-  //       APIKEY_DELETION: true,
-  //       APIKEY_CREATION: true
-  //     },
-  //     {
-  //       email: 'souchowd@redhat.com',
-  //       name: 'Soumyadip Chowdhury',
-  //       role: 'OWNER',
-  //       PERMISSION_DELETION: true,
-  //       PERMISSION_CREATION: true
-  //     },
-  //     {
-  //       email: 'test@redhat.com',
-  //       name: 'Arko',
-  //       role: 'OWNER',
-  //       PERMISSION_CREATION: true,
-  //       PERMISSION_DELETION: true,
-  //       APIKEY_DELETION: true,
-  //       APIKEY_CREATION: true
-  //     }
-  //   ],
-  //   isArray: true,
-  //   path: '/api/v1/permission',
-  //   duration: '16ms',
-  //   method: 'GET'
-  // };
+  const columnNames2 = {
+    NAME: 'Name',
+    // ROLE: 'Role',
+    APIKEY_CREATION: 'APIKEY_CREATION',
+    APIKEY_DELETION: 'APIKEY_DELETION',
+    PERMISSION_CREATION: 'PERMISSION_CREATION',
+    PERMISSION_DELETION: 'PERMISSION_DELETION',
+    ENV_CREATION: 'ENV_CREATION',
+    ENV_SYNC: 'ENV_SYNC'
+  };
+
   const role: any = {
     User: ['APIKEY_CREATION', 'ENV_CREATION', 'ENV_SYNC'],
     Owner: [
@@ -166,227 +111,164 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
       'PERMISSION_DELETION'
     ]
   };
-
   useEffect(() => {
-    if (activeTabKey === 0) {
-      const data: string[] = [];
-      let temp: any = {};
+    const data: any[] = [];
+    let temp: any = {};
 
-      newUserDetails.length !== 0 &&
-        newUserDetails.map((v: NewUserItem, k: number) => {
-          temp = {};
-          temp.name = v.name;
-          temp.email = v.email;
+    const userDetails = activeTabKey === 0 ? newUserDetails : roverList;
+    userDetails.forEach((user: any) => {
+      temp = {};
+      temp.name = user.name;
+      temp.email = user.email;
+      role[user.role].forEach((optionKey: string) => {
+        temp[optionKey] = true;
+      });
+      data.push(temp);
+    });
 
-          role[v.role].map((optionKey: string) => {
-            temp[optionKey] = true;
-          });
-          data.push(temp);
-        });
-      setGroup({ data });
-    } else {
-      const data: string[] = [];
-      let temp: any = {};
-      roverList.length !== 0 &&
-        roverList.map((v: any, k: number) => {
-          temp = {};
-          temp.name = v.name;
-          temp.email = v.email;
-          role[v.role].map((optionKey: string) => {
-            temp[optionKey] = true;
-          });
-          data.push(temp);
-        });
-
-      setGroup({ data });
-    }
-  }, [JSON.stringify(newUserDetails), selected, roverList]);
+    setGroup({ data });
+    
+  }, [JSON.stringify(newUserDetails), selected, roverList, activeTabKey]);
 
   const onToggle = (isOpen: boolean) => {
-    userList.length && setIsOpen(isOpen);
+    if (userList.length) {
+      setIsOpen(isOpen);
+    }
   };
+
   const onSelect: SelectProps['onSelect'] = (event, selection) => {
-    let temp = group
+    
     if (selected.includes(selection)) {
-
       setSelected((prevState) => prevState.filter((item) => item !== selection));
-      setGroup({ data: group.data.filter((n: GroupItem1) => n.name !== selection) });
-      setnewUserDetails(newUserDetails.filter((n) => n.name !== selection));
-
-
+      setGroup((prevState) => {
+        const newData = prevState.data.filter((item: any) => item.name !== selection);
+        return { data: newData };
+      });
+      setnewUserDetails((prevState) => prevState.filter((item: any) => item.name !== selection));
     } else {
-
       setSelected((prevState) => [...prevState, selection]);
-      // setnewUserDetails(newUserDetails.filter((n) => n.name !== selection));
-
-      // let c = newUserDetails.filter((value, index, self) =>
-      //   index === self.findIndex((t) => (
-      //     t.email === value.email && t.name === value.name
-      //   ))
-      // )
-
     }
   };
-  const clearSelection = () => {
-    setSelected([]);
-    setGroup({ data: {} });
-    setnewUserDetails([]);
-    setIsOpen(false);
+  const onToggleAccordian = (id: string) => {
+    setExpanded(id === expanded ? '' : id);
   };
 
-  const columnNames2 = {
-    NAME: 'Name',
-    ROLE: 'Role',
-    APIKEY_CREATION: 'APIKEY_CREATION',
-    APIKEY_DELETION: 'APIKEY_DELETION',
-    PERMISSION_CREATION: 'PERMISSION_CREATION',
-    PERMISSION_DELETION: 'PERMISSION_DELETION',
-    ENV_CREATION: 'ENV_CREATION',
-    ENV_SYNC: 'ENV_SYNC'
-  };
-  const onToggleAccordian = async (id: string) => {
-    if (id === expanded) {
-      setExpanded('');
-    } else {
-      setExpanded(id);
+  const handleChange = (checked: boolean, event: React.FormEvent<HTMLInputElement>, name: string, email: string, key: string) => {
+    const temp = [...group.data];
+    const index = temp.findIndex((e: RoverGropListItem) => e.email === email);
+    
+    if (index >= 0) {
+      temp[index] = { ...temp[index], [key]: checked };
+      setGroup({ data: temp });
     }
-  };
-  const handleChange = (
-    checked: boolean,
-    event: React.FormEvent<HTMLInputElement>,
-    name: string,
-    email: string
-  ) => {
-    const target = event.currentTarget;
-    const temp = group.data;
-
-    temp.filter((e: RoverGropListItem) => e.email === email)[0][target.name] = checked;
-    setGroup({ data: temp });
-  };
-
-  const debounceCustom = (delay: number): SelectProps['onFilter'] => {
-    let timer: any;
-
-    return (
-      e: React.ChangeEvent<HTMLInputElement> | null,
-      value: string
-    ): React.ReactElement[] | undefined => {
-      clearInterval(timer);
-      timer = setTimeout(async () => {
-        if (value.length >= 3) {
-          const res = await fetchUserlist(value)
-          await setUserList(res);
-          setIsOpen(true)
-        }
-      }, delay);
-      return
-    };
   };
 
   const onToggleAccess = (isOpenAccess: boolean, email: string) => {
-
     setIsOpenAccess(isOpenAccess);
-    const temp = newUserDetails;
-    temp.filter((m) => m.email === email)[0].isOpen = isOpenAccess;
-
-    setnewUserDetails(temp);
+    setnewUserDetails(prevDetails => {
+      const temp = [...prevDetails];
+      const index = temp.findIndex(m => m.email === email);
+      if (index >= 0) {
+        temp[index] = { ...temp[index], isOpen: isOpenAccess };
+      }
+      return temp;
+    });
   };
 
   const onSelectAccess = (
     event: React.MouseEvent | React.ChangeEvent,
     selection: string,
-    isPlaceholder: boolean,
+    // isPlaceholder: boolean,
     email: string
   ) => {
     setIsOpenAccess(false);
-
-    const temp = newUserDetails;
-    temp.filter((m) => m.email === email)[0].isOpen = false;
-    temp.filter((m) => m.email === email)[0].role = selection;
-    setnewUserDetails(temp);
+    setnewUserDetails(prevDetails => {
+      const temp = [...prevDetails];
+      const index = temp.findIndex(m => m.email === email);
+      if (index >= 0) {
+        temp[index] = { ...temp[index], isOpen: false, role: selection };
+      }
+      return temp;
+    });
   };
 
   const handleAddMemberClick = (event: React.MouseEvent | React.ChangeEvent, option: any) => {
-    const temp = newUserDetails;
-    option.role = 'User';
-    option.isOpen = false;
-    const check = temp.find(key => key.name == option.name)
-    if (!check) {
-      temp.push(option);
-    }
-
-
-
-    setnewUserDetails(temp);
+    setnewUserDetails(prevDetails => {
+      const temp = [...prevDetails];
+      const check = temp.find(key => key.name === option.name);
+      if (!check) {
+        temp.push({ ...option, role: 'User', isOpen: false });
+      }
+      return temp;
+    });
   };
 
   const useAddPermission1 = useAddPermission(propertyIdentifier);
-  const handleSubmit = () => {
-    const addData: Partial<AddDataType> = {};
-    let addPerm: AddPermType = [];
-    group.data.map((v: any) => {
-      const temp: any = {};
-      const tempActions: string[] = [];
-      temp.name = v.name;
-      temp.email = v.email;
-      Object.keys(v).map((a: string) => {
-        v[a] && a !== 'name' && a !== 'email' && a !== 'role' && tempActions.push(a);
+  const handleSubmit = async () => {
+    const addData: Partial<AddDataType> = { propertyIdentifier };
+    const addPerm: AddPermType = group.data
+      .filter(v => v.email)
+      .map(v => {
+        const tempActions: string[] = Object.keys(v).filter(a => v[a] && a !== 'name' && a !== 'email' && a !== 'role');
+        return { name: v.name, email: v.email, actions: tempActions };
       });
-      temp.actions = tempActions;
-      addPerm = [...addPerm, temp];
-    });
-    addData.propertyIdentifier = propertyIdentifier;
     addData.permissionDetails = addPerm;
     try {
-      let flag = false
-      useAddPermission1.mutateAsync({
-        ...addData as any
-      }).then(()=>{
-       toast.success('Members added successfully');
-      });
-      onClose()
-   
-    } 
-    catch (error) {
-      // toast.error('Members not added ');
+      await useAddPermission1.mutateAsync(addData as any).then(() => {
+        toast.success('Members added successfully');
+      })
+      onClose();
+    } catch (error) {
+     
     }
   };
-  // .catch(() => {
-  //   toast.error('Members not added successfully');
 
-  //   });
   const onToggleRover = (isOpenR: boolean) => {
-    // setIsOpenRover(isOpenR);
-
+    
   };
 
   const onSelectRover: SelectProps['onSelect'] = (event, selection) => {
-    if (selectedRover.includes(selection)) {
-      setSelectedRover((prevState) => prevState.filter((item) => item !== selection));
-      setGroup({ data: group.data.filter((n: RoverGropListItem) => n.name !== selection) });
-    } else {
-      setSelectedRover((prevState) => [...prevState, selection]);
-    }
-  };
+    
+    setSelectedRover(prevState => {
+      if (prevState.includes(selection)) {
+        return prevState.filter(item => item !== selection);
+      } else {
+        return [...prevState, selection];
+      }
+    });
 
-  const clearSelectionRover = () => {
-    setSelectedRover([]);
-    setIsOpenRover(false);
+    setGroup(prevGroup => ({
+      data: prevGroup.data.filter(n => n.name !== selection)
+    }));
   };
-
-  const addRoletoroverGroup = (roverGroupList: any) => {
-    if (roverGroupList !== undefined) {
-      roverGroupList.map((item: RoverGropListItem) => {
-        item.role = 'User';
-        item.isOpen = false;
-      });
-      setRoverList(roverGroupList);
+  const clearSelection = () => {
+    if (activeTabKey === 0) {
+      setSelected([]);
+      setGroup({ data: {} });
+      setnewUserDetails([]);
+      setIsOpen(false);
     }
     else {
-      toast.error("Please enter a valid Rover Group Common Name (cn)")
+      setSelectedRover([]);
+      setGroup({ data: {} })
+      setUserList([])
+      
     }
   };
-  const debounceCustomRover = (delay: number): SelectProps['onFilter'] => {
+  const addRoleToRoverGroup = (roverGroupList: any) => {
+
+    if (roverGroupList) {
+      const updatedRoverGroupList = roverGroupList.map(item => ({
+        ...item,
+        role: 'User',
+        isOpen: false
+      }));
+      setRoverList(updatedRoverGroupList);
+    } else {
+      toast.error('Please enter a valid Rover Group Common Name (cn)');
+    }
+  };
+  const debounceCustomCombined = (delay: number, selectedTab: string | number): SelectProps['onFilter'] => {
     let timer: any;
 
     return (
@@ -397,14 +279,19 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
 
       timer = setTimeout(async () => {
         if (value.length >= 3) {
-          const res = await fetchRoverGroup(value)
-          await addRoletoroverGroup(res);
+          if (selectedTab === 0) {
+            const res = await fetchUserlist(value);
+            await setUserList(res);
+            setIsOpen(true);
+          } else if (selectedTab === 1) {
+            const res = await fetchRoverGroup(value);
+            await addRoleToRoverGroup(res);
+          }
         }
       }, delay);
-      return
+      return;
     };
   };
-
   return (
     <Tabs
       activeKey={activeTabKey}
@@ -413,12 +300,13 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
       aria-label="Tabs in the default example"
       role="region"
     >
+
+
       <Tab
         eventKey={0}
         title={<TabTitleText><UserIcon /> Email</TabTitleText>}
         aria-label="Default content - users"
       >
-
         <div>
           <br />
           Email
@@ -427,7 +315,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
 
           <Select
             variant={SelectVariant.typeaheadMulti}
-            onFilter={debounceCustom(500)}
+            onFilter={debounceCustomCombined(500, activeTabKey)}
             onToggle={onToggle}
             onSelect={onSelect}
             onClear={clearSelection}
@@ -435,9 +323,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             isOpen={isOpen}
             aria-labelledby={titleId}
             placeholderText="Kindly enter name or email"
-
           >
-
             {(userList || []).map((option, index) => (
               <SelectOption
                 key={index}
@@ -446,6 +332,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
               />
             ))}
           </Select>
+
           <br />
           <Button
             style={{ display: 'flex', float: 'right' }}
@@ -457,229 +344,148 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
           >
             Show Advance Access
           </Button>
+
           <br />
           <b>New Members</b>
           <br />
           <br />
+
           {isShowAdvancedViewEnabled && Object.keys(columnNames2).length ? (
             <TableComposable>
               <Thead noWrap={true}>
                 <Tr>
                   <Th>{columnNames2.NAME}</Th>
-                  {/* <Th>{columnNames2.ROLE}</Th> */}
-                  <Th>{toPascalCase(columnNames2.APIKEY_CREATION)}</Th>
-                  <Th>{toPascalCase(columnNames2.APIKEY_DELETION)}</Th>
-                  <Th>{toPascalCase(columnNames2.PERMISSION_CREATION)}</Th>
-                  <Th>{toPascalCase(columnNames2.PERMISSION_DELETION)}</Th>
-                  <Th>{toPascalCase(columnNames2.ENV_CREATION)}</Th>
-                  <Th>{toPascalCase(columnNames2.ENV_SYNC)}</Th>
+                  {Object.keys(columnNames2).map((key) => {
+                    if (key === 'NAME') {
+                      return null;
+                    }
+                    return <Th key={key}>{toPascalCase(columnNames2[key])}</Th>;
+                  })}
                 </Tr>
               </Thead>
               <Tbody>
                 {Object.keys(group).length &&
                   group.data.map((i: GroupItem1) => (
+
                     <Tr key={i.name}>
                       <Td>{i.name}</Td>
-                      <Td>
-                        <Checkbox
-                          isChecked={i.APIKEY_CREATION}
-                          onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                          id="APIKEY_CREATION"
-                          name="APIKEY_CREATION"
-                        />
-                      </Td>
-                      <Td>
-                        <Checkbox
-                          isChecked={i.APIKEY_DELETION}
-                          onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                          id="APIKEY_DELETION"
-                          name="APIKEY_DELETION"
-                        />
-                      </Td>
-                      <Td>
-                        <Checkbox
-                          isChecked={i.PERMISSION_CREATION}
-                          onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                          id="PERMISSION_CREATION"
-                          name="PERMISSION_CREATION"
-                        />
-                      </Td>
-                      <Td>
-                        <Checkbox
-                          isChecked={i.PERMISSION_DELETION}
-                          onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                          id="PERMISSION_DELETION"
-                          name="PERMISSION_DELETION"
-                        />
-                      </Td>
-                      <Td>
-                        <Checkbox
-                          isChecked={i.ENV_CREATION}
-                          onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                          id="ENV_CREATION"
-                          name="ENV_CREATION"
-                        />
-                      </Td>
-                      <Td>
-                        <Checkbox
-                          isChecked={i.ENV_SYNC}
-                          onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                          id="ENV_SYNC"
-                          name="ENV_SYNC"
-                        />
-                      </Td>
+                      {Object.keys(columnNames2).map((key) => {
+                        if (key === 'NAME' || key === 'ROLE') {
+                          return null;
+                        }
+                        const isChecked = i[key];
+                        return (
+                          <Td key={key}>
+                            <Checkbox
+                              isChecked={isChecked}
+                              onChange={(checked, e) => handleChange(checked, e, i.name, i.email, key)}
+                              id={key}
+                              name={key}
+                            />
+                          </Td>
+                        );
+                      })}
                     </Tr>
                   ))}
               </Tbody>
             </TableComposable>
           ) : (
-            <div>
+            <>
               <Accordion asDefinitionList>
-                {newUserDetails.map((v, k) => (
-                  <AccordionItem>
-                    <AccordionToggle
-                      onClick={() => {
-                        onToggleAccordian(`def-list-toggle1_${v?.email}`);
-                      }}
-                      isExpanded={expanded === `def-list-toggle1_${v?.email}`}
-                      id="def-list-toggle1_"
-                    >
-                      <Split>
+                {newUserDetails.map((user) => {
+                  const { email, name, role, isOpen } = user;
+                  const isExpanded = expanded === `def-list-toggle1_${email}`;
+                  const onToggleAccessHandler = () => onToggleAccess(!isOpen, email);
+                  const onSelectAccessHandler = (event, selection) =>
+                    onSelectAccess(event, selection, email);
 
-                        <SplitItem isFilled onClick={(e) => e.stopPropagation()}>
-                          {v.name}
-                          <br />
-                          {v.email}
-                        </SplitItem>
-                        <SplitItem isFilled></SplitItem>
-                        <SplitItem onClick={(e) => e.stopPropagation()}>
-                          <Select
-                            id={`access_${v.email}`}
-                            variant={SelectVariant.single}
-                            placeholderText="Access"
-                            aria-label="Access"
-                            onToggle={(flagOpen) => onToggleAccess(flagOpen, v.email)}
-                            onSelect={(e, s, p) => onSelectAccess(e, s as any, p as any, v.email)}
-                            selections={v.role}
-                            isOpen={v.isOpen}
-                            menuAppendTo={() => document.body}
-                            value={v.role}
-                            isPlain={true}
-                          >
-                            <SelectOption key={`user_${v.email}`} value="User">
-                              User
-                            </SelectOption>
-                            <SelectOption key={`owner_${v.email}`} value="Owner">
-                              Owner
-                            </SelectOption>
-                          </Select>
-                        </SplitItem>
-                      </Split>
-                    </AccordionToggle>
-                    <AccordionContent
-                      id={`def-list-expand1${v.email}`}
-                      isHidden={expanded !== `def-list-toggle1_${v.email}`}
-                    >
-                      <TableComposable>
-                        <Thead noWrap={true}>
-                          <Tr>
-                            <Th>{toPascalCase(columnNames2.NAME)}</Th>
-                            {/* <toPascalCase(Th>{columnNames2.ROLE}</T)h> */}
-                            <Th>{toPascalCase(columnNames2.APIKEY_CREATION)}</Th>
-                            <Th>{toPascalCase(columnNames2.APIKEY_DELETION)}</Th>
-                            <Th>{toPascalCase(columnNames2.PERMISSION_CREATION)}</Th>
-                            <Th>{toPascalCase(columnNames2.PERMISSION_DELETION)}</Th>
-                            <Th>{toPascalCase(columnNames2.ENV_CREATION)}</Th>
-                            <Th>{toPascalCase(columnNames2.ENV_SYNC)}</Th>
-                          </Tr>
-                        </Thead>
-                        <Tbody>
-                          {Object.keys(group).length &&
-                            group.data.map(
-                              (i: GroupItem1) =>
-                                i.name == v.name && (
-                                  <Tr key={i.name}>
-                                    <Td>{i.name}</Td>
+                  return (
+                    <AccordionItem key={email}>
+                      <AccordionToggle
+                        id={`def-list-toggle1_${email}`}
+                        isExpanded={isExpanded}
+                        onClick={() => onToggleAccordian(`def-list-toggle1_${email}`)}
+                      >
+                        <Split>
+                          <SplitItem isFilled onClick={(e) => e.stopPropagation()}>
+                            {name}
+                            <br />
+                            {email}
+                          </SplitItem>
+                          <SplitItem isFilled></SplitItem>
+                          <SplitItem onClick={(e) => e.stopPropagation()}>
+                            <Select
+                              id={`access_${email}`}
+                              variant={SelectVariant.single}
+                              placeholderText="Access"
+                              aria-label="Access"
+                              onToggle={onToggleAccessHandler}
+                              onSelect={onSelectAccessHandler}
+                              selections={role}
+                              isOpen={isOpen}
+                              menuAppendTo={() => document.body}
+                              isPlain={true}
+                            >
+                              <SelectOption key={`user_${email}`} value="User">
+                                User
+                              </SelectOption>
+                              <SelectOption key={`owner_${email}`} value="Owner">
+                                Owner
+                              </SelectOption>
+                            </Select>
+                          </SplitItem>
+                        </Split>
+                      </AccordionToggle>
+                      <AccordionContent
+                        id={`def-list-expand1${email}`}
+                        isHidden={!isExpanded}
+                      >
+                        <TableComposable>
+                          <Thead noWrap={true}>
+                            <Tr>
+                              {Object.values(columnNames2).map((columnName) => (
+                                <Th key={columnName}>{toPascalCase(columnName)}</Th>
+                              ))}
+                            </Tr>
+                          </Thead>
+                          <Tbody>
+                            {group.data
+                              .filter((item) => item.name === name)
+                              .map((item) => (
+                                <Tr key={item.name}>
+                                  <Td>{item.name}</Td>
+                                  {Object.keys(columnNames2).map((columnName) => (
+                                    <Td key={columnName}>
 
-                                    <Td>
+
                                       <Checkbox
-                                        isChecked={i.APIKEY_CREATION}
-                                        onChange={(checked, e) =>
-                                          handleChange(checked, e, i.name, i.email)
+                                        isChecked={item[columnName]}
+                                        onChange={(checked, event) =>
+                                          handleChange(checked, event, name, email, columnName)
                                         }
-                                        id="APIKEY_CREATION"
-                                        name="APIKEY_CREATION"
+                                        id={columnName}
+                                        name={columnName}
                                       />
                                     </Td>
-                                    <Td>
-                                      <Checkbox
-                                        isChecked={i.APIKEY_DELETION}
-                                        onChange={(checked, e) =>
-                                          handleChange(checked, e, i.name, i.email)
-                                        }
-                                        id="APIKEY_DELETION"
-                                        name="APIKEY_DELETION"
-                                      />
-                                    </Td>
-                                    <Td>
-                                      <Checkbox
-                                        isChecked={i.PERMISSION_CREATION}
-                                        onChange={(checked, e) =>
-                                          handleChange(checked, e, i.name, i.email)
-                                        }
-                                        id="PERMISSION_CREATION"
-                                        name="PERMISSION_CREATION"
-                                      />
-                                    </Td>
-                                    <Td>
-                                      <Checkbox
-                                        isChecked={i.PERMISSION_DELETION}
-                                        onChange={(checked, e) =>
-                                          handleChange(checked, e, i.name, i.email)
-                                        }
-                                        id="PERMISSION_DELETION"
-                                        name="PERMISSION_DELETION"
-                                      />
-                                    </Td>
-                                    <Td>
-                                      <Checkbox
-                                        isChecked={i.ENV_CREATION}
-                                        onChange={(checked, e) =>
-                                          handleChange(checked, e, i.name, i.email)
-                                        }
-                                        id="ENV_CREATION"
-                                        name="ENV_CREATION"
-                                      />
-                                    </Td>
-                                    <Td>
-                                      <Checkbox
-                                        isChecked={i.ENV_SYNC}
-                                        onChange={(checked, e) =>
-                                          handleChange(checked, e, i.name, i.email)
-                                        }
-                                        id="ENV_SYNC"
-                                        name="ENV_SYNC"
-                                      />
-                                    </Td>
-                                  </Tr>
-                                )
-                            )}
-                        </Tbody>
-                      </TableComposable>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
+                                  ))}
+                                </Tr>
+                              ))}
+                          </Tbody>
+                        </TableComposable>
+                      </AccordionContent>
+                    </AccordionItem>
+                  );
+                })}
               </Accordion>
-            </div>
-          )}
-          <br />
-          <Button isDisabled={selected.length === 0} variant="primary" onClick={handleSubmit}>
+
+            </>)
+          }
+          <Button isDisabled={Object.keys(group).length && group?.data.length === 0} variant="primary" onClick={handleSubmit}>
 
             Add Members
           </Button>
         </div>
 
-        {/* <RbacForm title={"Email"} placeholderText={"Kindly enter email"} keyprops={'addMember'}  selected1={[]} isShowAdvancedViewEnabledprops ={false} data ={[]} propertyIdentifier={propertyIdentifier}/> */}
       </Tab>
       <Tab
         eventKey={1}
@@ -696,13 +502,10 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
 
           <Select
             variant={SelectVariant.typeaheadMulti}
-            onFilter={debounceCustomRover(1000)}
+            onFilter={debounceCustomCombined(1000, activeTabKey)}
             onToggle={onToggleRover}
             onSelect={onSelectRover}
-            onClear={clearSelectionRover}
-            // selections={selected}
-            // isOpen={isOpenRover}
-
+            onClear={clearSelection}
             aria-labelledby={titleId}
             placeholderText="Kindly put 'Rover group Common Name'"
           >
@@ -735,7 +538,6 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             <TableComposable>
               <Thead noWrap={true}>
                 <Tr>
-
                   <Th>{toPascalCase(columnNames2.NAME)}</Th>
                   <Th>{toPascalCase(columnNames2.APIKEY_CREATION)}</Th>
                   <Th>{toPascalCase(columnNames2.APIKEY_DELETION)}</Th>
@@ -746,206 +548,105 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
 
                 </Tr>
               </Thead>
+
               <Tbody>
-                {Object.keys(group).length &&
-                  group.data.map((i: GroupItem1) => (
-                    <Tr key={i.name}>
-                      <Td>{i.name}</Td>
-                      <Td>
+                {Object.keys(group).length && group.data.map((i: GroupItem1) => (
+                  <Tr key={i.name}>
+                    <Td>{i.name}</Td>
+                    {[i.APIKEY_CREATION, i.APIKEY_DELETION, i.PERMISSION_CREATION, i.PERMISSION_DELETION, i.ENV_CREATION, i.ENV_SYNC].map((isChecked, index) => (
+                      <Td key={index}>
                         <Checkbox
-                          isChecked={i.APIKEY_CREATION}
-                          onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                          id="APIKEY_CREATION"
-                          name="APIKEY_CREATION"
+                          isChecked={isChecked}
+                          onChange={(checked, e) => handleChange(checked, e, i.name, i.email, `${columnNames2[Object.keys(columnNames2)[index + 1]]}`)}
+                          id={`${columnNames2[Object.keys(columnNames2)[index + 1]]}`}
+                          name={`${columnNames2[Object.keys(columnNames2)[index + 1]]}`}
                         />
                       </Td>
-                      <Td>
-                        <Checkbox
-                          isChecked={i.APIKEY_DELETION}
-                          onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                          id="APIKEY_DELETION"
-                          name="APIKEY_DELETION"
-                        />
-                      </Td>
-                      <Td>
-                        <Checkbox
-                          isChecked={i.PERMISSION_CREATION}
-                          onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                          id="PERMISSION_CREATION"
-                          name="PERMISSION_CREATION"
-                        />
-                      </Td>
-                      <Td>
-                        <Checkbox
-                          isChecked={i.PERMISSION_DELETION}
-                          onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                          id="PERMISSION_DELETION"
-                          name="PERMISSION_DELETION"
-                        />
-                      </Td>
-                      <Td>
-                        <Checkbox
-                          isChecked={i.ENV_CREATION}
-                          onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                          id="ENV_CREATION"
-                          name="ENV_CREATION"
-                        />
-                      </Td>
-                      <Td>
-                        <Checkbox
-                          isChecked={i.ENV_SYNC}
-                          onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                          id="ENV_SYNC"
-                          name="ENV_SYNC"
-                        />
-                      </Td>
-                    </Tr>
-                  ))}
+                    ))}
+                  </Tr>
+                ))}
               </Tbody>
             </TableComposable>
-          ) : (
-            <div>
-              <Accordion asDefinitionList>
-                {(roverList || []).map((v, k) => (
-                  <AccordionItem>
-                    <AccordionToggle
-                      onClick={() => {
-                        onToggleAccordian(`def-list-toggle1_${v.email}`);
-                      }}
-                      isExpanded={expanded === `def-list-toggle1_${v.email}`}
-                      id="def-list-toggle1_"
-                    >
-                      {/* <Table>
-                        <Tbody>
-                        <Tr>
-                        <Td>  </Td>
-                        <Td>{v.email}</Td>
-                        <Td><b>{v.role}</b> </Td>
-                        </Tr>
-                        </Tbody>
-                        
-                       
-                      </Table> */}
-                      <Split>
-                        <SplitItem onClick={(e) => e.stopPropagation()}>
-                          <b>{v.name}</b>
-                          <br />
-                          {v.email}
-                        </SplitItem>
+          )
+            : (
+              <div>
+                <Accordion asDefinitionList>
+                  {(roverList || []).map((v) => (
+                    <AccordionItem>
+                      <AccordionToggle
+                        onClick={() => {
+                          onToggleAccordian(`def-list-toggle1_${v.email}`);
+                        }}
+                        isExpanded={expanded === `def-list-toggle1_${v.email}`}
+                        id="def-list-toggle1_"
+                      >
 
-                        <SplitItem isFilled></SplitItem>
-                        <SplitItem onClick={(e) => e.stopPropagation()}>
-                          <b>{v.role}</b>
+                        <Split>
+                          <SplitItem onClick={(e) => e.stopPropagation()}>
+                            <b>{v.name}</b>
+                            <br />
+                            {v.email}
+                          </SplitItem>
 
-                        </SplitItem>
-                      </Split>
-                    </AccordionToggle>
-                    <AccordionContent
-                      id={`def-list-expand1${v.email}`}
-                      isHidden={expanded !== `def-list-toggle1_${v.email}`}
-                    >
-                      <TableComposable>
-                        <Thead noWrap={true}>
-                          <Tr>
-                            <Th>{columnNames2.NAME}</Th>
-                            {/* <Th>{columnNames2.ROLE}</Th> */}
+                          <SplitItem isFilled></SplitItem>
+                          <SplitItem onClick={(e) => e.stopPropagation()}>
+                            <b>{v.role}</b>
 
-                            <Th>{toPascalCase(columnNames2.APIKEY_CREATION)}</Th>
-                            <Th>{toPascalCase(columnNames2.APIKEY_DELETION)}</Th>
-                            <Th>{toPascalCase(columnNames2.PERMISSION_CREATION)}</Th>
-                            <Th>{toPascalCase(columnNames2.PERMISSION_DELETION)}</Th>
-                            <Th>{toPascalCase(columnNames2.ENV_CREATION)}</Th>
-                            <Th>{toPascalCase(columnNames2.ENV_SYNC)}</Th>
+                          </SplitItem>
+                        </Split>
+                      </AccordionToggle>
+                      <AccordionContent
+                        id={`def-list-expand1${v.email}`}
+                        isHidden={expanded !== `def-list-toggle1_${v.email}`}
+                      >
+                        <TableComposable>
+                          <Thead noWrap={true}>
+                            <Tr>
+                              <Th>{columnNames2.NAME}</Th>
+                              <Th>{toPascalCase(columnNames2.APIKEY_CREATION)}</Th>
+                              <Th>{toPascalCase(columnNames2.APIKEY_DELETION)}</Th>
+                              <Th>{toPascalCase(columnNames2.PERMISSION_CREATION)}</Th>
+                              <Th>{toPascalCase(columnNames2.PERMISSION_DELETION)}</Th>
+                              <Th>{toPascalCase(columnNames2.ENV_CREATION)}</Th>
+                              <Th>{toPascalCase(columnNames2.ENV_SYNC)}</Th>
 
-                          </Tr>
-                        </Thead>
-                        <Tbody>
-                          {Object.keys(group).length &&
-                            group.data.map(
-                              (i: GroupItem1) =>
-                                i.name === v.name && (
-                                  <Tr key={i.name}>
-                                    <Td>{i.name}</Td>
+                            </Tr>
+                          </Thead>
 
-                                    <Td>
-                                      <Checkbox
-                                        isChecked={i.APIKEY_CREATION}
-                                        onChange={(checked, e) =>
-                                          handleChange(checked, e, i.name, i.email)
-                                        }
-                                        id="APIKEY_CREATION"
-                                        name="APIKEY_CREATION"
-                                      />
-                                    </Td>
-                                    <Td>
-                                      <Checkbox
-                                        isChecked={i.APIKEY_DELETION}
-                                        onChange={(checked, e) =>
-                                          handleChange(checked, e, i.name, i.email)
-                                        }
-                                        id="APIKEY_DELETION"
-                                        name="APIKEY_DELETION"
-                                      />
-                                    </Td>
-                                    <Td>
-                                      <Checkbox
-                                        isChecked={i.PERMISSION_CREATION}
-                                        onChange={(checked, e) =>
-                                          handleChange(checked, e, i.name, i.email)
-                                        }
-                                        id="PERMISSION_CREATION"
-                                        name="PERMISSION_CREATION"
-                                      />
-                                    </Td>
-                                    <Td>
-                                      <Checkbox
-                                        isChecked={i.PERMISSION_DELETION}
-                                        onChange={(checked, e) =>
-                                          handleChange(checked, e, i.name, i.email)
-                                        }
-                                        id="PERMISSION_DELETION"
-                                        name="PERMISSION_DELETION"
-                                      />
-                                    </Td>
-                                    <Td>
-                                      <Checkbox
-                                        isChecked={i.ENV_CREATION}
-                                        onChange={(checked, e) =>
-                                          handleChange(checked, e, i.name, i.email)
-                                        }
-                                        id="ENV_CREATION"
-                                        name="ENV_CREATION"
-                                      />
-                                    </Td>
-                                    <Td>
-                                      <Checkbox
-                                        isChecked={i.ENV_SYNC}
-                                        onChange={(checked, e) =>
-                                          handleChange(checked, e, i.name, i.email)
-                                        }
-                                        id="ENV_SYNC"
-                                        name="ENV_SYNC"
-                                      />
-                                    </Td>
-                                  </Tr>
-                                )
-                            )}
-                        </Tbody>
-                      </TableComposable>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </div>
-          )}
-          <br />
+
+                          <Tbody>
+                            {Object.keys(group).length && Object.keys(group.data).length && group.data.map((i: GroupItem1) => (
+                              <Tr key={i.name}>
+                                <Td>{i.name}</Td>
+
+                                {[i.APIKEY_CREATION, i.APIKEY_DELETION, i.PERMISSION_CREATION, i.PERMISSION_DELETION, i.ENV_CREATION, i.ENV_SYNC].map((isChecked, index) => (
+                                  <Td key={index}>
+                                    <Checkbox
+                                      isChecked={isChecked}
+                                      onChange={(checked, e) => handleChange(checked, e, i.name, i.email, `${columnNames2[Object.keys(columnNames2)[index + 1]]}`)}
+                                      id={`${columnNames2[Object.keys(columnNames2)[index + 1]]}`}
+                                      name={`${columnNames2[Object.keys(columnNames2)[index + 1]]}`}
+                                    />
+                                  </Td>
+                                ))}
+                              </Tr>
+                            ))}
+                          </Tbody>
+                        </TableComposable>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+            )}
+
 
           <Button isDisabled={Object.keys(group).length && group?.data.length === 0} variant="primary" onClick={handleSubmit}>
 
             Add Members
           </Button>
         </div>
-        {/* <RbacForm title={"Rover Group or Name"} placeholderText={"Enter full rover group"} keyprops={'addMember'} selected1={[]} isShowAdvancedViewEnabledprops={false} data={[]} propertyIdentifier={propertyIdentifier} /> */}
+
       </Tab>
     </Tabs>
   );

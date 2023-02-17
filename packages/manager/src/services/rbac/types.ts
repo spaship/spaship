@@ -64,19 +64,24 @@ export type TMemberforSPA = {
   APIKEY_CREATION: boolean;
 };
 
-type TpermissionDetails = {
+// type TpermissionDetails = {
+//   name: string;
+//   email: string;
+//   actions: never[];
+// };
+interface TpermissionDetails {
   name: string;
   email: string;
-  actions: never[];
-};
+  actions: string[];
+}
 export type TAddPermissionDTO = {
   propertyIdentifier: string;
-  permissionDetails: TpermissionDetails;
+  permissionDetails: TpermissionDetails[];
 };
 
 export type TDeletePermissionDTO = {
   propertyIdentifier: string;
-  permissionDetails: TpermissionDetails;
+  permissionDetails: TpermissionDetails[];
 };
 
 export type TRoleforMember = {
