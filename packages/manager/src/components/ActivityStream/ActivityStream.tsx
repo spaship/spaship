@@ -1,4 +1,4 @@
-/* eslint-disable no-underscore-dangle */
+/* eslint-disable */
 import { useFormatDate } from '@app/hooks';
 import { useGetWebPropActivityStream } from '@app/services/analytics';
 import { TWebPropActivityStream } from '@app/services/analytics/types';
@@ -20,7 +20,9 @@ import {
   ExclamationCircleIcon,
   OutlinedClockIcon,
   SyncAltIcon,
-  TimesIcon
+  TimesIcon,
+  UserIcon,
+  TrashIcon
 } from '@patternfly/react-icons';
 import Link from 'next/link';
 import { useEffect } from 'react';
@@ -36,6 +38,25 @@ type Props = {
 type DeploymentKindProps = {
   activity: TWebPropActivityStream;
 };
+
+// function toPascalCase (str) {
+//   if (/^[\p{L}\d]+$/iu.test(str)) {
+//     return str.charAt(0).toUpperCase() + str.slice(1);
+//   }
+//   return str.replace(
+//     /([\p{L}\d])([\p{L}\d]*)/giu,
+//     (g0, g1, g2) => g1.toUpperCase() + g2.toLowerCase()
+//   ).replace(/[^\p{L}\d]/giu, '');
+// }
+const toPascalCase = (sentence) =>
+  sentence
+    .toLowerCase()
+    .replace(new RegExp(/[-]+/, 'g'), ' ')
+    .replace(new RegExp(/[^\w\s]/, 'g'), '')
+    .trim()
+    .split(' ')
+    .map((word) => word[0].toUpperCase().concat(word.slice(1)))
+    .join('');
 
 const activities = {
   APPLICATION_DEPLOYED: ({
@@ -209,6 +230,37 @@ const activities = {
         deleted{' '}
       </Label>
     </Text>
+  ),
+
+  PERMISSION_CREATED: ({ message }: TWebPropActivityStream): JSX.Element => (
+    <Text component={TextVariants.small}>
+      <Label icon={<CubeIcon />} color="blue" isCompact>
+        {toPascalCase(message.split(' ')[0]).replace('_', ' ')}
+      </Label>{' '}
+      access{' '}
+      <Label color="green" icon={<CheckIcon />} variant="outline" isCompact>
+        {message.split(' ')[2]}
+      </Label>{' '}
+      for{' '}
+      <Label color="blue" icon={<UserIcon />} isCompact>
+        {message.split(' ')[4]}
+      </Label>{' '}
+    </Text>
+  ),
+  PERMISSION_DELETED: ({ message }: TWebPropActivityStream): JSX.Element => (
+    <Text component={TextVariants.small}>
+      <Label icon={<CubeIcon />} color="blue" isCompact>
+        {toPascalCase(message.split(' ')[0]).replace('_', ' ')}
+      </Label>{' '}
+      access{' '}
+      <Label color="red" icon={<TrashIcon />} variant="outline" isCompact>
+        {message.split(' ')[2]}
+      </Label>{' '}
+      for{' '}
+      <Label color="blue" icon={<UserIcon />} isCompact>
+        {message.split(' ')[4]}
+      </Label>{' '}
+    </Text>
   )
 } as any;
 
@@ -219,6 +271,7 @@ const DeploymentKind = ({ activity }: DeploymentKindProps) => {
 
   return <Text component={TextVariants.small}>Activity message - {activity.message}</Text>;
 };
+0;
 
 export const ActivityStream = ({
   propertyIdentifier = '',

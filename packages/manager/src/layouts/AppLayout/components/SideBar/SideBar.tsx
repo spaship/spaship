@@ -1,11 +1,17 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { ReactNode } from 'react';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { ReactNode } from 'react';
 
-import { Nav, NavItem, NavList, PageSidebar, Split, SplitItem } from '@patternfly/react-core';
-import { ChartLineIcon, CommentAltIcon, FolderIcon, ThIcon } from '@patternfly/react-icons';
 import { pageLinks } from '@app/links';
+import { Nav, NavItem, NavList, PageSidebar, Split, SplitItem } from '@patternfly/react-core';
+import {
+  ChartLineIcon,
+  CommentAltIcon,
+  FolderIcon,
+  OutlinedClockIcon,
+  ThIcon
+} from '@patternfly/react-icons';
 
 type SNProps = {
   title: string;
@@ -63,6 +69,15 @@ export const SideBar = () => {
                   title="Feedback"
                   icon={<CommentAltIcon size="sm" />}
                   isActive={pathname === '/feedback'}
+                />
+              </a>
+            </Link>
+            <Link href="/sla">
+              <a className="text-decoration-none">
+                <SidebarNavItem
+                  title="SLA"
+                  icon={<OutlinedClockIcon size="sm" />}
+                  isActive={pathname === pageLinks.slaPage}
                 />
               </a>
             </Link>

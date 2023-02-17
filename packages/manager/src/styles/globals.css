@@ -155,3 +155,10 @@ body {
 #nprogress .bar {
   background:var(--spaship-global--Color--solar-orange);
 }
+#__next > div.pf-c-page.pf-m-resize-observer.pf-m-breakpoint-2xl.pf-m-height-breakpoint-2xl > main > div > div.pf-m-grow > section.pf-c-page__main-section.pf-m-limit-width.pf-m-align-center.pf-u-px-3xl > div > div > div:nth-child(3) > article > div.pf-c-card__body > table > tbody > tr > td.pf-u-display-flex.pf-u-justify-content-flex-end{
+  display: flex;
+  justify-content: end;
+}
+#def-list-toggle1_ > span.pf-c-accordion__toggle-text{
+  width: 100%;
+}
