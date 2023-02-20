@@ -19,6 +19,14 @@ export class Application {
 
   isActive: boolean;
 
+  isSSR: boolean;
+
+  imageUrl: string;
+
+  config: object;
+
+  healthCheckPath: string;
+
   createdBy: string;
 
   updatedBy: string;
