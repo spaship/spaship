@@ -4,7 +4,7 @@ import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DIRECTORY_CONFIGURATION } from '../../configuration';
 import { AuthenticationGuard } from '../auth/auth.guard';
 import { ExceptionsService } from '../exceptions/exceptions.service';
-import { ApplicationResponse, CreateApplicationDto } from './application.dto';
+import { ApplicationConfigDTO, ApplicationResponse, CreateApplicationDto } from './application.dto';
 import { ApplicationService } from './service/application.service';
 
 @Controller('applications')
@@ -19,10 +19,11 @@ export class ApplicationController {
     @Param('identifier') identifier: any,
     @Query('applicationIdentifier') applicationIdentifier: string,
     @Query('env') env: string,
+    @Query('isSSR') isSSR: boolean,
     @Query('skip') skip: number,
     @Query('limit') limit: number
   ) {
-    return this.applicationService.getApplicationsByProperty(identifier, applicationIdentifier, env, skip, limit);
+    return this.applicationService.getApplicationsByProperty(identifier, applicationIdentifier, env, isSSR, skip, limit);
   }
 
   @Post('/deploy/:propertyIdentifier/:env')
@@ -36,18 +37,30 @@ export class ApplicationController {
     })
   )
   @ApiCreatedResponse({ status: 201, description: 'Application deployed successfully.', type: ApplicationResponse })
-  async createApplication(
-    @UploadedFile() file,
-    @Body() applicationDto: CreateApplicationDto,
-    @Param() params,
-    @Query() queries
-  ): Promise<ApplicationResponse> {
-    const types = ['zip', 'tgz', 'gzip', 'gz', 'bzip2', 'bzip', '7z', 'rar', 'tar'];
-    const fileFilter = file?.originalname.split('.');
-    if (!types.includes(fileFilter[fileFilter.length - 1])) {
-      this.exceptionService.badRequestException({ message: 'Invalid file type.' });
+  async createApplication(@UploadedFile() file, @Body() applicationDto: CreateApplicationDto, @Param() params): Promise<any> {
+    // @internal `imageUrl` refers to the SSR Enabled Deployment
+    if (applicationDto.imageUrl) {
+      await this.applicationService.checkPropertyAndEnvironment(params.propertyIdentifier, params.env);
+      return this.applicationService.saveSSRApplication(applicationDto, params.propertyIdentifier, params.env);
     }
-    const application = this.applicationService.saveApplication(applicationDto, file.path, params.propertyIdentifier, params.env, queries.createdBy);
+    // @internal deploy the Static Distribution
+    const types = ['zip', 'tgz', 'gzip', 'gz', 'bzip2', 'bzip', '7z', 'rar', 'tar'];
+    if (!file?.originalname) this.exceptionService.badRequestException({ message: 'Please provide a valid file for the deployment.' });
+    const fileFilter = file?.originalname.split('.');
+    if (!types.includes(fileFilter[fileFilter.length - 1])) this.exceptionService.badRequestException({ message: 'Invalid file type.' });
+    const application = this.applicationService.saveApplication(
+      applicationDto,
+      file.path,
+      params.propertyIdentifier,
+      params.env,
+      applicationDto.createdBy
+    );
     return application;
+  }
+
+  @Post('/config')
+  @ApiOperation({ description: 'Save the Config for the Application.' })
+  async saveConfig(@Body() applicationConfigDto: ApplicationConfigDTO) {
+    return this.applicationService.saveConfig(applicationConfigDto);
   }
 }

@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { EPHEMERAL_ENV } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
-import { ApplicationResponse, CreateApplicationDto } from 'src/server/application/application.dto';
+import { ApplicationResponse, CreateApplicationDto, SSRDeploymentRequest, SSRDeploymentResponse } from 'src/server/application/application.dto';
 import { Application } from 'src/server/application/application.entity';
 import { AuthFactory } from 'src/server/auth/auth.factory';
 import { Cluster, Environment } from 'src/server/environment/environment.entity';
@@ -111,6 +111,7 @@ export class ApplicationFactory {
     saveApplication.propertyIdentifier = propertyIdentifier;
     saveApplication.ref = 'NA';
     saveApplication.accessUrl = 'NA';
+    saveApplication.isSSR = false;
     saveApplication.createdBy = createdBy;
     saveApplication.updatedBy = createdBy;
     return saveApplication;
@@ -205,5 +206,57 @@ export class ApplicationFactory {
   getPath(requestPath: string): string {
     const appPath = requestPath.replace(/^\/+/g, '').replace(/\/+$/, '');
     return `/${appPath}`;
+  }
+
+  // @internal Start the SSR deployment to the operator
+  async ssrDeploymentRequest(request?: SSRDeploymentRequest, deploymentBaseURL?: string): Promise<SSRDeploymentResponse> {
+    const headers = { Authorization: await AuthFactory.getAccessToken() };
+    const ssrResponse = new SSRDeploymentResponse();
+    try {
+      const response = await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/deployment/v1/create`, request, {
+        maxBodyLength: Infinity,
+        headers
+      });
+      ssrResponse.accessUrl = response.data.accessUrl;
+    } catch (err) {
+      this.logger.error('SSROperator', err);
+    }
+    return ssrResponse;
+  }
+
+  // @internal Create the Application request for the SSE enabled deployment
+  createSSRApplicationRequest(
+    propertyIdentifier: string,
+    applicationRequest: CreateApplicationDto,
+    identifier: string,
+    env: string,
+    createdBy: string
+  ): Application {
+    const ssrApplicationRequest = this.createApplicationRequest(propertyIdentifier, applicationRequest, identifier, env, createdBy);
+    ssrApplicationRequest.isSSR = true;
+    ssrApplicationRequest.imageUrl = applicationRequest.imageUrl;
+    ssrApplicationRequest.healthCheckPath = applicationRequest.healthCheckPath;
+    ssrApplicationRequest.config = applicationRequest.config;
+
+    return ssrApplicationRequest;
+  }
+
+  // @internal Create the Deployment Request to the Operator for the SSE deployment
+  createSSROperatorRequest(
+    applicationRequest: CreateApplicationDto,
+    propertyIdentifier: string,
+    env: string,
+    namespace: string
+  ): SSRDeploymentRequest {
+    const ssrRequest = new SSRDeploymentRequest();
+    ssrRequest.imageUrl = applicationRequest.imageUrl;
+    ssrRequest.app = applicationRequest.name;
+    ssrRequest.contextPath = applicationRequest.path;
+    ssrRequest.website = propertyIdentifier;
+    ssrRequest.website = propertyIdentifier;
+    ssrRequest.nameSpace = namespace;
+    ssrRequest.environment = env;
+    ssrRequest.healthCheckPath = applicationRequest.healthCheckPath;
+    return ssrRequest;
   }
 }

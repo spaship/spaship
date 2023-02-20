@@ -1,6 +1,5 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsObject, IsOptional, IsString, Matches } from 'class-validator';
 import { MESSAGE, VALIDATION } from 'src/configuration';
 
 export class CreateApplicationDto {
@@ -30,10 +29,31 @@ export class CreateApplicationDto {
   @IsOptional()
   actionId: string;
 
+  //----------------------------------------------------------------
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  isSSR: boolean;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  imageUrl: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  @Matches(VALIDATION.PATH, { message: MESSAGE.INVALID_PATH, always: true })
+  healthCheckPath: string;
+
+  @ApiProperty()
+  @IsObject()
+  @IsOptional()
+  config: object;
+
   createdBy: string;
 }
-
-export class UpdateApplicationDto extends PartialType(CreateApplicationDto) {}
 
 export class ApplicationResponse {
   @ApiProperty()
@@ -53,4 +73,48 @@ export class ApplicationResponse {
 
   @ApiProperty()
   deployedBy: string;
+}
+
+export class SSRDeploymentRequest {
+  nameSpace: string;
+
+  environment: string;
+
+  website: string;
+
+  contextPath: string;
+
+  app: string;
+
+  imageUrl: string;
+
+  healthCheckPath: string;
+}
+
+export class SSRDeploymentResponse {
+  accessUrl: string;
+}
+
+export class ApplicationConfigDTO {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  propertyIdentifier: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  identifier: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  env: string;
+
+  @ApiProperty()
+  @IsObject()
+  @IsOptional()
+  config: object;
+
+  createdBy: string;
 }

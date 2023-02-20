@@ -33,6 +33,18 @@ export class Application {
   @Prop({ required: true, default: true })
   isActive: boolean;
 
+  @Prop({})
+  isSSR: boolean;
+
+  @Prop({})
+  imageUrl: string;
+
+  @Prop({ type: 'object' })
+  config: object;
+
+  @Prop({})
+  healthCheckPath: string;
+
   @Prop({ default: 'NA' })
   createdBy: string;
 

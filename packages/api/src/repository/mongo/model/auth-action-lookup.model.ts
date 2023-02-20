@@ -4,7 +4,7 @@ export type AuthActionLookupDocument = AuthActionLookup & Document;
 
 @Schema({ timestamps: true })
 export class AuthActionLookup {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true })
   name: string;
 
   @Prop({ required: true })
