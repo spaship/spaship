@@ -37,7 +37,7 @@ export class ApplicationController {
     })
   )
   @ApiCreatedResponse({ status: 201, description: 'Application deployed successfully.', type: ApplicationResponse })
-  async createApplication(@UploadedFile() file, @Body() applicationDto: CreateApplicationDto, @Param() params): Promise<any> {
+  async createApplication(@UploadedFile() file, @Body() applicationDto: CreateApplicationDto, @Param() params, @Query() queries): Promise<any> {
     // @internal `imageUrl` refers to the SSR Enabled Deployment
     if (applicationDto.imageUrl) {
       await this.applicationService.checkPropertyAndEnvironment(params.propertyIdentifier, params.env);
@@ -48,13 +48,7 @@ export class ApplicationController {
     if (!file?.originalname) this.exceptionService.badRequestException({ message: 'Please provide a valid file for the deployment.' });
     const fileFilter = file?.originalname.split('.');
     if (!types.includes(fileFilter[fileFilter.length - 1])) this.exceptionService.badRequestException({ message: 'Invalid file type.' });
-    const application = this.applicationService.saveApplication(
-      applicationDto,
-      file.path,
-      params.propertyIdentifier,
-      params.env,
-      applicationDto.createdBy
-    );
+    const application = this.applicationService.saveApplication(applicationDto, file.path, params.propertyIdentifier, params.env, queries.createdBy);
     return application;
   }
 

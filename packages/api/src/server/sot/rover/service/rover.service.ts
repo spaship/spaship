@@ -17,18 +17,18 @@ export class RoverService {
 
   /* @internal
    *  Search the User Details from Rover Group
-   *  It'll search the details from a Perticular Rover Group
+   *  It'll search the details from a Particular Rover Group
    *  Transform the response to User Details
    */
   async getRoverGroupDetails(key: string): Promise<Subject[]> {
     return this.searchFactory.getRoverGroupDetails(key);
   }
 
-    /* @internal
+  /* @internal
    *  Search the Rover Groups from the List
    *  Transform the response to Group List Details
    */
-    async getRoverGroupList(key: string): Promise<Subject[]> {
-      return this.searchFactory.getRoverGroupList(key);
-    }
+  async getRoverGroupList(key: string): Promise<Subject[]> {
+    return this.searchFactory.getRoverGroupList(key);
+  }
 }

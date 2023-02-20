@@ -6,7 +6,7 @@ import { Subject } from '../subject.response.dto';
 
 @Injectable()
 export class RoverFactory {
-  constructor(private readonly logger: LoggerService, private readonly httpService: HttpService) { }
+  constructor(private readonly logger: LoggerService, private readonly httpService: HttpService) {}
 
   // @internal fetch the user details from the Rover
   async getRoverUserDetails(key: string): Promise<Subject[]> {

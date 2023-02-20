@@ -37,7 +37,7 @@ export class RoleService {
     const updateRole = (await this.dataServices.role.getByAny({ name: updateRoleDto.name }))[0];
     if (!updateRole) this.exceptionService.badRequestException({ message: `Role doesn't exist.` });
     updateRole.actions = updateRoleDto.actions;
-    await this.dataServices.role.updateOne({ pname: updateRoleDto.name }, updateRole);
+    await this.dataServices.role.updateOne({ name: updateRoleDto.name }, updateRole);
     return updateRole;
   }
 
