@@ -1,4 +1,5 @@
-/* eslint-disable */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable react/jsx-key */
 import { useAddPermission, useDeleteMember } from '@app/services/rbac';
 import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
@@ -27,31 +28,8 @@ type GroupItem = {
   APIKEY_CREATION: boolean;
 };
 
-type AddPermType = {
-  actions: string[];
-  email: string;
-  name: string;
-};
-
-type AddDataType = {
-  propertyIdentifier: string;
-  permissionDetails: AddPermType[];
-};
-
-type DeletePermType = {
-  actions: string[];
-  email: string;
-  name: string;
-};
-
-type DeleteDataType = {
-  propertyIdentifier: string;
-  permissionDetails: DeletePermType[];
-};
-
 type Props = {
   onClose: () => void;
-  editMemberName: string;
   propertyIdentifier: string;
   // memberList: GroupItem[];
   memberList: any;
@@ -61,7 +39,6 @@ type Props = {
 
 export const ConfigureAccess = ({
   onClose,
-  editMemberName,
   propertyIdentifier,
   memberList,
   flagOpen
@@ -72,9 +49,13 @@ export const ConfigureAccess = ({
   const [isShowAdvancedViewEnabled, setIsShowAdvancedViewEnabled] = useState<boolean>(false);
   const [group, setGroup] = useState<any>(memberList);
 
+  // useEffect(() => {
+  //   setGroup(memberList);
+  // }, [flagOpen]);
+
   useEffect(() => {
     setGroup(memberList);
-  }, [flagOpen]);
+  }, [flagOpen, memberList]);
 
   const deleteMember = useDeleteMember(propertyIdentifier);
   const useAddPermission1 = useAddPermission(propertyIdentifier);
@@ -113,17 +94,6 @@ export const ConfigureAccess = ({
     setDeleteAccess(deleteAccess1);
   };
 
-  interface GroupData {
-    name: string;
-    email: string;
-    [key: string]: any;
-  }
-
-  interface PermissionData {
-    name: string;
-    email: string;
-    actions: string[];
-  }
   const onToggleAccordian = async (id: string) => {
     if (id === expanded) {
       setExpanded('');
@@ -131,44 +101,60 @@ export const ConfigureAccess = ({
       setExpanded(id);
     }
   };
-  const handleSubmit = (): void => {
-    const addPerm: PermissionData[] = [];
-    let addFlag = false;
-    const deletePerm: PermissionData[] = [];
-    let deleteFlag = false;
 
-    group.data.forEach((v: GroupData, k: number) => {
-      const temp: PermissionData = {
-        name: v.name,
-        email: v.email,
-        actions: []
-      };
-      Object.keys(v).forEach((a: string, i: number) => {
+  interface Permission {
+    name: string;
+    email: string;
+    actions: string[];
+  }
+  const handleSubmit = () => {
+    const addPerm: Permission[] = [];
+    // let addflag = false;
+    const deletePerm: Permission[] = [];
+    // let deleteflag = false;
+
+    group.data.forEach((v: any) => {
+      const temp: any = {};
+      const tempActions: string[] = [];
+
+      const tempDelete: any = {};
+      const tempActionsDelete: string[] = [];
+
+      temp.name = v.name;
+      temp.email = v.email;
+      tempDelete.email = v.email;
+
+      Object.keys(v).forEach((a: string) => {
         if (v[a] && a !== 'name' && a !== 'email' && a !== 'role') {
-          temp.actions.push(a);
-        }
-        if (!v[a] && a !== 'name' && a !== 'email' && a !== 'role') {
-          deleteFlag = true;
+          tempActions.push(a);
+        } else if (!v[a] && a !== 'name' && a !== 'email' && a !== 'role') {
+          tempActionsDelete.push(a);
         }
       });
-      if (temp.actions.length !== 0) {
-        addFlag = true;
-      }
-      if (temp.actions.length !== 0 || deleteFlag) {
-        addPerm.push(temp);
-        deletePerm.push({ name: v.name, email: v.email, actions: temp.actions });
-      }
+
+      // if (tempActions.length !== 0) {
+      //   addflag = true;
+      // }
+      // if (tempActionsDelete.length !== 0) {
+      //   deleteflag = true;
+      // }
+
+      temp.actions = tempActions;
+      addPerm.push(temp);
+
+      tempDelete.actions = tempActionsDelete;
+      deletePerm.push(tempDelete);
     });
 
     const addData = {
       propertyIdentifier,
       permissionDetails: addPerm
     };
-
     const deleteData = {
       propertyIdentifier,
       permissionDetails: deletePerm
     };
+
     try {
       if (addAccess.length) {
         useAddPermission1.mutateAsync(addData).then((res) => {
@@ -187,6 +173,7 @@ export const ConfigureAccess = ({
       // toast.error('Permission not deleted ');
     }
   };
+
   return (
     <div>
       <Button
@@ -203,14 +190,9 @@ export const ConfigureAccess = ({
         <TableComposable>
           <Thead noWrap>
             <Tr>
-              <Th>{columnNames.NAME}</Th>
-              {/* <Th>{columnNames.ROLE}</Th> */}
-              <Th>{toPascalCase(columnNames.APIKEY_CREATION)}</Th>
-              <Th>{toPascalCase(columnNames.APIKEY_DELETION)}</Th>
-              <Th>{toPascalCase(columnNames.PERMISSION_CREATION)}</Th>
-              <Th>{toPascalCase(columnNames.PERMISSION_DELETION)}</Th>
-              <Th>{toPascalCase(columnNames.ENV_CREATION)}</Th>
-              <Th>{toPascalCase(columnNames.ENV_SYNC)}</Th>
+              {Object.values(columnNames).map((column) => (
+                <Th key={column}>{toPascalCase(column)}</Th>
+              ))}
             </Tr>
           </Thead>
           <Tbody>
@@ -301,14 +283,9 @@ export const ConfigureAccess = ({
                     <TableComposable>
                       <Thead noWrap>
                         <Tr>
-                          <Th>{columnNames.NAME}</Th>
-                          {/* <Th>{columnNames.ROLE}</Th> */}
-                          <Th>{toPascalCase(columnNames.APIKEY_CREATION)}</Th>
-                          <Th>{toPascalCase(columnNames.APIKEY_DELETION)}</Th>
-                          <Th>{toPascalCase(columnNames.PERMISSION_CREATION)}</Th>
-                          <Th>{toPascalCase(columnNames.PERMISSION_DELETION)}</Th>
-                          <Th>{toPascalCase(columnNames.ENV_CREATION)}</Th>
-                          <Th>{toPascalCase(columnNames.ENV_SYNC)}</Th>
+                          {Object.values(columnNames).map((column) => (
+                            <Th key={column}>{toPascalCase(column)}</Th>
+                          ))}
                         </Tr>
                       </Thead>
                       <Tbody>

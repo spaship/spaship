@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { useState } from 'react';
 import { useAddPermission, useDeleteMember } from '@app/services/rbac';
 import { toPascalCase } from '@app/utils/toPascalConvert';
@@ -16,11 +15,21 @@ import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-tab
 import toast from 'react-hot-toast';
 
 interface Props {
-  onClose?: () => void;
+  onClose: () => void;
   editMemberName: string;
   propertyIdentifier: string;
   memberList: any;
 }
+type ColumnNames = {
+  NAME: string;
+  APIKEY_CREATION: string;
+  APIKEY_DELETION: string;
+  PERMISSION_CREATION: string;
+  PERMISSION_DELETION: string;
+  ENV_CREATION: string;
+  ENV_SYNC: string;
+  [key: string]: string;
+};
 
 type GroupItem1 = {
   email: string;
@@ -48,7 +57,7 @@ export const EditMemberAccess = ({
   const data1 = memberList.data.filter((e: any) => e.name === editMemberName);
   const [group, setGroup] = useState({ data: data1 });
 
-  const columnNames = {
+  const columnNames: ColumnNames = {
     NAME: 'Name',
     // ROLE: 'Role',
     APIKEY_CREATION: 'APIKEY_CREATION',
@@ -86,9 +95,14 @@ export const EditMemberAccess = ({
       setAddAccess(addAccess.filter((value) => value !== target.name));
     }
   };
-
+  interface GroupData {
+    email: string;
+    name: string;
+    role: string;
+    [key: string]: unknown;
+  }
   const handleSubmit = () => {
-    const addPerm = group.data.map(({ email, name, role, ...rand }) => ({
+    const addPerm = group.data.map(({ email, name, role, ...rand }: GroupData) => ({
       email,
       name,
       actions: Object.keys(rand)
@@ -96,7 +110,7 @@ export const EditMemberAccess = ({
 
     const addData = { propertyIdentifier, permissionDetails: addPerm };
 
-    const deletePerm = group.data.map(({ email, name, role, ...rand }) => ({
+    const deletePerm = group.data.map(({ email, name, role, ...rand }: GroupData) => ({
       email,
       name,
       actions: Object.keys(rand).filter((value) => rand[value] === false)
@@ -128,7 +142,7 @@ export const EditMemberAccess = ({
 
       onClose();
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     }
   };
 
@@ -176,19 +190,19 @@ export const EditMemberAccess = ({
                     <Tr key={i.name}>
                       <Td>{i.name}</Td>
                       {[
-                        i.APIKEY_CREATION,
-                        i.APIKEY_DELETION,
-                        i.PERMISSION_CREATION,
-                        i.PERMISSION_DELETION,
-                        i.ENV_CREATION,
-                        i.ENV_SYNC
-                      ].map((isChecked, index) => (
-                        <Td key={index}>
+                        { id: 'APIKEY_CREATION', value: i.APIKEY_CREATION },
+                        { id: 'APIKEY_DELETION', value: i.APIKEY_DELETION },
+                        { id: 'PERMISSION_CREATION', value: i.PERMISSION_CREATION },
+                        { id: 'PERMISSION_DELETION', value: i.PERMISSION_DELETION },
+                        { id: 'ENV_CREATION', value: i.ENV_CREATION },
+                        { id: 'ENV_SYNC', value: i.ENV_SYNC }
+                      ].map((item) => (
+                        <Td key={item.id}>
                           <Checkbox
-                            isChecked={isChecked}
+                            isChecked={item.value}
                             onChange={(checked, e) => handleChange(checked, e, i.email)}
-                            id={`${columnNames[Object.keys(columnNames)[index + 1]]}`}
-                            name={`${columnNames[Object.keys(columnNames)[index + 1]]}`}
+                            id={`${columnNames[item.id]}`}
+                            name={`${columnNames[item.id]}`}
                           />
                         </Td>
                       ))}
