@@ -18,12 +18,11 @@ export class RoverController {
     return this.searchService.getRoverUserDetails(username);
   }
 
-  @Get('/rover/group/:groupname')
+  @Get('/rover/group/:groupName')
   @ApiCreatedResponse({ status: 201, description: 'List for the users in Rover Group.', type: Subject, isArray: true })
   @ApiOperation({ description: 'Search the user details from Rover Group.' })
-  async getRoverGroupDetails(@Param('groupname') groupname: string, @Query('list') list: string,): Promise<Subject[]> {
-    if (list === 'group') return this.searchService.getRoverGroupList(groupname);
-    return this.searchService.getRoverGroupDetails(groupname);
+  async getRoverGroupDetails(@Param('groupName') groupName: string, @Query('searchByCriteria') searchByCriteria: string): Promise<Subject[]> {
+    if (searchByCriteria === 'group') return this.searchService.getRoverGroupList(groupName);
+    return this.searchService.getRoverGroupDetails(groupName);
   }
-
 }
