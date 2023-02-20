@@ -21,8 +21,8 @@ export class RoverController {
   @Get('/rover/group/:groupName')
   @ApiCreatedResponse({ status: 201, description: 'List for the users in Rover Group.', type: Subject, isArray: true })
   @ApiOperation({ description: 'Search the user details from Rover Group.' })
-  async getRoverGroupDetails(@Param('groupName') groupName: string, @Query('list') list: string): Promise<Subject[]> {
-    if (list === 'group') return this.searchService.getRoverGroupList(groupName);
+  async getRoverGroupDetails(@Param('groupName') groupName: string, @Query('searchBy') searchBy: string): Promise<Subject[]> {
+    if (searchBy === 'group') return this.searchService.getRoverGroupList(groupName);
     return this.searchService.getRoverGroupDetails(groupName);
   }
 }
