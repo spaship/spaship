@@ -1,20 +1,18 @@
 export type TWebProperty = {
-  env: [
-    {
-      _id: string;
-      cluster: string;
-      createdAt: string;
-      createdBy: string;
-      env: string;
-      isActive: boolean;
-      isEph: boolean;
-      propertyIdentifier: string;
-      sync: string;
-      updatedAt: string;
-      updatedBy: string;
-      url: string;
-    }
-  ];
+  env: {
+    _id: string;
+    cluster: string;
+    createdAt: string;
+    createdBy: string;
+    env: string;
+    isActive: boolean;
+    isEph: boolean;
+    propertyIdentifier: string;
+    sync: string;
+    updatedAt: string;
+    updatedBy: string;
+    url: string;
+  }[];
   createdBy: string;
   title: string;
   identifier: string;
