@@ -12,7 +12,7 @@ import { AnalyticsService } from 'src/server/analytics/service/analytics.service
 import { Application } from 'src/server/application/application.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { Source } from 'src/server/property/property.entity';
-import { ApplicationResponse, CreateApplicationDto } from '../application.dto';
+import { ApplicationConfigDTO, ApplicationResponse, CreateApplicationDto, SSRDeploymentRequest } from '../application.dto';
 import { ApplicationFactory } from './application.factory';
 
 @Injectable()
@@ -38,10 +38,11 @@ export class ApplicationService {
     propertyIdentifier: string,
     identifier: string,
     env: string,
+    isSSR: boolean,
     skip: number = ApplicationService.defaultSkip,
     limit: number = ApplicationService.defaultLimit
   ): Promise<Application[]> {
-    let keys = { propertyIdentifier, identifier };
+    let keys = { propertyIdentifier, identifier, isSSR };
     if (env) keys = { ...keys, ...{ env: { $in: env.split(',') } } };
     Object.keys(keys).forEach((key) => keys[key] === undefined && delete keys[key]);
     return this.dataServices.application.getByOptions(keys, { identifier: 1, updatedAt: -1 }, skip, limit);
@@ -94,7 +95,7 @@ export class ApplicationService {
     } catch (err) {
       this.exceptionService.internalServerErrorException(err.message);
     }
-    const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier }))[0];
+    const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: false }))[0];
     const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
     const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === environment.cluster);
     const deploymentConnection = (await this.dataServices.deploymentConnection.getByAny({ name: deploymentRecord.name }))[0];
@@ -134,7 +135,7 @@ export class ApplicationService {
     applicationDetails.name = applicationRequest.name;
     applicationDetails.updatedBy = createdBy;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
-    await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier }, applicationDetails);
+    await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isSSR: false }, applicationDetails);
     return this.applicationFactory.createApplicationResponse(applicationDetails, deploymentConnection.baseurl);
   }
 
@@ -175,5 +176,97 @@ export class ApplicationService {
       this.exceptionService.internalServerErrorException(err);
     }
     return applicationRequest;
+  }
+
+  /* @internal
+   * Create the request object for the SSR
+   * Check that application exists or not
+   * If not exists then create a new record for the application
+   * Else update the existing application
+   * Start the SSR deployment in the operator
+   * Send the acknowledgement to the user and wait for the final response
+   */
+  async saveSSRApplication(applicationRequest: CreateApplicationDto, propertyIdentifier: string, env: string): Promise<any> {
+    const identifier = this.applicationFactory.getIdentifier(applicationRequest.name);
+    const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+    const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
+    this.logger.log('Environment', JSON.stringify(environment));
+    this.logger.log('Property', JSON.stringify(property));
+    const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === environment.cluster);
+    const deploymentConnection = (await this.dataServices.deploymentConnection.getByAny({ name: deploymentRecord.name }))[0];
+    this.logger.log('DeploymentConnection', JSON.stringify(deploymentConnection));
+    const ssrOperatorRequest = this.applicationFactory.createSSROperatorRequest(applicationRequest, propertyIdentifier, env, property.namespace);
+    this.logger.log('SSROperatorRequest', JSON.stringify(ssrOperatorRequest));
+    const saveApplication = await this.applicationFactory.createSSRApplicationRequest(
+      propertyIdentifier,
+      applicationRequest,
+      identifier,
+      env,
+      applicationRequest.createdBy
+    );
+    const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true }))[0];
+    if (!applicationDetails) {
+      this.logger.log('SSRApplicationDetails', JSON.stringify(applicationDetails));
+      this.dataServices.application.create(saveApplication);
+    } else {
+      applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
+      applicationDetails.name = applicationRequest.name;
+      applicationDetails.path = applicationRequest.path;
+      applicationDetails.imageUrl = applicationRequest.imageUrl;
+      applicationDetails.healthCheckPath = applicationRequest.healthCheckPath;
+      applicationDetails.config = applicationRequest.config;
+      applicationDetails.updatedBy = applicationRequest.createdBy;
+      this.logger.log('SSRUpdatedApplicationDetails', JSON.stringify(applicationDetails));
+      await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier }, applicationDetails);
+    }
+    this.deploySSRApplication(ssrOperatorRequest, propertyIdentifier, env, identifier, deploymentConnection.baseurl);
+    return saveApplication;
+  }
+
+  /* @internal
+   * Start the SSR deployment in the operator
+   * Receive the final acknowledgement from the operator
+   * Update the particular application accordingly
+   */
+  async deploySSRApplication(sseRequest: SSRDeploymentRequest, propertyIdentifier: string, env: string, identifier: string, baseUrl: string) {
+    const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true }))[0];
+    try {
+      const response = await this.applicationFactory.ssrDeploymentRequest(sseRequest, baseUrl);
+      this.logger.warn('SSRDeploymentResponse', JSON.stringify(response));
+      if (!response) return;
+      applicationDetails.accessUrl = response.accessUrl;
+      applicationDetails.ref = applicationDetails.nextRef;
+      await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isSSR: true }, applicationDetails);
+      this.logger.warn('UpdatedSSRApplication', JSON.stringify(applicationDetails));
+    } catch (err) {
+      this.logger.warn('SSRDeployment', err);
+    }
+  }
+
+  /* @internal
+   * Update the configuration for the particular application
+   * Request the updated configuration to the operator
+   * Update the application accordingly after the successful updating
+   */
+  async saveConfig(configDTO: ApplicationConfigDTO) {
+    const search = { identifier: configDTO.identifier, propertyIdentifier: configDTO.propertyIdentifier, env: configDTO.env, isSSR: true };
+    const applicationDetails = (await this.dataServices.application.getByAny(search))[0];
+    if (!applicationDetails)
+      this.exceptionService.badRequestException({
+        message: `${configDTO.identifier} application doesn't exist for ${configDTO.propertyIdentifier}.`
+      });
+    applicationDetails.config = configDTO.config;
+    applicationDetails.updatedBy = configDTO.createdBy;
+    await this.dataServices.application.updateOne(search, applicationDetails);
+    // @internal TODO : SSR configs to be implemented for the operator
+    return applicationDetails;
+  }
+
+  async checkPropertyAndEnvironment(propertyIdentifier: string, env: string) {
+    const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+    if (!environment)
+      this.exceptionService.badRequestException({
+        message: `${env} environment doesn't exist on ${propertyIdentifier}. Please check the Deployment URL.`
+      });
   }
 }

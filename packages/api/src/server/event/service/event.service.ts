@@ -42,7 +42,12 @@ export class EventService implements OnApplicationBootstrap {
          * Calculate the time consumed for deploying an application
          */
         if (event.action === Action.APPLICATION_DEPLOYED) {
-          const searchApplication = { propertyIdentifier: event.propertyIdentifier, env: event.env, identifier: event.applicationIdentifier };
+          const searchApplication = {
+            propertyIdentifier: event.propertyIdentifier,
+            env: event.env,
+            identifier: event.applicationIdentifier,
+            isSSR: false
+          };
           const latestApplication = (await tmpDataService.application.getByAny(searchApplication))[0];
           if (!latestApplication?.accessUrl) return;
           latestApplication.accessUrl = event.accessUrl;
