@@ -16,6 +16,7 @@ import {
 import { Application } from 'src/server/application/application.entity';
 import { AuthFactory } from 'src/server/auth/auth.factory';
 import { Cluster, Environment } from 'src/server/environment/environment.entity';
+import { EventTimeTrace } from 'src/server/event/event-time-trace.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { v4 as uuidv4 } from 'uuid';
 import { zip } from 'zip-a-folder';
@@ -287,7 +288,6 @@ export class ApplicationFactory {
     return version ? version + 1 : 1;
   }
 
-  // @internal Create the Deployment Request to the Operator for the SSE deployment
   createSSROperatorConfigRequest(configRequest: ApplicationConfigDTO, namespace: string): SSRDeploymentRequest {
     const ssrRequest = new SSRDeploymentRequest();
     ssrRequest.app = configRequest.identifier;
@@ -296,5 +296,16 @@ export class ApplicationFactory {
     ssrRequest.environment = configRequest.env;
     ssrRequest.configMap = configRequest.config;
     return ssrRequest;
+  }
+
+  // @internal Process the Deployment time for the analytics
+  processDeploymentTime(application: Application, consumedTime: string): EventTimeTrace {
+    const eventTimeTrace = new EventTimeTrace();
+    eventTimeTrace.traceId = 'SSR';
+    eventTimeTrace.propertyIdentifier = application.propertyIdentifier;
+    eventTimeTrace.env = application.env;
+    eventTimeTrace.applicationIdentifier = application.identifier;
+    eventTimeTrace.consumedTime = consumedTime;
+    return eventTimeTrace;
   }
 }

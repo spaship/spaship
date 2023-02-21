@@ -32,4 +32,6 @@ export class Application {
   createdBy: string;
 
   updatedBy: string;
+
+  updatedAt: Date;
 }

@@ -28,7 +28,7 @@ export class ApplicationService {
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService,
     private readonly agendaService: AgendaService
-  ) {}
+  ) { }
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.application.getAll();
@@ -188,7 +188,6 @@ export class ApplicationService {
    * Send the acknowledgement to the user and wait for the final response
    */
   async saveSSRApplication(applicationRequest: CreateApplicationDto, propertyIdentifier: string, env: string): Promise<any> {
-    // @internal TODO : activity stream to be added
     const identifier = this.applicationFactory.getIdentifier(applicationRequest.name);
     const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
     const ssrOperatorRequest = this.applicationFactory.createSSROperatorRequest(
@@ -222,7 +221,17 @@ export class ApplicationService {
       this.logger.log('SSRUpdatedApplicationDetails', JSON.stringify(applicationDetails));
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier }, applicationDetails);
     }
-    this.deploySSRApplication(ssrOperatorRequest, propertyIdentifier, env, identifier, deploymentConnection.baseurl);
+    this.deploySSRApplication(ssrOperatorRequest, propertyIdentifier, env, identifier, deploymentConnection.baseurl, applicationRequest.createdBy);
+    await this.analyticsService.createActivityStream(
+      propertyIdentifier,
+      Action.APPLICATION_DEPLOYMENT_STARTED,
+      env,
+      identifier,
+      `Deployment started for ${applicationRequest.name} at ${env} [SSR Enabled]`,
+      applicationRequest.createdBy,
+      Source.MANAGER,
+      JSON.stringify(applicationRequest)
+    );
     return saveApplication;
   }
 
@@ -243,8 +252,14 @@ export class ApplicationService {
    * Receive the final acknowledgement from the operator
    * Update the particular application accordingly
    */
-  async deploySSRApplication(sseRequest: SSRDeploymentRequest, propertyIdentifier: string, env: string, identifier: string, baseUrl: string) {
-    // @internal TODO : activity stream to be added
+  async deploySSRApplication(
+    sseRequest: SSRDeploymentRequest,
+    propertyIdentifier: string,
+    env: string,
+    identifier: string,
+    baseUrl: string,
+    createdBy: string
+  ) {
     try {
       const response = await this.applicationFactory.ssrDeploymentRequest(sseRequest, baseUrl);
       this.logger.warn('SSRDeploymentResponse', JSON.stringify(response));
@@ -254,6 +269,21 @@ export class ApplicationService {
       applicationDetails.ref = applicationDetails.nextRef;
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isSSR: true }, applicationDetails);
       this.logger.log('UpdatedSSRApplication', JSON.stringify(applicationDetails));
+      const diff = (applicationDetails.updatedAt.getTime() - new Date().getTime()) / 1000;
+      const consumedTime = Math.abs(diff).toFixed(2).toString();
+      this.logger.log('TimeToDeploy', `${consumedTime} seconds`);
+      const eventTimeTrace = this.applicationFactory.processDeploymentTime(applicationDetails, consumedTime);
+      await this.dataServices.eventTimeTrace.create(eventTimeTrace);
+      await this.analyticsService.createActivityStream(
+        propertyIdentifier,
+        Action.APPLICATION_DEPLOYED,
+        env,
+        identifier,
+        `Deployment Time : ${consumedTime} seconds [SSR Enabled]`,
+        createdBy,
+        `${Source.OPERATOR}-SSR`,
+        JSON.stringify(response)
+      );
     } catch (err) {
       this.logger.warn('SSRDeployment', err);
     }
@@ -265,7 +295,6 @@ export class ApplicationService {
    * Update the application accordingly after the successful updating
    */
   async saveConfig(configDTO: ApplicationConfigDTO) {
-    // @internal TODO : activity stream to be added
     const search = { identifier: configDTO.identifier, propertyIdentifier: configDTO.propertyIdentifier, env: configDTO.env, isSSR: true };
     const { property, deploymentConnection } = await this.getDeploymentConnection(configDTO.propertyIdentifier, configDTO.env);
     const applicationDetails = (await this.dataServices.application.getByAny(search))[0];
@@ -278,6 +307,16 @@ export class ApplicationService {
     applicationDetails.updatedBy = configDTO.createdBy;
     await this.dataServices.application.updateOne(search, applicationDetails);
     this.applicationFactory.ssrConfigUpdate(ssrOperatorRequest, deploymentConnection.baseurl);
+    await this.analyticsService.createActivityStream(
+      configDTO.propertyIdentifier,
+      Action.APPLICATION_CONFIG_UPDATED,
+      configDTO.env,
+      configDTO.identifier,
+      `${applicationDetails.name} configuration updated for ${configDTO.env}`,
+      configDTO.createdBy,
+      Source.MANAGER,
+      JSON.stringify(applicationDetails)
+    );
     return applicationDetails;
   }
 
