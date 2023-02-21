@@ -27,6 +27,8 @@ export class Application {
 
   healthCheckPath: string;
 
+  version: number;
+
   createdBy: string;
 
   updatedBy: string;
