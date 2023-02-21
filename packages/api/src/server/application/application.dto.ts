@@ -29,8 +29,6 @@ export class CreateApplicationDto {
   @IsOptional()
   actionId: string;
 
-  //----------------------------------------------------------------
-
   @ApiProperty()
   @IsBoolean()
   @IsOptional()
@@ -89,6 +87,8 @@ export class SSRDeploymentRequest {
   imageUrl: string;
 
   healthCheckPath: string;
+
+  configMap: object;
 }
 
 export class SSRDeploymentResponse {
@@ -108,12 +108,12 @@ export class ApplicationConfigDTO {
 
   @ApiProperty()
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   env: string;
 
   @ApiProperty()
   @IsObject()
-  @IsOptional()
+  @IsNotEmpty()
   config: object;
 
   createdBy: string;
