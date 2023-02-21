@@ -42,6 +42,7 @@ export const WebPropertyListPage = (): JSX.Element => {
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
 
   const webProperties = useGetWebProperties();
+
   const webPropertyDeloymentCount = useGetDeploymentCounts();
 
   // loading state skeletion cards
@@ -153,7 +154,7 @@ export const WebPropertyListPage = (): JSX.Element => {
             </GalleryItem>
             {/* List of Properties */}
             {filteredWebProperties?.map(
-              ({ identifier, title, url, createdBy }: Partial<TWebProperty>) => (
+              ({ identifier, title, createdBy, env }: Partial<TWebProperty>) => (
                 <GalleryItem key={identifier}>
                   <Link
                     href={{
@@ -164,7 +165,11 @@ export const WebPropertyListPage = (): JSX.Element => {
                     <a className="text-decoration-none">
                       <WebPropertyCard
                         title={title}
-                        subtitle={url}
+                        subtitle={
+                          env?.find((envArray) => envArray.env === 'prod')?.url ||
+                          env?.find((envArray) => envArray.env === 'stage')?.url ||
+                          env?.at(0)?.url
+                        }
                         isSelected={createdBy === session?.user?.email}
                         footer={`${
                           webPropertyDeloymentCount?.data?.[identifier || ''] || 0
