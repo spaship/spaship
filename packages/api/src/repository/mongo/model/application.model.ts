@@ -45,6 +45,9 @@ export class Application {
   @Prop({})
   healthCheckPath: string;
 
+  @Prop({ default: 1 })
+  version: number;
+
   @Prop({ default: 'NA' })
   createdBy: string;
 
