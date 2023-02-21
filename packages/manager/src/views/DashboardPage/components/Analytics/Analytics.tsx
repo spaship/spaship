@@ -20,6 +20,8 @@ import {
 } from '@patternfly/react-charts';
 import { TSPADeploymentCount } from '@app/services/analytics/types';
 import { UseQueryResult } from '@tanstack/react-query';
+import Link from 'next/link';
+import { pageLinks } from '@app/links';
 
 const TotalDeploymentCardFields = ['Dev', 'QA', 'Stage', 'Prod'];
 const DeploymentTimeFrames = ['month', 'quarter', 'half year', 'year'];
@@ -85,7 +87,11 @@ export const Analytics = ({
           >
             <CardTitle>Total Deployments</CardTitle>
             <CardBody>
-              <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{Totaldeployment}</h1>
+              <h1 style={{ color: '#0066CC', fontSize: '28px' }}>
+                <Link href={pageLinks.webPropertyListPage}>
+                  <a className="text-decoration-none">{Totaldeployment}</a>
+                </Link>
+              </h1>
               <div
                 style={{ display: 'flex', flexDirection: 'row', gap: '35px', marginTop: '24px' }}
               >
@@ -170,7 +176,11 @@ export const Analytics = ({
           >
             <CardTitle>Total Properties</CardTitle>
             <CardBody>
-              <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{TotalProperty}</h1>
+              <h1 style={{ color: '#0066CC', fontSize: '28px' }}>
+                <Link href={pageLinks.webPropertyListPage}>
+                  <a className="text-decoration-none">{TotalProperty}</a>
+                </Link>
+              </h1>
             </CardBody>
           </Card>
         </GridItem>
