@@ -6,7 +6,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { EPHEMERAL_ENV } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
-import { ApplicationResponse, CreateApplicationDto, SSRDeploymentRequest, SSRDeploymentResponse } from 'src/server/application/application.dto';
+import {
+  ApplicationConfigDTO,
+  ApplicationResponse,
+  CreateApplicationDto,
+  SSRDeploymentRequest,
+  SSRDeploymentResponse
+} from 'src/server/application/application.dto';
 import { Application } from 'src/server/application/application.entity';
 import { AuthFactory } from 'src/server/auth/auth.factory';
 import { Cluster, Environment } from 'src/server/environment/environment.entity';
@@ -114,6 +120,7 @@ export class ApplicationFactory {
     saveApplication.isSSR = false;
     saveApplication.createdBy = createdBy;
     saveApplication.updatedBy = createdBy;
+    saveApplication.version = 1;
     return saveApplication;
   }
 
@@ -219,9 +226,24 @@ export class ApplicationFactory {
       });
       ssrResponse.accessUrl = response.data.accessUrl;
     } catch (err) {
-      this.logger.error('SSROperator', err);
+      this.logger.error('SSROperatorDeployment', err);
     }
     return ssrResponse;
+  }
+
+  // @internal Update the configuration for a SSR enabled application
+  async ssrConfigUpdate(request?: SSRDeploymentRequest, deploymentBaseURL?: string) {
+    const headers = { Authorization: await AuthFactory.getAccessToken() };
+    this.logger.log('SSROperatorConfigRequest', JSON.stringify(request));
+    try {
+      const response = await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/deployment/v1/config`, request, {
+        maxBodyLength: Infinity,
+        headers
+      });
+      this.logger.log('SSROperatorConfigResponse', JSON.stringify(response.data));
+    } catch (err) {
+      this.logger.error('SSROperatorConfig', err);
+    }
   }
 
   // @internal Create the Application request for the SSE enabled deployment
@@ -237,7 +259,6 @@ export class ApplicationFactory {
     ssrApplicationRequest.imageUrl = applicationRequest.imageUrl;
     ssrApplicationRequest.healthCheckPath = applicationRequest.healthCheckPath;
     ssrApplicationRequest.config = applicationRequest.config;
-
     return ssrApplicationRequest;
   }
 
@@ -245,18 +266,35 @@ export class ApplicationFactory {
   createSSROperatorRequest(
     applicationRequest: CreateApplicationDto,
     propertyIdentifier: string,
+    identifier: string,
     env: string,
     namespace: string
   ): SSRDeploymentRequest {
     const ssrRequest = new SSRDeploymentRequest();
     ssrRequest.imageUrl = applicationRequest.imageUrl;
-    ssrRequest.app = applicationRequest.name;
+    ssrRequest.app = identifier;
     ssrRequest.contextPath = applicationRequest.path;
-    ssrRequest.website = propertyIdentifier;
     ssrRequest.website = propertyIdentifier;
     ssrRequest.nameSpace = namespace;
     ssrRequest.environment = env;
+    ssrRequest.configMap = applicationRequest.config;
     ssrRequest.healthCheckPath = applicationRequest.healthCheckPath;
+    return ssrRequest;
+  }
+
+  // @internal Increment the version of a specific application
+  incrementVersion(version: number): number {
+    return version ? version + 1 : 1;
+  }
+
+  // @internal Create the Deployment Request to the Operator for the SSE deployment
+  createSSROperatorConfigRequest(configRequest: ApplicationConfigDTO, namespace: string): SSRDeploymentRequest {
+    const ssrRequest = new SSRDeploymentRequest();
+    ssrRequest.app = configRequest.identifier;
+    ssrRequest.website = configRequest.propertyIdentifier;
+    ssrRequest.nameSpace = namespace;
+    ssrRequest.environment = configRequest.env;
+    ssrRequest.configMap = configRequest.config;
     return ssrRequest;
   }
 }

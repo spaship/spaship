@@ -132,6 +132,7 @@ export class ApplicationService {
       return this.applicationFactory.createApplicationResponse(saveApplication, deploymentConnection.baseurl);
     }
     applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
+    applicationDetails.version = this.applicationFactory.incrementVersion(applicationDetails.version);
     applicationDetails.name = applicationRequest.name;
     applicationDetails.updatedBy = createdBy;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
@@ -187,15 +188,16 @@ export class ApplicationService {
    * Send the acknowledgement to the user and wait for the final response
    */
   async saveSSRApplication(applicationRequest: CreateApplicationDto, propertyIdentifier: string, env: string): Promise<any> {
+    // @internal TODO : activity stream to be added
     const identifier = this.applicationFactory.getIdentifier(applicationRequest.name);
-    const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
-    const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
-    this.logger.log('Environment', JSON.stringify(environment));
-    this.logger.log('Property', JSON.stringify(property));
-    const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === environment.cluster);
-    const deploymentConnection = (await this.dataServices.deploymentConnection.getByAny({ name: deploymentRecord.name }))[0];
-    this.logger.log('DeploymentConnection', JSON.stringify(deploymentConnection));
-    const ssrOperatorRequest = this.applicationFactory.createSSROperatorRequest(applicationRequest, propertyIdentifier, env, property.namespace);
+    const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
+    const ssrOperatorRequest = this.applicationFactory.createSSROperatorRequest(
+      applicationRequest,
+      propertyIdentifier,
+      identifier,
+      env,
+      property.namespace
+    );
     this.logger.log('SSROperatorRequest', JSON.stringify(ssrOperatorRequest));
     const saveApplication = await this.applicationFactory.createSSRApplicationRequest(
       propertyIdentifier,
@@ -213,6 +215,7 @@ export class ApplicationService {
       applicationDetails.name = applicationRequest.name;
       applicationDetails.path = applicationRequest.path;
       applicationDetails.imageUrl = applicationRequest.imageUrl;
+      applicationDetails.version = this.applicationFactory.incrementVersion(applicationDetails.version);
       applicationDetails.healthCheckPath = applicationRequest.healthCheckPath;
       applicationDetails.config = applicationRequest.config;
       applicationDetails.updatedBy = applicationRequest.createdBy;
@@ -223,21 +226,34 @@ export class ApplicationService {
     return saveApplication;
   }
 
+  // @internal Get the deployment connection for the property
+  private async getDeploymentConnection(propertyIdentifier: string, env: string) {
+    const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+    const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
+    this.logger.log('Environment', JSON.stringify(environment));
+    this.logger.log('Property', JSON.stringify(property));
+    const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === environment.cluster);
+    const deploymentConnection = (await this.dataServices.deploymentConnection.getByAny({ name: deploymentRecord.name }))[0];
+    this.logger.log('DeploymentConnection', JSON.stringify(deploymentConnection));
+    return { property, deploymentConnection };
+  }
+
   /* @internal
    * Start the SSR deployment in the operator
    * Receive the final acknowledgement from the operator
    * Update the particular application accordingly
    */
   async deploySSRApplication(sseRequest: SSRDeploymentRequest, propertyIdentifier: string, env: string, identifier: string, baseUrl: string) {
-    const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true }))[0];
+    // @internal TODO : activity stream to be added
     try {
       const response = await this.applicationFactory.ssrDeploymentRequest(sseRequest, baseUrl);
       this.logger.warn('SSRDeploymentResponse', JSON.stringify(response));
       if (!response) return;
+      const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true }))[0];
       applicationDetails.accessUrl = response.accessUrl;
       applicationDetails.ref = applicationDetails.nextRef;
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isSSR: true }, applicationDetails);
-      this.logger.warn('UpdatedSSRApplication', JSON.stringify(applicationDetails));
+      this.logger.log('UpdatedSSRApplication', JSON.stringify(applicationDetails));
     } catch (err) {
       this.logger.warn('SSRDeployment', err);
     }
@@ -249,8 +265,11 @@ export class ApplicationService {
    * Update the application accordingly after the successful updating
    */
   async saveConfig(configDTO: ApplicationConfigDTO) {
+    // @internal TODO : activity stream to be added
     const search = { identifier: configDTO.identifier, propertyIdentifier: configDTO.propertyIdentifier, env: configDTO.env, isSSR: true };
+    const { property, deploymentConnection } = await this.getDeploymentConnection(configDTO.propertyIdentifier, configDTO.env);
     const applicationDetails = (await this.dataServices.application.getByAny(search))[0];
+    const ssrOperatorRequest = this.applicationFactory.createSSROperatorConfigRequest(configDTO, property.namespace);
     if (!applicationDetails)
       this.exceptionService.badRequestException({
         message: `${configDTO.identifier} application doesn't exist for ${configDTO.propertyIdentifier}.`
@@ -258,7 +277,7 @@ export class ApplicationService {
     applicationDetails.config = configDTO.config;
     applicationDetails.updatedBy = configDTO.createdBy;
     await this.dataServices.application.updateOne(search, applicationDetails);
-    // @internal TODO : SSR configs to be implemented for the operator
+    this.applicationFactory.ssrConfigUpdate(ssrOperatorRequest, deploymentConnection.baseurl);
     return applicationDetails;
   }
 
