@@ -28,7 +28,7 @@ export class ApplicationService {
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService,
     private readonly agendaService: AgendaService
-  ) { }
+  ) {}
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.application.getAll();
@@ -205,10 +205,10 @@ export class ApplicationService {
       env,
       applicationRequest.createdBy
     );
-    const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true }))[0];
+    let applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true }))[0];
     if (!applicationDetails) {
-      this.logger.log('SSRApplicationDetails', JSON.stringify(applicationDetails));
-      this.dataServices.application.create(saveApplication);
+      this.logger.log('SSRApplicationDetails', JSON.stringify(saveApplication));
+      applicationDetails = await this.dataServices.application.create(saveApplication);
     } else {
       applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
       applicationDetails.name = applicationRequest.name;
@@ -232,7 +232,7 @@ export class ApplicationService {
       Source.MANAGER,
       JSON.stringify(applicationRequest)
     );
-    return saveApplication;
+    return applicationDetails;
   }
 
   // @internal Get the deployment connection for the property
@@ -320,11 +320,20 @@ export class ApplicationService {
     return applicationDetails;
   }
 
-  async checkPropertyAndEnvironment(propertyIdentifier: string, env: string) {
+  async validatePropertyAndEnvironment(propertyIdentifier: string, env: string) {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     if (!environment)
       this.exceptionService.badRequestException({
         message: `${env} environment doesn't exist on ${propertyIdentifier}. Please check the Deployment URL.`
+      });
+  }
+
+  // @internal it will validate the image format and the source
+  async validateImageRegistry(imageUrl: string) {
+    const imageRegistry = await this.applicationFactory.validateImageSource(imageUrl);
+    if (!imageRegistry)
+      this.exceptionService.badRequestException({
+        message: `${imageUrl} doesn't exists on the source registry, please check the imageUrl.`
       });
   }
 }
