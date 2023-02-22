@@ -1,7 +1,6 @@
 /* eslint-disable no-underscore-dangle */
-/* eslint-disable react/jsx-key */
-
 import { fetchRoverGroup, fetchUserlist, useAddPermission } from '@app/services/rbac';
+import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
   Accordion,
   AccordionContent,
@@ -9,6 +8,7 @@ import {
   AccordionToggle,
   Button,
   Checkbox,
+  Label,
   Select,
   SelectOption,
   SelectProps,
@@ -17,232 +17,127 @@ import {
   SplitItem,
   Tab,
   Tabs,
-  TabTitleText,
-  Label
+  TabTitleText
 } from '@patternfly/react-core';
+import { InfoCircleIcon, UserIcon, UsersIcon } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { toPascalCase } from '@app/utils/toPascalConvert';
-
-import { UserIcon, UsersIcon, InfoCircleIcon } from '@patternfly/react-icons';
-// import TableHeader from '../RBACEditForm';
-
-type RoverGropListItem = {
-  email: string;
-  isOpen: boolean;
-  name: string;
-  role: string;
-};
-
-type GroupItem1 = {
-  email: string;
-  name: string;
-  role: string;
-  PERMISSION_CREATION: boolean;
-  PERMISSION_DELETION: boolean;
-  ENV_SYNC: boolean;
-  ENV_CREATION: boolean;
-  APIKEY_DELETION: boolean;
-  APIKEY_CREATION: boolean;
-  [key: string]: any;
-};
+import {
+  AddDataType,
+  ColumnNames,
+  NewRoverData,
+  UserRoleDTO,
+  RoverItem,
+  RoverUserList,
+  UserDataItem,
+  UserDataTDO
+} from './types';
 
 type Props = {
-  // onSubmit: (data: FormData) => void;
   onClose: () => void;
 };
-type AddPermType = {
-  actions: [];
-  email: string;
-  name: string;
-}[];
 
-type AddDataType = {
-  propertyIdentifier: string;
-  permissionDetails: AddPermType;
+const columnNames2: ColumnNames = {
+  NAME: 'Name',
+  APIKEY_CREATION: 'APIKEY_CREATION',
+  APIKEY_DELETION: 'APIKEY_DELETION',
+  PERMISSION_CREATION: 'PERMISSION_CREATION',
+  PERMISSION_DELETION: 'PERMISSION_DELETION',
+  ENV_CREATION: 'ENV_CREATION',
+  ENV_SYNC: 'ENV_SYNC'
 };
-type ColumnNames = {
-  NAME: string;
-  APIKEY_CREATION: string;
-  APIKEY_DELETION: string;
-  PERMISSION_CREATION: string;
-  PERMISSION_DELETION: string;
-  ENV_CREATION: string;
-  ENV_SYNC: string;
-  [key: string]: string;
+const userRole: UserRoleDTO = {
+  User: ['APIKEY_CREATION', 'ENV_CREATION', 'ENV_SYNC'],
+  Owner: [
+    'APIKEY_CREATION',
+    'APIKEY_DELETION',
+    'ENV_CREATION',
+    'ENV_SYNC',
+    'PERMISSION_CREATION',
+    'PERMISSION_DELETION'
+  ]
 };
 
-type RoleOptionKey =
-  | 'APIKEY_CREATION'
-  | 'APIKEY_DELETION'
-  | 'ENV_CREATION'
-  | 'ENV_SYNC'
-  | 'PERMISSION_CREATION'
-  | 'PERMISSION_DELETION';
-type Role = {
-  User: RoleOptionKey[];
-  Owner: RoleOptionKey[];
-};
 export const AddMembers = ({ onClose }: Props): JSX.Element => {
-  const [activeTabKey, setActiveTabKey] = React.useState<string | number>(0);
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<any[]>([]);
-  const [isShowAdvancedViewEnabled, setIsShowAdvancedViewEnabled] = React.useState(false);
-  const [isShowAdvancedViewEnabledRover, setIsShowAdvancedViewEnabledRover] = React.useState(false);
+  const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
+  const [isOpenUser, setIsOpen] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [isShowAdvancedViewEnabled, setIsShowAdvancedViewEnabled] = useState(false);
+  const [isShowAdvancedViewEnabledRover, setIsShowAdvancedViewEnabledRover] = useState(false);
   const titleId = 'plain-typeahead-select-id';
-  const [userList, setUserList] = React.useState<any[]>([]);
-  const [group, setGroup] = React.useState<any>({});
-  const [newUserDetails, setnewUserDetails] = React.useState<any[]>([]);
-  const [expanded, setExpanded] = React.useState('def-list-toggle2');
+  const [userListFromRover, setUserListFromRover] = useState<RoverUserList>([]);
+  const [usersData, setUsersData] = useState<UserDataTDO>({ data: [] });
+  const [newUserDetails, setNewUserDetails] = useState<NewRoverData[]>([]);
+  const [expanded, setExpanded] = useState('def-list-toggle2');
   const { query } = useRouter();
-  const [roverList, setRoverList] = React.useState<any[]>([]);
+  const [roverList, setRoverList] = useState<NewRoverData[]>([]);
   const propertyIdentifier = query.propertyIdentifier as string;
 
   const handleTabClick = (
-    event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
+    _event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
     tabIndex: string | number
   ) => {
     setActiveTabKey(tabIndex);
   };
 
-  const columnNames2: ColumnNames = {
-    NAME: 'Name',
-    APIKEY_CREATION: 'APIKEY_CREATION',
-    APIKEY_DELETION: 'APIKEY_DELETION',
-    PERMISSION_CREATION: 'PERMISSION_CREATION',
-    PERMISSION_DELETION: 'PERMISSION_DELETION',
-    ENV_CREATION: 'ENV_CREATION',
-    ENV_SYNC: 'ENV_SYNC'
-  };
-
-  interface User {
-    name: string;
-    email: string;
-    role: keyof Role;
-  }
-
-  // useEffect(() => {
-  //   const data: any[] = [];
-  //   let temp: any = {};
-
-  //   const userDetails = activeTabKey === 0 ? newUserDetails : roverList;
-  //   userDetails.forEach((user: User) => {
-  //     temp = {};
-  //     temp.name = user.name;
-  //     temp.email = user.email;
-  //     role[user.role].forEach((optionKey: string) => {
-  //       temp[optionKey] = true;
-  //     });
-  //     data.push(temp);
-  //   });
-
-  //   setGroup({ data });
-  // }, [JSON.stringify(newUserDetails), selected, roverList, activeTabKey]);
-  // useEffect(() => {
-  //   const role: Role = {
-  //     User: ['APIKEY_CREATION', 'ENV_CREATION', 'ENV_SYNC'],
-  //     Owner: [
-  //       'APIKEY_CREATION',
-  //       'APIKEY_DELETION',
-  //       'ENV_CREATION',
-  //       'ENV_SYNC',
-  //       'PERMISSION_CREATION',
-  //       'PERMISSION_DELETION'
-  //     ]
-  //   };
-  //   const data: any[] = [];
-  //   let temp: any = {};
-
-  //   const userDetails = activeTabKey === 0 ? newUserDetails : roverList;
-  //   userDetails.forEach((user: User) => {
-  //     temp = {};
-  //     temp.name = user.name;
-  //     temp.email = user.email;
-  //     role[user.role].forEach((optionKey: string) => {
-  //       temp[optionKey] = true;
-  //     });
-  //     data.push(temp);
-  //   });
-
-  //   setGroup({ data });
-  // }, [JSON.stringify(newUserDetails), selected, roverList, activeTabKey, newUserDetails]);
-
   const userDetailsString = JSON.stringify(newUserDetails);
 
   useEffect(() => {
-    const role: Role = {
-      User: ['APIKEY_CREATION', 'ENV_CREATION', 'ENV_SYNC'],
-      Owner: [
-        'APIKEY_CREATION',
-        'APIKEY_DELETION',
-        'ENV_CREATION',
-        'ENV_SYNC',
-        'PERMISSION_CREATION',
-        'PERMISSION_DELETION'
-      ]
-    };
-    const data: any[] = [];
-    let temp: any = {};
-
-    const userDetails = activeTabKey === 0 ? newUserDetails : roverList;
-
-    userDetails.forEach((user: User) => {
-      temp = {};
-      temp.name = user.name;
-      temp.email = user.email;
-      role[user.role].forEach((optionKey: string) => {
-        temp[optionKey] = true;
-      });
-      data.push(temp);
-    });
-
-    setGroup({ data });
-  }, [selected, roverList, activeTabKey, newUserDetails, userDetailsString]);
+    const userDetails: NewRoverData[] = activeTabKey === 0 ? newUserDetails : roverList;
+    const res1: any = userDetails.map(({ name, email, role, isOpen }) => ({
+      name,
+      email,
+      role,
+      isOpen,
+      ...userRole[role].reduce((acc, cur) => ({ ...acc, [cur]: true }), {})
+    }));
+    setUsersData({ data: res1 });
+  }, [selectedUsers, roverList, activeTabKey, newUserDetails, userDetailsString]);
 
   const onToggle = (isOpenDD: boolean) => {
-    if (userList.length) {
+    if (userListFromRover.length) {
       setIsOpen(isOpenDD);
     }
   };
 
-  const onSelect: SelectProps['onSelect'] = (event, selection) => {
-    if (selected.includes(selection)) {
-      setSelected((prevState: string[]) => prevState.filter((item) => item !== selection));
-      setGroup((prevState: { data: { name: string }[] }) => {
+  const onSelect = (_event: React.MouseEvent | React.ChangeEvent, selection: string) => {
+    if (selectedUsers.includes(selection)) {
+      setSelectedUsers((prevState: string[]) => prevState.filter((item) => item !== selection));
+      setUsersData((prevState: UserDataTDO) => {
         const newData = prevState.data.filter((item) => item.name !== selection);
         return { data: newData };
       });
-      setnewUserDetails((prevState: { name: string }[]) =>
+      setNewUserDetails((prevState: NewRoverData[]) =>
         prevState.filter((item) => item.name !== selection)
       );
     } else {
-      setSelected((prevState: string[]) => [...prevState, selection]);
+      setSelectedUsers((prevState: string[]) => [...prevState, selection]);
     }
   };
 
   const onToggleAccordian = (id: string) => {
     setExpanded(id === expanded ? '' : id);
   };
-  const handleChange = (
+
+  const handleCheckBoxChange = (
     checked: boolean,
     event: React.FormEvent<HTMLInputElement>,
-    name: string,
+    _name: string,
     email: string
   ) => {
     const target = event.currentTarget;
-    const temp = [...group.data];
-    const index = temp.findIndex((e: RoverGropListItem) => e.email === email);
+    const temp = [...usersData.data];
+    const index = temp.findIndex((e: NewRoverData) => e.email === email);
     if (index >= 0) {
       temp[index] = { ...temp[index], [target.name]: checked };
-      setGroup({ data: temp });
+      setUsersData({ data: temp });
     }
   };
 
   const onToggleAccess = (isOpenAcc: boolean, email: string) => {
-    setnewUserDetails((prevDetails) => {
+    setNewUserDetails((prevDetails) => {
       const temp = [...prevDetails];
       const index = temp.findIndex((m) => m.email === email);
       if (index >= 0) {
@@ -253,12 +148,11 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
   };
 
   const onSelectAccess = (
-    event: React.MouseEvent | React.ChangeEvent,
+    _event: React.MouseEvent | React.ChangeEvent,
     selection: string,
-    isPlaceholder: boolean,
     email: string
   ) => {
-    setnewUserDetails((prevDetails) => {
+    setNewUserDetails((prevDetails) => {
       const temp = [...prevDetails];
       const index = temp.findIndex((m) => m.email === email);
       if (index >= 0) {
@@ -268,8 +162,11 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
     });
   };
 
-  const handleAddMemberClick = (event: React.MouseEvent | React.ChangeEvent, option: any) => {
-    setnewUserDetails((prevDetails) => {
+  const handleAddMemberClick = (
+    _event: React.MouseEvent | React.ChangeEvent,
+    option: RoverItem
+  ) => {
+    setNewUserDetails((prevDetails) => {
       const temp = [...prevDetails];
       const check = temp.find((key) => key.name === option.name);
       if (!check) {
@@ -279,49 +176,28 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
     });
   };
 
-  const useAddPermission1 = useAddPermission(propertyIdentifier);
-
-  const handleSubmit = async () => {
-    const addData: Partial<AddDataType> = { propertyIdentifier };
-    const addPerm: AddPermType = group.data
-      .filter((v: { [key: string]: any }) => v.email)
-      .map((v: { [key: string]: any }) => {
-        const tempActions: string[] = Object.keys(v).filter(
-          (a) => v[a] && a !== 'name' && a !== 'email' && a !== 'role'
-        );
-        return { name: v.name, email: v.email, actions: tempActions };
-      });
-    addData.permissionDetails = addPerm;
-
-    await useAddPermission1.mutateAsync(addData as any).then(() => {
-      toast.success('Members added successfully');
-    });
-    onClose();
-  };
-
   const onToggleRover = () => {};
-
-  const onSelectRover: SelectProps['onSelect'] = (event, selection) => {
-    setGroup((prevGroup: { data: { name: string }[] }) => ({
+  const onSelectRover: SelectProps['onSelect'] = (_event, selection) => {
+    setUsersData((prevGroup: UserDataTDO) => ({
       data: prevGroup.data.filter((n: { name: string }) => n.name !== selection)
     }));
   };
 
   const clearSelection = () => {
     if (activeTabKey === 0) {
-      setSelected([]);
-      setGroup({ data: {} });
-      setnewUserDetails([]);
+      setSelectedUsers([]);
+      setUsersData({ data: [] });
+      setNewUserDetails([]);
       setIsOpen(false);
     } else {
-      // setSelectedRover([]);
-      setGroup({ data: {} });
-      setUserList([]);
+      setUsersData({ data: [] });
+      setUserListFromRover([]);
     }
   };
-  const addRoleToRoverGroup = (roverGroupList: any) => {
+
+  const addRoleToRoverGroup = (roverGroupList: RoverItem[]) => {
     if (roverGroupList) {
-      const updatedRoverGroupList = roverGroupList.map((item: any) => ({
+      const updatedRoverGroupList = roverGroupList.map((item: RoverItem) => ({
         ...item,
         role: 'User',
         isOpen: false
@@ -336,28 +212,42 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
     delay: number,
     selectedTab: string | number
   ): SelectProps['onFilter'] => {
-    let timer: any;
-
+    let timer: NodeJS.Timeout;
     return (
-      e: React.ChangeEvent<HTMLInputElement> | null,
+      _e: React.ChangeEvent<HTMLInputElement> | null,
       value: string
     ): React.ReactElement[] | undefined => {
       clearInterval(timer);
-
       timer = setTimeout(async () => {
         if (value.length >= 3) {
           if (selectedTab === 0) {
             const res = await fetchUserlist(value);
-            await setUserList(res);
+            setUserListFromRover(res);
             setIsOpen(true);
           } else if (selectedTab === 1) {
             const res = await fetchRoverGroup(value);
-            await addRoleToRoverGroup(res);
+            addRoleToRoverGroup(res);
           }
         }
       }, delay);
       return
     };
+  };
+
+  const useAddPermission1 = useAddPermission(propertyIdentifier);
+  const handleSubmit = () => {
+    const addData: AddDataType = {
+      propertyIdentifier,
+      permissionDetails: usersData.data.map(({ email, name, ...rand }) => ({
+        email,
+        name,
+        actions: Object.keys(rand)
+      }))
+    };
+    useAddPermission1.mutateAsync(addData).then(() => {
+      toast.success('Members added successfully');
+    });
+    onClose();
   };
 
   return (
@@ -375,7 +265,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             <UserIcon /> Email
           </TabTitleText>
         }
-        aria-label="Default content - users"
+        aria-label="Default content - usersData"
       >
         <div>
           <br />
@@ -386,16 +276,16 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             variant={SelectVariant.typeaheadMulti}
             onFilter={debounceCustomCombined(500, activeTabKey)}
             onToggle={onToggle}
-            onSelect={onSelect}
+            onSelect={(e, s) => onSelect(e, s as string)}
             onClear={clearSelection}
-            selections={selected}
-            isOpen={isOpen}
+            selections={selectedUsers}
+            isOpen={isOpenUser}
             aria-labelledby={titleId}
             placeholderText="Kindly enter name or email"
           >
-            {(userList || []).map((option) => (
+            {(userListFromRover || []).map((option) => (
               <SelectOption
-                key={option.id}
+                key={option.name}
                 value={option.name}
                 onClick={(e) => handleAddMemberClick(e, option)}
               />
@@ -426,8 +316,8 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                 </Tr>
               </Thead>
               <Tbody>
-                {Object.keys(group).length &&
-                  group.data.map((i: GroupItem1) => (
+                {Object.keys(usersData).length &&
+                  usersData.data.map((i: UserDataItem) => (
                     <Tr key={i.name}>
                       <Td>{i.name}</Td>
                       {[
@@ -441,7 +331,9 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                         <Td key={item.id}>
                           <Checkbox
                             isChecked={item.value}
-                            onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
+                            onChange={(checked, e) =>
+                              handleCheckBoxChange(checked, e, i.name, i.email)
+                            }
                             id={`${columnNames2[item.id]}`}
                             name={`${columnNames2[item.id]}`}
                           />
@@ -455,7 +347,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             <div>
               <Accordion asDefinitionList>
                 {newUserDetails.map((v) => (
-                  <AccordionItem>
+                  <AccordionItem key={v.email}>
                     <AccordionToggle
                       onClick={() => {
                         onToggleAccordian(`def-list-toggle1_${v?.email}`);
@@ -477,7 +369,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                             placeholderText="Access"
                             aria-label="Access"
                             onToggle={(flagOpen) => onToggleAccess(flagOpen, v.email)}
-                            onSelect={(e, s, p) => onSelectAccess(e, s as any, p as any, v.email)}
+                            onSelect={(e, s) => onSelectAccess(e, s as string, v.email)}
                             selections={v.role}
                             isOpen={v.isOpen}
                             menuAppendTo={() => document.body}
@@ -507,9 +399,9 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                           </Tr>
                         </Thead>
                         <Tbody>
-                          {Object.keys(group).length &&
-                            group.data.map(
-                              (i: GroupItem1) =>
+                          {Object.keys(usersData).length &&
+                            usersData.data.map(
+                              (i: UserDataItem) =>
                                 i.name === v.name && (
                                   <Tr key={i.name}>
                                     <Td>{i.name}</Td>
@@ -525,7 +417,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                                         <Checkbox
                                           isChecked={item.value}
                                           onChange={(checked, e) =>
-                                            handleChange(checked, e, i.name, i.email)
+                                            handleCheckBoxChange(checked, e, i.name, i.email)
                                           }
                                           id={`${columnNames2[item.id]}`}
                                           name={`${columnNames2[item.id]}`}
@@ -545,7 +437,9 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
           )}
           <br />
           <Button
-            isDisabled={Object.keys(group).length && group?.data.length === 0 ? true : undefined}
+            isDisabled={
+              Object.keys(usersData).length && usersData?.data.length === 0 ? true : undefined
+            }
             variant="primary"
             onClick={handleSubmit}
           >
@@ -560,7 +454,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             <UsersIcon /> Rover Group
           </TabTitleText>
         }
-        aria-label="Default content - users"
+        aria-label="Default content - usersData"
       >
         <div>
           <br />
@@ -578,7 +472,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
           >
             {(roverList || []).map((option) => (
               <SelectOption
-                key={option.id}
+                key={option.name}
                 value={option.name}
                 onClick={(e) => handleAddMemberClick(e, option)}
               />
@@ -609,8 +503,8 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                 </Tr>
               </Thead>
               <Tbody>
-                {Object.keys(group).length &&
-                  group.data.map((i: GroupItem1) => (
+                {Object.keys(usersData).length &&
+                  usersData.data.map((i: UserDataItem) => (
                     <Tr key={i.name}>
                       <Td>{i.name}</Td>
                       {[
@@ -624,7 +518,9 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                         <Td key={item.id}>
                           <Checkbox
                             isChecked={item.value}
-                            onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
+                            onChange={(checked, e) =>
+                              handleCheckBoxChange(checked, e, i.name, i.email)
+                            }
                             id={`${columnNames2[item.id]}`}
                             name={`${columnNames2[item.id]}`}
                           />
@@ -638,7 +534,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             <div>
               <Accordion asDefinitionList>
                 {(roverList || []).map((v) => (
-                  <AccordionItem>
+                  <AccordionItem key={v.email}>
                     <AccordionToggle
                       onClick={() => {
                         onToggleAccordian(`def-list-toggle1_${v.email}`);
@@ -652,7 +548,6 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                           <br />
                           {v.email}
                         </SplitItem>
-
                         <SplitItem isFilled />
                         <SplitItem onClick={(e) => e.stopPropagation()}>
                           <b>{v.role}</b>
@@ -672,9 +567,9 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                           </Tr>
                         </Thead>
                         <Tbody>
-                          {Object.keys(group).length &&
-                            group.data.map(
-                              (i: GroupItem1) =>
+                          {Object.keys(usersData).length &&
+                            usersData.data.map(
+                              (i: UserDataItem) =>
                                 i.name === v.name && (
                                   <Tr key={i.name}>
                                     <Td>{i.name}</Td>
@@ -690,7 +585,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                                         <Checkbox
                                           isChecked={item.value}
                                           onChange={(checked, e) =>
-                                            handleChange(checked, e, i.name, i.email)
+                                            handleCheckBoxChange(checked, e, i.name, i.email)
                                           }
                                           id={`${columnNames2[item.id]}`}
                                           name={`${columnNames2[item.id]}`}
@@ -709,7 +604,9 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             </div>
           )}
           <Button
-            isDisabled={Object.keys(group).length && group?.data.length === 0 ? true : undefined}
+            isDisabled={
+              Object.keys(usersData).length && usersData?.data.length === 0 ? true : undefined
+            }
             variant="primary"
             onClick={handleSubmit}
           >
