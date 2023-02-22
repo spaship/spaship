@@ -34,9 +34,28 @@ export class CreateApplicationDto {
   @IsOptional()
   isSSR: boolean;
 
+  /* @internal
+   * It'll check the format of the provided image url
+   *
+   * Allowed Image Format :
+   *
+   * - spaship
+   * - spaship:latest
+   * - spaship-image:latest
+   * - spaship-registry.com/spaship-image:1.0.0
+   * - spaship_org/spaship_image:1.2.3-beluga
+   *
+   * Not Allowed Image Format :
+   *
+   * - SPAship (uppercase letters not allowed)
+   * - SPAship_image@sha256:abc123 (invalid character @)
+   * - spaship/image (slashes not allowed in repository name)
+   * - spaship-image: (tag or digest cannot be empty)
+   */
   @ApiProperty()
   @IsString()
   @IsOptional()
+  @Matches(VALIDATION.IMAGEURL, { message: MESSAGE.INVALID_IMAGEURL, always: true })
   imageUrl: string;
 
   @ApiProperty()
