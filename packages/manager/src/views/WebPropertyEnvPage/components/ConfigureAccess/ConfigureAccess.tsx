@@ -61,7 +61,7 @@ export const ConfigureAccess = ({
   const useAddPermission1 = useAddPermission(propertyIdentifier);
   const columnNames = {
     NAME: 'Name',
-    ROLE: 'Role',
+    // ROLE: 'Role',
     APIKEY_CREATION: 'APIKEY_CREATION',
     APIKEY_DELETION: 'APIKEY_DELETION',
     PERMISSION_CREATION: 'PERMISSION_CREATION',
