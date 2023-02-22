@@ -82,7 +82,9 @@ export enum MESSAGE {
   INVALID_APPLICATION = 'Invalid Application name [Correct format : home, doc].',
   INVALID_REF = 'Invalid Reference [Correct format : 1.2, v1@1.2.3].',
   INVALID_ENV = 'Invalid Environment [Correct format : prod, stage, dev]',
-  INVALID_LABEL = 'Invalid Label [Correct format : all-access, prod-key].'
+  INVALID_LABEL = 'Invalid Label [Correct format : all-access, prod-key].',
+  INVALID_IMAGEURL = 'Invalid Image URL [Allowed Image Format :  spaship, spaship:latest, spaship-image:latest, spaship-registry.com/spaship-image:1.0.0, spaship_org/spaship_image:1.2.3-beluga],' +
+    'Not Allowed Image Format [SPAship (uppercase letters not allowed), SPAship_image@sha256:abc123 (invalid character @), spaship/image (slashes not allowed in repository name), spaship-image: (tag or digest cannot be empty)]'
 }
 
 export const VALIDATION = {
@@ -97,7 +99,8 @@ export const VALIDATION = {
   URL: /^[_a-zA-Z0-9-.]+$/,
   ENV: /^[a-zA-Z0-9-]+$/,
   REF: /^[_a-zA-Z0-9/@ -.]+$/,
-  EXPIRESIN: /^[a-zA-Z0-9]+$/
+  EXPIRESIN: /^[a-zA-Z0-9]+$/,
+  IMAGEURL: /^([a-z0-9]+(?:[._-][a-z0-9]+)*(?:\/[a-z0-9]+(?:[._-][a-z0-9]+)*)*):?[a-z0-9._-]*$/
 };
 
 export enum JOB {
