@@ -100,7 +100,7 @@ export const VALIDATION = {
   ENV: /^[a-zA-Z0-9-]+$/,
   REF: /^[_a-zA-Z0-9/@ -.]+$/,
   EXPIRESIN: /^[a-zA-Z0-9]+$/,
-  IMAGEURL: /^([a-z0-9]+(?:[._-][a-z0-9]+)*(?:\/[a-z0-9]+(?:[._-][a-z0-9]+)*)*):?[a-z0-9._-]*$/
+  IMAGEURL: getImageUrlRegex()
 };
 
 export enum JOB {
@@ -108,3 +108,7 @@ export enum JOB {
 }
 
 export const GLOBAL_PREFIX = '/api/v1';
+
+function getImageUrlRegex() {
+  return new RegExp(process.env.SPASHIP_SSR_IMAGEURL_REGEX);
+}

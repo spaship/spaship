@@ -28,7 +28,7 @@ export class ApplicationService {
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService,
     private readonly agendaService: AgendaService
-  ) {}
+  ) { }
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.application.getAll();
@@ -333,7 +333,7 @@ export class ApplicationService {
     const imageRegistry = await this.applicationFactory.validateImageSource(imageUrl);
     if (!imageRegistry)
       this.exceptionService.badRequestException({
-        message: `${imageUrl} doesn't exists on the source registry, please check the imageUrl.`
+        message: `${imageUrl} doesn't exists on the source registry, please provide a valid imageUrl.`
       });
   }
 }
