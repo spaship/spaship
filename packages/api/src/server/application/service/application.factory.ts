@@ -313,10 +313,7 @@ export class ApplicationFactory {
   // @internal It'll check that image exists on the source or not
   async validateImageSource(imageUrl: string) {
     const hasProtocol = imageUrl.includes('https') || imageUrl.includes('http');
-    if (!hasProtocol) {
-      this.logger.warn('ImageRegistry', "Image doesn't contain any https protocol");
-      imageUrl = `https://${imageUrl}`;
-    }
+    if (!hasProtocol) imageUrl = `https://${imageUrl}`;
     try {
       const response = await this.httpService.axiosRef.head(imageUrl);
       if (response.status === 200) return true;

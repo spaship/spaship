@@ -28,7 +28,7 @@ export class ApplicationService {
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService,
     private readonly agendaService: AgendaService
-  ) { }
+  ) {}
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.application.getAll();
@@ -262,7 +262,7 @@ export class ApplicationService {
   ) {
     try {
       const response = await this.applicationFactory.ssrDeploymentRequest(sseRequest, baseUrl);
-      this.logger.warn('SSRDeploymentResponse', JSON.stringify(response));
+      this.logger.log('SSRDeploymentResponse', JSON.stringify(response));
       if (!response) return;
       const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true }))[0];
       applicationDetails.accessUrl = response.accessUrl;
@@ -296,13 +296,13 @@ export class ApplicationService {
    */
   async saveConfig(configDTO: ApplicationConfigDTO) {
     const search = { identifier: configDTO.identifier, propertyIdentifier: configDTO.propertyIdentifier, env: configDTO.env, isSSR: true };
-    const { property, deploymentConnection } = await this.getDeploymentConnection(configDTO.propertyIdentifier, configDTO.env);
     const applicationDetails = (await this.dataServices.application.getByAny(search))[0];
-    const ssrOperatorRequest = this.applicationFactory.createSSROperatorConfigRequest(configDTO, property.namespace);
     if (!applicationDetails)
       this.exceptionService.badRequestException({
         message: `${configDTO.identifier} application doesn't exist for ${configDTO.propertyIdentifier}.`
       });
+    const { property, deploymentConnection } = await this.getDeploymentConnection(configDTO.propertyIdentifier, configDTO.env);
+    const ssrOperatorRequest = this.applicationFactory.createSSROperatorConfigRequest(configDTO, property.namespace);
     applicationDetails.config = configDTO.config;
     applicationDetails.updatedBy = configDTO.createdBy;
     await this.dataServices.application.updateOne(search, applicationDetails);
@@ -324,7 +324,7 @@ export class ApplicationService {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     if (!environment)
       this.exceptionService.badRequestException({
-        message: `${env} environment doesn't exist on ${propertyIdentifier}. Please check the Deployment URL.`
+        message: `${env} environment doesn't exist on ${propertyIdentifier}.`
       });
   }
 
