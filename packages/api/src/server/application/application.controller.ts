@@ -40,7 +40,8 @@ export class ApplicationController {
   async createApplication(@UploadedFile() file, @Body() applicationDto: CreateApplicationDto, @Param() params, @Query() queries): Promise<any> {
     // @internal `imageUrl` refers to the SSR Enabled Deployment
     if (applicationDto.imageUrl) {
-      await this.applicationService.checkPropertyAndEnvironment(params.propertyIdentifier, params.env);
+      await this.applicationService.validateImageRegistry(applicationDto.imageUrl);
+      await this.applicationService.validatePropertyAndEnvironment(params.propertyIdentifier, params.env);
       return this.applicationService.saveSSRApplication(applicationDto, params.propertyIdentifier, params.env);
     }
     // @internal deploy the Static Distribution

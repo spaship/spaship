@@ -279,7 +279,7 @@ export class ApplicationFactory {
     ssrRequest.nameSpace = namespace;
     ssrRequest.environment = env;
     ssrRequest.configMap = applicationRequest.config;
-    ssrRequest.healthCheckPath = applicationRequest.healthCheckPath;
+    ssrRequest.healthCheckPath = applicationRequest.healthCheckPath || applicationRequest.path;
     return ssrRequest;
   }
 
@@ -288,6 +288,7 @@ export class ApplicationFactory {
     return version ? version + 1 : 1;
   }
 
+  // @internal It'll create the object request for SSR configuration
   createSSROperatorConfigRequest(configRequest: ApplicationConfigDTO, namespace: string): SSRDeploymentRequest {
     const ssrRequest = new SSRDeploymentRequest();
     ssrRequest.app = configRequest.identifier;
@@ -307,5 +308,21 @@ export class ApplicationFactory {
     eventTimeTrace.applicationIdentifier = application.identifier;
     eventTimeTrace.consumedTime = consumedTime;
     return eventTimeTrace;
+  }
+
+  // @internal It'll check that image exists on the source or not
+  async validateImageSource(imageUrl: string) {
+    const hasProtocol = imageUrl.includes('https') || imageUrl.includes('http');
+    if (!hasProtocol) {
+      this.logger.warn('ImageRegistry', "Image doesn't contain any https protocol");
+      imageUrl = `https://${imageUrl}`;
+    }
+    try {
+      const response = await this.httpService.axiosRef.head(imageUrl);
+      if (response.status === 200) return true;
+    } catch (error) {
+      this.logger.error('ImageRegistry', error);
+    }
+    return false;
   }
 }
