@@ -56,6 +56,7 @@ export class ApplicationController {
   @Post('/config')
   @ApiOperation({ description: 'Save the Config for the Application.' })
   async saveConfig(@Body() applicationConfigDto: ApplicationConfigDTO) {
+    await this.applicationService.validatePropertyAndEnvironment(applicationConfigDto.propertyIdentifier, applicationConfigDto.env);
     return this.applicationService.saveConfig(applicationConfigDto);
   }
 }
