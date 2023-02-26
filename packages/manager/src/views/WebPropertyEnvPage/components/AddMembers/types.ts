@@ -10,7 +10,9 @@ export type UserDataItem = {
   APIKEY_CREATION: boolean;
   isOpen: boolean;
 };
-
+export type UserDataTDO = {
+  data: UserDataItem[];
+};
 export type ColumnNames = {
   NAME: string;
   APIKEY_CREATION: string;
@@ -32,9 +34,6 @@ export type NewRoverData = {
   isOpen: boolean;
   name: string;
   role: string;
-};
-export type UserDataTDO = {
-  data: UserDataItem[];
 };
 
 export type AddPermType = {

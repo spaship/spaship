@@ -8,6 +8,8 @@ import {
   AccordionToggle,
   Button,
   Checkbox,
+  Flex,
+  FlexItem,
   Label,
   Select,
   SelectOption,
@@ -28,11 +30,11 @@ import {
   AddDataType,
   ColumnNames,
   NewRoverData,
-  UserRoleDTO,
   RoverItem,
   RoverUserList,
   UserDataItem,
-  UserDataTDO
+  UserDataTDO,
+  UserRoleDTO
 } from './types';
 
 type Props = {
@@ -268,10 +270,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
         aria-label="Default content - usersData"
       >
         <div>
-          <br />
-          Email
-          <br />
-          <br />
+          <div className="pf-u-my-lg">Email</div>
           <Select
             variant={SelectVariant.typeaheadMulti}
             onFilter={debounceCustomCombined(500, activeTabKey)}
@@ -282,6 +281,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             isOpen={isOpenUser}
             aria-labelledby={titleId}
             placeholderText="Kindly enter name or email"
+            className="pf-u-mb-lg"
           >
             {(userListFromRover || []).map((option) => (
               <SelectOption
@@ -291,7 +291,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
               />
             ))}
           </Select>
-          <br />
+          <div className="--pf-global--spacer--md" />
           <Button
             style={{ display: 'flex', float: 'right' }}
             variant="link"
@@ -299,15 +299,15 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             onClick={() => {
               setIsShowAdvancedViewEnabled(!isShowAdvancedViewEnabled);
             }}
+            className="pf-u-mb-lg"
           >
             Show Advance Access
           </Button>
-          <br />
-          <b>New Members</b>
-          <br />
-          <br />
+          <div className="pf-u-my-lg">
+            <b>New Members</b>
+          </div>
           {isShowAdvancedViewEnabled && Object.keys(columnNames2).length ? (
-            <TableComposable>
+            <TableComposable className="pf-u-mb-lg">
               <Thead noWrap>
                 <Tr>
                   {Object.values(columnNames2).map((column) => (
@@ -345,7 +345,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             </TableComposable>
           ) : (
             <div>
-              <Accordion asDefinitionList>
+              <Accordion asDefinitionList className="pf-u-mb-lg">
                 {newUserDetails.map((v) => (
                   <AccordionItem key={v.email}>
                     <AccordionToggle
@@ -355,11 +355,10 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                       isExpanded={expanded === `def-list-toggle1_${v?.email}`}
                       id="def-list-toggle1_"
                     >
-                      <Split>
+                      <Split hasGutter>
                         <SplitItem isFilled onClick={(e) => e.stopPropagation()}>
-                          {v.name}
-                          <br />
-                          {v.email}
+                          <b>{v.name}</b>
+                          <p className="pf-u-mt-xs">{v.email}</p>
                         </SplitItem>
                         <SplitItem isFilled />
                         <SplitItem onClick={(e) => e.stopPropagation()}>
@@ -403,7 +402,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                             usersData.data.map(
                               (i: UserDataItem) =>
                                 i.name === v.name && (
-                                  <Tr key={i.name}>
+                                  <Tr key={i.name} className="pf-u-mb-md">
                                     <Td>{i.name}</Td>
                                     {[
                                       { id: 'APIKEY_CREATION', value: i.APIKEY_CREATION },
@@ -435,7 +434,6 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
               </Accordion>
             </div>
           )}
-          <br />
           <Button
             isDisabled={
               Object.keys(usersData).length && usersData?.data.length === 0 ? true : undefined
@@ -457,10 +455,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
         aria-label="Default content - usersData"
       >
         <div>
-          <br />
-          Add Rover Group
-          <br />
-          <br />
+          <div className="pf-u-my-lg">Add Rover Group</div>
           <Select
             variant={SelectVariant.typeaheadMulti}
             onFilter={debounceCustomCombined(1000, activeTabKey)}
@@ -478,21 +473,26 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
               />
             ))}
           </Select>
-          <Label isCompact variant="filled" icon={<InfoCircleIcon />} color="blue">
-            Please select all roles to make a user OWNER
-          </Label>{' '}
-          <Button
-            style={{ display: 'flex', float: 'right' }}
-            variant="link"
-            isInline
-            onClick={() => {
-              setIsShowAdvancedViewEnabledRover(!isShowAdvancedViewEnabledRover);
-            }}
-          >
-            Show Advance Access Rover
-          </Button>
-          <br />
-          <br />
+          <Flex alignItems={{ default: 'alignItemsCenter' }}>
+            <FlexItem>
+              <Label isCompact variant="filled" icon={<InfoCircleIcon />} color="blue">
+                Please select all roles to make a user OWNER
+              </Label>
+            </FlexItem>
+            <FlexItem align={{ default: 'alignRight' }}>
+              <Button
+                variant="link"
+                isInline
+                onClick={() => {
+                  setIsShowAdvancedViewEnabledRover(!isShowAdvancedViewEnabledRover);
+                }}
+                style={{ marginBottom: 'var(--pf-global--spacer--lg)' }}
+              >
+                Show Advance Access Rover
+              </Button>
+            </FlexItem>
+          </Flex>
+          <div className="--pf-global--spacer--xl" />
           {isShowAdvancedViewEnabledRover && Object.keys(columnNames2).length ? (
             <TableComposable>
               <Thead noWrap>
@@ -545,8 +545,8 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                       <Split>
                         <SplitItem onClick={(e) => e.stopPropagation()}>
                           <b>{v.name}</b>
-                          <br />
-                          {v.email}
+
+                          <p className="pf-u-mt-xs">{v.email}</p>
                         </SplitItem>
                         <SplitItem isFilled />
                         <SplitItem onClick={(e) => e.stopPropagation()}>
@@ -604,6 +604,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             </div>
           )}
           <Button
+            className="pf-u-mt-md"
             isDisabled={
               Object.keys(usersData).length && usersData?.data.length === 0 ? true : undefined
             }

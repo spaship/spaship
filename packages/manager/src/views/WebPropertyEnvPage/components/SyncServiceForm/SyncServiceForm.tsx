@@ -1,7 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/jsx-props-no-spreading */
 import { TEnv } from '@app/services/persistent/types';
-import * as yup from 'yup';
+import { useUpdateSync } from '@app/services/sync';
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
   ActionGroup,
   Button,
@@ -11,25 +12,21 @@ import {
   FormSelectOption,
   TextArea
 } from '@patternfly/react-core';
-import { Controller, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useUpdateSync } from '@app/services/sync';
-import toast from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
+import { Controller, useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import * as yup from 'yup';
 
 type Props = {
   env: TEnv[];
   onClose: () => void;
   propertyIdentifier: string;
 };
-
 export const schema = yup.object({
   env: yup.string().label('Select Environment').required(),
   sync: yup.string().label('Enter Sync Config').required()
 });
-
 export interface FormData extends yup.InferType<typeof schema> {}
-
 export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JSX.Element => {
   const {
     control,
@@ -42,17 +39,10 @@ export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JS
   });
   const updateSync = useUpdateSync(propertyIdentifier);
   const { data: session } = useSession();
-  // TODO: This could be improved to O(1)
-  // by something like this before
-  // reduce((acc, env) => {
-  //     acc[env.env] = { ...env };
-  //     return acc;
-  // }, {})
   const updateSyncModal = (event: string) => {
     const syncConfig = env.find((envObject) => envObject.env === event)?.sync;
     setValue('sync', syncConfig || '');
   };
-
   const onSubmit = async (formData: FormData) => {
     try {
       await updateSync.mutateAsync({
@@ -71,7 +61,6 @@ export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JS
       }
     }
   };
-
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Controller

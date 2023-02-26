@@ -1,6 +1,3 @@
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import Router, { useRouter } from 'next/router';
 import {
   Badge,
   Button,
@@ -10,21 +7,34 @@ import {
   List,
   PageSection,
   SearchInput,
+  Select,
+  SelectOption,
+  SelectVariant,
   Split,
   SplitItem,
   Tab,
   Tabs,
   TabTitleIcon,
-  TabTitleText,
-  Select,
-  SelectOption,
-  SelectVariant
+  TabTitleText
 } from '@patternfly/react-core';
+import Link from 'next/link';
+import Router, { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 import { Banner, TableRowSkeleton } from '@app/components';
-import { useGetSPAPropGroupByName, useGetSPAProperties } from '@app/services/spaProperty';
-import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
+import { useDebounce, useFormatDate, useTabs, useToggle } from '@app/hooks';
+import { pageLinks } from '@app/links';
 import { useGetEphemeralListForProperty } from '@app/services/ephemeral';
+import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
+import { useGetSPAProperties, useGetSPAPropGroupByName } from '@app/services/spaProperty';
+import {
+  CogIcon,
+  CubeIcon,
+  ExternalLinkAltIcon,
+  PackageIcon,
+  RunningIcon,
+  TimesCircleIcon
+} from '@patternfly/react-icons';
 import {
   Caption,
   ExpandableRowContent,
@@ -35,21 +45,11 @@ import {
   Thead,
   Tr
 } from '@patternfly/react-table';
-import {
-  CogIcon,
-  CubeIcon,
-  ExternalLinkAltIcon,
-  PackageIcon,
-  RunningIcon,
-  TimesCircleIcon
-} from '@patternfly/react-icons';
-import { useDebounce, useFormatDate, useTabs, useToggle } from '@app/hooks';
-import { pageLinks } from '@app/links';
 
-import toast from 'react-hot-toast';
 import { ActivityStream } from '@app/components/ActivityStream';
-import { Ephemeral } from './components/Ephemeral';
+import toast from 'react-hot-toast';
 import { EmptyInfo } from './components/EmptyInfo';
+import { Ephemeral } from './components/Ephemeral';
 
 const URL_LENGTH_LIMIT = 30;
 
@@ -153,7 +153,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                         aria-label="filter Input"
                         value="Select Environment"
                         onToggle={setIsFilterOpen.toggle}
-                        onSelect={(e, value) => {
+                        onSelect={(_e, value) => {
                           if (value === 'Select Environment') {
                             setFilterByEnv('' as string);
                           } else {

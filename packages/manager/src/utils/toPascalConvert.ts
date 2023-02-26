@@ -1,8 +1,7 @@
-/* eslint-disable  */
 export const toPascalCase = (sentence: string) =>
   sentence
     .toLowerCase()
-    .replace(new RegExp(/[^\w\s]/, 'g'), '')
+    .replace(/[^\w\s]/g, '')
     .replace('_', ' ')
     .trim()
     .split(' ')

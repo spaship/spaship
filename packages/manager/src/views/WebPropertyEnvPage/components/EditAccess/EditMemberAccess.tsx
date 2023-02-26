@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { useAddPermission, useDeleteMember } from '@app/services/rbac';
 import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
@@ -12,8 +11,8 @@ import {
   SplitItem
 } from '@patternfly/react-core';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-
 interface Props {
   onClose: () => void;
   editMemberName: string;
@@ -30,7 +29,6 @@ type ColumnNames = {
   ENV_SYNC: string;
   [key: string]: string;
 };
-
 type GroupItem1 = {
   email: string;
   name: string;
@@ -42,7 +40,6 @@ type GroupItem1 = {
   APIKEY_DELETION: boolean;
   APIKEY_CREATION: boolean;
 };
-
 export const EditMemberAccess = ({
   onClose,
   editMemberName,
@@ -54,9 +51,8 @@ export const EditMemberAccess = ({
   const [deleteAccess, setDeleteAccess] = useState<string[]>([]);
   const useAddPermission1 = useAddPermission(propertyIdentifier);
   const deleteMember = useDeleteMember(propertyIdentifier);
-  const data1 = memberList.data.filter((e: any) => e.name === editMemberName);
+  const data1 = memberList.data.filter((e: GroupItem1) => e.name === editMemberName);
   const [group, setGroup] = useState({ data: data1 });
-
   const columnNames: ColumnNames = {
     NAME: 'Name',
     // ROLE: 'Role',
@@ -67,7 +63,6 @@ export const EditMemberAccess = ({
     ENV_CREATION: 'ENV_CREATION',
     ENV_SYNC: 'ENV_SYNC'
   };
-
   const onToggleAccordian = async (id: string) => {
     if (id === expanded) {
       setExpanded('');
@@ -75,18 +70,16 @@ export const EditMemberAccess = ({
       setExpanded(id);
     }
   };
-
   const handleChange = (
     checked: boolean,
     event: React.FormEvent<HTMLInputElement>,
     email: string
   ) => {
-    const target: any = event.currentTarget;
+    const target = event.currentTarget as HTMLInputElement;
     const temp = group.data;
-    const objIndex = temp.findIndex((e: any) => e.email === email);
+    const objIndex = temp.findIndex((e: GroupItem1) => e.email === email);
     temp[objIndex][target.name] = checked;
     setGroup({ data: temp });
-
     if (checked) {
       setAddAccess([...addAccess, target.name]);
       setDeleteAccess(deleteAccess.filter((value) => value !== target.name));
@@ -107,17 +100,13 @@ export const EditMemberAccess = ({
       name,
       actions: Object.keys(rand)
     }));
-
     const addData = { propertyIdentifier, permissionDetails: addPerm };
-
     const deletePerm = group.data.map(({ email, name, role, ...rand }: GroupData) => ({
       email,
       name,
       actions: Object.keys(rand).filter((value) => rand[value] === false)
     }));
-
     const deleteData = { propertyIdentifier, permissionDetails: deletePerm };
-
     try {
       if (addAccess.length) {
         useAddPermission1
@@ -129,7 +118,6 @@ export const EditMemberAccess = ({
             return res;
           });
       }
-
       if (deleteAccess.length) {
         deleteMember
           .mutateAsync({
@@ -139,13 +127,11 @@ export const EditMemberAccess = ({
             toast.success('Permission updated successfully');
           });
       }
-
       onClose();
     } catch (err) {
       // console.error(err);
     }
   };
-
   return (
     <div>
       <Accordion asDefinitionList>
@@ -167,7 +153,6 @@ export const EditMemberAccess = ({
               </SplitItem>
             </Split>
           </AccordionToggle>
-
           <AccordionContent
             id={`def-list-expand1${editMemberName}`}
             isHidden={expanded !== `def-list-toggle1_${editMemberName}`}
@@ -213,8 +198,7 @@ export const EditMemberAccess = ({
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-
-      <Button variant="primary" onClick={handleSubmit}>
+      <Button className="pf-u-mt-md" variant="primary" onClick={handleSubmit}>
         Submit
       </Button>
     </div>

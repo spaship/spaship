@@ -1,5 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-/* eslint-disable react/jsx-key */
 import { useAddPermission, useDeleteMember } from '@app/services/rbac';
 import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
@@ -15,28 +14,14 @@ import {
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-
-type GroupItem = {
-  email: string;
-  name: string;
-  role: string;
-  PERMISSION_CREATION: boolean;
-  PERMISSION_DELETION: boolean;
-  ENV_SYNC: boolean;
-  ENV_CREATION: boolean;
-  APIKEY_DELETION: boolean;
-  APIKEY_CREATION: boolean;
-};
+import { AddDataType, DeleteDataType, GroupDTO, GroupItem } from './types';
 
 type Props = {
   onClose: () => void;
   propertyIdentifier: string;
-  // memberList: GroupItem[];
   memberList: any;
-
   flagOpen: boolean;
 };
-
 export const ConfigureAccess = ({
   onClose,
   propertyIdentifier,
@@ -47,21 +32,14 @@ export const ConfigureAccess = ({
   const [addAccess, setAddAccess] = useState<string[]>([]);
   const [deleteAccess, setDeleteAccess] = useState<string[]>([]);
   const [isShowAdvancedViewEnabled, setIsShowAdvancedViewEnabled] = useState<boolean>(false);
-  const [group, setGroup] = useState<any>(memberList);
-
-  // useEffect(() => {
-  //   setGroup(memberList);
-  // }, [flagOpen]);
-
+  const [group, setGroup] = useState<GroupDTO>({ data: memberList?.data });
   useEffect(() => {
     setGroup(memberList);
   }, [flagOpen, memberList]);
-
   const deleteMember = useDeleteMember(propertyIdentifier);
   const useAddPermission1 = useAddPermission(propertyIdentifier);
   const columnNames = {
     NAME: 'Name',
-    // ROLE: 'Role',
     APIKEY_CREATION: 'APIKEY_CREATION',
     APIKEY_DELETION: 'APIKEY_DELETION',
     PERMISSION_CREATION: 'PERMISSION_CREATION',
@@ -76,7 +54,6 @@ export const ConfigureAccess = ({
     email: string
   ) => {
     const target = event.currentTarget;
-
     const temp = [...group.data];
     const addAccess1 = [...addAccess];
     const deleteAccess1 = [...deleteAccess];
@@ -93,7 +70,6 @@ export const ConfigureAccess = ({
     setAddAccess(addAccess1);
     setDeleteAccess(deleteAccess1);
   };
-
   const onToggleAccordian = async (id: string) => {
     if (id === expanded) {
       setExpanded('');
@@ -101,60 +77,27 @@ export const ConfigureAccess = ({
       setExpanded(id);
     }
   };
-
-  interface Permission {
-    name: string;
-    email: string;
-    actions: string[];
-  }
   const handleSubmit = () => {
-    const addPerm: Permission[] = [];
-    // let addflag = false;
-    const deletePerm: Permission[] = [];
-    // let deleteflag = false;
-
-    group.data.forEach((v: any) => {
-      const temp: any = {};
-      const tempActions: string[] = [];
-
-      const tempDelete: any = {};
-      const tempActionsDelete: string[] = [];
-
-      temp.name = v.name;
-      temp.email = v.email;
-      tempDelete.email = v.email;
-
-      Object.keys(v).forEach((a: string) => {
-        if (v[a] && a !== 'name' && a !== 'email' && a !== 'role') {
-          tempActions.push(a);
-        } else if (!v[a] && a !== 'name' && a !== 'email' && a !== 'role') {
-          tempActionsDelete.push(a);
-        }
-      });
-
-      // if (tempActions.length !== 0) {
-      //   addflag = true;
-      // }
-      // if (tempActionsDelete.length !== 0) {
-      //   deleteflag = true;
-      // }
-
-      temp.actions = tempActions;
-      addPerm.push(temp);
-
-      tempDelete.actions = tempActionsDelete;
-      deletePerm.push(tempDelete);
-    });
-
-    const addData = {
+    const addData: AddDataType = {
       propertyIdentifier,
-      permissionDetails: addPerm
+      permissionDetails: group.data
+        .map(({ email, name, ...rand }) => ({
+          email,
+          name,
+          actions: Object.keys(rand).filter((key) => rand[key] === true)
+        }))
+        .filter(({ actions }) => actions.length > 0)
     };
-    const deleteData = {
+    const deleteData: DeleteDataType = {
       propertyIdentifier,
-      permissionDetails: deletePerm
+      permissionDetails: group.data
+        .map(({ email, name, ...rand }) => ({
+          email,
+          name,
+          actions: Object.keys(rand).filter((key) => rand[key] === false)
+        }))
+        .filter(({ actions }: { actions: string[] }) => actions.length > 0)
     };
-
     try {
       if (addAccess.length) {
         useAddPermission1.mutateAsync(addData).then((res) => {
@@ -170,10 +113,10 @@ export const ConfigureAccess = ({
       }
       onClose();
     } catch (error) {
-      // toast.error('Permission not deleted ');
+      console.error(error);
     }
+    onClose();
   };
-
   return (
     <div>
       <Button
@@ -257,7 +200,7 @@ export const ConfigureAccess = ({
           <Accordion asDefinitionList>
             {Object.keys(group).length &&
               group.data.map((i: GroupItem) => (
-                <AccordionItem>
+                <AccordionItem key={i.name}>
                   <AccordionToggle
                     style={{ width: '100%' }}
                     onClick={() => {
@@ -271,7 +214,6 @@ export const ConfigureAccess = ({
                         {i.name}
                       </SplitItem>
                       <SplitItem style={{ display: 'flex', justifyContent: 'end' }} isFilled>
-                        {/* {group['data'][0]['role']} */}
                         {toPascalCase(i.role)}
                       </SplitItem>
                     </Split>
@@ -289,7 +231,6 @@ export const ConfigureAccess = ({
                         </Tr>
                       </Thead>
                       <Tbody>
-                        {/* {Object.keys(group).length && group['data'].map((i) => */}
                         <Tr key={i.name}>
                           <Td>{i.name}</Td>
                           <Td>
@@ -341,7 +282,6 @@ export const ConfigureAccess = ({
                             />
                           </Td>
                         </Tr>
-                        {/* )} */}
                       </Tbody>
                     </TableComposable>
                   </AccordionContent>
@@ -350,8 +290,7 @@ export const ConfigureAccess = ({
           </Accordion>
         </div>
       )}
-      <br />
-      <Button variant="primary" onClick={handleSubmit}>
+      <Button variant="primary" onClick={handleSubmit} className="pf-u-mt-md">
         Configure Access
       </Button>
     </div>

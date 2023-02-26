@@ -4,7 +4,7 @@ import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-tab
 
 export const SLAPage = (): JSX.Element => (
   <>
-    <Banner title="Service Level Agreement for Spaship" />
+    <Banner title="Service Level Agreement for SPAship" />
 
     <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
       <TableComposable aria-label="Simple table" variant="compact">

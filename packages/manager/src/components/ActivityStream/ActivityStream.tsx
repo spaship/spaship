@@ -1,7 +1,8 @@
-/* eslint-disable */
+/* eslint-disable no-underscore-dangle */
 import { useFormatDate } from '@app/hooks';
 import { useGetWebPropActivityStream } from '@app/services/analytics';
 import { TWebPropActivityStream } from '@app/services/analytics/types';
+import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
   Label,
   ProgressStep,
@@ -21,8 +22,8 @@ import {
   OutlinedClockIcon,
   SyncAltIcon,
   TimesIcon,
-  UserIcon,
-  TrashIcon
+  TrashIcon,
+  UserIcon
 } from '@patternfly/react-icons';
 import Link from 'next/link';
 import { useEffect } from 'react';
@@ -34,29 +35,9 @@ type Props = {
   action?: string;
   isGlobal?: boolean;
 };
-
 type DeploymentKindProps = {
   activity: TWebPropActivityStream;
 };
-
-// function toPascalCase (str) {
-//   if (/^[\p{L}\d]+$/iu.test(str)) {
-//     return str.charAt(0).toUpperCase() + str.slice(1);
-//   }
-//   return str.replace(
-//     /([\p{L}\d])([\p{L}\d]*)/giu,
-//     (g0, g1, g2) => g1.toUpperCase() + g2.toLowerCase()
-//   ).replace(/[^\p{L}\d]/giu, '');
-// }
-const toPascalCase = (sentence) =>
-  sentence
-    .toLowerCase()
-    .replace(new RegExp(/[-]+/, 'g'), ' ')
-    .replace(new RegExp(/[^\w\s]/, 'g'), '')
-    .trim()
-    .split(' ')
-    .map((word) => word[0].toUpperCase().concat(word.slice(1)))
-    .join('');
 
 const activities = {
   APPLICATION_DEPLOYED: ({
@@ -231,7 +212,6 @@ const activities = {
       </Label>
     </Text>
   ),
-
   PERMISSION_CREATED: ({ message }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
       <Label icon={<CubeIcon />} color="blue" isCompact>
@@ -263,15 +243,12 @@ const activities = {
     </Text>
   )
 } as any;
-
 const DeploymentKind = ({ activity }: DeploymentKindProps) => {
   if (Object.prototype.hasOwnProperty.call(activities, activity.action)) {
     return activities[activity.action](activity);
   }
-
   return <Text component={TextVariants.small}>Activity message - {activity.message}</Text>;
 };
-0;
 
 export const ActivityStream = ({
   propertyIdentifier = '',
@@ -295,19 +272,17 @@ export const ActivityStream = ({
         {isSuccess &&
           data.pages?.map((page) =>
             page.map((activity: TWebPropActivityStream) => {
-              // eslint-disable-next-line no-param-reassign
-              activity.isGlobal = isGlobal;
+              const modifiedActivity = { ...activity, isGlobal };
               return (
                 <ProgressStep
                   id={activity._id}
                   titleId={activity._id}
                   key={activity._id}
                   variant="success"
-                  // Description does not support elements yet. Hence they are rendered as text.
                   description={formatDate(activity.createdAt, 'MMM DD YY, hh:mm a')}
                 >
                   <TextContent className="pf-u-mb-sm">
-                    <DeploymentKind activity={activity} />
+                    <DeploymentKind activity={modifiedActivity} />
                   </TextContent>
                 </ProgressStep>
               );
@@ -335,7 +310,6 @@ export const ActivityStream = ({
     </>
   );
 };
-
 ActivityStream.defaultProps = {
   propertyIdentifier: '',
   applicationIdentifier: '',

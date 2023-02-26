@@ -1,50 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react/jsx-key */
-import React from 'react';
 import {
-  Button,
-  Card,
-  CardActions,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  ClipboardCopy,
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateIcon,
-  Flex,
-  Label,
-  Modal,
-  ModalVariant,
-  PageSection,
-  Split,
-  SplitItem,
-  Stack,
-  StackItem,
-  Text,
-  TextVariants,
-  Title,
-  Tooltip
+  Button, Card, CardActions, CardBody, CardHeader, CardTitle, ClipboardCopy, EmptyState, EmptyStateBody, EmptyStateIcon, Flex, Label, Modal, ModalVariant, PageSection, Split, SplitItem, Stack, StackItem, Text, TextVariants, Title, Tooltip
 } from '@patternfly/react-core';
 import {
-  CheckCircleIcon,
-  CubesIcon,
-  ExternalLinkAltIcon,
-  InfoCircleIcon,
-  KeyIcon,
-  LockIcon,
-  OutlinedCalendarAltIcon,
-  PencilAltIcon,
-  PlusIcon,
-  SecurityIcon,
-  SyncAltIcon,
-  TimesCircleIcon,
-  TrashIcon,
-  UserIcon,
-  WrenchIcon
+  CheckCircleIcon, CubesIcon, ExternalLinkAltIcon, InfoCircleIcon, KeyIcon, LockIcon, OutlinedCalendarAltIcon, PencilAltIcon, PlusIcon, SecurityIcon, SyncAltIcon, TimesCircleIcon, TrashIcon, UserIcon, WrenchIcon
 } from '@patternfly/react-icons';
-
+import React from 'react';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
@@ -57,17 +19,17 @@ import { useCreateAPIKey, useDeleteAPIKey, useGetApiKeys } from '@app/services/a
 import { useAddEnv, useGetEnvList } from '@app/services/persistent';
 import { useDeleteMember, useGetMemberforSPA } from '@app/services/rbac';
 
-import Avatar from 'react-avatar';
 import { toPascalCase } from '@app/utils/toPascalConvert';
+import Avatar from 'react-avatar';
+import { AddMembers } from './components/AddMembers/AddMembers';
+import { ConfigureAccess } from './components/ConfigureAccess/ConfigureAccess';
 import {
   CreateAPIKeyForm,
   FormData as APIKeyForm
 } from './components/CreateAPIKeyForm/CreateAPIKeyForm';
 import { CreateEnvForm, FormData as EnvForm } from './components/CreateEnvForm/CreateEnvForm';
-import { SyncServiceForm } from './components/SyncServiceForm';
-import { AddMembers } from './components/AddMembers/AddMembers';
-import { ConfigureAccess } from './components/ConfigureAccess/ConfigureAccess';
 import { EditMemberAccess } from './components/EditAccess/EditMemberAccess';
+import { SyncServiceForm } from './components/SyncServiceForm';
 
 function getExpiryDayDiff(expiry: string) {
   const currentDate = new Date();
@@ -271,9 +233,8 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                               rel="noopener noreferrer"
                             >
                               <ExternalLinkAltIcon />
-                              {`${env.url.slice(0, URL_LENGTH_LIMIT)} ${
-                                env.url.length > URL_LENGTH_LIMIT ? '...' : ''
-                              }`}
+                              {`${env.url.slice(0, URL_LENGTH_LIMIT)} ${env.url.length > URL_LENGTH_LIMIT ? '...' : ''
+                                }`}
                             </a>
                           </Td>
                           <Td>
@@ -352,10 +313,10 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                           <Td>
                             {key.env
                               ? key.env.slice(0, 5).map((environment: any) => (
-                                  <Label key={environment} isCompact>
-                                    {environment}
-                                  </Label>
-                                ))
+                                <Label key={environment} isCompact>
+                                  {environment}
+                                </Label>
+                              ))
                               : 'N/A'}
                           </Td>
                           <Td dataLabel={key.shortKey}>
@@ -396,9 +357,6 @@ export const WebPropertyEnvPage = (): JSX.Element => {
               </CardBody>
             </Card>
           </StackItem>
-
-          {/* RBAC */}
-
           <StackItem>
             <Card className="pf-u-mt-lg">
               <CardHeader>
@@ -429,19 +387,20 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                   </TableComposable>
                 )}
 
+
                 {!memberList.isLoading &&
                   (memberList?.data?.length === 0 || memberList.isError) && (
-                    <div>
+
+                    <div className="pf-u-my-lg">
                       <b>Share web property</b>
-                      <br />
                       Give your teammates access to this web projects and start collaborating
                     </div>
                   )}
-                {memberList?.isSuccess && memberList?.data?.length !== 0 && (
+                {/* {memberList?.isSuccess && memberList?.data?.length !== 0 && (
                   <TableComposable isStriped>
                     <Tbody>
                       {memberList.data?.map((key: any) => (
-                        <Tr>
+                        <Tr key={key.email}>
                           <Td dataLabel={key.email}>
                             <Split hasGutter>
                               <SplitItem>
@@ -519,7 +478,84 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                       ))}
                     </Tbody>
                   </TableComposable>
+                )} */}
+                {memberList?.isSuccess && memberList?.data?.length !== 0 && (
+                  <TableComposable isStriped>
+                    <Tbody>
+                      {memberList.data?.map((key: any) => (
+                        <Tr key={key.email}>
+                          <Td dataLabel={key.email}>
+                            <Split hasGutter>
+                              <SplitItem>
+                                <Avatar
+                                  name={key.name}
+                                  size="43"
+                                  round
+                                  color="#B8BBBE"
+                                  fgColor="#000"
+                                />
+                              </SplitItem>
+                              <SplitItem isFilled>
+                                <Stack>
+                                  <StackItem>
+                                    <b>{key.name}</b>
+                                  </StackItem>
+                                  <StackItem>{key.email}</StackItem>
+                                </Stack>
+                              </SplitItem>
+                              {key.role !== 'ADMIN' ? (
+                                <Td
+                                  className="pf-u-display-flex pf-u-justify-content-flex-end"
+                                  dataLabel={key.role}
+                                >
+                                  <b>
+                                    {toPascalCase(key.role) === 'Owner' ? (
+                                      <SecurityIcon />
+                                    ) : (
+                                      <UserIcon />
+                                    )}{' '}
+                                    {toPascalCase(key.role)} &nbsp;&nbsp;
+                                  </b>
+                                </Td>
+                              ) : (
+                                <Td dataLabel={key.role}>{key.role} </Td>
+                              )}
+                              <SplitItem>
+
+                                <Button
+                                  variant="tertiary"
+                                  icon={<PencilAltIcon />}
+                                  onClick={() => {
+                                    handlePopUpOpen('editMemberAccess');
+                                    setEditMemberName(key.name);
+                                  }}
+                                >
+                                  Edit
+                                </Button>
+                                &nbsp;&nbsp;
+                                <Button
+                                  variant="secondary"
+                                  isDanger
+                                  isDisabled={key.email === session?.user.email}
+                                  icon={<TrashIcon />}
+                                  onClick={() => {
+                                    handlePopUpOpen('deleteMember');
+                                    setDeleteMemberName(key.name);
+                                  }}
+                                >
+                                  Delete
+                                </Button>
+                              </SplitItem>
+                            </Split>
+                          </Td>
+
+
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </TableComposable>
                 )}
+
               </CardBody>
             </Card>
           </StackItem>
@@ -570,7 +606,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
         onClose={() => handlePopUpClose('createApiKey')}
       >
         <CreateAPIKeyForm
-          // envs={envList.data?.map(({ env }) => env) || []}
+
           envs={envList.data?.map(({ env }: { env: string }) => env) || []}
           onClose={() => handlePopUpClose('createApiKey')}
           onSubmit={handleCreateAPIKey}
@@ -597,7 +633,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
           onClose={() => {
             handlePopUpClose('configureAccess');
           }}
-          // editMemberName={editMemberName}
+
           propertyIdentifier={propertyIdentifier}
           memberList={{ ...memberList }}
           flagOpen={popUp.configureAccess.isOpen}
@@ -625,7 +661,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
         isOpen={popUp.deleteWebProp.isOpen}
         onClose={() => handlePopUpClose('deleteWebProp')}
         confirmationToken={propertyIdentifier}
-        onSubmit={() => {}}
+        onSubmit={() => { }}
       />
 
       <DeleteConfirmationModal
@@ -643,7 +679,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
         isOpen={popUp.deleteMember.isOpen}
         onClose={() => handlePopUpClose('deleteMember')}
         onSubmit={() => handleDeleteMember()}
-        // isLoading={.isLoading}
+
       >
         Do you want to delete <b>{deleteMemberName}</b> from <b>{propertyIdentifier}</b> ?
       </DeleteConfirmationModal>

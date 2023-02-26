@@ -7,7 +7,6 @@ export type TApiKey = {
   createdBy: string;
   createdAt: string;
 };
-
 export type TCreateApiKeyDTO = {
   expiresIn: string;
   env: string[];
@@ -15,15 +14,12 @@ export type TCreateApiKeyDTO = {
   propertyIdentifier: string;
   createdBy: string;
 };
-
 export type TCreateApiKeyRes = {
   key: string;
 };
-
 export type TDeleteApiKeyDTO = {
   shortKey: string;
 };
-
 export type TIndividualRole = {
   // _id: 63d9fc58104165e3edd20db0,
   name: string;
@@ -37,17 +33,14 @@ export type TIndividualRole = {
   updatedAt: Date;
   __v: 0;
 };
-
 export type TUserList = {
   name: string;
   email: string;
 };
-
 export type TRoverGroupList = {
   name: string;
   email: string;
 };
-
 export type TMemberforSPA = {
   email: string;
   name: string;
@@ -63,12 +56,6 @@ export type TMemberforSPA = {
   APIKEY_DELETION: boolean;
   APIKEY_CREATION: boolean;
 };
-
-// type TpermissionDetails = {
-//   name: string;
-//   email: string;
-//   actions: never[];
-// };
 interface TpermissionDetails {
   name: string;
   email: string;
@@ -78,12 +65,10 @@ export type TAddPermissionDTO = {
   propertyIdentifier: string;
   permissionDetails: TpermissionDetails[];
 };
-
 export type TDeletePermissionDTO = {
   propertyIdentifier: string;
   permissionDetails: TpermissionDetails[];
 };
-
 export type TRoleforMember = {
   _id: string;
   name: string;
