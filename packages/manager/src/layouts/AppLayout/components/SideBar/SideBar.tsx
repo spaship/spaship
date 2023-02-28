@@ -54,7 +54,7 @@ export const SideBar = () => {
                 />
               </a>
             </Link>
-            <Link href="/document">
+            <Link href="/documents">
               <a className="text-decoration-none">
                 <SidebarNavItem
                   title="Documents"
@@ -72,7 +72,7 @@ export const SideBar = () => {
                 />
               </a>
             </Link>
-            <Link href="/sla">
+            <Link href="/SLA">
               <a className="text-decoration-none">
                 <SidebarNavItem
                   title="SLA"

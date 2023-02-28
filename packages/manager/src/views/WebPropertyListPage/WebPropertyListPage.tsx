@@ -155,14 +155,7 @@ export const WebPropertyListPage = (): JSX.Element => {
             {/* List of Properties */}
             {filteredWebProperties?.map(
               ({ identifier, title, createdBy, env }: Partial<TWebProperty>) => (
-                <GalleryItem key={identifier}>
-                  <Link
-                    href={{
-                      pathname: pageLinks.webPropertyDetailPage,
-                      query: { propertyIdentifier: identifier }
-                    }}
-                  >
-                    <a className="text-decoration-none">
+                <GalleryItem key={identifier}> 
                       <WebPropertyCard
                         title={title}
                         subtitle={
@@ -174,9 +167,10 @@ export const WebPropertyListPage = (): JSX.Element => {
                         footer={`${
                           webPropertyDeloymentCount?.data?.[identifier || ''] || 0
                         } Deployment(s)`}
+                        urlPath={pageLinks.webPropertyDetailPage}
+                        urlQuery={ identifier}
+
                       />
-                    </a>
-                  </Link>
                 </GalleryItem>
               )
             )}
