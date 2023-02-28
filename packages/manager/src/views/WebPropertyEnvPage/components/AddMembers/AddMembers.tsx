@@ -227,6 +227,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
           }
         }
       }, delay);
+      return
     };
   };
 
