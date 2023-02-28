@@ -61,7 +61,7 @@ export class CreateApplicationDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  @Matches(VALIDATION.PATH, { message: MESSAGE.INVALID_PATH, always: true })
+  @Matches(VALIDATION.PATH, { message: MESSAGE.INVALID_HEALTH_CHECK_PATH, always: true })
   healthCheckPath: string;
 
   @ApiProperty()
