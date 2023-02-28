@@ -83,13 +83,11 @@ export const ConfigureAccess = ({
   const handleSubmit = () => {
     const addData: AddDataType = {
       propertyIdentifier,
-      permissionDetails: group.data
-        .map(({ email, name, ...rand }) => ({
-          email,
-          name,
-          actions: Object.keys(rand).filter((key) => rand[key] === true)
-        }))
-        .filter(({ actions }) => actions.length > 0)
+      permissionDetails: group.data.map(({ email, name, ...rand }) => ({
+        email,
+        name,
+        actions: Object.keys(rand).filter((key) => rand[key] === true)
+      }))
     };
     const deleteData: DeleteDataType = {
       propertyIdentifier,
@@ -102,13 +100,12 @@ export const ConfigureAccess = ({
         .filter(({ actions }: { actions: string[] }) => actions.length > 0)
     };
 
-    if (addAccess.length) {
+    if (addAccess.length || deleteAccess.length) {
       addPermission.mutateAsync(addData).then((res) => {
         toast.success('Permission updated successfully');
         return res;
       });
-    }
-    if (deleteAccess.length) {
+
       deleteMember.mutateAsync(deleteData).then((res) => {
         toast.success('Permission updated successfully');
         return res;
