@@ -258,7 +258,7 @@ export class ApplicationFactory {
     const ssrApplicationRequest = this.createApplicationRequest(propertyIdentifier, applicationRequest, identifier, env, createdBy);
     ssrApplicationRequest.isSSR = true;
     ssrApplicationRequest.imageUrl = applicationRequest.imageUrl;
-    ssrApplicationRequest.healthCheckPath = applicationRequest.healthCheckPath;
+    ssrApplicationRequest.healthCheckPath = applicationRequest.healthCheckPath || applicationRequest.path;
     ssrApplicationRequest.config = applicationRequest.config;
     return ssrApplicationRequest;
   }
