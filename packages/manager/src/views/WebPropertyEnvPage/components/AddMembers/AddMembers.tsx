@@ -1,4 +1,5 @@
 /* eslint-disable no-underscore-dangle */
+/* eslint-disable no-useless-return */
 import { fetchRoverGroup, fetchUserlist, useAddPermission } from '@app/services/rbac';
 import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
@@ -227,7 +228,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
           }
         }
       }, delay);
-      return
+      return;
     };
   };
 
