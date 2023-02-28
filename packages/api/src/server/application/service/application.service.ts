@@ -198,15 +198,15 @@ export class ApplicationService {
       property.namespace
     );
     this.logger.log('SSROperatorRequest', JSON.stringify(ssrOperatorRequest));
-    const saveApplication = await this.applicationFactory.createSSRApplicationRequest(
-      propertyIdentifier,
-      applicationRequest,
-      identifier,
-      env,
-      applicationRequest.createdBy
-    );
     let applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true }))[0];
     if (!applicationDetails) {
+      const saveApplication = await this.applicationFactory.createSSRApplicationRequest(
+        propertyIdentifier,
+        applicationRequest,
+        identifier,
+        env,
+        applicationRequest.createdBy
+      );
       this.logger.log('SSRApplicationDetails', JSON.stringify(saveApplication));
       applicationDetails = await this.dataServices.application.create(saveApplication);
     } else {
