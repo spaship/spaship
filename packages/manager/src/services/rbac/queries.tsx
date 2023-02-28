@@ -1,6 +1,6 @@
-/* eslint-disable */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { orchestratorReq } from '@app/config/orchestratorReq';
+import toast from 'react-hot-toast';
 import {
   TCreateApiKeyRes,
   TIndividualRole,
@@ -11,7 +11,7 @@ import {
   TDeletePermissionDTO,
   TRoleforMember
 } from './types';
-import toast from 'react-hot-toast';
+
 const rbacKeyQueryKeys = {
   list: (webPropertyIdentifier: string) => ['rbac-keys', webPropertyIdentifier] as const
 };
@@ -70,16 +70,15 @@ export const addPermission = async (dto: TAddPermissionDTO): Promise<TCreateApiK
   return data.data;
 };
 export const useAddPermission = (property: string) => {
-  let flag = true
   const queryClient = useQueryClient();
   return useMutation(addPermission, {
     onSuccess: () => {
       queryClient.invalidateQueries(rbacKeyQueryKeys.list(property));
     },
-    onError: (error:any) => {
+    onError: (error: any) => {
       if (error.response.status === 403) {
         toast.error("You don't have access to perform this action");
-      } 
+      }
     }
   });
 };
@@ -94,12 +93,10 @@ export const useDeleteMember = (property: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries(rbacKeyQueryKeys.list(property));
     },
-    onError: (error:any) => {
+    onError: (error: any) => {
       if (error.response.status === 403) {
         toast.error("You don't have access to perform this action");
-      } 
-      
-    
+      }
     }
   });
 };

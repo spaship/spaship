@@ -24,7 +24,7 @@ import {
 import { InfoCircleIcon, UserIcon, UsersIcon } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, MouseEvent, ChangeEvent, FormEvent, ReactElement } from 'react';
 import toast from 'react-hot-toast';
 import {
   AddDataType,
@@ -63,6 +63,7 @@ const userRole: UserRoleDTO = {
 };
 
 export const AddMembers = ({ onClose }: Props): JSX.Element => {
+  
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [isOpenUser, setIsOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
@@ -76,9 +77,11 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
   const { query } = useRouter();
   const [roverList, setRoverList] = useState<NewRoverData[]>([]);
   const propertyIdentifier = query.propertyIdentifier as string;
+  const addPermission = useAddPermission(propertyIdentifier);
+
 
   const handleTabClick = (
-    _event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
+    _event: MouseEvent<any> | KeyboardEvent | MouseEvent,
     tabIndex: string | number
   ) => {
     setActiveTabKey(tabIndex);
@@ -104,7 +107,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
     }
   };
 
-  const onSelect = (_event: React.MouseEvent | React.ChangeEvent, selection: string) => {
+  const onSelect = (_event: MouseEvent | ChangeEvent, selection: string) => {
     if (selectedUsers.includes(selection)) {
       setSelectedUsers((prevState: string[]) => prevState.filter((item) => item !== selection));
       setUsersData((prevState: UserDataTDO) => {
@@ -125,7 +128,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
 
   const handleCheckBoxChange = (
     checked: boolean,
-    event: React.FormEvent<HTMLInputElement>,
+    event: FormEvent<HTMLInputElement>,
     _name: string,
     email: string
   ) => {
@@ -149,11 +152,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
     });
   };
 
-  const onSelectAccess = (
-    _event: React.MouseEvent | React.ChangeEvent,
-    selection: string,
-    email: string
-  ) => {
+  const onSelectAccess = (_event: MouseEvent | ChangeEvent, selection: string, email: string) => {
     setNewUserDetails((prevDetails) => {
       const temp = [...prevDetails];
       const index = temp.findIndex((m) => m.email === email);
@@ -164,10 +163,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
     });
   };
 
-  const handleAddMemberClick = (
-    _event: React.MouseEvent | React.ChangeEvent,
-    option: RoverItem
-  ) => {
+  const handleAddMemberClick = (_event: MouseEvent | ChangeEvent, option: RoverItem) => {
     setNewUserDetails((prevDetails) => {
       const temp = [...prevDetails];
       const check = temp.find((key) => key.name === option.name);
@@ -216,9 +212,9 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
   ): SelectProps['onFilter'] => {
     let timer: NodeJS.Timeout;
     return (
-      _e: React.ChangeEvent<HTMLInputElement> | null,
+      _e: ChangeEvent<HTMLInputElement> | null,
       value: string
-    ): React.ReactElement[] | undefined => {
+    ): ReactElement[] | undefined => {
       clearInterval(timer);
       timer = setTimeout(async () => {
         if (value.length >= 3) {
@@ -236,7 +232,6 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
     };
   };
 
-  const useAddPermission1 = useAddPermission(propertyIdentifier);
   const handleSubmit = () => {
     const addData: AddDataType = {
       propertyIdentifier,
@@ -246,7 +241,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
         actions: Object.keys(rand)
       }))
     };
-    useAddPermission1.mutateAsync(addData).then(() => {
+    addPermission.mutateAsync(addData).then(() => {
       toast.success('Members added successfully');
     });
     onClose();

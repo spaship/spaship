@@ -12,7 +12,7 @@ import {
   SplitItem
 } from '@patternfly/react-core';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, FormEvent } from 'react';
 import toast from 'react-hot-toast';
 import { AddDataType, DeleteDataType, GroupDTO, GroupItem } from './types';
 
@@ -21,6 +21,15 @@ type Props = {
   propertyIdentifier: string;
   memberList: any;
   flagOpen: boolean;
+};
+const columnNames = {
+  NAME: 'Name',
+  APIKEY_CREATION: 'APIKEY_CREATION',
+  APIKEY_DELETION: 'APIKEY_DELETION',
+  PERMISSION_CREATION: 'PERMISSION_CREATION',
+  PERMISSION_DELETION: 'PERMISSION_DELETION',
+  ENV_CREATION: 'ENV_CREATION',
+  ENV_SYNC: 'ENV_SYNC'
 };
 export const ConfigureAccess = ({
   onClose,
@@ -33,23 +42,16 @@ export const ConfigureAccess = ({
   const [deleteAccess, setDeleteAccess] = useState<string[]>([]);
   const [isShowAdvancedViewEnabled, setIsShowAdvancedViewEnabled] = useState<boolean>(false);
   const [group, setGroup] = useState<GroupDTO>({ data: memberList?.data });
+  
   useEffect(() => {
     setGroup(memberList);
   }, [flagOpen, memberList]);
   const deleteMember = useDeleteMember(propertyIdentifier);
-  const useAddPermission1 = useAddPermission(propertyIdentifier);
-  const columnNames = {
-    NAME: 'Name',
-    APIKEY_CREATION: 'APIKEY_CREATION',
-    APIKEY_DELETION: 'APIKEY_DELETION',
-    PERMISSION_CREATION: 'PERMISSION_CREATION',
-    PERMISSION_DELETION: 'PERMISSION_DELETION',
-    ENV_CREATION: 'ENV_CREATION',
-    ENV_SYNC: 'ENV_SYNC'
-  };
+  const addPermission = useAddPermission(propertyIdentifier);
+
   const handleChange = (
     checked: boolean,
-    event: React.FormEvent<HTMLInputElement>,
+    event: FormEvent<HTMLInputElement>,
     name: string,
     email: string
   ) => {
@@ -100,7 +102,7 @@ export const ConfigureAccess = ({
     };
     try {
       if (addAccess.length) {
-        useAddPermission1.mutateAsync(addData).then((res) => {
+        addPermission.mutateAsync(addData).then((res) => {
           toast.success('Permission updated successfully');
           return res;
         });

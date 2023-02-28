@@ -12,6 +12,7 @@ import {
   FormSelectOption,
   TextArea
 } from '@patternfly/react-core';
+import { AxiosError } from 'axios';
 import { useSession } from 'next-auth/react';
 import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -52,8 +53,8 @@ export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JS
       });
       toast.success('Successfully updated Sync');
       onClose();
-    } catch (error: any) {
-      if (error.response.status === 403) {
+    } catch (error) {
+      if (error instanceof AxiosError && error.response && error.response.status === 403) {
         toast.error("You don't have access to perform this action");
         onClose();
       } else {

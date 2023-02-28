@@ -42,12 +42,11 @@ import {
   UserIcon,
   WrenchIcon
 } from '@patternfly/react-icons';
-import React from 'react';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
-
 import { Banner, DeleteConfirmationModal, TableRowSkeleton } from '@app/components';
 import { useFormatDate, usePopUp } from '@app/hooks';
 import { pageLinks } from '@app/links';
@@ -56,6 +55,7 @@ import { useAddEnv, useGetEnvList } from '@app/services/persistent';
 import { useDeleteMember, useGetMemberforSPA } from '@app/services/rbac';
 
 import { toPascalCase } from '@app/utils/toPascalConvert';
+import { AxiosError } from 'axios';
 import Avatar from 'react-avatar';
 import { AddMembers } from './components/AddMembers/AddMembers';
 import { ConfigureAccess } from './components/ConfigureAccess/ConfigureAccess';
@@ -76,23 +76,36 @@ function getExpiryDayDiff(expiry: string) {
 }
 const URL_LENGTH_LIMIT = 25;
 
+type MemberListItem = {
+  email: string;
+  name: string;
+  role: string;
+  [key: string]: boolean | string;
+};
+
+type ApiKeysItem = {
+  propertyIdentifier: string;
+  label: string;
+  env: string[];
+  expirationDate: string;
+  shortKey: string;
+  createdBy: string;
+  createdAt: string;
+};
 export const WebPropertyEnvPage = (): JSX.Element => {
   const { query } = useRouter();
   const propertyIdentifier = query.propertyIdentifier as string;
   const { data: session } = useSession();
   const formatDate = useFormatDate();
-
-  const envList: any = useGetEnvList(propertyIdentifier);
-  const createEnv: any = useAddEnv(propertyIdentifier);
-  const apiKeys: any = useGetApiKeys(propertyIdentifier);
-  const createAPIKey: any = useCreateAPIKey(propertyIdentifier);
-  const deleteAPIKey: any = useDeleteAPIKey(propertyIdentifier);
-  const deleteMember: any = useDeleteMember(propertyIdentifier);
-  const memberList: any = useGetMemberforSPA(propertyIdentifier);
-
-  const [deleteMemberName, setDeleteMemberName] = React.useState('');
-
-  const [editMemberName, setEditMemberName] = React.useState('');
+  const envList = useGetEnvList(propertyIdentifier);
+  const createEnv = useAddEnv(propertyIdentifier);
+  const apiKeys = useGetApiKeys(propertyIdentifier);
+  const createAPIKey = useCreateAPIKey(propertyIdentifier);
+  const deleteAPIKey = useDeleteAPIKey(propertyIdentifier);
+  const deleteMember = useDeleteMember(propertyIdentifier);
+  const memberList = useGetMemberforSPA(propertyIdentifier);
+  const [deleteMemberName, setDeleteMemberName] = useState('');
+  const [editMemberName, setEditMemberName] = useState('');
   const propertyTitle = envList?.data?.[0]?.propertyIdentifier;
 
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
@@ -107,6 +120,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     'deleteMember'
   ] as const);
 
+
   const handleCreateEnv = async (data: EnvForm) => {
     if (!propertyTitle) return;
     try {
@@ -118,8 +132,8 @@ export const WebPropertyEnvPage = (): JSX.Element => {
       });
       toast.success('Environment Created');
       handlePopUpClose('createEnv');
-    } catch (error: any) {
-      if (error.response.status === 403) {
+    } catch (error) {
+      if (error instanceof AxiosError && error.response && error.response.status === 403) {
         toast.error("You don't have access to perform this action");
         handlePopUpClose('createEnv');
       } else {
@@ -138,8 +152,8 @@ export const WebPropertyEnvPage = (): JSX.Element => {
       });
       handlePopUpOpen('createApiKey', res.key);
       toast.success('API Key Created');
-    } catch (error: any) {
-      if (error.response.status === 403) {
+    } catch (error) {
+      if (error instanceof AxiosError && error.response && error.response.status === 403) {
         toast.error("You don't have access to perform this action");
         handlePopUpOpen('createApiKey');
       } else {
@@ -156,8 +170,8 @@ export const WebPropertyEnvPage = (): JSX.Element => {
       });
       handlePopUpClose('deleteApiKey');
       toast.success('API Key deleted');
-    } catch (error: any) {
-      if (error.response.status === 403) {
+    } catch (error) {
+      if (error instanceof AxiosError && error.response && error.response.status === 403) {
         toast.error("You don't have access to perform this action");
       } else {
         toast.error('Failed to delete API Key');
@@ -166,18 +180,16 @@ export const WebPropertyEnvPage = (): JSX.Element => {
   };
 
   const handleDeleteMember = async () => {
-    if (!propertyTitle) {
-      return;
-    }
+    if (!memberList?.data) return;
 
-    const deletePerm: { email: string; actions: string[] }[] = memberList.data
-      .filter((e: any) => e.name === deleteMemberName)
-      .map((v: any) => {
+    const deletePerm = memberList.data
+      .filter((e: MemberListItem) => e.name === deleteMemberName)
+      .map((v: MemberListItem) => {
         const tempActionsDelete: string[] = [];
         Object.keys(v)
           .filter((a) => !['name', 'email', 'role'].includes(a))
           .forEach((a) => tempActionsDelete.push(a));
-        return { email: v.email, actions: tempActionsDelete };
+        return { name: v.name, email: v.email, actions: tempActionsDelete };
       });
 
     const deleteData = {
@@ -190,6 +202,19 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     handlePopUpClose('deleteMember');
   };
 
+  type EnvItem = {
+    _id: string;
+    propertyIdentifier: string;
+    url: string;
+    cluster: string;
+    isEph: boolean;
+    env: string;
+    sync?: string;
+    createdBy: string;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+  };
   return (
     <>
       <Banner
@@ -254,7 +279,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                       </Tr>
                     )}
                     {envList.isSuccess &&
-                      envList.data?.map((env: any) => (
+                      envList.data?.map((env: EnvItem) => (
                         <Tr key={env._id}>
                           <Td dataLabel={env.env}>{env.env}</Td>
                           <Td dataLabel={env.createdAt}>
@@ -342,14 +367,14 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                       </Tr>
                     )}
                     {apiKeys?.isSuccess &&
-                      apiKeys.data?.map((key: any) => (
+                      apiKeys.data?.map((key: ApiKeysItem) => (
                         <Tr key={key.shortKey}>
                           <Td dataLabel={key.label}>
                             <LockIcon /> {key.label}
                           </Td>
                           <Td>
                             {key.env
-                              ? key.env.slice(0, 5).map((environment: any) => (
+                              ? key.env.slice(0, 5).map((environment: string) => (
                                   <Label key={environment} isCompact>
                                     {environment}
                                   </Label>
@@ -431,16 +456,15 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                       Give your teammates access to this web projects and start collaborating
                     </div>
                   )}
-               
+
                 {memberList?.isSuccess && memberList?.data?.length !== 0 && (
                   <TableComposable isStriped>
                     <Tbody>
-                      {memberList.data?.map((key: any) => (
+                      {memberList.data?.map((key: MemberListItem) => (
                         <Tr key={key.email}>
                           <Td dataLabel={key.email}>
                             {/* <Split hasGutter> */}
                             <Split hasGutter style={{ alignItems: 'center' }}>
-
                               <SplitItem>
                                 <Avatar
                                   name={key.name}
@@ -458,7 +482,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                                   <StackItem>{key.email}</StackItem>
                                 </Stack>
                               </SplitItem>
-                             
+
                               {key.role !== 'ADMIN' ? (
                                 <Td
                                   className="pf-u-display-flex pf-u-justify-content-flex-end"
@@ -601,7 +625,11 @@ export const WebPropertyEnvPage = (): JSX.Element => {
           editMemberName={editMemberName}
           propertyIdentifier={propertyIdentifier}
           onClose={() => handlePopUpClose('editMemberAccess')}
-          memberList={memberList}
+          memberList={{
+            data: memberList.data
+              ? memberList.data.filter((e: MemberListItem) => e.name === editMemberName)
+              : []
+          }}
         />
       </Modal>
 

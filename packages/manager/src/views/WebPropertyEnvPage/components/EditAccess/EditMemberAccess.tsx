@@ -11,22 +11,11 @@ import {
   SplitItem
 } from '@patternfly/react-core';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import React, { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import toast from 'react-hot-toast';
-interface Props {
-  onClose: () => void;
-  editMemberName: string;
-  propertyIdentifier: string;
-  memberList: any;
-}
+
 type ColumnNames = {
   NAME: string;
-  APIKEY_CREATION: string;
-  APIKEY_DELETION: string;
-  PERMISSION_CREATION: string;
-  PERMISSION_DELETION: string;
-  ENV_CREATION: string;
-  ENV_SYNC: string;
   [key: string]: string;
 };
 type GroupItem1 = {
@@ -39,7 +28,34 @@ type GroupItem1 = {
   ENV_CREATION: boolean;
   APIKEY_DELETION: boolean;
   APIKEY_CREATION: boolean;
+  [key: string]: boolean | string;
 };
+type UserDataTDO = {
+  data: GroupItem1[];
+};
+type GroupData = {
+  email: string;
+  name: string;
+  role: string;
+  [key: string]: unknown;
+};
+type Props = {
+  onClose: () => void;
+  editMemberName: string;
+  propertyIdentifier: string;
+  memberList: UserDataTDO;
+};
+
+const columnNames: ColumnNames = {
+  NAME: 'Name',
+  APIKEY_CREATION: 'APIKEY_CREATION',
+  APIKEY_DELETION: 'APIKEY_DELETION',
+  PERMISSION_CREATION: 'PERMISSION_CREATION',
+  PERMISSION_DELETION: 'PERMISSION_DELETION',
+  ENV_CREATION: 'ENV_CREATION',
+  ENV_SYNC: 'ENV_SYNC'
+};
+
 export const EditMemberAccess = ({
   onClose,
   editMemberName,
@@ -49,20 +65,9 @@ export const EditMemberAccess = ({
   const [expanded, setExpanded] = useState('def-list-toggle2');
   const [addAccess, setAddAccess] = useState<string[]>([]);
   const [deleteAccess, setDeleteAccess] = useState<string[]>([]);
-  const useAddPermission1 = useAddPermission(propertyIdentifier);
+  const addPermission = useAddPermission(propertyIdentifier);
   const deleteMember = useDeleteMember(propertyIdentifier);
-  const data1 = memberList.data.filter((e: GroupItem1) => e.name === editMemberName);
-  const [group, setGroup] = useState({ data: data1 });
-  const columnNames: ColumnNames = {
-    NAME: 'Name',
-    // ROLE: 'Role',
-    APIKEY_CREATION: 'APIKEY_CREATION',
-    APIKEY_DELETION: 'APIKEY_DELETION',
-    PERMISSION_CREATION: 'PERMISSION_CREATION',
-    PERMISSION_DELETION: 'PERMISSION_DELETION',
-    ENV_CREATION: 'ENV_CREATION',
-    ENV_SYNC: 'ENV_SYNC'
-  };
+  const [group, setGroup] = useState(memberList);
   const onToggleAccordian = async (id: string) => {
     if (id === expanded) {
       setExpanded('');
@@ -70,11 +75,7 @@ export const EditMemberAccess = ({
       setExpanded(id);
     }
   };
-  const handleChange = (
-    checked: boolean,
-    event: React.FormEvent<HTMLInputElement>,
-    email: string
-  ) => {
+  const handleChange = (checked: boolean, event: FormEvent<HTMLInputElement>, email: string) => {
     const target = event.currentTarget as HTMLInputElement;
     const temp = group.data;
     const objIndex = temp.findIndex((e: GroupItem1) => e.email === email);
@@ -88,12 +89,7 @@ export const EditMemberAccess = ({
       setAddAccess(addAccess.filter((value) => value !== target.name));
     }
   };
-  interface GroupData {
-    email: string;
-    name: string;
-    role: string;
-    [key: string]: unknown;
-  }
+
   const handleSubmit = () => {
     const addPerm = group.data.map(({ email, name, role, ...rand }: GroupData) => ({
       email,
@@ -109,13 +105,12 @@ export const EditMemberAccess = ({
     const deleteData = { propertyIdentifier, permissionDetails: deletePerm };
     try {
       if (addAccess.length) {
-        useAddPermission1
+        addPermission
           .mutateAsync({
             ...addData
           })
-          .then((res) => {
+          .then(() => {
             toast.success('Permission updated successfully');
-            return res;
           });
       }
       if (deleteAccess.length) {
@@ -129,7 +124,7 @@ export const EditMemberAccess = ({
       }
       onClose();
     } catch (err) {
-      // console.error(err);
+      console.error(err);
     }
   };
   return (

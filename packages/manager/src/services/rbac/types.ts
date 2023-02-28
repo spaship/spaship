@@ -47,20 +47,17 @@ export type TMemberforSPA = {
   role: string;
   PERMISSION_CREATION: boolean;
   PERMISSION_DELETION: boolean;
-  WEBHOOK_DELETION: boolean;
-  WEBHOOK_UPDATION: boolean;
-  WEBHOOK_CREATION: boolean;
   ENV_DELETION: boolean;
   ENV_SYNC: boolean;
   ENV_CREATION: boolean;
   APIKEY_DELETION: boolean;
   APIKEY_CREATION: boolean;
 };
-interface TpermissionDetails {
+export type TpermissionDetails = {
   name: string;
   email: string;
   actions: string[];
-}
+};
 export type TAddPermissionDTO = {
   propertyIdentifier: string;
   permissionDetails: TpermissionDetails[];
