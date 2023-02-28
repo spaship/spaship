@@ -2,15 +2,16 @@ export type UserDataItem = {
   email: string;
   name: string;
   role: string;
-  PERMISSION_CREATION: boolean;
-  PERMISSION_DELETION: boolean;
-  ENV_SYNC: boolean;
-  ENV_CREATION: boolean;
-  APIKEY_DELETION: boolean;
-  APIKEY_CREATION: boolean;
+  // PERMISSION_CREATION: boolean;
+  // PERMISSION_DELETION: boolean;
+  // ENV_SYNC: boolean;
+  // ENV_CREATION: boolean;
+  // APIKEY_DELETION: boolean;
+  // APIKEY_CREATION: boolean;
   isOpen: boolean;
+  [key: string]: boolean | string;
 };
-export type UserDataTDO = {
+export type UserDataDTO = {
   data: UserDataItem[];
 };
 export type ColumnNames = {

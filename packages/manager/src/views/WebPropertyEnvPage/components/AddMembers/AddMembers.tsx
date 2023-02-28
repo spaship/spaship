@@ -33,7 +33,7 @@ import {
   RoverItem,
   RoverUserList,
   UserDataItem,
-  UserDataTDO,
+  UserDataDTO,
   UserRoleDTO
 } from './types';
 
@@ -63,7 +63,6 @@ const userRole: UserRoleDTO = {
 };
 
 export const AddMembers = ({ onClose }: Props): JSX.Element => {
-  
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [isOpenUser, setIsOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
@@ -71,14 +70,13 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
   const [isShowAdvancedViewEnabledRover, setIsShowAdvancedViewEnabledRover] = useState(false);
   const titleId = 'plain-typeahead-select-id';
   const [userListFromRover, setUserListFromRover] = useState<RoverUserList>([]);
-  const [usersData, setUsersData] = useState<UserDataTDO>({ data: [] });
+  const [usersData, setUsersData] = useState<UserDataDTO>({ data: [] });
   const [newUserDetails, setNewUserDetails] = useState<NewRoverData[]>([]);
   const [expanded, setExpanded] = useState('def-list-toggle2');
   const { query } = useRouter();
   const [roverList, setRoverList] = useState<NewRoverData[]>([]);
   const propertyIdentifier = query.propertyIdentifier as string;
   const addPermission = useAddPermission(propertyIdentifier);
-
 
   const handleTabClick = (
     _event: MouseEvent<any> | KeyboardEvent | MouseEvent,
@@ -91,13 +89,14 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
 
   useEffect(() => {
     const userDetails: NewRoverData[] = activeTabKey === 0 ? newUserDetails : roverList;
-    const res1: any = userDetails.map(({ name, email, role, isOpen }) => ({
+    const res1 = userDetails.map(({ name, email, role, isOpen }) => ({
       name,
       email,
       role,
       isOpen,
       ...userRole[role].reduce((acc, cur) => ({ ...acc, [cur]: true }), {})
     }));
+    // console.log(res1,"useffectx")
     setUsersData({ data: res1 });
   }, [selectedUsers, roverList, activeTabKey, newUserDetails, userDetailsString]);
 
@@ -110,7 +109,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
   const onSelect = (_event: MouseEvent | ChangeEvent, selection: string) => {
     if (selectedUsers.includes(selection)) {
       setSelectedUsers((prevState: string[]) => prevState.filter((item) => item !== selection));
-      setUsersData((prevState: UserDataTDO) => {
+      setUsersData((prevState: UserDataDTO) => {
         const newData = prevState.data.filter((item) => item.name !== selection);
         return { data: newData };
       });
@@ -176,7 +175,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
 
   const onToggleRover = () => {};
   const onSelectRover: SelectProps['onSelect'] = (_event, selection) => {
-    setUsersData((prevGroup: UserDataTDO) => ({
+    setUsersData((prevGroup: UserDataDTO) => ({
       data: prevGroup.data.filter((n: { name: string }) => n.name !== selection)
     }));
   };
@@ -228,7 +227,6 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
           }
         }
       }, delay);
-      return
     };
   };
 
@@ -325,7 +323,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                       ].map((item) => (
                         <Td key={item.id}>
                           <Checkbox
-                            isChecked={item.value}
+                            isChecked={Boolean(item.value)}
                             onChange={(checked, e) =>
                               handleCheckBoxChange(checked, e, i.name, i.email)
                             }
@@ -409,7 +407,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                                     ].map((item) => (
                                       <Td key={item.id}>
                                         <Checkbox
-                                          isChecked={item.value}
+                                          isChecked={Boolean(item.value)}
                                           onChange={(checked, e) =>
                                             handleCheckBoxChange(checked, e, i.name, i.email)
                                           }
@@ -512,7 +510,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                       ].map((item) => (
                         <Td key={item.id}>
                           <Checkbox
-                            isChecked={item.value}
+                            isChecked={Boolean(item.value)}
                             onChange={(checked, e) =>
                               handleCheckBoxChange(checked, e, i.name, i.email)
                             }
@@ -578,7 +576,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                                     ].map((item) => (
                                       <Td key={item.id}>
                                         <Checkbox
-                                          isChecked={item.value}
+                                          isChecked={Boolean(item.value)}
                                           onChange={(checked, e) =>
                                             handleCheckBoxChange(checked, e, i.name, i.email)
                                           }

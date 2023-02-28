@@ -120,7 +120,6 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     'deleteMember'
   ] as const);
 
-
   const handleCreateEnv = async (data: EnvForm) => {
     if (!propertyTitle) return;
     try {

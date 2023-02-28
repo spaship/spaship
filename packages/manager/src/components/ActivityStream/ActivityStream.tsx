@@ -230,15 +230,15 @@ const activities = {
   PERMISSION_DELETED: ({ message }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
       <Label icon={<CubeIcon />} color="blue" isCompact>
-        {toPascalCase(message.split(' ')[0]).replace('_', ' ')}
+        {toPascalCase(message?.split(' ')[0]).replace('_', ' ')}
       </Label>{' '}
       access{' '}
       <Label color="red" icon={<TrashIcon />} variant="outline" isCompact>
-        {message.split(' ')[2]}
+        {message?.split(' ')[2]}
       </Label>{' '}
       for{' '}
       <Label color="blue" icon={<UserIcon />} isCompact>
-        {message.split(' ')[4]}
+        {message?.split(' ')[4]}
       </Label>{' '}
     </Text>
   )

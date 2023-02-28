@@ -41,8 +41,9 @@ export const ConfigureAccess = ({
   const [addAccess, setAddAccess] = useState<string[]>([]);
   const [deleteAccess, setDeleteAccess] = useState<string[]>([]);
   const [isShowAdvancedViewEnabled, setIsShowAdvancedViewEnabled] = useState<boolean>(false);
+  // TODO(akhilmhdh) : Same opinion on group. Why keep this as object if only one key
   const [group, setGroup] = useState<GroupDTO>({ data: memberList?.data });
-  
+
   useEffect(() => {
     setGroup(memberList);
   }, [flagOpen, memberList]);
@@ -56,12 +57,12 @@ export const ConfigureAccess = ({
     email: string
   ) => {
     const target = event.currentTarget;
-    const temp = [...group.data];
     const addAccess1 = [...addAccess];
     const deleteAccess1 = [...deleteAccess];
-    const index = temp.findIndex((e) => e.email === email);
-    temp[index][target.name] = checked;
-    setGroup({ data: temp });
+    setGroup(({ data }) => ({
+      data: data.map((e) => (email === e.email ? { ...e, [target.name]: checked } : e))
+    }));
+
     if (checked) {
       addAccess1.push(target.name);
       deleteAccess1.splice(deleteAccess1.indexOf(target.name), 1);
@@ -100,22 +101,18 @@ export const ConfigureAccess = ({
         }))
         .filter(({ actions }: { actions: string[] }) => actions.length > 0)
     };
-    try {
-      if (addAccess.length) {
-        addPermission.mutateAsync(addData).then((res) => {
-          toast.success('Permission updated successfully');
-          return res;
-        });
-      }
-      if (deleteAccess.length) {
-        deleteMember.mutateAsync(deleteData).then((res) => {
-          toast.success('Permission updated successfully');
-          return res;
-        });
-      }
-      onClose();
-    } catch (error) {
-      console.error(error);
+
+    if (addAccess.length) {
+      addPermission.mutateAsync(addData).then((res) => {
+        toast.success('Permission updated successfully');
+        return res;
+      });
+    }
+    if (deleteAccess.length) {
+      deleteMember.mutateAsync(deleteData).then((res) => {
+        toast.success('Permission updated successfully');
+        return res;
+      });
     }
     onClose();
   };

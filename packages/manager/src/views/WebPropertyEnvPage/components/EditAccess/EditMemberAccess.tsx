@@ -30,7 +30,7 @@ type GroupItem1 = {
   APIKEY_CREATION: boolean;
   [key: string]: boolean | string;
 };
-type UserDataTDO = {
+type UserDataDTO = {
   data: GroupItem1[];
 };
 type GroupData = {
@@ -43,7 +43,7 @@ type Props = {
   onClose: () => void;
   editMemberName: string;
   propertyIdentifier: string;
-  memberList: UserDataTDO;
+  memberList: UserDataDTO;
 };
 
 const columnNames: ColumnNames = {
@@ -55,7 +55,7 @@ const columnNames: ColumnNames = {
   ENV_CREATION: 'ENV_CREATION',
   ENV_SYNC: 'ENV_SYNC'
 };
-
+// TODO(akhilmhdh): Migrate to react-hook-form later. Removes a lot of boilerplate in this page
 export const EditMemberAccess = ({
   onClose,
   editMemberName,
@@ -77,10 +77,9 @@ export const EditMemberAccess = ({
   };
   const handleChange = (checked: boolean, event: FormEvent<HTMLInputElement>, email: string) => {
     const target = event.currentTarget as HTMLInputElement;
-    const temp = group.data;
-    const objIndex = temp.findIndex((e: GroupItem1) => e.email === email);
-    temp[objIndex][target.name] = checked;
-    setGroup({ data: temp });
+    setGroup(({ data }) => ({
+      data: data.map((e) => (email === e.email ? { ...e, [target.name]: checked } : e))
+    }));
     if (checked) {
       setAddAccess([...addAccess, target.name]);
       setDeleteAccess(deleteAccess.filter((value) => value !== target.name));
@@ -103,29 +102,28 @@ export const EditMemberAccess = ({
       actions: Object.keys(rand).filter((value) => rand[value] === false)
     }));
     const deleteData = { propertyIdentifier, permissionDetails: deletePerm };
-    try {
-      if (addAccess.length) {
-        addPermission
-          .mutateAsync({
-            ...addData
-          })
-          .then(() => {
-            toast.success('Permission updated successfully');
-          });
-      }
-      if (deleteAccess.length) {
-        deleteMember
-          .mutateAsync({
-            ...deleteData
-          })
-          .then(() => {
-            toast.success('Permission updated successfully');
-          });
-      }
-      onClose();
-    } catch (err) {
-      console.error(err);
+    // TODO(akhilmhdh):I can see that there is toast error inside the hook for 403 but what about other errors that could happen like 500 internal server error.
+    // How about adding a default error message too if specific ones fail
+
+    if (addAccess.length) {
+      addPermission
+        .mutateAsync({
+          ...addData
+        })
+        .then(() => {
+          toast.success('Permission updated successfully');
+        });
     }
+    if (deleteAccess.length) {
+      deleteMember
+        .mutateAsync({
+          ...deleteData
+        })
+        .then(() => {
+          toast.success('Permission updated successfully');
+        });
+    }
+    onClose();
   };
   return (
     <div>
@@ -153,6 +151,7 @@ export const EditMemberAccess = ({
             isHidden={expanded !== `def-list-toggle1_${editMemberName}`}
           >
             <TableComposable>
+              {/* TODO(akhilmhdh): store all column names in one place east to edit */}
               <Thead noWrap>
                 <Tr>
                   <Th>{columnNames.NAME}</Th>
