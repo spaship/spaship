@@ -2,6 +2,7 @@
 import { useFormatDate } from '@app/hooks';
 import { useGetWebPropActivityStream } from '@app/services/analytics';
 import { TWebPropActivityStream } from '@app/services/analytics/types';
+import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
   Label,
   ProgressStep,
@@ -20,7 +21,9 @@ import {
   ExclamationCircleIcon,
   OutlinedClockIcon,
   SyncAltIcon,
-  TimesIcon
+  TimesIcon,
+  TrashIcon,
+  UserIcon
 } from '@patternfly/react-icons';
 import Link from 'next/link';
 import { useEffect } from 'react';
@@ -32,7 +35,6 @@ type Props = {
   action?: string;
   isGlobal?: boolean;
 };
-
 type DeploymentKindProps = {
   activity: TWebPropActivityStream;
 };
@@ -209,14 +211,42 @@ const activities = {
         deleted{' '}
       </Label>
     </Text>
+  ),
+  PERMISSION_CREATED: ({ message }: TWebPropActivityStream): JSX.Element => (
+    <Text component={TextVariants.small}>
+      <Label icon={<CubeIcon />} color="blue" isCompact>
+        {toPascalCase(message.split(' ')[0]).replace('_', ' ')}
+      </Label>{' '}
+      access{' '}
+      <Label color="green" icon={<CheckIcon />} variant="outline" isCompact>
+        {message.split(' ')[2]}
+      </Label>{' '}
+      for{' '}
+      <Label color="blue" icon={<UserIcon />} isCompact>
+        {message.split(' ')[4]}
+      </Label>{' '}
+    </Text>
+  ),
+  PERMISSION_DELETED: ({ message }: TWebPropActivityStream): JSX.Element => (
+    <Text component={TextVariants.small}>
+      <Label icon={<CubeIcon />} color="blue" isCompact>
+        {toPascalCase(message?.split(' ')[0]).replace('_', ' ')}
+      </Label>{' '}
+      access{' '}
+      <Label color="red" icon={<TrashIcon />} variant="outline" isCompact>
+        {message?.split(' ')[2]}
+      </Label>{' '}
+      for{' '}
+      <Label color="blue" icon={<UserIcon />} isCompact>
+        {message?.split(' ')[4]}
+      </Label>{' '}
+    </Text>
   )
 } as any;
-
 const DeploymentKind = ({ activity }: DeploymentKindProps) => {
   if (Object.prototype.hasOwnProperty.call(activities, activity.action)) {
     return activities[activity.action](activity);
   }
-
   return <Text component={TextVariants.small}>Activity message - {activity.message}</Text>;
 };
 
@@ -242,19 +272,17 @@ export const ActivityStream = ({
         {isSuccess &&
           data.pages?.map((page) =>
             page.map((activity: TWebPropActivityStream) => {
-              // eslint-disable-next-line no-param-reassign
-              activity.isGlobal = isGlobal;
+              const modifiedActivity = { ...activity, isGlobal };
               return (
                 <ProgressStep
                   id={activity._id}
                   titleId={activity._id}
                   key={activity._id}
                   variant="success"
-                  // Description does not support elements yet. Hence they are rendered as text.
                   description={formatDate(activity.createdAt, 'MMM DD YY, hh:mm a')}
                 >
                   <TextContent className="pf-u-mb-sm">
-                    <DeploymentKind activity={activity} />
+                    <DeploymentKind activity={modifiedActivity} />
                   </TextContent>
                 </ProgressStep>
               );
@@ -282,7 +310,6 @@ export const ActivityStream = ({
     </>
   );
 };
-
 ActivityStream.defaultProps = {
   propertyIdentifier: '',
   applicationIdentifier: '',
