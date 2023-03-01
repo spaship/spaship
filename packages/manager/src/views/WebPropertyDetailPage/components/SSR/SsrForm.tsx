@@ -39,7 +39,6 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
   const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
 
   const onSubmit = async (data: FormData) => {
-    // useAddSsrSpaProperty(data)
     try {
       await createSsrSpaProperty.mutateAsync({ ...data });
       onClose();

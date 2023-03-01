@@ -6,7 +6,7 @@ export type TSSRProperty = {
   imageUrl: string;
   path: string;
   name: string;
-  ref: string;
+  // ref: string;
 };
 export type TSSRConfigure = {
   propertyIdentifier: string;

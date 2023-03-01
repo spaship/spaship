@@ -25,7 +25,7 @@ import Link from 'next/link';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 
-import { CogIcon, CubesIcon, PackageIcon, RunningIcon } from '@patternfly/react-icons';
+import { BuildIcon, CogIcon, CubesIcon, PackageIcon, RunningIcon } from '@patternfly/react-icons';
 import {
   Chart,
   ChartAxis,
@@ -43,6 +43,7 @@ import { Banner } from '@app/components';
 import { pageLinks } from '@app/links';
 import toast from 'react-hot-toast';
 import { ActivityStream } from '@app/components/ActivityStream';
+import { SSRDetails } from '../WebPropertyDetailPage/components/SSR/SSRDetails';
 
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
@@ -56,7 +57,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
     router.push(`/properties/${propertyIdentifier}`);
   }
 
-  const { handleTabChange, openTab } = useTabs(2);
+  const { handleTabChange, openTab } = useTabs(3);
 
   // TODO: Backend must sort this before giving
   const sortedDeployCount = deploymentCount?.data?.sort((x, y) => x.count - y.count);
@@ -109,6 +110,22 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
         <Tabs activeKey={openTab} onSelect={(_, tab) => handleTabChange(tab as number)}>
           <Tab
             eventKey={0}
+            title={
+              <>
+                <TabTitleIcon>
+                  <BuildIcon />
+                </TabTitleIcon>
+                <TabTitleText>SSR Deployment</TabTitleText>{' '}
+              </>
+            }
+            aria-label="SSR SPA Deployment"
+          >
+            <List className="pf-u-mt-lg">
+              <SSRDetails />
+            </List>
+          </Tab>
+          <Tab
+            eventKey={1}
             title={
               <>
                 <TabTitleIcon>
@@ -227,7 +244,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             </Split>
           </Tab>
           <Tab
-            eventKey={1}
+            eventKey={2}
             title={
               <>
                 <TabTitleIcon>

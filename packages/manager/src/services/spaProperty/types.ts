@@ -10,4 +10,6 @@ export type TSpaProperty = {
   updatedAt: string;
   _id: number;
   isSSR:boolean;
+  healthCheckPath:string;
+
 };
