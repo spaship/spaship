@@ -72,7 +72,7 @@ export const SideBar = () => {
                 />
               </a>
             </Link>
-            <Link href="/SLA">
+            <Link href="/sla">
               <a className="text-decoration-none">
                 <SidebarNavItem
                   title="SLA"
