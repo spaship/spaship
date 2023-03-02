@@ -219,7 +219,7 @@ export class ApplicationService {
       applicationDetails.config = applicationRequest.config;
       applicationDetails.updatedBy = applicationRequest.createdBy;
       this.logger.log('SSRUpdatedApplicationDetails', JSON.stringify(applicationDetails));
-      await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier }, applicationDetails);
+      await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isSSR: true }, applicationDetails);
     }
     this.deploySSRApplication(ssrOperatorRequest, propertyIdentifier, env, identifier, deploymentConnection.baseurl, applicationRequest.createdBy);
     await this.analyticsService.createActivityStream(
