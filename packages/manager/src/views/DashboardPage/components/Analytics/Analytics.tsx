@@ -74,6 +74,8 @@ export const Analytics = ({
       </TextContent>
       <Grid style={{ padding: '12px 12px' }}>
         <GridItem span={6}>
+        <Link href={pageLinks.webPropertyListPage}>
+        <a className="text-decoration-none">
           <Card
             isSelectable
             isFullHeight
@@ -88,9 +90,7 @@ export const Analytics = ({
             <CardTitle>Total Deployments</CardTitle>
             <CardBody>
               <h1 style={{ color: '#0066CC', fontSize: '28px' }}>
-                <Link href={pageLinks.webPropertyListPage}>
-                  <a className="text-decoration-none">{Totaldeployment}</a>
-                </Link>
+                 {Totaldeployment}
               </h1>
               <div
                 style={{ display: 'flex', flexDirection: 'row', gap: '35px', marginTop: '24px' }}
@@ -121,6 +121,8 @@ export const Analytics = ({
               </div>
             </CardBody>
           </Card>
+          </a>
+          </Link>
         </GridItem>
         <GridItem span={6}>
           <Card
@@ -163,6 +165,8 @@ export const Analytics = ({
           </Card>
         </GridItem>
         <GridItem span={6}>
+        <Link href={pageLinks.webPropertyListPage}>
+        <a className="text-decoration-none">
           <Card
             isSelectable
             isFullHeight
@@ -177,12 +181,12 @@ export const Analytics = ({
             <CardTitle>Total Properties</CardTitle>
             <CardBody>
               <h1 style={{ color: '#0066CC', fontSize: '28px' }}>
-                <Link href={pageLinks.webPropertyListPage}>
-                  <a className="text-decoration-none">{TotalProperty}</a>
-                </Link>
+                  {TotalProperty}
               </h1>
             </CardBody>
           </Card>
+          </a>
+          </Link>
         </GridItem>
         <GridItem span={6}>
           <Card
