@@ -1,13 +1,16 @@
 export type TSSRProperty = {
   config: {
-    [key: string]: any;
+    [key: string]: string;
   };
   healthCheckPath: string;
   imageUrl: string;
   path: string;
   name: string;
-  // ref: string;
+  ref?: string | number;
+  propertyIdentifier: string;
+  env: string;
 };
+
 export type TSSRConfigure = {
   propertyIdentifier: string;
   env: string;

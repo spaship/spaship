@@ -56,9 +56,6 @@ import { EmptyInfo } from './components/EmptyInfo';
 import { SSRForm } from './components/SSR/SsrForm';
 
 const URL_LENGTH_LIMIT = 30;
-const customStyles = {
-  "--pf-l-split--GridTemplateColumns--gutter": "var(--pf-global--spacer--sm)",
-};
 
 export const WebPropertyDetailPage = (): JSX.Element => {
   const { query } = useRouter();
@@ -142,15 +139,14 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             aria-label="SPA listing"
           >
             {!spaProperties.isLoading &&
-              !isCountOfSpasListEmpty &&
-              Object.values(countOfSpas.data || {}).length === 0 ? (
+            !isCountOfSpasListEmpty &&
+            Object.values(countOfSpas.data || {}).length === 0 ? (
               <EmptyInfo propertyIdentifier={propertyIdentifier} />
             ) : (
               <>
                 <div className="pf-u-w-70 pf-u-mb-lg pf-u-mt-md">
-
                   <Split hasGutter className="pf-u-mb-md">
-                    <SplitItem >
+                    <SplitItem>
                       <Button
                         onClick={() => handlePopUpOpen('createSSRDeployment')}
                         icon={<PlusCircleIcon />}
@@ -159,13 +155,15 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                       </Button>
                     </SplitItem>
 
-                    <SplitItem > <SearchInput
-
-                      placeholder="Search by name"
-                      value={searchTerm}
-                      onChange={(value) => setSearchTerm(value?.toLowerCase())}
-                      onClear={() => setSearchTerm('')}
-                    /></SplitItem>
+                    <SplitItem>
+                      {' '}
+                      <SearchInput
+                        placeholder="Search by name"
+                        value={searchTerm}
+                        onChange={(value) => setSearchTerm(value?.toLowerCase())}
+                        onClear={() => setSearchTerm('')}
+                      />
+                    </SplitItem>
                     {/* <SplitItem isFilled /> */}
                     <SplitItem>
                       <Select
@@ -190,7 +188,6 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                         ))}
                       </Select>
                     </SplitItem>
-
                   </Split>
                   {filterByEnv === 'Select Environment' || filterByEnv === '' ? (
                     <p />
@@ -219,7 +216,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                 {spaProperties.isSuccess && isSpaPropertyListEmpty ? (
                   <EmptyInfo propertyIdentifier={propertyIdentifier} />
                 ) : (
-                  <TableComposable aria-label="spa-property-list"  >
+                  <TableComposable aria-label="spa-property-list">
                     <>
                       <Caption>SPA&apos;s DEPLOYED</Caption>
                       <Thead noWrap>
@@ -233,7 +230,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                     </>
 
                     {(spaProperties.isLoading && webProperties.isLoading) ||
-                      (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
+                    (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
                       <TableRowSkeleton rows={3} columns={4} />
                     ) : (
                       spaProperties.isSuccess &&
@@ -265,12 +262,11 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                               <Td>
                                 <Split hasGutter>
                                   {spaProperties.data[identifier].map(({ _id, env, isSSR }) => (
-                                    <SplitItem key={_id}  style={{marginRight:"8px"}}>
-                                      <Label color={isSSR ? "cyan" : "gold"} isCompact>
+                                    <SplitItem key={_id} style={{ marginRight: '8px' }}>
+                                      <Label color={isSSR ? 'cyan' : 'gold'} isCompact>
                                         {env}
                                         {isSSR && '(ssr)'}
                                       </Label>
-
                                     </SplitItem>
                                   ))}
                                 </Split>
@@ -293,16 +289,15 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                         <Th>Updated At</Th>
                                       </Tr>
                                     </Thead>
-                                    <Tbody >
+                                    <Tbody>
                                       {spaProperties?.data?.[identifier].map(
                                         ({ _id, env, ref, isSSR, accessUrl, updatedAt }) => (
                                           <Tr key={_id}>
                                             <Td>
-                                              <Label color={isSSR ? "cyan" : "gold"} isCompact>
+                                              <Label color={isSSR ? 'cyan' : 'gold'} isCompact>
                                                 {env}
                                                 {isSSR && '(ssr)'}
                                               </Label>
-
                                             </Td>
                                             <Td>{ref}</Td>
                                             <Td>
@@ -315,12 +310,13 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                                 {`${webProperties?.data?.[env]?.url.slice(
                                                   0,
                                                   URL_LENGTH_LIMIT
-                                                )} ${webProperties?.data?.[env]?.url &&
-                                                    webProperties?.data?.[env]?.url.length >
+                                                )} ${
+                                                  webProperties?.data?.[env]?.url &&
+                                                  webProperties?.data?.[env]?.url.length >
                                                     URL_LENGTH_LIMIT
                                                     ? '...'
                                                     : ''
-                                                  }`}
+                                                }`}
                                               </a>
                                             </Td>
 
@@ -331,8 +327,9 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                                 rel="noopener noreferrer"
                                               >
                                                 <ExternalLinkAltIcon />{' '}
-                                                {`${accessUrl.slice(0, URL_LENGTH_LIMIT)} ${accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
-                                                  }`}
+                                                {`${accessUrl.slice(0, URL_LENGTH_LIMIT)} ${
+                                                  accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
+                                                }`}
                                               </a>
                                             </Td>
                                             <Td>

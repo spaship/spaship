@@ -97,7 +97,6 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
       isOpen,
       ...userRole[role].reduce((acc, cur) => ({ ...acc, [cur]: true }), {})
     }));
-    // console.log(res1,"useffectx")
     setUsersData({ data: res1 });
   }, [selectedUsers, roverList, activeTabKey, newUserDetails, userDetailsString]);
 

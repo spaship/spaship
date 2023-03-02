@@ -1,24 +1,36 @@
+import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useConfigureSsrSpaProperty } from '@app/services/ssr';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button, Form, FormGroup, Split, SplitItem, TextArea, TextInput } from '@patternfly/react-core';
+import {
+  Button,
+  Form,
+  FormGroup,
+  FormSelect,
+  FormSelectOption,
+  Split,
+  SplitItem,
+  TextInput
+} from '@patternfly/react-core';
+import { AddCircleOIcon } from '@patternfly/react-icons';
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import * as yup from 'yup';
 
-interface FormData {
+type FormData = {
   propertyIdentifier: string;
   env: string;
   identifier: string;
-  config: object;
-}
+  // config: string;
+  config: { [key: string]: string }; // additional key value pairs
+};
 
 const schema = yup.object().shape({
   propertyIdentifier: yup.string(),
-  env: yup.string().required(),
-  identifier: yup.string().required(),
-  config: yup.object().required()
+  env: yup.string().required()
+  // identifier: yup.string().required(),
+  // config: yup.object().required()
 });
-
 type Props = {
   onClose: () => void;
   propertyIdentifier: string;
@@ -33,15 +45,41 @@ export const ConfigureSSRForm = ({ propertyIdentifier, onClose }: Props): JSX.El
     resolver: yupResolver(schema)
   });
 
+  const [keyValuePairs, setKeyValuePairs] = useState([{ key: '', value: '' }]);
   const configureSsrSpaProperty = useConfigureSsrSpaProperty(propertyIdentifier);
+  const handleAddKeyValuePair = () => {
+    setKeyValuePairs([...keyValuePairs, { key: '', value: '' }]);
+  };
+  const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
+  const webPropertiesKeys = Object.keys(webProperties.data || {});
 
-  const onSubmit = async (data: FormData) => {
-    data.propertyIdentifier = propertyIdentifier;
-    console.log('configure submit', data);
+  const handleKeyValuePairChange = (index: number, key: string, value: string) => {
+    const newKeyValuePairs = [...keyValuePairs];
+    newKeyValuePairs[index] = { key, value };
+    setKeyValuePairs(newKeyValuePairs);
+  };
+  type MyObjectType = {
+    identifier: string;
+    env: string;
+    config: Record<string, string>;
+    propertyIdentifier: string;
+  };
+
+  const onSubmit = async (data: MyObjectType) => {
+    const json: Record<string, string> = {};
+    keyValuePairs.forEach(({ key, value }) => {
+      if (key && value) {
+        json[key] = value;
+      }
+    });
+    const newData = {
+      ...data,
+      config: json,
+      propertyIdentifier
+    };
+
     try {
-      await configureSsrSpaProperty.mutateAsync({
-        ...data
-      });
+      await configureSsrSpaProperty.mutateAsync(newData);
       onClose();
       toast.success('SPA configured successfully');
     } catch (error) {
@@ -55,78 +93,81 @@ export const ConfigureSSRForm = ({ propertyIdentifier, onClose }: Props): JSX.El
         <Controller
           name="propertyIdentifier"
           control={control}
-          render={({ field }) => (
-            <TextInput id="name" type="text" value={propertyIdentifier} isDisabled />
-          )}
+          render={() => <TextInput id="name" type="text" value={propertyIdentifier} isDisabled />}
         />
         {errors.propertyIdentifier && <span>{errors.propertyIdentifier.message}</span>}
       </FormGroup>
-      <Split hasGutter>
-        <SplitItem isFilled>   <FormGroup label="Environment" isRequired>
-          <Controller
-            name="env"
-            control={control}
-            render={
-              ({ field }) => (
-                <TextInput
-                  id="env"
-                  type="text"
-                  isRequired
-                  value={field.value}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                />
-              )
-              // <TextInput id="env" type="text" isRequired {...field} />
-            }
-          />
-          {errors.env && <span>{errors.env.message}</span>}
-        </FormGroup>
-        </SplitItem>
-        <SplitItem isFilled>
-          <FormGroup label="Identifier" isRequired>
-            <Controller
-              name="identifier"
-              control={control}
-              render={
-                ({ field }) => (
-                  <TextInput
-                    id="identifier"
-                    type="text"
-                    isRequired
-                    value={field.value}
-                    onChange={field.onChange}
-                    onBlur={field.onBlur}
-                  />
-                )
-                // <TextInput id="identifier" type="text" isRequired {...field} />
-              }
-            />
-            {errors.identifier && <span>{errors.identifier.message}</span>}
+
+      <Controller
+        control={control}
+        name="env"
+        defaultValue=""
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
+          <FormGroup
+            label="Select Environment"
+            fieldId="select-env"
+            validated={error ? 'error' : 'default'}
+            helperTextInvalid={error?.message}
+          >
+            <FormSelect
+              label="Select Environment"
+              aria-label="FormSelect Input"
+              onChange={(event) => {
+                onChange(event);
+              }}
+              value={value}
+            >
+              <FormSelectOption key={1} label="Please select an environment" isDisabled />
+              {webPropertiesKeys.map((envName) => (
+                <FormSelectOption key={envName} value={envName} label={envName} />
+              ))}
+            </FormSelect>
           </FormGroup>
+        )}
+      />
+
+      <Split hasGutter>
+        <SplitItem isFilled>Config</SplitItem>
+        <SplitItem
+          isFilled
+          style={{
+            display: 'grid',
+            justifyContent: 'right'
+          }}
+        >
+          <Button variant="secondary" onClick={handleAddKeyValuePair}>
+            <AddCircleOIcon />
+          </Button>
         </SplitItem>
       </Split>
 
+      {keyValuePairs.map((pair, index) => (
+        <div key={pair.key}>
+          <Split hasGutter>
+            <SplitItem isFilled>
+              <FormGroup label="Key">
+                <TextInput
+                  id={`key-${index}`}
+                  type="text"
+                  value={pair.key}
+                  onChange={(event) => handleKeyValuePairChange(index, event, pair.value)}
+                />
+              </FormGroup>
+            </SplitItem>
+            <SplitItem isFilled>
+              <FormGroup label="Value">
+                <TextInput
+                  id={`value-${index}`}
+                  type="text"
+                  value={pair.value}
+                  onChange={(event) => handleKeyValuePairChange(index, pair.key, event)}
+                />
+              </FormGroup>
+            </SplitItem>
+          </Split>
+        </div>
+      ))}
 
-
-
-      <FormGroup label="Config" isRequired>
-        <Controller
-          name="config"
-          control={control}
-          render={({ field }) => (
-            <TextArea
-              id="config"
-              isRequired
-              value={field.value}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-            />
-          )}
-        //   <TextArea id="config" isRequired {...field} />}
-        />
-        {errors.config && <span>{errors.config.message}</span>}
-      </FormGroup>
       <Button type="submit">Submit</Button>
     </Form>
   );

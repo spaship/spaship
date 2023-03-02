@@ -32,7 +32,7 @@ export const useGetSPAProperties = <T extends unknown>(
     () => fetchAppsForProperties(webPropertyIdentifier, env),
     {
       select,
-      refetchInterval: 20
+      refetchInterval: 10000
     }
   );
 

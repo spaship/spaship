@@ -9,7 +9,11 @@ const spaSsrPropertyKeys = {
 };
 
 const createSsrSpaProperty = async (dto: TSSRProperty): Promise<TSSRResponse> => {
-  const { data } = await orchestratorReq.post('/applications/deploy/testssr/dev', dto);
+  const { propertyIdentifier, env, ...newObject } = dto;
+  const { data } = await orchestratorReq.post(
+    `/applications/deploy/${propertyIdentifier}/${env}`,
+    newObject
+  );
   return data.data;
 };
 
