@@ -33,7 +33,6 @@ const schema = yup.object().shape({
   path: yup.string().required(),
   imageUrl: yup.string().required(),
   healthCheckPath: yup.string().required()
-  // config: yup.object()
 });
 
 type Props = {
@@ -66,15 +65,23 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
 
   const webPropertiesKeys = Object.keys(webProperties.data || {});
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (dataf: FormData) => {
     const json: Record<string, string> = {};
     keyValuePairs.forEach(({ key, value }) => {
       if (key && value) {
         json[key] = value;
       }
     });
+    const temp = dataf;
+    if (!temp.path.startsWith('/')) {
+      temp.path = `/${temp.path}`;
+    }
+    if (!temp.healthCheckPath.startsWith('/')) {
+      temp.healthCheckPath = `/${temp.healthCheckPath}`;
+    }
+
     const newData = {
-      ...data,
+      ...temp,
       config: json,
       propertyIdentifier
     };
@@ -135,19 +142,16 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
             <Controller
               name="ref"
               control={control}
-              render={
-                ({ field }) => (
-                  <TextInput
-                    id="ref"
-                    type="text"
-                    isRequired
-                    value={field.value}
-                    onChange={field.onChange}
-                    onBlur={field.onBlur}
-                  />
-                )
-                // <TextInput id="ref" type="text" {...field} />
-              }
+              render={({ field }) => (
+                <TextInput
+                  id="ref"
+                  type="text"
+                  isRequired
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                />
+              )}
             />
             {errors.ref && <span>{errors.ref.message}</span>}
           </FormGroup>
@@ -158,7 +162,6 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
               name="imageUrl"
               control={control}
               render={({ field }) => (
-                // <TextInput id="imageUrl" type="text" isRequired {...field} />
                 <TextInput
                   id="imageUrl"
                   type="text"
@@ -181,7 +184,6 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
               name="healthCheckPath"
               control={control}
               render={({ field }) => (
-                // <TextInput id="healthCheckPath" type="text" isRequired {...field} />
                 <TextInput
                   id="healthCheckPath"
                   type="text"
@@ -242,7 +244,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
       </Split>
 
       {keyValuePairs.map((pair, index) => (
-        <Split hasGutter>
+        <Split hasGutter key={`key-${index + 1}`}>
           <SplitItem isFilled>
             <FormGroup label="Key">
               <TextInput

@@ -6,26 +6,25 @@ import { Button, Label, Modal, ModalVariant, SplitItem } from '@patternfly/react
 import { PencilAltIcon, UndoIcon } from '@patternfly/react-icons';
 import { Caption, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useRouter } from 'next/router';
-import { MouseEvent, useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { EmptyInfo } from '../EmptyInfo';
 import { ConfigureSSRForm } from './ConfigureSSRForm';
 
-interface MyObject {
-  // export type TSpaProperty = {
-  propertyIdentifier: string;
-  name: string;
-  path: string;
-  ref: string;
-  env: string;
-  identifier: string;
-  nextRef: string;
-  accessUrl: string;
-  updatedAt: string;
-  _id: number;
-  isSSR: boolean;
-  healthCheckPath: string;
-}
+// type MyObject = {
+//   propertyIdentifier: string;
+//   name: string;
+//   path: string;
+//   ref: string;
+//   env: string;
+//   identifier: string;
+//   nextRef: string;
+//   accessUrl: string;
+//   updatedAt: string;
+//   _id: number;
+//   isSSR: boolean;
+//   healthCheckPath: string;
+// };
 
 export const SSRDetails = () => {
   const { query } = useRouter();
@@ -42,17 +41,11 @@ export const SSRDetails = () => {
   const [data, setData] = useState<any>([]);
   const [data1, setData1] = useState<any>([]);
 
-  const handleRedeployModal = (_e: MouseEvent<HTMLButtonElement>, val: MyObject) => {
-    console.log('handleRedeployModal', data);
-
-    if (val) {
-      setData(val);
-    }
+  const handleRedeployModal = () => {
     setIsRedployModalOpen((prevIsModalOpen) => !prevIsModalOpen);
   };
 
   const handleConfirmRedployment = async () => {
-    console.log('handleConfirmRedployment', data);
     data.propertyIdentifier = propertyIdentifier;
 
     try {
@@ -64,9 +57,7 @@ export const SSRDetails = () => {
     setIsRedployModalOpen((prevIsModalOpen) => !prevIsModalOpen);
   };
 
-  const handleConfigureModal = (_e: MouseEvent<HTMLButtonElement>, val: MyObject) => {
-    console.log('handleConfigureModal', _e, val);
-    setData1(val);
+  const handleConfigureModal = () => {
     setIsConfigureModalOpen((prevIsModalOpen) => !prevIsModalOpen);
   };
 
@@ -124,8 +115,9 @@ export const SSRDetails = () => {
                         variant="primary"
                         isSmall
                         icon={<PencilAltIcon />}
-                        onClick={(e) => {
-                          handleConfigureModal(e, val);
+                        onClick={() => {
+                          handleConfigureModal();
+                          setData1(val);
                         }}
                       >
                         Configure
@@ -135,7 +127,10 @@ export const SSRDetails = () => {
                         variant="secondary"
                         isSmall
                         icon={<UndoIcon />}
-                        onClick={(e) => handleRedeployModal(e, val)}
+                        onClick={() => {
+                          handleRedeployModal();
+                          setData(val);
+                        }}
                       >
                         ReDeploy
                       </Button>
@@ -151,7 +146,7 @@ export const SSRDetails = () => {
         title="Confirm SSR Redeployment"
         variant={ModalVariant.medium}
         isOpen={isRedployModalOpen}
-        onClose={(e) => handleRedeployModal(e, [])}
+        onClose={handleRedeployModal}
       >
         <p> Want to redeploy the SPA?</p>
         <Button onClick={handleConfirmRedployment} className="pf-u-mt-md">
@@ -163,7 +158,7 @@ export const SSRDetails = () => {
         title="Configure SPA"
         variant={ModalVariant.medium}
         isOpen={isConfigureModalOpen}
-        onClose={(e) => handleConfigureModal(e, [])}
+        onClose={handleConfigureModal}
       >
         <ConfigureSSRForm
           propertyIdentifier={propertyIdentifier}

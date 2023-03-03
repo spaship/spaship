@@ -1,4 +1,3 @@
-// import { usecreateSsrSpaProperty } from '@app/services/apiKeys';
 import { useAddSsrSpaProperty } from '@app/services/ssr';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Form, FormGroup, Split, SplitItem, TextInput } from '@patternfly/react-core';
@@ -24,7 +23,6 @@ const schema = yup.object().shape({
   path: yup.string().required(),
   imageUrl: yup.string().required(),
   healthCheckPath: yup.string().required()
-  // config: yup.object()
 });
 
 type Props = {
@@ -67,8 +65,16 @@ export const ConfigureSSRForm = ({
         json[key] = value;
       }
     });
+    const temp = data;
+    if (!temp.path.startsWith('/')) {
+      temp.path = `/${temp.path}`;
+    }
+    if (!temp.healthCheckPath.startsWith('/')) {
+      temp.healthCheckPath = `/${temp.healthCheckPath}`;
+    }
+
     const newData = {
-      ...data,
+      ...temp,
       config: json,
       propertyIdentifier
     };
@@ -179,7 +185,6 @@ export const ConfigureSSRForm = ({
               name="imageUrl"
               control={control}
               render={({ field }) => (
-                // <TextInput id="imageUrl" type="text" isRequired {...field} />
                 <TextInput
                   id="imageUrl"
                   type="text"
@@ -199,7 +204,6 @@ export const ConfigureSSRForm = ({
               name="healthCheckPath"
               control={control}
               render={({ field }) => (
-                // <TextInput id="healthCheckPath" type="text" isRequired {...field} />
                 <TextInput
                   id="healthCheckPath"
                   type="text"
@@ -231,7 +235,7 @@ export const ConfigureSSRForm = ({
       </Split>
 
       {keyValuePairs.map((pair, index) => (
-        <Split hasGutter>
+        <Split hasGutter key={`key-${index + 1}`}>
           <SplitItem isFilled>
             <FormGroup label="Key">
               <TextInput
