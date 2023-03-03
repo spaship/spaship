@@ -137,7 +137,7 @@ export class ApplicationFactory {
     applicationResponse.path = application.path;
     applicationResponse.env = application.env;
     applicationResponse.ref = this.getRef(application.nextRef);
-    applicationResponse.accessUrl = this.getAccessUrl(application, baseUrl);
+    applicationResponse.accessUrl = application.isSSR ? this.getSSRAccessUrl(application, baseUrl) : this.getAccessUrl(application, baseUrl);
     return applicationResponse;
   }
 
@@ -269,17 +269,18 @@ export class ApplicationFactory {
     propertyIdentifier: string,
     identifier: string,
     env: string,
-    namespace: string
+    namespace: string,
+    applicationDetails: Application
   ): SSRDeploymentRequest {
     const ssrRequest = new SSRDeploymentRequest();
-    ssrRequest.imageUrl = applicationRequest.imageUrl;
+    ssrRequest.imageUrl = applicationDetails.imageUrl;
     ssrRequest.app = identifier;
-    ssrRequest.contextPath = applicationRequest.path;
+    ssrRequest.contextPath = applicationDetails.path;
     ssrRequest.website = propertyIdentifier;
     ssrRequest.nameSpace = namespace;
     ssrRequest.environment = env;
-    ssrRequest.configMap = applicationRequest.config;
-    ssrRequest.healthCheckPath = applicationRequest.healthCheckPath || applicationRequest.path;
+    ssrRequest.configMap = applicationDetails.config;
+    ssrRequest.healthCheckPath = applicationDetails.healthCheckPath;
     return ssrRequest;
   }
 
@@ -321,5 +322,13 @@ export class ApplicationFactory {
       this.logger.error('ImageRegistry', error);
     }
     return false;
+  }
+
+  private getSSRAccessUrl(application: Application, baseUrl: string): string {
+    const protocol = 'https';
+    const { hostname } = new URL(baseUrl);
+    const domain = hostname.split('.').slice(1).join('.');
+    const generatedAccessURL = `${protocol}://${application.propertyIdentifier}-${application.env}.${domain}${application.path}`;
+    return generatedAccessURL;
   }
 }

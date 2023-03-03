@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsObject, IsOptional, IsString, Matches } from 'class-validator';
+import { IsNotEmpty, IsObject, IsOptional, IsString, Matches } from 'class-validator';
 import { MESSAGE, VALIDATION } from 'src/configuration';
 
 export class CreateApplicationDto {
@@ -28,11 +28,6 @@ export class CreateApplicationDto {
   @IsString()
   @IsOptional()
   actionId: string;
-
-  @ApiProperty()
-  @IsBoolean()
-  @IsOptional()
-  isSSR: boolean;
 
   /* @internal
    * It'll check the format of the provided image url
