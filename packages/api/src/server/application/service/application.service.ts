@@ -190,14 +190,7 @@ export class ApplicationService {
   async saveSSRApplication(applicationRequest: CreateApplicationDto, propertyIdentifier: string, env: string): Promise<any> {
     const identifier = this.applicationFactory.getIdentifier(applicationRequest.name);
     const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
-    const ssrOperatorRequest = this.applicationFactory.createSSROperatorRequest(
-      applicationRequest,
-      propertyIdentifier,
-      identifier,
-      env,
-      property.namespace
-    );
-    this.logger.log('SSROperatorRequest', JSON.stringify(ssrOperatorRequest));
+
     let applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true }))[0];
     if (!applicationDetails) {
       const saveApplication = await this.applicationFactory.createSSRApplicationRequest(
@@ -215,12 +208,21 @@ export class ApplicationService {
       applicationDetails.path = applicationRequest.path;
       applicationDetails.imageUrl = applicationRequest.imageUrl;
       applicationDetails.version = this.applicationFactory.incrementVersion(applicationDetails.version);
-      applicationDetails.healthCheckPath = applicationRequest.healthCheckPath;
-      applicationDetails.config = applicationRequest.config;
+      applicationDetails.healthCheckPath = applicationRequest.healthCheckPath || applicationDetails.healthCheckPath;
+      applicationDetails.config = applicationRequest.config || applicationDetails.config;
       applicationDetails.updatedBy = applicationRequest.createdBy;
       this.logger.log('SSRUpdatedApplicationDetails', JSON.stringify(applicationDetails));
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isSSR: true }, applicationDetails);
     }
+    const ssrOperatorRequest = this.applicationFactory.createSSROperatorRequest(
+      applicationRequest,
+      propertyIdentifier,
+      identifier,
+      env,
+      property.namespace,
+      applicationDetails
+    );
+    this.logger.log('SSROperatorRequest', JSON.stringify(ssrOperatorRequest));
     this.deploySSRApplication(ssrOperatorRequest, propertyIdentifier, env, identifier, deploymentConnection.baseurl, applicationRequest.createdBy);
     await this.analyticsService.createActivityStream(
       propertyIdentifier,
@@ -232,7 +234,7 @@ export class ApplicationService {
       Source.MANAGER,
       JSON.stringify(applicationRequest)
     );
-    return applicationDetails;
+    return this.applicationFactory.createApplicationResponse(applicationDetails, deploymentConnection.baseurl);
   }
 
   // @internal Get the deployment connection for the property
