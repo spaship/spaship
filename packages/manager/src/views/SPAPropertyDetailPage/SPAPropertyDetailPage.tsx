@@ -44,6 +44,7 @@ import { pageLinks } from '@app/links';
 import toast from 'react-hot-toast';
 import { ActivityStream } from '@app/components/ActivityStream';
 import { SSRDetails } from '../WebPropertyDetailPage/components/SSR/SSRDetails';
+import { StaticDeployment } from '../WebPropertyDetailPage/components/SSR/StaticDeployment';
 
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
@@ -57,7 +58,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
     router.push(`/properties/${propertyIdentifier}`);
   }
 
-  const { handleTabChange, openTab } = useTabs(3);
+  const { handleTabChange, openTab } = useTabs(4);
 
   // TODO: Backend must sort this before giving
   const sortedDeployCount = deploymentCount?.data?.sort((x, y) => x.count - y.count);
@@ -126,6 +127,22 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
           </Tab>
           <Tab
             eventKey={1}
+            title={
+              <>
+                <TabTitleIcon>
+                  <BuildIcon />
+                </TabTitleIcon>
+                <TabTitleText>Static Deployment</TabTitleText>{' '}
+              </>
+            }
+            aria-label="SSR SPA Deployment"
+          >
+            <List className="pf-u-mt-lg">
+              <StaticDeployment />
+            </List>
+          </Tab>
+          <Tab
+            eventKey={2}
             title={
               <>
                 <TabTitleIcon>
@@ -244,7 +261,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             </Split>
           </Tab>
           <Tab
-            eventKey={2}
+            eventKey={3}
             title={
               <>
                 <TabTitleIcon>

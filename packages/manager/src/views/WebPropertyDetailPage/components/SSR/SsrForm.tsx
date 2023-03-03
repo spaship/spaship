@@ -1,4 +1,4 @@
-// import { usecreateSsrSpaProperty } from '@app/services/apiKeys';
+import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useAddSsrSpaProperty } from '@app/services/ssr';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
@@ -16,7 +16,6 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import * as yup from 'yup';
-import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 
 interface FormData {
   name: string;
@@ -56,11 +55,13 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
   const handleAddKeyValuePair = () => {
     setKeyValuePairs([...keyValuePairs, { key: '', value: '' }]);
   };
+
   const handleKeyValuePairChange = (index: number, key: string, value: string) => {
     const newKeyValuePairs = [...keyValuePairs];
     newKeyValuePairs[index] = { key, value };
     setKeyValuePairs(newKeyValuePairs);
   };
+
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
 
   const webPropertiesKeys = Object.keys(webProperties.data || {});
@@ -72,22 +73,19 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
         json[key] = value;
       }
     });
-
     const newData = {
       ...data,
       config: json,
       propertyIdentifier
     };
-
     try {
       await createSsrSpaProperty.mutateAsync(newData);
       onClose();
-      toast.success('Redeployed SSR successfully');
+      toast.success('Deployed SSR successfully');
     } catch (error) {
-      toast.error('Failed to redeploy SSR');
+      toast.error('Failed to deploy SSR');
     }
   };
-
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Split hasGutter>
@@ -242,31 +240,30 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
           </Button>
         </SplitItem>
       </Split>
+
       {keyValuePairs.map((pair, index) => (
-        <div key={pair.key}>
-          <Split hasGutter>
-            <SplitItem isFilled>
-              <FormGroup label="Key">
-                <TextInput
-                  id={`key-${index}`}
-                  type="text"
-                  value={pair.key}
-                  onChange={(event) => handleKeyValuePairChange(index, event, pair.value)}
-                />
-              </FormGroup>
-            </SplitItem>
-            <SplitItem isFilled>
-              <FormGroup label="Value">
-                <TextInput
-                  id={`value-${index}`}
-                  type="text"
-                  value={pair.value}
-                  onChange={(event) => handleKeyValuePairChange(index, pair.key, event)}
-                />
-              </FormGroup>
-            </SplitItem>
-          </Split>
-        </div>
+        <Split hasGutter>
+          <SplitItem isFilled>
+            <FormGroup label="Key">
+              <TextInput
+                id={`key-${index}`}
+                type="text"
+                value={pair.key}
+                onChange={(event) => handleKeyValuePairChange(index, event, pair.value)}
+              />
+            </FormGroup>
+          </SplitItem>
+          <SplitItem isFilled>
+            <FormGroup label="Value">
+              <TextInput
+                id={`value-${index}`}
+                type="text"
+                value={pair.value}
+                onChange={(event) => handleKeyValuePairChange(index, pair.key, event)}
+              />
+            </FormGroup>
+          </SplitItem>
+        </Split>
       ))}
 
       <Button type="submit">Submit</Button>

@@ -5,36 +5,58 @@ import { useAddSsrSpaProperty } from '@app/services/ssr';
 import { Button, Label, Modal, ModalVariant, SplitItem } from '@patternfly/react-core';
 import { PencilAltIcon, UndoIcon } from '@patternfly/react-icons';
 import { Caption, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { MouseEvent, useState } from 'react';
 import toast from 'react-hot-toast';
 import { EmptyInfo } from '../EmptyInfo';
 import { ConfigureSSRForm } from './ConfigureSSRForm';
 
+interface MyObject {
+  // export type TSpaProperty = {
+  propertyIdentifier: string;
+  name: string;
+  path: string;
+  ref: string;
+  env: string;
+  identifier: string;
+  nextRef: string;
+  accessUrl: string;
+  updatedAt: string;
+  _id: number;
+  isSSR: boolean;
+  healthCheckPath: string;
+}
+
 export const SSRDetails = () => {
   const { query } = useRouter();
+
   const propertyIdentifier = query.propertyIdentifier as string;
+  const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
   const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, '');
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
+
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
-  const webPropertiesKeys = Object.keys(webProperties.data || {});
   const [isRedployModalOpen, setIsRedployModalOpen] = useState(false);
   const [isConfigureModalOpen, setIsConfigureModalOpen] = useState(false);
-  const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
   const [data, setData] = useState<any>([]);
+  const [data1, setData1] = useState<any>([]);
 
-  const handleRedeployModal = (_e: MouseEvent<HTMLButtonElement>, name: string) => {
-    if (spaProperties && spaProperties.data && spaProperties.data[name]) {
-      setData(spaProperties.data[name]);
+  const handleRedeployModal = (_e: MouseEvent<HTMLButtonElement>, val: MyObject) => {
+    console.log('handleRedeployModal', data);
+
+    if (val) {
+      setData(val);
     }
     setIsRedployModalOpen((prevIsModalOpen) => !prevIsModalOpen);
   };
 
   const handleConfirmRedployment = async () => {
+    console.log('handleConfirmRedployment', data);
+    data.propertyIdentifier = propertyIdentifier;
+
     try {
-      await createSsrSpaProperty.mutateAsync({ ...data[0] });
+      await createSsrSpaProperty.mutateAsync({ ...data });
       toast.success('Redeployed SSR successfully');
     } catch (error) {
       toast.error('Failed to redeploy SSR');
@@ -42,9 +64,16 @@ export const SSRDetails = () => {
     setIsRedployModalOpen((prevIsModalOpen) => !prevIsModalOpen);
   };
 
-  const handleConfigureModal = () => {
+  const handleConfigureModal = (_e: MouseEvent<HTMLButtonElement>, val: MyObject) => {
+    console.log('handleConfigureModal', _e, val);
+    setData1(val);
     setIsConfigureModalOpen((prevIsModalOpen) => !prevIsModalOpen);
   };
+
+  const url = window.location.href;
+  const parts = url.split('/');
+  const applicationName = parts[parts.length - 1];
+  const temp = spaProperties?.data?.[applicationName].filter((item) => item.isSSR === true);
 
   return (
     <>
@@ -68,45 +97,36 @@ export const SSRDetails = () => {
             </Thead>
           </>
           {(spaProperties.isLoading && webProperties.isLoading) ||
-            (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
+          (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
             <TableRowSkeleton rows={3} columns={4} />
           ) : (
-            spaProperties.isSuccess &&
-            webPropertiesKeys &&
-            spaPropertyKeys.map((identifier) => (
-              <Tbody key={identifier}>
-                <Tr>
+            <Tbody>
+              {temp?.map((val) => (
+                <Tr key={val.name}>
+                  <Td textCenter>{val?.name}</Td>
                   <Td textCenter>
-                    <Link href={spaProperties.data[identifier]?.[0]?.accessUrl}>
-                      {spaProperties.data[identifier]?.[0]?.name}
-                    </Link>
+                    <Label
+                      key={val.env}
+                      color={val.isSSR ? 'blue' : 'gold'}
+                      isCompact
+                      style={{ marginRight: '8px' }}
+                    >
+                      {val.env}
+                      {val.isSSR && '[ssr]'}
+                    </Label>
                   </Td>
-                  <Td textCenter>
-                    {spaProperties.data[identifier]
-                      .filter((item) => item.isSSR)
-                      .map(({ env, isSSR }) => (
-                        <Label
-                          key={env}
-                          color={isSSR ? 'blue' : 'gold'}
-                          isCompact
-                          style={{ marginRight: '8px' }}
-                        >
-                          {env}
-                          {isSSR && '(ssr)'}
-                        </Label>
-                      ))}
-                  </Td>
-                  <Td textCenter>{spaProperties.data[identifier]?.[0]?.ref}</Td>
-                  <Td textCenter>{spaProperties.data[identifier]?.[0]?.path}</Td>
-                  <Td textCenter>{spaProperties.data[identifier]?.[0]?.healthCheckPath}</Td>
-
+                  <Td textCenter>{val?.ref}</Td>
+                  <Td textCenter>{val?.path}</Td>
+                  <Td textCenter>{val?.healthCheckPath}</Td>
                   <Td textCenter style={{ justifyContent: 'flex-end', display: 'grid' }}>
                     <SplitItem isFilled>
                       <Button
                         variant="primary"
                         isSmall
                         icon={<PencilAltIcon />}
-                        onClick={handleConfigureModal}
+                        onClick={(e) => {
+                          handleConfigureModal(e, val);
+                        }}
                       >
                         Configure
                       </Button>
@@ -115,18 +135,15 @@ export const SSRDetails = () => {
                         variant="secondary"
                         isSmall
                         icon={<UndoIcon />}
-                        onClick={(e) =>
-                          handleRedeployModal(e, spaProperties.data[identifier]?.[0]?.name)
-                        }
+                        onClick={(e) => handleRedeployModal(e, val)}
                       >
                         ReDeploy
                       </Button>
                     </SplitItem>
                   </Td>
-                  {/* <Td textCenter >{spaProperties.data[identifier]?.[0]?.updatedAt}</Td> */}
                 </Tr>
-              </Tbody>
-            ))
+              ))}
+            </Tbody>
           )}
         </TableComposable>
       )}
@@ -134,21 +151,25 @@ export const SSRDetails = () => {
         title="Confirm SSR Redeployment"
         variant={ModalVariant.medium}
         isOpen={isRedployModalOpen}
+        onClose={(e) => handleRedeployModal(e, [])}
       >
         <p> Want to redeploy the SPA?</p>
         <Button onClick={handleConfirmRedployment} className="pf-u-mt-md">
           Confirm Redeployment
         </Button>
-
       </Modal>
 
       <Modal
         title="Configure SPA"
         variant={ModalVariant.medium}
         isOpen={isConfigureModalOpen}
-        onClose={handleConfigureModal}
+        onClose={(e) => handleConfigureModal(e, [])}
       >
-        <ConfigureSSRForm onClose={handleConfigureModal} propertyIdentifier={propertyIdentifier} />
+        <ConfigureSSRForm
+          propertyIdentifier={propertyIdentifier}
+          onClose={() => setIsConfigureModalOpen(!isConfigureModalOpen)}
+          dataprops={data1}
+        />
       </Modal>
     </>
   );

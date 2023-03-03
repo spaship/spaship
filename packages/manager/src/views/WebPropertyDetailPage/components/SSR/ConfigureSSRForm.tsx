@@ -1,71 +1,66 @@
-import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
-import { useConfigureSsrSpaProperty } from '@app/services/ssr';
+// import { usecreateSsrSpaProperty } from '@app/services/apiKeys';
+import { useAddSsrSpaProperty } from '@app/services/ssr';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  Button,
-  Form,
-  FormGroup,
-  FormSelect,
-  FormSelectOption,
-  Split,
-  SplitItem,
-  TextInput
-} from '@patternfly/react-core';
+import { Button, Form, FormGroup, Split, SplitItem, TextInput } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import * as yup from 'yup';
 
-type FormData = {
-  propertyIdentifier: string;
+interface FormData {
+  name: string;
+  path: string;
+  ref?: string;
+  imageUrl: string;
+  healthCheckPath: string;
+  config: { [key: string]: string };
   env: string;
-  identifier: string;
-  // config: string;
-  config: { [key: string]: string }; // additional key value pairs
-};
+  propertyIdentifier: string;
+}
 
 const schema = yup.object().shape({
-  propertyIdentifier: yup.string(),
-  env: yup.string().required()
-  // identifier: yup.string().required(),
-  // config: yup.object().required()
+  name: yup.string().required(),
+  path: yup.string().required(),
+  imageUrl: yup.string().required(),
+  healthCheckPath: yup.string().required()
+  // config: yup.object()
 });
+
 type Props = {
   onClose: () => void;
   propertyIdentifier: string;
+  dataprops: any;
 };
 
-export const ConfigureSSRForm = ({ propertyIdentifier, onClose }: Props): JSX.Element => {
+export const ConfigureSSRForm = ({
+  onClose,
+  propertyIdentifier,
+  dataprops
+}: Props): JSX.Element => {
   const {
     control,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    reset
   } = useForm<FormData>({
     resolver: yupResolver(schema)
   });
 
+  const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
+
   const [keyValuePairs, setKeyValuePairs] = useState([{ key: '', value: '' }]);
-  const configureSsrSpaProperty = useConfigureSsrSpaProperty(propertyIdentifier);
   const handleAddKeyValuePair = () => {
     setKeyValuePairs([...keyValuePairs, { key: '', value: '' }]);
   };
-  const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
-  const webPropertiesKeys = Object.keys(webProperties.data || {});
 
   const handleKeyValuePairChange = (index: number, key: string, value: string) => {
     const newKeyValuePairs = [...keyValuePairs];
     newKeyValuePairs[index] = { key, value };
     setKeyValuePairs(newKeyValuePairs);
   };
-  type MyObjectType = {
-    identifier: string;
-    env: string;
-    config: Record<string, string>;
-    propertyIdentifier: string;
-  };
 
-  const onSubmit = async (data: MyObjectType) => {
+  const onSubmit = async (data: FormData) => {
     const json: Record<string, string> = {};
     keyValuePairs.forEach(({ key, value }) => {
       if (key && value) {
@@ -77,54 +72,148 @@ export const ConfigureSSRForm = ({ propertyIdentifier, onClose }: Props): JSX.El
       config: json,
       propertyIdentifier
     };
-
     try {
-      await configureSsrSpaProperty.mutateAsync(newData);
+      await createSsrSpaProperty.mutateAsync(newData);
       onClose();
-      toast.success('SPA configured successfully');
+      toast.success('Configured and deployed SSR successfully');
     } catch (error) {
-      toast.error('Failed to configure the spa');
+      toast.error('Failed to deploy SSR');
     }
   };
 
+  useEffect(() => {
+    const configKeys = Object.keys(dataprops.config);
+    const configPairs = configKeys.map((key) => ({ key, value: dataprops.config[key] }));
+    setKeyValuePairs(configPairs);
+    reset(dataprops);
+  }, [reset, dataprops]);
+
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
-      <FormGroup label="Name">
-        <Controller
-          name="propertyIdentifier"
-          control={control}
-          render={() => <TextInput id="name" type="text" value={propertyIdentifier} isDisabled />}
-        />
-        {errors.propertyIdentifier && <span>{errors.propertyIdentifier.message}</span>}
-      </FormGroup>
-
-      <Controller
-        control={control}
-        name="env"
-        defaultValue=""
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <FormGroup
-            label="Select Environment"
-            fieldId="select-env"
-            validated={error ? 'error' : 'default'}
-            helperTextInvalid={error?.message}
-          >
-            <FormSelect
-              label="Select Environment"
-              aria-label="FormSelect Input"
-              onChange={(event) => {
-                onChange(event);
-              }}
-              value={value}
-            >
-              <FormSelectOption key={1} label="Please select an environment" isDisabled />
-              {webPropertiesKeys.map((envName) => (
-                <FormSelectOption key={envName} value={envName} label={envName} />
-              ))}
-            </FormSelect>
+      <Split hasGutter>
+        <SplitItem isFilled>
+          <FormGroup label="Name" isRequired>
+            <Controller
+              name="name"
+              control={control}
+              render={({ field }) => (
+                <TextInput
+                  id="name"
+                  type="text"
+                  isDisabled
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                />
+              )}
+            />
+            {errors.name && <span>{errors.name.message}</span>}
           </FormGroup>
-        )}
-      />
+        </SplitItem>
+        <SplitItem isFilled>
+          <FormGroup label="Select Environment" fieldId="select-env">
+            <Controller
+              name="env"
+              control={control}
+              render={({ field }) => (
+                <TextInput
+                  id="env"
+                  type="text"
+                  isDisabled
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                />
+              )}
+            />
+            {errors.name && <span>{errors.name.message}</span>}
+          </FormGroup>
+        </SplitItem>
+      </Split>
+
+      <Split hasGutter>
+        <SplitItem isFilled>
+          <FormGroup label="Path" isRequired>
+            <Controller
+              name="path"
+              control={control}
+              render={({ field }) => (
+                <TextInput
+                  id="path"
+                  type="text"
+                  isRequired
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                />
+              )}
+            />
+            {errors.path && <span>{errors.path.message}</span>}
+          </FormGroup>
+        </SplitItem>
+        <SplitItem isFilled>
+          <FormGroup label="Ref">
+            <Controller
+              name="ref"
+              control={control}
+              render={({ field }) => (
+                <TextInput
+                  id="ref"
+                  type="text"
+                  isRequired
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                />
+              )}
+            />
+            {errors.ref && <span>{errors.ref.message}</span>}
+          </FormGroup>
+        </SplitItem>
+      </Split>
+
+      <Split hasGutter>
+        <SplitItem isFilled>
+          <FormGroup label="Image URL" isRequired>
+            <Controller
+              name="imageUrl"
+              control={control}
+              render={({ field }) => (
+                // <TextInput id="imageUrl" type="text" isRequired {...field} />
+                <TextInput
+                  id="imageUrl"
+                  type="text"
+                  isRequired
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                />
+              )}
+            />
+            {errors.imageUrl && <span>{errors.imageUrl.message}</span>}
+          </FormGroup>
+        </SplitItem>
+        <SplitItem isFilled>
+          <FormGroup label="Health Check Path" isRequired>
+            <Controller
+              name="healthCheckPath"
+              control={control}
+              render={({ field }) => (
+                // <TextInput id="healthCheckPath" type="text" isRequired {...field} />
+                <TextInput
+                  id="healthCheckPath"
+                  type="text"
+                  isRequired
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                />
+              )}
+            />
+            {errors.healthCheckPath && <span>{errors.healthCheckPath.message}</span>}
+          </FormGroup>
+        </SplitItem>
+      </Split>
 
       <Split hasGutter>
         <SplitItem isFilled>Config</SplitItem>
@@ -142,30 +231,28 @@ export const ConfigureSSRForm = ({ propertyIdentifier, onClose }: Props): JSX.El
       </Split>
 
       {keyValuePairs.map((pair, index) => (
-        <div key={pair.key}>
-          <Split hasGutter>
-            <SplitItem isFilled>
-              <FormGroup label="Key">
-                <TextInput
-                  id={`key-${index}`}
-                  type="text"
-                  value={pair.key}
-                  onChange={(event) => handleKeyValuePairChange(index, event, pair.value)}
-                />
-              </FormGroup>
-            </SplitItem>
-            <SplitItem isFilled>
-              <FormGroup label="Value">
-                <TextInput
-                  id={`value-${index}`}
-                  type="text"
-                  value={pair.value}
-                  onChange={(event) => handleKeyValuePairChange(index, pair.key, event)}
-                />
-              </FormGroup>
-            </SplitItem>
-          </Split>
-        </div>
+        <Split hasGutter>
+          <SplitItem isFilled>
+            <FormGroup label="Key">
+              <TextInput
+                id={`key-${index}`}
+                type="text"
+                value={pair.key}
+                onChange={(event) => handleKeyValuePairChange(index, event, pair.value)}
+              />
+            </FormGroup>
+          </SplitItem>
+          <SplitItem isFilled>
+            <FormGroup label="Value">
+              <TextInput
+                id={`value-${index}`}
+                type="text"
+                value={pair.value}
+                onChange={(event) => handleKeyValuePairChange(index, pair.key, event)}
+              />
+            </FormGroup>
+          </SplitItem>
+        </Split>
       ))}
 
       <Button type="submit">Submit</Button>

@@ -265,7 +265,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                     <SplitItem key={_id} style={{ marginRight: '8px' }}>
                                       <Label color={isSSR ? 'cyan' : 'gold'} isCompact>
                                         {env}
-                                        {isSSR && '(ssr)'}
+                                        {isSSR && ' [ssr]'}
                                       </Label>
                                     </SplitItem>
                                   ))}
@@ -296,7 +296,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                             <Td>
                                               <Label color={isSSR ? 'cyan' : 'gold'} isCompact>
                                                 {env}
-                                                {isSSR && '(ssr)'}
+                                                {isSSR && ' [ssr]'}
                                               </Label>
                                             </Td>
                                             <Td>{ref}</Td>
