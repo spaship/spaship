@@ -11,20 +11,24 @@ import toast from 'react-hot-toast';
 import { EmptyInfo } from '../EmptyInfo';
 import { ConfigureSSRForm } from './ConfigureSSRForm';
 
-// type MyObject = {
-//   propertyIdentifier: string;
-//   name: string;
-//   path: string;
-//   ref: string;
-//   env: string;
-//   identifier: string;
-//   nextRef: string;
-//   accessUrl: string;
-//   updatedAt: string;
-//   _id: number;
-//   isSSR: boolean;
-//   healthCheckPath: string;
-// };
+type Data = {
+  propertyIdentifier: string;
+  name: string;
+  path: string;
+  ref: string;
+  env: string;
+  identifier: string;
+  nextRef: string;
+  accessUrl: string;
+  updatedAt: string;
+  _id: number;
+  isSSR: boolean;
+  healthCheckPath: string;
+  config: {
+    [key: string]: string;
+  };
+  imageUrl: string;
+};
 
 export const SSRDetails = () => {
   const { query } = useRouter();
@@ -38,18 +42,49 @@ export const SSRDetails = () => {
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
   const [isRedployModalOpen, setIsRedployModalOpen] = useState(false);
   const [isConfigureModalOpen, setIsConfigureModalOpen] = useState(false);
-  const [data, setData] = useState<any>([]);
-  const [data1, setData1] = useState<any>([]);
+  const [redeployData, setRedeployData] = useState<Data>({
+    propertyIdentifier: '',
+    name: '',
+    path: '',
+    ref: '',
+    env: '',
+    identifier: '',
+    nextRef: '',
+    accessUrl: '',
+    updatedAt: '',
+    imageUrl: '',
+    healthCheckPath: '',
+    _id: 0,
+    isSSR: false,
+    config: {}
+  });
+  const [configureData, setConfigureData] = useState<Data>({
+    propertyIdentifier: '',
+    name: '',
+    path: '',
+    ref: '',
+    env: '',
+    identifier: '',
+    nextRef: '',
+    accessUrl: '',
+    updatedAt: '',
+    imageUrl: '',
+    healthCheckPath: '',
+    _id: 0,
+    isSSR: false,
+    config: {}
+  });
 
   const handleRedeployModal = () => {
     setIsRedployModalOpen((prevIsModalOpen) => !prevIsModalOpen);
   };
 
   const handleConfirmRedployment = async () => {
-    data.propertyIdentifier = propertyIdentifier;
-
+    redeployData.propertyIdentifier = propertyIdentifier;
     try {
-      await createSsrSpaProperty.mutateAsync({ ...data });
+      await createSsrSpaProperty.mutateAsync({
+        ...redeployData
+      });
       toast.success('Redeployed SSR successfully');
     } catch (error) {
       toast.error('Failed to redeploy SSR');
@@ -117,7 +152,7 @@ export const SSRDetails = () => {
                         icon={<PencilAltIcon />}
                         onClick={() => {
                           handleConfigureModal();
-                          setData1(val);
+                          setConfigureData(val);
                         }}
                       >
                         Configure
@@ -129,7 +164,7 @@ export const SSRDetails = () => {
                         icon={<UndoIcon />}
                         onClick={() => {
                           handleRedeployModal();
-                          setData(val);
+                          setRedeployData(val);
                         }}
                       >
                         ReDeploy
@@ -163,7 +198,7 @@ export const SSRDetails = () => {
         <ConfigureSSRForm
           propertyIdentifier={propertyIdentifier}
           onClose={() => setIsConfigureModalOpen(!isConfigureModalOpen)}
-          dataprops={data1}
+          dataprops={configureData}
         />
       </Modal>
     </>

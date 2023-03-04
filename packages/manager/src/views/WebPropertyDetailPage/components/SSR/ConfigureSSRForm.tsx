@@ -7,16 +7,24 @@ import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import * as yup from 'yup';
 
-interface FormData {
+type FormData = {
+  propertyIdentifier: string;
   name: string;
   path: string;
-  ref?: string;
-  imageUrl: string;
-  healthCheckPath: string;
-  config: { [key: string]: string };
+  ref: string;
   env: string;
-  propertyIdentifier: string;
-}
+  identifier: string;
+  nextRef: string;
+  accessUrl: string;
+  updatedAt: string;
+  _id: number;
+  isSSR: boolean;
+  healthCheckPath: string;
+  config: {
+    [key: string]: string;
+  };
+  imageUrl: string;
+};
 
 const schema = yup.object().shape({
   name: yup.string().required(),
@@ -28,7 +36,7 @@ const schema = yup.object().shape({
 type Props = {
   onClose: () => void;
   propertyIdentifier: string;
-  dataprops: any;
+  dataprops: FormData;
 };
 
 export const ConfigureSSRForm = ({
