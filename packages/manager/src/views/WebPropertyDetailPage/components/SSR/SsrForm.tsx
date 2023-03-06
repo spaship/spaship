@@ -11,11 +11,12 @@ import {
   SplitItem,
   TextInput
 } from '@patternfly/react-core';
-import { AddCircleOIcon } from '@patternfly/react-icons';
+import { AddCircleOIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import * as yup from 'yup';
+import { RegisterOptions } from 'react-hook-form';
 
 type FormData = {
   propertyIdentifier: string;
@@ -30,9 +31,11 @@ type FormData = {
   _id: number;
   isSSR: boolean;
   healthCheckPath: string;
-  config: {
-    [key: string]: string;
-  };
+  config: Array<{
+    // id: string;
+    key: string;
+    value: string;
+  }>;
   imageUrl: string;
 };
 
@@ -42,7 +45,10 @@ const schema = yup.object().shape({
   imageUrl: yup.string().required(),
   healthCheckPath: yup.string().required()
 });
-
+type KeyValuePair = {
+  key: string;
+  value: string;
+}
 type Props = {
   onClose: () => void;
   propertyIdentifier: string;
@@ -52,34 +58,31 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
   const {
     control,
     handleSubmit,
+    register,
     formState: { errors }
   } = useForm<FormData>({
     resolver: yupResolver(schema)
   });
-
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'config' as const,
+  });
   const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
   const [keyValuePairs, setKeyValuePairs] = useState([{ key: '', value: '' }]);
   const handleAddKeyValuePair = () => {
     setKeyValuePairs([...keyValuePairs, { key: '', value: '' }]);
   };
 
-  const handleKeyValuePairChange = (index: number, key: string, value: string) => {
-    const newKeyValuePairs = [...keyValuePairs];
-    newKeyValuePairs[index] = { key, value };
-    setKeyValuePairs(newKeyValuePairs);
+  const handleKeyValuePairChange = (index: number, field: string, value: string) => {
+    console.log("index", index, field, value)
+    const updatedField = { ...fields[index], [field]: value };
+    fields[index] = updatedField;
   };
-
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
 
   const webPropertiesKeys = Object.keys(webProperties.data || {});
 
   const onSubmit = async (dataf: FormData) => {
-    const json: Record<string, string> = {};
-    keyValuePairs.forEach(({ key, value }) => {
-      if (key && value) {
-        json[key] = value;
-      }
-    });
     const temp = dataf;
     if (!temp.path.startsWith('/')) {
       temp.path = `/${temp.path}`;
@@ -90,7 +93,6 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
 
     const newData = {
       ...temp,
-      config: json,
       propertyIdentifier
     };
     try {
@@ -101,6 +103,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
       toast.error('Failed to deploy SSR');
     }
   };
+
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Split hasGutter>
@@ -245,21 +248,21 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
             justifyContent: 'right'
           }}
         >
-          <Button variant="secondary" onClick={handleAddKeyValuePair}>
+          <Button variant="secondary" onClick={() => append({ key: '', value: '' })}>
             <AddCircleOIcon />
           </Button>
         </SplitItem>
       </Split>
-
-      {keyValuePairs.map((pair, index) => (
+      {/* {fields.map((pair, index) => (
         <Split hasGutter key={`key-${index + 1}`}>
           <SplitItem isFilled>
             <FormGroup label="Key">
               <TextInput
                 id={`key-${index}`}
                 type="text"
-                value={pair.key}
-                onChange={(event) => handleKeyValuePairChange(index, event, pair.value)}
+                {...register(`config.${index}.key`)}
+                defaultValue={pair.key}
+                onChange={(event) => handleKeyValuePairChange(index, 'key', event)}
               />
             </FormGroup>
           </SplitItem>
@@ -268,14 +271,48 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
               <TextInput
                 id={`value-${index}`}
                 type="text"
-                value={pair.value}
-                onChange={(event) => handleKeyValuePairChange(index, pair.key, event)}
+                {...register(`config.${index}.value`)}
+                defaultValue={pair.value}
+                onChange={(event) => handleKeyValuePairChange(index, 'value', event)}
               />
             </FormGroup>
           </SplitItem>
-        </Split>
-      ))}
+          <SplitItem isFilled> <Button onClick={() => remove(index)}><TimesCircleIcon/></Button>  </SplitItem>
 
+        </Split>
+
+      ))} */}
+
+      {fields.map((pair, index) => (
+        <Split hasGutter>
+          <SplitItem key={`key-${index + 1}`} isFilled>
+            <FormGroup label="Key">
+              <TextInput
+                id={`key-${index}`}
+                type="text"
+                {...register(`config.${index}.key`)}
+                defaultValue={pair.key}
+                onChange={(event) => handleKeyValuePairChange(index, 'key', event)}
+              />
+            </FormGroup>
+          </SplitItem>
+          <SplitItem key={`value-${index + 1}`} isFilled>
+            <FormGroup label="Value">
+              <TextInput
+                id={`value-${index}`}
+                type="text"
+                {...register(`config.${index}.value`)}
+                defaultValue={pair.value}
+                onChange={(event) => handleKeyValuePairChange(index, 'value', event)}
+              />
+            </FormGroup>
+          </SplitItem>
+          <SplitItem key={`remove-${index + 1}`} style={{ display: 'flex', alignItems: 'center', marginLeft: 'var(--pf-global--spacer--md)',marginTop: 'var(--pf-global--spacer--lg)' }}>
+            <Button variant="link" icon={<TimesCircleIcon />} onClick={() => remove(index)}></Button>
+          </SplitItem>
+        </Split>
+
+      ))}
       <Button type="submit">Submit</Button>
     </Form>
   );
