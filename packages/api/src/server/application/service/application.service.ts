@@ -255,7 +255,7 @@ export class ApplicationService {
    * Update the particular application accordingly
    */
   async deploySSRApplication(
-    sseRequest: SSRDeploymentRequest,
+    ssrRequest: SSRDeploymentRequest,
     propertyIdentifier: string,
     env: string,
     identifier: string,
@@ -263,9 +263,11 @@ export class ApplicationService {
     createdBy: string
   ) {
     try {
-      const response = await this.applicationFactory.ssrDeploymentRequest(sseRequest, baseUrl);
+      const response = await this.applicationFactory.ssrDeploymentRequest(ssrRequest, baseUrl);
       this.logger.log('SSRDeploymentResponse', JSON.stringify(response));
       if (!response) return;
+      // @internal TODO : To be removed after the Operator Enhancement
+      await this.applicationFactory.ssrConfigUpdate(ssrRequest, baseUrl);
       const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true }))[0];
       applicationDetails.accessUrl = response.accessUrl;
       applicationDetails.ref = applicationDetails.nextRef;
