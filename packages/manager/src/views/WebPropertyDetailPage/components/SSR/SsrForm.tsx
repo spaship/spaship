@@ -12,11 +12,9 @@ import {
   TextInput
 } from '@patternfly/react-core';
 import { AddCircleOIcon, TimesCircleIcon } from '@patternfly/react-icons';
-import { useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import * as yup from 'yup';
-import { RegisterOptions } from 'react-hook-form';
 
 type FormData = {
   propertyIdentifier: string;
@@ -39,20 +37,21 @@ type FormData = {
   imageUrl: string;
 };
 
+
+interface ConfigObj {
+  [key: string]: string;
+}
+type Props = {
+  onClose: () => void;
+  propertyIdentifier: string;
+};
+
 const schema = yup.object().shape({
   name: yup.string().required(),
   path: yup.string().required(),
   imageUrl: yup.string().required(),
   healthCheckPath: yup.string().required()
 });
-type KeyValuePair = {
-  key: string;
-  value: string;
-}
-type Props = {
-  onClose: () => void;
-  propertyIdentifier: string;
-};
 
 export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => {
   const {
@@ -68,13 +67,9 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
     name: 'config' as const,
   });
   const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
-  const [keyValuePairs, setKeyValuePairs] = useState([{ key: '', value: '' }]);
-  const handleAddKeyValuePair = () => {
-    setKeyValuePairs([...keyValuePairs, { key: '', value: '' }]);
-  };
 
   const handleKeyValuePairChange = (index: number, field: string, value: string) => {
-    console.log("index", index, field, value)
+    
     const updatedField = { ...fields[index], [field]: value };
     fields[index] = updatedField;
   };
@@ -90,11 +85,19 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
     if (!temp.healthCheckPath.startsWith('/')) {
       temp.healthCheckPath = `/${temp.healthCheckPath}`;
     }
-
+  
+    const configObj = temp.config.reduce((acc: ConfigObj, cur) => {
+      acc[cur.key] = cur.value;
+      return acc;
+    }, {});
+  
     const newData = {
       ...temp,
+      config: configObj, 
       propertyIdentifier
     };
+
+    
     try {
       await createSsrSpaProperty.mutateAsync(newData);
       onClose();
@@ -103,7 +106,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
       toast.error('Failed to deploy SSR');
     }
   };
-
+  
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Split hasGutter>
@@ -253,36 +256,6 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
           </Button>
         </SplitItem>
       </Split>
-      {/* {fields.map((pair, index) => (
-        <Split hasGutter key={`key-${index + 1}`}>
-          <SplitItem isFilled>
-            <FormGroup label="Key">
-              <TextInput
-                id={`key-${index}`}
-                type="text"
-                {...register(`config.${index}.key`)}
-                defaultValue={pair.key}
-                onChange={(event) => handleKeyValuePairChange(index, 'key', event)}
-              />
-            </FormGroup>
-          </SplitItem>
-          <SplitItem isFilled>
-            <FormGroup label="Value">
-              <TextInput
-                id={`value-${index}`}
-                type="text"
-                {...register(`config.${index}.value`)}
-                defaultValue={pair.value}
-                onChange={(event) => handleKeyValuePairChange(index, 'value', event)}
-              />
-            </FormGroup>
-          </SplitItem>
-          <SplitItem isFilled> <Button onClick={() => remove(index)}><TimesCircleIcon/></Button>  </SplitItem>
-
-        </Split>
-
-      ))} */}
-
       {fields.map((pair, index) => (
         <Split hasGutter>
           <SplitItem key={`key-${index + 1}`} isFilled>

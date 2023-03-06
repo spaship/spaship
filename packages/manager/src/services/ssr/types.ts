@@ -11,11 +11,9 @@ export type TSSRProperty = {
   _id: number;
   isSSR: boolean;
   healthCheckPath: string;
-  config: Array<{
-    // id: string;
-    key: string;
-    value: string;
-  }>;
+  config: {
+    [key: string]: string;
+  };
   imageUrl: string;
 };
 
