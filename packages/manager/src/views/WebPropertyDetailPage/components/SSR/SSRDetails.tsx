@@ -1,4 +1,5 @@
 import { TableRowSkeleton } from '@app/components';
+import { usePopUp } from '@app/hooks';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { useAddSsrSpaProperty } from '@app/services/ssr';
@@ -39,9 +40,7 @@ export const SSRDetails = () => {
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
 
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
-  const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
-  const [isRedployModalOpen, setIsRedployModalOpen] = useState(false);
-  const [isConfigureModalOpen, setIsConfigureModalOpen] = useState(false);
+  const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;;
   const [redeployData, setRedeployData] = useState<Data>({
     propertyIdentifier: '',
     name: '',
@@ -75,9 +74,10 @@ export const SSRDetails = () => {
     config: {}
   });
 
-  const handleRedeployModal = () => {
-    setIsRedployModalOpen((prevIsModalOpen) => !prevIsModalOpen);
-  };
+  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
+   'redeploySsrApplication',
+   'reconfigureSsrApplication'
+  ] as const);
 
   const handleConfirmRedployment = async () => {
     redeployData.propertyIdentifier = propertyIdentifier;
@@ -89,11 +89,7 @@ export const SSRDetails = () => {
     } catch (error) {
       toast.error('Failed to redeploy SSR');
     }
-    setIsRedployModalOpen((prevIsModalOpen) => !prevIsModalOpen);
-  };
-
-  const handleConfigureModal = () => {
-    setIsConfigureModalOpen((prevIsModalOpen) => !prevIsModalOpen);
+    handlePopUpClose('redeploySsrApplication')
   };
 
   const url = window.location.href;
@@ -151,7 +147,7 @@ export const SSRDetails = () => {
                         isSmall
                         icon={<PencilAltIcon />}
                         onClick={() => {
-                          handleConfigureModal();
+                        handlePopUpOpen('reconfigureSsrApplication');
                           setConfigureData(val);
                         }}
                       >
@@ -163,7 +159,7 @@ export const SSRDetails = () => {
                         isSmall
                         icon={<UndoIcon />}
                         onClick={() => {
-                          handleRedeployModal();
+                          handlePopUpOpen('redeploySsrApplication');
                           setRedeployData(val);
                         }}
                       >
@@ -180,8 +176,8 @@ export const SSRDetails = () => {
       <Modal
         title="Confirm SSR Redeployment"
         variant={ModalVariant.medium}
-        isOpen={isRedployModalOpen}
-        onClose={handleRedeployModal}
+        isOpen={popUp.redeploySsrApplication.isOpen}
+        onClose={() =>handlePopUpClose('redeploySsrApplication')}
       >
         <p> Want to redeploy the SPA?</p>
         <Button onClick={handleConfirmRedployment} className="pf-u-mt-md">
@@ -192,12 +188,12 @@ export const SSRDetails = () => {
       <Modal
         title="Configure SPA"
         variant={ModalVariant.medium}
-        isOpen={isConfigureModalOpen}
-        onClose={handleConfigureModal}
+        isOpen={popUp.reconfigureSsrApplication.isOpen}
+        onClose={() =>handlePopUpClose('reconfigureSsrApplication')}
       >
         <ConfigureSSRForm
           propertyIdentifier={propertyIdentifier}
-          onClose={() => setIsConfigureModalOpen(!isConfigureModalOpen)}
+          onClose={() => handlePopUpClose('reconfigureSsrApplication')}
           dataprops={configureData}
         />
       </Modal>
