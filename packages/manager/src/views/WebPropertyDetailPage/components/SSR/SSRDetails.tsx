@@ -40,7 +40,7 @@ export const SSRDetails = () => {
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
 
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
-  const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;;
+  const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
   const [redeployData, setRedeployData] = useState<Data>({
     propertyIdentifier: '',
     name: '',
@@ -75,8 +75,8 @@ export const SSRDetails = () => {
   });
 
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
-   'redeploySsrApplication',
-   'reconfigureSsrApplication'
+    'redeploySsrApplication',
+    'reconfigureSsrApplication'
   ] as const);
 
   const handleConfirmRedployment = async () => {
@@ -89,7 +89,7 @@ export const SSRDetails = () => {
     } catch (error) {
       toast.error('Failed to redeploy SSR');
     }
-    handlePopUpClose('redeploySsrApplication')
+    handlePopUpClose('redeploySsrApplication');
   };
 
   const url = window.location.href;
@@ -147,7 +147,7 @@ export const SSRDetails = () => {
                         isSmall
                         icon={<PencilAltIcon />}
                         onClick={() => {
-                        handlePopUpOpen('reconfigureSsrApplication');
+                          handlePopUpOpen('reconfigureSsrApplication');
                           setConfigureData(val);
                         }}
                       >
@@ -177,7 +177,7 @@ export const SSRDetails = () => {
         title="Confirm SSR Redeployment"
         variant={ModalVariant.medium}
         isOpen={popUp.redeploySsrApplication.isOpen}
-        onClose={() =>handlePopUpClose('redeploySsrApplication')}
+        onClose={() => handlePopUpClose('redeploySsrApplication')}
       >
         <p> Want to redeploy the SPA?</p>
         <Button onClick={handleConfirmRedployment} className="pf-u-mt-md">
@@ -189,7 +189,7 @@ export const SSRDetails = () => {
         title="Configure SPA"
         variant={ModalVariant.medium}
         isOpen={popUp.reconfigureSsrApplication.isOpen}
-        onClose={() =>handlePopUpClose('reconfigureSsrApplication')}
+        onClose={() => handlePopUpClose('reconfigureSsrApplication')}
       >
         <ConfigureSSRForm
           propertyIdentifier={propertyIdentifier}

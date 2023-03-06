@@ -1,13 +1,26 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import { useAddSsrSpaProperty } from '@app/services/ssr';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Form, FormGroup, Split, SplitItem, TextInput } from '@patternfly/react-core';
-import { AddCircleOIcon } from '@patternfly/react-icons';
-import { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { AddCircleOIcon, TimesCircleIcon } from '@patternfly/react-icons';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import * as yup from 'yup';
 
-type FormData = {
+interface ConfigObj {
+  [key: string]: string;
+}
+
+const schema = yup.object({
+  name: yup.string().required(),
+  path: yup.string().required(),
+  env: yup.string().required(),
+  ref: yup.string().required(),
+  imageUrl: yup.string().required(),
+  healthCheckPath: yup.string().required(),
+  config: yup.array(yup.object({ key: yup.string().required(), value: yup.string().required() }))
+});
+type Data = {
   propertyIdentifier: string;
   name: string;
   path: string;
@@ -25,19 +38,16 @@ type FormData = {
   };
   imageUrl: string;
 };
-
-const schema = yup.object().shape({
-  name: yup.string().required(),
-  path: yup.string().required(),
-  imageUrl: yup.string().required(),
-  healthCheckPath: yup.string().required()
-});
-
 type Props = {
   onClose: () => void;
   propertyIdentifier: string;
-  dataprops: FormData;
+  dataprops: Data;
 };
+
+export type FormData = yup.InferType<typeof schema>;
+
+const keyValuePairsGenerator = ({ dataprops }: { dataprops: Data }) =>
+  Object.entries(dataprops.config).map(([key, value]) => ({ key, value }));
 
 export const ConfigureSSRForm = ({
   onClose,
@@ -47,183 +57,187 @@ export const ConfigureSSRForm = ({
   const {
     control,
     handleSubmit,
-    formState: { errors },
-    reset
+    register,
+    formState: { isSubmitting }
   } = useForm<FormData>({
-    resolver: yupResolver(schema)
+    mode: 'onBlur',
+    resolver: yupResolver(schema),
+    defaultValues: { ...dataprops, config: keyValuePairsGenerator({ dataprops }) }
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'config' as const
   });
 
   const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
 
-  const [keyValuePairs, setKeyValuePairs] = useState([{ key: '', value: '' }]);
-  const handleAddKeyValuePair = () => {
-    setKeyValuePairs([...keyValuePairs, { key: '', value: '' }]);
+  const handleKeyValuePairChange = (index: number, field: string, value: string) => {
+    const updatedField = { ...fields[index], [field]: value };
+    fields[index] = updatedField;
   };
 
-  const handleKeyValuePairChange = (index: number, key: string, value: string) => {
-    const newKeyValuePairs = [...keyValuePairs];
-    newKeyValuePairs[index] = { key, value };
-    setKeyValuePairs(newKeyValuePairs);
-  };
-
-  const onSubmit = async (data: FormData) => {
-    const json: Record<string, string> = {};
-    keyValuePairs.forEach(({ key, value }) => {
-      if (key && value) {
-        json[key] = value;
-      }
-    });
-    const temp = data;
-    if (!temp.path.startsWith('/')) {
-      temp.path = `/${temp.path}`;
-    }
-    if (!temp.healthCheckPath.startsWith('/')) {
-      temp.healthCheckPath = `/${temp.healthCheckPath}`;
-    }
-
-    const newData = {
-      ...temp,
-      config: json,
+  const onSubmit = async (dataf: FormData) => {
+    const newDataf = {
+      ...dataf,
+      path: dataf.path.startsWith('/') ? dataf.path : `/${dataf.path}`,
+      healthCheckPath: dataf.healthCheckPath.startsWith('/')
+        ? dataf.healthCheckPath
+        : `/${dataf.healthCheckPath}`,
+      config: dataf.config
+        ? dataf.config.reduce((acc: ConfigObj, cur: any) => {
+            acc[cur.key] = cur.value;
+            return acc;
+          }, {})
+        : {},
       propertyIdentifier
     };
+
     try {
-      await createSsrSpaProperty.mutateAsync(newData);
+      await createSsrSpaProperty.mutateAsync(newDataf);
       onClose();
-      toast.success('Configured and deployed SSR successfully');
+      toast.success('Deployed SSR successfully');
     } catch (error) {
       toast.error('Failed to deploy SSR');
     }
   };
 
-  useEffect(() => {
-    const configKeys = Object.keys(dataprops.config);
-    const configPairs = configKeys.map((key) => ({ key, value: dataprops.config[key] }));
-    setKeyValuePairs(configPairs);
-    reset(dataprops);
-  }, [reset, dataprops]);
-
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Split hasGutter>
         <SplitItem isFilled>
-          <FormGroup label="Name" isRequired>
-            <Controller
-              name="name"
-              control={control}
-              render={({ field }) => (
+          <Controller
+            control={control}
+            name="name"
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label="Name"
+                isRequired
+                fieldId="property-name"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
                 <TextInput
-                  id="name"
+                  isRequired
+                  placeholder="Application Name"
                   type="text"
+                  id="property-name"
                   isDisabled
-                  value={field.value}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
+                  {...field}
                 />
-              )}
-            />
-            {errors.name && <span>{errors.name.message}</span>}
-          </FormGroup>
+              </FormGroup>
+            )}
+          />
         </SplitItem>
         <SplitItem isFilled>
-          <FormGroup label="Select Environment" fieldId="select-env">
-            <Controller
-              name="env"
-              control={control}
-              render={({ field }) => (
+          <Controller
+            control={control}
+            name="env"
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label="Environment"
+                isRequired
+                fieldId="env"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
                 <TextInput
+                  isRequired
+                  // placeholder="Application Name"
+                  type="text"
                   id="env"
-                  type="text"
                   isDisabled
-                  value={field.value}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
+                  {...field}
                 />
-              )}
-            />
-            {errors.name && <span>{errors.name.message}</span>}
-          </FormGroup>
+              </FormGroup>
+            )}
+          />
         </SplitItem>
       </Split>
 
       <Split hasGutter>
         <SplitItem isFilled>
-          <FormGroup label="Path" isRequired>
-            <Controller
-              name="path"
-              control={control}
-              render={({ field }) => (
-                <TextInput
-                  id="path"
-                  type="text"
-                  isRequired
-                  value={field.value}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                />
-              )}
-            />
-            {errors.path && <span>{errors.path.message}</span>}
-          </FormGroup>
+          <Controller
+            control={control}
+            name="ref"
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label="Ref"
+                isRequired
+                fieldId="ref"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
+                <TextInput isRequired placeholder="Ref" type="text" id="ref" {...field} />
+              </FormGroup>
+            )}
+          />
         </SplitItem>
         <SplitItem isFilled>
-          <FormGroup label="Ref">
-            <Controller
-              name="ref"
-              control={control}
-              render={({ field }) => (
+          <Controller
+            control={control}
+            name="imageUrl"
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label="Image URL"
+                isRequired
+                fieldId="imageUrl"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
                 <TextInput
-                  id="ref"
-                  type="text"
                   isRequired
-                  value={field.value}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                />
-              )}
-            />
-            {errors.ref && <span>{errors.ref.message}</span>}
-          </FormGroup>
-        </SplitItem>
-      </Split>
-
-      <Split hasGutter>
-        <SplitItem isFilled>
-          <FormGroup label="Image URL" isRequired>
-            <Controller
-              name="imageUrl"
-              control={control}
-              render={({ field }) => (
-                <TextInput
+                  placeholder="Enter Image URL"
+                  type="text"
                   id="imageUrl"
-                  type="text"
-                  isRequired
-                  value={field.value}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
+                  {...field}
                 />
-              )}
-            />
-            {errors.imageUrl && <span>{errors.imageUrl.message}</span>}
-          </FormGroup>
+              </FormGroup>
+            )}
+          />
+        </SplitItem>
+      </Split>
+
+      <Split hasGutter>
+        <SplitItem isFilled>
+          <Controller
+            control={control}
+            name="healthCheckPath"
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label="Health Check Path"
+                isRequired
+                fieldId="healthCheckPath"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
+                <TextInput
+                  isRequired
+                  placeholder="Enter health Check Path"
+                  type="text"
+                  id="healthCheckPath"
+                  {...field}
+                />
+              </FormGroup>
+            )}
+          />
         </SplitItem>
         <SplitItem isFilled>
-          <FormGroup label="Health Check Path" isRequired>
-            <Controller
-              name="healthCheckPath"
-              control={control}
-              render={({ field }) => (
-                <TextInput
-                  id="healthCheckPath"
-                  type="text"
-                  isRequired
-                  value={field.value}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                />
-              )}
-            />
-            {errors.healthCheckPath && <span>{errors.healthCheckPath.message}</span>}
-          </FormGroup>
+          <Controller
+            control={control}
+            name="path"
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label="Path"
+                isRequired
+                fieldId="path"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
+                <TextInput isRequired placeholder="Path" type="text" id="path" {...field} />
+              </FormGroup>
+            )}
+          />
         </SplitItem>
       </Split>
 
@@ -236,38 +250,79 @@ export const ConfigureSSRForm = ({
             justifyContent: 'right'
           }}
         >
-          <Button variant="secondary" onClick={handleAddKeyValuePair}>
+          <Button variant="secondary" onClick={() => append({ key: '', value: '' })}>
             <AddCircleOIcon />
           </Button>
         </SplitItem>
       </Split>
-
-      {keyValuePairs.map((pair, index) => (
-        <Split hasGutter key={`key-${index + 1}`}>
-          <SplitItem isFilled>
-            <FormGroup label="Key">
-              <TextInput
-                id={`key-${index}`}
-                type="text"
-                value={pair.key}
-                onChange={(event) => handleKeyValuePairChange(index, event, pair.value)}
-              />
-            </FormGroup>
+      {fields.map((pair, index) => (
+        <Split key={`key-${index + 1}`} hasGutter>
+          <SplitItem key={`key-${index + 1}`} isFilled>
+            <Controller
+              control={control}
+              name="config"
+              render={({ fieldState: { error } }) => (
+                <FormGroup
+                  label="Key"
+                  isRequired
+                  fieldId="key"
+                  validated={error ? 'error' : 'default'}
+                  helperTextInvalid={error?.message}
+                >
+                  <TextInput
+                    id={`key-${index}`}
+                    type="text"
+                    isRequired
+                    placeholder="Config Key"
+                    {...register(`config.${index}.key`)}
+                    defaultValue={pair.key}
+                    onChange={(event) => handleKeyValuePairChange(index, 'key', event)}
+                  />
+                </FormGroup>
+              )}
+            />
           </SplitItem>
-          <SplitItem isFilled>
-            <FormGroup label="Value">
-              <TextInput
-                id={`value-${index}`}
-                type="text"
-                value={pair.value}
-                onChange={(event) => handleKeyValuePairChange(index, pair.key, event)}
-              />
-            </FormGroup>
+          <SplitItem key={`value-${index + 1}`} isFilled>
+            <Controller
+              control={control}
+              name="config"
+              render={({ fieldState: { error } }) => (
+                <FormGroup
+                  label="Value"
+                  isRequired
+                  fieldId="value"
+                  validated={error ? 'error' : 'default'}
+                  helperTextInvalid={error?.message}
+                >
+                  <TextInput
+                    id={`value-${index}`}
+                    type="text"
+                    isRequired
+                    placeholder="Config Value"
+                    {...register(`config.${index}.value`)}
+                    defaultValue={pair.value}
+                    onChange={(event) => handleKeyValuePairChange(index, 'value', event)}
+                  />
+                </FormGroup>
+              )}
+            />
+          </SplitItem>
+          <SplitItem
+            key={`remove-${index + 1}`}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginLeft: 'var(--pf-global--spacer--md)',
+              marginTop: 'var(--pf-global--spacer--lg)'
+            }}
+          >
+            <Button variant="link" icon={<TimesCircleIcon />} onClick={() => remove(index)} />
           </SplitItem>
         </Split>
       ))}
-
-      <Button type="submit">Submit</Button>
+      <Button isLoading={isSubmitting} type="submit">
+        Submit
+      </Button>
     </Form>
   );
 };

@@ -20,7 +20,9 @@ export const StaticDeployment = () => {
   const url = window.location.href;
   const parts = url.split('/');
   const applicationName = parts[parts.length - 1];
-  const temp = spaProperties?.data?.[applicationName].filter((data) => data.isSSR === false);
+  const staticDeploymentData = spaProperties?.data?.[applicationName].filter(
+    (data) => data.isSSR === false
+  );
 
   return (
     <div>
@@ -46,7 +48,7 @@ export const StaticDeployment = () => {
             <TableRowSkeleton rows={3} columns={4} />
           ) : (
             <Tbody>
-              {temp?.map((val) => (
+              {staticDeploymentData?.map((val) => (
                 <Tr key={val.name}>
                   <Td textCenter>{val?.name}</Td>
                   <Td textCenter>
