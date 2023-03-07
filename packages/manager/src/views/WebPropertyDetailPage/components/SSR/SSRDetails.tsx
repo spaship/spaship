@@ -3,8 +3,8 @@ import { usePopUp } from '@app/hooks';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { useAddSsrSpaProperty } from '@app/services/ssr';
-import { Button, Label, Modal, ModalVariant, SplitItem } from '@patternfly/react-core';
-import { PencilAltIcon, UndoIcon } from '@patternfly/react-icons';
+import { Button, Label, Modal, ModalVariant, Split, SplitItem } from '@patternfly/react-core';
+import { ExternalLinkAltIcon, PencilAltIcon, UndoIcon } from '@patternfly/react-icons';
 import { Caption, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -28,7 +28,7 @@ type Data = {
   config: Record<string, string>;
   imageUrl: string;
 };
-
+const URL_LENGTH_LIMIT = 25;
 export const SSRDetails = () => {
   const { query } = useRouter();
 
@@ -102,7 +102,7 @@ export const SSRDetails = () => {
       ) : (
         <TableComposable aria-label="spa-property-list" className="">
           <>
-          <Caption>SPA&apos;s DEPLOYED</Caption>
+            <Caption>SPA&apos;s DEPLOYED</Caption>
             <Thead noWrap>
               <Tr>
                 <Th textCenter>SPA Name</Th>
@@ -110,6 +110,7 @@ export const SSRDetails = () => {
                 <Th textCenter>Ref</Th>
                 <Th textCenter>Path</Th>
                 <Th textCenter>HealthCheck Path</Th>
+                <Th textCenter>Internal Access URL</Th>
                 <Th textCenter style={{ justifyContent: 'space-evenly', display: 'grid' }}>
                   Actions
                 </Th>
@@ -118,12 +119,18 @@ export const SSRDetails = () => {
           </>
           {(spaProperties.isLoading && webProperties.isLoading) ||
           (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
-            <TableRowSkeleton rows={3} columns={4} />
+            <TableRowSkeleton rows={3} columns={7} />
           ) : (
             <Tbody>
               {temp?.map((val) => (
                 <Tr key={val.name}>
-                  <Td textCenter>{val?.name}</Td>
+                  <Td textCenter>
+                    {' '}
+                    {`${val?.name.slice(0, URL_LENGTH_LIMIT)} ${
+                      val?.name.length > URL_LENGTH_LIMIT ? '...' : ''
+                    }`}
+                  </Td>
+
                   <Td textCenter>
                     <Label
                       key={val.env}
@@ -138,32 +145,43 @@ export const SSRDetails = () => {
                   <Td textCenter>{val?.ref}</Td>
                   <Td textCenter>{val?.path}</Td>
                   <Td textCenter>{val?.healthCheckPath}</Td>
-                  <Td textCenter style={{ justifyContent: 'flex-end', display: 'grid' }}>
-                    <SplitItem isFilled>
-                      <Button
-                        variant="primary"
-                        isSmall
-                        icon={<PencilAltIcon />}
-                        onClick={() => {
-                          handlePopUpOpen('reconfigureSsrApplication');
-                          setConfigureData(val);
-                        }}
-                      >
-                        Configure
-                      </Button>
-                      &nbsp;&nbsp;
-                      <Button
-                        variant="secondary"
-                        isSmall
-                        icon={<UndoIcon />}
-                        onClick={() => {
-                          handlePopUpOpen('redeploySsrApplication');
-                          setRedeployData(val);
-                        }}
-                      >
-                        ReDeploy
-                      </Button>
-                    </SplitItem>
+                  <Td textCenter>
+                    <a href={val?.accessUrl} target="_blank" rel="noopener noreferrer">
+                      <ExternalLinkAltIcon />{' '}
+                      {`${val?.accessUrl.slice(0, URL_LENGTH_LIMIT)} ${
+                        val?.accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
+                      }`}
+                    </a>
+                  </Td>
+                  <Td textCenter>
+                    <Split hasGutter>
+                      <SplitItem isFilled>
+                        <Button
+                          variant="primary"
+                          isSmall
+                          icon={<PencilAltIcon />}
+                          onClick={() => {
+                            handlePopUpOpen('reconfigureSsrApplication');
+                            setConfigureData(val);
+                          }}
+                        >
+                          Configure
+                        </Button>
+                      </SplitItem>
+                      <SplitItem isFilled>
+                        <Button
+                          variant="secondary"
+                          isSmall
+                          icon={<UndoIcon />}
+                          onClick={() => {
+                            handlePopUpOpen('redeploySsrApplication');
+                            setRedeployData(val);
+                          }}
+                        >
+                          ReDeploy
+                        </Button>
+                      </SplitItem>
+                    </Split>
                   </Td>
                 </Tr>
               ))}

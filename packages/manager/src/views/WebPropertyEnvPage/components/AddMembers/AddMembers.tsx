@@ -61,7 +61,7 @@ const userRole: UserRoleDTO = {
     'ENV_SYNC',
     'PERMISSION_CREATION',
     'PERMISSION_DELETION',
-    'APPLICATION_CREATION',
+    'APPLICATION_CREATION'
   ]
 };
 
@@ -175,7 +175,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
     });
   };
 
-  const onToggleRover = () => { };
+  const onToggleRover = () => {};
   const onSelectRover: SelectProps['onSelect'] = (_event, selection) => {
     setUsersData((prevGroup: UserDataDTO) => ({
       data: prevGroup.data.filter((n: { name: string }) => n.name !== selection)
@@ -409,7 +409,6 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                                       { id: 'ENV_CREATION', value: i.ENV_CREATION },
                                       { id: 'ENV_SYNC', value: i.ENV_SYNC },
                                       { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION }
-
                                     ].map((item) => (
                                       <Td key={item.id}>
                                         <Checkbox
@@ -514,7 +513,6 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                         { id: 'ENV_CREATION', value: i.ENV_CREATION },
                         { id: 'ENV_SYNC', value: i.ENV_SYNC },
                         { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION }
-
                       ].map((item) => (
                         <Td key={item.id}>
                           <Checkbox
@@ -582,7 +580,6 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                                       { id: 'ENV_CREATION', value: i.ENV_CREATION },
                                       { id: 'ENV_SYNC', value: i.ENV_SYNC },
                                       { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION }
-
                                     ].map((item) => (
                                       <Td key={item.id}>
                                         <Checkbox

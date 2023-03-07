@@ -1,5 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-import { useMemo } from 'react';
 import {
   Button,
   Card,
@@ -21,11 +20,19 @@ import {
   TabTitleText,
   Title
 } from '@patternfly/react-core';
-import Link from 'next/link';
 import dayjs from 'dayjs';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useMemo } from 'react';
 
-import { BuildIcon, CogIcon, CubesIcon, PackageIcon, RunningIcon } from '@patternfly/react-icons';
+import { Banner } from '@app/components';
+import { ActivityStream } from '@app/components/ActivityStream';
+import { useTabs } from '@app/hooks';
+import { pageLinks } from '@app/links';
+import {
+  useGetMonthlyDeploymentChart,
+  useGetTotalDeploymentsForApps
+} from '@app/services/analytics';
 import {
   Chart,
   ChartAxis,
@@ -35,14 +42,14 @@ import {
   ChartVoronoiContainer
 } from '@patternfly/react-charts';
 import {
-  useGetMonthlyDeploymentChart,
-  useGetTotalDeploymentsForApps
-} from '@app/services/analytics';
-import { useTabs } from '@app/hooks';
-import { Banner } from '@app/components';
-import { pageLinks } from '@app/links';
+  BuildIcon,
+  BundleIcon,
+  CogIcon,
+  CubesIcon,
+  PackageIcon,
+  RunningIcon
+} from '@patternfly/react-icons';
 import toast from 'react-hot-toast';
-import { ActivityStream } from '@app/components/ActivityStream';
 import { SSRDetails } from '../WebPropertyDetailPage/components/SSR/SSRDetails';
 import { StaticDeployment } from '../WebPropertyDetailPage/components/SSR/StaticDeployment';
 
@@ -130,7 +137,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             title={
               <>
                 <TabTitleIcon>
-                  <BuildIcon />
+                  <BundleIcon />
                 </TabTitleIcon>
                 <TabTitleText>Static Deployment</TabTitleText>{' '}
               </>

@@ -3,6 +3,7 @@ import { useAddSsrSpaProperty } from '@app/services/ssr';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Form, FormGroup, Split, SplitItem, TextInput } from '@patternfly/react-core';
 import { AddCircleOIcon, TimesCircleIcon } from '@patternfly/react-icons';
+import { AxiosError } from 'axios';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import * as yup from 'yup';
@@ -42,7 +43,7 @@ type Props = {
 export type FormData = yup.InferType<typeof schema>;
 
 const keyValuePairsGenerator = ({ dataprops }: { dataprops: Data }) =>
-  Object.entries(dataprops.config).map(([key, value]) => ({ key, value }));
+  Object.entries(dataprops?.config || {}).map(([key, value]) => ({ key, value }));
 
 export const ConfigureSSRForm = ({
   onClose,
@@ -93,7 +94,12 @@ export const ConfigureSSRForm = ({
       onClose();
       toast.success('Deployed SSR successfully');
     } catch (error) {
-      toast.error('Failed to deploy SSR');
+      if (error instanceof AxiosError && error.response && error.response.status === 403) {
+        toast.error("You don't have access to perform this action");
+        onClose();
+      } else {
+        toast.error('Failed to deploy SSR');
+      }
     }
   };
 

@@ -77,7 +77,6 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
         : {},
       propertyIdentifier
     };
-
     try {
       await createSsrSpaProperty.mutateAsync(newDataf);
       onClose();
@@ -87,9 +86,8 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
         toast.error("You don't have access to perform this action");
         onClose();
       } else {
-       toast.error('Failed to deploy SSR');
+        toast.error('Failed to deploy SSR');
       }
-      
     }
   };
 

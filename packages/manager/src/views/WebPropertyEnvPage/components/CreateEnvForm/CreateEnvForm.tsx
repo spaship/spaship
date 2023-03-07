@@ -18,13 +18,7 @@ export const schema = yup.object({
   // TODO: change this to URL validation, after server supports http protocol append
 
   url: yup.string().label('Hostname URL').trim().required().max(250),
-  env: yup
-    .string()
-    .label('Environment Name')
-    .trim()
-    .max(15)
-    .matches(/^[a-zA-Z0-9-]+$/, 'Only letters, numbers, and dashes are allowed')
-    .required(),
+  env: yup.string().label('Environment Name').trim().max(50).alphabetsOnly().required(),
   cluster: yup.string().label('Environment Type').oneOf(['preprod', 'prod']).required()
 });
 

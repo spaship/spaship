@@ -141,7 +141,17 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             {!spaProperties.isLoading &&
             !isCountOfSpasListEmpty &&
             Object.values(countOfSpas.data || {}).length === 0 ? (
-              <EmptyInfo propertyIdentifier={propertyIdentifier} />
+              <>
+                <Split hasGutter className="pf-u-mt-md">
+                  <Button
+                    onClick={() => handlePopUpOpen('createSSRDeployment')}
+                    icon={<PlusCircleIcon />}
+                  >
+                    Add Deployment
+                  </Button>
+                </Split>
+                <EmptyInfo propertyIdentifier={propertyIdentifier} />
+              </>
             ) : (
               <>
                 <div className="pf-u-w-70 pf-u-mb-lg pf-u-mt-md">
@@ -255,7 +265,16 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                     query: { propertyIdentifier, spaProperty: identifier }
                                   }}
                                 >
-                                  {spaProperties.data[identifier]?.[0]?.name}
+                                  {/* {spaProperties.data[identifier]?.[0]?.name} */}
+                                  {`${spaProperties.data[identifier]?.[0]?.name.slice(
+                                    0,
+                                    URL_LENGTH_LIMIT
+                                  )} ${
+                                    spaProperties.data[identifier]?.[0]?.name.length >
+                                    URL_LENGTH_LIMIT
+                                      ? '...'
+                                      : ''
+                                  }`}
                                 </Link>
                               </Td>
                               <Td>{spaProperties.data[identifier]?.[0]?.path}</Td>
