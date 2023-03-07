@@ -8,6 +8,7 @@ export type GroupItem = {
   PERMISSION_DELETION?: boolean;
   APIKEY_DELETION?: boolean;
   PERMISSION_CREATION?: boolean;
+  APPLICATION_CREATION?: boolean;
 };
 export type GroupItem1 = {
   email: string;

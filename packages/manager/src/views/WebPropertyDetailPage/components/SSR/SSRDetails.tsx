@@ -102,7 +102,7 @@ export const SSRDetails = () => {
       ) : (
         <TableComposable aria-label="spa-property-list" className="">
           <>
-            <Caption>SSR&apos;s DEPLOYED</Caption>
+          <Caption>SPA&apos;s DEPLOYED</Caption>
             <Thead noWrap>
               <Tr>
                 <Th textCenter>SPA Name</Th>
