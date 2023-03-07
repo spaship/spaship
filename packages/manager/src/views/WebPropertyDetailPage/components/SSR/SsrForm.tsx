@@ -17,9 +17,6 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import * as yup from 'yup';
 
-interface ConfigObj {
-  [key: string]: string;
-}
 interface Props {
   onClose: () => void;
   propertyIdentifier: string;
@@ -72,7 +69,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
         ? dataf.healthCheckPath
         : `/${dataf.healthCheckPath}`,
       config: dataf.config
-        ? dataf.config.reduce((acc: ConfigObj, cur: any) => {
+        ? dataf.config.reduce((acc: Record<string,string>, cur: any) => {
             acc[cur.key] = cur.value;
             return acc;
           }, {})

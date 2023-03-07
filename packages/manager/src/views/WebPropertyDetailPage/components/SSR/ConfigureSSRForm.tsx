@@ -7,9 +7,6 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import * as yup from 'yup';
 
-interface ConfigObj {
-  [key: string]: string;
-}
 
 const schema = yup.object({
   name: yup.string().required(),
@@ -33,11 +30,10 @@ type Data = {
   _id: number;
   isSSR: boolean;
   healthCheckPath: string;
-  config: {
-    [key: string]: string;
-  };
+  config:Record<string,string>;
   imageUrl: string;
 };
+
 type Props = {
   onClose: () => void;
   propertyIdentifier: string;
@@ -85,7 +81,7 @@ export const ConfigureSSRForm = ({
         ? dataf.healthCheckPath
         : `/${dataf.healthCheckPath}`,
       config: dataf.config
-        ? dataf.config.reduce((acc: ConfigObj, cur: any) => {
+        ? dataf.config.reduce((acc: Record<string,string>, cur: any) => {
             acc[cur.key] = cur.value;
             return acc;
           }, {})

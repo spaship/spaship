@@ -25,9 +25,7 @@ type Data = {
   _id: number;
   isSSR: boolean;
   healthCheckPath: string;
-  config: {
-    [key: string]: string;
-  };
+  config: Record<string,string>;
   imageUrl: string;
 };
 
