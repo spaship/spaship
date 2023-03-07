@@ -6,6 +6,6 @@ export const pageLinks = {
   webPropertySettingPage: '/properties/[propertyIdentifier]/settings',
   loginPage: '/login',
   dashboardPage: '/dashboard',
-  documentsPage: '/document',
+  documentsPage: '/documents',
   slaPage: '/sla'
 };
