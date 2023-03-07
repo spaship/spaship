@@ -1,5 +1,5 @@
 export type TSSRProperty = {
-  config: Record<string,string>;
+  config: Record<string, string>;
   propertyIdentifier: string;
   name: string;
   path: string;
@@ -13,8 +13,7 @@ export type TSSRConfigure = {
   propertyIdentifier: string;
   env: string;
   identifier: string;
-  config:Record<string,string>
-  ;
+  config: Record<string, string>;
 };
 export interface TSSRResponse {
   data: {
@@ -29,7 +28,7 @@ export interface TSSRResponse {
     isActive: boolean;
     isSSR: boolean;
     imageUrl: string;
-    config:Record<string,string>
+    config: Record<string, string>;
     healthCheckPath: string;
     version: number;
     createdBy: string;

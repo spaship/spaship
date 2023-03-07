@@ -69,7 +69,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
         ? dataf.healthCheckPath
         : `/${dataf.healthCheckPath}`,
       config: dataf.config
-        ? dataf.config.reduce((acc: Record<string,string>, cur: any) => {
+        ? dataf.config.reduce((acc: Record<string, string>, cur: any) => {
             acc[cur.key] = cur.value;
             return acc;
           }, {})
