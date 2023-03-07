@@ -84,7 +84,7 @@ export enum MESSAGE {
   INVALID_REF = 'Invalid Reference [Correct format : 1.2, v1@1.2.3].',
   INVALID_ENV = 'Invalid Environment [Correct format : prod, stage, dev]',
   INVALID_LABEL = 'Invalid Label [Correct format : all-access, prod-key].',
-  INVALID_IMAGEURL = 'Invalid Image URL. Please check the image url'
+  INVALID_IMAGEURL = 'Invalid Image URL.'
 }
 
 export const VALIDATION = {
