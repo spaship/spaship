@@ -74,53 +74,58 @@ export const Analytics = ({
       </TextContent>
       <Grid style={{ padding: '12px 12px' }}>
         <GridItem span={6}>
-          <Card
-            isSelectable
-            isFullHeight
-            style={{
-              margin: '12px 12px',
-              overflow: 'auto',
-              scrollbarWidth: 'none',
-              height: '190px'
-            }}
-            isRounded
-          >
-            <CardTitle>Total Deployments</CardTitle>
-            <CardBody>
-              <h1 style={{ color: '#0066CC', fontSize: '28px' }}>
-                <Link href={pageLinks.webPropertyListPage}>
-                  <a className="text-decoration-none">{Totaldeployment}</a>
-                </Link>
-              </h1>
-              <div
-                style={{ display: 'flex', flexDirection: 'row', gap: '35px', marginTop: '24px' }}
+          <Link href={pageLinks.webPropertyListPage}>
+            <a className="text-decoration-none">
+              <Card
+                isSelectable
+                isFullHeight
+                style={{
+                  margin: '12px 12px',
+                  overflow: 'auto',
+                  scrollbarWidth: 'none',
+                  height: '190px'
+                }}
+                isRounded
               >
-                {TotalDeploymentCardFields.map((field) => (
-                  <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
-                    <h1 style={{ fontSize: '12px' }}>{field}</h1>
-                    <h1 style={{ fontSize: '12px' }}>
-                      {TotalDeploymentData.data
-                        ?.filter((ele) => ele.env === field.toLocaleLowerCase())
-                        .map((ele) => ele.count)}
-                    </h1>
-                  </div>
-                ))}
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <h1 style={{ fontSize: '12px' }}>Others</h1>
-                  <h1 style={{ fontSize: '12px' }}>
-                    {TotalDeploymentData.data
-                      ?.filter(
-                        (ele) =>
-                          !TotalDeploymentCardFields.map((str) => str.toLocaleLowerCase()).includes(
-                            ele.env
+                <CardTitle>Total Deployments</CardTitle>
+                <CardBody>
+                  <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{Totaldeployment}</h1>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      gap: '35px',
+                      marginTop: '24px'
+                    }}
+                  >
+                    {TotalDeploymentCardFields.map((field) => (
+                      <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
+                        <h1 style={{ fontSize: '12px' }}>{field}</h1>
+                        <h1 style={{ fontSize: '12px' }}>
+                          {TotalDeploymentData.data
+                            ?.filter((ele) => ele.env === field.toLocaleLowerCase())
+                            .map((ele) => ele.count)}
+                        </h1>
+                      </div>
+                    ))}
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <h1 style={{ fontSize: '12px' }}>Others</h1>
+                      <h1 style={{ fontSize: '12px' }}>
+                        {TotalDeploymentData.data
+                          ?.filter(
+                            (ele) =>
+                              !TotalDeploymentCardFields.map((str) =>
+                                str.toLocaleLowerCase()
+                              ).includes(ele.env)
                           )
-                      )
-                      .reduce((acc, ele) => acc + ele.count, 0)}
-                  </h1>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
+                          .reduce((acc, ele) => acc + ele.count, 0)}
+                      </h1>
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
+            </a>
+          </Link>
         </GridItem>
         <GridItem span={6}>
           <Card
@@ -163,26 +168,26 @@ export const Analytics = ({
           </Card>
         </GridItem>
         <GridItem span={6}>
-          <Card
-            isSelectable
-            isFullHeight
-            style={{
-              margin: '12px 12px',
-              overflow: 'auto',
-              scrollbarWidth: 'none',
-              height: '130px'
-            }}
-            isRounded
-          >
-            <CardTitle>Total Properties</CardTitle>
-            <CardBody>
-              <h1 style={{ color: '#0066CC', fontSize: '28px' }}>
-                <Link href={pageLinks.webPropertyListPage}>
-                  <a className="text-decoration-none">{TotalProperty}</a>
-                </Link>
-              </h1>
-            </CardBody>
-          </Card>
+          <Link href={pageLinks.webPropertyListPage}>
+            <a className="text-decoration-none">
+              <Card
+                isSelectable
+                isFullHeight
+                style={{
+                  margin: '12px 12px',
+                  overflow: 'auto',
+                  scrollbarWidth: 'none',
+                  height: '130px'
+                }}
+                isRounded
+              >
+                <CardTitle>Total Properties</CardTitle>
+                <CardBody>
+                  <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{TotalProperty}</h1>
+                </CardBody>
+              </Card>
+            </a>
+          </Link>
         </GridItem>
         <GridItem span={6}>
           <Card

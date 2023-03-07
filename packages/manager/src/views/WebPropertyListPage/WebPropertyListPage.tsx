@@ -156,27 +156,20 @@ export const WebPropertyListPage = (): JSX.Element => {
             {filteredWebProperties?.map(
               ({ identifier, title, createdBy, env }: Partial<TWebProperty>) => (
                 <GalleryItem key={identifier}>
-                  <Link
-                    href={{
-                      pathname: pageLinks.webPropertyDetailPage,
-                      query: { propertyIdentifier: identifier }
-                    }}
-                  >
-                    <a className="text-decoration-none">
-                      <WebPropertyCard
-                        title={title}
-                        subtitle={
-                          env?.find((envArray) => envArray.env === 'prod')?.url ||
-                          env?.find((envArray) => envArray.env === 'stage')?.url ||
-                          env?.at(0)?.url
-                        }
-                        isSelected={createdBy === session?.user?.email}
-                        footer={`${
-                          webPropertyDeloymentCount?.data?.[identifier || ''] || 0
-                        } Deployment(s)`}
-                      />
-                    </a>
-                  </Link>
+                  <WebPropertyCard
+                    title={title}
+                    subtitle={
+                      env?.find((envArray) => envArray.env === 'prod')?.url ||
+                      env?.find((envArray) => envArray.env === 'stage')?.url ||
+                      env?.at(0)?.url
+                    }
+                    isSelected={createdBy === session?.user?.email}
+                    footer={`${
+                      webPropertyDeloymentCount?.data?.[identifier || ''] || 0
+                    } Deployment(s)`}
+                    urlPath={pageLinks.webPropertyDetailPage}
+                    urlQuery={identifier}
+                  />
                 </GalleryItem>
               )
             )}
