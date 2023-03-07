@@ -53,7 +53,6 @@ export const ConfigureSSRForm = ({
   const {
     control,
     handleSubmit,
-    register,
     formState: { isSubmitting }
   } = useForm<FormData>({
     mode: 'onBlur',
@@ -261,12 +260,14 @@ export const ConfigureSSRForm = ({
           <SplitItem key={`key-${index + 1}`} isFilled>
             <Controller
               control={control}
-              name="config"
-              render={({ fieldState: { error } }) => (
+              name={`config.${index}.key`}
+              defaultValue={pair.key}
+              rules={{ required: 'Key is required' }}
+              render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
                 <FormGroup
                   label="Key"
                   isRequired
-                  fieldId="key"
+                  fieldId={`key-${index}`}
                   validated={error ? 'error' : 'default'}
                   helperTextInvalid={error?.message}
                 >
@@ -275,9 +276,12 @@ export const ConfigureSSRForm = ({
                     type="text"
                     isRequired
                     placeholder="Config Key"
-                    {...register(`config.${index}.key`)}
-                    defaultValue={pair.key}
-                    onChange={(event) => handleKeyValuePairChange(index, 'key', event)}
+                    value={value}
+                    onChange={(event) => {
+                      onChange(event);
+                      handleKeyValuePairChange(index, 'key', event);
+                    }}
+                    onBlur={onBlur}
                   />
                 </FormGroup>
               )}
@@ -286,12 +290,14 @@ export const ConfigureSSRForm = ({
           <SplitItem key={`value-${index + 1}`} isFilled>
             <Controller
               control={control}
-              name="config"
-              render={({ fieldState: { error } }) => (
+              name={`config.${index}.value`}
+              defaultValue={pair.value}
+              rules={{ required: 'Value is required' }}
+              render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
                 <FormGroup
                   label="Value"
                   isRequired
-                  fieldId="value"
+                  fieldId={`value-${index}`}
                   validated={error ? 'error' : 'default'}
                   helperTextInvalid={error?.message}
                 >
@@ -300,9 +306,12 @@ export const ConfigureSSRForm = ({
                     type="text"
                     isRequired
                     placeholder="Config Value"
-                    {...register(`config.${index}.value`)}
-                    defaultValue={pair.value}
-                    onChange={(event) => handleKeyValuePairChange(index, 'value', event)}
+                    value={value}
+                    onChange={(event) => {
+                      onChange(event);
+                      handleKeyValuePairChange(index, 'value', event);
+                    }}
+                    onBlur={onBlur}
                   />
                 </FormGroup>
               )}
