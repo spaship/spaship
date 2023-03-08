@@ -130,7 +130,7 @@ export const WebPropertyListPage = (): JSX.Element => {
             <GalleryItem>
               <Link href={pageLinks.newWebPropertyPage}>
                 <a className="text-decoration-none">
-                  <WebPropertyCard>
+                  <WebPropertyCard urlPath={pageLinks.newWebPropertyPage}>
                     <Flex
                       direction={{ default: 'column' }}
                       justifyContent={{ default: 'justifyContentCenter' }}
