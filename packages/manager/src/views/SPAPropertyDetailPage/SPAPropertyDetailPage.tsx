@@ -1,5 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-import { useMemo } from 'react';
 import {
   Button,
   Card,
@@ -21,11 +20,19 @@ import {
   TabTitleText,
   Title
 } from '@patternfly/react-core';
-import Link from 'next/link';
 import dayjs from 'dayjs';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useMemo } from 'react';
 
-import { CogIcon, CubesIcon, PackageIcon, RunningIcon } from '@patternfly/react-icons';
+import { Banner } from '@app/components';
+import { ActivityStream } from '@app/components/ActivityStream';
+import { useTabs } from '@app/hooks';
+import { pageLinks } from '@app/links';
+import {
+  useGetMonthlyDeploymentChart,
+  useGetTotalDeploymentsForApps
+} from '@app/services/analytics';
 import {
   Chart,
   ChartAxis,
@@ -35,14 +42,16 @@ import {
   ChartVoronoiContainer
 } from '@patternfly/react-charts';
 import {
-  useGetMonthlyDeploymentChart,
-  useGetTotalDeploymentsForApps
-} from '@app/services/analytics';
-import { useTabs } from '@app/hooks';
-import { Banner } from '@app/components';
-import { pageLinks } from '@app/links';
+  BuildIcon,
+  BundleIcon,
+  CogIcon,
+  CubesIcon,
+  PackageIcon,
+  RunningIcon
+} from '@patternfly/react-icons';
 import toast from 'react-hot-toast';
-import { ActivityStream } from '@app/components/ActivityStream';
+import { SSRDetails } from '../WebPropertyDetailPage/components/SSR/SSRDetails';
+import { StaticDeployment } from '../WebPropertyDetailPage/components/SSR/StaticDeployment';
 
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
@@ -56,7 +65,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
     router.push(`/properties/${propertyIdentifier}`);
   }
 
-  const { handleTabChange, openTab } = useTabs(2);
+  const { handleTabChange, openTab } = useTabs(4);
 
   // TODO: Backend must sort this before giving
   const sortedDeployCount = deploymentCount?.data?.sort((x, y) => x.count - y.count);
@@ -109,6 +118,38 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
         <Tabs activeKey={openTab} onSelect={(_, tab) => handleTabChange(tab as number)}>
           <Tab
             eventKey={0}
+            title={
+              <>
+                <TabTitleIcon>
+                  <BuildIcon />
+                </TabTitleIcon>
+                <TabTitleText>SSR Deployment</TabTitleText>{' '}
+              </>
+            }
+            aria-label="SSR SPA Deployment"
+          >
+            <List className="pf-u-mt-lg">
+              <SSRDetails />
+            </List>
+          </Tab>
+          <Tab
+            eventKey={1}
+            title={
+              <>
+                <TabTitleIcon>
+                  <BundleIcon />
+                </TabTitleIcon>
+                <TabTitleText>Static Deployment</TabTitleText>{' '}
+              </>
+            }
+            aria-label="SSR SPA Deployment"
+          >
+            <List className="pf-u-mt-lg">
+              <StaticDeployment />
+            </List>
+          </Tab>
+          <Tab
+            eventKey={2}
             title={
               <>
                 <TabTitleIcon>
@@ -227,7 +268,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             </Split>
           </Tab>
           <Tab
-            eventKey={1}
+            eventKey={3}
             title={
               <>
                 <TabTitleIcon>

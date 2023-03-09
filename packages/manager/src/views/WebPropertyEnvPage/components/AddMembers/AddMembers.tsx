@@ -49,7 +49,8 @@ const columnNames2: ColumnNames = {
   PERMISSION_CREATION: 'PERMISSION_CREATION',
   PERMISSION_DELETION: 'PERMISSION_DELETION',
   ENV_CREATION: 'ENV_CREATION',
-  ENV_SYNC: 'ENV_SYNC'
+  ENV_SYNC: 'ENV_SYNC',
+  APPLICATION_CREATION: 'APPLICATION_CREATION '
 };
 const userRole: UserRoleDTO = {
   User: ['APIKEY_CREATION', 'ENV_CREATION', 'ENV_SYNC'],
@@ -59,7 +60,8 @@ const userRole: UserRoleDTO = {
     'ENV_CREATION',
     'ENV_SYNC',
     'PERMISSION_CREATION',
-    'PERMISSION_DELETION'
+    'PERMISSION_DELETION',
+    'APPLICATION_CREATION'
   ]
 };
 
@@ -97,7 +99,6 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
       isOpen,
       ...userRole[role].reduce((acc, cur) => ({ ...acc, [cur]: true }), {})
     }));
-    // console.log(res1,"useffectx")
     setUsersData({ data: res1 });
   }, [selectedUsers, roverList, activeTabKey, newUserDetails, userDetailsString]);
 
@@ -321,7 +322,8 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                         { id: 'PERMISSION_CREATION', value: i.PERMISSION_CREATION },
                         { id: 'PERMISSION_DELETION', value: i.PERMISSION_DELETION },
                         { id: 'ENV_CREATION', value: i.ENV_CREATION },
-                        { id: 'ENV_SYNC', value: i.ENV_SYNC }
+                        { id: 'ENV_SYNC', value: i.ENV_SYNC },
+                        { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION }
                       ].map((item) => (
                         <Td key={item.id}>
                           <Checkbox
@@ -405,7 +407,8 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                                       { id: 'PERMISSION_CREATION', value: i.PERMISSION_CREATION },
                                       { id: 'PERMISSION_DELETION', value: i.PERMISSION_DELETION },
                                       { id: 'ENV_CREATION', value: i.ENV_CREATION },
-                                      { id: 'ENV_SYNC', value: i.ENV_SYNC }
+                                      { id: 'ENV_SYNC', value: i.ENV_SYNC },
+                                      { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION }
                                     ].map((item) => (
                                       <Td key={item.id}>
                                         <Checkbox
@@ -508,7 +511,8 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                         { id: 'PERMISSION_CREATION', value: i.PERMISSION_CREATION },
                         { id: 'PERMISSION_DELETION', value: i.PERMISSION_DELETION },
                         { id: 'ENV_CREATION', value: i.ENV_CREATION },
-                        { id: 'ENV_SYNC', value: i.ENV_SYNC }
+                        { id: 'ENV_SYNC', value: i.ENV_SYNC },
+                        { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION }
                       ].map((item) => (
                         <Td key={item.id}>
                           <Checkbox
@@ -574,7 +578,8 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                                       { id: 'PERMISSION_CREATION', value: i.PERMISSION_CREATION },
                                       { id: 'PERMISSION_DELETION', value: i.PERMISSION_DELETION },
                                       { id: 'ENV_CREATION', value: i.ENV_CREATION },
-                                      { id: 'ENV_SYNC', value: i.ENV_SYNC }
+                                      { id: 'ENV_SYNC', value: i.ENV_SYNC },
+                                      { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION }
                                     ].map((item) => (
                                       <Td key={item.id}>
                                         <Checkbox

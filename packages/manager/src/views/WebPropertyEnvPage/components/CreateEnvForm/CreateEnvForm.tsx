@@ -16,14 +16,15 @@ import { CustomRadio, CustomRadioContainer } from '@app/components';
 
 export const schema = yup.object({
   // TODO: change this to URL validation, after server supports http protocol append
+
   url: yup.string().label('Hostname URL').trim().required().max(250),
   env: yup
     .string()
     .label('Environment Name')
-    .noWhitespace()
     .trim()
-    .max(50)
-    .alphabetsOnly()
+    .noWhitespace()
+    .max(15)
+    .matches(/^[a-zA-Z0-9-]+$/, 'Only letters, numbers, and dashes are allowed')
     .required(),
   cluster: yup.string().label('Environment Type').oneOf(['preprod', 'prod']).required()
 });
@@ -60,7 +61,7 @@ export const CreateEnvForm = ({ onSubmit, onClose }: Props): JSX.Element => {
                 fieldId="property-env"
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
-                helperText="Environment name shouldn't contain any space, numbers, special-character"
+                helperText="Environment name shouldn't contain any space, special-character"
               >
                 <TextInput
                   isRequired

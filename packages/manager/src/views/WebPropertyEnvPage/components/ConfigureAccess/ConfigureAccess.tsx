@@ -29,7 +29,8 @@ const columnNames = {
   PERMISSION_CREATION: 'PERMISSION_CREATION',
   PERMISSION_DELETION: 'PERMISSION_DELETION',
   ENV_CREATION: 'ENV_CREATION',
-  ENV_SYNC: 'ENV_SYNC'
+  ENV_SYNC: 'ENV_SYNC',
+  APPLICATION_CREATION: 'APPLICATION_CREATION'
 };
 export const ConfigureAccess = ({
   onClose,
@@ -187,6 +188,14 @@ export const ConfigureAccess = ({
                       name="ENV_SYNC"
                     />
                   </Td>
+                  <Td>
+                    <Checkbox
+                      isChecked={i.APPLICATION_CREATION}
+                      onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
+                      id="APPLICATION_CREATION"
+                      name="APPLICATION_CREATION"
+                    />
+                  </Td>
                 </Tr>
               ))}
           </Tbody>
@@ -275,6 +284,14 @@ export const ConfigureAccess = ({
                               onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
                               id="ENV_SYNC"
                               name="ENV_SYNC"
+                            />
+                          </Td>
+                          <Td>
+                            <Checkbox
+                              isChecked={i.APPLICATION_CREATION}
+                              onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
+                              id="APPLICATION_CREATION"
+                              name="APPLICATION_CREATION"
                             />
                           </Td>
                         </Tr>

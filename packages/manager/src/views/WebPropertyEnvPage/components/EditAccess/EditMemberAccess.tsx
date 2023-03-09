@@ -28,6 +28,7 @@ type GroupItem1 = {
   ENV_CREATION: boolean;
   APIKEY_DELETION: boolean;
   APIKEY_CREATION: boolean;
+  APPLICATION_CREATION: boolean;
   [key: string]: boolean | string;
 };
 type UserDataDTO = {
@@ -53,7 +54,8 @@ const columnNames: ColumnNames = {
   PERMISSION_CREATION: 'PERMISSION_CREATION',
   PERMISSION_DELETION: 'PERMISSION_DELETION',
   ENV_CREATION: 'ENV_CREATION',
-  ENV_SYNC: 'ENV_SYNC'
+  ENV_SYNC: 'ENV_SYNC',
+  APPLICATION_CREATION: 'APPLICATION_CREATION'
 };
 // TODO(akhilmhdh): Migrate to react-hook-form later. Removes a lot of boilerplate in this page
 export const EditMemberAccess = ({
@@ -161,6 +163,7 @@ export const EditMemberAccess = ({
                   <Th>{toPascalCase(columnNames.PERMISSION_DELETION)}</Th>
                   <Th>{toPascalCase(columnNames.ENV_CREATION)}</Th>
                   <Th>{toPascalCase(columnNames.ENV_SYNC)}</Th>
+                  <Th>{toPascalCase(columnNames.APPLICATION_CREATION)}</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -174,7 +177,8 @@ export const EditMemberAccess = ({
                         { id: 'PERMISSION_CREATION', value: i.PERMISSION_CREATION },
                         { id: 'PERMISSION_DELETION', value: i.PERMISSION_DELETION },
                         { id: 'ENV_CREATION', value: i.ENV_CREATION },
-                        { id: 'ENV_SYNC', value: i.ENV_SYNC }
+                        { id: 'ENV_SYNC', value: i.ENV_SYNC },
+                        { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION }
                       ].map((item) => (
                         <Td key={item.id}>
                           <Checkbox

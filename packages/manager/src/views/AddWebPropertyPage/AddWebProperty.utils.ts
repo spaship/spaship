@@ -9,7 +9,7 @@ export const addNewWebPropertySchema = yup.object({
     .label('Environment Name')
     .noWhitespace()
     .trim()
-    .alphabetsOnly()
+    .matches(/^[a-zA-Z0-9-]+$/, 'Only letters, numbers, and dashes are allowed')
     .max(50)
     .required(),
   cluster: yup.string().label('Environment Type').oneOf(['preprod', 'prod']).required()

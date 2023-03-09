@@ -9,4 +9,10 @@ export type TSpaProperty = {
   accessUrl: string;
   updatedAt: string;
   _id: number;
+  isSSR: boolean;
+  healthCheckPath: string;
+  config: {
+    [key: string]: string;
+  };
+  imageUrl: string;
 };

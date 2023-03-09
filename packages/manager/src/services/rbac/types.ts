@@ -52,6 +52,7 @@ export type TMemberforSPA = {
   ENV_CREATION: boolean;
   APIKEY_DELETION: boolean;
   APIKEY_CREATION: boolean;
+  APPLICATION_CREATION: boolean;
 };
 export type TpermissionDetails = {
   name: string;

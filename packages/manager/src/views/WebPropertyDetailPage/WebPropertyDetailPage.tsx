@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import Router, { useRouter } from 'next/router';
 import {
   Badge,
   Button,
@@ -7,34 +10,23 @@ import {
   List,
   PageSection,
   SearchInput,
-  Select,
-  SelectOption,
-  SelectVariant,
   Split,
   SplitItem,
   Tab,
   Tabs,
   TabTitleIcon,
-  TabTitleText
+  TabTitleText,
+  Select,
+  SelectOption,
+  SelectVariant,
+  Modal,
+  ModalVariant
 } from '@patternfly/react-core';
-import Link from 'next/link';
-import Router, { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 
 import { Banner, TableRowSkeleton } from '@app/components';
-import { useDebounce, useFormatDate, useTabs, useToggle } from '@app/hooks';
-import { pageLinks } from '@app/links';
-import { useGetEphemeralListForProperty } from '@app/services/ephemeral';
+import { useGetSPAPropGroupByName, useGetSPAProperties } from '@app/services/spaProperty';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
-import { useGetSPAProperties, useGetSPAPropGroupByName } from '@app/services/spaProperty';
-import {
-  CogIcon,
-  CubeIcon,
-  ExternalLinkAltIcon,
-  PackageIcon,
-  RunningIcon,
-  TimesCircleIcon
-} from '@patternfly/react-icons';
+import { useGetEphemeralListForProperty } from '@app/services/ephemeral';
 import {
   Caption,
   ExpandableRowContent,
@@ -45,11 +37,23 @@ import {
   Thead,
   Tr
 } from '@patternfly/react-table';
+import {
+  CogIcon,
+  CubeIcon,
+  ExternalLinkAltIcon,
+  PackageIcon,
+  PlusCircleIcon,
+  RunningIcon,
+  TimesCircleIcon
+} from '@patternfly/react-icons';
+import { useDebounce, useFormatDate, useTabs, useToggle, usePopUp } from '@app/hooks';
+import { pageLinks } from '@app/links';
 
-import { ActivityStream } from '@app/components/ActivityStream';
 import toast from 'react-hot-toast';
-import { EmptyInfo } from './components/EmptyInfo';
+import { ActivityStream } from '@app/components/ActivityStream';
 import { Ephemeral } from './components/Ephemeral';
+import { EmptyInfo } from './components/EmptyInfo';
+import { SSRForm } from './components/SSR/SsrForm';
 
 const URL_LENGTH_LIMIT = 30;
 
@@ -73,6 +77,9 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const webPropertiesKeys = Object.keys(webProperties.data || {});
   const countOfSpas = useGetSPAProperties(propertyIdentifier, '');
   const isCountOfSpasListEmpty = Object.keys(countOfSpas).length === 0;
+
+  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['createSSRDeployment'] as const);
+
   useEffect(() => {
     if (spaProperties.isError || webProperties.isError) {
       toast.error(`Sorry cannot find ${propertyIdentifier}`);
@@ -134,26 +141,47 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             {!spaProperties.isLoading &&
             !isCountOfSpasListEmpty &&
             Object.values(countOfSpas.data || {}).length === 0 ? (
-              <EmptyInfo propertyIdentifier={propertyIdentifier} />
+              <>
+                <Split hasGutter className="pf-u-mt-md">
+                  <Button
+                    onClick={() => handlePopUpOpen('createSSRDeployment')}
+                    icon={<PlusCircleIcon />}
+                  >
+                    Add Deployment
+                  </Button>
+                </Split>
+                <EmptyInfo propertyIdentifier={propertyIdentifier} />
+              </>
             ) : (
               <>
-                <div className="pf-u-w-50 pf-u-mb-lg pf-u-mt-md">
+                <div className="pf-u-w-70 pf-u-mb-lg pf-u-mt-md">
                   <Split hasGutter className="pf-u-mb-md">
-                    <SearchInput
-                      placeholder="Search by name"
-                      value={searchTerm}
-                      onChange={(value) => setSearchTerm(value?.toLowerCase())}
-                      onClear={() => setSearchTerm('')}
-                    />
-                    <SplitItem isFilled />
-                    <SplitItem isFilled />
+                    <SplitItem>
+                      <Button
+                        onClick={() => handlePopUpOpen('createSSRDeployment')}
+                        icon={<PlusCircleIcon />}
+                      >
+                        Add Deployment
+                      </Button>
+                    </SplitItem>
+
+                    <SplitItem>
+                      {' '}
+                      <SearchInput
+                        placeholder="Search by name"
+                        value={searchTerm}
+                        onChange={(value) => setSearchTerm(value?.toLowerCase())}
+                        onClear={() => setSearchTerm('')}
+                      />
+                    </SplitItem>
+                    {/* <SplitItem isFilled /> */}
                     <SplitItem>
                       <Select
                         variant={SelectVariant.single}
                         aria-label="filter Input"
                         value="Select Environment"
                         onToggle={setIsFilterOpen.toggle}
-                        onSelect={(_e, value) => {
+                        onSelect={(e, value) => {
                           if (value === 'Select Environment') {
                             setFilterByEnv('' as string);
                           } else {
@@ -198,10 +226,10 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                 {spaProperties.isSuccess && isSpaPropertyListEmpty ? (
                   <EmptyInfo propertyIdentifier={propertyIdentifier} />
                 ) : (
-                  <TableComposable aria-label="spa-property-list" className="">
+                  <TableComposable aria-label="spa-property-list">
                     <>
                       <Caption>SPA&apos;s DEPLOYED</Caption>
-                      <Thead>
+                      <Thead noWrap>
                         <Tr>
                           <Th />
                           <Th>Name</Th>
@@ -237,16 +265,26 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                     query: { propertyIdentifier, spaProperty: identifier }
                                   }}
                                 >
-                                  {spaProperties.data[identifier]?.[0]?.name}
+                                  {/* {spaProperties.data[identifier]?.[0]?.name} */}
+                                  {`${spaProperties.data[identifier]?.[0]?.name.slice(
+                                    0,
+                                    URL_LENGTH_LIMIT
+                                  )} ${
+                                    spaProperties.data[identifier]?.[0]?.name.length >
+                                    URL_LENGTH_LIMIT
+                                      ? '...'
+                                      : ''
+                                  }`}
                                 </Link>
                               </Td>
                               <Td>{spaProperties.data[identifier]?.[0]?.path}</Td>
                               <Td>
                                 <Split hasGutter>
-                                  {spaProperties.data[identifier].map(({ _id, env }) => (
-                                    <SplitItem key={_id}>
-                                      <Label color="gold" isCompact>
+                                  {spaProperties.data[identifier].map(({ _id, env, isSSR }) => (
+                                    <SplitItem key={_id} style={{ marginRight: '8px' }}>
+                                      <Label color={isSSR ? 'cyan' : 'gold'} isCompact>
                                         {env}
+                                        {isSSR && ' [ssr]'}
                                       </Label>
                                     </SplitItem>
                                   ))}
@@ -261,7 +299,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                     aria-label="expandable-table"
                                     borders={false}
                                   >
-                                    <Thead>
+                                    <Thead noWrap>
                                       <Tr>
                                         <Th>Environment Name</Th>
                                         <Th>Ref</Th>
@@ -272,11 +310,12 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                     </Thead>
                                     <Tbody>
                                       {spaProperties?.data?.[identifier].map(
-                                        ({ _id, env, ref, accessUrl, updatedAt }) => (
+                                        ({ _id, env, ref, isSSR, accessUrl, updatedAt }) => (
                                           <Tr key={_id}>
                                             <Td>
-                                              <Label color="gold" isCompact>
+                                              <Label color={isSSR ? 'cyan' : 'gold'} isCompact>
                                                 {env}
+                                                {isSSR && ' [ssr]'}
                                               </Label>
                                             </Td>
                                             <Td>{ref}</Td>
@@ -371,6 +410,18 @@ export const WebPropertyDetailPage = (): JSX.Element => {
           </Tab>
         </Tabs>
       </PageSection>
+
+      <Modal
+        title="Create SSR Deployement"
+        variant={ModalVariant.medium}
+        isOpen={popUp.createSSRDeployment.isOpen}
+        onClose={() => handlePopUpClose('createSSRDeployment')}
+      >
+        <SSRForm
+          propertyIdentifier={propertyIdentifier}
+          onClose={() => handlePopUpClose('createSSRDeployment')}
+        />
+      </Modal>
     </>
   );
 };
