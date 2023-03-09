@@ -14,7 +14,7 @@ import { CubesIcon, ExternalLinkAltIcon, PencilAltIcon, UndoIcon } from '@patter
 import { Caption, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useRouter } from 'next/router';
 
-const URL_LENGTH_LIMIT = 25;
+const URL_LENGTH_LIMIT = 100;
 
 export const StaticDeployment = () => {
   const { query } = useRouter();

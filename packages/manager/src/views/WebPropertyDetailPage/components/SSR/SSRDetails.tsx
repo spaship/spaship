@@ -39,7 +39,7 @@ type Data = {
   config: Record<string, string>;
   imageUrl: string;
 };
-const URL_LENGTH_LIMIT = 25;
+const URL_LENGTH_LIMIT = 100;
 export const SSRDetails = () => {
   const { query } = useRouter();
 
@@ -128,12 +128,24 @@ export const SSRDetails = () => {
             <Caption>SPA&apos;s DEPLOYED</Caption>
             <Thead noWrap>
               <Tr>
-                <Th textCenter>SPA Name</Th>
-                <Th textCenter>Environments</Th>
-                <Th textCenter>Ref</Th>
-                <Th textCenter>Path</Th>
-                <Th textCenter>HealthCheck Path</Th>
-                <Th textCenter>Internal Access URL</Th>
+                <Th textCenter width={15}>
+                  SPA Name
+                </Th>
+                <Th textCenter width={15}>
+                  Environments
+                </Th>
+                <Th textCenter width={15}>
+                  Ref
+                </Th>
+                <Th textCenter width={15}>
+                  Path
+                </Th>
+                <Th textCenter width={15}>
+                  HealthCheck Path
+                </Th>
+                <Th textCenter width={15}>
+                  Internal Access URL
+                </Th>
                 <Th textCenter style={{ justifyContent: 'space-evenly', display: 'grid' }}>
                   Actions
                 </Th>
@@ -147,14 +159,13 @@ export const SSRDetails = () => {
             <Tbody>
               {containerisedDeploymentData?.map((val) => (
                 <Tr key={val.name}>
-                  <Td textCenter>
-                    {' '}
+                  <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
                     {`${val?.name.slice(0, URL_LENGTH_LIMIT)} ${
                       val?.name.length > URL_LENGTH_LIMIT ? '...' : ''
                     }`}
                   </Td>
 
-                  <Td textCenter>
+                  <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
                     <Label
                       key={val.env}
                       color={val.isSSR ? 'blue' : 'gold'}
@@ -164,10 +175,24 @@ export const SSRDetails = () => {
                       {val.env}
                     </Label>
                   </Td>
-                  <Td textCenter>{val?.ref}</Td>
-                  <Td textCenter>{val?.path}</Td>
-                  <Td textCenter>{val?.healthCheckPath}</Td>
-                  <Td textCenter>
+                  <Td
+                    textCenter
+                    style={{ maxWidth: '15ch', wordWrap: 'break-word' }}
+                  >{`${val?.ref.slice(0, URL_LENGTH_LIMIT)} ${
+                    val?.ref.length > URL_LENGTH_LIMIT ? '...' : ''
+                  }`}</Td>
+                  <Td
+                    textCenter
+                    style={{ maxWidth: '15ch', wordWrap: 'break-word' }}
+                  >{`${val?.path.slice(0, URL_LENGTH_LIMIT)} ${
+                    val?.path.length > URL_LENGTH_LIMIT ? '...' : ''
+                  }`}</Td>
+                  <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
+                    {`${val?.healthCheckPath.slice(0, URL_LENGTH_LIMIT)} ${
+                      val?.healthCheckPath.length > URL_LENGTH_LIMIT ? '...' : ''
+                    }`}
+                  </Td>
+                  <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
                     <a href={val?.accessUrl} target="_blank" rel="noopener noreferrer">
                       <ExternalLinkAltIcon />{' '}
                       {`${val?.accessUrl.slice(0, URL_LENGTH_LIMIT)} ${
@@ -210,6 +235,94 @@ export const SSRDetails = () => {
             </Tbody>
           )}
         </TableComposable>
+
+        // <TableComposable aria-label="spa-property-list" className="">
+        //   <>
+        //     <Caption>SPA&apos;s DEPLOYED</Caption>
+        //     <Thead >
+        //       <Tr>
+        //         <Th  textCenter>SPA Name1</Th>
+        //         <Th  textCenter>Environments</Th>
+        //         <Th  textCenter>Ref</Th>
+        //         <Th  textCenter>Path</Th>
+        //         <Th  textCenter>HealthCheck Path</Th>
+        //         <Th  textCenter>Internal Access URL</Th>
+        //         <Th  textCenter style={{ justifyContent: 'space-evenly', display: 'grid' }}>
+        //           Actions
+        //         </Th>
+        //       </Tr>
+        //     </Thead>
+        //   </>
+        //   {(spaProperties.isLoading && webProperties.isLoading) ||
+        //   (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
+        //     <TableRowSkeleton rows={3} columns={7} />
+        //   ) : (
+        //     <Tbody>
+        //       {containerisedDeploymentData?.map((val) => (
+        //         <Tr key={val.name}>
+        //           <Td textCenter>
+        //             {' '}
+        //             {`${val?.name.slice(0, URL_LENGTH_LIMIT)} ${
+        //               val?.name.length > URL_LENGTH_LIMIT ? '...' : ''
+        //             }`}
+        //           </Td>
+
+        //           <Td textCenter>
+        //             <Label
+        //               key={val.env}
+        //               color={val.isSSR ? 'blue' : 'gold'}
+        //               isCompact
+        //               style={{ marginRight: '8px' }}
+        //             >
+        //               {val.env}
+        //             </Label>
+        //           </Td>
+        //           <Td textCenter>{val?.ref}</Td>
+        //           <Td textCenter>{val?.path}</Td>
+        //           <Td textCenter>{val?.healthCheckPath}</Td>
+        //           <Td textCenter>
+        //             <a href={val?.accessUrl} target="_blank" rel="noopener noreferrer">
+        //               <ExternalLinkAltIcon />{' '}
+        //               {`${val?.accessUrl.slice(0, URL_LENGTH_LIMIT)} ${
+        //                 val?.accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
+        //               }`}
+        //             </a>
+        //           </Td>
+        //           <Td textCenter>
+        //             <Split hasGutter>
+        //               <SplitItem isFilled>
+        //                 <Button
+        //                   variant="primary"
+        //                   isSmall
+        //                   icon={<PencilAltIcon />}
+        //                   onClick={() => {
+        //                     handlePopUpOpen('reconfigureSsrApplication');
+        //                     setConfigureData(val);
+        //                   }}
+        //                 >
+        //                   Configure
+        //                 </Button>
+        //               </SplitItem>
+        //               <SplitItem isFilled>
+        //                 <Button
+        //                   variant="secondary"
+        //                   isSmall
+        //                   icon={<UndoIcon />}
+        //                   onClick={() => {
+        //                     handlePopUpOpen('redeploySsrApplication');
+        //                     setRedeployData(val);
+        //                   }}
+        //                 >
+        //                   ReDeploy
+        //                 </Button>
+        //               </SplitItem>
+        //             </Split>
+        //           </Td>
+        //         </Tr>
+        //       ))}
+        //     </Tbody>
+        //   )}
+        // </TableComposable>
       )}
       <Modal
         title="Confirm Redeployment"

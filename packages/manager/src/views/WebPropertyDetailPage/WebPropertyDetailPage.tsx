@@ -55,7 +55,7 @@ import { Ephemeral } from './components/Ephemeral';
 import { EmptyInfo } from './components/EmptyInfo';
 import { SSRForm } from './components/SSR/SsrForm';
 
-const URL_LENGTH_LIMIT = 30;
+const URL_LENGTH_LIMIT = 100;
 
 export const WebPropertyDetailPage = (): JSX.Element => {
   const { query } = useRouter();
@@ -292,14 +292,13 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                   expandId: 'composable-property-table'
                                 }}
                               />
-                              <Td>
+                              <Td style={{ maxWidth: '25ch', wordWrap: 'break-word' }}>
                                 <Link
                                   href={{
                                     pathname: '/properties/[propertyIdentifier]/[spaProperty]',
                                     query: { propertyIdentifier, spaProperty: identifier }
                                   }}
                                 >
-                                  {/* {spaProperties.data[identifier]?.[0]?.name} */}
                                   {`${spaProperties.data[identifier]?.[0]?.name.slice(
                                     0,
                                     URL_LENGTH_LIMIT
@@ -311,8 +310,18 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                   }`}
                                 </Link>
                               </Td>
-                              <Td>{spaProperties.data[identifier]?.[0]?.path}</Td>
-                              <Td>
+                              <Td style={{ maxWidth: '25ch', wordWrap: 'break-word' }}>
+                                {`${spaProperties.data[identifier]?.[0]?.path.slice(
+                                  0,
+                                  URL_LENGTH_LIMIT
+                                )} ${
+                                  spaProperties.data[identifier]?.[0]?.path.length >
+                                  URL_LENGTH_LIMIT
+                                    ? '...'
+                                    : ''
+                                }`}
+                              </Td>
+                              <Td style={{ wordWrap: 'break-word' }}>
                                 <Split hasGutter>
                                   {spaProperties.data[identifier].map(({ _id, env, isSSR }) => (
                                     <SplitItem key={_id} style={{ marginRight: '8px' }}>
@@ -345,13 +354,23 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                       {spaProperties?.data?.[identifier].map(
                                         ({ _id, env, ref, isSSR, accessUrl, updatedAt }) => (
                                           <Tr key={_id}>
-                                            <Td>
+                                            <Td
+                                              style={{ maxWidth: '20ch', wordWrap: 'break-word' }}
+                                            >
                                               <Label color={isSSR ? 'cyan' : 'gold'} isCompact>
                                                 {env}
                                               </Label>
                                             </Td>
-                                            <Td>{ref}</Td>
-                                            <Td>
+                                            <Td
+                                              style={{ maxWidth: '20ch', wordWrap: 'break-word' }}
+                                            >
+                                              {`${ref.slice(0, URL_LENGTH_LIMIT)} ${
+                                                ref.length > URL_LENGTH_LIMIT ? '...' : ''
+                                              }`}
+                                            </Td>
+                                            <Td
+                                              style={{ maxWidth: '20ch', wordWrap: 'break-word' }}
+                                            >
                                               <a
                                                 href={`https://${webProperties?.data?.[env]?.url}`}
                                                 target="_blank"
@@ -371,7 +390,9 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                               </a>
                                             </Td>
 
-                                            <Td>
+                                            <Td
+                                              style={{ maxWidth: '20ch', wordWrap: 'break-word' }}
+                                            >
                                               <a
                                                 href={accessUrl}
                                                 target="_blank"
