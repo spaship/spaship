@@ -3,13 +3,24 @@ import { usePopUp } from '@app/hooks';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { useAddSsrSpaProperty } from '@app/services/ssr';
-import { Button, Label, Modal, ModalVariant, Split, SplitItem } from '@patternfly/react-core';
-import { ExternalLinkAltIcon, PencilAltIcon, UndoIcon } from '@patternfly/react-icons';
+import {
+  Button,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  Label,
+  Modal,
+  ModalVariant,
+  Split,
+  SplitItem,
+  Title
+} from '@patternfly/react-core';
+import { CubesIcon, ExternalLinkAltIcon, PencilAltIcon, UndoIcon } from '@patternfly/react-icons';
 import { Caption, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { EmptyInfo } from '../EmptyInfo';
 import { ConfigureSSRForm } from './ConfigureSSRForm';
 
 type Data = {
@@ -85,7 +96,11 @@ export const SSRDetails = () => {
       });
       toast.success('Redeployed SSR successfully');
     } catch (error) {
-      toast.error('Failed to redeploy SSR');
+      if (error instanceof AxiosError && error.response && error.response.status === 403) {
+        toast.error("You don't have access to perform this action");
+      } else {
+        toast.error('Failed to deploy conatinerized application');
+      }
     }
     handlePopUpClose('redeploySsrApplication');
   };
@@ -93,12 +108,20 @@ export const SSRDetails = () => {
   const url = window.location.href;
   const parts = url.split('/');
   const applicationName = parts[parts.length - 1];
-  const temp = spaProperties?.data?.[applicationName].filter((item) => item.isSSR === true);
+  const containerisedDeploymentData = spaProperties?.data?.[applicationName].filter(
+    (item) => item.isSSR === true
+  );
 
   return (
     <>
-      {spaProperties.isSuccess && isSpaPropertyListEmpty ? (
-        <EmptyInfo propertyIdentifier={propertyIdentifier} />
+      {!containerisedDeploymentData?.length ? (
+        <EmptyState>
+          <EmptyStateIcon icon={CubesIcon} />
+          <Title headingLevel="h4" size="lg">
+            No Containerised Deployment exists.
+          </Title>
+          <EmptyStateBody>Please create an deployment to view them here</EmptyStateBody>
+        </EmptyState>
       ) : (
         <TableComposable aria-label="spa-property-list" className="">
           <>
@@ -122,7 +145,7 @@ export const SSRDetails = () => {
             <TableRowSkeleton rows={3} columns={7} />
           ) : (
             <Tbody>
-              {temp?.map((val) => (
+              {containerisedDeploymentData?.map((val) => (
                 <Tr key={val.name}>
                   <Td textCenter>
                     {' '}
@@ -139,7 +162,6 @@ export const SSRDetails = () => {
                       style={{ marginRight: '8px' }}
                     >
                       {val.env}
-                      {val.isSSR && '[ssr]'}
                     </Label>
                   </Td>
                   <Td textCenter>{val?.ref}</Td>
@@ -190,7 +212,7 @@ export const SSRDetails = () => {
         </TableComposable>
       )}
       <Modal
-        title="Confirm SSR Redeployment"
+        title="Confirm Redeployment"
         variant={ModalVariant.medium}
         isOpen={popUp.redeploySsrApplication.isOpen}
         onClose={() => handlePopUpClose('redeploySsrApplication')}

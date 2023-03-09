@@ -1,11 +1,18 @@
 import { TableRowSkeleton } from '@app/components';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
-import { Button, Label, SplitItem } from '@patternfly/react-core';
-import { ExternalLinkAltIcon, PencilAltIcon, UndoIcon } from '@patternfly/react-icons';
+import {
+  Button,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  Label,
+  SplitItem,
+  Title
+} from '@patternfly/react-core';
+import { CubesIcon, ExternalLinkAltIcon, PencilAltIcon, UndoIcon } from '@patternfly/react-icons';
 import { Caption, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useRouter } from 'next/router';
-import { EmptyInfo } from '../EmptyInfo';
 
 const URL_LENGTH_LIMIT = 25;
 
@@ -28,8 +35,14 @@ export const StaticDeployment = () => {
 
   return (
     <div>
-      {spaProperties.isSuccess && isSpaPropertyListEmpty ? (
-        <EmptyInfo propertyIdentifier={propertyIdentifier} />
+      {!staticDeploymentData?.length ? (
+        <EmptyState>
+          <EmptyStateIcon icon={CubesIcon} />
+          <Title headingLevel="h4" size="lg">
+            No Static Deployment exists.
+          </Title>
+          <EmptyStateBody>Please create an deployment to view them here</EmptyStateBody>
+        </EmptyState>
       ) : (
         <TableComposable aria-label="spa-property-list">
           <Caption>SPA&apos;s DEPLOYED</Caption>
@@ -67,7 +80,6 @@ export const StaticDeployment = () => {
                       style={{ marginRight: '8px' }}
                     >
                       {val.env}
-                      {val.isSSR && ' [ssr]'}
                     </Label>
                   </Td>
                   <Td textCenter>{val?.ref}</Td>
