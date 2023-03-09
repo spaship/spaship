@@ -163,7 +163,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
               >
-                <TextInput  placeholder="Ref" type="text" id="ref" {...field} />
+                <TextInput placeholder="Ref" type="text" id="ref" {...field} />
               </FormGroup>
             )}
           />
