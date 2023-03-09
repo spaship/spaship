@@ -19,15 +19,15 @@ import {
 export const schema = yup.object({
   label: yup.string().label('Label').trim().max(50).required(),
   env: yup
-  .array(
-    yup
-      .string()
-      .label('Environment')
-      .trim()
-      .noWhitespace()
-      .matches(/^[a-zA-Z0-9-]+$/, 'Only letters, numbers, and dashes are allowed')
-      .required()
-  )
+    .array(
+      yup
+        .string()
+        .label('Environment')
+        .trim()
+        .noWhitespace()
+        .matches(/^[a-zA-Z0-9-]+$/, 'Only letters, numbers, and dashes are allowed')
+        .required()
+    )
     .label('Environments')
     .min(1)
     .required(),
