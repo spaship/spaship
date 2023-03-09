@@ -190,7 +190,8 @@ export class ApplicationService {
   async saveSSRApplication(applicationRequest: CreateApplicationDto, propertyIdentifier: string, env: string): Promise<any> {
     const identifier = this.applicationFactory.getIdentifier(applicationRequest.name);
     const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
-
+    applicationRequest.path = this.applicationFactory.getPath(applicationRequest.path);
+    if (applicationRequest?.healthCheckPath) applicationRequest.healthCheckPath = this.applicationFactory.getPath(applicationRequest.healthCheckPath);
     let applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true }))[0];
     if (!applicationDetails) {
       const saveApplication = await this.applicationFactory.createSSRApplicationRequest(
