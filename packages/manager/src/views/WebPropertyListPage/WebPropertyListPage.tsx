@@ -139,7 +139,12 @@ export const WebPropertyListPage = (): JSX.Element => {
                       <FlexItem>
                         <Button
                           isLarge
-                          style={{ borderRadius: '100%', width: '80px', height: '80px' }}
+                          style={{
+                            borderRadius: '100%',
+                            width: '80px',
+                            height: '80px',
+                            marginTop: '-15px'
+                          }}
                         >
                           <PlusIcon />
                         </Button>
