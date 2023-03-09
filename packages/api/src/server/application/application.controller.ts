@@ -5,13 +5,18 @@ import { DIRECTORY_CONFIGURATION } from '../../configuration';
 import { AuthenticationGuard } from '../auth/auth.guard';
 import { ExceptionsService } from '../exceptions/exceptions.service';
 import { ApplicationConfigDTO, ApplicationResponse, CreateApplicationDto } from './application.dto';
+import { ApplicationFactory } from './service/application.factory';
 import { ApplicationService } from './service/application.service';
 
 @Controller('applications')
 @ApiTags('Application')
 @UseGuards(AuthenticationGuard)
 export class ApplicationController {
-  constructor(private readonly applicationService: ApplicationService, private readonly exceptionService: ExceptionsService) {}
+  constructor(
+    private readonly applicationService: ApplicationService,
+    private readonly applicationFactory: ApplicationFactory,
+    private readonly exceptionService: ExceptionsService
+  ) {}
 
   @Get('/property/:identifier')
   @ApiOperation({ description: 'Get the list of Properties.' })
@@ -38,6 +43,8 @@ export class ApplicationController {
   )
   @ApiCreatedResponse({ status: 201, description: 'Application deployed successfully.', type: ApplicationResponse })
   async createApplication(@UploadedFile() file, @Body() applicationDto: CreateApplicationDto, @Param() params, @Query() queries): Promise<any> {
+    if (!this.applicationFactory.getIdentifier(applicationDto.name))
+      this.exceptionService.badRequestException({ message: 'Please provide a valid name.' });
     // @internal `imageUrl` refers to the SSR Enabled Deployment
     if (applicationDto.imageUrl) {
       await this.applicationService.validateImageRegistry(applicationDto.imageUrl);
