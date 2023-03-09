@@ -53,7 +53,7 @@ const columnNames2: ColumnNames = {
   APPLICATION_CREATION: 'APPLICATION_CREATION '
 };
 const userRole: UserRoleDTO = {
-  User: ['APIKEY_CREATION', 'ENV_CREATION', 'ENV_SYNC'],
+  User: ['APIKEY_CREATION', 'ENV_CREATION', 'ENV_SYNC', 'APPLICATION_CREATION'],
   Owner: [
     'APIKEY_CREATION',
     'APIKEY_DELETION',
@@ -64,7 +64,6 @@ const userRole: UserRoleDTO = {
     'APPLICATION_CREATION'
   ]
 };
-
 export const AddMembers = ({ onClose }: Props): JSX.Element => {
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [isOpenUser, setIsOpen] = useState(false);

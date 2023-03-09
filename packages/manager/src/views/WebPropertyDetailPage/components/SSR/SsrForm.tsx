@@ -10,9 +10,10 @@ import {
   FormSelectOption,
   Split,
   SplitItem,
-  TextInput
+  TextInput,
+  Tooltip
 } from '@patternfly/react-core';
-import { AddCircleOIcon, TimesCircleIcon } from '@patternfly/react-icons';
+import { AddCircleOIcon, InfoCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { AxiosError } from 'axios';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
@@ -25,14 +26,24 @@ interface Props {
 
 const schema = yup.object({
   name: yup.string().required(),
-  path: yup.string().required(),
+  path: yup
+    .string()
+    .matches(/^[a-zA-Z0-9/-]+$/, 'Only letters, numbers, forward slash and dashes are allowed')
+    .required(),
   env: yup.string().required(),
-  ref: yup.string().required(),
-  imageUrl: yup.string().required(),
-  healthCheckPath: yup.string().required(),
-  config: yup
-    .array(yup.object({ key: yup.string().required(), value: yup.string().required() }))
-    .required()
+  ref: yup.string(),
+  imageUrl: yup.string().trim().min(1, 'Image URL must not be empty').required(),
+  healthCheckPath: yup
+    .string()
+    .matches(/^[a-zA-Z0-9/-]+$/, 'Only letters, numbers, forward slash and dashes are allowed')
+    .required(),
+
+  config: yup.array().of(
+    yup.object({
+      key: yup.string().trim().min(1, 'Key must not be empty'),
+      value: yup.string().trim().min(1, 'Value must not be empty')
+    })
+  )
 });
 
 export type FormData = yup.InferType<typeof schema>;
@@ -59,18 +70,19 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
   const onSubmit = async (dataf: FormData) => {
     const newDataf = {
       ...dataf,
-      path: dataf.path.startsWith('/') ? dataf.path : `/${dataf.path}`,
-      healthCheckPath: dataf.healthCheckPath.startsWith('/')
-        ? dataf.healthCheckPath
-        : `/${dataf.healthCheckPath}`,
+      path: dataf.path.trim().startsWith('/') ? dataf.path.trim() : `/${dataf.path.trim()}`,
+      healthCheckPath: dataf.healthCheckPath.trim().startsWith('/')
+        ? dataf.healthCheckPath.trim()
+        : `/${dataf.healthCheckPath.trim()}`,
       config: dataf.config
         ? dataf.config.reduce((acc: Record<string, string>, cur: any) => {
-            acc[cur.key] = cur.value;
+            acc[cur.key.trim()] = cur.value.trim();
             return acc;
           }, {})
         : {},
-      propertyIdentifier
+      propertyIdentifier: propertyIdentifier.trim()
     };
+
     try {
       await createSsrSpaProperty.mutateAsync(newDataf);
       onClose();
@@ -80,7 +92,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
         toast.error("You don't have access to perform this action");
         onClose();
       } else {
-        toast.error('Failed to deploy SSR');
+        toast.error('Failed to deploy conatinerized application');
       }
     }
   };
@@ -117,7 +129,16 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
             name="path"
             render={({ field, fieldState: { error } }) => (
               <FormGroup
-                label="Path"
+                label={
+                  <>
+                    Path
+                    <Tooltip content={<div>Please enter context path for your application.</div>}>
+                      <span>
+                        &nbsp; <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+                      </span>
+                    </Tooltip>
+                  </>
+                }
                 isRequired
                 fieldId="path"
                 validated={error ? 'error' : 'default'}
@@ -138,12 +159,11 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
             render={({ field, fieldState: { error } }) => (
               <FormGroup
                 label="Ref"
-                isRequired
                 fieldId="ref"
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
               >
-                <TextInput isRequired placeholder="Ref" type="text" id="ref" {...field} />
+                <TextInput  placeholder="Ref" type="text" id="ref" {...field} />
               </FormGroup>
             )}
           />
@@ -154,7 +174,20 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
             name="imageUrl"
             render={({ field, fieldState: { error } }) => (
               <FormGroup
-                label="Image URL"
+                label={
+                  <>
+                    Image URL
+                    <Tooltip
+                      content={
+                        <div>Please enter image (url) for the containerized deployment [SSR].</div>
+                      }
+                    >
+                      <span>
+                        &nbsp; <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+                      </span>
+                    </Tooltip>
+                  </>
+                }
                 isRequired
                 fieldId="imageUrl"
                 validated={error ? 'error' : 'default'}
@@ -180,7 +213,18 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
             name="healthCheckPath"
             render={({ field, fieldState: { error } }) => (
               <FormGroup
-                label="Health Check Path"
+                label={
+                  <>
+                    Health Check Path
+                    <Tooltip
+                      content={<div>Please enter path for your application health checks.</div>}
+                    >
+                      <span>
+                        &nbsp; <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+                      </span>
+                    </Tooltip>
+                  </>
+                }
                 isRequired
                 fieldId="healthCheckPath"
                 validated={error ? 'error' : 'default'}
@@ -226,9 +270,24 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
           />
         </SplitItem>
       </Split>
-
       <Split hasGutter>
-        <SplitItem isFilled>Config</SplitItem>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            fontSize: 'var(--pf-c-form__label--FontSize)',
+            lineHeight: 'var(--pf-c-form__label--LineHeight)',
+            fontFamily: 'RedHatDisplay',
+            fontWeight: 'var(--pf-c-form__label-text--FontWeight)'
+          }}
+        >
+          Configuration
+          <Tooltip content={<div>Please enter configuration values for your application.</div>}>
+            <span style={{ marginLeft: '5px' }}>
+              <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+            </span>
+          </Tooltip>
+        </div>
         <SplitItem
           isFilled
           style={{
@@ -248,11 +307,9 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
               control={control}
               name={`config.${index}.key`}
               defaultValue={pair.key}
-              rules={{ required: 'Key is required' }}
               render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
                 <FormGroup
                   label="Key"
-                  isRequired
                   fieldId={`key-${index}`}
                   validated={error ? 'error' : 'default'}
                   helperTextInvalid={error?.message}
@@ -260,7 +317,6 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                   <TextInput
                     id={`key-${index}`}
                     type="text"
-                    isRequired
                     placeholder="Config Key"
                     value={value}
                     onChange={(event) => {
@@ -277,11 +333,9 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
               control={control}
               name={`config.${index}.value`}
               defaultValue={pair.value}
-              rules={{ required: 'Value is required' }}
               render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
                 <FormGroup
                   label="Value"
-                  isRequired
                   fieldId={`value-${index}`}
                   validated={error ? 'error' : 'default'}
                   helperTextInvalid={error?.message}
@@ -289,7 +343,6 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                   <TextInput
                     id={`value-${index}`}
                     type="text"
-                    isRequired
                     placeholder="Config Value"
                     value={value}
                     onChange={(event) => {

@@ -174,7 +174,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                         onClear={() => setSearchTerm('')}
                       />
                     </SplitItem>
-                    {/* <SplitItem isFilled /> */}
+
                     <SplitItem>
                       <Select
                         variant={SelectVariant.single}
@@ -197,6 +197,40 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                           <SelectOption key={`${envName} + ${index + 1}`} value={envName} />
                         ))}
                       </Select>
+                    </SplitItem>
+                    <SplitItem
+                      isFilled
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'flex-end'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            marginRight: '8px',
+                            height: '12px',
+                            width: '12px',
+                            borderRadius: '50%',
+                            backgroundColor: 'var(--pf-global--default-color--200)'
+                          }}
+                        />
+                        <span>Containerized Deployment</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', marginLeft: '16px' }}>
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            marginRight: '8px',
+                            height: '12px',
+                            width: '12px',
+                            borderRadius: '50%',
+                            backgroundColor: 'gold'
+                          }}
+                        />
+                        <span>Static Deployment</span>
+                      </div>
                     </SplitItem>
                   </Split>
                   {filterByEnv === 'Select Environment' || filterByEnv === '' ? (
@@ -284,7 +318,6 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                     <SplitItem key={_id} style={{ marginRight: '8px' }}>
                                       <Label color={isSSR ? 'cyan' : 'gold'} isCompact>
                                         {env}
-                                        {isSSR && ' [ssr]'}
                                       </Label>
                                     </SplitItem>
                                   ))}
@@ -315,7 +348,6 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                             <Td>
                                               <Label color={isSSR ? 'cyan' : 'gold'} isCompact>
                                                 {env}
-                                                {isSSR && ' [ssr]'}
                                               </Label>
                                             </Td>
                                             <Td>{ref}</Td>
@@ -412,7 +444,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
       </PageSection>
 
       <Modal
-        title="Create SSR Deployement"
+        title="Create Containerized Deployment"
         variant={ModalVariant.medium}
         isOpen={popUp.createSSRDeployment.isOpen}
         onClose={() => handlePopUpClose('createSSRDeployment')}

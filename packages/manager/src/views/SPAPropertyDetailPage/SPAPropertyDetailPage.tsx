@@ -123,7 +123,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                 <TabTitleIcon>
                   <BuildIcon />
                 </TabTitleIcon>
-                <TabTitleText>SSR Deployment</TabTitleText>{' '}
+                <TabTitleText>Containerized Deployment</TabTitleText>{' '}
               </>
             }
             aria-label="SSR SPA Deployment"

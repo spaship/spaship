@@ -4,7 +4,7 @@ export type TSSRProperty = {
   name: string;
   path: string;
   env: string;
-  ref: string;
+  ref?: string;
   imageUrl: string;
   healthCheckPath: string;
 };
