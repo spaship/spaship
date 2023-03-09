@@ -56,11 +56,6 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const webPropertiesKeys = Object.keys(webProperties.data || {});
 
-  const handleKeyValuePairChange = (index: number, field: string, value: string) => {
-    const updatedField = { ...fields[index], [field]: value };
-    fields[index] = updatedField;
-  };
-
   const onSubmit = async (dataf: FormData) => {
     const newDataf = {
       ...dataf,
@@ -270,7 +265,6 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                     value={value}
                     onChange={(event) => {
                       onChange(event);
-                      handleKeyValuePairChange(index, 'key', event);
                     }}
                     onBlur={onBlur}
                   />
@@ -300,7 +294,6 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                     value={value}
                     onChange={(event) => {
                       onChange(event);
-                      handleKeyValuePairChange(index, 'value', event);
                     }}
                     onBlur={onBlur}
                   />

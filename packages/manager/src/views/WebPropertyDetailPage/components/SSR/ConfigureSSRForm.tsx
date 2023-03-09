@@ -67,11 +67,6 @@ export const ConfigureSSRForm = ({
 
   const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
 
-  const handleKeyValuePairChange = (index: number, field: string, value: string) => {
-    const updatedField = { ...fields[index], [field]: value };
-    fields[index] = updatedField;
-  };
-
   const onSubmit = async (dataf: FormData) => {
     const newDataf = {
       ...dataf,
@@ -255,7 +250,7 @@ export const ConfigureSSRForm = ({
           </Button>
         </SplitItem>
       </Split>
-      {fields.map((pair, index) => (
+      {/* {fields.map((pair, index) => (
         <Split key={`key-${index + 1}`} hasGutter>
           <SplitItem key={`key-${index + 1}`} isFilled>
             <Controller
@@ -279,7 +274,6 @@ export const ConfigureSSRForm = ({
                     value={value}
                     onChange={(event) => {
                       onChange(event);
-                      handleKeyValuePairChange(index, 'key', event);
                     }}
                     onBlur={onBlur}
                   />
@@ -309,7 +303,80 @@ export const ConfigureSSRForm = ({
                     value={value}
                     onChange={(event) => {
                       onChange(event);
-                      handleKeyValuePairChange(index, 'value', event);
+                    }}
+                    onBlur={onBlur}
+                  />
+                </FormGroup>
+              )}
+            />
+          </SplitItem>
+          <SplitItem
+            key={`remove-${index + 1}`}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginLeft: 'var(--pf-global--spacer--md)',
+              marginTop: 'var(--pf-global--spacer--lg)'
+            }}
+          >
+            {console.log("field",fields,index)}
+            <Button variant="link" icon={<TimesCircleIcon />} onClick={() => remove(index)} />
+          </SplitItem>
+        </Split>
+      ))} */}
+      {fields.map((pair, index) => (
+        <Split key={`key-${index + 1}`} hasGutter>
+          <SplitItem key={`key-${index + 1}`} isFilled>
+            <Controller
+              control={control}
+              name={`config.${index}.key`}
+              defaultValue={pair.key}
+              rules={{ required: 'Key is required' }}
+              render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
+                <FormGroup
+                  label="Key"
+                  isRequired
+                  fieldId={`key-${index}`}
+                  validated={error ? 'error' : 'default'}
+                  helperTextInvalid={error?.message}
+                >
+                  <TextInput
+                    id={`key-${index}`}
+                    type="text"
+                    isRequired
+                    placeholder="Config Key"
+                    value={value}
+                    onChange={(event) => {
+                      onChange(event);
+                    }}
+                    onBlur={onBlur}
+                  />
+                </FormGroup>
+              )}
+            />
+          </SplitItem>
+          <SplitItem key={`value-${index + 1}`} isFilled>
+            <Controller
+              control={control}
+              name={`config.${index}.value`}
+              defaultValue={pair.value}
+              rules={{ required: 'Value is required' }}
+              render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
+                <FormGroup
+                  label="Value"
+                  isRequired
+                  fieldId={`value-${index}`}
+                  validated={error ? 'error' : 'default'}
+                  helperTextInvalid={error?.message}
+                >
+                  <TextInput
+                    id={`value-${index}`}
+                    type="text"
+                    isRequired
+                    placeholder="Config Value"
+                    value={value}
+                    onChange={(event) => {
+                      onChange(event);
                     }}
                     onBlur={onBlur}
                   />
@@ -330,6 +397,7 @@ export const ConfigureSSRForm = ({
           </SplitItem>
         </Split>
       ))}
+
       <Button isLoading={isSubmitting} type="submit">
         Submit
       </Button>
