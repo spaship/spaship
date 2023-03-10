@@ -40,6 +40,8 @@ type Data = {
   imageUrl: string;
 };
 const URL_LENGTH_LIMIT = 100;
+const INTERNAL_ACCESS_URL_LENGTH = 25;
+
 export const SSRDetails = () => {
   const { query } = useRouter();
 
@@ -195,8 +197,8 @@ export const SSRDetails = () => {
                   <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
                     <a href={val?.accessUrl} target="_blank" rel="noopener noreferrer">
                       <ExternalLinkAltIcon />{' '}
-                      {`${val?.accessUrl.slice(0, URL_LENGTH_LIMIT)} ${
-                        val?.accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
+                      {`${val?.accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                        val?.accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
                       }`}
                     </a>
                   </Td>
