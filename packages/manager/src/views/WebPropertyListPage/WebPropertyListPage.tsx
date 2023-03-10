@@ -143,7 +143,7 @@ export const WebPropertyListPage = (): JSX.Element => {
                             borderRadius: '100%',
                             width: '80px',
                             height: '80px',
-                            marginTop: '-15px'
+                            marginTop: '-20px'
                           }}
                         >
                           <PlusIcon />
