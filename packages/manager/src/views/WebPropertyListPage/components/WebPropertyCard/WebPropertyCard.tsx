@@ -25,7 +25,7 @@ export const WebPropertyCard = ({
   <Card
     isSelectable
     isFullHeight
-    style={{ height: '180px', overflow: 'hidden' }}
+    style={{ height: '205px', overflow: 'hidden' }}
     isRounded
     className={css('pf-u-px-sm rounded-md transition hover:shadow-sm', {
       'selected-card': isSelected
@@ -39,7 +39,7 @@ export const WebPropertyCard = ({
     >
       <a className="text-decoration-none">
         <CardTitle>
-          <Title headingLevel="h4" size="lg" className="capitalize">
+          <Title headingLevel="h3" size="xl" className="capitalize">
             {title}
           </Title>
           <Text
@@ -50,7 +50,7 @@ export const WebPropertyCard = ({
           </Text>
         </CardTitle>
         <CardBody>{children}</CardBody>
-        <CardFooter>
+        <CardFooter style={{ marginTop: '10px' }}>
           <Text className="pf-u-color-700" style={{ fontWeight: 'bold' }}>
             {footer}
           </Text>
