@@ -56,6 +56,7 @@ import { EmptyInfo } from './components/EmptyInfo';
 import { SSRForm } from './components/SSR/SsrForm';
 
 const URL_LENGTH_LIMIT = 100;
+const INTERNAL_ACCESS_URL_LENGTH = 25;
 
 export const WebPropertyDetailPage = (): JSX.Element => {
   const { query } = useRouter();
@@ -399,8 +400,13 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                                 rel="noopener noreferrer"
                                               >
                                                 <ExternalLinkAltIcon />{' '}
-                                                {`${accessUrl.slice(0, URL_LENGTH_LIMIT)} ${
-                                                  accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
+                                                {`${accessUrl.slice(
+                                                  0,
+                                                  INTERNAL_ACCESS_URL_LENGTH
+                                                )} ${
+                                                  accessUrl.length > INTERNAL_ACCESS_URL_LENGTH
+                                                    ? '...'
+                                                    : ''
                                                 }`}
                                               </a>
                                             </Td>

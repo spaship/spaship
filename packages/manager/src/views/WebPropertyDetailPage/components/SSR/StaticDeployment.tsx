@@ -15,6 +15,7 @@ import { Caption, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/
 import { useRouter } from 'next/router';
 
 const URL_LENGTH_LIMIT = 100;
+const INTERNAL_ACCESS_URL_LENGTH = 25;
 
 export const StaticDeployment = () => {
   const { query } = useRouter();
@@ -87,8 +88,8 @@ export const StaticDeployment = () => {
                   <Td>
                     <a href={val?.accessUrl} target="_blank" rel="noopener noreferrer">
                       <ExternalLinkAltIcon />{' '}
-                      {`${val?.accessUrl.slice(0, URL_LENGTH_LIMIT)} ${
-                        val?.accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
+                      {`${val?.accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                        val?.accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
                       }`}
                     </a>
                   </Td>
