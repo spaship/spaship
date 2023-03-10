@@ -12,7 +12,6 @@ type Props = {
   urlPath?: string;
   urlQuery?: string;
 };
-
 export const WebPropertyCard = ({
   title,
   subtitle,
@@ -22,22 +21,22 @@ export const WebPropertyCard = ({
   urlPath,
   urlQuery
 }: Props) => (
-  <Card
-    isSelectable
-    isFullHeight
-    style={{ height: '205px', overflow: 'hidden' }}
-    isRounded
-    className={css('pf-u-px-sm rounded-md transition hover:shadow-sm', {
-      'selected-card': isSelected
-    })}
+  <Link
+    href={{
+      pathname: urlPath,
+      query: { propertyIdentifier: urlQuery }
+    }}
   >
-    <Link
-      href={{
-        pathname: urlPath,
-        query: { propertyIdentifier: urlQuery }
-      }}
-    >
-      <a className="text-decoration-none">
+    <a className="text-decoration-none">
+      <Card
+        isSelectable
+        isFullHeight
+        style={{ height: '205px', overflow: 'hidden' }}
+        isRounded
+        className={css('pf-u-px-sm rounded-md transition hover:shadow-sm', {
+          'selected-card': isSelected
+        })}
+      >
         <CardTitle>
           <Title headingLevel="h3" size="xl" className="capitalize">
             {title}
@@ -55,11 +54,10 @@ export const WebPropertyCard = ({
             {footer}
           </Text>
         </CardFooter>
-      </a>
-    </Link>
-  </Card>
+      </Card>
+    </a>
+  </Link>
 );
-
 WebPropertyCard.defaultProps = {
   children: null,
   title: '',

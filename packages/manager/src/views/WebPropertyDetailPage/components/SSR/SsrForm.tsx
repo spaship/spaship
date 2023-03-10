@@ -23,7 +23,6 @@ interface Props {
   onClose: () => void;
   propertyIdentifier: string;
 }
-
 const schema = yup.object({
   name: yup.string().required(),
   path: yup
@@ -37,7 +36,6 @@ const schema = yup.object({
     .string()
     .matches(/^[a-zA-Z0-9/-]+$/, 'Only letters, numbers, forward slash and dashes are allowed')
     .required(),
-
   config: yup.array().of(
     yup.object({
       key: yup.string().trim().min(1, 'Key must not be empty'),
@@ -52,12 +50,14 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
   const {
     control,
     handleSubmit,
+    setValue,
+    getValues,
     formState: { isSubmitting }
   } = useForm<FormData>({
+    defaultValues: { healthCheckPath: '', path: '' },
     mode: 'onBlur',
     resolver: yupResolver(schema)
   });
-
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'config' as const
@@ -126,25 +126,27 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
         <SplitItem isFilled>
           <Controller
             control={control}
-            name="path"
-            render={({ field, fieldState: { error } }) => (
+            name="env"
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
               <FormGroup
-                label={
-                  <>
-                    Path
-                    <Tooltip content={<div>Please enter context path for your application.</div>}>
-                      <span>
-                        &nbsp; <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
-                      </span>
-                    </Tooltip>
-                  </>
-                }
-                isRequired
-                fieldId="path"
+                label="Select Environment"
+                fieldId="select-env"
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
               >
-                <TextInput isRequired placeholder="Path" type="text" id="path" {...field} />
+                <FormSelect
+                  label="Select Environment"
+                  aria-label="FormSelect Input"
+                  onChange={(event) => {
+                    onChange(event);
+                  }}
+                  value={value}
+                >
+                  <FormSelectOption key={1} label="Please select an environment" isDisabled />
+                  {webPropertiesKeys.map((envName) => (
+                    <FormSelectOption key={envName} value={envName} label={envName} />
+                  ))}
+                </FormSelect>
               </FormGroup>
             )}
           />
@@ -244,32 +246,49 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
         <SplitItem isFilled>
           <Controller
             control={control}
-            name="env"
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-              <FormGroup
-                label="Select Environment"
-                fieldId="select-env"
-                validated={error ? 'error' : 'default'}
-                helperTextInvalid={error?.message}
-              >
-                <FormSelect
-                  label="Select Environment"
-                  aria-label="FormSelect Input"
-                  onChange={(event) => {
-                    onChange(event);
-                  }}
-                  value={value}
+            name="path"
+            render={({ field, fieldState: { error } }) => {
+              const handleChange = (e: string) => {
+                const pathValue = e;
+                const healthCheckPathValue = getValues('healthCheckPath');
+                if (healthCheckPathValue === field.value) {
+                  setValue('healthCheckPath', pathValue);
+                }
+                field.onChange(e);
+              };
+              return (
+                <FormGroup
+                  label={
+                    <>
+                      Path
+                      <Tooltip content={<div>Please enter context path for your application.</div>}>
+                        <span>
+                          &nbsp;{' '}
+                          <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+                        </span>
+                      </Tooltip>
+                    </>
+                  }
+                  isRequired
+                  fieldId="path"
+                  validated={error ? 'error' : 'default'}
+                  helperTextInvalid={error?.message}
                 >
-                  <FormSelectOption key={1} label="Please select an environment" isDisabled />
-                  {webPropertiesKeys.map((envName) => (
-                    <FormSelectOption key={envName} value={envName} label={envName} />
-                  ))}
-                </FormSelect>
-              </FormGroup>
-            )}
+                  <TextInput
+                    isRequired
+                    placeholder="Path"
+                    type="text"
+                    id="path"
+                    value={field.value}
+                    onChange={handleChange}
+                  />
+                </FormGroup>
+              );
+            }}
           />
         </SplitItem>
       </Split>
+
       <Split hasGutter>
         <div
           style={{
@@ -300,6 +319,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
           </Button>
         </SplitItem>
       </Split>
+
       {fields.map((pair, index) => (
         <Split key={`key-${index + 1}`} hasGutter>
           <SplitItem key={`key-${index + 1}`} isFilled>
