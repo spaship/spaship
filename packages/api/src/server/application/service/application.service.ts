@@ -284,7 +284,7 @@ export class ApplicationService {
         Action.APPLICATION_DEPLOYED,
         env,
         identifier,
-        `Deployment Time : ${consumedTime} seconds [SSR Enabled]`,
+        `Deployment Time : ${consumedTime} seconds [Containerized]`,
         createdBy,
         `${Source.OPERATOR}-SSR`,
         JSON.stringify(response)
