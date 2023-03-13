@@ -188,7 +188,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                       content={
                         <div>
                           The registry URL of the application you want to deploy. for example,
-                          Sample URL : quay.io/spashio/sample-ssr-app
+                          Sample URL : quay.io/spaship/sample-ssr-app
                         </div>
                       }
                     >

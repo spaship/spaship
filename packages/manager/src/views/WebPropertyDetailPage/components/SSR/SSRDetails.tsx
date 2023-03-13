@@ -120,7 +120,7 @@ export const SSRDetails = () => {
         <EmptyState>
           <EmptyStateIcon icon={CubesIcon} />
           <Title headingLevel="h4" size="lg">
-            No Containerised Deployment exists.
+            No Containerized Deployment exists.
           </Title>
           <EmptyStateBody>Please create an deployment to view them here</EmptyStateBody>
         </EmptyState>
