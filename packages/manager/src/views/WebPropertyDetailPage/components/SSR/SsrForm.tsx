@@ -419,7 +419,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
           </SplitItem>
         </Split>
       ))}
-      <Button isLoading={isSubmitting} type="submit">
+      <Button isLoading={isSubmitting} isDisabled={isSubmitting} type="submit">
         Submit
       </Button>
     </Form>
