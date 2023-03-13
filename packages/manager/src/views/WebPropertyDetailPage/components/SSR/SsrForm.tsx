@@ -132,6 +132,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                 label="Select Environment"
                 fieldId="select-env"
                 validated={error ? 'error' : 'default'}
+                isRequired
                 helperTextInvalid={error?.message}
               >
                 <FormSelect
@@ -212,40 +213,6 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
         <SplitItem isFilled>
           <Controller
             control={control}
-            name="healthCheckPath"
-            render={({ field, fieldState: { error } }) => (
-              <FormGroup
-                label={
-                  <>
-                    Health Check Path
-                    <Tooltip
-                      content={<div>Please enter path for your application health checks.</div>}
-                    >
-                      <span>
-                        &nbsp; <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
-                      </span>
-                    </Tooltip>
-                  </>
-                }
-                isRequired
-                fieldId="healthCheckPath"
-                validated={error ? 'error' : 'default'}
-                helperTextInvalid={error?.message}
-              >
-                <TextInput
-                  isRequired
-                  placeholder="Enter health Check Path"
-                  type="text"
-                  id="healthCheckPath"
-                  {...field}
-                />
-              </FormGroup>
-            )}
-          />
-        </SplitItem>
-        <SplitItem isFilled>
-          <Controller
-            control={control}
             name="path"
             render={({ field, fieldState: { error } }) => {
               const handleChange = (e: string) => {
@@ -285,6 +252,40 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                 </FormGroup>
               );
             }}
+          />
+        </SplitItem>
+        <SplitItem isFilled>
+          <Controller
+            control={control}
+            name="healthCheckPath"
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label={
+                  <>
+                    Health Check Path
+                    <Tooltip
+                      content={<div>Please enter path for your application health checks.</div>}
+                    >
+                      <span>
+                        &nbsp; <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+                      </span>
+                    </Tooltip>
+                  </>
+                }
+                isRequired
+                fieldId="healthCheckPath"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
+                <TextInput
+                  isRequired
+                  placeholder="Enter health Check Path"
+                  type="text"
+                  id="healthCheckPath"
+                  {...field}
+                />
+              </FormGroup>
+            )}
           />
         </SplitItem>
       </Split>
