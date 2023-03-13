@@ -29,17 +29,21 @@ const schema = yup.object({
     .string()
     .matches(/^[a-zA-Z0-9/-]+$/, 'Only letters, numbers, forward slash and dashes are allowed')
     .required(),
-  env: yup.string().required(),
+  env: yup.string().required('Environment is a required field'),
   ref: yup.string(),
-  imageUrl: yup.string().trim().min(1, 'Image URL must not be empty').required(),
+  imageUrl: yup
+    .string()
+    .trim()
+    .min(1, 'Image URL must not be empty')
+    .required('Image URL is a  required field'),
   healthCheckPath: yup
     .string()
     .matches(/^[a-zA-Z0-9/-]+$/, 'Only letters, numbers, forward slash and dashes are allowed')
     .required(),
   config: yup.array().of(
     yup.object({
-      key: yup.string().trim().min(1, 'Key must not be empty'),
-      value: yup.string().trim().min(1, 'Value must not be empty')
+      key: yup.string().trim().min(1, 'Configuration Key must not be empty'),
+      value: yup.string().trim().min(1, 'Configuration Value must not be empty')
     })
   )
 });
@@ -365,7 +369,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                   <TextInput
                     id={`key-${index}`}
                     type="text"
-                    placeholder="Config Key"
+                    placeholder="Configuration Key"
                     value={value}
                     onChange={(event) => {
                       onChange(event);
@@ -391,7 +395,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                   <TextInput
                     id={`value-${index}`}
                     type="text"
-                    placeholder="Config Value"
+                    placeholder="Configuration Value"
                     value={value}
                     onChange={(event) => {
                       onChange(event);
