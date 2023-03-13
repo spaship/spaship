@@ -29,17 +29,21 @@ const schema = yup.object({
     .string()
     .matches(/^[a-zA-Z0-9/-]+$/, 'Only letters, numbers, forward slash and dashes are allowed')
     .required(),
-  env: yup.string().required(),
+  env: yup.string().required('Environment is a required field'),
   ref: yup.string(),
-  imageUrl: yup.string().trim().min(1, 'Image URL must not be empty').required(),
+  imageUrl: yup
+    .string()
+    .trim()
+    .min(1, 'Image URL must not be empty')
+    .required('Image URL is a  required field'),
   healthCheckPath: yup
     .string()
     .matches(/^[a-zA-Z0-9/-]+$/, 'Only letters, numbers, forward slash and dashes are allowed')
     .required(),
   config: yup.array().of(
     yup.object({
-      key: yup.string().trim().min(1, 'Key must not be empty'),
-      value: yup.string().trim().min(1, 'Value must not be empty')
+      key: yup.string().trim().min(1, 'Configuration Key must not be empty'),
+      value: yup.string().trim().min(1, 'Configuration Value must not be empty')
     })
   )
 });
@@ -54,7 +58,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
     getValues,
     formState: { isSubmitting }
   } = useForm<FormData>({
-    defaultValues: { healthCheckPath: '', path: '' },
+    defaultValues: { healthCheckPath: '/', path: '/' },
     mode: 'onBlur',
     resolver: yupResolver(schema)
   });
@@ -100,7 +104,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Split hasGutter>
-        <SplitItem isFilled>
+        <SplitItem isFilled style={{ width: '100%' }}>
           <Controller
             control={control}
             name="name"
@@ -123,7 +127,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
             )}
           />
         </SplitItem>
-        <SplitItem isFilled>
+        <SplitItem isFilled style={{ width: '100%' }}>
           <Controller
             control={control}
             name="env"
@@ -155,7 +159,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
       </Split>
 
       <Split hasGutter>
-        <SplitItem isFilled>
+        <SplitItem isFilled style={{ width: '100%' }}>
           <Controller
             control={control}
             name="ref"
@@ -171,7 +175,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
             )}
           />
         </SplitItem>
-        <SplitItem isFilled>
+        <SplitItem isFilled style={{ width: '100%' }}>
           <Controller
             control={control}
             name="imageUrl"
@@ -182,7 +186,10 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                     Image URL
                     <Tooltip
                       content={
-                        <div>Please enter image (url) for the containerized deployment [SSR].</div>
+                        <div>
+                          The registry URL of the application you want to deploy. for example,
+                          Sample URL : quay.io/spaship/sample-ssr-app
+                        </div>
                       }
                     >
                       <span>
@@ -210,7 +217,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
       </Split>
 
       <Split hasGutter>
-        <SplitItem isFilled>
+        <SplitItem isFilled style={{ width: '100%' }}>
           <Controller
             control={control}
             name="path"
@@ -228,7 +235,15 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                   label={
                     <>
                       Path
-                      <Tooltip content={<div>Please enter context path for your application.</div>}>
+                      <Tooltip
+                        content={
+                          <div>
+                            This will be the context path is your application.
+                            <br /> Please note that this should match the homepage attribute of the
+                            package.json file.
+                          </div>
+                        }
+                      >
                         <span>
                           &nbsp;{' '}
                           <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
@@ -248,13 +263,14 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                     id="path"
                     value={field.value}
                     onChange={handleChange}
+                    style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
               );
             }}
           />
         </SplitItem>
-        <SplitItem isFilled>
+        <SplitItem isFilled style={{ width: '100%' }}>
           <Controller
             control={control}
             name="healthCheckPath"
@@ -264,7 +280,13 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                   <>
                     Health Check Path
                     <Tooltip
-                      content={<div>Please enter path for your application health checks.</div>}
+                      content={
+                        <div>
+                          By default, it will pick the value of the Path attribute, used for
+                          application liveness checking for monitoring and auto redeployment on
+                          failure.
+                        </div>
+                      }
                     >
                       <span>
                         &nbsp; <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
@@ -283,6 +305,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                   type="text"
                   id="healthCheckPath"
                   {...field}
+                  style={{ marginRight: '0px' }}
                 />
               </FormGroup>
             )}
@@ -302,7 +325,15 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
           }}
         >
           Configuration
-          <Tooltip content={<div>Please enter configuration values for your application.</div>}>
+          <Tooltip
+            content={
+              <div>
+                This will store the configuration map in key-value pairs, which will be required
+                during the application runtime, for example, if your app reads a value of some env
+                variable to configure itself during start-up.
+              </div>
+            }
+          >
             <span style={{ marginLeft: '5px' }}>
               <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
             </span>
@@ -338,7 +369,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                   <TextInput
                     id={`key-${index}`}
                     type="text"
-                    placeholder="Config Key"
+                    placeholder="Configuration Key"
                     value={value}
                     onChange={(event) => {
                       onChange(event);
@@ -364,7 +395,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                   <TextInput
                     id={`value-${index}`}
                     type="text"
-                    placeholder="Config Value"
+                    placeholder="Configuration Value"
                     value={value}
                     onChange={(event) => {
                       onChange(event);

@@ -148,7 +148,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                     onClick={() => handlePopUpOpen('createSSRDeployment')}
                     icon={<PlusCircleIcon />}
                   >
-                    Add Deployment
+                    Add New App
                   </Button>
                 </Split>
                 <EmptyInfo propertyIdentifier={propertyIdentifier} />
@@ -162,7 +162,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                         onClick={() => handlePopUpOpen('createSSRDeployment')}
                         icon={<PlusCircleIcon />}
                       >
-                        Add Deployment
+                        Add New App
                       </Button>
                     </SplitItem>
 

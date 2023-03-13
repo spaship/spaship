@@ -50,21 +50,29 @@ const aboutAllData = [
 ];
 const newFeaturesData = [
   {
-    id: 0,
+    id: 101,
     title: 'Containerized Deployment [SSR] support in SPAship',
     linkhere:
       'https://source.redhat.com/groups/public/spaship/blog_article/introducing_containerized_deployment_support_for_ssr_in_spaship',
     footer: 'Containerization & SSR'
   },
   {
-    id: 1,
+    id: 102,
+    title: 'Containerized Deployment Complete Workflow',
+    linkhere: 'https://drive.google.com/file/d/1g-obdU_RT1kQOgDKM150s_eVyiYUElKa/view?usp=sharing',
+    footer: 'Containerization & SSR',
+    isIcon: true
+  },
+  {
+    id: 103,
+
     title: 'SPAship Access Management using RBAC',
     linkhere:
       'https://source.redhat.com/groups/public/spaship/blog_article/introduction_to_rbac_feature_in_spaship',
     footer: 'Access Management'
   },
   {
-    id: 2,
+    id: 104,
     title: 'RBAC Complete Workflow',
     linkhere:
       'https://drive.google.com/file/d/1xgN55mPjIG_CdLaT1G7wE1l9NnbqNZCC/view?usp=share_link',
@@ -72,35 +80,35 @@ const newFeaturesData = [
     isIcon: true
   },
   {
-    id: 3,
+    id: 105,
     title: 'Introducing Ephemeral Preview',
     linkhere:
       'https://source.redhat.com/groups/public/dxp/exd_digital_experience_platforms_dxp_blog/ephemeral_preview_feature_in_spaship',
     footer: 'Deployment Preview'
   },
   {
-    id: 4,
+    id: 106,
     title: 'Getting Deployment Status in Real Time',
     linkhere:
       'https://source.redhat.com/groups/public/dxp/exd_digital_experience_platforms_dxp_blog/get_your_deployment_status_in_realtime',
     footer: 'SSE & Notifications'
   },
   {
-    id: 5,
+    id: 107,
     title: 'Introducing Sync service in SPAship ',
     linkhere:
       'https://source.redhat.com/groups/public/dxp/exd_digital_experience_platforms_dxp_blog/introducing_sync_service_in_spaship',
     footer: 'SSI Configuration'
   },
   {
-    id: 6,
+    id: 108,
     title: 'SPAship Release Logs ',
     linkhere:
       'https://docs.google.com/document/u/1/d/1tdwBCT9d3n3lJnjpiD7B67304Tgl2URwnKwSwGasNHk/edit',
     footer: 'Version Update '
   },
   {
-    id: 7,
+    id: 109,
     title: 'SPAship FAQ',
     linkhere:
       'https://docs.google.com/document/d/143ezNXxfujOiTe3VD0cc0ZBYL92F_fSpYCFJUzzDoiQ/edit',
