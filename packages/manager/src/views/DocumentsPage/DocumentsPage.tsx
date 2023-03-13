@@ -55,7 +55,6 @@ const newFeaturesData = [
     linkhere:
       'https://source.redhat.com/groups/public/spaship/blog_article/introducing_containerized_deployment_support_for_ssr_in_spaship',
     footer: 'Containerization & SSR'
-
   },
   {
     id: 1,
