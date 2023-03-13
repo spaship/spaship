@@ -219,6 +219,32 @@ export const ConfigureSSRForm = ({
         <SplitItem isFilled>
           <Controller
             control={control}
+            name="path"
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label={
+                  <>
+                    Path
+                    <Tooltip content={<div>Please enter context path for your application.</div>}>
+                      <span>
+                        &nbsp; <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+                      </span>
+                    </Tooltip>
+                  </>
+                }
+                isRequired
+                fieldId="path"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
+                <TextInput isRequired placeholder="Path" type="text" id="path" {...field} />
+              </FormGroup>
+            )}
+          />
+        </SplitItem>
+        <SplitItem isFilled>
+          <Controller
+            control={control}
             name="healthCheckPath"
             render={({ field, fieldState: { error } }) => (
               <FormGroup
@@ -246,32 +272,6 @@ export const ConfigureSSRForm = ({
                   id="healthCheckPath"
                   {...field}
                 />
-              </FormGroup>
-            )}
-          />
-        </SplitItem>
-        <SplitItem isFilled>
-          <Controller
-            control={control}
-            name="path"
-            render={({ field, fieldState: { error } }) => (
-              <FormGroup
-                label={
-                  <>
-                    Path
-                    <Tooltip content={<div>Please enter context path for your application.</div>}>
-                      <span>
-                        &nbsp; <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
-                      </span>
-                    </Tooltip>
-                  </>
-                }
-                isRequired
-                fieldId="path"
-                validated={error ? 'error' : 'default'}
-                helperTextInvalid={error?.message}
-              >
-                <TextInput isRequired placeholder="Path" type="text" id="path" {...field} />
               </FormGroup>
             )}
           />
