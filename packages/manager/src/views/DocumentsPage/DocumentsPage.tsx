@@ -58,7 +58,7 @@ const newFeaturesData = [
   },
   {
     id: 102,
-    title: 'Containerized Deployment Complete Workflow',
+    title: 'Containerized Deployment [SSR] Complete Workflow',
     linkhere: 'https://drive.google.com/file/d/1g-obdU_RT1kQOgDKM150s_eVyiYUElKa/view?usp=sharing',
     footer: 'Containerization & SSR',
     isIcon: true
