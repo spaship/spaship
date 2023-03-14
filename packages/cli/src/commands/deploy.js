@@ -43,14 +43,22 @@ class DeployCommand extends Command {
     const ephemeral = flags?.preview || false;
     const actionId = flags?.prid;
 
-    if (actionId && !ephemeral) {
-      this.error("You need to provide --preview or -P to use this --prid option [example : --preview --prid=10 or -P --prid=10]");
+    const image = flags?.image || false;
+
+    if (image) {
+      this.log("It is a containerized deployment [SSR], please update the corresponding application from the SPAship Manager section. \nNote : To know more about it please check the https://spaship.redhat.com/documents.");
+    }
+    else {
+      if (actionId && !ephemeral) {
+        this.error("You need to provide --preview or -P to use this --prid option [example : --preview --prid=10 or -P --prid=10]");
+      }
+
+      if (ephemeral) {
+        this.log("This Deployment is ephemeral preview enabled, please check your deployment from SPAship Manager")
+      }
     }
 
 
-    if (ephemeral) {
-      this.log("This Deployment is ephemeral preview enabled, please check your deployment from SPAship Manager")
-    }
 
 
     if (!name) {
@@ -106,35 +114,36 @@ class DeployCommand extends Command {
       this.error(`An API key must be provided, either in your spashiprc file or in a --apikey option.`);
     }
 
-    if (!args.archive) {
-      if (buildDir) {
-        // No archive path specified in the commandline as argument and buildDir is specified in the spaship.yaml
-        const buildDirPath = nodePath.join(process.cwd(), buildDir);
-        try {
-          fs.statSync(buildDirPath);
-        } catch {
-          this.error(`Unable to access ${buildDirPath}, please check the buildDir value.`);
+    if (!image) {
+      if (!args.archive) {
+        if (buildDir) {
+          // No archive path specified in the commandline as argument and buildDir is specified in the spaship.yaml
+          const buildDirPath = nodePath.join(process.cwd(), buildDir);
+          try {
+            fs.statSync(buildDirPath);
+          } catch {
+            this.error(`Unable to access ${buildDirPath}, please check the buildDir value.`);
+          }
+          const rawSpashipYml = await common.config.readRaw("spaship.yaml");
+          this.log("Creating a zip archive...");
+          try {
+            args.archive = await zipDirectory(buildDirPath, rawSpashipYml);
+            this.log(buildDirPath);
+            this.log(rawSpashipYml);
+            this.log("Done creating the archive...");
+          } catch (e) {
+            this.error(e);
+          }
+        } else {
+          // No buildDir is specified in the spaship.yaml
+          this.error("You should provide the archive file name which contains the spaship.yaml file.");
         }
-        const rawSpashipYml = await common.config.readRaw("spaship.yaml");
-        this.log("Creating a zip archive...");
-        try {
-          args.archive = await zipDirectory(buildDirPath, rawSpashipYml);
-          this.log(buildDirPath);
-          this.log(rawSpashipYml);
-          this.log("Done creating the archive...");
-        } catch (e) {
-          this.error(e);
-        }
-      } else {
-        // No buildDir is specified in the spaship.yaml
-        this.error("You should provide the archive file name which contains the spaship.yaml file.");
       }
     }
+
     const spinner = ora(`Start deploying SPA`);
     this.log(`Deploying SPA to ${flags.env}${envIsURL ? "" : ` (${host})`}`);
-
     let step = "uploading";
-
     try {
       spinner.start();
       const startTime = performance.now();
@@ -144,39 +153,60 @@ class DeployCommand extends Command {
       data.append("name", name);
       data.append("path", path);
       data.append("ref", this.getRef(flags));
-      if (ephemeral) {
-        data.append("ephemeral", 'true');
-        if (actionId) {
-          data.append("actionId", actionId);
+      if (image) {
+        data.append("imageUrl", image);
+      }
+      else {
+        if (ephemeral) {
+          data.append("ephemeral", 'true');
+          if (actionId) {
+            data.append("actionId", actionId);
+          }
         }
       }
-      if (!fs.existsSync(args.archive)) {
-        spinner.fail(`${args.archive} cannot be found, Please check the path of the ${args.archive} or provide a valid file.`);
-        return;
+
+      if (!image) {
+        if (!fs.existsSync(args.archive)) {
+          spinner.fail(`${args.archive} cannot be found, Please check the path of the ${args.archive} or provide a valid file.`);
+          return;
+        }
+        data.append("upload", fs.createReadStream(args.archive));
       }
-      data.append("upload", fs.createReadStream(args.archive));
 
       const response = await DeployService.upload(host, data, apikey, (progress) => {
-        if (progress.percent < 1) {
-          const percent = Math.round(progress.percent * 100);
-          const takenTime = performance.now() - startTime;
-          const speed = prettyBytes(progress.transferred / (takenTime / 1000));
-          spinner.text = `Uploading SPA: ${percent}% (${prettyBytes(progress.transferred)}/${prettyBytes(
-            progress.total
-          )}) | ${speed}/s`;
-        } else {
+        if (!image) {
+          if (progress.percent < 1) {
+            const percent = Math.round(progress.percent * 100);
+            const takenTime = performance.now() - startTime;
+            const speed = prettyBytes(progress.transferred / (takenTime / 1000));
+            spinner.text = `Uploading SPA: ${percent}% (${prettyBytes(progress.transferred)}/${prettyBytes(
+              progress.total
+            )}) | ${speed}/s`;
+          } else {
+            step = "processing";
+            processTime = performance.now();
+            spinner.text = `Processing archive file, this may take a while.`;
+          }
+        }
+        else {
           step = "processing";
           processTime = performance.now();
-          spinner.text = `Processing archive file, this may take a while.`;
+          spinner.text = `Deploying the Application, this may take a while.`;
         }
+
       });
       const endTime = performance.now();
-      spinner.succeed(`The file ${args.archive} deployed successfully !`);
-      this.log(`Upload file took ${Math.round((processTime - startTime) / 1000)} seconds`);
-      this.log(`Process file took ${Math.round((endTime - processTime) / 1000)} seconds`);
-      this.log(`Total: ${Math.round((endTime - startTime) / 1000)} seconds`);
+      if (!image) {
+        spinner.succeed(`The file ${args.archive} deployed successfully !`);
+        this.log(`Upload file took ${Math.round((processTime - startTime) / 1000)} seconds`);
+        this.log(`Process file took ${Math.round((endTime - processTime) / 1000)} seconds`);
+        this.log(`Total: ${Math.round((endTime - startTime) / 1000)} seconds`);
+      }
+      else {
+        spinner.succeed(`Application deployed successfully !`);
+      }
       this.log(response);
-      this.log("* Please note that the deployment takes a few seconds; the access URL becomes available or reflects changes once the distribution is uploaded successfully into the target environment.")
+      this.log("* Please note that the deployment takes a few seconds; The Access URL will be available once it's deployed.")
     } catch (e) {
       spinner.fail(e.message);
       e.includes("ENOTFOUND")
@@ -244,6 +274,12 @@ DeployCommand.flags = assign(
     prid: flags.string({
       required: false,
       description: "prid is to enable temporary preview environment in a optimized way. ex: pass the pull request id.",
+    }),
+  },
+  {
+    image: flags.string({
+      required: false,
+      description: "image (url) for the containerized deployment [SSR].",
     }),
   },
   commonFlags.apikey,

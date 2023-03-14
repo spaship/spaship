@@ -8,44 +8,40 @@ A command line interface for SPAship.
 [![License](https://img.shields.io/npm/l/@spaship/cli.svg)](https://github.com/spaship/cli/blob/master/package.json)
 
 <!-- toc -->
-
-- [SPAship CLI](#spaship-cli)
-- [Usage](#usage)
-- [Commands](#commands)
-- [SPAship environments & .spashiprc](#spashiprc--spaship-environments)
-- [Writing tests](#writing-tests)
+* [SPAship CLI](#spaship-cli)
+* [Usage](#usage)
+* [Commands](#commands)
+* [SPAship environments & .spashiprc](#spaship-environments--spashiprc)
+* [Writing tests](#writing-tests)
 <!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
-
 ```sh-session
 $ npm install -g @spaship/cli
 $ spaship COMMAND
 running command...
 $ spaship (-v|--version|version)
-@spaship/cli/1.5.0 darwin-x64 node-v14.17.1
+@spaship/cli/1.5.6 darwin-x64 node-v18.12.1
 $ spaship --help [COMMAND]
 USAGE
   $ spaship COMMAND
 ...
 ```
-
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
-
-- [`spaship env [COMMAND]`](#spaship-add-env)
-- [`spaship deploy [ARCHIVE]`](#spaship-deploy-archive)
-- [`spaship help [COMMAND]`](#spaship-help-command)
-- [`spaship init`](#spaship-init)
+* [`spaship deploy [ARCHIVE]`](#spaship-deploy-archive)
+* [`spaship env`](#spaship-env)
+* [`spaship help [COMMAND]`](#spaship-help-command)
+* [`spaship init`](#spaship-init)
 
 ## `spaship deploy [ARCHIVE]`
 
-### Deploy to a SPAship host
+deploy to a SPAship host
 
 ```
 USAGE
@@ -56,16 +52,23 @@ ARGUMENTS
            this if you specify the build artifact path as `buildDir` in the spaship.yaml file.
 
 OPTIONS
+  -P, --preview            deploying into temporary preview environment.
   -b, --builddir=builddir  path of your SPAs artifact. Defaults to 'buildDir' if specified in the spaship.yaml.
-  -e, --env=env    [default: default] either the name of a SPAship environment as defined in your .spashiprc.yml file,
-                   or a URL to a SPAship environment
 
-  -p, --path=path  a custom URL path for your app under the SPAship domain. Defaults to the 'path' in your spaship.yaml.
-                   ex: /my/app
+  -e, --env=env            [default: default] either the name of a SPAship environment as defined in your .spashiprc.yml
+                           file, or a URL to a SPAship environment
 
-  -r, --ref=ref    [default: undefined] a version tag, commit hash, or branch to identify this release
+  -p, --path=path          a custom URL path for your app under the SPAship domain. Defaults to the 'path' in your
+                           spaship.yaml. ex: /my/app.
 
-  --apikey=apikey  a SPAship API key
+  -r, --ref=ref            [default: undefined] a version tag, commit hash, or branch to identify this release
+
+  --apikey=apikey          a SPAship API key
+
+  --image=image            image (url) for the containerized deployment [SSR].
+
+  --prid=prid              prid is to enable temporary preview environment in a optimized way. ex: pass the pull request
+                           id.
 
 DESCRIPTION
   Send an archive containing a SPA to a SPAship host for deployment.  Supports .tar.gz/.tgz, .zip, and .tar.bz2.
@@ -73,14 +76,29 @@ DESCRIPTION
 EXAMPLES
   $ npm pack && spaship deploy your-app-1.0.0.tgz # deploying an archive created with npm pack
   $ spaship deploy # deploying a buildDir directory
-  $ spaship deploy --env=dev
 ```
 
-_See code: [src/commands/deploy.js](https://github.com/spaship/spaship/blob/v0.13.2/src/commands/deploy.js)_
+_See code: [src/commands/deploy.js](https://github.com/spaship/spaship/blob/v1.5.6/src/commands/deploy.js)_
+
+## `spaship env`
+
+set env for .spashiprc.yml file (for setting environment & authentication).
+
+```
+USAGE
+  $ spaship env
+
+OPTIONS
+  -n, --name=name  [default: undefined] name of the environment
+  -u, --url=url    [default: undefined] url of the environment
+  --apikey=apikey  a SPAship API key
+```
+
+_See code: [src/commands/env.js](https://github.com/spaship/spaship/blob/v1.5.6/src/commands/env.js)_
 
 ## `spaship help [COMMAND]`
 
-### Display help for spaship
+display help for spaship
 
 ```
 USAGE
@@ -93,45 +111,31 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.0/src/commands/help.ts)_
-
-## `spaship env [COMMAND]`
-
-### Add env in the spashiprc file
-
-```
-USAGE
-  $ spaship env --name=[name] --url=[url] --apikey=[apikey]
-
-OPTIONS
-  --name=name    (required) name of the alias
-  --url=url    (required) deployment url of the property
-  --apikey=apikey    (required) a SPAship API key 
-
-DESCRIPTION
-  This spaship env will create an alias in the spashiprc file, which we can use for the further deployment
-```
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.3.1/src/commands/help.ts)_
 
 ## `spaship init`
 
-### Initialize a SPAship config file for your app.
+initialize a SPAship config file for your app.
 
 ```
 USAGE
   $ spaship init
 
 OPTIONS
-  -n, --name=name    (required) a human-friendly title for your app
-  -p, --path=path    (required) the URL path for your app under the SPAship domain. ex: /my/app
-  -s, --[no-]single  route all non-asset requests to index.html
-  --overwrite        overwrite existing spaship.yaml
+  -b, --builddir=builddir  path of your SPAs artifact. Defaults to 'buildDir' if specified in the spaship.yaml.
+  -d, --dist=dist          the URL path for dist folder
+  -m, --file=file          the URL path for spaship.yaml file
+  -n, --name=name          a human-friendly title for your app
+  -p, --path=path          the URL path for your app under the SPAship domain. ex: /my/app
+  -s, --[no-]single        route all non-asset requests to index.html
+  --overwrite              overwrite existing spaship.yaml
+
 DESCRIPTION
   Without arguments, init will ask you a few questions and generate a spaship.yaml config file.  The answers can also be
-  passed in as CLI options.
+   passed in as CLI options.
 ```
 
-_See code: [src/commands/init.js](https://github.com/spaship/spaship/blob/v0.13.2/src/commands/init.js)_
-
+_See code: [src/commands/init.js](https://github.com/spaship/spaship/blob/v1.5.6/src/commands/init.js)_
 <!-- commandsstop -->
 
 # SPAship environments & .spashiprc
