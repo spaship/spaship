@@ -81,7 +81,7 @@ const upload = (url, data, apiKey, onUploadProgress) => {
           } else if (res.statusCode >= 500 && res.statusCode < 600) {
             switch (res.statusCode) {
               case 500:
-                reject(`The SPAship server has encountered a mysterious problem; someone call Richard Feynman! [500]`);
+                reject(`The SPAship server has encountered some problem; please check the SPAship SLA [https://spaship.redhat.com/sla] or connect the spaship-dev team! [500]`);
                 break;
               case 501:
                 reject(
