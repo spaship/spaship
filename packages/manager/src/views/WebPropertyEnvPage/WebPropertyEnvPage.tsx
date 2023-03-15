@@ -23,7 +23,8 @@ import {
   Text,
   TextVariants,
   Title,
-  Tooltip
+  Tooltip,
+  Pagination
 } from '@patternfly/react-core';
 import {
   CheckCircleIcon,
@@ -45,7 +46,7 @@ import {
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { SetStateAction, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Banner, DeleteConfirmationModal, TableRowSkeleton } from '@app/components';
 import { useFormatDate, usePopUp } from '@app/hooks';
@@ -75,7 +76,6 @@ function getExpiryDayDiff(expiry: string) {
   return `${Math.ceil(dateDiff)}d`;
 }
 const URL_LENGTH_LIMIT = 25;
-
 type MemberListItem = {
   email: string;
   name: string;
@@ -214,6 +214,24 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     createdAt: string;
     updatedAt: string;
   };
+
+  const [page, setPage] = useState(1); // the current page
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const start = (page - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  const paginatedData = apiKeys?.data?.slice(start, end);
+  // const pageCount = Math.ceil((apiKeys?.data?.length ?? 0) / ITEMS_PER_PAGE);
+  const handlePageChange = (event: any, pageNumber: SetStateAction<number>) => {
+    setPage(pageNumber);
+  };
+  const handlePerPageSelect = (_: any, perPage: SetStateAction<number>) => {
+    setItemsPerPage(perPage);
+    setPage(1);
+  };
+  const perPageOptions = [
+    { title: '5', value: 5 },
+    { title: '10', value: 10 }
+  ];
   return (
     <>
       <Banner
@@ -366,7 +384,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                       </Tr>
                     )}
                     {apiKeys?.isSuccess &&
-                      apiKeys.data?.map((key: ApiKeysItem) => (
+                      paginatedData?.map((key: ApiKeysItem) => (
                         <Tr key={key.shortKey}>
                           <Td dataLabel={key.label}>
                             <LockIcon /> {key.label}
@@ -416,6 +434,15 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                   </Tbody>
                 </TableComposable>
               </CardBody>
+              <Pagination
+                itemCount={apiKeys?.data?.length}
+                perPage={itemsPerPage}
+                page={page}
+                onSetPage={handlePageChange}
+                variant="bottom"
+                onPerPageSelect={handlePerPageSelect}
+                perPageOptions={perPageOptions}
+              />
             </Card>
           </StackItem>
           <StackItem>
