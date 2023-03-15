@@ -29,6 +29,8 @@ export class Application {
 
   version: number;
 
+  port: number;
+
   createdBy: string;
 
   updatedBy: string;

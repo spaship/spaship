@@ -4,7 +4,7 @@ import { AxiosResponse } from 'axios';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
-import { EPHEMERAL_ENV } from 'src/configuration';
+import { EPHEMERAL_ENV, SSR_DETAILS } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import {
   ApplicationConfigDTO,
@@ -260,6 +260,7 @@ export class ApplicationFactory {
     ssrApplicationRequest.imageUrl = applicationRequest.imageUrl;
     ssrApplicationRequest.healthCheckPath = applicationRequest.healthCheckPath || applicationRequest.path;
     ssrApplicationRequest.config = applicationRequest.config;
+    ssrApplicationRequest.port = applicationRequest.port || SSR_DETAILS.port;
     return ssrApplicationRequest;
   }
 
@@ -281,6 +282,7 @@ export class ApplicationFactory {
     ssrRequest.environment = env;
     ssrRequest.configMap = applicationDetails.config;
     ssrRequest.healthCheckPath = applicationDetails.healthCheckPath;
+    ssrRequest.port = applicationDetails.port || 3000;
     return ssrRequest;
   }
 

@@ -3,7 +3,7 @@ import * as decompress from 'decompress';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
-import { DIRECTORY_CONFIGURATION, EPHEMERAL_ENV, JOB } from 'src/configuration';
+import { DIRECTORY_CONFIGURATION, EPHEMERAL_ENV, JOB, SSR_DETAILS } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { AgendaService } from 'src/server/agenda/agenda.service';
@@ -211,6 +211,7 @@ export class ApplicationService {
       applicationDetails.version = this.applicationFactory.incrementVersion(applicationDetails.version);
       applicationDetails.healthCheckPath = applicationRequest.healthCheckPath || applicationDetails.healthCheckPath;
       applicationDetails.config = applicationRequest.config || applicationDetails.config;
+      applicationDetails.port = applicationRequest.port || applicationDetails.port || SSR_DETAILS.port;
       applicationDetails.updatedBy = applicationRequest.createdBy;
       this.logger.log('SSRUpdatedApplicationDetails', JSON.stringify(applicationDetails));
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isSSR: true }, applicationDetails);
