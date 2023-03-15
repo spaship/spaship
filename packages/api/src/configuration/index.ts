@@ -6,6 +6,10 @@ export const EPHEMERAL_ENV = {
   expiresIn: process.env.SPASHIP_EPH__TTL || 3600
 };
 
+export const SSR_DETAILS = {
+  port: 3000
+};
+
 export const AUTH_DETAILS = {
   url: process.env.SPASHIP_AUTH__KEYCLOAK__URL,
   realm: process.env.SPASHIP_AUTH__KEYCLOAK__REALM,
