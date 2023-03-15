@@ -64,6 +64,10 @@ export class CreateApplicationDto {
   @IsOptional()
   config: object;
 
+  @ApiProperty()
+  @IsOptional()
+  port: number;
+
   createdBy: string;
 }
 
@@ -103,6 +107,8 @@ export class SSRDeploymentRequest {
   healthCheckPath: string;
 
   configMap: object;
+
+  port: number;
 }
 
 export class SSRDeploymentResponse {

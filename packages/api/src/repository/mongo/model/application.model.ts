@@ -48,6 +48,9 @@ export class Application {
   @Prop({ default: 1 })
   version: number;
 
+  @Prop({})
+  port: number;
+
   @Prop({ default: 'NA' })
   createdBy: string;
 
