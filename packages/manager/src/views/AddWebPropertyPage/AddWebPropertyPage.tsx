@@ -128,7 +128,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
                     fieldId="property-env"
                     validated={error ? 'error' : 'default'}
                     helperTextInvalid={error?.message}
-                    helperText="Environment Name shouldn't contain any space, special-character "
+                    helperText="Environment Name can contain only letters, numbers, and dashes are allowed"
                   >
                     <TextInput
                       isRequired
