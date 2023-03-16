@@ -26,7 +26,9 @@ import {
   Role,
   RoleSchema,
   Permission,
-  PermissionSchema
+  PermissionSchema,
+  Documentation,
+  DocumentationSchema
 } from './model';
 import { MongoDataServices } from './mongo-data-services.service';
 
@@ -44,7 +46,8 @@ import { MongoDataServices } from './mongo-data-services.service';
       { name: Webhook.name, schema: WebhookSchema },
       { name: AuthActionLookup.name, schema: AuthActionLookupSchema },
       { name: Role.name, schema: RoleSchema },
-      { name: Permission.name, schema: PermissionSchema }
+      { name: Permission.name, schema: PermissionSchema },
+      { name: Documentation.name, schema: DocumentationSchema }
     ]),
     MongooseModule.forRoot(DATA_BASE_CONFIGURATION.mongoConnectionString, {
       useNewUrlParser: true,
