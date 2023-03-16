@@ -65,8 +65,9 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
     const method = context.getArgs()[0].method;
     const propertyIdentifier = context.getArgs()[0].body.propertyIdentifier || context.getArgs()[0].params.propertyIdentifier;
     const checkResource = (await this.dataServices.authActionLookup.getByAny({ resource, method }))[0];
+    const email = JSON.parse(JSON.stringify(payload)).email;
+    context.getArgs()[0].body.createdBy = email;
     if (checkResource) {
-      const email = JSON.parse(JSON.stringify(payload)).email;
       if (!propertyIdentifier)
         this.exceptionsService.badRequestException({
           message: `Please provide the PropertyIdentifier.`
@@ -76,9 +77,8 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
         this.exceptionsService.UnauthorizedException({
           message: `${email} is not authorized to perform this action, please connect with ${propertyIdentifier} owner.`
         });
-      context.getArgs()[0].body.createdBy = email;
     }
-    // @internal It'll extract the Name of the Creator specificly for the Property Creation Request
+    // @internal It'll extract the Name of the Creator specificity for the Property Creation Request
     if (context.getArgs()[0].route.path === AUTH_LISTING.propertyBaseURL)
       context.getArgs()[0].body.creatorName = JSON.parse(JSON.stringify(payload)).name;
   }
