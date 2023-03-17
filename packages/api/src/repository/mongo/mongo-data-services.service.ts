@@ -27,7 +27,9 @@ import {
   Role,
   RoleDocument,
   Permission,
-  PermissionDocument
+  PermissionDocument,
+  Documentation,
+  DocumentationDocument
 } from './model';
 
 @Injectable()
@@ -56,6 +58,8 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
 
   permission: MongoGenericRepository<Permission>;
 
+  documentation: MongoGenericRepository<Documentation>;
+
   constructor(
     @InjectModel(Application.name)
     private ApplicationRepository: Model<ApplicationDocument>,
@@ -80,7 +84,9 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
     @InjectModel(Role.name)
     private RoleRepository: Model<RoleDocument>,
     @InjectModel(Permission.name)
-    private PermissionRepository: Model<PermissionDocument>
+    private PermissionRepository: Model<PermissionDocument>,
+    @InjectModel(Documentation.name)
+    private DocumentationRepository: Model<DocumentationDocument>
   ) {}
 
   onApplicationBootstrap() {
@@ -96,5 +102,6 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
     this.authActionLookup = new MongoGenericRepository<AuthActionLookup>(this.AuthActionLookupRepository);
     this.role = new MongoGenericRepository<Role>(this.RoleRepository);
     this.permission = new MongoGenericRepository<Permission>(this.PermissionRepository);
+    this.documentation = new MongoGenericRepository<Documentation>(this.DocumentationRepository);
   }
 }

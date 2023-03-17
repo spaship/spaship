@@ -27,6 +27,8 @@ import { RoleModule } from './server/role/service/role.module';
 import { RoleController } from './server/role/role.controller';
 import { PermissionModule } from './server/permission/service/permission.module';
 import { PermissionController } from './server/permission/permission.controller';
+import { DocumentationModule } from './server/document/service/documentation.module';
+import { DocumentationController } from './server/document/documentation.controller';
 
 @Module({
   imports: [
@@ -46,7 +48,8 @@ import { PermissionController } from './server/permission/permission.controller'
     RoverModule,
     AuthActionLookupModule,
     RoleModule,
-    PermissionModule
+    PermissionModule,
+    DocumentationModule
   ],
   controllers: [
     ApikeyController,
@@ -59,7 +62,8 @@ import { PermissionController } from './server/permission/permission.controller'
     RoverController,
     AuthActionLookupController,
     RoleController,
-    PermissionController
+    PermissionController,
+    DocumentationController
   ],
   providers: []
 })
