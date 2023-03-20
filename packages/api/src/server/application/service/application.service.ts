@@ -99,6 +99,14 @@ export class ApplicationService {
     const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
     const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === environment.cluster);
     const deploymentConnection = (await this.dataServices.deploymentConnection.getByAny({ name: deploymentRecord.name }))[0];
+    const searchedApplicationsByPath = await this.dataServices.application.getByAny({
+      propertyIdentifier,
+      env,
+      path: applicationRequest.path,
+      isSSR: false
+    });
+    const applicationExists = this.applicationFactory.getExistingApplicationsByPath(searchedApplicationsByPath, identifier);
+
     await this.analyticsService.createActivityStream(
       propertyIdentifier,
       Action.APPLICATION_DEPLOYMENT_STARTED,
@@ -129,7 +137,7 @@ export class ApplicationService {
       );
       this.logger.log('NewApplicationDetails', JSON.stringify(saveApplication));
       this.dataServices.application.create(saveApplication);
-      return this.applicationFactory.createApplicationResponse(saveApplication, deploymentConnection.baseurl);
+      return this.applicationFactory.createApplicationResponse(saveApplication, deploymentConnection.baseurl, applicationExists);
     }
     applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
     applicationDetails.version = this.applicationFactory.incrementVersion(applicationDetails.version);
@@ -137,7 +145,7 @@ export class ApplicationService {
     applicationDetails.updatedBy = createdBy;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
     await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isSSR: false }, applicationDetails);
-    return this.applicationFactory.createApplicationResponse(applicationDetails, deploymentConnection.baseurl);
+    return this.applicationFactory.createApplicationResponse(applicationDetails, deploymentConnection.baseurl, applicationExists);
   }
 
   /* @internal
@@ -193,6 +201,13 @@ export class ApplicationService {
     applicationRequest.path = this.applicationFactory.getPath(applicationRequest.path);
     if (applicationRequest?.healthCheckPath) applicationRequest.healthCheckPath = this.applicationFactory.getPath(applicationRequest.healthCheckPath);
     let applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true }))[0];
+    const searchedApplicationsByPath = await this.dataServices.application.getByAny({
+      propertyIdentifier,
+      env,
+      path: applicationRequest.path,
+      isSSR: true
+    });
+    const applicationExists = this.applicationFactory.getExistingApplicationsByPath(searchedApplicationsByPath, identifier);
     if (!applicationDetails) {
       const saveApplication = await this.applicationFactory.createSSRApplicationRequest(
         propertyIdentifier,
@@ -236,7 +251,7 @@ export class ApplicationService {
       Source.MANAGER,
       JSON.stringify(applicationRequest)
     );
-    return this.applicationFactory.createApplicationResponse(applicationDetails, deploymentConnection.baseurl);
+    return this.applicationFactory.createApplicationResponse(applicationDetails, deploymentConnection.baseurl, applicationExists);
   }
 
   // @internal Get the deployment connection for the property

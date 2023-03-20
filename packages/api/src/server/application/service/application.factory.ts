@@ -130,14 +130,15 @@ export class ApplicationFactory {
     return ref;
   }
 
-  // TODO : Add the deployed-by post RBAC Implementation
-  createApplicationResponse(application: Application, baseUrl: string): ApplicationResponse {
+  createApplicationResponse(application: Application, baseUrl: string, applicationExists: string): ApplicationResponse {
     const applicationResponse = new ApplicationResponse();
     applicationResponse.name = application.name;
     applicationResponse.path = application.path;
     applicationResponse.env = application.env;
     applicationResponse.ref = this.getRef(application.nextRef);
     applicationResponse.accessUrl = application.isSSR ? this.getSSRAccessUrl(application, baseUrl) : this.getAccessUrl(application, baseUrl);
+    if (applicationExists)
+      applicationResponse.warning = `SPA(s) - ${applicationExists} already exist(s) on the context path ${applicationResponse.path} Overriding existing deployment.`;
     return applicationResponse;
   }
 
@@ -332,5 +333,12 @@ export class ApplicationFactory {
     const domain = hostname.split('.').slice(1).join('.');
     const generatedAccessURL = `${protocol}://${application.propertyIdentifier}-${application.env}.${domain}${application.path}`;
     return generatedAccessURL;
+  }
+
+  // @internal get the existing applications with the same path for a specific property
+  getExistingApplicationsByPath(applications: Application[], identifier: string): string {
+    const filteredApplications = applications.filter((i) => i.identifier !== identifier);
+    const existingApplications = filteredApplications.map((j) => j.name).join(', ');
+    return existingApplications;
   }
 }
