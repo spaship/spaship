@@ -1,10 +1,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
+import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useAddSsrSpaProperty } from '@app/services/ssr';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Button,
   Form,
   FormGroup,
+  FormSelect,
+  FormSelectOption,
   Split,
   SplitItem,
   TextInput,
@@ -61,6 +64,7 @@ type Props = {
   onClose: () => void;
   propertyIdentifier: string;
   dataprops: Data;
+  flag: string;
 };
 
 export type FormData = yup.InferType<typeof schema>;
@@ -71,7 +75,8 @@ const keyValuePairsGenerator = ({ dataprops }: { dataprops: Data }) =>
 export const ConfigureSSRForm = ({
   onClose,
   propertyIdentifier,
-  dataprops
+  dataprops,
+  flag
 }: Props): JSX.Element => {
   const {
     control,
@@ -89,6 +94,8 @@ export const ConfigureSSRForm = ({
   });
 
   const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
+  const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
+  const webPropertiesKeys = Object.keys(webProperties.data || {});
 
   const onSubmit = async (dataf: FormData) => {
     const newDataf = {
@@ -150,23 +157,55 @@ export const ConfigureSSRForm = ({
             )}
           />
         </SplitItem>
-        <SplitItem isFilled style={{ width: '100%' }}>
-          <Controller
-            control={control}
-            name="env"
-            render={({ field, fieldState: { error } }) => (
-              <FormGroup
-                label="Environment"
-                isRequired
-                fieldId="env"
-                validated={error ? 'error' : 'default'}
-                helperTextInvalid={error?.message}
-              >
-                <TextInput isRequired type="text" id="env" isDisabled {...field} />
-              </FormGroup>
-            )}
-          />
-        </SplitItem>
+        {flag === 'configure' ? (
+          <SplitItem isFilled style={{ width: '100%' }}>
+            <Controller
+              control={control}
+              name="env"
+              render={({ field, fieldState: { error } }) => (
+                <FormGroup
+                  label="Environment"
+                  isRequired
+                  fieldId="env"
+                  validated={error ? 'error' : 'default'}
+                  helperTextInvalid={error?.message}
+                >
+                  <TextInput isRequired type="text" id="env" isDisabled {...field} />
+                </FormGroup>
+              )}
+            />
+          </SplitItem>
+        ) : (
+          <SplitItem isFilled style={{ width: '100%' }}>
+            <Controller
+              control={control}
+              name="env"
+              render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <FormGroup
+                  label="Select Environment"
+                  fieldId="select-env"
+                  validated={error ? 'error' : 'default'}
+                  isRequired
+                  helperTextInvalid={error?.message}
+                >
+                  <FormSelect
+                    label="Select Environment"
+                    aria-label="FormSelect Input"
+                    onChange={(event) => {
+                      onChange(event);
+                    }}
+                    value={value}
+                  >
+                    <FormSelectOption key={1} label="Please select an environment" isDisabled />
+                    {webPropertiesKeys.map((envName) => (
+                      <FormSelectOption key={envName} value={envName} label={envName} />
+                    ))}
+                  </FormSelect>
+                </FormGroup>
+              )}
+            />
+          </SplitItem>
+        )}
       </Split>
 
       <Split hasGutter>

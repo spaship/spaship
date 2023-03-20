@@ -15,7 +15,13 @@ import {
   SplitItem,
   Title
 } from '@patternfly/react-core';
-import { CubesIcon, ExternalLinkAltIcon, PencilAltIcon, UndoIcon } from '@patternfly/react-icons';
+import {
+  CubesIcon,
+  ExternalLinkAltIcon,
+  PencilAltIcon,
+  PlusCircleIcon,
+  UndoIcon
+} from '@patternfly/react-icons';
 import { Caption, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
@@ -83,7 +89,8 @@ export const SSRDetails = () => {
   });
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
     'redeploySsrApplication',
-    'reconfigureSsrApplication'
+    'reconfigureSsrApplication',
+    'createSSRDeployment'
   ] as const);
   const handleConfirmRedployment = async () => {
     redeployData.propertyIdentifier = propertyIdentifier;
@@ -107,8 +114,29 @@ export const SSRDetails = () => {
   const containerisedDeploymentData = spaProperties?.data?.[applicationName].filter(
     (item) => item.isSSR === true
   );
+
+  const data1 = {
+    propertyIdentifier,
+    name: propertyIdentifier,
+    path: '',
+    ref: '',
+    env: '',
+    identifier: '',
+    nextRef: '',
+    accessUrl: '',
+    updatedAt: '',
+    imageUrl: '',
+    healthCheckPath: '',
+    _id: 0,
+    isSSR: false,
+    config: {}
+  };
   return (
     <>
+      <Button onClick={() => handlePopUpOpen('createSSRDeployment')} icon={<PlusCircleIcon />}>
+        Add New App
+      </Button>
+
       {!containerisedDeploymentData?.length ? (
         <EmptyState>
           <EmptyStateIcon icon={CubesIcon} />
@@ -251,6 +279,20 @@ export const SSRDetails = () => {
           propertyIdentifier={propertyIdentifier}
           onClose={() => handlePopUpClose('reconfigureSsrApplication')}
           dataprops={configureData}
+          flag="configure"
+        />
+      </Modal>
+      <Modal
+        title="Create Containerized Deployment"
+        variant={ModalVariant.medium}
+        isOpen={popUp.createSSRDeployment.isOpen}
+        onClose={() => handlePopUpClose('createSSRDeployment')}
+      >
+        <ConfigureSSRForm
+          propertyIdentifier={propertyIdentifier}
+          onClose={() => handlePopUpClose('createSSRDeployment')}
+          dataprops={data1}
+          flag="addnew"
         />
       </Modal>
     </>
