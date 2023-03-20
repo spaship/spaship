@@ -23,7 +23,8 @@ import {
   Text,
   TextVariants,
   Title,
-  Tooltip
+  Tooltip,
+  Pagination
 } from '@patternfly/react-core';
 import {
   CheckCircleIcon,
@@ -45,7 +46,7 @@ import {
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { SetStateAction, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Banner, DeleteConfirmationModal, TableRowSkeleton } from '@app/components';
 import { useFormatDate, usePopUp } from '@app/hooks';
@@ -75,7 +76,6 @@ function getExpiryDayDiff(expiry: string) {
   return `${Math.ceil(dateDiff)}d`;
 }
 const URL_LENGTH_LIMIT = 25;
-
 type MemberListItem = {
   email: string;
   name: string;
@@ -214,6 +214,43 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     createdAt: string;
     updatedAt: string;
   };
+
+  // Pagination for APIKEY section
+  const [pageForAPI, setPageForAPI] = useState(1); // the current page
+  const [itemsPerPageForAPI, setItemsPerPageForAPI] = useState(5);
+  const startForAPI = (pageForAPI - 1) * itemsPerPageForAPI;
+  const endForAPI = startForAPI + itemsPerPageForAPI;
+  const paginatedDataForAPI = apiKeys?.data?.slice(startForAPI, endForAPI);
+
+  // const pageCount = Math.ceil((apiKeys?.data?.length ?? 0) / ITEMS_PER_PAGE);
+  const handlePageChangeForAPI = (event: any, pageNumberForAPI: SetStateAction<number>) => {
+    setPageForAPI(pageNumberForAPI);
+  };
+  const handlePerPageSelectForAPI = (_: any, perPageForAPI: SetStateAction<number>) => {
+    setItemsPerPageForAPI(perPageForAPI);
+    setPageForAPI(1);
+  };
+
+  // Pagination for RBAC Members section
+  const [pageForMembers, setPageForMembers] = useState(1); // the current page
+  const [itemsPerPageForMembers, setItemsPerPageForMembers] = useState(5);
+  const startForMembers = (pageForMembers - 1) * itemsPerPageForMembers;
+  const endForMembers = startForMembers + itemsPerPageForMembers;
+  const paginatedDataForMembers = memberList?.data?.slice(startForMembers, endForMembers);
+  // const pageCount = Math.ceil((apiKeys?.data?.length ?? 0) / ITEMS_PER_PAGE);
+  const handlePageChangeForMembers = (event: any, pageNumberForMembers: SetStateAction<number>) => {
+    setPageForMembers(pageNumberForMembers);
+  };
+  const handlePerPageSelectForMembers = (_: any, perPageForMembers: SetStateAction<number>) => {
+    setItemsPerPageForMembers(perPageForMembers);
+    setPageForMembers(1);
+  };
+
+  const perPageOptions = [
+    { title: '5', value: 5 },
+    { title: '10', value: 10 }
+  ];
+
   return (
     <>
       <Banner
@@ -366,7 +403,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                       </Tr>
                     )}
                     {apiKeys?.isSuccess &&
-                      apiKeys.data?.map((key: ApiKeysItem) => (
+                      paginatedDataForAPI?.map((key: ApiKeysItem) => (
                         <Tr key={key.shortKey}>
                           <Td dataLabel={key.label}>
                             <LockIcon /> {key.label}
@@ -416,6 +453,15 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                   </Tbody>
                 </TableComposable>
               </CardBody>
+              <Pagination
+                itemCount={apiKeys?.data?.length}
+                perPage={itemsPerPageForAPI}
+                page={pageForAPI}
+                onSetPage={handlePageChangeForAPI}
+                variant="bottom"
+                onPerPageSelect={handlePerPageSelectForAPI}
+                perPageOptions={perPageOptions}
+              />
             </Card>
           </StackItem>
           <StackItem>
@@ -459,7 +505,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                 {memberList?.isSuccess && memberList?.data?.length !== 0 && (
                   <TableComposable isStriped>
                     <Tbody>
-                      {memberList.data?.map((key: MemberListItem) => (
+                      {paginatedDataForMembers?.map((key: MemberListItem) => (
                         <Tr key={key.email}>
                           <Td dataLabel={key.email}>
                             {/* <Split hasGutter> */}
@@ -533,6 +579,15 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                   </TableComposable>
                 )}
               </CardBody>
+              <Pagination
+                itemCount={memberList?.data?.length}
+                perPage={itemsPerPageForMembers}
+                page={pageForMembers}
+                onSetPage={handlePageChangeForMembers}
+                variant="bottom"
+                onPerPageSelect={handlePerPageSelectForMembers}
+                perPageOptions={perPageOptions}
+              />
             </Card>
           </StackItem>
 
