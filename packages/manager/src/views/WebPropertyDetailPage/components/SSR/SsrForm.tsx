@@ -86,7 +86,6 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
         : {},
       propertyIdentifier: propertyIdentifier.trim()
     };
-
     try {
       await createSsrSpaProperty.mutateAsync(newDataf);
       onClose();
@@ -95,6 +94,10 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
       if (error instanceof AxiosError && error.response && error.response.status === 403) {
         toast.error("You don't have access to perform this action");
         onClose();
+      } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
+        toast.error(error.response.data.message);
+          // 'Please provide valid image URL. See tooltip for more.' );
+       
       } else {
         toast.error('Failed to deploy conatinerized application');
       }
