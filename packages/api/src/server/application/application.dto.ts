@@ -89,6 +89,9 @@ export class ApplicationResponse {
 
   @ApiProperty()
   deployedBy: string;
+
+  @ApiProperty()
+  warning: string;
 }
 
 export class SSRDeploymentRequest {
