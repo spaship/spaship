@@ -131,7 +131,6 @@ export const SSRDetails = () => {
     isSSR: false,
     config: {}
   };
-
   return (
     <>
       <Button onClick={() => handlePopUpOpen('createSSRDeployment')} icon={<PlusCircleIcon />}>
