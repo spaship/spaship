@@ -47,6 +47,7 @@ type Data = {
 };
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 25;
+
 export const SSRDetails = () => {
   const { query } = useRouter();
   const propertyIdentifier = query.propertyIdentifier as string;
@@ -114,8 +115,7 @@ export const SSRDetails = () => {
   const containerisedDeploymentData = spaProperties?.data?.[applicationName].filter(
     (item) => item.isSSR === true
   );
-
-  const data1 = {
+  const spaDetailedInitialData = {
     propertyIdentifier,
     name: propertyIdentifier,
     path: '',
@@ -131,6 +131,7 @@ export const SSRDetails = () => {
     isSSR: false,
     config: {}
   };
+
   return (
     <>
       <Button onClick={() => handlePopUpOpen('createSSRDeployment')} icon={<PlusCircleIcon />}>
@@ -291,7 +292,7 @@ export const SSRDetails = () => {
         <ConfigureSSRForm
           propertyIdentifier={propertyIdentifier}
           onClose={() => handlePopUpClose('createSSRDeployment')}
-          dataprops={data1}
+          dataprops={spaDetailedInitialData}
           flag="addnew"
         />
       </Modal>
