@@ -6,13 +6,14 @@ export const addNewWebPropertySchema = yup.object({
   url: yup.string().label('Hostname URL').trim().max(250).required(),
   env: yup
     .string()
+    .required()
     .label('Environment Name')
     .noWhitespace()
     .trim()
-    .matches(/^[a-zA-Z0-9-]+$/, 'Environment is required')
+    .matches(/^[a-zA-Z0-9-]+$/, 'Only letters, numbers, and dashes are allowed')
     .max(50)
-    .required(),
+  ,
   cluster: yup.string().label('Environment Type').oneOf(['preprod', 'prod']).required()
 });
 
-export interface FormData extends yup.InferType<typeof addNewWebPropertySchema> {}
+export interface FormData extends yup.InferType<typeof addNewWebPropertySchema> { }
