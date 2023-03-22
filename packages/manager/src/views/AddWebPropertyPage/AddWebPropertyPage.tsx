@@ -44,7 +44,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
     try {
       await createWebPropertyMutation.mutateAsync({
         ...data,
-        env: data.env.toLowerCase(),
+        env: data.env?.toLowerCase() || '',
         identifier: propertyID,
         createdBy: session?.user.email || ''
       });
