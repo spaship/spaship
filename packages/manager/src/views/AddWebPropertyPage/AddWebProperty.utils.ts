@@ -11,9 +11,8 @@ export const addNewWebPropertySchema = yup.object({
     .noWhitespace()
     .trim()
     .matches(/^[a-zA-Z0-9-]+$/, 'Only letters, numbers, and dashes are allowed')
-    .max(50)
-  ,
+    .max(50),
   cluster: yup.string().label('Environment Type').oneOf(['preprod', 'prod']).required()
 });
 
-export interface FormData extends yup.InferType<typeof addNewWebPropertySchema> { }
+export interface FormData extends yup.InferType<typeof addNewWebPropertySchema> {}
