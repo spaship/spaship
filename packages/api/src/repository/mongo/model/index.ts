@@ -10,4 +10,4 @@ export * from './webhook.model';
 export * from './auth-action-lookup.model';
 export * from './role.model';
 export * from './permission.model';
-export * from './Documentation.model';
+export * from './documentation.model';
