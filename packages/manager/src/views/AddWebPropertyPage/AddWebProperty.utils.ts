@@ -15,4 +15,4 @@ export const addNewWebPropertySchema = yup.object({
   cluster: yup.string().label('Environment Type').oneOf(['preprod', 'prod']).required()
 });
 
-export interface FormData extends yup.InferType<typeof addNewWebPropertySchema> {}
+export interface FormData extends yup.InferType<typeof addNewWebPropertySchema> { }
