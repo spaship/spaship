@@ -54,6 +54,7 @@ import { ActivityStream } from '@app/components/ActivityStream';
 import { Ephemeral } from './components/Ephemeral';
 import { EmptyInfo } from './components/EmptyInfo';
 import { SSRForm } from './components/SSR/SsrForm';
+import { Dashboard } from './components/Dashboard';
 
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 25;
@@ -65,7 +66,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const [filterByEnv, setFilterByEnv] = useState('');
   const propertyIdentifier = (query?.propertyIdentifier as string) || '';
   const formatDate = useFormatDate();
-  const { openTab, handleTabChange } = useTabs(3);
+  const { openTab, handleTabChange } = useTabs(4);
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
   const [isFilterOpen, setIsFilterOpen] = useToggle();
 
@@ -466,6 +467,20 @@ export const WebPropertyDetailPage = (): JSX.Element => {
               isSuccess={ephemeralPreview.isSuccess}
               ephemeralEnvs={ephemeralPreview.data}
             />
+          </Tab>
+          <Tab
+            eventKey={3}
+            title={
+              <>
+                <TabTitleIcon>
+                  <PackageIcon />
+                </TabTitleIcon>
+                <TabTitleText>Dashboard</TabTitleText>
+              </>
+            }
+            aria-label="Dashboard"
+          >
+            <Dashboard />
           </Tab>
         </Tabs>
       </PageSection>
