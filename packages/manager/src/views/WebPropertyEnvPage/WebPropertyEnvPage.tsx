@@ -46,7 +46,7 @@ import {
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { SetStateAction, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Banner, DeleteConfirmationModal, TableRowSkeleton } from '@app/components';
 import { useFormatDate, usePopUp } from '@app/hooks';
@@ -67,6 +67,8 @@ import {
 import { CreateEnvForm, FormData as EnvForm } from './components/CreateEnvForm/CreateEnvForm';
 import { EditMemberAccess } from './components/EditAccess/EditMemberAccess';
 import { SyncServiceForm } from './components/SyncServiceForm';
+import { TApiKey } from '@app/services/apiKeys/types';
+import { TMemberforSPA } from '@app/services/rbac/types';
 
 function getExpiryDayDiff(expiry: string) {
   const currentDate = new Date();
@@ -119,15 +121,30 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     'editMemberAccess',
     'deleteMember'
   ] as const);
+  // Pagination for APIKEY section
+  const [pageForAPI, setPageForAPI] = useState(1); // the current page
+  const [itemsPerPageForAPI, setItemsPerPageForAPI] = useState(5);
+  const [dataForAPI, setDataForAPI] = useState<TApiKey[]>([]); // your data set
+  useEffect(() => {
+    setDataForAPI(apiKeys.data ?? []);
+  }, [apiKeys.data]);
 
+    // Pagination for RBAC Members section
+    const [pageForMembers, setPageForMembers] = useState(1); // the current page
+    const [itemsPerPageForMembers, setItemsPerPageForMembers] = useState(5);
+    const [dataForMembers, setDataForMembers] = useState<TMemberforSPA[]>([]); // your data set
+    useEffect(() => {
+       setDataForMembers(memberList.data ?? []);
+    }, [memberList.data]);
+  
   const handleCreateEnv = async (data: EnvForm) => {
     if (!propertyTitle) return;
     try {
-      await createEnv.mutateAsync({
+      const res = await createEnv.mutateAsync({
         ...data,
         env: data.env.toLowerCase(),
         propertyIdentifier,
-        createdBy: session?.user.email || ''
+        createdBy: session?.user.email || '',
       });
       toast.success('Environment Created');
       handlePopUpClose('createEnv');
@@ -167,6 +184,12 @@ export const WebPropertyEnvPage = (): JSX.Element => {
         shortKey: popUp.deleteApiKey.data as string,
         propertyIdentifier
       });
+      const newDataForAPI = dataForAPI.filter((item) => item.shortKey !== popUp.deleteApiKey.data);
+      setDataForAPI(newDataForAPI);
+     
+      if (newDataForAPI.length % itemsPerPageForAPI === 0 && pageForAPI > 1) {
+        setPageForAPI(pageForAPI - 1);
+      }
       handlePopUpClose('deleteApiKey');
       toast.success('API Key deleted');
     } catch (error) {
@@ -177,30 +200,36 @@ export const WebPropertyEnvPage = (): JSX.Element => {
       }
     }
   };
-
   const handleDeleteMember = async () => {
     if (!memberList?.data) return;
-
+    const updatedMemberList = dataForMembers.filter(
+      (member) => member.name !== deleteMemberName
+    );
     const deletePerm = memberList.data
       .filter((e: MemberListItem) => e.name === deleteMemberName)
       .map((v: MemberListItem) => {
-        const tempActionsDelete: string[] = [];
-        Object.keys(v)
-          .filter((a) => !['name', 'email', 'role'].includes(a))
-          .forEach((a) => tempActionsDelete.push(a));
-        return { name: v.name, email: v.email, actions: tempActionsDelete };
-      });
-
+      const tempActionsDelete: string[] = [];
+      Object.keys(v)
+        .filter((a) => !['name', 'email', 'role'].includes(a))
+        .forEach((a) => tempActionsDelete.push(a));
+      return { name: v.name, email: v.email, actions: tempActionsDelete };
+    });
+  
     const deleteData = {
       propertyIdentifier,
       permissionDetails: deletePerm
     };
-
+  
     await deleteMember.mutateAsync(deleteData);
+    setDataForMembers(updatedMemberList);
+
+    if (updatedMemberList.length % itemsPerPageForMembers === 0 && pageForMembers > 1) {
+      setPageForMembers(pageForMembers - 1);
+    }
     toast.success('Member deleted successfully');
     handlePopUpClose('deleteMember');
   };
-
+  
   type EnvItem = {
     _id: string;
     propertyIdentifier: string;
@@ -215,29 +244,27 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     updatedAt: string;
   };
 
-  // Pagination for APIKEY section
-  const [pageForAPI, setPageForAPI] = useState(1); // the current page
-  const [itemsPerPageForAPI, setItemsPerPageForAPI] = useState(5);
-  const startForAPI = (pageForAPI - 1) * itemsPerPageForAPI;
-  const endForAPI = startForAPI + itemsPerPageForAPI;
-  const paginatedDataForAPI = apiKeys?.data?.slice(startForAPI, endForAPI);
 
   // const pageCount = Math.ceil((apiKeys?.data?.length ?? 0) / ITEMS_PER_PAGE);
-  const handlePageChangeForAPI = (event: any, pageNumberForAPI: SetStateAction<number>) => {
-    setPageForAPI(pageNumberForAPI);
+  const handlePageChangeForAPI = (event: any, itemsForAPI: SetStateAction<number>) => {
+      setPageForAPI(itemsForAPI);
+    
   };
+ 
   const handlePerPageSelectForAPI = (_: any, perPageForAPI: SetStateAction<number>) => {
     setItemsPerPageForAPI(perPageForAPI);
     setPageForAPI(1);
   };
+  
 
-  // Pagination for RBAC Members section
-  const [pageForMembers, setPageForMembers] = useState(1); // the current page
-  const [itemsPerPageForMembers, setItemsPerPageForMembers] = useState(5);
+  const indexOfLastItem = pageForAPI * itemsPerPageForAPI;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPageForAPI;
+  const currentDataForAPI = dataForAPI.slice(indexOfFirstItem, indexOfLastItem);
+
   const startForMembers = (pageForMembers - 1) * itemsPerPageForMembers;
   const endForMembers = startForMembers + itemsPerPageForMembers;
   const paginatedDataForMembers = memberList?.data?.slice(startForMembers, endForMembers);
-  // const pageCount = Math.ceil((apiKeys?.data?.length ?? 0) / ITEMS_PER_PAGE);
+
   const handlePageChangeForMembers = (event: any, pageNumberForMembers: SetStateAction<number>) => {
     setPageForMembers(pageNumberForMembers);
   };
@@ -246,10 +273,14 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     setPageForMembers(1);
   };
 
+
   const perPageOptions = [
     { title: '5', value: 5 },
-    { title: '10', value: 10 }
+    { title: '10', value: 10 },
+    { title: '20', value: 20 },
+    { title: '50', value: 50 }
   ];
+ 
 
   return (
     <>
@@ -403,7 +434,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                       </Tr>
                     )}
                     {apiKeys?.isSuccess &&
-                      paginatedDataForAPI?.map((key: ApiKeysItem) => (
+                      currentDataForAPI?.map((key: ApiKeysItem) => (
                         <Tr key={key.shortKey}>
                           <Td dataLabel={key.label}>
                             <LockIcon /> {key.label}
@@ -454,13 +485,16 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                 </TableComposable>
               </CardBody>
               <Pagination
-                itemCount={apiKeys?.data?.length}
+                itemCount={dataForAPI.length}
                 perPage={itemsPerPageForAPI}
                 page={pageForAPI}
                 onSetPage={handlePageChangeForAPI}
                 variant="bottom"
                 onPerPageSelect={handlePerPageSelectForAPI}
                 perPageOptions={perPageOptions}
+                dropDirection="down"
+                
+                
               />
             </Card>
           </StackItem>
@@ -587,7 +621,10 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                 variant="bottom"
                 onPerPageSelect={handlePerPageSelectForMembers}
                 perPageOptions={perPageOptions}
-              />
+                dropDirection="down"
+              >
+                
+      </Pagination>  
             </Card>
           </StackItem>
 
@@ -697,15 +734,15 @@ export const WebPropertyEnvPage = (): JSX.Element => {
         onSubmit={() => {}}
       />
 
-      <DeleteConfirmationModal
-        variant={ModalVariant.small}
-        isOpen={popUp.deleteApiKey.isOpen}
-        onClose={() => handlePopUpClose('deleteApiKey')}
-        onSubmit={() => handleDeleteAPIKey()}
-        isLoading={deleteAPIKey.isLoading}
-      >
-        Do you want to delete this API Key
-      </DeleteConfirmationModal>
+<DeleteConfirmationModal
+  variant={ModalVariant.small}
+  isOpen={popUp.deleteApiKey.isOpen}
+  onClose={() => handlePopUpClose('deleteApiKey')}
+  onSubmit={() => handleDeleteAPIKey()}
+  isLoading={deleteAPIKey.isLoading}
+>
+  Do you want to delete this API Key
+</DeleteConfirmationModal>
 
       <DeleteConfirmationModal
         variant={ModalVariant.small}
