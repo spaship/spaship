@@ -614,7 +614,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                 )}
               </CardBody>
               <Pagination
-                itemCount={memberList?.data?.length}
+                itemCount={dataForMembers.length}
                 perPage={itemsPerPageForMembers}
                 page={pageForMembers}
                 onSetPage={handlePageChangeForMembers}
