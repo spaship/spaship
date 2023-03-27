@@ -18,8 +18,13 @@ export class ApikeyService {
     private readonly exceptionsService: ExceptionsService
   ) {}
 
+  private static readonly defaultSkip: number = 0;
+
+  private static readonly defaultLimit: number = 2000;
+
   async getApikeyByProperty(propertyIdentifier: string): Promise<ResponseApikeyDto[]> {
-    const apiKeys = await this.dataServices.apikey.getByAny({ propertyIdentifier });
+    const keys = { propertyIdentifier };
+    const apiKeys = await this.dataServices.apikey.getByOptions(keys, { createdAt: -1 }, ApikeyService.defaultSkip, ApikeyService.defaultLimit);
     const apiKeysResponse: ResponseApikeyDto[] = [];
     apiKeys.forEach(async (apiKey) => {
       const tmpApiKey = new ResponseApikeyDto();
