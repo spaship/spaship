@@ -209,10 +209,12 @@ export const useGetTotalDeployments = (propertyIdentifier?: string) =>
 const fetchTotalMonthlyDeploymentTime = async (
   propertyIdentifier?: string
 ): Promise<TSPADeploymentTime> => {
-  const endpoint = propertyIdentifier
-    ? `analytics/deployment/time?propertyIdentifier=${propertyIdentifier}&days=30`
-    : 'analytics/deployment/time?days=30';
-  const { data } = await orchestratorReq.get(endpoint);
+  const { data } = await orchestratorReq.get("/analytics/deployment/time",{
+    params:{
+      propertyIdentifier,
+      days: '30'
+    }
+  });
   return data.data;
 };
 
@@ -226,10 +228,12 @@ export const useGetMonthlyDeploymentsTime = (propertyIdentifier?: string) =>
 const fetchTotalQuarterlyDeploymentTime = async (
   propertyIdentifier?: string
 ): Promise<TSPADeploymentTime> => {
-  const endpoint = propertyIdentifier
-    ? `analytics/deployment/time?propertyIdentifier=${propertyIdentifier}&days=120`
-    : 'analytics/deployment/time?days=120';
-  const { data } = await orchestratorReq.get(endpoint);
+  const { data } = await orchestratorReq.get('analytics/deployment/time',{
+    params:{
+      propertyIdentifier,
+      days: '120'
+    }
+  });
   return data.data;
 };
 
@@ -243,10 +247,12 @@ export const useGetQuarterlyDeploymentsTime = (propertyIdentifier?: string) =>
 const fetchTotalHalfYearlyDeploymentTime = async (
   propertyIdentifier?: string
 ): Promise<TSPADeploymentTime> => {
-  const endpoint = propertyIdentifier
-    ? `analytics/deployment/time?propertyIdentifier=${propertyIdentifier}&days=180`
-    : 'analytics/deployment/time?days=180';
-  const { data } = await orchestratorReq.get(endpoint);
+  const { data } = await orchestratorReq.get('analytics/deployment/time',{
+    params:{
+      propertyIdentifier,
+      days: '180'
+    }
+  });
 
   return data.data;
 };
@@ -261,10 +267,12 @@ export const useGetHalfYearlyDeploymentsTime = (propertyIdentifier?: string) =>
 const fetchTotalYearlyDeploymentTime = async (
   propertyIdentifier?: string
 ): Promise<TSPADeploymentTime> => {
-  const endpoint = propertyIdentifier
-    ? `analytics/deployment/time?propertyIdentifier=${propertyIdentifier}&days=365`
-    : 'analytics/deployment/time?days=365';
-  const { data } = await orchestratorReq.get(endpoint);
+  const { data } = await orchestratorReq.get('analytics/deployment/time',{
+    params:{
+      propertyIdentifier,
+      days: '365'
+    }
+  });
   return data.data;
 };
 
