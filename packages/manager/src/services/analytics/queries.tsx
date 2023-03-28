@@ -209,8 +209,8 @@ export const useGetTotalDeployments = (propertyIdentifier?: string) =>
 const fetchTotalMonthlyDeploymentTime = async (
   propertyIdentifier?: string
 ): Promise<TSPADeploymentTime> => {
-  const { data } = await orchestratorReq.get("/analytics/deployment/time",{
-    params:{
+  const { data } = await orchestratorReq.get('/analytics/deployment/time', {
+    params: {
       propertyIdentifier,
       days: '30'
     }
@@ -228,8 +228,8 @@ export const useGetMonthlyDeploymentsTime = (propertyIdentifier?: string) =>
 const fetchTotalQuarterlyDeploymentTime = async (
   propertyIdentifier?: string
 ): Promise<TSPADeploymentTime> => {
-  const { data } = await orchestratorReq.get('analytics/deployment/time',{
-    params:{
+  const { data } = await orchestratorReq.get('analytics/deployment/time', {
+    params: {
       propertyIdentifier,
       days: '120'
     }
@@ -247,8 +247,8 @@ export const useGetQuarterlyDeploymentsTime = (propertyIdentifier?: string) =>
 const fetchTotalHalfYearlyDeploymentTime = async (
   propertyIdentifier?: string
 ): Promise<TSPADeploymentTime> => {
-  const { data } = await orchestratorReq.get('analytics/deployment/time',{
-    params:{
+  const { data } = await orchestratorReq.get('analytics/deployment/time', {
+    params: {
       propertyIdentifier,
       days: '180'
     }
@@ -267,8 +267,8 @@ export const useGetHalfYearlyDeploymentsTime = (propertyIdentifier?: string) =>
 const fetchTotalYearlyDeploymentTime = async (
   propertyIdentifier?: string
 ): Promise<TSPADeploymentTime> => {
-  const { data } = await orchestratorReq.get('analytics/deployment/time',{
-    params:{
+  const { data } = await orchestratorReq.get('analytics/deployment/time', {
+    params: {
       propertyIdentifier,
       days: '365'
     }
