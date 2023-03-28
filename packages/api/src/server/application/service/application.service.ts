@@ -99,12 +99,17 @@ export class ApplicationService {
     const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
     const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === environment.cluster);
     const deploymentConnection = (await this.dataServices.deploymentConnection.getByAny({ name: deploymentRecord.name }))[0];
-    const searchedApplicationsByPath = await this.dataServices.application.getByAny({
-      propertyIdentifier,
-      env,
-      path: applicationRequest.path,
-      isSSR: false
-    });
+    const searchedApplicationsByPath = await this.dataServices.application.getByOptions(
+      {
+        propertyIdentifier,
+        env,
+        path: applicationRequest.path,
+        isSSR: false
+      },
+      { updatedAt: -1 },
+      ApplicationService.defaultSkip,
+      ApplicationService.defaultLimit
+    );
     const applicationExists = this.applicationFactory.getExistingApplicationsByPath(searchedApplicationsByPath, identifier);
 
     await this.analyticsService.createActivityStream(

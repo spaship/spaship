@@ -138,7 +138,7 @@ export class ApplicationFactory {
     applicationResponse.ref = this.getRef(application.nextRef);
     applicationResponse.accessUrl = application.isSSR ? this.getSSRAccessUrl(application, baseUrl) : this.getAccessUrl(application, baseUrl);
     if (applicationExists)
-      applicationResponse.warning = `SPA(s) - ${applicationExists} already exist(s) on the context path ${applicationResponse.path} Overriding existing deployment.`;
+      applicationResponse.warning = `SPA(s) - ${applicationExists} already exist(s) on the context path ${applicationResponse.path}. Overriding existing deployment.`;
     return applicationResponse;
   }
 
