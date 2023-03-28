@@ -90,26 +90,18 @@ export const useGetWebPropActivityStream = (
   );
 
 const fetchTotalDeploymentForApps = async (
-  webProperty: string,
-  spaName = ''
+  propertyIdentifier: string,
+  applicationIdentifier?: string
 ): Promise<TSPADeploymentCount[]> => {
-  const dataparams: any = {
-    propertyIdentifier: webProperty,
-    applicationIdentifier: spaName
-  };
-  Object.keys(dataparams).forEach(
-    (key: string) =>
-      (dataparams[key] === undefined || dataparams[key] === '') && delete dataparams[key]
-  );
   const { data } = await orchestratorReq.get('analytics/deployment/env', {
-    params: dataparams
+    params: {
+      propertyIdentifier,
+      applicationIdentifier
+    }
   });
 
   // TODO: To be removed after backend revamp
-  if (data.data) {
-    data.data = data.data.filter((spa: any) => !spa.env.startsWith('ephemeral'));
-  }
-  return data.data;
+  return data?.data?.filter((spa: any) => !spa.env.startsWith('ephemeral'));
 };
 
 export const useGetTotalDeploymentsForApps = (webProperty: string, spaName?: string) =>
@@ -118,19 +110,14 @@ export const useGetTotalDeploymentsForApps = (webProperty: string, spaName?: str
   );
 
 const fetchMonthlyDeploymentChart = async (
-  webProperty: string,
-  spaName?: string
+  propertyIdentifier: string,
+  applicationIdentifier?: string
 ): Promise<Record<string, TSPAMonthlyDeploymentCount[]>> => {
-  const dataparams: any = {
-    propertyIdentifier: webProperty,
-    applicationIdentifier: spaName
-  };
-  Object.keys(dataparams).forEach(
-    (key: string) =>
-      (dataparams[key] === undefined || dataparams[key] === '') && delete dataparams[key]
-  );
   const { data } = await orchestratorReq.get('/analytics/deployment/env/month', {
-    params: dataparams
+    params: {
+      propertyIdentifier,
+      applicationIdentifier
+    }
   });
   // TODO: Remove this once backend has been revamped
   if (data.data) {
