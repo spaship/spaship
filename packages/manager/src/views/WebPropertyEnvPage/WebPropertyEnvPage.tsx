@@ -146,7 +146,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
       setPageForAPI((prevPage) => prevPage - 1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiKeys.data?.length, itemsPerPageForAPI, setPageForAPI]);
+  }, [apiKeys.data?.length]);
 
   // Pagination for RBAC Members section
   const [pageForMembers, setPageForMembers] = useState(1); // the current page
@@ -156,7 +156,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
       setPageForMembers((prevPage) => prevPage - 1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [memberList.data?.length, itemsPerPageForMembers, setItemsPerPageForMembers]);
+  }, [memberList.data?.length]);
 
   const handleCreateEnv = async (data: EnvForm) => {
     if (!propertyTitle) return;
