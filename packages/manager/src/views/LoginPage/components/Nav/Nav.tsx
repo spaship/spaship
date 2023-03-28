@@ -2,7 +2,6 @@ import {
   Button,
   ButtonVariant,
   Masthead,
-  MastheadBrand,
   MastheadContent,
   MastheadMain,
   Toolbar,
@@ -17,9 +16,9 @@ import { env } from '@app/config/env';
 export const Nav = () => (
   <Masthead backgroundColor="light">
     <MastheadMain>
-    <a href="/" className="pf-c-masthead__brand" >
-  <img src="/img/spaship-logo.svg" alt="SPASHIP logo" style={{ height: '32px' }} />
-</a>
+      <a href="/" className="pf-c-masthead__brand">
+        <img src="/img/spaship-logo.svg" alt="SPASHIP logo" style={{ height: '32px' }} />
+      </a>
     </MastheadMain>
     <MastheadContent>
       <Toolbar id="toolbar" isFullHeight isStatic>
@@ -38,7 +37,6 @@ export const Nav = () => (
                 href={env.PUBLIC_DOC_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-              
               >
                 Documentation
               </Button>
