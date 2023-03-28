@@ -155,7 +155,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     if ((memberList?.data?.length || 0) % itemsPerPageForMembers === 0 && pageForMembers > 1) {
       setPageForMembers((prevPage) => prevPage - 1);
     }
-     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [memberList.data?.length, itemsPerPageForMembers, setItemsPerPageForMembers]);
 
   const handleCreateEnv = async (data: EnvForm) => {
