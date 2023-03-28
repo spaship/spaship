@@ -33,18 +33,18 @@ type IGraphData = {
 };
 
 type ITotalMonthlyDeploymentData = {
-  dev: IGraphData[] | undefined;
-  qa: IGraphData[] | undefined;
-  stage: IGraphData[] | undefined;
-  prod: IGraphData[] | undefined;
+  dev?: IGraphData[];
+  qa?: IGraphData[];
+  stage?: IGraphData[];
+  prod?: IGraphData[];
 };
 
 type Props = {
   TotalMonthlyDeploymentData: ITotalMonthlyDeploymentData;
-  Totaldeployment: number | undefined;
+  Totaldeployment?: number;
   TotalProperty: number;
-  averageDeploymentTime: (number | undefined)[];
-  bestDeploymentTime: number | undefined;
+  averageDeploymentTime: number[];
+  bestDeploymentTime?: number;
   bestDeploymentTimeIndex: number;
   TotalDeploymentData: UseQueryResult<TSPADeploymentCount[]>;
   minCount: number;

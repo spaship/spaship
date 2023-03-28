@@ -17,10 +17,10 @@ export const DashboardPage = (): JSX.Element => {
   const TotalProperty = Object.keys(TotalDeploymentCountsData.data || {}).length;
   const TotalMonthlyDeploymentData = useGetMonthlyDeploymentChartWithEphemeral().data;
   const averageDeploymentTime = [
-    useGetMonthlyDeploymentsTime().data,
-    useGetQuarterlyDeploymentsTime().data,
-    useGetHalfYearlyDeploymentsTime().data,
-    useGetYearlyDeploymentsTime().data
+    useGetMonthlyDeploymentsTime().data || 0,
+    useGetQuarterlyDeploymentsTime().data || 0,
+    useGetHalfYearlyDeploymentsTime().data || 0,
+    useGetYearlyDeploymentsTime().data || 0
   ];
   const bestDeploymentTime = Math.min(...averageDeploymentTime.map((time) => time || 0));
   const bestDeploymentTimeIndex = averageDeploymentTime.findIndex(
