@@ -20,26 +20,25 @@ import { toast } from 'react-hot-toast';
 import * as yup from 'yup';
 
 const schema = yup.object({
-  name: yup.string().required(),
+  name: yup.string().required().label('Application Name'),
   path: yup
     .string()
     .matches(/^[a-zA-Z0-9/-]+$/, 'Only letters, numbers, forward slash and dashes are allowed')
-    .required(),
-  env: yup.string().required('Environment is a required field'),
-  ref: yup.string(),
-  imageUrl: yup
-    .string()
     .trim()
-    .min(1, 'Image URL must not be empty')
-    .required('Image URL is a  required field'),
+    .required(),
+
+  env: yup.string().required().label('Environment'),
+  ref: yup.string(),
+  port: yup.string().label('Port'),
+  imageUrl: yup.string().trim().min(1, 'Image URL must not be empty').required().label('Image URL'),
   healthCheckPath: yup
     .string()
     .matches(/^[a-zA-Z0-9/-]+$/, 'Only letters, numbers, forward slash and dashes are allowed')
     .required(),
   config: yup.array().of(
     yup.object({
-      key: yup.string().trim().min(1, 'Configuration Key must not be empty'),
-      value: yup.string().trim().min(1, 'Configuration Value must not be empty')
+      key: yup.string().trim().required().label('Configuration Key'),
+      value: yup.string().trim().required().label('Configuration Value')
     })
   )
 });
@@ -85,7 +84,7 @@ export const ConfigureSSRForm = ({
   } = useForm<FormData>({
     mode: 'onBlur',
     resolver: yupResolver(schema),
-    defaultValues: { ...dataprops, config: keyValuePairsGenerator({ dataprops }) }
+    defaultValues: { ...dataprops, config: keyValuePairsGenerator({ dataprops }), port: '3000' }
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -228,6 +227,45 @@ export const ConfigureSSRForm = ({
         <SplitItem isFilled style={{ width: '100%' }}>
           <Controller
             control={control}
+            name="port"
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label={
+                  <>
+                    Port
+                    <Tooltip
+                      content={
+                        <div>Kindly put port for the application, bydefault it is 3000.</div>
+                      }
+                    >
+                      <span>
+                        &nbsp; <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+                      </span>
+                    </Tooltip>
+                  </>
+                }
+                isRequired
+                fieldId="port"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
+                <TextInput
+                  isRequired
+                  placeholder="Enter port"
+                  type="text"
+                  id="port"
+                  {...field}
+                  style={{ marginRight: '0px' }}
+                />
+              </FormGroup>
+            )}
+          />
+        </SplitItem>
+      </Split>
+      <Split>
+        <SplitItem isFilled style={{ width: '100%' }}>
+          <Controller
+            control={control}
             name="imageUrl"
             render={({ field, fieldState: { error } }) => (
               <FormGroup
@@ -265,7 +303,6 @@ export const ConfigureSSRForm = ({
           />
         </SplitItem>
       </Split>
-
       <Split hasGutter>
         <SplitItem isFilled style={{ width: '100%' }}>
           <Controller
