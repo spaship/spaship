@@ -46,7 +46,7 @@ import {
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { SetStateAction, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Banner, DeleteConfirmationModal, TableRowSkeleton } from '@app/components';
 import { useFormatDate, usePopUp } from '@app/hooks';
@@ -92,6 +92,25 @@ type ApiKeysItem = {
   createdBy: string;
   createdAt: string;
 };
+type EnvItem = {
+  _id: string;
+  propertyIdentifier: string;
+  url: string;
+  cluster: string;
+  isEph: boolean;
+  env: string;
+  sync?: string;
+  createdBy: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+const perPageOptions = [
+  { title: '5', value: 5 },
+  { title: '10', value: 10 },
+  { title: '20', value: 20 },
+  { title: '50', value: 50 }
+];
 export const WebPropertyEnvPage = (): JSX.Element => {
   const { query } = useRouter();
   const propertyIdentifier = query.propertyIdentifier as string;
@@ -119,6 +138,25 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     'editMemberAccess',
     'deleteMember'
   ] as const);
+  // Pagination for APIKEY section
+  const [pageForAPI, setPageForAPI] = useState(1); // the current page
+  const [itemsPerPageForAPI, setItemsPerPageForAPI] = useState(5);
+  useEffect(() => {
+    if ((apiKeys?.data?.length || 0) % itemsPerPageForAPI === 0 && pageForAPI > 1) {
+      setPageForAPI((prevPage) => prevPage - 1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apiKeys.data?.length]);
+
+  // Pagination for RBAC Members section
+  const [pageForMembers, setPageForMembers] = useState(1); // the current page
+  const [itemsPerPageForMembers, setItemsPerPageForMembers] = useState(5);
+  useEffect(() => {
+    if ((memberList?.data?.length || 0) % itemsPerPageForMembers === 0 && pageForMembers > 1) {
+      setPageForMembers((prevPage) => prevPage - 1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [memberList.data?.length]);
 
   const handleCreateEnv = async (data: EnvForm) => {
     if (!propertyTitle) return;
@@ -180,7 +218,6 @@ export const WebPropertyEnvPage = (): JSX.Element => {
 
   const handleDeleteMember = async () => {
     if (!memberList?.data) return;
-
     const deletePerm = memberList.data
       .filter((e: MemberListItem) => e.name === deleteMemberName)
       .map((v: MemberListItem) => {
@@ -190,54 +227,33 @@ export const WebPropertyEnvPage = (): JSX.Element => {
           .forEach((a) => tempActionsDelete.push(a));
         return { name: v.name, email: v.email, actions: tempActionsDelete };
       });
-
     const deleteData = {
       propertyIdentifier,
       permissionDetails: deletePerm
     };
-
     await deleteMember.mutateAsync(deleteData);
     toast.success('Member deleted successfully');
     handlePopUpClose('deleteMember');
   };
 
-  type EnvItem = {
-    _id: string;
-    propertyIdentifier: string;
-    url: string;
-    cluster: string;
-    isEph: boolean;
-    env: string;
-    sync?: string;
-    createdBy: string;
-    isActive: boolean;
-    createdAt: string;
-    updatedAt: string;
-  };
-
-  // Pagination for APIKEY section
-  const [pageForAPI, setPageForAPI] = useState(1); // the current page
-  const [itemsPerPageForAPI, setItemsPerPageForAPI] = useState(5);
-  const startForAPI = (pageForAPI - 1) * itemsPerPageForAPI;
-  const endForAPI = startForAPI + itemsPerPageForAPI;
-  const paginatedDataForAPI = apiKeys?.data?.slice(startForAPI, endForAPI);
-
   // const pageCount = Math.ceil((apiKeys?.data?.length ?? 0) / ITEMS_PER_PAGE);
-  const handlePageChangeForAPI = (event: any, pageNumberForAPI: SetStateAction<number>) => {
-    setPageForAPI(pageNumberForAPI);
+  const handlePageChangeForAPI = (event: any, itemsForAPI: SetStateAction<number>) => {
+    setPageForAPI(itemsForAPI);
   };
+
   const handlePerPageSelectForAPI = (_: any, perPageForAPI: SetStateAction<number>) => {
     setItemsPerPageForAPI(perPageForAPI);
     setPageForAPI(1);
   };
 
-  // Pagination for RBAC Members section
-  const [pageForMembers, setPageForMembers] = useState(1); // the current page
-  const [itemsPerPageForMembers, setItemsPerPageForMembers] = useState(5);
+  const indexOfLastItem = pageForAPI * itemsPerPageForAPI;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPageForAPI;
+  const currentDataForAPI = apiKeys?.data?.slice(indexOfFirstItem, indexOfLastItem);
+
   const startForMembers = (pageForMembers - 1) * itemsPerPageForMembers;
   const endForMembers = startForMembers + itemsPerPageForMembers;
   const paginatedDataForMembers = memberList?.data?.slice(startForMembers, endForMembers);
-  // const pageCount = Math.ceil((apiKeys?.data?.length ?? 0) / ITEMS_PER_PAGE);
+
   const handlePageChangeForMembers = (event: any, pageNumberForMembers: SetStateAction<number>) => {
     setPageForMembers(pageNumberForMembers);
   };
@@ -245,11 +261,6 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     setItemsPerPageForMembers(perPageForMembers);
     setPageForMembers(1);
   };
-
-  const perPageOptions = [
-    { title: '5', value: 5 },
-    { title: '10', value: 10 }
-  ];
 
   return (
     <>
@@ -403,7 +414,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                       </Tr>
                     )}
                     {apiKeys?.isSuccess &&
-                      paginatedDataForAPI?.map((key: ApiKeysItem) => (
+                      currentDataForAPI?.map((key: ApiKeysItem) => (
                         <Tr key={key.shortKey}>
                           <Td dataLabel={key.label}>
                             <LockIcon /> {key.label}
@@ -454,13 +465,14 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                 </TableComposable>
               </CardBody>
               <Pagination
-                itemCount={apiKeys?.data?.length}
+                itemCount={apiKeys?.data?.length || 0}
                 perPage={itemsPerPageForAPI}
                 page={pageForAPI}
                 onSetPage={handlePageChangeForAPI}
                 variant="bottom"
                 onPerPageSelect={handlePerPageSelectForAPI}
                 perPageOptions={perPageOptions}
+                dropDirection="down"
               />
             </Card>
           </StackItem>
@@ -580,13 +592,14 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                 )}
               </CardBody>
               <Pagination
-                itemCount={memberList?.data?.length}
+                itemCount={memberList?.data?.length || 0}
                 perPage={itemsPerPageForMembers}
                 page={pageForMembers}
                 onSetPage={handlePageChangeForMembers}
                 variant="bottom"
                 onPerPageSelect={handlePerPageSelectForMembers}
                 perPageOptions={perPageOptions}
+                dropDirection="down"
               />
             </Card>
           </StackItem>
