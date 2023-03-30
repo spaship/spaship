@@ -101,10 +101,9 @@ export const Dashboard = (): JSX.Element => {
     <>
       <Grid style={{ padding: '12px 12px' }}>
         <GridItem span={6}>
-          <Link href={pageLinks.webPropertyListPage}>
+          <Link href={`/properties/${propertyIdentifier}`}>
             <a className="text-decoration-none">
               <Card
-                isSelectable
                 isFullHeight
                 style={{
                   margin: '12px 12px',
@@ -156,7 +155,6 @@ export const Dashboard = (): JSX.Element => {
         </GridItem>
         <GridItem span={6}>
           <Card
-            isSelectable
             isFullHeight
             style={{
               margin: '12px 12px',
@@ -199,7 +197,6 @@ export const Dashboard = (): JSX.Element => {
           <Link href={pageLinks.webPropertyListPage}>
             <a className="text-decoration-none">
               <Card
-                isSelectable
                 isFullHeight
                 style={{
                   margin: '12px 12px',
@@ -219,7 +216,6 @@ export const Dashboard = (): JSX.Element => {
         </GridItem>
         <GridItem span={6}>
           <Card
-            isSelectable
             isFullHeight
             style={{
               margin: '12px 12px',
@@ -285,7 +281,6 @@ export const Dashboard = (): JSX.Element => {
         </SplitItem>
         <SplitItem isFilled>
           <Card
-            isSelectable
             isFullHeight
             style={{
               // overflow: 'auto',
