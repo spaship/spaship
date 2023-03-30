@@ -44,6 +44,7 @@ type Data = {
   healthCheckPath: string;
   config: Record<string, string>;
   imageUrl: string;
+  port: string;
 };
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 25;
@@ -70,7 +71,8 @@ export const SSRDetails = () => {
     healthCheckPath: '',
     _id: 0,
     isSSR: false,
-    config: {}
+    config: {},
+    port: ''
   });
   const [configureData, setConfigureData] = useState<Data>({
     propertyIdentifier: '',
@@ -86,7 +88,8 @@ export const SSRDetails = () => {
     healthCheckPath: '',
     _id: 0,
     isSSR: false,
-    config: {}
+    config: {},
+    port: ''
   });
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
     'redeploySsrApplication',
@@ -117,7 +120,7 @@ export const SSRDetails = () => {
   );
   const spaDetailedInitialData = {
     propertyIdentifier,
-    name: propertyIdentifier,
+    name: applicationName,
     path: '',
     ref: '',
     env: '',
@@ -129,7 +132,8 @@ export const SSRDetails = () => {
     healthCheckPath: '',
     _id: 0,
     isSSR: false,
-    config: {}
+    config: {},
+    port: ''
   };
 
   return (

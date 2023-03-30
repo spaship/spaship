@@ -20,26 +20,23 @@ import { toast } from 'react-hot-toast';
 import * as yup from 'yup';
 
 const schema = yup.object({
-  name: yup.string().required(),
+  name: yup.string().required().label('Application Name'),
   path: yup
     .string()
     .matches(/^[a-zA-Z0-9/-]+$/, 'Only letters, numbers, forward slash and dashes are allowed')
     .required(),
-  env: yup.string().required('Environment is a required field'),
+  env: yup.string().required().label('Environment'),
+  port: yup.string().required().label('Port'),
   ref: yup.string(),
-  imageUrl: yup
-    .string()
-    .trim()
-    .min(1, 'Image URL must not be empty')
-    .required('Image URL is a  required field'),
+  imageUrl: yup.string().trim().required().label('Image URL'),
   healthCheckPath: yup
     .string()
     .matches(/^[a-zA-Z0-9/-]+$/, 'Only letters, numbers, forward slash and dashes are allowed')
     .required(),
   config: yup.array().of(
     yup.object({
-      key: yup.string().trim().min(1, 'Configuration Key must not be empty'),
-      value: yup.string().trim().min(1, 'Configuration Value must not be empty')
+      key: yup.string().trim().required().label('Configuration Key'),
+      value: yup.string().trim().required().label('Configuration Value')
     })
   )
 });
@@ -58,6 +55,7 @@ type Data = {
   healthCheckPath: string;
   config: Record<string, string>;
   imageUrl: string;
+  port: string;
 };
 
 type Props = {
@@ -81,11 +79,19 @@ export const ConfigureSSRForm = ({
   const {
     control,
     handleSubmit,
+    setValue,
+    getValues,
     formState: { isSubmitting }
   } = useForm<FormData>({
     mode: 'onBlur',
     resolver: yupResolver(schema),
-    defaultValues: { ...dataprops, config: keyValuePairsGenerator({ dataprops }) }
+    defaultValues: {
+      ...dataprops,
+      config: keyValuePairsGenerator({ dataprops }),
+      port: dataprops.port ? dataprops.port : '3000',
+      path: dataprops.path ? dataprops.path : '/',
+      healthCheckPath: dataprops.healthCheckPath ? dataprops.healthCheckPath : '/'
+    }
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -96,7 +102,6 @@ export const ConfigureSSRForm = ({
   const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const webPropertiesKeys = Object.keys(webProperties.data || {});
-
   const onSubmit = async (dataf: FormData) => {
     const newDataf = {
       ...dataf,
@@ -121,9 +126,6 @@ export const ConfigureSSRForm = ({
         onClose();
       } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
         toast.error(error.response.data.message);
-        // toast.error(
-        //   'Please provide valid image URL. See tooltip for more.'
-        // );
       } else {
         toast.error('Failed to deploy conatinerized application');
       }
@@ -139,7 +141,7 @@ export const ConfigureSSRForm = ({
             name="name"
             render={({ field, fieldState: { error } }) => (
               <FormGroup
-                label="Name"
+                label="Application Name"
                 isRequired
                 fieldId="property-name"
                 validated={error ? 'error' : 'default'}
@@ -228,6 +230,34 @@ export const ConfigureSSRForm = ({
         <SplitItem isFilled style={{ width: '100%' }}>
           <Controller
             control={control}
+            name="port"
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label={
+                  <>
+                    Port
+                    <Tooltip content={<div>Kindly put port for your application.</div>}>
+                      <span>
+                        &nbsp; <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+                      </span>
+                    </Tooltip>
+                  </>
+                }
+                isRequired
+                fieldId="port"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
+                <TextInput isRequired placeholder="Enter port" type="text" id="port" {...field} />
+              </FormGroup>
+            )}
+          />
+        </SplitItem>
+      </Split>
+      <Split hasGutter>
+        <SplitItem isFilled style={{ width: '100%' }}>
+          <Controller
+            control={control}
             name="imageUrl"
             render={({ field, fieldState: { error } }) => (
               <FormGroup
@@ -265,83 +295,184 @@ export const ConfigureSSRForm = ({
           />
         </SplitItem>
       </Split>
-
-      <Split hasGutter>
-        <SplitItem isFilled style={{ width: '100%' }}>
-          <Controller
-            control={control}
-            name="path"
-            render={({ field, fieldState: { error } }) => (
-              <FormGroup
-                label={
-                  <>
-                    Path
-                    <Tooltip
-                      content={
-                        <div>
-                          This will be the context path is your application.
-                          <br /> Please note that this should match the homepage attribute of the
-                          package.json file.
-                        </div>
-                      }
-                    >
-                      <span>
-                        &nbsp; <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
-                      </span>
-                    </Tooltip>
-                  </>
-                }
-                isRequired
-                fieldId="path"
-                validated={error ? 'error' : 'default'}
-                helperTextInvalid={error?.message}
-              >
-                <TextInput isRequired placeholder="Path" type="text" id="path" {...field} />
-              </FormGroup>
-            )}
-          />
-        </SplitItem>
-        <SplitItem isFilled style={{ width: '100%' }}>
-          <Controller
-            control={control}
-            name="healthCheckPath"
-            render={({ field, fieldState: { error } }) => (
-              <FormGroup
-                label={
-                  <>
-                    Health Check Path
-                    <Tooltip
-                      content={
-                        <div>
-                          By default, it will pick the value of the Path attribute, used for
-                          application liveness checking for monitoring and auto redeployment on
-                          failure.
-                        </div>
-                      }
-                    >
-                      <span>
-                        &nbsp; <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
-                      </span>
-                    </Tooltip>
-                  </>
-                }
-                isRequired
-                fieldId="healthCheckPath"
-                validated={error ? 'error' : 'default'}
-                helperTextInvalid={error?.message}
-              >
-                <TextInput
+      {flag === 'configure' ? (
+        <Split hasGutter>
+          <SplitItem isFilled style={{ width: '100%' }}>
+            <Controller
+              control={control}
+              name="path"
+              render={({ field, fieldState: { error } }) => (
+                <FormGroup
+                  label={
+                    <>
+                      Path
+                      <Tooltip
+                        content={
+                          <div>
+                            This will be the context path is your application.
+                            <br /> Please note that this should match the homepage attribute of the
+                            package.json file.
+                          </div>
+                        }
+                      >
+                        <span>
+                          &nbsp;{' '}
+                          <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+                        </span>
+                      </Tooltip>
+                    </>
+                  }
                   isRequired
-                  placeholder="Enter health Check Path"
-                  type="text"
-                  id="healthCheckPath"
-                  {...field}
-                />
-              </FormGroup>
-            )}
-          />
-        </SplitItem>
-      </Split>
+                  fieldId="path"
+                  validated={error ? 'error' : 'default'}
+                  helperTextInvalid={error?.message}
+                >
+                  <TextInput isRequired placeholder="Path" type="text" id="path" {...field} />
+                </FormGroup>
+              )}
+            />
+          </SplitItem>
+          <SplitItem isFilled style={{ width: '100%' }}>
+            <Controller
+              control={control}
+              name="healthCheckPath"
+              render={({ field, fieldState: { error } }) => (
+                <FormGroup
+                  label={
+                    <>
+                      Health Check Path
+                      <Tooltip
+                        content={
+                          <div>
+                            By default, it will pick the value of the Path attribute, used for
+                            application liveness checking for monitoring and auto redeployment on
+                            failure.
+                          </div>
+                        }
+                      >
+                        <span>
+                          &nbsp;{' '}
+                          <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+                        </span>
+                      </Tooltip>
+                    </>
+                  }
+                  isRequired
+                  fieldId="healthCheckPath"
+                  validated={error ? 'error' : 'default'}
+                  helperTextInvalid={error?.message}
+                >
+                  <TextInput
+                    isRequired
+                    placeholder="Enter health Check Path"
+                    type="text"
+                    id="healthCheckPath"
+                    {...field}
+                  />
+                </FormGroup>
+              )}
+            />
+          </SplitItem>
+        </Split>
+      ) : (
+        <Split hasGutter>
+          <SplitItem isFilled style={{ width: '100%' }}>
+            <Controller
+              control={control}
+              name="path"
+              render={({ field, fieldState: { error } }) => {
+                const handleChange = (e: string) => {
+                  const pathValue = e;
+                  const healthCheckPathValue = getValues('healthCheckPath');
+                  if (healthCheckPathValue === field.value) {
+                    setValue('healthCheckPath', pathValue);
+                  }
+                  field.onChange(e);
+                };
+                return (
+                  <FormGroup
+                    label={
+                      <>
+                        Path
+                        <Tooltip
+                          content={
+                            <div>
+                              This will be the context path is your application.
+                              <br /> Please note that this should match the homepage attribute of
+                              the package.json file.
+                            </div>
+                          }
+                        >
+                          <span>
+                            &nbsp;{' '}
+                            <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+                          </span>
+                        </Tooltip>
+                      </>
+                    }
+                    isRequired
+                    fieldId="path"
+                    validated={error ? 'error' : 'default'}
+                    helperTextInvalid={error?.message}
+                  >
+                    <TextInput
+                      isRequired
+                      placeholder="Path"
+                      type="text"
+                      id="path"
+                      value={field.value}
+                      onChange={handleChange}
+                      style={{ marginRight: '0px' }}
+                    />
+                  </FormGroup>
+                );
+              }}
+            />
+          </SplitItem>
+          <SplitItem isFilled style={{ width: '100%' }}>
+            <Controller
+              control={control}
+              name="healthCheckPath"
+              render={({ field, fieldState: { error } }) => (
+                <FormGroup
+                  label={
+                    <>
+                      Health Check Path
+                      <Tooltip
+                        content={
+                          <div>
+                            By default, it will pick the value of the Path attribute, used for
+                            application liveness checking for monitoring and auto redeployment on
+                            failure.
+                          </div>
+                        }
+                      >
+                        <span>
+                          &nbsp;{' '}
+                          <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+                        </span>
+                      </Tooltip>
+                    </>
+                  }
+                  isRequired
+                  fieldId="healthCheckPath"
+                  validated={error ? 'error' : 'default'}
+                  helperTextInvalid={error?.message}
+                >
+                  <TextInput
+                    isRequired
+                    placeholder="Enter health Check Path"
+                    type="text"
+                    id="healthCheckPath"
+                    {...field}
+                    style={{ marginRight: '0px' }}
+                  />
+                </FormGroup>
+              )}
+            />
+          </SplitItem>
+        </Split>
+      )}
 
       <Split hasGutter>
         <div
