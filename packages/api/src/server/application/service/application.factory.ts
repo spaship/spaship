@@ -29,6 +29,16 @@ export class ApplicationFactory {
     private readonly exceptionService: ExceptionsService
   ) {}
 
+  private static readonly hexadecimalCode: RegExp = /%[0-9a-zA-Z]{2}/g;
+
+  private static readonly specialChar1: RegExp = /[\ \-\/\:\@\[\]\`\{\~\.]+/g;
+
+  private static readonly specialChar2: RegExp = /[\|!@#$%^&*;_"<>\(\)\+,]/g;
+
+  private static readonly startEndChar: RegExp = /^-+|-+$/g;
+
+  private static readonly consecutiveChar: RegExp = /--+/g;
+
   /* @internal
    * Create the spaship config (.spaship) from the application
    * Check the distribution folder from the archive
@@ -348,15 +358,15 @@ export class ApplicationFactory {
       encodeURIComponent(identifier)
         .toLowerCase()
         /* Replace the encoded hexadecimal code with `-` */
-        .replace(/%[0-9a-zA-Z]{2}/g, '-')
+        .replace(ApplicationFactory.hexadecimalCode, '-')
         /* Replace any special characters with `-` */
-        .replace(/[\ \-\/\:\@\[\]\`\{\~\.]+/g, '-')
+        .replace(ApplicationFactory.specialChar1, '-')
         /* Special characters are replaced by an underscore */
-        .replace(/[\|!@#$%^&*;_"<>\(\)\+,]/g, '-')
+        .replace(ApplicationFactory.specialChar2, '-')
         /* Remove any starting or ending `-` */
-        .replace(/^-+|-+$/g, '')
+        .replace(ApplicationFactory.startEndChar, '')
         /* Removing multiple consecutive `-`s */
-        .replace(/--+/g, '-')
+        .replace(ApplicationFactory.consecutiveChar, '-')
     );
   }
 }
