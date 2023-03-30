@@ -24,6 +24,7 @@ import { BellIcon } from '@patternfly/react-icons';
 import { env } from '@app/config/env';
 import { useToggle } from '@app/hooks';
 import { pageLinks } from '@app/links';
+import { deleteOrchestratorAuthorizationHeader } from '@app/config/orchestratorReq';
 
 export const Nav = () => {
   const { data: session } = useSession();
@@ -33,6 +34,7 @@ export const Nav = () => {
     setIsSigningOut.on();
     signOut({ redirect: false, callbackUrl: pageLinks.loginPage })
       .then((data) => {
+        deleteOrchestratorAuthorizationHeader();
         Router.push(data.url);
       })
       .catch(() => {
