@@ -283,7 +283,7 @@ export const SSRDetails = () => {
         <ConfigureSSRForm
           propertyIdentifier={propertyIdentifier}
           onClose={() => handlePopUpClose('reconfigureSsrApplication')}
-          dataprops={configureData}
+          dataProps={configureData}
           flag="configure"
         />
       </Modal>
@@ -296,7 +296,7 @@ export const SSRDetails = () => {
         <ConfigureSSRForm
           propertyIdentifier={propertyIdentifier}
           onClose={() => handlePopUpClose('createSSRDeployment')}
-          dataprops={spaDetailedInitialData}
+          dataProps={spaDetailedInitialData}
           flag="addnew"
         />
       </Modal>

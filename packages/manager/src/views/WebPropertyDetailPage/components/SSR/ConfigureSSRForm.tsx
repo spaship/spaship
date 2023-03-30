@@ -61,19 +61,19 @@ type Data = {
 type Props = {
   onClose: () => void;
   propertyIdentifier: string;
-  dataprops: Data;
+  dataProps: Data;
   flag: string;
 };
 
 export type FormData = yup.InferType<typeof schema>;
 
-const keyValuePairsGenerator = ({ dataprops }: { dataprops: Data }) =>
-  Object.entries(dataprops?.config || {}).map(([key, value]) => ({ key, value }));
+const keyValuePairsGenerator = ({ dataProps }: { dataProps: Data }) =>
+  Object.entries(dataProps?.config || {}).map(([key, value]) => ({ key, value }));
 
 export const ConfigureSSRForm = ({
   onClose,
   propertyIdentifier,
-  dataprops,
+  dataProps,
   flag
 }: Props): JSX.Element => {
   const {
@@ -86,11 +86,11 @@ export const ConfigureSSRForm = ({
     mode: 'onBlur',
     resolver: yupResolver(schema),
     defaultValues: {
-      ...dataprops,
-      config: keyValuePairsGenerator({ dataprops }),
-      port: dataprops.port ? dataprops.port : '3000',
-      path: dataprops.path ? dataprops.path : '/',
-      healthCheckPath: dataprops.healthCheckPath ? dataprops.healthCheckPath : '/'
+      ...dataProps,
+      config: keyValuePairsGenerator({ dataProps }),
+      port: dataProps.port ? dataProps.port : '3000',
+      path: dataProps.path ? dataProps.path : '/',
+      healthCheckPath: dataProps.healthCheckPath ? dataProps.healthCheckPath : '/'
     }
   });
 
