@@ -341,4 +341,22 @@ export class ApplicationFactory {
     const existingApplications = filteredApplications.map((j) => j.name).join(', ');
     return existingApplications;
   }
+
+  // @internal generate the SSR application identifier for
+  getSSRIdentifier(identifier): string {
+    return (
+      encodeURIComponent(identifier)
+        .toLowerCase()
+        /* Replace the encoded hexadecimal code with `-` */
+        .replace(/%[0-9a-zA-Z]{2}/g, '-')
+        /* Replace any special characters with `-` */
+        .replace(/[\ \-\/\:\@\[\]\`\{\~\.]+/g, '-')
+        /* Special characters are replaced by an underscore */
+        .replace(/[\|!@#$%^&*;_"<>\(\)\+,]/g, '-')
+        /* Remove any starting or ending `-` */
+        .replace(/^-+|-+$/g, '')
+        /* Removing multiple consecutive `-`s */
+        .replace(/--+/g, '-')
+    );
+  }
 }

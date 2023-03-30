@@ -201,7 +201,7 @@ export class ApplicationService {
    * Send the acknowledgement to the user and wait for the final response
    */
   async saveSSRApplication(applicationRequest: CreateApplicationDto, propertyIdentifier: string, env: string): Promise<any> {
-    const identifier = this.applicationFactory.getIdentifier(applicationRequest.name);
+    const identifier = this.applicationFactory.getSSRIdentifier(applicationRequest.name);
     const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
     applicationRequest.path = this.applicationFactory.getPath(applicationRequest.path);
     if (applicationRequest?.healthCheckPath) applicationRequest.healthCheckPath = this.applicationFactory.getPath(applicationRequest.healthCheckPath);
