@@ -2,7 +2,6 @@ import {
   Button,
   ButtonVariant,
   Masthead,
-  MastheadBrand,
   MastheadContent,
   MastheadMain,
   Toolbar,
@@ -17,9 +16,9 @@ import { env } from '@app/config/env';
 export const Nav = () => (
   <Masthead backgroundColor="light">
     <MastheadMain>
-      <MastheadBrand>
-        <img src="/img/spaship-logo.svg" alt="SPASHIP" style={{ height: '32px' }} />
-      </MastheadBrand>
+      <a href="/" className="pf-c-masthead__brand">
+        <img src="/img/spaship-logo.svg" alt="SPASHIP logo" style={{ height: '32px' }} />
+      </a>
     </MastheadMain>
     <MastheadContent>
       <Toolbar id="toolbar" isFullHeight isStatic>
@@ -32,7 +31,7 @@ export const Nav = () => (
             <ToolbarItem>
               <Button
                 component="a"
-                aria-label="DOC URL"
+                aria-label="Documentation"
                 variant={ButtonVariant.link}
                 icon={<FileIcon />}
                 href={env.PUBLIC_DOC_URL}
@@ -44,7 +43,7 @@ export const Nav = () => (
             </ToolbarItem>
             <ToolbarItem>
               <Button
-                aria-label="GitHub URL"
+                aria-label="View the source code on GitHub"
                 variant={ButtonVariant.link}
                 icon={<GithubIcon />}
                 href={env.PUBLIC_GITHUB_URL}

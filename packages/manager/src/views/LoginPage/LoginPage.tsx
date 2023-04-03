@@ -70,7 +70,14 @@ export const LoginPage = (): JSX.Element => {
               )}
               <Title headingLevel="h1" size={TitleSizes['4xl']} style={{ fontSize: '2.4rem' }}>
                 develop fast ·{' '}
-                <span style={{ color: 'var(--spaship-global--Color--solar-orange)' }}>
+                <span
+                  style={{
+                    color: 'var(--spaship-global--Color--solar-orange)',
+                    backgroundColor: 'var(--spaship-global--Color--black)',
+                    padding: '0.2rem 0.5rem',
+                    borderRadius: '4px'
+                  }}
+                >
                   deploy faster
                 </span>
               </Title>
@@ -87,7 +94,10 @@ export const LoginPage = (): JSX.Element => {
                     isBlock
                     isLoading={isLoggingIn}
                     isDisabled={isLoggingIn}
-                    onClick={onLogin}
+                    onClick={(event) => {
+                      event.preventDefault(); // Prevent default button click behavior
+                      onLogin(); // Call the login function
+                    }}
                   >
                     Red Hat SSO
                   </Button>
