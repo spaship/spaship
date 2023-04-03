@@ -261,6 +261,14 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     setItemsPerPageForMembers(perPageForMembers);
     setPageForMembers(1);
   };
+  const handleKeyPress = (event: { keyCode: any; which: any; preventDefault: () => void }) => {
+    const keyCode = event.keyCode || event.which;
+    const keyValue = String.fromCharCode(keyCode);
+    // Allow only numeric digits
+    if (!/^\d+$/.test(keyValue)) {
+      event.preventDefault();
+    }
+  };
 
   return (
     <>
@@ -473,6 +481,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                 onPerPageSelect={handlePerPageSelectForAPI}
                 perPageOptions={perPageOptions}
                 dropDirection="down"
+                onKeyPress={handleKeyPress}
               />
             </Card>
           </StackItem>
@@ -600,6 +609,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                 onPerPageSelect={handlePerPageSelectForMembers}
                 perPageOptions={perPageOptions}
                 dropDirection="down"
+                onKeyPress={handleKeyPress}
               />
             </Card>
           </StackItem>

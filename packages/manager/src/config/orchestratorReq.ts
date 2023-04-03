@@ -30,8 +30,5 @@ export const deleteOrchestratorAuthorizationHeader = orchReq.removeToken;
 // Global error handler for axios requests
 orchestratorReq.interceptors.response.use(
   (response) => response,
-  (error) => {
-    console.error('Error:', error);
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
