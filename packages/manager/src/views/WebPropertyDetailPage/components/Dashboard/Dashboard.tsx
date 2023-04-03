@@ -1,4 +1,3 @@
-import { pageLinks } from '@app/links';
 import {
   useGetHalfYearlyDeploymentsTime,
   useGetMonthlyDeploymentChart,
@@ -34,7 +33,6 @@ import {
   Title
 } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import toast from 'react-hot-toast';
@@ -101,57 +99,53 @@ export const Dashboard = (): JSX.Element => {
     <>
       <Grid style={{ padding: '12px 12px' }}>
         <GridItem span={6}>
-          <Link href={`/properties/${propertyIdentifier}`}>
-            <a className="text-decoration-none">
-              <Card
-                isFullHeight
+          <Card
+            isFullHeight
+            style={{
+              margin: '12px 12px',
+              overflow: 'auto',
+              scrollbarWidth: 'none',
+              height: '190px'
+            }}
+            isRounded
+          >
+            <CardTitle>Total Deployments</CardTitle>
+            <CardBody>
+              <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{Totaldeployment}</h1>
+              <div
                 style={{
-                  margin: '12px 12px',
-                  overflow: 'auto',
-                  scrollbarWidth: 'none',
-                  height: '190px'
+                  display: 'flex',
+                  flexDirection: 'row',
+                  gap: '35px',
+                  marginTop: '24px'
                 }}
-                isRounded
               >
-                <CardTitle>Total Deployments</CardTitle>
-                <CardBody>
-                  <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{Totaldeployment}</h1>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      gap: '35px',
-                      marginTop: '24px'
-                    }}
-                  >
-                    {TotalDeploymentCardFields.map((field) => (
-                      <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
-                        <h1 style={{ fontSize: '12px' }}>{field}</h1>
-                        <h1 style={{ fontSize: '12px' }}>
-                          {TotalDeploymentData.data
-                            ?.filter((ele) => ele.env === field.toLocaleLowerCase())
-                            .map((ele) => ele.count)}
-                        </h1>
-                      </div>
-                    ))}
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <h1 style={{ fontSize: '12px' }}>Others</h1>
-                      <h1 style={{ fontSize: '12px' }}>
-                        {TotalDeploymentData.data
-                          ?.filter(
-                            (ele) =>
-                              !TotalDeploymentCardFields.map((str) =>
-                                str.toLocaleLowerCase()
-                              ).includes(ele.env)
-                          )
-                          .reduce((acc, ele) => acc + ele.count, 0)}
-                      </h1>
-                    </div>
+                {TotalDeploymentCardFields.map((field) => (
+                  <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
+                    <h1 style={{ fontSize: '12px' }}>{field}</h1>
+                    <h1 style={{ fontSize: '12px' }}>
+                      {TotalDeploymentData.data
+                        ?.filter((ele) => ele.env === field.toLocaleLowerCase())
+                        .map((ele) => ele.count)}
+                    </h1>
                   </div>
-                </CardBody>
-              </Card>
-            </a>
-          </Link>
+                ))}
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <h1 style={{ fontSize: '12px' }}>Others</h1>
+                  <h1 style={{ fontSize: '12px' }}>
+                    {TotalDeploymentData.data
+                      ?.filter(
+                        (ele) =>
+                          !TotalDeploymentCardFields.map((str) => str.toLocaleLowerCase()).includes(
+                            ele.env
+                          )
+                      )
+                      .reduce((acc, ele) => acc + ele.count, 0)}
+                  </h1>
+                </div>
+              </div>
+            </CardBody>
+          </Card>
         </GridItem>
         <GridItem span={6}>
           <Card
@@ -194,25 +188,21 @@ export const Dashboard = (): JSX.Element => {
           </Card>
         </GridItem>
         <GridItem span={6}>
-          <Link href={pageLinks.webPropertyListPage}>
-            <a className="text-decoration-none">
-              <Card
-                isFullHeight
-                style={{
-                  margin: '12px 12px',
-                  overflow: 'auto',
-                  scrollbarWidth: 'none',
-                  height: '130px'
-                }}
-                isRounded
-              >
-                <CardTitle>Total SPA&apos;s</CardTitle>
-                <CardBody>
-                  <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{TotalProperty}</h1>
-                </CardBody>
-              </Card>
-            </a>
-          </Link>
+          <Card
+            isFullHeight
+            style={{
+              margin: '12px 12px',
+              overflow: 'auto',
+              scrollbarWidth: 'none',
+              height: '130px'
+            }}
+            isRounded
+          >
+            <CardTitle>Total SPA&apos;s</CardTitle>
+            <CardBody>
+              <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{TotalProperty}</h1>
+            </CardBody>
+          </Card>
         </GridItem>
         <GridItem span={6}>
           <Card
