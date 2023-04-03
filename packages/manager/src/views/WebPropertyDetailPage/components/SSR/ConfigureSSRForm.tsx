@@ -125,7 +125,15 @@ export const ConfigureSSRForm = ({
         toast.error("You don't have access to perform this action");
         onClose();
       } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
-        toast.error(error.response.data.message);
+        toast.error(error.response.data.message, {
+          duration: 5000,
+          style: {
+            maxWidth: '400px',
+            overflowWrap: 'break-word',
+            wordWrap: 'break-word',
+            wordBreak: 'break-word'
+          }
+        });
       } else {
         toast.error('Failed to deploy conatinerized application');
       }
