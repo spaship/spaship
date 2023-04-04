@@ -206,7 +206,7 @@ const fetchTotalDeployment = async (
 export const useGetTotalDeployments = (propertyIdentifier?: string) =>
   useQuery(analyticsKeys.spaDeployments(''), () => fetchTotalDeployment(propertyIdentifier));
 
-export const fetchTotalMonthlyDeploymentTime = async (
+const fetchTotalMonthlyDeploymentTime = async (
   propertyIdentifier?: string
 ): Promise<TSPADeploymentTime> => {
   const endpoint = propertyIdentifier
