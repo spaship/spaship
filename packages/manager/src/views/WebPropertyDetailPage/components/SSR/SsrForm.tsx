@@ -102,7 +102,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
           }
         });
       } else {
-        toast.error('Failed to deploy conatinerized application');
+        toast.error('Failed to deploy containerized application');
       }
     }
   };

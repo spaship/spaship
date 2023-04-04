@@ -135,7 +135,7 @@ export const ConfigureSSRForm = ({
           }
         });
       } else {
-        toast.error('Failed to deploy conatinerized application');
+        toast.error('Failed to deploy containerized application');
       }
     }
   };
