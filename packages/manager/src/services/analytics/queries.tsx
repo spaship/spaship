@@ -93,11 +93,16 @@ const fetchTotalDeploymentForApps = async (
   propertyIdentifier: string,
   applicationIdentifier?: string
 ): Promise<TSPADeploymentCount[]> => {
+  const dataparams: any = {
+    propertyIdentifier,
+    applicationIdentifier
+  };
+  Object.keys(dataparams).forEach(
+    (key: string) =>
+      (dataparams[key] === undefined || dataparams[key] === '') && delete dataparams[key]
+  );
   const { data } = await orchestratorReq.get('analytics/deployment/env', {
-    params: {
-      propertyIdentifier,
-      applicationIdentifier
-    }
+    params: dataparams
   });
 
   // TODO: To be removed after backend revamp
@@ -113,11 +118,16 @@ const fetchMonthlyDeploymentChart = async (
   propertyIdentifier: string,
   applicationIdentifier?: string
 ): Promise<Record<string, TSPAMonthlyDeploymentCount[]>> => {
+  const dataparams: any = {
+    propertyIdentifier,
+    applicationIdentifier
+  };
+  Object.keys(dataparams).forEach(
+    (key: string) =>
+      (dataparams[key] === undefined || dataparams[key] === '') && delete dataparams[key]
+  );
   const { data } = await orchestratorReq.get('/analytics/deployment/env/month', {
-    params: {
-      propertyIdentifier,
-      applicationIdentifier
-    }
+    params: dataparams
   });
   // TODO: Remove this once backend has been revamped
   if (data.data) {
@@ -209,12 +219,10 @@ export const useGetTotalDeployments = (propertyIdentifier?: string) =>
 const fetchTotalMonthlyDeploymentTime = async (
   propertyIdentifier?: string
 ): Promise<TSPADeploymentTime> => {
-  const { data } = await orchestratorReq.get('/analytics/deployment/time', {
-    params: {
-      propertyIdentifier,
-      days: '30'
-    }
-  });
+  const endpoint = propertyIdentifier
+    ? `analytics/deployment/time?propertyIdentifier=${propertyIdentifier}&days=30`
+    : 'analytics/deployment/time?days=30';
+  const { data } = await orchestratorReq.get(endpoint);
   return data.data;
 };
 
@@ -228,12 +236,10 @@ export const useGetMonthlyDeploymentsTime = (propertyIdentifier?: string) =>
 const fetchTotalQuarterlyDeploymentTime = async (
   propertyIdentifier?: string
 ): Promise<TSPADeploymentTime> => {
-  const { data } = await orchestratorReq.get('analytics/deployment/time', {
-    params: {
-      propertyIdentifier,
-      days: '120'
-    }
-  });
+  const endpoint = propertyIdentifier
+    ? `analytics/deployment/time?propertyIdentifier=${propertyIdentifier}&days=120`
+    : 'analytics/deployment/time?days=120';
+  const { data } = await orchestratorReq.get(endpoint);
   return data.data;
 };
 
@@ -247,12 +253,10 @@ export const useGetQuarterlyDeploymentsTime = (propertyIdentifier?: string) =>
 const fetchTotalHalfYearlyDeploymentTime = async (
   propertyIdentifier?: string
 ): Promise<TSPADeploymentTime> => {
-  const { data } = await orchestratorReq.get('analytics/deployment/time', {
-    params: {
-      propertyIdentifier,
-      days: '180'
-    }
-  });
+  const endpoint = propertyIdentifier
+    ? `analytics/deployment/time?propertyIdentifier=${propertyIdentifier}&days=180`
+    : 'analytics/deployment/time?days=180';
+  const { data } = await orchestratorReq.get(endpoint);
 
   return data.data;
 };
@@ -267,12 +271,10 @@ export const useGetHalfYearlyDeploymentsTime = (propertyIdentifier?: string) =>
 const fetchTotalYearlyDeploymentTime = async (
   propertyIdentifier?: string
 ): Promise<TSPADeploymentTime> => {
-  const { data } = await orchestratorReq.get('analytics/deployment/time', {
-    params: {
-      propertyIdentifier,
-      days: '365'
-    }
-  });
+  const endpoint = propertyIdentifier
+    ? `analytics/deployment/time?propertyIdentifier=${propertyIdentifier}&days=365`
+    : 'analytics/deployment/time?days=365';
+  const { data } = await orchestratorReq.get(endpoint);
   return data.data;
 };
 

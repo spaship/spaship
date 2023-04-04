@@ -45,10 +45,10 @@ type IGraphData = {
   y: number;
 };
 type ITotalMonthlyDeploymentData = {
-  dev?: IGraphData[];
-  qa?: IGraphData[];
-  stage?: IGraphData[];
-  prod?: IGraphData[];
+  dev: IGraphData[] | undefined;
+  qa: IGraphData[] | undefined;
+  stage: IGraphData[] | undefined;
+  prod: IGraphData[] | undefined;
 };
 export const Dashboard = (): JSX.Element => {
   const router = useRouter();
@@ -149,6 +149,7 @@ export const Dashboard = (): JSX.Element => {
         </GridItem>
         <GridItem span={6}>
           <Card
+            isSelectable
             isFullHeight
             style={{
               margin: '12px 12px',
@@ -206,6 +207,7 @@ export const Dashboard = (): JSX.Element => {
         </GridItem>
         <GridItem span={6}>
           <Card
+            isSelectable
             isFullHeight
             style={{
               margin: '12px 12px',
@@ -271,6 +273,7 @@ export const Dashboard = (): JSX.Element => {
         </SplitItem>
         <SplitItem isFilled>
           <Card
+            isSelectable
             isFullHeight
             style={{
               // overflow: 'auto',
