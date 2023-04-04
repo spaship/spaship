@@ -38,7 +38,7 @@ import { useMemo } from 'react';
 import toast from 'react-hot-toast';
 
 const TotalDeploymentCardFields = ['Dev', 'QA', 'Stage', 'Prod'];
-const DeploymentTimeFrames = ['month', 'quarter', 'half year', 'year'];
+const DeploymentTimeFrames = ['30 days', '120 days', '180 days', '365 days'];
 type IGraphData = {
   name: string;
   x: string;
@@ -80,7 +80,8 @@ export const Dashboard = (): JSX.Element => {
   const Totaldeployment = TotalDeploymentData.data?.reduce((acc, obj) => acc + obj.count, 0);
   const TotalSpasCountsData = useGetSPAPropGroupByName(propertyIdentifier, '');
   const TotalProperty = Object.keys(TotalSpasCountsData.data || {}).length;
-  const TotalMonthlyDeploymentData = useGetMonthlyDeploymentChartWithEphemeral().data ?? {};
+  const TotalMonthlyDeploymentData =
+    useGetMonthlyDeploymentChartWithEphemeral(propertyIdentifier).data ?? {};
   const minCount = TotalMonthlyDeploymentData?.minDeploymentCount || 0;
   const maxCount = TotalMonthlyDeploymentData?.maxDeploymentCount || 0;
 
@@ -124,9 +125,10 @@ export const Dashboard = (): JSX.Element => {
                   <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
                     <h1 style={{ fontSize: '12px' }}>{field}</h1>
                     <h1 style={{ fontSize: '12px' }}>
-                      {TotalDeploymentData.data
+                      {TotalDeploymentData?.data
                         ?.filter((ele) => ele.env === field.toLocaleLowerCase())
-                        .map((ele) => ele.count)}
+                        .map((ele) => ele.count)
+                        .reduce((a, b) => a + b, 0) ?? 0}
                     </h1>
                   </div>
                 ))}
@@ -231,7 +233,7 @@ export const Dashboard = (): JSX.Element => {
           <Card isFullHeight>
             <CardHeader>
               <CardTitle>
-                <Title headingLevel="h6">Total Deployments / Environment</Title>
+                <Title headingLevel="h6">Total Deployments per Environment</Title>
               </CardTitle>
             </CardHeader>
             <CardBody className="x-y-center pf-u-h-100">
