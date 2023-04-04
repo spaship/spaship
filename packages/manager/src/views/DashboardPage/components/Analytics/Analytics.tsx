@@ -43,7 +43,7 @@ type Props = {
   TotalMonthlyDeploymentData: ITotalMonthlyDeploymentData;
   Totaldeployment?: number;
   TotalProperty: number;
-  averageDeploymentTime: number[];
+  averageDeploymentTime: (number | undefined)[];
   bestDeploymentTime?: number;
   bestDeploymentTimeIndex: number;
   TotalDeploymentData: UseQueryResult<TSPADeploymentCount[]>;

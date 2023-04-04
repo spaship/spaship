@@ -45,10 +45,10 @@ type IGraphData = {
   y: number;
 };
 type ITotalMonthlyDeploymentData = {
-  dev: IGraphData[] | undefined;
-  qa: IGraphData[] | undefined;
-  stage: IGraphData[] | undefined;
-  prod: IGraphData[] | undefined;
+  dev?: IGraphData[];
+  qa?: IGraphData[];
+  stage?: IGraphData[];
+  prod?: IGraphData[];
 };
 export const Dashboard = (): JSX.Element => {
   const router = useRouter();

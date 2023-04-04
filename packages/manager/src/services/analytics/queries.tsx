@@ -93,16 +93,11 @@ const fetchTotalDeploymentForApps = async (
   propertyIdentifier: string,
   applicationIdentifier?: string
 ): Promise<TSPADeploymentCount[]> => {
-  const dataparams: any = {
-    propertyIdentifier,
-    applicationIdentifier
-  };
-  Object.keys(dataparams).forEach(
-    (key: string) =>
-      (dataparams[key] === undefined || dataparams[key] === '') && delete dataparams[key]
-  );
   const { data } = await orchestratorReq.get('analytics/deployment/env', {
-    params: dataparams
+    params: {
+      propertyIdentifier,
+      applicationIdentifier
+    }
   });
 
   // TODO: To be removed after backend revamp
@@ -118,16 +113,11 @@ const fetchMonthlyDeploymentChart = async (
   propertyIdentifier: string,
   applicationIdentifier?: string
 ): Promise<Record<string, TSPAMonthlyDeploymentCount[]>> => {
-  const dataparams: any = {
-    propertyIdentifier,
-    applicationIdentifier
-  };
-  Object.keys(dataparams).forEach(
-    (key: string) =>
-      (dataparams[key] === undefined || dataparams[key] === '') && delete dataparams[key]
-  );
   const { data } = await orchestratorReq.get('/analytics/deployment/env/month', {
-    params: dataparams
+    params: {
+      propertyIdentifier,
+      applicationIdentifier
+    }
   });
   // TODO: Remove this once backend has been revamped
   if (data.data) {
