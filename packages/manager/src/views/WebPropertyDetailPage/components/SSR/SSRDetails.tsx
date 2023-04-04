@@ -107,7 +107,7 @@ export const SSRDetails = () => {
       if (error instanceof AxiosError && error.response && error.response.status === 403) {
         toast.error("You don't have access to perform this action");
       } else {
-        toast.error('Failed to deploy conatinerized application');
+        toast.error('Failed to deploy containerized application');
       }
     }
     handlePopUpClose('redeploySsrApplication');

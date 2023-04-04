@@ -1,0 +1,1 @@
+export { useGetDocumentPage } from './queries';
