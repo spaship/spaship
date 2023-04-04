@@ -24,7 +24,7 @@ import Link from 'next/link';
 import { pageLinks } from '@app/links';
 
 const TotalDeploymentCardFields = ['Dev', 'QA', 'Stage', 'Prod'];
-const DeploymentTimeFrames = ['month', 'quarter', 'half year', 'year'];
+const DeploymentTimeFrames = ['30 days', '120 days', '180 days', '365 days'];
 
 type IGraphData = {
   name: string;

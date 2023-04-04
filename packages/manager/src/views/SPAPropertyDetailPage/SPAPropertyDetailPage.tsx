@@ -44,6 +44,7 @@ import {
   ChartDonut,
   ChartGroup,
   ChartLine,
+  ChartThemeColor,
   ChartVoronoiContainer
 } from '@patternfly/react-charts';
 import {
@@ -59,7 +60,7 @@ import { SSRDetails } from '../WebPropertyDetailPage/components/SSR/SSRDetails';
 import { StaticDeployment } from '../WebPropertyDetailPage/components/SSR/StaticDeployment';
 
 const TotalDeploymentCardFields = ['Dev', 'QA', 'Stage', 'Prod'];
-const DeploymentTimeFrames = ['month', 'quarter', 'half year', 'year'];
+const DeploymentTimeFrames = ['30 days', '120 days', '180 days', '365 days'];
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
   const propertyIdentifier = router.query.propertyIdentifier as string;
@@ -99,7 +100,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
     useGetHalfYearlyDeploymentsTime(propertyIdentifier, spaProperty).data,
     useGetYearlyDeploymentsTime(propertyIdentifier, spaProperty).data
   ];
-  console.log('>>>', useGetMonthlyDeploymentsTime(propertyIdentifier, spaProperty).data);
+
   const bestDeploymentFiltered = averageDeploymentTime.filter((e) => e);
   const bestDeploymentTime = Math.min(...bestDeploymentFiltered.map((time) => time || 0));
   const bestDeploymentTimeIndex = averageDeploymentTime.findIndex(
@@ -286,7 +287,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                   <Card isFullHeight style={{ height: '320px' }}>
                     <CardHeader>
                       <CardTitle>
-                        <Title headingLevel="h6">Total Deployments / Environment</Title>
+                        <Title headingLevel="h6">Total Deployments per Environment</Title>
                       </CardTitle>
                     </CardHeader>
                     <CardBody className="x-y-center pf-u-h-100">
@@ -361,6 +362,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                             right: 100, // Adjusted to accommodate legend
                             top: 50
                           }}
+                          themeColor={ChartThemeColor.multiUnordered}
                           width={700}
                         >
                           <ChartAxis />
