@@ -17,7 +17,7 @@ export const DocumentsPage = (): JSX.Element => {
             <Gallery hasGutter>
               {data?.data?.[section]?.map(({ title, link, tags, isVideo }) => (
                 <GalleryItem key={title}>
-                  <DocumentCard title={title} href={link} footer={tags} isIcon={isVideo} />
+                  <DocumentCard title={title} linkhere={link} footer={tags} isIcon={isVideo} />
                 </GalleryItem>
               ))}
             </Gallery>
