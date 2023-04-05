@@ -24,7 +24,7 @@ import Link from 'next/link';
 import { pageLinks } from '@app/links';
 
 const TotalDeploymentCardFields = ['Dev', 'QA', 'Stage', 'Prod'];
-const DeploymentTimeFrames = ['30 days', '120 days', '180 days', '365 days'];
+const DeploymentTimeFrames = ['30 days', '90 days', '180 days', '365 days'];
 
 type IGraphData = {
   name: string;
@@ -41,7 +41,7 @@ type ITotalMonthlyDeploymentData = {
 
 type Props = {
   TotalMonthlyDeploymentData: ITotalMonthlyDeploymentData;
-  Totaldeployment?: number;
+  TotalDeployment?: number;
   TotalProperty: number;
   averageDeploymentTime: number[];
   bestDeploymentTime?: number;
@@ -53,7 +53,7 @@ type Props = {
 
 export const Analytics = ({
   TotalMonthlyDeploymentData,
-  Totaldeployment,
+  TotalDeployment,
   TotalProperty,
   averageDeploymentTime,
   bestDeploymentTime,
@@ -89,7 +89,7 @@ export const Analytics = ({
               >
                 <CardTitle>Total Deployments</CardTitle>
                 <CardBody>
-                  <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{Totaldeployment}</h1>
+                  <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{TotalDeployment}</h1>
                   <div
                     style={{
                       display: 'flex',
