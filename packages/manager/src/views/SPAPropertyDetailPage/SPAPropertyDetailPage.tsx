@@ -60,7 +60,7 @@ import { SSRDetails } from '../WebPropertyDetailPage/components/SSR/SSRDetails';
 import { StaticDeployment } from '../WebPropertyDetailPage/components/SSR/StaticDeployment';
 
 const TotalDeploymentCardFields = ['Dev', 'QA', 'Stage', 'Prod'];
-const DeploymentTimeFrames = ['30 days', '120 days', '180 days', '365 days'];
+const DeploymentTimeFrames = ['30 days', '90 days', '180 days', '365 days'];
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
   const propertyIdentifier = router.query.propertyIdentifier as string;
@@ -92,7 +92,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
   );
 
   const lineChartLegend = Object.keys(monthlyDeployChart?.data || {}).map((key) => ({ name: key }));
-  const Totaldeployment = deploymentCount.data?.reduce((acc, obj) => acc + obj.count, 0);
+  const TotalDeployment = deploymentCount.data?.reduce((acc, obj) => acc + obj.count, 0);
 
   const averageDeploymentTime = [
     useGetMonthlyDeploymentsTime(propertyIdentifier, spaProperty).data,
@@ -187,7 +187,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                   >
                     <CardTitle>Total Deployments</CardTitle>
                     <CardBody>
-                      <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{Totaldeployment}</h1>
+                      <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{TotalDeployment}</h1>
                       <div
                         style={{
                           display: 'flex',

@@ -12,7 +12,7 @@ import { Analytics } from './components/Analytics';
 
 export const DashboardPage = (): JSX.Element => {
   const TotalDeploymentData = useGetTotalDeployments();
-  const Totaldeployment = TotalDeploymentData.data?.reduce((acc, obj) => acc + obj.count, 0);
+  const TotalDeployment = TotalDeploymentData.data?.reduce((acc, obj) => acc + obj.count, 0);
   const TotalDeploymentCountsData = useGetDeploymentCounts();
   const TotalProperty = Object.keys(TotalDeploymentCountsData.data || {}).length;
   const TotalMonthlyDeploymentData = useGetMonthlyDeploymentChartWithEphemeral().data;
@@ -36,7 +36,7 @@ export const DashboardPage = (): JSX.Element => {
             dev: TotalMonthlyDeploymentData?.dev,
             stage: TotalMonthlyDeploymentData?.stage
           }}
-          Totaldeployment={Totaldeployment}
+          TotalDeployment={TotalDeployment}
           TotalProperty={TotalProperty}
           averageDeploymentTime={averageDeploymentTime}
           bestDeploymentTime={bestDeploymentTime}

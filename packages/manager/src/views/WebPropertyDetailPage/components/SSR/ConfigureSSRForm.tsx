@@ -26,7 +26,13 @@ const schema = yup.object({
     .matches(/^[a-zA-Z0-9/-]+$/, 'Only letters, numbers, forward slash and dashes are allowed')
     .required(),
   env: yup.string().required().label('Environment'),
-  port: yup.string().required().label('Port'),
+  port: yup
+    .string()
+    .matches(/^\d+$/, { message: 'Port must contain only numbers', excludeEmptyString: true })
+    .min(1, 'Port is required')
+    .max(5, 'Port must be less than or equal to 5 digits')
+    .trim()
+    .label('Port'),
   ref: yup.string(),
   imageUrl: yup.string().trim().required().label('Image URL'),
   healthCheckPath: yup
@@ -81,6 +87,7 @@ export const ConfigureSSRForm = ({
     handleSubmit,
     setValue,
     getValues,
+    trigger,
     formState: { isSubmitting }
   } = useForm<FormData>({
     mode: 'onBlur',
@@ -125,15 +132,9 @@ export const ConfigureSSRForm = ({
         toast.error("You don't have access to perform this action");
         onClose();
       } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
-        toast.error(error.response.data.message, {
-          duration: 5000,
-          style: {
-            maxWidth: '400px',
-            overflowWrap: 'break-word',
-            wordWrap: 'break-word',
-            wordBreak: 'break-word'
-          }
-        });
+        toast.error(
+          "Given Image URL doesn't exists on the source registry, please provide a valid imageUrl."
+        );
       } else {
         toast.error('Failed to deploy containerized application');
       }
@@ -309,6 +310,7 @@ export const ConfigureSSRForm = ({
             <Controller
               control={control}
               name="path"
+              rules={{ required: 'Path is required' }}
               render={({ field, fieldState: { error } }) => (
                 <FormGroup
                   label={
@@ -335,7 +337,14 @@ export const ConfigureSSRForm = ({
                   validated={error ? 'error' : 'default'}
                   helperTextInvalid={error?.message}
                 >
-                  <TextInput isRequired placeholder="Path" type="text" id="path" {...field} />
+                  <TextInput
+                    isRequired
+                    placeholder="Path"
+                    type="text"
+                    id="path"
+                    {...field}
+                    onBlur={() => trigger('path')}
+                  />
                 </FormGroup>
               )}
             />
@@ -344,6 +353,7 @@ export const ConfigureSSRForm = ({
             <Controller
               control={control}
               name="healthCheckPath"
+              rules={{ required: 'Health Check Path is required' }}
               render={({ field, fieldState: { error } }) => (
                 <FormGroup
                   label={
@@ -376,6 +386,7 @@ export const ConfigureSSRForm = ({
                     type="text"
                     id="healthCheckPath"
                     {...field}
+                    onBlur={() => trigger('healthCheckPath')}
                   />
                 </FormGroup>
               )}
@@ -394,6 +405,7 @@ export const ConfigureSSRForm = ({
                   const healthCheckPathValue = getValues('healthCheckPath');
                   if (healthCheckPathValue === field.value) {
                     setValue('healthCheckPath', pathValue);
+                    trigger('healthCheckPath');
                   }
                   field.onChange(e);
                 };
@@ -430,6 +442,7 @@ export const ConfigureSSRForm = ({
                       id="path"
                       value={field.value}
                       onChange={handleChange}
+                      onBlur={() => trigger('path')}
                       style={{ marginRight: '0px' }}
                     />
                   </FormGroup>
@@ -441,6 +454,7 @@ export const ConfigureSSRForm = ({
             <Controller
               control={control}
               name="healthCheckPath"
+              rules={{ required: 'Health Check Path is required' }}
               render={({ field, fieldState: { error } }) => (
                 <FormGroup
                   label={
@@ -473,6 +487,7 @@ export const ConfigureSSRForm = ({
                     type="text"
                     id="healthCheckPath"
                     {...field}
+                    onBlur={() => trigger('healthCheckPath')}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>

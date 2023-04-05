@@ -38,7 +38,7 @@ import { useMemo } from 'react';
 import toast from 'react-hot-toast';
 
 const TotalDeploymentCardFields = ['Dev', 'QA', 'Stage', 'Prod'];
-const DeploymentTimeFrames = ['30 days', '120 days', '180 days', '365 days'];
+const DeploymentTimeFrames = ['30 days', '90 days', '180 days', '365 days'];
 type IGraphData = {
   name: string;
   x: string;
@@ -77,7 +77,7 @@ export const Dashboard = (): JSX.Element => {
   const lineChartLegend = Object.keys(monthlyDeployChart?.data || {}).map((key) => ({ name: key }));
   const TotalDeploymentData = useGetTotalDeployments(propertyIdentifier);
 
-  const Totaldeployment = TotalDeploymentData.data?.reduce((acc, obj) => acc + obj.count, 0);
+  const TotalDeployment = TotalDeploymentData.data?.reduce((acc, obj) => acc + obj.count, 0);
   const TotalSpasCountsData = useGetSPAPropGroupByName(propertyIdentifier, '');
   const TotalProperty = Object.keys(TotalSpasCountsData.data || {}).length;
   const TotalMonthlyDeploymentData =
@@ -112,7 +112,7 @@ export const Dashboard = (): JSX.Element => {
           >
             <CardTitle>Total Deployments</CardTitle>
             <CardBody>
-              <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{Totaldeployment}</h1>
+              <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{TotalDeployment}</h1>
               <div
                 style={{
                   display: 'flex',
