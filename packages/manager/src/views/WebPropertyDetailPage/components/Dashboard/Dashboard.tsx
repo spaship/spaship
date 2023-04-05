@@ -286,43 +286,54 @@ export const Dashboard = (): JSX.Element => {
             </CardHeader>
             <CardBody>
               <div style={{ height: '275px' }}>
-                <Chart
-                  ariaDesc="Average number of pets"
-                  containerComponent={
-                    <ChartVoronoiContainer
-                      labels={({ datum }) => `${datum.name}: ${datum.y}`}
-                      constrainToVisibleArea
-                    />
-                  }
-                  legendData={lineChartLegend}
-                  legendPosition="bottom-left"
-                  height={275}
-                  name="chart1"
-                  maxDomain={{ y: maxCount + (maxCount - minCount) * 0.2 }}
-                  minDomain={{ y: 0 }}
-                  padding={{
-                    bottom: 75,
-                    left: 50,
-                    right: 50,
-                    top: 50
-                  }}
-                  themeColor={ChartThemeColor.multiUnordered}
-                  width={850}
-                >
-                  <ChartAxis />
-                  <ChartAxis dependentAxis showGrid tickFormat={(x) => Number(x)} />
-                  <ChartGroup>
-                    {lineChartLegend.map(({ name }) => (
-                      <ChartLine
-                        key={`key-${name}`}
-                        data={
-                          TotalMonthlyDeploymentData[name as keyof ITotalMonthlyDeploymentData] ||
-                          []
-                        }
+                {Object.values(TotalMonthlyDeploymentData).some(
+                  (arr) => Array.isArray(arr) && arr.length > 0
+                ) ? (
+                  <Chart
+                    ariaDesc="Average number of pets"
+                    containerComponent={
+                      <ChartVoronoiContainer
+                        labels={({ datum }) => `${datum.name}: ${datum.y}`}
+                        constrainToVisibleArea
                       />
-                    ))}
-                  </ChartGroup>
-                </Chart>
+                    }
+                    legendData={lineChartLegend}
+                    legendPosition="bottom-left"
+                    height={275}
+                    name="chart1"
+                    maxDomain={{ y: maxCount + (maxCount - minCount) * 0.2 }}
+                    minDomain={{ y: 0 }}
+                    padding={{
+                      bottom: 75,
+                      left: 50,
+                      right: 50,
+                      top: 50
+                    }}
+                    themeColor={ChartThemeColor.multiUnordered}
+                    width={850}
+                  >
+                    <ChartAxis />
+                    <ChartAxis dependentAxis showGrid tickFormat={(x) => Number(x)} />
+                    <ChartGroup>
+                      {lineChartLegend.map(({ name }) => (
+                        <ChartLine
+                          key={`key-${name}`}
+                          data={
+                            TotalMonthlyDeploymentData[name as keyof ITotalMonthlyDeploymentData] ||
+                            []
+                          }
+                        />
+                      ))}
+                    </ChartGroup>
+                  </Chart>
+                ) : (
+                  <EmptyState>
+                    <EmptyStateIcon icon={CubesIcon} />
+                    <Title headingLevel="h4" size="lg">
+                      No History found
+                    </Title>
+                  </EmptyState>
+                )}
               </div>
             </CardBody>
           </Card>
