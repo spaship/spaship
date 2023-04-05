@@ -30,7 +30,13 @@ const schema = yup.object({
     .matches(/^[a-zA-Z0-9/-]+$/, 'Only letters, numbers, forward slash and dashes are allowed')
     .required(),
   env: yup.string().required().label('Environment'),
-  port: yup.string().required().label('Port'),
+  port: yup
+    .string()
+    .matches(/^\d+$/, { message: 'Port must contain only numbers', excludeEmptyString: true })
+    .min(1, 'Port is required')
+    .max(5, 'Port must be less than or equal to 5 digits')
+    .trim()
+    .label('Port'),
   ref: yup.string(),
   imageUrl: yup.string().trim().required().label('Image URL'),
   healthCheckPath: yup
@@ -53,6 +59,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
     handleSubmit,
     setValue,
     getValues,
+    trigger,
     formState: { isSubmitting }
   } = useForm<FormData>({
     defaultValues: { healthCheckPath: '/', path: '/', port: '3000' },
@@ -92,15 +99,9 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
         toast.error("You don't have access to perform this action");
         onClose();
       } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
-        toast.error(error.response.data.message, {
-          duration: 5000,
-          style: {
-            maxWidth: '400px',
-            overflowWrap: 'break-word',
-            wordWrap: 'break-word',
-            wordBreak: 'break-word'
-          }
-        });
+        toast.error(
+          "Given Image URL doesn't exists on the source registry, please provide a valid imageUrl."
+        );
       } else {
         toast.error('Failed to deploy containerized application');
       }
@@ -116,7 +117,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
             name="name"
             render={({ field, fieldState: { error } }) => (
               <FormGroup
-                label="Name"
+                label="Application Name"
                 isRequired
                 fieldId="property-name"
                 validated={error ? 'error' : 'default'}
@@ -254,12 +255,14 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
           <Controller
             control={control}
             name="path"
+            rules={{ required: 'Path is required' }}
             render={({ field, fieldState: { error } }) => {
               const handleChange = (e: string) => {
                 const pathValue = e;
                 const healthCheckPathValue = getValues('healthCheckPath');
                 if (healthCheckPathValue === field.value) {
                   setValue('healthCheckPath', pathValue);
+                  trigger('healthCheckPath');
                 }
                 field.onChange(e);
               };
@@ -296,6 +299,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                     id="path"
                     value={field.value}
                     onChange={handleChange}
+                    onBlur={() => trigger('path')}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -307,6 +311,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
           <Controller
             control={control}
             name="healthCheckPath"
+            rules={{ required: 'Health Check Path is required' }}
             render={({ field, fieldState: { error } }) => (
               <FormGroup
                 label={
@@ -338,6 +343,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                   type="text"
                   id="healthCheckPath"
                   {...field}
+                  onBlur={() => trigger('healthCheckPath')}
                   style={{ marginRight: '0px' }}
                 />
               </FormGroup>
