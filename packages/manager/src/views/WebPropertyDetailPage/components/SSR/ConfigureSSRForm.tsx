@@ -31,6 +31,11 @@ const schema = yup.object({
     .matches(/^\d+$/, { message: 'Port must contain only numbers', excludeEmptyString: true })
     .min(1, 'Port is required')
     .max(5, 'Port must be less than or equal to 5 digits')
+    .test(
+      'port',
+      'Port must be less than or equal to 65536',
+      (value) => parseInt(value as string, 10) <= 65536
+    )
     .trim()
     .label('Port'),
   ref: yup.string(),
