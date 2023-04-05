@@ -55,6 +55,7 @@ import {
   PackageIcon,
   RunningIcon
 } from '@patternfly/react-icons';
+import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { SSRDetails } from '../WebPropertyDetailPage/components/SSR/SSRDetails';
 import { StaticDeployment } from '../WebPropertyDetailPage/components/SSR/StaticDeployment';
@@ -120,9 +121,16 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
         <Level>
           <LevelItem />
           <LevelItem>
-            <Button variant="link" icon={<CogIcon />}>
-              Settings
-            </Button>
+            <Link
+              href={{
+                pathname: pageLinks.webPropertySettingPage,
+                query: { propertyIdentifier }
+              }}
+            >
+              <Button variant="link" icon={<CogIcon />}>
+                Settings
+              </Button>
+            </Link>
           </LevelItem>
         </Level>
       </Banner>
