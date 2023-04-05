@@ -236,7 +236,7 @@ const fetchTotalQuarterlyDeploymentTime = async (
   propertyIdentifier?: string
 ): Promise<TSPADeploymentTime> => {
   const { data } = await orchestratorReq.get('analytics/deployment/time', {
-    params: { propertyIdentifier, days: 120 }
+    params: { propertyIdentifier, days: 90 }
   });
   return data.data;
 };
