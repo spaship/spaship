@@ -39,6 +39,7 @@ import toast from 'react-hot-toast';
 
 const TotalDeploymentCardFields = ['Dev', 'QA', 'Stage', 'Prod'];
 const DeploymentTimeFrames = ['30 days', '90 days', '180 days', '365 days'];
+const DATE_FORMAT = 'DD MMM';
 
 export const Dashboard = (): JSX.Element => {
   const router = useRouter();
@@ -316,8 +317,8 @@ export const Dashboard = (): JSX.Element => {
 
                         .map(({ count, startDate, endDate }) => ({
                           name,
-                          x: `${dayjs(startDate).format('DD MMM')} - ${dayjs(endDate).format(
-                            'DD MMM'
+                          x: `${dayjs(startDate).format(DATE_FORMAT)} - ${dayjs(endDate).format(
+                            DATE_FORMAT
                           )}`,
                           y: count
                         }));

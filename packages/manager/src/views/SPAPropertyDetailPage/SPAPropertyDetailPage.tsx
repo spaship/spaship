@@ -62,6 +62,8 @@ import { StaticDeployment } from '../WebPropertyDetailPage/components/SSR/Static
 
 const TotalDeploymentCardFields = ['Dev', 'QA', 'Stage', 'Prod'];
 const DeploymentTimeFrames = ['30 days', '90 days', '180 days', '365 days'];
+const DATE_FORMAT = 'DD MMM';
+
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
   const propertyIdentifier = router.query.propertyIdentifier as string;
@@ -385,9 +387,9 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                                 )
                                 .map(({ count, startDate, endDate }) => ({
                                   name,
-                                  x: `${dayjs(startDate).format('DD MMM')} - ${dayjs(
+                                  x: `${dayjs(startDate).format(DATE_FORMAT)} - ${dayjs(
                                     endDate
-                                  ).format('DD MMM')}`,
+                                  ).format(DATE_FORMAT)}`,
                                   y: count
                                 }));
                               return <ChartLine key={`key-${name}`} data={chartData} />;

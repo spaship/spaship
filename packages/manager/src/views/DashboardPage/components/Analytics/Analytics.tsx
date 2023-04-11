@@ -46,6 +46,7 @@ type Props = {
   maxCount: number;
 };
 
+const DATE_FORMAT = 'DD MMM';
 export const Analytics = ({
   TotalMonthlyDeploymentData,
   TotalDeployment,
@@ -260,8 +261,8 @@ export const Analytics = ({
                     )
                     .map(({ count, startDate, endDate }) => ({
                       name,
-                      x: `${dayjs(startDate).format('DD MMM')} - ${dayjs(endDate).format(
-                        'DD MMM'
+                      x: `${dayjs(startDate).format(DATE_FORMAT)} - ${dayjs(endDate).format(
+                        DATE_FORMAT
                       )}`,
                       y: count
                     }));
