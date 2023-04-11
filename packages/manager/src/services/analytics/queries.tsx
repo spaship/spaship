@@ -184,8 +184,6 @@ export const useGetMonthlyDeploymentChartWithEphemeral = (propertyIdentifier?: s
         data.dev?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0,
         data.prod?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0
       );
-      console.log('456', monthlyDelpoymentData);
-
       return monthlyDelpoymentData;
     }
   });
@@ -293,31 +291,4 @@ export const useGetYearlyDeploymentsTime = (
         ? data.averageTime
         : data.deploymentDetails.filter((m) => m.applicationIdentifier === applicationIdentifier)[0]
             .averageTime
-  });
-export const useGetMonthlyDeploymentChartWithEphemeral1 = (propertyIdentifier?: string) =>
-  useQuery({
-    queryKey: analyticsKeys.spaMonthyDeploymentChartWithEphemeral,
-    queryFn: () => fetchMonthlyDeploymentChartWithEphemeral(propertyIdentifier),
-    select: (data: {
-      qa?: IDeploymentData[];
-      stage?: IDeploymentData[];
-      dev?: IDeploymentData[];
-      prod?: IDeploymentData[];
-      ephemeral?: IDeploymentData[];
-    }) => {
-      const monthlyDelpoymentData: {
-        qa?: any[];
-        stage?: any[];
-        dev?: any[];
-        prod?: any[];
-        lastMonthEphemeral?: number;
-        maxDeploymentCount?: number;
-        minDeploymentCount?: number;
-      } = {};
-      console.log('123', data);
-      monthlyDelpoymentData.qa = data.qa || [];
-      monthlyDelpoymentData.stage = data.stage || [];
-      monthlyDelpoymentData.dev = data.dev || [];
-      monthlyDelpoymentData.prod = data.prod || [];
-    }
   });
