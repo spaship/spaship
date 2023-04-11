@@ -84,6 +84,8 @@ export const Dashboard = (): JSX.Element => {
   const bestDeploymentTimeIndex = averageDeploymentTime.findIndex(
     (time) => time === bestDeploymentTime
   );
+  console.log('monthlyDeployChart ggg', monthlyDeployChart?.data);
+
   return (
     <>
       <Grid style={{ padding: '12px 12px' }}>
