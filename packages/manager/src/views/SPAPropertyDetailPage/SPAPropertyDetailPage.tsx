@@ -110,8 +110,6 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
     (time) => time === bestDeploymentTime
   );
 
-  console.log('monthlyDeployChart bbb', monthlyDeployChart);
-
   return (
     <>
       <Banner
