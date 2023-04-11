@@ -27,13 +27,13 @@ import Link from 'next/link';
 const TotalDeploymentCardFields = ['Dev', 'QA', 'Stage', 'Prod'];
 const DeploymentTimeFrames = ['30 days', '90 days', '180 days', '365 days'];
 
-interface ITotalMonthlyDeploymentData {
+type ITotalMonthlyDeploymentData = {
   [key: string]: {
     count: number;
     startDate: string;
     endDate: string;
   }[];
-}
+};
 type Props = {
   TotalMonthlyDeploymentData: ITotalMonthlyDeploymentData;
   TotalDeployment?: number;

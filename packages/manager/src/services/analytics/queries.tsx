@@ -9,12 +9,12 @@ import {
   TWebPropActivityStream
 } from './types';
 
-interface IDeploymentData {
+type IDeploymentData = {
   env: string;
   count: number;
   startDate: string;
   endDate: string;
-}
+};
 
 const analyticsKeys = {
   deploy: ['deployment-count'] as const,
