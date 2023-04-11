@@ -109,6 +109,9 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
   const bestDeploymentTimeIndex = averageDeploymentTime.findIndex(
     (time) => time === bestDeploymentTime
   );
+
+  console.log('monthlyDeployChart bbb', monthlyDeployChart);
+
   return (
     <>
       <Banner
@@ -344,7 +347,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                     </CardHeader>
                     <CardBody className="x-y-center pf-u-h-100 ">
                       {monthlyDeployChart.isLoading && <Skeleton height="160px" width="90%" />}
-                      {!monthlyDeployChart.isLoading && !monthlyDeployChart.data && (
+                      {!monthlyDeployChart.isLoading && (
                         <EmptyState>
                           <EmptyStateIcon icon={CubesIcon} />
                           <Title headingLevel="h4" size="lg">
@@ -352,7 +355,8 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                           </Title>
                         </EmptyState>
                       )}
-                      {monthlyDeployChart.isSuccess && (
+                      {monthlyDeployChart.isSuccess &&
+                      Object.keys(monthlyDeployChart?.data).length ? (
                         <Chart
                           ariaDesc="Average number of pets"
                           containerComponent={
@@ -396,6 +400,13 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                             })}
                           </ChartGroup>
                         </Chart>
+                      ) : (
+                        <EmptyState>
+                          <EmptyStateIcon icon={CubesIcon} />
+                          <Title headingLevel="h4" size="lg">
+                            No History found
+                          </Title>
+                        </EmptyState>
                       )}
                     </CardBody>
                   </Card>

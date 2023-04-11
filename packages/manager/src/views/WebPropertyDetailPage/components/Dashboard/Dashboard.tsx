@@ -84,6 +84,8 @@ export const Dashboard = (): JSX.Element => {
   const bestDeploymentTimeIndex = averageDeploymentTime.findIndex(
     (time) => time === bestDeploymentTime
   );
+  console.log('monthlyDeployChart ggg', monthlyDeployChart?.data);
+
   return (
     <>
       <Grid style={{ padding: '12px 12px' }}>
@@ -274,7 +276,7 @@ export const Dashboard = (): JSX.Element => {
             </CardHeader>
             <CardBody className="x-y-center pf-u-h-100 ">
               {monthlyDeployChart.isLoading && <Skeleton height="160px" width="90%" />}
-              {!monthlyDeployChart.isLoading && !monthlyDeployChart.data && (
+              {!monthlyDeployChart.isLoading && (
                 <EmptyState>
                   <EmptyStateIcon icon={CubesIcon} />
                   <Title headingLevel="h4" size="lg">
@@ -282,7 +284,7 @@ export const Dashboard = (): JSX.Element => {
                   </Title>
                 </EmptyState>
               )}
-              {monthlyDeployChart.isSuccess && (
+              {monthlyDeployChart.isSuccess && Object.keys(monthlyDeployChart?.data).length ? (
                 <Chart
                   ariaDesc="Average number of pets"
                   containerComponent={
@@ -326,6 +328,13 @@ export const Dashboard = (): JSX.Element => {
                     })}
                   </ChartGroup>
                 </Chart>
+              ) : (
+                <EmptyState>
+                  <EmptyStateIcon icon={CubesIcon} />
+                  <Title headingLevel="h4" size="lg">
+                    No History found
+                  </Title>
+                </EmptyState>
               )}
             </CardBody>
           </Card>
