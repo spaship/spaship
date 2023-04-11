@@ -62,6 +62,8 @@ import { StaticDeployment } from '../WebPropertyDetailPage/components/SSR/Static
 
 const TotalDeploymentCardFields = ['Dev', 'QA', 'Stage', 'Prod'];
 const DeploymentTimeFrames = ['30 days', '90 days', '180 days', '365 days'];
+const DATE_FORMAT = 'DD MMM';
+
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
   const propertyIdentifier = router.query.propertyIdentifier as string;
@@ -107,6 +109,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
   const bestDeploymentTimeIndex = averageDeploymentTime.findIndex(
     (time) => time === bestDeploymentTime
   );
+
   return (
     <>
       <Banner
@@ -342,7 +345,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                     </CardHeader>
                     <CardBody className="x-y-center pf-u-h-100 ">
                       {monthlyDeployChart.isLoading && <Skeleton height="160px" width="90%" />}
-                      {!monthlyDeployChart.isLoading && !monthlyDeployChart.data && (
+                      {!monthlyDeployChart.isLoading && (
                         <EmptyState>
                           <EmptyStateIcon icon={CubesIcon} />
                           <Title headingLevel="h4" size="lg">
@@ -350,7 +353,8 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                           </Title>
                         </EmptyState>
                       )}
-                      {monthlyDeployChart.isSuccess && (
+                      {monthlyDeployChart.isSuccess &&
+                      Object.keys(monthlyDeployChart?.data).length ? (
                         <Chart
                           ariaDesc="Average number of pets"
                           containerComponent={
@@ -363,7 +367,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                           legendOrientation="vertical"
                           legendPosition="right"
                           name="chart1"
-                          minDomain={0}
+                          minDomain={{ y: 0 }}
                           padding={{
                             bottom: 100,
                             left: 50,
@@ -376,22 +380,31 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                           <ChartAxis />
                           <ChartAxis dependentAxis showGrid tickFormat={(x) => Number(x)} />
                           <ChartGroup>
-                            {lineChartLegend.map(({ name }) => (
-                              <ChartLine
-                                key={`key-${name}`}
-                                data={monthlyDeployChart?.data?.[name].map(
-                                  ({ count, startDate, endDate }) => ({
-                                    name,
-                                    x: `${dayjs(startDate).format('DD MMM')} - ${dayjs(
-                                      endDate
-                                    ).format('DD MMM')}`,
-                                    y: count
-                                  })
-                                )}
-                              />
-                            ))}
+                            {lineChartLegend.map(({ name }) => {
+                              const chartData = monthlyDeployChart?.data?.[name]
+                                .sort(
+                                  (a, b) =>
+                                    new Date(a.startDate).valueOf() -
+                                    new Date(b.startDate).valueOf()
+                                )
+                                .map(({ count, startDate, endDate }) => ({
+                                  name,
+                                  x: `${dayjs(startDate).format(DATE_FORMAT)} - ${dayjs(
+                                    endDate
+                                  ).format(DATE_FORMAT)}`,
+                                  y: count
+                                }));
+                              return <ChartLine key={`key-${name}`} data={chartData} />;
+                            })}
                           </ChartGroup>
                         </Chart>
+                      ) : (
+                        <EmptyState>
+                          <EmptyStateIcon icon={CubesIcon} />
+                          <Title headingLevel="h4" size="lg">
+                            No History found
+                          </Title>
+                        </EmptyState>
                       )}
                     </CardBody>
                   </Card>

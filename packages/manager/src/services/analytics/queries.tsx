@@ -1,21 +1,20 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { orchestratorReq } from '@app/config/orchestratorReq';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import {
   TDeploymentCount,
   TSPADeploymentCount,
-  TSPAMonthlyDeploymentCount,
-  TWebPropActivityStream,
   TSPADeploymentTime,
-  TSPAMonthlyDeploymentChart
+  TSPAMonthlyDeploymentChart,
+  TSPAMonthlyDeploymentCount,
+  TWebPropActivityStream
 } from './types';
 
-interface IDeploymentData {
+type IDeploymentData = {
   env: string;
   count: number;
   startDate: string;
   endDate: string;
-}
+};
 
 const analyticsKeys = {
   deploy: ['deployment-count'] as const,
@@ -147,13 +146,6 @@ const fetchMonthlyDeploymentChartWithEphemeral = async (
   return data.data;
 };
 
-const sortWeeklyDeployments = (arr: IDeploymentData[]) =>
-  arr.map((ele: IDeploymentData) => ({
-    name: `${ele.env}`,
-    x: `${dayjs(ele.startDate).format('DD MMM')} - ${dayjs(ele.endDate).format('DD MMM')}`,
-    y: ele.count
-  }));
-
 export const useGetMonthlyDeploymentChartWithEphemeral = (propertyIdentifier?: string) =>
   useQuery({
     queryKey: analyticsKeys.spaMonthyDeploymentChartWithEphemeral,
@@ -174,10 +166,10 @@ export const useGetMonthlyDeploymentChartWithEphemeral = (propertyIdentifier?: s
         maxDeploymentCount?: number;
         minDeploymentCount?: number;
       } = {};
-      monthlyDelpoymentData.qa = sortWeeklyDeployments(data.qa || []);
-      monthlyDelpoymentData.stage = sortWeeklyDeployments(data.stage || []);
-      monthlyDelpoymentData.dev = sortWeeklyDeployments(data.dev || []);
-      monthlyDelpoymentData.prod = sortWeeklyDeployments(data.prod || []);
+      monthlyDelpoymentData.qa = data.qa || [];
+      monthlyDelpoymentData.stage = data.stage || [];
+      monthlyDelpoymentData.dev = data.dev || [];
+      monthlyDelpoymentData.prod = data.prod || [];
       monthlyDelpoymentData.lastMonthEphemeral =
         data.ephemeral?.reduce((acc, obj) => acc + obj.count, 0) || 0;
       monthlyDelpoymentData.minDeploymentCount = Math.min(

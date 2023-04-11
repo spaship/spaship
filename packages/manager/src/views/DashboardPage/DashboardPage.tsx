@@ -26,15 +26,16 @@ export const DashboardPage = (): JSX.Element => {
   const bestDeploymentTimeIndex = averageDeploymentTime.findIndex(
     (time) => time === bestDeploymentTime
   );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'row', height: '10%' }}>
       <div style={{ width: '55%' }}>
         <Analytics
           TotalMonthlyDeploymentData={{
-            qa: TotalMonthlyDeploymentData?.qa,
-            prod: TotalMonthlyDeploymentData?.prod,
-            dev: TotalMonthlyDeploymentData?.dev,
-            stage: TotalMonthlyDeploymentData?.stage
+            qa: TotalMonthlyDeploymentData?.qa ?? [],
+            prod: TotalMonthlyDeploymentData?.prod ?? [],
+            dev: TotalMonthlyDeploymentData?.dev ?? [],
+            stage: TotalMonthlyDeploymentData?.stage ?? []
           }}
           TotalDeployment={TotalDeployment}
           TotalProperty={TotalProperty}
