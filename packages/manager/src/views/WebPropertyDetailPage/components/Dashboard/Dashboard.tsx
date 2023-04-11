@@ -274,14 +274,6 @@ export const Dashboard = (): JSX.Element => {
             </CardHeader>
             <CardBody className="x-y-center pf-u-h-100 ">
               {monthlyDeployChart.isLoading && <Skeleton height="160px" width="90%" />}
-              {!monthlyDeployChart.isLoading && (
-                <EmptyState>
-                  <EmptyStateIcon icon={CubesIcon} />
-                  <Title headingLevel="h4" size="lg">
-                    No History found
-                  </Title>
-                </EmptyState>
-              )}
               {monthlyDeployChart.isSuccess && Object.keys(monthlyDeployChart?.data).length ? (
                 <Chart
                   ariaDesc="Average number of pets"
