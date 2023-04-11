@@ -1,15 +1,6 @@
 /* eslint-disable react/require-default-props */
-import {
-  Card,
-  CardTitle,
-  CardBody,
-  CardHeader,
-  Grid,
-  GridItem,
-  TextContent,
-  Text,
-  TextVariants
-} from '@patternfly/react-core';
+import { pageLinks } from '@app/links';
+import { TSPADeploymentCount } from '@app/services/analytics/types';
 import {
   Chart,
   ChartAxis,
@@ -18,27 +9,31 @@ import {
   ChartThemeColor,
   ChartVoronoiContainer
 } from '@patternfly/react-charts';
-import { TSPADeploymentCount } from '@app/services/analytics/types';
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  Grid,
+  GridItem,
+  Text,
+  TextContent,
+  TextVariants
+} from '@patternfly/react-core';
 import { UseQueryResult } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import Link from 'next/link';
-import { pageLinks } from '@app/links';
 
 const TotalDeploymentCardFields = ['Dev', 'QA', 'Stage', 'Prod'];
 const DeploymentTimeFrames = ['30 days', '90 days', '180 days', '365 days'];
 
-type IGraphData = {
-  name: string;
-  x: string;
-  y: number;
-};
-
-type ITotalMonthlyDeploymentData = {
-  dev?: IGraphData[];
-  qa?: IGraphData[];
-  stage?: IGraphData[];
-  prod?: IGraphData[];
-};
-
+interface ITotalMonthlyDeploymentData {
+  [key: string]: {
+    count: number;
+    startDate: string;
+    endDate: string;
+  }[];
+}
 type Props = {
   TotalMonthlyDeploymentData: ITotalMonthlyDeploymentData;
   TotalDeployment?: number;
@@ -65,6 +60,8 @@ export const Analytics = ({
   const lineChartLegend = Object.keys(TotalMonthlyDeploymentData || {}).map((key) => ({
     name: key
   }));
+
+  console.log('TotalMonthlyDeploymentData', TotalMonthlyDeploymentData);
   return (
     <>
       <TextContent
@@ -257,14 +254,20 @@ export const Analytics = ({
               <ChartAxis />
               <ChartAxis dependentAxis showGrid tickFormat={(x) => Number(x)} />
               <ChartGroup>
-                {lineChartLegend.map(({ name }) => (
-                  <ChartLine
-                    key={`key-${name}`}
-                    data={
-                      TotalMonthlyDeploymentData[name as keyof ITotalMonthlyDeploymentData] || []
-                    }
-                  />
-                ))}
+                {lineChartLegend.map(({ name }) => {
+                  const chartData = (TotalMonthlyDeploymentData?.[name] || [])
+                    .sort(
+                      (a, b) => new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf()
+                    )
+                    .map(({ count, startDate, endDate }) => ({
+                      name,
+                      x: `${dayjs(startDate).format('DD MMM')} - ${dayjs(endDate).format(
+                        'DD MMM'
+                      )}`,
+                      y: count
+                    }));
+                  return <ChartLine key={`key-${name}`} data={chartData} />;
+                })}
               </ChartGroup>
             </Chart>
           </div>

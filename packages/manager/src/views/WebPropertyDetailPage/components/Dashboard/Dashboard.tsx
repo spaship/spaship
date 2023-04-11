@@ -1,7 +1,6 @@
 import {
   useGetHalfYearlyDeploymentsTime,
   useGetMonthlyDeploymentChart,
-  useGetMonthlyDeploymentChartWithEphemeral,
   useGetMonthlyDeploymentsTime,
   useGetQuarterlyDeploymentsTime,
   useGetTotalDeployments,
@@ -33,23 +32,14 @@ import {
   Title
 } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
+import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import toast from 'react-hot-toast';
 
 const TotalDeploymentCardFields = ['Dev', 'QA', 'Stage', 'Prod'];
 const DeploymentTimeFrames = ['30 days', '90 days', '180 days', '365 days'];
-type IGraphData = {
-  name: string;
-  x: string;
-  y: number;
-};
-type ITotalMonthlyDeploymentData = {
-  dev?: IGraphData[];
-  qa?: IGraphData[];
-  stage?: IGraphData[];
-  prod?: IGraphData[];
-};
+
 export const Dashboard = (): JSX.Element => {
   const router = useRouter();
   const propertyIdentifier = router.query.propertyIdentifier as string;
@@ -60,6 +50,7 @@ export const Dashboard = (): JSX.Element => {
     toast.error(`Sorry cannot find ${spaProperty}`);
     router.push(`/properties/${propertyIdentifier}`);
   }
+
   const sortedDeployCount = deploymentCount?.data?.sort((x, y) => x.count - y.count);
   const donutChartData = useMemo(
     () => ({
@@ -80,10 +71,6 @@ export const Dashboard = (): JSX.Element => {
   const TotalDeployment = TotalDeploymentData.data?.reduce((acc, obj) => acc + obj.count, 0);
   const TotalSpasCountsData = useGetSPAPropGroupByName(propertyIdentifier, '');
   const TotalProperty = Object.keys(TotalSpasCountsData.data || {}).length;
-  const TotalMonthlyDeploymentData =
-    useGetMonthlyDeploymentChartWithEphemeral(propertyIdentifier).data ?? {};
-  const minCount = TotalMonthlyDeploymentData?.minDeploymentCount || 0;
-  const maxCount = TotalMonthlyDeploymentData?.maxDeploymentCount || 0;
 
   const averageDeploymentTime = [
     useGetMonthlyDeploymentsTime(propertyIdentifier).data,
@@ -284,57 +271,61 @@ export const Dashboard = (): JSX.Element => {
             <CardHeader>
               <CardTitle>Past 30 days Deployment History</CardTitle>
             </CardHeader>
-            <CardBody>
-              <div style={{ height: '275px' }}>
-                {Object.values(TotalMonthlyDeploymentData).some(
-                  (arr) => Array.isArray(arr) && arr.length > 0
-                ) ? (
-                  <Chart
-                    ariaDesc="Average number of pets"
-                    containerComponent={
-                      <ChartVoronoiContainer
-                        labels={({ datum }) => `${datum.name}: ${datum.y}`}
-                        constrainToVisibleArea
-                      />
-                    }
-                    legendData={lineChartLegend}
-                    legendPosition="bottom-left"
-                    height={275}
-                    name="chart1"
-                    maxDomain={{ y: maxCount + (maxCount - minCount) * 0.2 }}
-                    minDomain={{ y: 0 }}
-                    padding={{
-                      bottom: 75,
-                      left: 50,
-                      right: 50,
-                      top: 50
-                    }}
-                    themeColor={ChartThemeColor.multiUnordered}
-                    width={850}
-                  >
-                    <ChartAxis />
-                    <ChartAxis dependentAxis showGrid tickFormat={(x) => Number(x)} />
-                    <ChartGroup>
-                      {lineChartLegend.map(({ name }) => (
-                        <ChartLine
-                          key={`key-${name}`}
-                          data={
-                            TotalMonthlyDeploymentData[name as keyof ITotalMonthlyDeploymentData] ||
-                            []
-                          }
-                        />
-                      ))}
-                    </ChartGroup>
-                  </Chart>
-                ) : (
-                  <EmptyState>
-                    <EmptyStateIcon icon={CubesIcon} />
-                    <Title headingLevel="h4" size="lg">
-                      No History found
-                    </Title>
-                  </EmptyState>
-                )}
-              </div>
+            <CardBody className="x-y-center pf-u-h-100 ">
+              {monthlyDeployChart.isLoading && <Skeleton height="160px" width="90%" />}
+              {!monthlyDeployChart.isLoading && !monthlyDeployChart.data && (
+                <EmptyState>
+                  <EmptyStateIcon icon={CubesIcon} />
+                  <Title headingLevel="h4" size="lg">
+                    No History found
+                  </Title>
+                </EmptyState>
+              )}
+              {monthlyDeployChart.isSuccess && (
+                <Chart
+                  ariaDesc="Average number of pets"
+                  containerComponent={
+                    <ChartVoronoiContainer
+                      labels={({ datum }) => `${datum.name}: ${datum.y}`}
+                      constrainToVisibleArea
+                    />
+                  }
+                  legendData={lineChartLegend}
+                  legendOrientation="vertical"
+                  legendPosition="right"
+                  name="chart1"
+                  minDomain={{ y: 0 }}
+                  padding={{
+                    bottom: 100,
+                    left: 50,
+                    right: 100, // Adjusted to accommodate legend
+                    top: 50
+                  }}
+                  themeColor={ChartThemeColor.multiUnordered}
+                  width={700}
+                >
+                  <ChartAxis />
+                  <ChartAxis dependentAxis showGrid tickFormat={(x) => Number(x)} />
+                  <ChartGroup>
+                    {lineChartLegend.map(({ name }) => {
+                      const chartData = monthlyDeployChart?.data?.[name]
+                        .sort(
+                          (a, b) =>
+                            new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf()
+                        )
+
+                        .map(({ count, startDate, endDate }) => ({
+                          name,
+                          x: `${dayjs(startDate).format('DD MMM')} - ${dayjs(endDate).format(
+                            'DD MMM'
+                          )}`,
+                          y: count
+                        }));
+                      return <ChartLine key={`key-${name}`} data={chartData} />;
+                    })}
+                  </ChartGroup>
+                </Chart>
+              )}
             </CardBody>
           </Card>
         </SplitItem>

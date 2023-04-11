@@ -363,7 +363,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                           legendOrientation="vertical"
                           legendPosition="right"
                           name="chart1"
-                          minDomain={0}
+                          minDomain={{ y: 0 }}
                           padding={{
                             bottom: 100,
                             left: 50,
@@ -376,20 +376,22 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                           <ChartAxis />
                           <ChartAxis dependentAxis showGrid tickFormat={(x) => Number(x)} />
                           <ChartGroup>
-                            {lineChartLegend.map(({ name }) => (
-                              <ChartLine
-                                key={`key-${name}`}
-                                data={monthlyDeployChart?.data?.[name].map(
-                                  ({ count, startDate, endDate }) => ({
-                                    name,
-                                    x: `${dayjs(startDate).format('DD MMM')} - ${dayjs(
-                                      endDate
-                                    ).format('DD MMM')}`,
-                                    y: count
-                                  })
-                                )}
-                              />
-                            ))}
+                            {lineChartLegend.map(({ name }) => {
+                              const chartData = monthlyDeployChart?.data?.[name]
+                                .sort(
+                                  (a, b) =>
+                                    new Date(a.startDate).valueOf() -
+                                    new Date(b.startDate).valueOf()
+                                )
+                                .map(({ count, startDate, endDate }) => ({
+                                  name,
+                                  x: `${dayjs(startDate).format('DD MMM')} - ${dayjs(
+                                    endDate
+                                  ).format('DD MMM')}`,
+                                  y: count
+                                }));
+                              return <ChartLine key={`key-${name}`} data={chartData} />;
+                            })}
                           </ChartGroup>
                         </Chart>
                       )}
