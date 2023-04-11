@@ -61,7 +61,6 @@ export const Analytics = ({
     name: key
   }));
 
-  console.log('TotalMonthlyDeploymentData', TotalMonthlyDeploymentData);
   return (
     <>
       <TextContent
