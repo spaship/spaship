@@ -296,7 +296,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
             }}
             className="pf-u-mb-lg"
           >
-            Show Advance Access
+            {!isShowAdvancedViewEnabled ? 'Show Advance Access' : 'Hide Advance Access'}
           </Button>
           <div className="pf-u-my-lg">
             <b>New Members</b>
@@ -485,7 +485,9 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                 }}
                 style={{ marginBottom: 'var(--pf-global--spacer--lg)' }}
               >
-                Show Advance Access Rover
+                {!isShowAdvancedViewEnabledRover
+                  ? ' Show Advance Access Rover'
+                  : 'Hide Advance Access Rover'}
               </Button>
             </FlexItem>
           </Flex>
