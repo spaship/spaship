@@ -6,6 +6,7 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { SideBar } from './components/SideBar';
 import { Nav } from './components/Nav';
 import { Footer } from './components/Footer';
+import { useGetDocumentPage } from '@app/services/documents';
 
 interface Props {
   children: ReactNode;
@@ -15,33 +16,65 @@ interface Props {
  * TODO: Breadcrumb generator to be building using a context
  * TODO: The title for layout should be changing based on URLs or can be from a context
  */
-export const AppLayout = ({ children }: Props): JSX.Element => (
+export const AppLayout = ({ children }: Props): JSX.Element => {
+  const data = useGetDocumentPage();
+  const sections = Object.keys(data?.data || {}).filter((section) => section === 'banner');
+  const lastSection = sections[sections.length - 1];
+  const lastSectionData = data?.data?.[lastSection] ?? [];
+  const lastElement = lastSectionData[lastSectionData.length - 1] ?? null;
+  const isOutage = lastElement && lastElement.tags?.includes('outage') || false;
+  
+  return (
   <>
-    <Banner
-      style={{
-        backgroundColor: 'var(--spaship-global--Color--solar-orange)'
-      }}
-      isSticky
-      variant="info"
-    >
-      <Flex
-        justifyContent={{ default: 'justifyContentCenter' }}
-        alignItems={{ default: 'alignItemsCenter' }}
+
+{lastElement && !isOutage && (
+      <Banner
+        style={{
+          backgroundColor: 'var(--spaship-global--Color--solar-orange)'
+        }}
+        isSticky
+        variant="info"
       >
-        <a
-          target="_blank"
-          href="https://source.redhat.com/groups/public/spaship/blog_article/whats_new_in_spaship_"
-          rel="noreferrer"
+        <Flex
+          justifyContent={{ default: 'justifyContentCenter' }}
+          alignItems={{ default: 'alignItemsCenter' }}
         >
-          <ExternalLinkAltIcon
-            style={{
-              marginRight: '0.5rem'
-            }}
-          />
-          What&apos;s new in SPAship?
-        </a>
-      </Flex>
-    </Banner>
+          <a
+            target="_blank"
+            href={lastElement.link}
+            rel="noreferrer"
+          >
+            <ExternalLinkAltIcon
+              style={{
+                marginRight: '0.5rem'
+              }}
+            />
+            {lastElement.title}
+          </a>
+        </Flex>
+      </Banner>
+    )}
+    {lastElement &&isOutage && (
+       <Banner
+       style={{
+         backgroundColor: '#F44336',
+         color: '#FFFFFF',
+         fontWeight:'bolder'
+         
+       }}
+       isSticky
+       variant="info"
+     >
+       <Flex
+         justifyContent={{ default: 'justifyContentCenter' }}
+         alignItems={{ default: 'alignItemsCenter' }}
+       >
+         
+           {lastElement.title}
+          
+       </Flex>
+     </Banner>
+    )}
     <Page sidebar={<SideBar />} header={<Nav />}>
       <Flex
         direction={{ default: 'column' }}
@@ -56,6 +89,7 @@ export const AppLayout = ({ children }: Props): JSX.Element => (
       </Flex>
     </Page>
   </>
-);
+  );
+};
 
 export const getAppLayout = (page: JSX.Element) => <AppLayout>{page}</AppLayout>;
