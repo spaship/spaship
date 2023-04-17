@@ -12,7 +12,7 @@ import { AnalyticsService } from 'src/server/analytics/service/analytics.service
 import { Application } from 'src/server/application/application.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { Source } from 'src/server/property/property.entity';
-import { ApplicationConfigDTO, ApplicationResponse, CreateApplicationDto, SSRDeploymentRequest } from '../application.dto';
+import { ApplicationConfigDTO, ApplicationResponse, CreateApplicationDto, GitRequestDTO, SSRDeploymentRequest } from '../application.dto';
 import { ApplicationFactory } from './application.factory';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class ApplicationService {
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService,
     private readonly agendaService: AgendaService
-  ) {}
+  ) { }
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.application.getAll();
@@ -95,7 +95,7 @@ export class ApplicationService {
     } catch (err) {
       this.exceptionService.internalServerErrorException(err.message);
     }
-    const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: false }))[0];
+    const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: false, isGit: false }))[0];
     const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
     const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === environment.cluster);
     const deploymentConnection = (await this.dataServices.deploymentConnection.getByAny({ name: deploymentRecord.name }))[0];
@@ -104,7 +104,8 @@ export class ApplicationService {
         propertyIdentifier,
         env,
         path: applicationRequest.path,
-        isSSR: false
+        isSSR: false,
+        isGit: false
       },
       { updatedAt: -1 },
       ApplicationService.defaultSkip,
@@ -149,7 +150,7 @@ export class ApplicationService {
     applicationDetails.name = applicationRequest.name;
     applicationDetails.updatedBy = createdBy;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
-    await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isSSR: false }, applicationDetails);
+    await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isSSR: false, isGit: false }, applicationDetails);
     return this.applicationFactory.createApplicationResponse(applicationDetails, deploymentConnection.baseurl, applicationExists);
   }
 
@@ -205,12 +206,13 @@ export class ApplicationService {
     const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
     applicationRequest.path = this.applicationFactory.getPath(applicationRequest.path);
     if (applicationRequest?.healthCheckPath) applicationRequest.healthCheckPath = this.applicationFactory.getPath(applicationRequest.healthCheckPath);
-    let applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true }))[0];
+    let applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true, isGit: false }))[0];
     const searchedApplicationsByPath = await this.dataServices.application.getByAny({
       propertyIdentifier,
       env,
       path: applicationRequest.path,
-      isSSR: true
+      isSSR: true,
+      isGit: false
     });
     const applicationExists = this.applicationFactory.getExistingApplicationsByPath(searchedApplicationsByPath, identifier);
     if (!applicationDetails) {
@@ -234,15 +236,15 @@ export class ApplicationService {
       applicationDetails.port = applicationRequest.port || applicationDetails.port || SSR_DETAILS.port;
       applicationDetails.updatedBy = applicationRequest.createdBy;
       this.logger.log('SSRUpdatedApplicationDetails', JSON.stringify(applicationDetails));
-      await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isSSR: true }, applicationDetails);
+      await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isSSR: true, isGit: false }, applicationDetails);
     }
     const ssrOperatorRequest = this.applicationFactory.createSSROperatorRequest(
       applicationRequest,
       propertyIdentifier,
       identifier,
       env,
-      property.namespace,
-      applicationDetails
+      applicationDetails,
+      property.namespace
     );
     this.logger.log('SSROperatorRequest', JSON.stringify(ssrOperatorRequest));
     this.deploySSRApplication(ssrOperatorRequest, propertyIdentifier, env, identifier, deploymentConnection.baseurl, applicationRequest.createdBy);
@@ -290,10 +292,12 @@ export class ApplicationService {
       if (!response) return;
       // @internal TODO : To be removed after the Operator Enhancement
       await this.applicationFactory.ssrConfigUpdate(ssrRequest, baseUrl);
-      const applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true }))[0];
+      const applicationDetails = (
+        await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true, isGit: false })
+      )[0];
       applicationDetails.accessUrl = response.accessUrl;
       applicationDetails.ref = applicationDetails.nextRef;
-      await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isSSR: true }, applicationDetails);
+      await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isSSR: true, isGit: false }, applicationDetails);
       this.logger.log('UpdatedSSRApplication', JSON.stringify(applicationDetails));
       const diff = (applicationDetails.updatedAt.getTime() - new Date().getTime()) / 1000;
       const consumedTime = Math.abs(diff).toFixed(2).toString();
@@ -321,7 +325,13 @@ export class ApplicationService {
    * Update the application accordingly after the successful updating
    */
   async saveConfig(configDTO: ApplicationConfigDTO) {
-    const search = { identifier: configDTO.identifier, propertyIdentifier: configDTO.propertyIdentifier, env: configDTO.env, isSSR: true };
+    const search = {
+      identifier: configDTO.identifier,
+      propertyIdentifier: configDTO.propertyIdentifier,
+      env: configDTO.env,
+      isSSR: true,
+      isGit: false
+    };
     const applicationDetails = (await this.dataServices.application.getByAny(search))[0];
     if (!applicationDetails)
       this.exceptionService.badRequestException({
@@ -346,6 +356,69 @@ export class ApplicationService {
     return applicationDetails;
   }
 
+  /* @internal
+   * Create the request object for the SSR-Git Application
+   * Process the Application
+   * Start the SSR-Git build and deployment in the operator
+   */
+  async saveGitApplication(applicationRequest: CreateApplicationDto, propertyIdentifier: string, env: string): Promise<Application> {
+    const identifier = this.applicationFactory.getSSRIdentifier(applicationRequest.name);
+    const { property } = await this.getDeploymentConnection(propertyIdentifier, env);
+    applicationRequest.path = this.applicationFactory.getPath(applicationRequest.path);
+    if (applicationRequest?.healthCheckPath) applicationRequest.healthCheckPath = this.applicationFactory.getPath(applicationRequest.healthCheckPath);
+    let applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true, isGit: true }))[0];
+    if (!applicationDetails) {
+      const saveApplication = await this.applicationFactory.createSSREnabledGitApplicationRequest(
+        propertyIdentifier,
+        applicationRequest,
+        identifier,
+        env,
+        applicationRequest.createdBy
+      );
+      this.logger.log('SSRGitApplicationDetails', JSON.stringify(saveApplication));
+      applicationDetails = await this.dataServices.application.create(saveApplication);
+    } else {
+      applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
+      applicationDetails.name = applicationRequest.name;
+      applicationDetails.path = applicationRequest.path;
+      applicationDetails.version = this.applicationFactory.incrementVersion(applicationDetails.version);
+      applicationDetails.healthCheckPath = applicationRequest.healthCheckPath || applicationDetails.healthCheckPath;
+      applicationDetails.config = applicationRequest.config || applicationDetails.config;
+      applicationDetails.port = applicationRequest.port || applicationDetails.port || SSR_DETAILS.port;
+      applicationDetails.repoUrl = applicationRequest.repoUrl || applicationDetails.repoUrl;
+      applicationDetails.gitRef = applicationRequest.gitRef || applicationDetails.gitRef;
+      applicationDetails.contextDir = applicationRequest.contextDir || applicationDetails.contextDir;
+      applicationDetails.buildArgs = applicationRequest.buildArgs || applicationDetails.buildArgs;
+      applicationDetails.commitId = applicationRequest.commitId || applicationDetails.commitId;
+      applicationDetails.mergeId = applicationRequest.mergeId || applicationDetails.mergeId;
+      applicationDetails.updatedBy = applicationRequest.createdBy;
+      this.logger.log('SSRGitUpdatedApplicationDetails', JSON.stringify(applicationDetails));
+      await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isSSR: true, isGit: true }, applicationDetails);
+    }
+    const ssrEnabledGitOperatorRequest = this.applicationFactory.createSSREnabledGitOperatorRequest(
+      applicationRequest,
+      propertyIdentifier,
+      identifier,
+      env,
+      property.namespace,
+      applicationDetails
+    );
+    this.logger.log('SSRGitOperatorRequest', JSON.stringify(ssrEnabledGitOperatorRequest));
+    // @internal TODO : once it's ready in the Operator
+    // await this.applicationFactory.ssrEnabledGitDeploymentRequest(ssrEnabledGitOperatorRequest, deploymentConnection.baseurl);
+    await this.analyticsService.createActivityStream(
+      propertyIdentifier,
+      Action.APPLICATION_DEPLOYMENT_STARTED,
+      env,
+      identifier,
+      `Deployment started for ${applicationRequest.name} at ${env} [GIT-SSR Enabled]`,
+      applicationRequest.createdBy,
+      Source.GIT,
+      JSON.stringify(applicationRequest)
+    );
+    return applicationDetails;
+  }
+
   async validatePropertyAndEnvironment(propertyIdentifier: string, env: string) {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     if (!environment)
@@ -361,5 +434,15 @@ export class ApplicationService {
       this.exceptionService.badRequestException({
         message: `${imageUrl} doesn't exists on the source registry, please provide a valid imageUrl.`
       });
+  }
+
+  // @internal it will validate the git repository
+  async validateGitProps(gitRequestDTO: GitRequestDTO) {
+    const gitProps = await this.applicationFactory.validateGitProps(gitRequestDTO);
+    if (!gitProps)
+      this.exceptionService.badRequestException({
+        message: `${gitRequestDTO.repoUrl} doesn't exists.`
+      });
+    return this.applicationFactory.extractDockerProps(gitRequestDTO);
   }
 }
