@@ -4,7 +4,7 @@ import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DIRECTORY_CONFIGURATION } from '../../configuration';
 import { AuthenticationGuard } from '../auth/auth.guard';
 import { ExceptionsService } from '../exceptions/exceptions.service';
-import { ApplicationConfigDTO, ApplicationResponse, CreateApplicationDto } from './application.dto';
+import { ApplicationConfigDTO, ApplicationResponse, CreateApplicationDto, GitRequestDTO } from './application.dto';
 import { ApplicationFactory } from './service/application.factory';
 import { ApplicationService } from './service/application.service';
 
@@ -51,6 +51,12 @@ export class ApplicationController {
       await this.applicationService.validatePropertyAndEnvironment(params.propertyIdentifier, params.env);
       return this.applicationService.saveSSRApplication(applicationDto, params.propertyIdentifier, params.env);
     }
+    // @internal `repoUrl` refers to the Git Enabled Deployment
+    if (applicationDto.repoUrl) {
+      // await this.applicationService.validateGitProps(applicationDto);
+      await this.applicationService.validatePropertyAndEnvironment(params.propertyIdentifier, params.env);
+      return this.applicationService.saveGitApplication(applicationDto, params.propertyIdentifier, params.env);
+    }
     // @internal deploy the Static Distribution
     const types = ['zip', 'tgz', 'gzip', 'gz', 'bzip2', 'bzip', '7z', 'rar', 'tar'];
     if (!file?.originalname) this.exceptionService.badRequestException({ message: 'Please provide a valid file for the deployment.' });
@@ -65,5 +71,11 @@ export class ApplicationController {
   async saveConfig(@Body() applicationConfigDto: ApplicationConfigDTO) {
     await this.applicationService.validatePropertyAndEnvironment(applicationConfigDto.propertyIdentifier, applicationConfigDto.env);
     return this.applicationService.saveConfig(applicationConfigDto);
+  }
+
+  @Post('/git/validate')
+  @ApiOperation({ description: 'Start the Deployment process for Application on Git Config.' })
+  async validateGitCredentials(@Body() gitRequestDTO: GitRequestDTO) {
+    return this.applicationService.validateGitProps(gitRequestDTO);
   }
 }
