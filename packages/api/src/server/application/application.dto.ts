@@ -68,6 +68,31 @@ export class CreateApplicationDto {
   @IsOptional()
   port: number;
 
+  @ApiProperty()
+  @IsOptional()
+  repoUrl: string;
+
+  @ApiProperty()
+  @IsOptional()
+  gitRef: string;
+
+  @ApiProperty()
+  @IsOptional()
+  contextDir: string;
+
+  @ApiProperty()
+  @IsObject()
+  @IsOptional()
+  buildArgs: object;
+
+  @ApiProperty()
+  @IsOptional()
+  commitId: string;
+
+  @ApiProperty()
+  @IsOptional()
+  mergeId: string;
+
   createdBy: string;
 }
 
@@ -118,6 +143,20 @@ export class SSRDeploymentResponse {
   accessUrl: string;
 }
 
+export class SSREnabledGitDeploymentRequest {
+  deploymentDetails: SSRDeploymentRequest;
+
+  namespace: string;
+
+  gitRef: string;
+
+  repoUrl: string;
+
+  contextDir: string;
+
+  buildArgs: object;
+}
+
 export class ApplicationConfigDTO {
   @ApiProperty()
   @IsString()
@@ -140,4 +179,38 @@ export class ApplicationConfigDTO {
   config: object;
 
   createdBy: string;
+}
+
+export class GitRequestDTO {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  repoUrl: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  gitRef: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  commitId: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  mergeId: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  contextDir: string;
+}
+
+export class GitValidateResponse {
+  port: string;
+
+  warning: string;
 }
