@@ -3,10 +3,10 @@ import { ReactNode } from 'react';
 import { Banner, Flex, FlexItem, Page } from '@patternfly/react-core';
 
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { useGetDocumentPage } from '@app/services/documents';
 import { SideBar } from './components/SideBar';
 import { Nav } from './components/Nav';
 import { Footer } from './components/Footer';
-import { useGetDocumentPage } from '@app/services/documents';
 
 interface Props {
   children: ReactNode;
@@ -22,73 +22,65 @@ export const AppLayout = ({ children }: Props): JSX.Element => {
   const lastSection = sections[sections.length - 1];
   const lastSectionData = data?.data?.[lastSection] ?? [];
   const lastElement = lastSectionData[lastSectionData.length - 1] ?? null;
-  const isOutage = lastElement && lastElement.tags?.includes('outage') || false;
-  
-  return (
-  <>
+  const isOutage = (lastElement && lastElement.tags?.includes('outage')) || false;
 
-{lastElement && !isOutage && (
-      <Banner
-        style={{
-          backgroundColor: 'var(--spaship-global--Color--solar-orange)'
-        }}
-        isSticky
-        variant="info"
-      >
-        <Flex
-          justifyContent={{ default: 'justifyContentCenter' }}
-          alignItems={{ default: 'alignItemsCenter' }}
+  return (
+    <>
+      {lastElement && !isOutage && (
+        <Banner
+          style={{
+            backgroundColor: 'var(--spaship-global--Color--solar-orange)'
+          }}
+          isSticky
+          variant="info"
         >
-          <a
-            target="_blank"
-            href={lastElement.link}
-            rel="noreferrer"
+          <Flex
+            justifyContent={{ default: 'justifyContentCenter' }}
+            alignItems={{ default: 'alignItemsCenter' }}
           >
-            <ExternalLinkAltIcon
-              style={{
-                marginRight: '0.5rem'
-              }}
-            />
+            <a target="_blank" href={lastElement.link} rel="noreferrer">
+              <ExternalLinkAltIcon
+                style={{
+                  marginRight: '0.5rem'
+                }}
+              />
+              {lastElement.title}
+            </a>
+          </Flex>
+        </Banner>
+      )}
+      {lastElement && isOutage && (
+        <Banner
+          style={{
+            backgroundColor: '#F44336',
+            color: '#FFFFFF',
+            fontWeight: 'bolder'
+          }}
+          isSticky
+          variant="info"
+        >
+          <Flex
+            justifyContent={{ default: 'justifyContentCenter' }}
+            alignItems={{ default: 'alignItemsCenter' }}
+          >
             {lastElement.title}
-          </a>
+          </Flex>
+        </Banner>
+      )}
+      <Page sidebar={<SideBar />} header={<Nav />}>
+        <Flex
+          direction={{ default: 'column' }}
+          spaceItems={{ default: 'spaceItemsNone' }}
+          style={{ height: '100%' }}
+          flexWrap={{ default: 'nowrap' }}
+        >
+          <FlexItem grow={{ default: 'grow' }}>{children}</FlexItem>
+          <FlexItem>
+            <Footer />
+          </FlexItem>
         </Flex>
-      </Banner>
-    )}
-    {lastElement &&isOutage && (
-       <Banner
-       style={{
-         backgroundColor: '#F44336',
-         color: '#FFFFFF',
-         fontWeight:'bolder'
-         
-       }}
-       isSticky
-       variant="info"
-     >
-       <Flex
-         justifyContent={{ default: 'justifyContentCenter' }}
-         alignItems={{ default: 'alignItemsCenter' }}
-       >
-         
-           {lastElement.title}
-          
-       </Flex>
-     </Banner>
-    )}
-    <Page sidebar={<SideBar />} header={<Nav />}>
-      <Flex
-        direction={{ default: 'column' }}
-        spaceItems={{ default: 'spaceItemsNone' }}
-        style={{ height: '100%' }}
-        flexWrap={{ default: 'nowrap' }}
-      >
-        <FlexItem grow={{ default: 'grow' }}>{children}</FlexItem>
-        <FlexItem>
-          <Footer />
-        </FlexItem>
-      </Flex>
-    </Page>
-  </>
+      </Page>
+    </>
   );
 };
 
