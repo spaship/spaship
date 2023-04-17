@@ -5,10 +5,11 @@ import { DocumentCard } from './components/DocumentCard';
 
 export const DocumentsPage = (): JSX.Element => {
   const data = useGetDocumentPage();
+  const sections = Object.keys(data?.data || {}).filter((section) => section !== 'banner');
   return (
     <>
       <Banner title="Documents" />
-      {Object.keys(data?.data || {}).map((section) => (
+      {sections.map((section) => (
         <>
           <Title headingLevel="h1" style={{ marginLeft: '100px', marginTop: '20px' }}>
             {section}
