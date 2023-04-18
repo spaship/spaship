@@ -4,7 +4,7 @@ import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DIRECTORY_CONFIGURATION } from '../../configuration';
 import { AuthenticationGuard } from '../auth/auth.guard';
 import { ExceptionsService } from '../exceptions/exceptions.service';
-import { ApplicationConfigDTO, ApplicationResponse, CreateApplicationDto, GitRequestDTO } from './application.dto';
+import { ApplicationConfigDTO, ApplicationResponse, CreateApplicationDto, GitValidationRequestDTO, GitDeploymentRequestDTO } from './application.dto';
 import { ApplicationFactory } from './service/application.factory';
 import { ApplicationService } from './service/application.service';
 
@@ -53,8 +53,14 @@ export class ApplicationController {
     }
     // @internal `repoUrl` refers to the Git Enabled Deployment
     if (applicationDto.repoUrl) {
-      // await this.applicationService.validateGitProps(applicationDto);
+      await this.applicationService.validateGitProps(applicationDto.repoUrl, applicationDto.gitRef, applicationDto.contextDir);
       await this.applicationService.validatePropertyAndEnvironment(params.propertyIdentifier, params.env);
+      await this.applicationService.validateExistingGitDeployment(
+        applicationDto.repoUrl,
+        applicationDto.contextDir,
+        params.propertyIdentifier,
+        this.applicationFactory.getSSRIdentifier(applicationDto.name)
+      );
       return this.applicationService.saveGitApplication(applicationDto, params.propertyIdentifier, params.env);
     }
     // @internal deploy the Static Distribution
@@ -73,9 +79,23 @@ export class ApplicationController {
     return this.applicationService.saveConfig(applicationConfigDto);
   }
 
+  @Post('/git/deploy')
+  @ApiOperation({ description: 'Start the Deployment process for Application on Git Config.' })
+  async saveApplicationFromGit(@Body() gitRequestDTO: GitDeploymentRequestDTO) {
+    await this.applicationService.validateGitProps(gitRequestDTO.repoUrl, gitRequestDTO.gitRef, gitRequestDTO.contextDir);
+    return this.applicationService.processGitRequest(gitRequestDTO);
+  }
+
   @Post('/git/validate')
   @ApiOperation({ description: 'Start the Deployment process for Application on Git Config.' })
-  async validateGitCredentials(@Body() gitRequestDTO: GitRequestDTO) {
-    return this.applicationService.validateGitProps(gitRequestDTO);
+  async validateGitCredentials(@Body() gitRequestDTO: GitValidationRequestDTO) {
+    await this.applicationService.validateGitProps(gitRequestDTO.repoUrl, gitRequestDTO.gitRef, gitRequestDTO.contextDir);
+    await this.applicationService.validateExistingGitDeployment(
+      gitRequestDTO.repoUrl,
+      gitRequestDTO.contextDir,
+      gitRequestDTO.propertyIdentifier,
+      gitRequestDTO.identifier
+    );
+    return this.applicationFactory.extractDockerProps(gitRequestDTO);
   }
 }
