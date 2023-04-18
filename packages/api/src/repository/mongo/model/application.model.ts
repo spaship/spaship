@@ -51,6 +51,27 @@ export class Application {
   @Prop({})
   port: number;
 
+  @Prop({})
+  isGit: boolean;
+
+  @Prop({})
+  repoUrl: string;
+
+  @Prop({})
+  gitRef: string;
+
+  @Prop({})
+  contextDir: string;
+
+  @Prop({ type: 'object' })
+  buildArgs: object;
+
+  @Prop({})
+  commitId: string;
+
+  @Prop({})
+  mergeId: string;
+
   @Prop({ default: 'NA' })
   createdBy: string;
 

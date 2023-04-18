@@ -20,6 +20,7 @@ export class DeploymentRecord {
 }
 
 export enum Source {
+  GIT = 'GIT',
   MANAGER = 'MANAGER',
   CLI = 'CLI',
   OPERATOR = 'OPERATOR'

@@ -10,8 +10,11 @@ import {
   ApplicationConfigDTO,
   ApplicationResponse,
   CreateApplicationDto,
+  GitRequestDTO,
+  GitValidateResponse,
   SSRDeploymentRequest,
-  SSRDeploymentResponse
+  SSRDeploymentResponse,
+  SSREnabledGitDeploymentRequest
 } from 'src/server/application/application.dto';
 import { Application } from 'src/server/application/application.entity';
 import { AuthFactory } from 'src/server/auth/auth.factory';
@@ -129,6 +132,7 @@ export class ApplicationFactory {
     saveApplication.ref = 'NA';
     saveApplication.accessUrl = 'NA';
     saveApplication.isSSR = false;
+    saveApplication.isGit = false;
     saveApplication.createdBy = createdBy;
     saveApplication.updatedBy = createdBy;
     saveApplication.version = 1;
@@ -232,11 +236,26 @@ export class ApplicationFactory {
     const headers = { Authorization: await AuthFactory.getAccessToken() };
     const ssrResponse = new SSRDeploymentResponse();
     try {
-      const response = await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/deployment/v1/create`, request, {
+      await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/deployment/v1/create`, request, {
         maxBodyLength: Infinity,
         headers
       });
-      ssrResponse.accessUrl = response.data.accessUrl;
+    } catch (err) {
+      this.logger.error('SSROperatorDeployment', err);
+    }
+    return ssrResponse;
+  }
+
+  // @internal Start the SSR Enabled Git deployment to the operator
+  // @internal TODO : To be changed after the operator integration
+  async ssrEnabledGitDeploymentRequest(request?: SSREnabledGitDeploymentRequest, deploymentBaseURL?: string): Promise<SSRDeploymentResponse> {
+    const headers = { Authorization: await AuthFactory.getAccessToken() };
+    const ssrResponse = new SSRDeploymentResponse();
+    try {
+      await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/deployment/v1/create`, request, {
+        maxBodyLength: Infinity,
+        headers
+      });
     } catch (err) {
       this.logger.error('SSROperatorDeployment', err);
     }
@@ -258,7 +277,7 @@ export class ApplicationFactory {
     }
   }
 
-  // @internal Create the Application request for the SSE enabled deployment
+  // @internal Create the Application request for the SSR enabled deployment
   createSSRApplicationRequest(
     propertyIdentifier: string,
     applicationRequest: CreateApplicationDto,
@@ -275,14 +294,33 @@ export class ApplicationFactory {
     return ssrApplicationRequest;
   }
 
-  // @internal Create the Deployment Request to the Operator for the SSE deployment
+  // @internal Create the Application request for the SSR enabled  Git deployment
+  createSSREnabledGitApplicationRequest(
+    propertyIdentifier: string,
+    applicationRequest: CreateApplicationDto,
+    identifier: string,
+    env: string,
+    createdBy: string
+  ): Application {
+    const ssrEnabledGitApplicationRequest = this.createSSRApplicationRequest(propertyIdentifier, applicationRequest, identifier, env, createdBy);
+    ssrEnabledGitApplicationRequest.isGit = true;
+    ssrEnabledGitApplicationRequest.repoUrl = applicationRequest.repoUrl;
+    ssrEnabledGitApplicationRequest.gitRef = applicationRequest.gitRef;
+    ssrEnabledGitApplicationRequest.contextDir = applicationRequest.contextDir;
+    ssrEnabledGitApplicationRequest.buildArgs = applicationRequest.buildArgs;
+    ssrEnabledGitApplicationRequest.commitId = applicationRequest.commitId || 'NA';
+    ssrEnabledGitApplicationRequest.mergeId = applicationRequest.mergeId || 'NA';
+    return ssrEnabledGitApplicationRequest;
+  }
+
+  // @internal Create the Deployment Request to the Operator for the SSR deployment
   createSSROperatorRequest(
     applicationRequest: CreateApplicationDto,
     propertyIdentifier: string,
     identifier: string,
     env: string,
-    namespace: string,
-    applicationDetails: Application
+    applicationDetails: Application,
+    namespace?: string
   ): SSRDeploymentRequest {
     const ssrRequest = new SSRDeploymentRequest();
     ssrRequest.imageUrl = applicationDetails.imageUrl;
@@ -295,6 +333,26 @@ export class ApplicationFactory {
     ssrRequest.healthCheckPath = applicationDetails.healthCheckPath;
     ssrRequest.port = applicationDetails.port || 3000;
     return ssrRequest;
+  }
+
+  // @internal Create the Deployment Request to the Operator for the SSR-Git deployment
+  createSSREnabledGitOperatorRequest(
+    applicationRequest: CreateApplicationDto,
+    propertyIdentifier: string,
+    identifier: string,
+    env: string,
+    namespace: string,
+    applicationDetails: Application
+  ): SSREnabledGitDeploymentRequest {
+    const deploymentDetails = this.createSSROperatorRequest(applicationRequest, propertyIdentifier, identifier, env, applicationDetails);
+    const ssrEnabledGitDeploymentRequest = new SSREnabledGitDeploymentRequest();
+    ssrEnabledGitDeploymentRequest.namespace = namespace;
+    ssrEnabledGitDeploymentRequest.deploymentDetails = deploymentDetails;
+    ssrEnabledGitDeploymentRequest.repoUrl = applicationRequest.repoUrl;
+    ssrEnabledGitDeploymentRequest.gitRef = applicationRequest.gitRef;
+    ssrEnabledGitDeploymentRequest.contextDir = applicationRequest.contextDir;
+    ssrEnabledGitDeploymentRequest.buildArgs = applicationRequest.buildArgs;
+    return ssrEnabledGitDeploymentRequest;
   }
 
   // @internal Increment the version of a specific application
@@ -337,6 +395,18 @@ export class ApplicationFactory {
     return false;
   }
 
+  // @internal It'll check that the repository exists or not
+  async validateGitProps(gitRequestDTO: GitRequestDTO) {
+    const gitUrl = `${gitRequestDTO.repoUrl}/tree/${gitRequestDTO.gitRef}/${gitRequestDTO.contextDir}`;
+    try {
+      const response = await this.httpService.axiosRef.head(gitUrl);
+      if (response.status === 200) return true;
+    } catch (error) {
+      this.logger.error('GitSource', error);
+    }
+    return false;
+  }
+
   private getSSRAccessUrl(application: Application, baseUrl: string): string {
     const protocol = 'https';
     const { hostname } = new URL(baseUrl);
@@ -368,5 +438,38 @@ export class ApplicationFactory {
         /* Removing multiple consecutive `-`s */
         .replace(ApplicationFactory.consecutiveChar, '-')
     );
+  }
+
+  // @internal extract Port from the DockerFile
+  // @internal TODO : GitLab Support to be Added
+  async extractDockerProps(gitRequestDTO: GitRequestDTO) {
+    const gitUrl = `${gitRequestDTO.repoUrl}/tree/${gitRequestDTO.gitRef}/${gitRequestDTO.contextDir}/Dockerfile`;
+    const githubRegex = /^https?:\/\/github\.com\/(.+?)\/(.+?)\/(blob|tree)\/(.+?)\/(.+)$/i;
+    const match = gitUrl.match(githubRegex);
+    const [, user, repo, , branch, contextDir] = match;
+    const rawDockerFile = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${contextDir}`;
+    const gitResponse = new GitValidateResponse();
+    let response;
+    let port;
+    try {
+      response = await this.httpService.axiosRef.get(rawDockerFile);
+    } catch (err) {
+      this.logger.error('SSROperatorDeployment', err);
+      gitResponse.warning = 'No DockerFile found in this Repository';
+      return gitResponse;
+    }
+    const regex = /^EXPOSE\s+([\d\s]+)$/im;
+    const checkDocker = response.data.match(regex);
+    if (checkDocker) {
+      const ports = checkDocker[1].trim().split(/\s+/);
+      port = ports.map((tmp) => parseInt(tmp, 10));
+      port = port.filter((tmp) => tmp !== 8443);
+      if (port.length === 0) {
+        gitResponse.warning = 'No Port found in this DockerFile';
+        return gitResponse;
+      }
+    }
+    [gitResponse.port] = port;
+    return gitResponse;
   }
 }

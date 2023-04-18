@@ -31,6 +31,20 @@ export class Application {
 
   port: number;
 
+  isGit: boolean;
+
+  gitRef: string;
+
+  repoUrl: string;
+
+  contextDir: string;
+
+  buildArgs: object;
+
+  commitId: string;
+
+  mergeId: string;
+
   createdBy: string;
 
   updatedBy: string;
