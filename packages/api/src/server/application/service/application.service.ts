@@ -10,9 +10,10 @@ import { AgendaService } from 'src/server/agenda/agenda.service';
 import { Action } from 'src/server/analytics/activity-stream.entity';
 import { AnalyticsService } from 'src/server/analytics/service/analytics.service';
 import { Application } from 'src/server/application/application.entity';
+import { Cluster } from 'src/server/environment/environment.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { Source } from 'src/server/property/property.entity';
-import { ApplicationConfigDTO, ApplicationResponse, CreateApplicationDto, GitRequestDTO, SSRDeploymentRequest } from '../application.dto';
+import { ApplicationConfigDTO, ApplicationResponse, CreateApplicationDto, GitDeploymentRequestDTO, SSRDeploymentRequest } from '../application.dto';
 import { ApplicationFactory } from './application.factory';
 
 @Injectable()
@@ -364,6 +365,8 @@ export class ApplicationService {
   async saveGitApplication(applicationRequest: CreateApplicationDto, propertyIdentifier: string, env: string): Promise<Application> {
     const identifier = this.applicationFactory.getSSRIdentifier(applicationRequest.name);
     const { property } = await this.getDeploymentConnection(propertyIdentifier, env);
+    applicationRequest.repoUrl = this.applicationFactory.getRepoUrl(applicationRequest.repoUrl);
+    applicationRequest.contextDir = this.applicationFactory.getPath(applicationRequest.contextDir);
     applicationRequest.path = this.applicationFactory.getPath(applicationRequest.path);
     if (applicationRequest?.healthCheckPath) applicationRequest.healthCheckPath = this.applicationFactory.getPath(applicationRequest.healthCheckPath);
     let applicationDetails = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isSSR: true, isGit: true }))[0];
@@ -379,7 +382,6 @@ export class ApplicationService {
       applicationDetails = await this.dataServices.application.create(saveApplication);
     } else {
       applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
-      applicationDetails.name = applicationRequest.name;
       applicationDetails.path = applicationRequest.path;
       applicationDetails.version = this.applicationFactory.incrementVersion(applicationDetails.version);
       applicationDetails.healthCheckPath = applicationRequest.healthCheckPath || applicationDetails.healthCheckPath;
@@ -419,6 +421,44 @@ export class ApplicationService {
     return applicationDetails;
   }
 
+  /* @internal
+   * Validate the Git Repository
+   * Process and Select the Environment for Deployment
+   * Create the Payload and Start the Deployment
+   */
+  async processGitRequest(gitRequestDTO: GitDeploymentRequestDTO) {
+    gitRequestDTO.repoUrl = this.applicationFactory.getRepoUrl(gitRequestDTO.repoUrl);
+    gitRequestDTO.contextDir = this.applicationFactory.getPath(gitRequestDTO.contextDir);
+    const checkGitRegistry = await this.dataServices.application.getByAny({ repoUrl: gitRequestDTO.repoUrl, contextDir: gitRequestDTO.contextDir });
+    if (!checkGitRegistry.length)
+      this.exceptionService.badRequestException({
+        message: `${gitRequestDTO.contextDir} is not registered for ${gitRequestDTO.repoUrl}. Please register your repository from the SPAship Manager.`
+      });
+    const { propertyIdentifier } = checkGitRegistry[0];
+    let envsResponse = await this.dataServices.environment.getByAny({ propertyIdentifier, env: gitRequestDTO.envs });
+    envsResponse = envsResponse.filter((i) => i.cluster !== Cluster.PROD);
+    this.logger.log('RegisteredEnvs', JSON.stringify(envsResponse));
+    if (!envsResponse.length) {
+      envsResponse = await this.dataServices.environment.getByAny({ propertyIdentifier });
+      envsResponse = envsResponse.filter((i) => i.cluster !== Cluster.PROD);
+      // @internal By Default deploy in Dev (Pre-prod) Environment if no cluster mentioned
+      envsResponse = [envsResponse.find((i) => i.env === 'dev')];
+      this.logger.log('DefaultEnv', JSON.stringify(envsResponse));
+    }
+    if (!envsResponse.length) this.exceptionService.badRequestException({ message: `No Preferred environment found for the deployment` });
+    try {
+      for (const tmp of envsResponse) {
+        const applicationRequest = this.applicationFactory.generateGitApplicationRequest(checkGitRegistry, tmp);
+        await this.saveGitApplication(applicationRequest, tmp.propertyIdentifier, tmp.env);
+      }
+    } catch (e) {
+      this.logger.warn('Deployment', e);
+    }
+    // @internal TODO: Message to be changed
+    return { message: 'Deployment Completed for the requested registered envs.' };
+  }
+
+  // @internal it will check that registered property and env
   async validatePropertyAndEnvironment(propertyIdentifier: string, env: string) {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     if (!environment)
@@ -437,12 +477,28 @@ export class ApplicationService {
   }
 
   // @internal it will validate the git repository
-  async validateGitProps(gitRequestDTO: GitRequestDTO) {
-    const gitProps = await this.applicationFactory.validateGitProps(gitRequestDTO);
+  async validateGitProps(repoUrl: string, gitRef: string, contextDir: string) {
+    const gitProps = await this.applicationFactory.validateGitProps(repoUrl, gitRef, contextDir);
     if (!gitProps)
       this.exceptionService.badRequestException({
-        message: `${gitRequestDTO.repoUrl} doesn't exists.`
+        message: `${repoUrl} doesn't exists.`
       });
-    return this.applicationFactory.extractDockerProps(gitRequestDTO);
+  }
+
+  // @internal it will validate if the url and context directory is registered for any other property
+  async validateExistingGitDeployment(repoUrl: string, contextDir: string, propertyIdentifier: string, identifier: string) {
+    repoUrl = this.applicationFactory.getRepoUrl(repoUrl);
+    contextDir = this.applicationFactory.getPath(contextDir);
+    const checkGitRegistry = await this.dataServices.application.getByAny({ repoUrl, contextDir });
+    const existingApplications = checkGitRegistry.filter((i) => i.propertyIdentifier !== propertyIdentifier || i.identifier !== identifier);
+    if (existingApplications.length) {
+      const listApplications = [];
+      existingApplications.forEach((tmp) => {
+        listApplications.push(`${tmp.identifier} ${tmp.env} on ${tmp.propertyIdentifier}`);
+      });
+      this.exceptionService.badRequestException({
+        message: `${repoUrl}${contextDir} is already registered for ${listApplications}`
+      });
+    }
   }
 }
