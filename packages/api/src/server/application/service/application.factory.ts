@@ -30,7 +30,7 @@ export class ApplicationFactory {
     private readonly logger: LoggerService,
     private readonly httpService: HttpService,
     private readonly exceptionService: ExceptionsService
-  ) {}
+  ) { }
 
   private static readonly hexadecimalCode: RegExp = /%[0-9a-zA-Z]{2}/g;
 
@@ -168,9 +168,8 @@ export class ApplicationFactory {
       const { hostname } = new URL(baseUrl);
       const appPrefix = hostname.split('.')[4];
       const domain = hostname.split('.').slice(1).join('.');
-      generatedAccessURL = `${protocol}://${appPrefix}.spaship--${application.propertyIdentifier}.${application.propertyIdentifier}.${
-        application.env
-      }.${domain}${this.getGeneratedPath(application.path)}`;
+      generatedAccessURL = `${protocol}://${appPrefix}.spaship--${application.propertyIdentifier}.${application.propertyIdentifier}.${application.env
+        }.${domain}${this.getGeneratedPath(application.path)}`;
     }
     return generatedAccessURL;
   }
@@ -402,7 +401,7 @@ export class ApplicationFactory {
 
   // @internal It'll check that the repository exists or not
   async validateGitProps(repoUrl: string, gitRef: string, contextDir: string) {
-    const gitUrl = `${repoUrl}/tree/${gitRef}/${contextDir}`;
+    const gitUrl = this.generateGitUrl(repoUrl, gitRef, contextDir);
     try {
       const response = await this.httpService.axiosRef.head(gitUrl);
       if (response.status === 200) return true;
@@ -410,6 +409,16 @@ export class ApplicationFactory {
       this.logger.error('GitSource', error);
     }
     return false;
+  }
+
+  // @internal It'll generate the url for github and gitlab
+  private generateGitUrl(repoUrl: string, gitRef: string, contextDir: string) {
+    let gitUrl;
+    repoUrl = this.getRepoUrl(repoUrl);
+    contextDir = this.getPath(contextDir);
+    if (repoUrl.startsWith('https://github.com')) gitUrl = `${repoUrl}/tree/${gitRef}${contextDir}`;
+    if (repoUrl.startsWith('https://gitlab')) gitUrl = `${repoUrl}/-/tree/${gitRef}${contextDir}`;
+    return gitUrl;
   }
 
   private getSSRAccessUrl(application: Application, baseUrl: string): string {
@@ -463,18 +472,20 @@ export class ApplicationFactory {
   }
 
   // @internal extract Port from the DockerFile
-  // @internal TODO : GitLab Support to be Added
   async extractDockerProps(gitRequestDTO: GitValidationRequestDTO) {
-    const gitUrl = `${gitRequestDTO.repoUrl}/tree/${gitRequestDTO.gitRef}/${gitRequestDTO.contextDir}/Dockerfile`;
-    const githubRegex = /^https?:\/\/github\.com\/(.+?)\/(.+?)\/(blob|tree)\/(.+?)\/(.+)$/i;
-    const match = gitUrl.match(githubRegex);
-    const [, user, repo, , branch, contextDir] = match;
-    const rawDockerFile = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${contextDir}`;
+    const gitUrl = this.generateGitUrl(gitRequestDTO.repoUrl, gitRequestDTO.gitRef, gitRequestDTO.contextDir);
+    let rawDockerFile;
+    if (gitRequestDTO.repoUrl.startsWith('https://github.com')) {
+      rawDockerFile = gitUrl.replace('/tree/', '/raw/');
+    } else if (gitRequestDTO.repoUrl.startsWith('https://gitlab')) {
+      rawDockerFile = gitUrl.replace('/tree/', '/raw/');
+    }
+    this.logger.log('DockerFileUrl', rawDockerFile);
     const gitResponse = new GitValidateResponse();
     let response;
     let port;
     try {
-      response = await this.httpService.axiosRef.get(rawDockerFile);
+      response = await this.httpService.axiosRef.get(`${rawDockerFile}/Dockerfile`);
     } catch (err) {
       this.logger.error('SSROperatorDeployment', err);
       gitResponse.warning = 'No DockerFile found in this Repository';
