@@ -30,7 +30,7 @@ export class ApplicationFactory {
     private readonly logger: LoggerService,
     private readonly httpService: HttpService,
     private readonly exceptionService: ExceptionsService
-  ) { }
+  ) {}
 
   private static readonly hexadecimalCode: RegExp = /%[0-9a-zA-Z]{2}/g;
 
@@ -168,8 +168,9 @@ export class ApplicationFactory {
       const { hostname } = new URL(baseUrl);
       const appPrefix = hostname.split('.')[4];
       const domain = hostname.split('.').slice(1).join('.');
-      generatedAccessURL = `${protocol}://${appPrefix}.spaship--${application.propertyIdentifier}.${application.propertyIdentifier}.${application.env
-        }.${domain}${this.getGeneratedPath(application.path)}`;
+      generatedAccessURL = `${protocol}://${appPrefix}.spaship--${application.propertyIdentifier}.${application.propertyIdentifier}.${
+        application.env
+      }.${domain}${this.getGeneratedPath(application.path)}`;
     }
     return generatedAccessURL;
   }
@@ -402,11 +403,23 @@ export class ApplicationFactory {
   // @internal It'll check that the repository exists or not
   async validateGitProps(repoUrl: string, gitRef: string, contextDir: string) {
     const gitUrl = this.generateGitUrl(repoUrl, gitRef, contextDir);
-    try {
-      const response = await this.httpService.axiosRef.head(gitUrl);
-      if (response.status === 200) return true;
-    } catch (error) {
-      this.logger.error('GitSource', error);
+    if (gitUrl.startsWith('https://gitlab')) {
+      try {
+        const response = await this.httpService.axiosRef.get(gitUrl);
+        // @internal for the valid repository Gitlab sends the list of valid urls
+        const regex = /\bhttps?:\/\/[^\s,"}]+\b/g;
+        const gitlabSource = response.data.match(regex).includes(gitUrl.replace(/\/$/, ''));
+        if (gitlabSource && response.status === 200) return true;
+      } catch (error) {
+        this.logger.error('GitlabSource', error);
+      }
+    } else {
+      try {
+        const githubSource = await this.httpService.axiosRef.head(gitUrl);
+        if (githubSource.status === 200) return true;
+      } catch (error) {
+        this.logger.error('GithubSource', error);
+      }
     }
     return false;
   }
@@ -474,18 +487,13 @@ export class ApplicationFactory {
   // @internal extract Port from the DockerFile
   async extractDockerProps(gitRequestDTO: GitValidationRequestDTO) {
     const gitUrl = this.generateGitUrl(gitRequestDTO.repoUrl, gitRequestDTO.gitRef, gitRequestDTO.contextDir);
-    let rawDockerFile;
-    if (gitRequestDTO.repoUrl.startsWith('https://github.com')) {
-      rawDockerFile = gitUrl.replace('/tree/', '/raw/');
-    } else if (gitRequestDTO.repoUrl.startsWith('https://gitlab')) {
-      rawDockerFile = gitUrl.replace('/tree/', '/raw/');
-    }
+    const rawDockerFile = `${gitUrl.replace('/tree/', '/raw/')}/Dockerfile`;
     this.logger.log('DockerFileUrl', rawDockerFile);
     const gitResponse = new GitValidateResponse();
     let response;
     let port;
     try {
-      response = await this.httpService.axiosRef.get(`${rawDockerFile}/Dockerfile`);
+      response = await this.httpService.axiosRef.get(`${rawDockerFile}`);
     } catch (err) {
       this.logger.error('SSROperatorDeployment', err);
       gitResponse.warning = 'No DockerFile found in this Repository';
