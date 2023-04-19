@@ -192,7 +192,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     } catch (error) {
       if (error instanceof AxiosError && error.response && error.response.status === 403) {
         toast.error("You don't have access to perform this action");
-        handlePopUpOpen('createApiKey');
+        handlePopUpClose('createApiKey');
       } else {
         toast.error('Failed to create API Key');
       }
@@ -210,6 +210,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     } catch (error) {
       if (error instanceof AxiosError && error.response && error.response.status === 403) {
         toast.error("You don't have access to perform this action");
+        handlePopUpClose('deleteApiKey');
       } else {
         toast.error('Failed to delete API Key');
       }
