@@ -233,6 +233,7 @@ export class ApplicationFactory {
 
   // @internal generate the repository url
   getRepoUrl(repoUrl: string): string {
+    // @internal it will replace the heading & trailing slash frm the repoUrl
     return repoUrl.replace(/^\/+/g, '').replace(/\/+$/, '');
   }
 
@@ -406,9 +407,10 @@ export class ApplicationFactory {
     if (gitUrl.startsWith('https://gitlab')) {
       try {
         const response = await this.httpService.axiosRef.get(gitUrl);
-        // @internal for the valid repository Gitlab sends the list of valid urls
-        const regex = /\bhttps?:\/\/[^\s,"}]+\b/g;
-        const gitlabSource = response.data.match(regex).includes(gitUrl.replace(/\/$/, ''));
+        // @internal It'll extract the urls from the gitlab gitResponse & remove the trailing slashes
+        // TODO : To be improvised further
+        const getUrls = /\bhttps?:\/\/[^\s,"}]+\b/g;
+        const gitlabSource = response.data.match(getUrls).includes(gitUrl.replace(/\/$/, ''));
         if (gitlabSource && response.status === 200) return true;
       } catch (error) {
         this.logger.error('GitlabSource', error);
@@ -467,8 +469,8 @@ export class ApplicationFactory {
     );
   }
 
-  // @internal generate ApplicationRequest from the Git payload
-  generateGitApplicationRequest(checkGitRegistry: Application[], tmp: Environment): CreateApplicationDto {
+  // @internal Generate ApplicationRequest from the GitRequest
+  generateApplicationRequestFromGit(checkGitRegistry: Application[], tmp: Environment): CreateApplicationDto {
     const applicationRequest = new CreateApplicationDto();
     const existingDeployment = checkGitRegistry.find((i) => i.env === tmp.env);
     applicationRequest.name = existingDeployment?.name || checkGitRegistry[0].name;

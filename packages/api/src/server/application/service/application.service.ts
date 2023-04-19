@@ -29,7 +29,7 @@ export class ApplicationService {
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService,
     private readonly agendaService: AgendaService
-  ) { }
+  ) {}
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.application.getAll();
@@ -422,7 +422,6 @@ export class ApplicationService {
   }
 
   /* @internal
-   * Validate the Git Repository
    * Process and Select the Environment for Deployment
    * Create the Payload and Start the Deployment
    */
@@ -448,7 +447,7 @@ export class ApplicationService {
     if (!envsResponse.length) this.exceptionService.badRequestException({ message: `No Preferred environment found for the deployment` });
     try {
       for (const tmp of envsResponse) {
-        const applicationRequest = this.applicationFactory.generateGitApplicationRequest(checkGitRegistry, tmp);
+        const applicationRequest = this.applicationFactory.generateApplicationRequestFromGit(checkGitRegistry, tmp);
         await this.saveGitApplication(applicationRequest, tmp.propertyIdentifier, tmp.env);
       }
     } catch (e) {
