@@ -10,8 +10,8 @@ import {
   ApplicationConfigDTO,
   ApplicationResponse,
   CreateApplicationDto,
-  GitRequestDTO,
   GitValidateResponse,
+  GitValidationRequestDTO,
   SSRDeploymentRequest,
   SSRDeploymentResponse,
   SSREnabledGitDeploymentRequest
@@ -21,6 +21,7 @@ import { AuthFactory } from 'src/server/auth/auth.factory';
 import { Cluster, Environment } from 'src/server/environment/environment.entity';
 import { EventTimeTrace } from 'src/server/event/event-time-trace.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
+import { Source } from 'src/server/property/property.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { zip } from 'zip-a-folder';
 
@@ -150,7 +151,9 @@ export class ApplicationFactory {
     applicationResponse.path = application.path;
     applicationResponse.env = application.env;
     applicationResponse.ref = this.getRef(application.nextRef);
-    applicationResponse.accessUrl = application.isSSR ? this.getSSRAccessUrl(application, baseUrl) : this.getAccessUrl(application, baseUrl);
+    applicationResponse.accessUrl = application.isSSR
+      ? this.getContainerizedAccessUrl(application, baseUrl)
+      : this.getAccessUrl(application, baseUrl);
     if (applicationExists)
       applicationResponse.warning = `SPA(s) - ${applicationExists} already exist(s) on the context path ${applicationResponse.path}. Overriding existing deployment.`;
     return applicationResponse;
@@ -229,6 +232,12 @@ export class ApplicationFactory {
   getPath(requestPath: string): string {
     const appPath = requestPath.replace(/^\/+/g, '').replace(/\/+$/, '');
     return `/${appPath}`;
+  }
+
+  // @internal generate the repository url
+  getRepoUrl(repoUrl: string): string {
+    // @internal it will replace the heading & trailing slash frm the repoUrl
+    return repoUrl.replace(/^\/+/g, '').replace(/\/+$/, '');
   }
 
   // @internal Start the SSR deployment to the operator
@@ -396,18 +405,42 @@ export class ApplicationFactory {
   }
 
   // @internal It'll check that the repository exists or not
-  async validateGitProps(gitRequestDTO: GitRequestDTO) {
-    const gitUrl = `${gitRequestDTO.repoUrl}/tree/${gitRequestDTO.gitRef}/${gitRequestDTO.contextDir}`;
-    try {
-      const response = await this.httpService.axiosRef.head(gitUrl);
-      if (response.status === 200) return true;
-    } catch (error) {
-      this.logger.error('GitSource', error);
+  async validateGitProps(repoUrl: string, gitRef: string, contextDir: string) {
+    const gitUrl = this.generateGitUrl(repoUrl, gitRef, contextDir);
+    if (gitUrl.startsWith(Source.GITLAB)) {
+      try {
+        const response = await this.httpService.axiosRef.get(gitUrl);
+        // @internal It'll validate & extract the urls from the gitlab gitResponse
+        // TODO : To be improvised further
+        const validUrlPattern = /\bhttps?:\/\/[^\s,"}]+\b/g;
+        const removeTrailingSlashPattern = /\/$/;
+        const gitlabSource = response.data.match(validUrlPattern).includes(gitUrl.replace(removeTrailingSlashPattern, ''));
+        if (gitlabSource && response.status === 200) return true;
+      } catch (error) {
+        this.logger.error('GitlabSource', error);
+      }
+    } else {
+      try {
+        const githubSource = await this.httpService.axiosRef.head(gitUrl);
+        if (githubSource.status === 200) return true;
+      } catch (error) {
+        this.logger.error('GithubSource', error);
+      }
     }
     return false;
   }
 
-  private getSSRAccessUrl(application: Application, baseUrl: string): string {
+  // @internal It'll generate the url for github and gitlab
+  private generateGitUrl(repoUrl: string, gitRef: string, contextDir: string) {
+    let gitUrl;
+    repoUrl = this.getRepoUrl(repoUrl);
+    contextDir = this.getPath(contextDir);
+    if (repoUrl.startsWith(Source.GITHUB)) gitUrl = `${repoUrl}/tree/${gitRef}${contextDir}`;
+    if (repoUrl.startsWith(Source.GITLAB)) gitUrl = `${repoUrl}/-/tree/${gitRef}${contextDir}`;
+    return gitUrl;
+  }
+
+  private getContainerizedAccessUrl(application: Application, baseUrl: string): string {
     const protocol = 'https';
     const { hostname } = new URL(baseUrl);
     const domain = hostname.split('.').slice(1).join('.');
@@ -440,19 +473,33 @@ export class ApplicationFactory {
     );
   }
 
+  // @internal Generate ApplicationRequest from the GitRequest
+  generateApplicationRequestFromGit(checkGitRegistry: Application[], tmp: Environment): CreateApplicationDto {
+    const applicationRequest = new CreateApplicationDto();
+    const existingDeployment = checkGitRegistry.find((i) => i.env === tmp.env);
+    applicationRequest.name = existingDeployment?.name || checkGitRegistry[0].name;
+    applicationRequest.path = existingDeployment?.path || checkGitRegistry[0].path;
+    applicationRequest.ref = existingDeployment?.ref || checkGitRegistry[0].ref;
+    applicationRequest.repoUrl = existingDeployment?.repoUrl || checkGitRegistry[0].repoUrl;
+    applicationRequest.gitRef = existingDeployment?.gitRef || checkGitRegistry[0].gitRef;
+    applicationRequest.contextDir = existingDeployment?.contextDir || checkGitRegistry[0].contextDir;
+    applicationRequest.commitId = existingDeployment?.commitId || checkGitRegistry[0].commitId;
+    applicationRequest.mergeId = existingDeployment?.mergeId || checkGitRegistry[0].mergeId;
+    applicationRequest.createdBy = existingDeployment?.createdBy || checkGitRegistry[0].createdBy;
+    this.logger.log('ApplicationRequest', JSON.stringify(applicationRequest));
+    return applicationRequest;
+  }
+
   // @internal extract Port from the DockerFile
-  // @internal TODO : GitLab Support to be Added
-  async extractDockerProps(gitRequestDTO: GitRequestDTO) {
-    const gitUrl = `${gitRequestDTO.repoUrl}/tree/${gitRequestDTO.gitRef}/${gitRequestDTO.contextDir}/Dockerfile`;
-    const githubRegex = /^https?:\/\/github\.com\/(.+?)\/(.+?)\/(blob|tree)\/(.+?)\/(.+)$/i;
-    const match = gitUrl.match(githubRegex);
-    const [, user, repo, , branch, contextDir] = match;
-    const rawDockerFile = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${contextDir}`;
+  async extractDockerProps(gitRequestDTO: GitValidationRequestDTO) {
+    const gitUrl = this.generateGitUrl(gitRequestDTO.repoUrl, gitRequestDTO.gitRef, gitRequestDTO.contextDir);
+    const rawDockerFile = `${gitUrl.replace('/tree/', '/raw/')}/Dockerfile`;
+    this.logger.log('DockerFileUrl', rawDockerFile);
     const gitResponse = new GitValidateResponse();
     let response;
     let port;
     try {
-      response = await this.httpService.axiosRef.get(rawDockerFile);
+      response = await this.httpService.axiosRef.get(`${rawDockerFile}`);
     } catch (err) {
       this.logger.error('SSROperatorDeployment', err);
       gitResponse.warning = 'No DockerFile found in this Repository';

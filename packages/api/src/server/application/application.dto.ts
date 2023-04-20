@@ -181,7 +181,7 @@ export class ApplicationConfigDTO {
   createdBy: string;
 }
 
-export class GitRequestDTO {
+export class GitValidationRequestDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -195,6 +195,27 @@ export class GitRequestDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  contextDir: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  propertyIdentifier: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  identifier: string;
+}
+
+export class GitDeploymentRequestDTO extends GitValidationRequestDTO {
+  @ApiProperty()
+  @IsOptional()
+  envs: string[];
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   @IsOptional()
   commitId: string;
 
@@ -202,11 +223,6 @@ export class GitRequestDTO {
   @IsString()
   @IsOptional()
   mergeId: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  contextDir: string;
 }
 
 export class GitValidateResponse {
