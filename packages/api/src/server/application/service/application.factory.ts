@@ -150,7 +150,7 @@ export class ApplicationFactory {
     applicationResponse.path = application.path;
     applicationResponse.env = application.env;
     applicationResponse.ref = this.getRef(application.nextRef);
-    applicationResponse.accessUrl = application.isSSR ? this.getSSRAccessUrl(application, baseUrl) : this.getAccessUrl(application, baseUrl);
+    applicationResponse.accessUrl = application.isSSR ? this.getContainerizedAccessUrl(application, baseUrl) : this.getAccessUrl(application, baseUrl);
     if (applicationExists)
       applicationResponse.warning = `SPA(s) - ${applicationExists} already exist(s) on the context path ${applicationResponse.path}. Overriding existing deployment.`;
     return applicationResponse;
@@ -436,7 +436,7 @@ export class ApplicationFactory {
     return gitUrl;
   }
 
-  private getSSRAccessUrl(application: Application, baseUrl: string): string {
+  private getContainerizedAccessUrl(application: Application, baseUrl: string): string {
     const protocol = 'https';
     const { hostname } = new URL(baseUrl);
     const domain = hostname.split('.').slice(1).join('.');
