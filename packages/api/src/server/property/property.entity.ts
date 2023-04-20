@@ -23,5 +23,7 @@ export enum Source {
   GIT = 'GIT',
   MANAGER = 'MANAGER',
   CLI = 'CLI',
-  OPERATOR = 'OPERATOR'
+  OPERATOR = 'OPERATOR',
+  GITLAB = 'https://gitlab',
+  GITHUB = 'https://github.com'
 }

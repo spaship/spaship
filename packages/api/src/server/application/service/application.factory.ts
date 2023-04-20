@@ -21,6 +21,7 @@ import { AuthFactory } from 'src/server/auth/auth.factory';
 import { Cluster, Environment } from 'src/server/environment/environment.entity';
 import { EventTimeTrace } from 'src/server/event/event-time-trace.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
+import { Source } from 'src/server/property/property.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { zip } from 'zip-a-folder';
 
@@ -150,7 +151,9 @@ export class ApplicationFactory {
     applicationResponse.path = application.path;
     applicationResponse.env = application.env;
     applicationResponse.ref = this.getRef(application.nextRef);
-    applicationResponse.accessUrl = application.isSSR ? this.getContainerizedAccessUrl(application, baseUrl) : this.getAccessUrl(application, baseUrl);
+    applicationResponse.accessUrl = application.isSSR
+      ? this.getContainerizedAccessUrl(application, baseUrl)
+      : this.getAccessUrl(application, baseUrl);
     if (applicationExists)
       applicationResponse.warning = `SPA(s) - ${applicationExists} already exist(s) on the context path ${applicationResponse.path}. Overriding existing deployment.`;
     return applicationResponse;
@@ -404,13 +407,14 @@ export class ApplicationFactory {
   // @internal It'll check that the repository exists or not
   async validateGitProps(repoUrl: string, gitRef: string, contextDir: string) {
     const gitUrl = this.generateGitUrl(repoUrl, gitRef, contextDir);
-    if (gitUrl.startsWith('https://gitlab')) {
+    if (gitUrl.startsWith(Source.GITLAB)) {
       try {
         const response = await this.httpService.axiosRef.get(gitUrl);
-        // @internal It'll extract the urls from the gitlab gitResponse & remove the trailing slashes
+        // @internal It'll validate & extract the urls from the gitlab gitResponse
         // TODO : To be improvised further
-        const getUrls = /\bhttps?:\/\/[^\s,"}]+\b/g;
-        const gitlabSource = response.data.match(getUrls).includes(gitUrl.replace(/\/$/, ''));
+        const validUrlPattern = /\bhttps?:\/\/[^\s,"}]+\b/g;
+        const removeTrailingSlashPattern = /\/$/;
+        const gitlabSource = response.data.match(validUrlPattern).includes(gitUrl.replace(removeTrailingSlashPattern, ''));
         if (gitlabSource && response.status === 200) return true;
       } catch (error) {
         this.logger.error('GitlabSource', error);
@@ -431,8 +435,8 @@ export class ApplicationFactory {
     let gitUrl;
     repoUrl = this.getRepoUrl(repoUrl);
     contextDir = this.getPath(contextDir);
-    if (repoUrl.startsWith('https://github.com')) gitUrl = `${repoUrl}/tree/${gitRef}${contextDir}`;
-    if (repoUrl.startsWith('https://gitlab')) gitUrl = `${repoUrl}/-/tree/${gitRef}${contextDir}`;
+    if (repoUrl.startsWith(Source.GITHUB)) gitUrl = `${repoUrl}/tree/${gitRef}${contextDir}`;
+    if (repoUrl.startsWith(Source.GITLAB)) gitUrl = `${repoUrl}/-/tree/${gitRef}${contextDir}`;
     return gitUrl;
   }
 
