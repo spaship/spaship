@@ -6,7 +6,7 @@ export const EPHEMERAL_ENV = {
   expiresIn: process.env.SPASHIP_EPH__TTL || 3600
 };
 
-export const SSR_DETAILS = {
+export const CONTAINERIZED_DEPLOYMENT_DETAILS = {
   port: 3000
 };
 

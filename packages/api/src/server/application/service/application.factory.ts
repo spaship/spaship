@@ -4,7 +4,7 @@ import { AxiosResponse } from 'axios';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
-import { EPHEMERAL_ENV, SSR_DETAILS } from 'src/configuration';
+import { EPHEMERAL_ENV, CONTAINERIZED_DEPLOYMENT_DETAILS } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import {
   ApplicationConfigDTO,
@@ -12,9 +12,9 @@ import {
   CreateApplicationDto,
   GitValidateResponse,
   GitValidationRequestDTO,
-  SSRDeploymentRequest,
-  SSRDeploymentResponse,
-  SSREnabledGitDeploymentRequest
+  ContainerizedDeploymentRequest,
+  ContainerizedDeploymentResponse,
+  ContainerizedGitDeploymentRequest
 } from 'src/server/application/application.dto';
 import { Application } from 'src/server/application/application.entity';
 import { AuthFactory } from 'src/server/auth/auth.factory';
@@ -132,7 +132,7 @@ export class ApplicationFactory {
     saveApplication.propertyIdentifier = propertyIdentifier;
     saveApplication.ref = 'NA';
     saveApplication.accessUrl = 'NA';
-    saveApplication.isSSR = false;
+    saveApplication.isContainerized = false;
     saveApplication.isGit = false;
     saveApplication.createdBy = createdBy;
     saveApplication.updatedBy = createdBy;
@@ -151,7 +151,7 @@ export class ApplicationFactory {
     applicationResponse.path = application.path;
     applicationResponse.env = application.env;
     applicationResponse.ref = this.getRef(application.nextRef);
-    applicationResponse.accessUrl = application.isSSR
+    applicationResponse.accessUrl = application.isContainerized
       ? this.getContainerizedAccessUrl(application, baseUrl)
       : this.getAccessUrl(application, baseUrl);
     if (applicationExists)
@@ -203,7 +203,7 @@ export class ApplicationFactory {
     return ephEnvironment;
   }
 
-  // @internal generate the application identifier
+  // @internal Generate the application identifier
   getIdentifier(identifier): string {
     return (
       encodeURIComponent(identifier)
@@ -221,147 +221,165 @@ export class ApplicationFactory {
     );
   }
 
-  // @internal max length in openshfit to deploy
+  // @internal Max length in openshfit to deploy
   trimWebsiteVersion(version): string {
     const maxLength = 60;
     if (version.length > maxLength) return version.substr(0, maxLength);
     return version;
   }
 
-  // @internal generate the application identifier
+  // @internal Generate the application identifier
   getPath(requestPath: string): string {
     const appPath = requestPath.replace(/^\/+/g, '').replace(/\/+$/, '');
     return `/${appPath}`;
   }
 
-  // @internal generate the repository url
+  // @internal Generate the repository url
   getRepoUrl(repoUrl: string): string {
     // @internal it will replace the heading & trailing slash frm the repoUrl
     return repoUrl.replace(/^\/+/g, '').replace(/\/+$/, '');
   }
 
-  // @internal Start the SSR deployment to the operator
-  async ssrDeploymentRequest(request?: SSRDeploymentRequest, deploymentBaseURL?: string): Promise<SSRDeploymentResponse> {
+  // @internal Start the Containerized deployment to the operator
+  async containerizedDeploymentRequest(
+    request?: ContainerizedDeploymentRequest,
+    deploymentBaseURL?: string
+  ): Promise<ContainerizedDeploymentResponse> {
     const headers = { Authorization: await AuthFactory.getAccessToken() };
-    const ssrResponse = new SSRDeploymentResponse();
+    const containerizedDeploymentResponse = new ContainerizedDeploymentResponse();
     try {
       await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/deployment/v1/create`, request, {
         maxBodyLength: Infinity,
         headers
       });
     } catch (err) {
-      this.logger.error('SSROperatorDeployment', err);
+      this.logger.error('ContainerizedDeploymentForOperator', err);
     }
-    return ssrResponse;
+    return containerizedDeploymentResponse;
   }
 
-  // @internal Start the SSR Enabled Git deployment to the operator
+  // @internal Start the Containerized Git deployment to the operator
   // @internal TODO : To be changed after the operator integration
-  async ssrEnabledGitDeploymentRequest(request?: SSREnabledGitDeploymentRequest, deploymentBaseURL?: string): Promise<SSRDeploymentResponse> {
+  async containerizedEnabledGitDeploymentRequest(
+    request?: ContainerizedGitDeploymentRequest,
+    deploymentBaseURL?: string
+  ): Promise<ContainerizedDeploymentResponse> {
     const headers = { Authorization: await AuthFactory.getAccessToken() };
-    const ssrResponse = new SSRDeploymentResponse();
+    const response = new ContainerizedDeploymentResponse();
     try {
       await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/deployment/v1/create`, request, {
         maxBodyLength: Infinity,
         headers
       });
     } catch (err) {
-      this.logger.error('SSROperatorDeployment', err);
+      this.logger.error('ContainerizedDeploymentForOperator', err);
     }
-    return ssrResponse;
+    return response;
   }
 
-  // @internal Update the configuration for a SSR enabled application
-  async ssrConfigUpdate(request?: SSRDeploymentRequest, deploymentBaseURL?: string) {
+  // @internal Update the configuration for a Containerized application
+  async containerizedConfigUpdate(request?: ContainerizedDeploymentRequest, deploymentBaseURL?: string) {
     const headers = { Authorization: await AuthFactory.getAccessToken() };
-    this.logger.log('SSROperatorConfigRequest', JSON.stringify(request));
+    this.logger.log('ContainerizedContainerizedConfigRequest', JSON.stringify(request));
     try {
       const response = await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/deployment/v1/config`, request, {
         maxBodyLength: Infinity,
         headers
       });
-      this.logger.log('SSROperatorConfigResponse', JSON.stringify(response.data));
+      this.logger.log('ContainerizedDeploymentConfigResponse', JSON.stringify(response.data));
     } catch (err) {
-      this.logger.error('SSROperatorConfig', err);
+      this.logger.error('ContainerizedDeploymentConfig', err);
     }
   }
 
-  // @internal Create the Application request for the SSR enabled deployment
-  createSSRApplicationRequest(
+  // @internal Create the Application request for the Containerized deployment
+  createContainerizedApplicationRequest(
     propertyIdentifier: string,
     applicationRequest: CreateApplicationDto,
     identifier: string,
     env: string,
     createdBy: string
   ): Application {
-    const ssrApplicationRequest = this.createApplicationRequest(propertyIdentifier, applicationRequest, identifier, env, createdBy);
-    ssrApplicationRequest.isSSR = true;
-    ssrApplicationRequest.imageUrl = applicationRequest.imageUrl;
-    ssrApplicationRequest.healthCheckPath = applicationRequest.healthCheckPath || applicationRequest.path;
-    ssrApplicationRequest.config = applicationRequest.config;
-    ssrApplicationRequest.port = applicationRequest.port || SSR_DETAILS.port;
-    return ssrApplicationRequest;
+    const containerizedApplicationRequest = this.createApplicationRequest(propertyIdentifier, applicationRequest, identifier, env, createdBy);
+    containerizedApplicationRequest.isContainerized = true;
+    containerizedApplicationRequest.imageUrl = applicationRequest.imageUrl;
+    containerizedApplicationRequest.healthCheckPath = applicationRequest.healthCheckPath || applicationRequest.path;
+    containerizedApplicationRequest.config = applicationRequest.config;
+    containerizedApplicationRequest.port = applicationRequest.port || CONTAINERIZED_DEPLOYMENT_DETAILS.port;
+    return containerizedApplicationRequest;
   }
 
-  // @internal Create the Application request for the SSR enabled  Git deployment
-  createSSREnabledGitApplicationRequest(
+  // @internal Create the Application request for the Containerized  Git deployment
+  createContainerizedGitApplicationRequest(
     propertyIdentifier: string,
     applicationRequest: CreateApplicationDto,
     identifier: string,
     env: string,
     createdBy: string
   ): Application {
-    const ssrEnabledGitApplicationRequest = this.createSSRApplicationRequest(propertyIdentifier, applicationRequest, identifier, env, createdBy);
-    ssrEnabledGitApplicationRequest.isGit = true;
-    ssrEnabledGitApplicationRequest.repoUrl = applicationRequest.repoUrl;
-    ssrEnabledGitApplicationRequest.gitRef = applicationRequest.gitRef;
-    ssrEnabledGitApplicationRequest.contextDir = applicationRequest.contextDir;
-    ssrEnabledGitApplicationRequest.buildArgs = applicationRequest.buildArgs;
-    ssrEnabledGitApplicationRequest.commitId = applicationRequest.commitId || 'NA';
-    ssrEnabledGitApplicationRequest.mergeId = applicationRequest.mergeId || 'NA';
-    return ssrEnabledGitApplicationRequest;
+    const containerizedEnabledGitApplicationRequest = this.createContainerizedApplicationRequest(
+      propertyIdentifier,
+      applicationRequest,
+      identifier,
+      env,
+      createdBy
+    );
+    containerizedEnabledGitApplicationRequest.isGit = true;
+    containerizedEnabledGitApplicationRequest.repoUrl = applicationRequest.repoUrl;
+    containerizedEnabledGitApplicationRequest.gitRef = applicationRequest.gitRef;
+    containerizedEnabledGitApplicationRequest.contextDir = applicationRequest.contextDir;
+    containerizedEnabledGitApplicationRequest.buildArgs = applicationRequest.buildArgs;
+    containerizedEnabledGitApplicationRequest.commitId = applicationRequest.commitId || 'NA';
+    containerizedEnabledGitApplicationRequest.mergeId = applicationRequest.mergeId || 'NA';
+    return containerizedEnabledGitApplicationRequest;
   }
 
-  // @internal Create the Deployment Request to the Operator for the SSR deployment
-  createSSROperatorRequest(
+  // @internal Create the Deployment Request to the Operator for the Containerized deployment
+  createContainerizedDeploymentRequestForOperator(
     applicationRequest: CreateApplicationDto,
     propertyIdentifier: string,
     identifier: string,
     env: string,
     applicationDetails: Application,
     namespace?: string
-  ): SSRDeploymentRequest {
-    const ssrRequest = new SSRDeploymentRequest();
-    ssrRequest.imageUrl = applicationDetails.imageUrl;
-    ssrRequest.app = identifier;
-    ssrRequest.contextPath = applicationDetails.path;
-    ssrRequest.website = propertyIdentifier;
-    ssrRequest.nameSpace = namespace;
-    ssrRequest.environment = env;
-    ssrRequest.configMap = applicationDetails.config;
-    ssrRequest.healthCheckPath = applicationDetails.healthCheckPath;
-    ssrRequest.port = applicationDetails.port || 3000;
-    return ssrRequest;
+  ): ContainerizedDeploymentRequest {
+    const containerizedRequest = new ContainerizedDeploymentRequest();
+    containerizedRequest.imageUrl = applicationDetails.imageUrl;
+    containerizedRequest.app = identifier;
+    containerizedRequest.contextPath = applicationDetails.path;
+    containerizedRequest.website = propertyIdentifier;
+    containerizedRequest.nameSpace = namespace;
+    containerizedRequest.environment = env;
+    containerizedRequest.configMap = applicationDetails.config;
+    containerizedRequest.healthCheckPath = applicationDetails.healthCheckPath;
+    containerizedRequest.port = applicationDetails.port || 3000;
+    return containerizedRequest;
   }
 
-  // @internal Create the Deployment Request to the Operator for the SSR-Git deployment
-  createSSREnabledGitOperatorRequest(
+  // @internal Create the Deployment Request to the Operator for the isContainerized-Git deployment
+  createContainerizedGitOperatorRequest(
     applicationRequest: CreateApplicationDto,
     propertyIdentifier: string,
     identifier: string,
     env: string,
     namespace: string,
     applicationDetails: Application
-  ): SSREnabledGitDeploymentRequest {
-    const deploymentDetails = this.createSSROperatorRequest(applicationRequest, propertyIdentifier, identifier, env, applicationDetails);
-    const ssrEnabledGitDeploymentRequest = new SSREnabledGitDeploymentRequest();
-    ssrEnabledGitDeploymentRequest.namespace = namespace;
-    ssrEnabledGitDeploymentRequest.deploymentDetails = deploymentDetails;
-    ssrEnabledGitDeploymentRequest.repoUrl = applicationRequest.repoUrl;
-    ssrEnabledGitDeploymentRequest.gitRef = applicationRequest.gitRef;
-    ssrEnabledGitDeploymentRequest.contextDir = applicationRequest.contextDir;
-    ssrEnabledGitDeploymentRequest.buildArgs = applicationRequest.buildArgs;
-    return ssrEnabledGitDeploymentRequest;
+  ): ContainerizedGitDeploymentRequest {
+    const deploymentDetails = this.createContainerizedDeploymentRequestForOperator(
+      applicationRequest,
+      propertyIdentifier,
+      identifier,
+      env,
+      applicationDetails
+    );
+    const containerizedEnabledGitDeploymentRequest = new ContainerizedGitDeploymentRequest();
+    containerizedEnabledGitDeploymentRequest.namespace = namespace;
+    containerizedEnabledGitDeploymentRequest.deploymentDetails = deploymentDetails;
+    containerizedEnabledGitDeploymentRequest.repoUrl = applicationRequest.repoUrl;
+    containerizedEnabledGitDeploymentRequest.gitRef = applicationRequest.gitRef;
+    containerizedEnabledGitDeploymentRequest.contextDir = applicationRequest.contextDir;
+    containerizedEnabledGitDeploymentRequest.buildArgs = applicationRequest.buildArgs;
+    return containerizedEnabledGitDeploymentRequest;
   }
 
   // @internal Increment the version of a specific application
@@ -369,21 +387,21 @@ export class ApplicationFactory {
     return version ? version + 1 : 1;
   }
 
-  // @internal It'll create the object request for SSR configuration
-  createSSROperatorConfigRequest(configRequest: ApplicationConfigDTO, namespace: string): SSRDeploymentRequest {
-    const ssrRequest = new SSRDeploymentRequest();
-    ssrRequest.app = configRequest.identifier;
-    ssrRequest.website = configRequest.propertyIdentifier;
-    ssrRequest.nameSpace = namespace;
-    ssrRequest.environment = configRequest.env;
-    ssrRequest.configMap = configRequest.config;
-    return ssrRequest;
+  // @internal It'll create the object request for Containerized Deployment configuration
+  createContainerizedOperatorConfigRequest(configRequest: ApplicationConfigDTO, namespace: string): ContainerizedDeploymentRequest {
+    const containerizedRequest = new ContainerizedDeploymentRequest();
+    containerizedRequest.app = configRequest.identifier;
+    containerizedRequest.website = configRequest.propertyIdentifier;
+    containerizedRequest.nameSpace = namespace;
+    containerizedRequest.environment = configRequest.env;
+    containerizedRequest.configMap = configRequest.config;
+    return containerizedRequest;
   }
 
   // @internal Process the Deployment time for the analytics
   processDeploymentTime(application: Application, consumedTime: string): EventTimeTrace {
     const eventTimeTrace = new EventTimeTrace();
-    eventTimeTrace.traceId = 'SSR';
+    eventTimeTrace.traceId = 'Containerized';
     eventTimeTrace.propertyIdentifier = application.propertyIdentifier;
     eventTimeTrace.env = application.env;
     eventTimeTrace.applicationIdentifier = application.identifier;
@@ -455,8 +473,8 @@ export class ApplicationFactory {
     return existingApplications;
   }
 
-  // @internal generate the SSR application identifier for
-  getSSRIdentifier(identifier): string {
+  // @internal generate the Containerized application identifier for
+  getContainerizedApplicationIdentifier(identifier): string {
     return (
       encodeURIComponent(identifier)
         .toLowerCase()
@@ -501,7 +519,7 @@ export class ApplicationFactory {
     try {
       response = await this.httpService.axiosRef.get(`${rawDockerFile}`);
     } catch (err) {
-      this.logger.error('SSROperatorDeployment', err);
+      this.logger.error('ContainerizedOperatorDeployment', err);
       gitResponse.warning = 'No DockerFile found in this Repository';
       return gitResponse;
     }

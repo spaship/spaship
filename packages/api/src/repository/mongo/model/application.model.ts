@@ -34,7 +34,7 @@ export class Application {
   isActive: boolean;
 
   @Prop({})
-  isSSR: boolean;
+  isContainerized: boolean;
 
   @Prop({})
   imageUrl: string;

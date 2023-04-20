@@ -46,7 +46,7 @@ export class EventService implements OnApplicationBootstrap {
             propertyIdentifier: event.propertyIdentifier,
             env: event.env,
             identifier: event.applicationIdentifier,
-            isSSR: false
+            isContainerized: false
           };
           const latestApplication = (await tmpDataService.application.getByAny(searchApplication))[0];
           if (!latestApplication?.accessUrl) return;
