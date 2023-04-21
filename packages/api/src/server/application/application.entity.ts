@@ -19,7 +19,7 @@ export class Application {
 
   isActive: boolean;
 
-  isSSR: boolean;
+  isContainerized: boolean;
 
   imageUrl: string;
 

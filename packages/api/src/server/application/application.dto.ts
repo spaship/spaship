@@ -119,7 +119,7 @@ export class ApplicationResponse {
   warning: string;
 }
 
-export class SSRDeploymentRequest {
+export class ContainerizedDeploymentRequest {
   nameSpace: string;
 
   environment: string;
@@ -139,12 +139,12 @@ export class SSRDeploymentRequest {
   port: number;
 }
 
-export class SSRDeploymentResponse {
+export class ContainerizedDeploymentResponse {
   accessUrl: string;
 }
 
-export class SSREnabledGitDeploymentRequest {
-  deploymentDetails: SSRDeploymentRequest;
+export class ContainerizedGitDeploymentRequest {
+  deploymentDetails: ContainerizedDeploymentRequest;
 
   namespace: string;
 

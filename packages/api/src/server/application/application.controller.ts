@@ -24,11 +24,12 @@ export class ApplicationController {
     @Param('identifier') identifier: any,
     @Query('applicationIdentifier') applicationIdentifier: string,
     @Query('env') env: string,
-    @Query('isSSR') isSSR: boolean,
+    // @internal TODO : isSSR to be changed for the Query and need to change in the SPAship manager too
+    @Query('isSSR') isContainerized: boolean,
     @Query('skip') skip: number,
     @Query('limit') limit: number
   ) {
-    return this.applicationService.getApplicationsByProperty(identifier, applicationIdentifier, env, isSSR, skip, limit);
+    return this.applicationService.getApplicationsByProperty(identifier, applicationIdentifier, env, isContainerized, skip, limit);
   }
 
   @Post('/deploy/:propertyIdentifier/:env')
@@ -45,11 +46,11 @@ export class ApplicationController {
   async createApplication(@UploadedFile() file, @Body() applicationDto: CreateApplicationDto, @Param() params, @Query() queries): Promise<any> {
     if (!this.applicationFactory.getIdentifier(applicationDto.name))
       this.exceptionService.badRequestException({ message: 'Please provide a valid name.' });
-    // @internal `imageUrl` refers to the SSR Enabled Deployment
+    // @internal `imageUrl` refers to the Containerized Deployment
     if (applicationDto.imageUrl) {
       await this.applicationService.validateImageRegistry(applicationDto.imageUrl);
       await this.applicationService.validatePropertyAndEnvironment(params.propertyIdentifier, params.env);
-      return this.applicationService.saveSSRApplication(applicationDto, params.propertyIdentifier, params.env);
+      return this.applicationService.saveContainerizedApplication(applicationDto, params.propertyIdentifier, params.env);
     }
     // @internal `repoUrl` refers to the Git Enabled Deployment
     if (applicationDto.repoUrl) {
@@ -59,7 +60,7 @@ export class ApplicationController {
         applicationDto.repoUrl,
         applicationDto.contextDir,
         params.propertyIdentifier,
-        this.applicationFactory.getSSRIdentifier(applicationDto.name)
+        this.applicationFactory.getContainerizedApplicationIdentifier(applicationDto.name)
       );
       return this.applicationService.saveGitApplication(applicationDto, params.propertyIdentifier, params.env);
     }
