@@ -22,6 +22,8 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
    * Token Format : Bearer {JWT} / Bearer {APIKey}
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // @internal TODO : To be removed after the auth implementation in the Puzzle Application
+    if (context.getArgs()[0].url.startsWith(AUTH_LISTING.gitDeploymentBaseURL)) return true;
     let bearerToken: string;
     try {
       /* eslint-disable prefer-destructuring */
