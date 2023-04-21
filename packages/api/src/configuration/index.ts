@@ -35,7 +35,8 @@ export const DATA_BASE_CONFIGURATION = {
 export const AUTH_LISTING = {
   deploymentBaseURL: '/api/v1/applications/deploy',
   eventsBaseURL: '/api/v1/analytics/events',
-  propertyBaseURL: '/api/v1/property'
+  propertyBaseURL: '/api/v1/property',
+  gitDeploymentBaseURL: '/api/v1/applications/git/deploy'
 };
 
 const ROVER_AUTH_DETAILS = {
