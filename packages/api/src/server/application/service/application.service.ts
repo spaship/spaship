@@ -46,10 +46,11 @@ export class ApplicationService {
     identifier: string,
     env: string,
     isContainerized: boolean,
+    isGit: boolean,
     skip: number = ApplicationService.defaultSkip,
     limit: number = ApplicationService.defaultLimit
   ): Promise<Application[]> {
-    let keys = { propertyIdentifier, identifier, isContainerized };
+    let keys = { propertyIdentifier, identifier, isContainerized, isGit };
     if (env) keys = { ...keys, ...{ env: { $in: env.split(',') } } };
     Object.keys(keys).forEach((key) => keys[key] === undefined && delete keys[key]);
     return this.dataServices.application.getByOptions(keys, { identifier: 1, updatedAt: -1 }, skip, limit);
@@ -466,7 +467,7 @@ export class ApplicationService {
     if (!envsResponse.length) this.exceptionService.badRequestException({ message: `No Preferred environment found for the deployment` });
     try {
       for (const tmp of envsResponse) {
-        const applicationRequest = this.applicationFactory.generateApplicationRequestFromGit(checkGitRegistry, tmp);
+        const applicationRequest = this.applicationFactory.generateApplicationRequestFromGit(checkGitRegistry, tmp, gitRequestDTO);
         await this.saveGitApplication(applicationRequest, tmp.propertyIdentifier, tmp.env);
       }
     } catch (e) {
@@ -496,6 +497,11 @@ export class ApplicationService {
 
   // @internal it will validate the git repository
   async validateGitProps(repoUrl: string, gitRef: string, contextDir: string) {
+    if (!repoUrl.startsWith(Source.GITHUB) && !repoUrl.startsWith(Source.GITLAB))
+      this.exceptionService.badRequestException({
+        message: `Currently we only support Github & Gitlab repositories. Please provide a valid url.`
+      });
+
     const gitProps = await this.applicationFactory.validateGitProps(repoUrl, gitRef, contextDir);
     if (!gitProps)
       this.exceptionService.badRequestException({
