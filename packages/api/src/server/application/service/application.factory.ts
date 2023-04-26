@@ -14,7 +14,8 @@ import {
   GitValidationRequestDTO,
   ContainerizedDeploymentRequest,
   ContainerizedDeploymentResponse,
-  ContainerizedGitDeploymentRequest
+  ContainerizedGitDeploymentRequest,
+  GitDeploymentRequestDTO
 } from 'src/server/application/application.dto';
 import { Application } from 'src/server/application/application.entity';
 import { AuthFactory } from 'src/server/auth/auth.factory';
@@ -492,7 +493,7 @@ export class ApplicationFactory {
   }
 
   // @internal Generate ApplicationRequest from the GitRequest
-  generateApplicationRequestFromGit(checkGitRegistry: Application[], tmp: Environment): CreateApplicationDto {
+  generateApplicationRequestFromGit(checkGitRegistry: Application[], tmp: Environment, gitRequestDTO: GitDeploymentRequestDTO): CreateApplicationDto {
     const applicationRequest = new CreateApplicationDto();
     const existingDeployment = checkGitRegistry.find((i) => i.env === tmp.env);
     applicationRequest.name = existingDeployment?.name || checkGitRegistry[0].name;
@@ -501,8 +502,8 @@ export class ApplicationFactory {
     applicationRequest.repoUrl = existingDeployment?.repoUrl || checkGitRegistry[0].repoUrl;
     applicationRequest.gitRef = existingDeployment?.gitRef || checkGitRegistry[0].gitRef;
     applicationRequest.contextDir = existingDeployment?.contextDir || checkGitRegistry[0].contextDir;
-    applicationRequest.commitId = existingDeployment?.commitId || checkGitRegistry[0].commitId;
-    applicationRequest.mergeId = existingDeployment?.mergeId || checkGitRegistry[0].mergeId;
+    applicationRequest.commitId = gitRequestDTO?.commitId || checkGitRegistry[0].commitId;
+    applicationRequest.mergeId = gitRequestDTO?.mergeId || checkGitRegistry[0].mergeId;
     applicationRequest.createdBy = existingDeployment?.createdBy || checkGitRegistry[0].createdBy;
     this.logger.log('ApplicationRequest', JSON.stringify(applicationRequest));
     return applicationRequest;
