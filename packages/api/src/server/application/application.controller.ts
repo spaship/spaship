@@ -24,12 +24,12 @@ export class ApplicationController {
     @Param('identifier') identifier: any,
     @Query('applicationIdentifier') applicationIdentifier: string,
     @Query('env') env: string,
-    // @internal TODO : isSSR to be changed for the Query and need to change in the SPAship manager too
-    @Query('isSSR') isContainerized: boolean,
+    @Query('isContainerized') isContainerized: boolean,
+    @Query('isGit') isGit: boolean,
     @Query('skip') skip: number,
     @Query('limit') limit: number
   ) {
-    return this.applicationService.getApplicationsByProperty(identifier, applicationIdentifier, env, isContainerized, skip, limit);
+    return this.applicationService.getApplicationsByProperty(identifier, applicationIdentifier, env, isContainerized, isGit, skip, limit);
   }
 
   @Post('/deploy/:propertyIdentifier/:env')
