@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { DEPLOYMENT_DETAILS } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { CreateEnvironmentDto } from 'src/server/environment/environment.dto';
 import { CreatePropertyDto } from 'src/server/property/property.dto';
@@ -12,7 +13,7 @@ export class PropertyFactory {
     const newProperty = new Property();
     newProperty.title = createPropertyDto.title || createPropertyDto.identifier;
     newProperty.identifier = createPropertyDto.identifier;
-    newProperty.namespace = `spaship--${createPropertyDto.identifier}`;
+    newProperty.namespace = `${DEPLOYMENT_DETAILS.namespace}--${createPropertyDto.identifier}`;
     newProperty.createdBy = createPropertyDto.createdBy;
     newProperty.updatedBy = createPropertyDto.createdBy;
     newProperty.deploymentRecord = [deploymentRecord];

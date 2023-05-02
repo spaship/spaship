@@ -4,7 +4,7 @@ import { AxiosResponse } from 'axios';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
-import { EPHEMERAL_ENV, CONTAINERIZED_DEPLOYMENT_DETAILS } from 'src/configuration';
+import { EPHEMERAL_ENV, CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import {
   ApplicationConfigDTO,
@@ -172,9 +172,9 @@ export class ApplicationFactory {
       const { hostname } = new URL(baseUrl);
       const appPrefix = hostname.split('.')[4];
       const domain = hostname.split('.').slice(1).join('.');
-      generatedAccessURL = `${protocol}://${appPrefix}.spaship--${application.propertyIdentifier}.${application.propertyIdentifier}.${
-        application.env
-      }.${domain}${this.getGeneratedPath(application.path)}`;
+      generatedAccessURL = `${protocol}://${appPrefix}.${DEPLOYMENT_DETAILS.namespace}--${application.propertyIdentifier}.${
+        application.propertyIdentifier
+      }.${application.env}.${domain}${this.getGeneratedPath(application.path)}`;
     }
     return generatedAccessURL;
   }

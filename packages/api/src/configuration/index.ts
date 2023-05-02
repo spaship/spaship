@@ -54,6 +54,10 @@ export const ROVER_AUTH = {
   baseUrl: process.env.SPASHIP_ROVER_BASE_URL
 };
 
+export const DEPLOYMENT_DETAILS = {
+  namespace: process.env.SPASHIP_NAMESPACE || 'spaship'
+};
+
 // @internal this is for validating the minimum length for the Specific requests
 export enum MIN {
   DEFAULT = 2,
