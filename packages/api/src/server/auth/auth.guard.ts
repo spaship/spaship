@@ -40,6 +40,7 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
       const url = context.getArgs()[0].url;
       if (url.startsWith(AUTH_LISTING.deploymentBaseURL)) return this.validateDeploymentRequest(propertyIdentifier, env, bearerToken, context);
       if (url.startsWith(AUTH_LISTING.eventsBaseURL)) return this.validateEventRequest(propertyIdentifier, bearerToken);
+      if (context.getArgs()[0].method === 'GET') return this.validateGetRequest(bearerToken);
     }
     const secret: string = this.getSecretKey();
     const options: Object = { secret, algorithms: ['RS256'] };
@@ -115,6 +116,20 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
       }
       this.exceptionsService.UnauthorizedException({ message: 'Invalid API Key.' });
     }
+    return false;
+  }
+
+  // @internal Request authentication for get api
+  private async validateGetRequest(bearerToken: string) {
+    const hashKey = this.getHashKeyForValidation(bearerToken);
+    const response = (await this.dataServices.apikey.getByAny({ hashKey }))[0];
+    if (response) {
+      const { expirationDate } = response;
+      if (expirationDate && expirationDate.getTime() <= new Date().getTime())
+        this.exceptionsService.badRequestException({ message: 'API Key is expired.' });
+      return true;
+    }
+    this.exceptionsService.UnauthorizedException({ message: 'Invalid API Key.' });
     return false;
   }
 
