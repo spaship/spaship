@@ -1,4 +1,3 @@
-# Use a specific version of Node.js to ensure reproducibility
 FROM node:18-alpine3.16
 
 # Create a new group and user with a specific UID for the application
@@ -9,11 +8,15 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci --only=production
+# Install both production and development dependencies TODO this was a workaround; get rid of devDependencies
+RUN npm ci
 
 COPY . .
 
 RUN npm run build
+
+# Remove development dependencies
+RUN npm prune --production
 
 # Change ownership of the application files to the new user
 RUN chown -R appuser:appgroup /app
