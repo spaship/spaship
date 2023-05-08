@@ -1,32 +1,16 @@
 FROM node:18-alpine3.16
 
-# Create a new group and user with a specific UID for the application
-RUN addgroup -g 1001 appgroup && adduser -S -u 1001 -G appgroup appuser
-
-
+RUN addgroup allusers && adduser -S -G allusers 1002590000
+RUN mkdir /.npm
 WORKDIR /app
-
-COPY package*.json ./
-
-# Install both production and development dependencies TODO this was a workaround; get rid of devDependencies
-RUN npm ci
-
 COPY . .
-
+RUN mkdir spaship_uploads && mkdir root
+RUN npm install
 RUN npm run build
-
-# Remove development dependencies
-RUN npm prune --production
-
-# Change ownership of the application files to the new user
-RUN chown -R appuser:appgroup /app
-
-# Create necessary directories and set ownership
-RUN mkdir spaship_uploads root && chown -R appuser:appgroup spaship_uploads root
-
-# Run the application as a non-root user
-USER appuser
-
+RUN chown -R 1002590000:allusers .
+RUN chown -R 1002590000:allusers ~/.npm
+RUN chown -R 1002590000:allusers /.npm
+RUN chmod -R 777 .
 EXPOSE 2345
-
+USER 1002590000
 CMD [ "npm", "run", "start:prod"]
