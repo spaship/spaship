@@ -1,5 +1,5 @@
 # Use a specific version of Node.js to ensure reproducibility
-FROM node:18.0.0-alpine3.16
+FROM node:18-alpine3.16
 
 # Create a new group and user with a specific UID for the application
 RUN addgroup -g 1001 appgroup && adduser -S -u 1001 -G appgroup appuser
