@@ -40,7 +40,7 @@ export class ApplicationService {
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService,
     private readonly agendaService: AgendaService
-  ) {}
+  ) { }
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.application.getAll();
@@ -643,8 +643,7 @@ export class ApplicationService {
     } catch (e) {
       this.logger.warn('Deployment', e);
     }
-    // @internal TODO: Message to be changed
-    return { message: 'Deployment Completed for the requested registered envs.' };
+    return { message: `Build & Deployment Process Started Successfully, please check SPAship Manager for more details.` };
   }
 
   // @internal It will check that registered property and env
