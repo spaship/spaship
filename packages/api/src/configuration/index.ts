@@ -116,6 +116,11 @@ export enum JOB {
   DELETE_EPH_ENV = 'DELETE_EPH_ENV'
 }
 
+export enum LOG {
+  DEPLOYMENT = 'DEPLOYMENT',
+  BUILD = 'BUILD'
+}
+
 export const GLOBAL_PREFIX = '/api/v1';
 
 function getImageUrlRegex() {
