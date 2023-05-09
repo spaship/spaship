@@ -102,7 +102,7 @@ export class EventService implements OnApplicationBootstrap {
           };
           const latestApplication = (await tmpDataService.application.getByAny(searchApplication))[0];
           if (!latestApplication?.accessUrl) return;
-          latestApplication.accessUrl = event.accessUrl;
+          latestApplication.accessUrl = event.path;
           latestApplication.ref = latestApplication.nextRef;
           await tmpDataService.application.updateOne(searchApplication, latestApplication);
         }
