@@ -9,7 +9,8 @@ export type TSpaProperty = {
   accessUrl: string;
   updatedAt: string;
   _id: number;
-  isSSR: boolean;
+  isContainerized: boolean;
+  isGit: boolean;
   healthCheckPath: string;
   config: {
     [key: string]: string;

@@ -12,6 +12,7 @@ import {
   OutlinedClockIcon,
   ThIcon
 } from '@patternfly/react-icons';
+import { Notification } from './Notification';
 
 type SNProps = {
   title: string;
@@ -34,55 +35,58 @@ export const SideBar = () => {
   return (
     <PageSidebar
       nav={
-        <Nav aria-label="Nav">
-          <NavList>
-            <Link href={pageLinks.webPropertyListPage}>
-              <a className="text-decoration-none">
-                <SidebarNavItem
-                  title="Web Properties"
-                  icon={<ThIcon size="sm" />}
-                  isActive={pathname === pageLinks.webPropertyListPage}
-                />
-              </a>
-            </Link>
-            <Link href="/dashboard">
-              <a className="text-decoration-none">
-                <SidebarNavItem
-                  title="Dashboard"
-                  icon={<ChartLineIcon size="sm" />}
-                  isActive={pathname === pageLinks.dashboardPage}
-                />
-              </a>
-            </Link>
-            <Link href="/documents">
-              <a className="text-decoration-none">
-                <SidebarNavItem
-                  title="Documents"
-                  icon={<FolderIcon size="sm" />}
-                  isActive={pathname === pageLinks.documentsPage}
-                />
-              </a>
-            </Link>
-            <Link href="/coming-soon">
-              <a className="text-decoration-none">
-                <SidebarNavItem
-                  title="Feedback"
-                  icon={<CommentAltIcon size="sm" />}
-                  isActive={pathname === '/feedback'}
-                />
-              </a>
-            </Link>
-            <Link href="/sla">
-              <a className="text-decoration-none">
-                <SidebarNavItem
-                  title="SLA"
-                  icon={<OutlinedClockIcon size="sm" />}
-                  isActive={pathname === pageLinks.slaPage}
-                />
-              </a>
-            </Link>
-          </NavList>
-        </Nav>
+        <>
+          <Nav aria-label="Nav">
+            <NavList>
+              <Link href={pageLinks.webPropertyListPage}>
+                <a className="text-decoration-none">
+                  <SidebarNavItem
+                    title="Web Properties"
+                    icon={<ThIcon size="sm" />}
+                    isActive={pathname === pageLinks.webPropertyListPage}
+                  />
+                </a>
+              </Link>
+              <Link href="/dashboard">
+                <a className="text-decoration-none">
+                  <SidebarNavItem
+                    title="Dashboard"
+                    icon={<ChartLineIcon size="sm" />}
+                    isActive={pathname === pageLinks.dashboardPage}
+                  />
+                </a>
+              </Link>
+              <Link href="/documents">
+                <a className="text-decoration-none">
+                  <SidebarNavItem
+                    title="Documents"
+                    icon={<FolderIcon size="sm" />}
+                    isActive={pathname === pageLinks.documentsPage}
+                  />
+                </a>
+              </Link>
+              <Link href="/coming-soon">
+                <a className="text-decoration-none">
+                  <SidebarNavItem
+                    title="Feedback"
+                    icon={<CommentAltIcon size="sm" />}
+                    isActive={pathname === '/feedback'}
+                  />
+                </a>
+              </Link>
+              <Link href="/sla">
+                <a className="text-decoration-none">
+                  <SidebarNavItem
+                    title="SLA"
+                    icon={<OutlinedClockIcon size="sm" />}
+                    isActive={pathname === pageLinks.slaPage}
+                  />
+                </a>
+              </Link>
+            </NavList>
+          </Nav>
+          <Notification />
+        </>
       }
     />
   );

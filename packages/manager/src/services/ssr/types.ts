@@ -5,7 +5,7 @@ export type TSSRProperty = {
   path: string;
   env: string;
   ref?: string;
-  imageUrl: string;
+  imageUrl?: string;
   healthCheckPath: string;
 };
 
@@ -26,7 +26,8 @@ export interface TSSRResponse {
     nextRef: string;
     accessUrl: string;
     isActive: boolean;
-    isSSR: boolean;
+    isContainerized: boolean;
+    isGit: boolean;
     imageUrl: string;
     config: Record<string, string>;
     healthCheckPath: string;
@@ -36,6 +37,26 @@ export interface TSSRResponse {
     _id: string;
     createdAt: string;
     updatedAt: string;
+    port: string;
     __v: number;
   };
 }
+
+export type TWorkflowResponse = TSSRResponse & {
+  gitRef: string;
+  type: string;
+  repoUrl: string;
+  contextDir: string;
+  buildArgs: Record<string, unknown>;
+};
+
+export type TSSRValidate = {
+  propertyIdentifier: string;
+  identifier: string;
+  repoUrl: string;
+  gitRef: string;
+  contextDir: string;
+};
+export type TSSRValidateResponse = {
+  port: string;
+};

@@ -472,7 +472,12 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
           </Select>
           <Flex alignItems={{ default: 'alignItemsCenter' }}>
             <FlexItem>
-              <Label isCompact variant="filled" icon={<InfoCircleIcon />} color="blue">
+              <Label
+                isCompact
+                variant="filled"
+                icon={<InfoCircleIcon style={{ color: '#6A6E73' }} />}
+                color="blue"
+              >
                 Please select all roles to make a user OWNER
               </Label>
             </FlexItem>
