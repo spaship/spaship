@@ -39,11 +39,13 @@ export class Application {
 
   contextDir: string;
 
-  buildArgs: object;
+  buildArgs: object[];
 
   commitId: string;
 
   mergeId: string;
+
+  buildName: string;
 
   createdBy: string;
 

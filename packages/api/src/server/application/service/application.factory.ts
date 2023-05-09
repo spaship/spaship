@@ -15,7 +15,10 @@ import {
   ContainerizedDeploymentRequest,
   ContainerizedDeploymentResponse,
   ContainerizedGitDeploymentRequest,
-  GitDeploymentRequestDTO
+  GitDeploymentRequestDTO,
+  GitApplicationStatusRequest,
+  ContainerizedGitDeploymentResponse,
+  GitApplicationStatusResponse
 } from 'src/server/application/application.dto';
 import { Application } from 'src/server/application/application.entity';
 import { AuthFactory } from 'src/server/auth/auth.factory';
@@ -238,7 +241,7 @@ export class ApplicationFactory {
   // @internal Generate the repository url
   getRepoUrl(repoUrl: string): string {
     // @internal it will replace the heading & trailing slash frm the repoUrl
-    return repoUrl.replace(/^\/+/g, '').replace(/\/+$/, '');
+    return repoUrl.replace(/^\/+/g, '').replace(/\/+$/, '').replace('.git', '');
   }
 
   // @internal Start the Containerized deployment to the operator
@@ -249,10 +252,11 @@ export class ApplicationFactory {
     const headers = { Authorization: await AuthFactory.getAccessToken() };
     const containerizedDeploymentResponse = new ContainerizedDeploymentResponse();
     try {
-      await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/deployment/v1/create`, request, {
+      const response = await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/deployment/v1/create`, request, {
         maxBodyLength: Infinity,
         headers
       });
+      containerizedDeploymentResponse.accessUrl = response.data.accessUrl;
     } catch (err) {
       this.logger.error('ContainerizedDeploymentForOperator', err);
     }
@@ -260,22 +264,83 @@ export class ApplicationFactory {
   }
 
   // @internal Start the Containerized Git deployment to the operator
-  // @internal TODO : To be changed after the operator integration
   async containerizedEnabledGitDeploymentRequest(
     request?: ContainerizedGitDeploymentRequest,
     deploymentBaseURL?: string
-  ): Promise<ContainerizedDeploymentResponse> {
+  ): Promise<ContainerizedGitDeploymentResponse> {
     const headers = { Authorization: await AuthFactory.getAccessToken() };
-    const response = new ContainerizedDeploymentResponse();
+    let response;
     try {
-      await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/deployment/v1/create`, request, {
+      response = await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/gf/v1/init`, request, {
         maxBodyLength: Infinity,
         headers
       });
     } catch (err) {
-      this.logger.error('ContainerizedDeploymentForOperator', err);
+      this.logger.error('containerizedEnabledGitDeploymentForOperator', err);
     }
-    return response;
+    return response?.data;
+  }
+
+  // @internal Get the Build Logs from the Operator
+  async buildLogRequest(logRequest: GitApplicationStatusRequest, deploymentBaseURL?: string): Promise<String> {
+    const headers = { Authorization: await AuthFactory.getAccessToken() };
+    let response;
+    try {
+      response = await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/gf/v1/build-log`, logRequest, {
+        maxBodyLength: Infinity,
+        headers
+      });
+    } catch (err) {
+      this.logger.error('buildLogRequestForOperator', err);
+      this.exceptionService.badRequestException({ message: `No Build log found for ${logRequest.objectName}.` });
+    }
+    return response.data;
+  }
+
+  // @internal Get the Deployment Logs from the Operator
+  async deploymentLogRequest(logRequest: GitApplicationStatusRequest, deploymentBaseURL?: string): Promise<String> {
+    const headers = { Authorization: await AuthFactory.getAccessToken() };
+    let response;
+    try {
+      response = await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/gf/v1/deployment-log`, logRequest, {
+        maxBodyLength: Infinity,
+        headers
+      });
+    } catch (err) {
+      this.logger.error('DeploymentLogRequestForOperator', err);
+      this.exceptionService.badRequestException({ message: `No Deployment log found for ${logRequest.objectName}.` });
+    }
+    return response?.data;
+  }
+
+  // @internal Get the Build Status from the Operator
+  async buildStatusRequest(logRequest: GitApplicationStatusRequest, deploymentBaseURL?: string): Promise<GitApplicationStatusResponse> {
+    const headers = { Authorization: await AuthFactory.getAccessToken() };
+    let response;
+    try {
+      response = await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/gf/v1/build-status`, logRequest, {
+        maxBodyLength: Infinity,
+        headers
+      });
+    } catch (err) {
+      this.logger.error('BuildLogRequestForOperator', err);
+    }
+    return response.data;
+  }
+
+  // @internal Get the Deployment Status from the Operator
+  async deploymentStatusRequest(logRequest: GitApplicationStatusRequest, deploymentBaseURL?: string): Promise<GitApplicationStatusResponse> {
+    const headers = { Authorization: await AuthFactory.getAccessToken() };
+    let response;
+    try {
+      response = await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/gf/v1/deployment-status`, logRequest, {
+        maxBodyLength: Infinity,
+        headers
+      });
+    } catch (err) {
+      this.logger.error('DeploymentLogRequestForOperator', err);
+    }
+    return response.data;
   }
 
   // @internal Update the configuration for a Containerized application
@@ -374,13 +439,20 @@ export class ApplicationFactory {
       applicationDetails
     );
     const containerizedEnabledGitDeploymentRequest = new ContainerizedGitDeploymentRequest();
-    containerizedEnabledGitDeploymentRequest.namespace = namespace;
+    containerizedEnabledGitDeploymentRequest.nameSpace = namespace;
     containerizedEnabledGitDeploymentRequest.deploymentDetails = deploymentDetails;
-    containerizedEnabledGitDeploymentRequest.repoUrl = applicationRequest.repoUrl;
+    containerizedEnabledGitDeploymentRequest.repoUrl = this.configureGitSuffix(applicationRequest.repoUrl);
     containerizedEnabledGitDeploymentRequest.gitRef = applicationRequest.gitRef;
     containerizedEnabledGitDeploymentRequest.contextDir = applicationRequest.contextDir;
     containerizedEnabledGitDeploymentRequest.buildArgs = applicationRequest.buildArgs;
+    containerizedEnabledGitDeploymentRequest.reDeployment = applicationRequest.reDeployment || false;
     return containerizedEnabledGitDeploymentRequest;
+  }
+
+  // @internal append .git to the repo url suffix
+  private configureGitSuffix(repoUrl: string): string {
+    if (!repoUrl.endsWith('.git')) return `${repoUrl}.git`;
+    return repoUrl;
   }
 
   // @internal Increment the version of a specific application
@@ -410,8 +482,17 @@ export class ApplicationFactory {
     return eventTimeTrace;
   }
 
+  // @internal Create the deployment / build log request
+  createLogRequest(propertyIdentifier: string, env: string, identifier: string, namespace: string, lines?: string): GitApplicationStatusRequest {
+    const logRequest = new GitApplicationStatusRequest();
+    logRequest.objectName = `${propertyIdentifier}-${identifier}-${env}`;
+    logRequest.ns = namespace;
+    logRequest.upto = lines || '100';
+    return logRequest;
+  }
+
   // @internal It'll check that image exists on the source or not
-  async validateImageSource(imageUrl: string) {
+  async validateImageSource(imageUrl: string): Promise<Boolean> {
     const hasProtocol = imageUrl.includes('https') || imageUrl.includes('http');
     if (!hasProtocol) imageUrl = `https://${imageUrl}`;
     try {
@@ -424,8 +505,8 @@ export class ApplicationFactory {
   }
 
   // @internal It'll check that the repository exists or not
-  async validateGitProps(repoUrl: string, gitRef: string, contextDir: string) {
-    const gitUrl = this.generateGitUrl(repoUrl, gitRef, contextDir);
+  async validateGitProps(repoUrl: string, gitRef: string, contextDir: string): Promise<Boolean> {
+    const gitUrl = this.generateRepoUrl(repoUrl, gitRef, contextDir);
     if (gitUrl.startsWith(Source.GITLAB)) {
       try {
         const response = await this.httpService.axiosRef.get(gitUrl);
@@ -450,7 +531,7 @@ export class ApplicationFactory {
   }
 
   // @internal It'll generate the url for github and gitlab
-  private generateGitUrl(repoUrl: string, gitRef: string, contextDir: string) {
+  private generateRepoUrl(repoUrl: string, gitRef: string, contextDir: string): string {
     let gitUrl;
     repoUrl = this.getRepoUrl(repoUrl);
     contextDir = this.getPath(contextDir);
@@ -510,8 +591,8 @@ export class ApplicationFactory {
   }
 
   // @internal extract Port from the DockerFile
-  async extractDockerProps(gitRequestDTO: GitValidationRequestDTO) {
-    const gitUrl = this.generateGitUrl(gitRequestDTO.repoUrl, gitRequestDTO.gitRef, gitRequestDTO.contextDir);
+  async extractDockerProps(gitRequestDTO: GitValidationRequestDTO): Promise<GitValidateResponse> {
+    const gitUrl = this.generateRepoUrl(gitRequestDTO.repoUrl, gitRequestDTO.gitRef, gitRequestDTO.contextDir);
     const rawDockerFile = `${gitUrl.replace('/tree/', '/raw/')}/Dockerfile`;
     this.logger.log('DockerFileUrl', rawDockerFile);
     const gitResponse = new GitValidateResponse();
@@ -530,12 +611,12 @@ export class ApplicationFactory {
       const ports = checkDocker[1].trim().split(/\s+/);
       port = ports.map((tmp) => parseInt(tmp, 10));
       port = port.filter((tmp) => tmp !== 8443);
-      if (port.length === 0) {
-        gitResponse.warning = 'No Port found in this DockerFile';
-        return gitResponse;
-      }
+      [gitResponse.port] = port;
     }
-    [gitResponse.port] = port;
+    if (!checkDocker || port?.length === 0) {
+      gitResponse.warning = 'No Port found in this DockerFile';
+      return gitResponse;
+    }
     return gitResponse;
   }
 }

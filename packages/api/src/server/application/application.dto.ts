@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsObject, IsOptional, IsString, Matches } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsObject, IsOptional, IsString, Matches } from 'class-validator';
 import { MESSAGE, VALIDATION } from 'src/configuration';
 
 export class CreateApplicationDto {
@@ -70,28 +70,37 @@ export class CreateApplicationDto {
 
   @ApiProperty()
   @IsOptional()
+  @IsString()
   repoUrl: string;
 
   @ApiProperty()
   @IsOptional()
+  @IsString()
   gitRef: string;
 
   @ApiProperty()
   @IsOptional()
+  @IsString()
   contextDir: string;
 
   @ApiProperty()
-  @IsObject()
   @IsOptional()
-  buildArgs: object;
+  buildArgs: object[];
 
   @ApiProperty()
   @IsOptional()
+  @IsString()
   commitId: string;
 
   @ApiProperty()
   @IsOptional()
+  @IsString()
   mergeId: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsBoolean()
+  reDeployment: boolean;
 
   createdBy: string;
 }
@@ -146,7 +155,7 @@ export class ContainerizedDeploymentResponse {
 export class ContainerizedGitDeploymentRequest {
   deploymentDetails: ContainerizedDeploymentRequest;
 
-  namespace: string;
+  nameSpace: string;
 
   gitRef: string;
 
@@ -155,6 +164,16 @@ export class ContainerizedGitDeploymentRequest {
   contextDir: string;
 
   buildArgs: object;
+
+  reDeployment: boolean;
+}
+
+export class ContainerizedGitDeploymentResponse {
+  constructedGitFlowMeta: ContainerizedGitDeploymentRequest;
+
+  buildName: string;
+
+  deploymentName: string;
 }
 
 export class ApplicationConfigDTO {
@@ -229,4 +248,18 @@ export class GitValidateResponse {
   port: string;
 
   warning: string;
+}
+
+export class GitApplicationStatusRequest {
+  objectName: string;
+
+  ns: string;
+
+  upto: string;
+}
+
+export class GitApplicationStatusResponse {
+  data: string;
+
+  status: string;
 }

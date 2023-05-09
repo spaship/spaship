@@ -63,14 +63,17 @@ export class Application {
   @Prop({})
   contextDir: string;
 
-  @Prop({ type: 'object' })
-  buildArgs: object;
+  @Prop({})
+  buildArgs: object[];
 
   @Prop({})
   commitId: string;
 
   @Prop({})
   mergeId: string;
+
+  @Prop({})
+  buildName: string;
 
   @Prop({ default: 'NA' })
   createdBy: string;

@@ -4,6 +4,7 @@ import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { Action } from 'src/server/analytics/activity-stream.entity';
 import { AnalyticsService } from 'src/server/analytics/service/analytics.service';
+import { Source } from 'src/server/property/property.entity';
 import { EventTimeTrace } from '../event-time-trace.entity';
 import { Event } from '../event.entity';
 
@@ -69,7 +70,7 @@ export class EventService implements OnApplicationBootstrap {
             event.applicationIdentifier,
             message,
             'EventStream',
-            'OPERATOR',
+            Source.OPERATOR,
             JSON.stringify({ accessUrl: event.accessUrl, path: event.path })
           );
         }
@@ -80,6 +81,30 @@ export class EventService implements OnApplicationBootstrap {
             event.env,
             event.applicationIdentifier
           );
+        }
+        if (event.action === Action.APPLICATION_DEPLOYMENT_STARTED) {
+          await tmpAnalyticsService.createActivityStream(
+            event.propertyIdentifier,
+            Action.APPLICATION_DEPLOYMENT_STARTED,
+            event.env,
+            event.applicationIdentifier,
+            `Deployment Started for ${event.applicationIdentifier} [Workflow 3.0]`,
+            'EventStream',
+            Source.OPERATOR,
+            JSON.stringify(event)
+          );
+          const searchApplication = {
+            propertyIdentifier: event.propertyIdentifier,
+            env: event.env,
+            identifier: event.applicationIdentifier,
+            isContainerized: true,
+            isGit: true
+          };
+          const latestApplication = (await tmpDataService.application.getByAny(searchApplication))[0];
+          if (!latestApplication?.accessUrl) return;
+          latestApplication.accessUrl = event.accessUrl;
+          latestApplication.ref = latestApplication.nextRef;
+          await tmpDataService.application.updateOne(searchApplication, latestApplication);
         }
       };
     });
@@ -112,9 +137,12 @@ function getUrl(accessUrl: string): string {
 
 // @internal Final acknowledgement for application deployment
 function getAction(state: string): string {
+  // @internal States for Static Deployment
   if (state === 'spa deployment ops performed') return Action.APPLICATION_DEPLOYED;
   if (state === 'spa deployment ops failed') return Action.APPLICATION_DEPLOYMENT_FAILED;
-  return Action.APPLICATION_DEPLOYMENT_STARTED;
+  // @internal State for Workflow 3.0 Deployment
+  if (state === 'DEPLOYMENT_STARTED') return Action.APPLICATION_DEPLOYMENT_STARTED;
+  return Action.APPLICATION_DEPLOYMENT_PROCESSING;
 }
 
 function processEvent(response: any): Event {
