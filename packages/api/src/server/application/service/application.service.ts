@@ -3,7 +3,7 @@ import * as decompress from 'decompress';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
-import { DIRECTORY_CONFIGURATION, EPHEMERAL_ENV, JOB, CONTAINERIZED_DEPLOYMENT_DETAILS } from 'src/configuration';
+import { CONTAINERIZED_DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, EPHEMERAL_ENV, JOB, LOG } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { AgendaService } from 'src/server/agenda/agenda.service';
@@ -16,9 +16,10 @@ import { Source } from 'src/server/property/property.entity';
 import {
   ApplicationConfigDTO,
   ApplicationResponse,
+  ContainerizedDeploymentRequest,
   CreateApplicationDto,
-  GitDeploymentRequestDTO,
-  ContainerizedDeploymentRequest
+  GitApplicationStatusRequest,
+  GitDeploymentRequestDTO
 } from '../application.dto';
 import { ApplicationFactory } from './application.factory';
 
@@ -27,6 +28,10 @@ export class ApplicationService {
   private static readonly defaultSkip: number = 0;
 
   private static readonly defaultLimit: number = 500;
+
+  private readonly period: number = 15000;
+
+  private readonly timeout: number = 600000;
 
   constructor(
     private readonly dataServices: IDataServices,
@@ -122,7 +127,6 @@ export class ApplicationService {
       ApplicationService.defaultLimit
     );
     const applicationExists = this.applicationFactory.getExistingApplicationsByPath(searchedApplicationsByPath, identifier);
-
     await this.analyticsService.createActivityStream(
       propertyIdentifier,
       Action.APPLICATION_DEPLOYMENT_STARTED,
@@ -211,7 +215,11 @@ export class ApplicationService {
    * Start the Containerized deployment in the operator
    * Send the acknowledgement to the user and wait for the final response
    */
-  async saveContainerizedApplication(applicationRequest: CreateApplicationDto, propertyIdentifier: string, env: string): Promise<any> {
+  async saveContainerizedApplication(
+    applicationRequest: CreateApplicationDto,
+    propertyIdentifier: string,
+    env: string
+  ): Promise<ApplicationResponse> {
     const identifier = this.applicationFactory.getContainerizedApplicationIdentifier(applicationRequest.name);
     const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
     applicationRequest.path = this.applicationFactory.getPath(applicationRequest.path);
@@ -343,7 +351,7 @@ export class ApplicationService {
    * Request the updated configuration to the operator
    * Update the application accordingly after the successful updating
    */
-  async saveConfig(configDTO: ApplicationConfigDTO) {
+  async saveConfig(configDTO: ApplicationConfigDTO): Promise<Application> {
     const search = {
       identifier: configDTO.identifier,
       propertyIdentifier: configDTO.propertyIdentifier,
@@ -382,7 +390,7 @@ export class ApplicationService {
    */
   async saveGitApplication(applicationRequest: CreateApplicationDto, propertyIdentifier: string, env: string): Promise<Application> {
     const identifier = this.applicationFactory.getContainerizedApplicationIdentifier(applicationRequest.name);
-    const { property } = await this.getDeploymentConnection(propertyIdentifier, env);
+    const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
     applicationRequest.repoUrl = this.applicationFactory.getRepoUrl(applicationRequest.repoUrl);
     applicationRequest.contextDir = this.applicationFactory.getPath(applicationRequest.contextDir);
     applicationRequest.path = this.applicationFactory.getPath(applicationRequest.path);
@@ -426,19 +434,181 @@ export class ApplicationService {
       applicationDetails
     );
     this.logger.log('ContainerizedGitOperatorRequest', JSON.stringify(containerizedGitOperatorRequest));
-    // @internal TODO : once it's ready in the Operator
-    // await this.applicationFactory.containerizedGitDeploymentRequest(containerizedGitOperatorRequest, deploymentConnection.baseurl);
-    await this.analyticsService.createActivityStream(
-      propertyIdentifier,
-      Action.APPLICATION_DEPLOYMENT_STARTED,
-      env,
-      identifier,
-      `Deployment started for ${applicationRequest.name} at ${env} [GIT-Contain Enabled]`,
-      applicationRequest.createdBy,
-      Source.GIT,
-      JSON.stringify(applicationRequest)
+    const response = await this.applicationFactory.containerizedEnabledGitDeploymentRequest(
+      containerizedGitOperatorRequest,
+      deploymentConnection.baseurl
     );
+    if (response) {
+      const statusRequest = this.applicationFactory.createLogRequest(propertyIdentifier, env, identifier, property.namespace);
+      await this.analyticsService.createActivityStream(
+        propertyIdentifier,
+        Action.APPLICATION_BUILD_STARTED,
+        env,
+        identifier,
+        `Build Started for ${applicationRequest.name} at ${env} [Workflow 3.0]`,
+        applicationRequest.createdBy,
+        Source.GIT,
+        JSON.stringify(response)
+      );
+      applicationDetails.buildName = response.buildName;
+      await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: true, isGit: true }, applicationDetails);
+      this.manageBuildAndDeployment(applicationDetails, statusRequest, applicationDetails.buildName, deploymentConnection.baseurl);
+    } else {
+      await this.analyticsService.createActivityStream(
+        propertyIdentifier,
+        Action.APPLICATION_DEPLOYMENT_FAILED,
+        env,
+        identifier,
+        `Deployment Failed ${applicationRequest.name} at ${env} [Workflow 3.0]`,
+        applicationRequest.createdBy,
+        Source.GIT,
+        JSON.stringify(applicationRequest)
+      );
+      this.exceptionService.internalServerErrorException({
+        message: `Application Deployment is Failed currently, please try after sometime.`
+      });
+    }
     return applicationDetails;
+  }
+
+  private async manageBuildAndDeployment(application: Application, statusRequest: GitApplicationStatusRequest, buildName: string, baseurl: string) {
+    await this.startBuildInterval(application, buildName, statusRequest, baseurl);
+  }
+
+  // @internal Check build periodically & update the status
+  async startBuildInterval(application: Application, buildName: string, statusRequest: GitApplicationStatusRequest, baseurl: string) {
+    let buildCheck = false;
+    const buildInterval = setInterval(async () => {
+      this.logger.log('BuildCheck', `Checking Build for ${buildName}`);
+      const buildStatus = await this.applicationFactory.buildStatusRequest({ ...statusRequest, objectName: buildName }, baseurl);
+      this.logger.log('BuildStatus', `${buildName} : ${buildStatus.data}}`);
+      if (buildStatus?.data === 'COMPLETED') {
+        this.logger.log('BuildStatus', `Build Successfully Completed for ${buildName}`);
+        buildCheck = true;
+        this.analyticsService.createActivityStream(
+          application.propertyIdentifier,
+          Action.APPLICATION_BUILD_FINISHED,
+          application.env,
+          application.identifier,
+          `Build (${buildName}) Successful for ${application.identifier} [Workflow 3.0]`,
+          application.createdBy,
+          Source.GIT,
+          JSON.stringify(statusRequest)
+        );
+        this.startDeploymentInterval(application, statusRequest, baseurl);
+        await clearInterval(buildInterval);
+      } else if (buildStatus?.data === 'FAILED') {
+        buildCheck = true;
+        this.logger.error('BuildStatus', `Build Failed for ${buildName}`);
+        this.analyticsService.createActivityStream(
+          application.propertyIdentifier,
+          Action.APPLICATION_BUILD_FAILED,
+          application.env,
+          application.identifier,
+          `Build (${buildName}) Failed for ${application.identifier} [Workflow 3.0]`,
+          application.createdBy,
+          Source.GIT,
+          JSON.stringify(statusRequest)
+        );
+        await clearInterval(buildInterval);
+      } else if (buildStatus?.data === 'CHECK_OS_CONSOLE') {
+        buildCheck = true;
+        this.logger.error('BuildStatus', `Build Terminated for ${buildName}`);
+        this.analyticsService.createActivityStream(
+          application.propertyIdentifier,
+          Action.APPLICATION_BUILD_TERMINATED,
+          application.env,
+          application.identifier,
+          `Build (${buildName}) Terminated for ${application.identifier} [Workflow 3.0]`,
+          application.createdBy,
+          Source.GIT,
+          JSON.stringify(statusRequest)
+        );
+        await clearInterval(buildInterval);
+      }
+    }, this.period);
+    setTimeout(async () => {
+      if (!buildCheck) {
+        this.logger.warn('BuildTimeout', `Build Timeout for ${buildName}`);
+        this.analyticsService.createActivityStream(
+          application.propertyIdentifier,
+          Action.APPLICATION_BUILD_TIMEOUT,
+          application.env,
+          application.identifier,
+          `Build Timeout for ${application.identifier} [Workflow 3.0]`,
+          application.createdBy,
+          Source.GIT,
+          JSON.stringify(statusRequest)
+        );
+      }
+      await clearInterval(buildInterval);
+    }, this.timeout);
+  }
+
+  // @internal Check deployment periodically & update the status
+  async startDeploymentInterval(application: Application, statusRequest: GitApplicationStatusRequest, baseurl: string) {
+    let deploymentCheck = false;
+    const deploymentInterval = setInterval(async () => {
+      const deploymentStatus = await this.applicationFactory.deploymentStatusRequest(statusRequest, baseurl);
+      this.logger.log('DeploymentStatus', `${statusRequest.objectName} : ${deploymentStatus.data}`);
+      if (deploymentStatus.status === 'READY') {
+        await clearInterval(deploymentInterval);
+        deploymentCheck = true;
+        const applicationDetails = (
+          await this.dataServices.application.getByAny({
+            propertyIdentifier: application.propertyIdentifier,
+            env: application.env,
+            identifier: application.identifier,
+            isContainerized: true,
+            isGit: true
+          })
+        )[0];
+        const diff = (applicationDetails.updatedAt.getTime() - new Date().getTime()) / 1000;
+        const consumedTime = Math.abs(diff).toFixed(2).toString();
+        this.logger.log('TimeToDeploy', `${consumedTime} seconds`);
+        const eventTimeTrace = this.applicationFactory.processDeploymentTime(applicationDetails, consumedTime);
+        await this.dataServices.eventTimeTrace.create(eventTimeTrace);
+        this.analyticsService.createActivityStream(
+          application.propertyIdentifier,
+          Action.APPLICATION_DEPLOYED,
+          application.env,
+          application.identifier,
+          `Deployment Time : ${consumedTime} seconds [Workflow 3.0]`,
+          application.createdBy,
+          Source.GIT,
+          JSON.stringify(deploymentStatus.data)
+        );
+      } else if (deploymentStatus?.status === 'ERR') {
+        deploymentCheck = true;
+        this.analyticsService.createActivityStream(
+          application.propertyIdentifier,
+          Action.APPLICATION_DEPLOYMENT_FAILED,
+          application.env,
+          application.identifier,
+          `Deployment Failed for ${application.identifier} [Workflow 3.0]`,
+          application.createdBy,
+          Source.GIT,
+          JSON.stringify(statusRequest)
+        );
+        await clearInterval(deploymentInterval);
+      }
+    }, this.period);
+    setTimeout(async () => {
+      if (!deploymentCheck) {
+        this.logger.warn('DeploymentTimeout', `Deployment Timeout for ${statusRequest.objectName}`);
+        this.analyticsService.createActivityStream(
+          application.propertyIdentifier,
+          Action.APPLICATION_DEPLOYMENT_TIMEOUT,
+          application.env,
+          application.identifier,
+          `Build Timeout for ${application.identifier} [Workflow 3.0]`,
+          application.createdBy,
+          Source.GIT,
+          JSON.stringify(statusRequest)
+        );
+      }
+      await clearInterval(deploymentInterval);
+    }, this.timeout);
   }
 
   /* @internal
@@ -477,7 +647,7 @@ export class ApplicationService {
     return { message: 'Deployment Completed for the requested registered envs.' };
   }
 
-  // @internal it will check that registered property and env
+  // @internal It will check that registered property and env
   async validatePropertyAndEnvironment(propertyIdentifier: string, env: string) {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     if (!environment)
@@ -486,7 +656,7 @@ export class ApplicationService {
       });
   }
 
-  // @internal it will validate the image format and the source
+  // @internal It will validate the image format and the source
   async validateImageRegistry(imageUrl: string) {
     const imageRegistry = await this.applicationFactory.validateImageSource(imageUrl);
     if (!imageRegistry)
@@ -495,13 +665,12 @@ export class ApplicationService {
       });
   }
 
-  // @internal it will validate the git repository
+  // @internal It will validate the git repository
   async validateGitProps(repoUrl: string, gitRef: string, contextDir: string) {
     if (!repoUrl.startsWith(Source.GITHUB) && !repoUrl.startsWith(Source.GITLAB))
       this.exceptionService.badRequestException({
         message: `Currently we only support Github & Gitlab repositories. Please provide a valid url.`
       });
-
     const gitProps = await this.applicationFactory.validateGitProps(repoUrl, gitRef, contextDir);
     if (!gitProps)
       this.exceptionService.badRequestException({
@@ -524,5 +693,15 @@ export class ApplicationService {
         message: `${repoUrl}${contextDir} is already registered for ${listApplications}`
       });
     }
+  }
+
+  // @internal it will get the logs (build/deployment) based on the request
+  async getBuildAndDeploymentLogs(propertyIdentifier: string, env: string, identifier: string, lines: string, type: string): Promise<String> {
+    const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+    if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
+    const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
+    const logRequest = this.applicationFactory.createLogRequest(propertyIdentifier, env, identifier, property.namespace, lines);
+    if (type === LOG.BUILD) return this.applicationFactory.buildLogRequest(logRequest, deploymentConnection.baseurl);
+    return this.applicationFactory.deploymentLogRequest(logRequest, deploymentConnection.baseurl);
   }
 }
