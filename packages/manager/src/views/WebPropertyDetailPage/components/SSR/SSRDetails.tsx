@@ -40,7 +40,7 @@ type Data = {
   accessUrl: string;
   updatedAt: string;
   _id: number;
-  isSSR: boolean;
+  isContainerized: boolean;
   healthCheckPath: string;
   config: Record<string, string>;
   imageUrl: string;
@@ -70,7 +70,7 @@ export const SSRDetails = () => {
     imageUrl: '',
     healthCheckPath: '',
     _id: 0,
-    isSSR: false,
+    isContainerized: false,
     config: {},
     port: ''
   });
@@ -87,7 +87,7 @@ export const SSRDetails = () => {
     imageUrl: '',
     healthCheckPath: '',
     _id: 0,
-    isSSR: false,
+    isContainerized: false,
     config: {},
     port: ''
   });
@@ -116,7 +116,7 @@ export const SSRDetails = () => {
   const parts = url.split('/');
   const applicationName = parts[parts.length - 1];
   const containerisedDeploymentData = spaProperties?.data?.[applicationName].filter(
-    (item) => item.isSSR === true
+    (item) => item.isContainerized === true
   );
   const spaDetailedInitialData = {
     propertyIdentifier,
@@ -131,7 +131,7 @@ export const SSRDetails = () => {
     imageUrl: '',
     healthCheckPath: '',
     _id: 0,
-    isSSR: false,
+    isContainerized: false,
     config: {},
     port: ''
   };
@@ -195,7 +195,7 @@ export const SSRDetails = () => {
                   <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
                     <Label
                       key={val.env}
-                      color={val.isSSR ? 'blue' : 'gold'}
+                      color={val.isContainerized ? 'blue' : 'gold'}
                       isCompact
                       style={{ marginRight: '8px' }}
                     >

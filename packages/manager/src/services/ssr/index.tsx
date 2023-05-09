@@ -1,1 +1,5 @@
-export { useAddSsrSpaProperty, useConfigureSsrSpaProperty } from './queries';
+export {
+  useAddSsrSpaProperty,
+  useConfigureSsrSpaProperty,
+  useValidateSsrSpaProperty
+} from './queries';

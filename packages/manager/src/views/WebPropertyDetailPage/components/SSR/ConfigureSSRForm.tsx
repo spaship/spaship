@@ -62,7 +62,7 @@ type Data = {
   accessUrl: string;
   updatedAt: string;
   _id: number;
-  isSSR: boolean;
+  isContainerized: boolean;
   healthCheckPath: string;
   config: Record<string, string>;
   imageUrl: string;

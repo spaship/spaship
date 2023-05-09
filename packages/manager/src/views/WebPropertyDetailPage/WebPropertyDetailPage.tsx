@@ -325,13 +325,15 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                               </Td>
                               <Td style={{ wordWrap: 'break-word' }}>
                                 <Split hasGutter>
-                                  {spaProperties.data[identifier].map(({ _id, env, isSSR }) => (
-                                    <SplitItem key={_id} style={{ marginRight: '8px' }}>
-                                      <Label color={isSSR ? 'cyan' : 'gold'} isCompact>
-                                        {env}
-                                      </Label>
-                                    </SplitItem>
-                                  ))}
+                                  {spaProperties.data[identifier].map(
+                                    ({ _id, env, isContainerized }) => (
+                                      <SplitItem key={_id} style={{ marginRight: '8px' }}>
+                                        <Label color={isContainerized ? 'cyan' : 'gold'} isCompact>
+                                          {env}
+                                        </Label>
+                                      </SplitItem>
+                                    )
+                                  )}
                                 </Split>
                               </Td>
                             </Tr>
@@ -354,12 +356,22 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                     </Thead>
                                     <Tbody>
                                       {spaProperties?.data?.[identifier].map(
-                                        ({ _id, env, ref, isSSR, accessUrl, updatedAt }) => (
+                                        ({
+                                          _id,
+                                          env,
+                                          ref,
+                                          isContainerized,
+                                          accessUrl,
+                                          updatedAt
+                                        }) => (
                                           <Tr key={_id}>
                                             <Td
                                               style={{ maxWidth: '20ch', wordWrap: 'break-word' }}
                                             >
-                                              <Label color={isSSR ? 'cyan' : 'gold'} isCompact>
+                                              <Label
+                                                color={isContainerized ? 'cyan' : 'gold'}
+                                                isCompact
+                                              >
                                                 {env}
                                               </Label>
                                             </Td>
