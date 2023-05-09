@@ -4,7 +4,7 @@ import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DIRECTORY_CONFIGURATION } from '../../configuration';
 import { AuthenticationGuard } from '../auth/auth.guard';
 import { ExceptionsService } from '../exceptions/exceptions.service';
-import { ApplicationConfigDTO, ApplicationResponse, CreateApplicationDto, GitValidationRequestDTO, GitDeploymentRequestDTO } from './application.dto';
+import { ApplicationConfigDTO, ApplicationResponse, CreateApplicationDto, GitDeploymentRequestDTO, GitValidationRequestDTO } from './application.dto';
 import { ApplicationFactory } from './service/application.factory';
 import { ApplicationService } from './service/application.service';
 
@@ -88,7 +88,7 @@ export class ApplicationController {
   }
 
   @Post('/git/validate')
-  @ApiOperation({ description: 'Start the Deployment process for Application on Git Config.' })
+  @ApiOperation({ description: 'Validate the Git Repository and Dockerfile.' })
   async validateGitCredentials(@Body() gitRequestDTO: GitValidationRequestDTO) {
     await this.applicationService.validateGitProps(gitRequestDTO.repoUrl, gitRequestDTO.gitRef, gitRequestDTO.contextDir);
     await this.applicationService.validateExistingGitDeployment(
@@ -98,5 +98,17 @@ export class ApplicationController {
       gitRequestDTO.identifier
     );
     return this.applicationFactory.extractDockerProps(gitRequestDTO);
+  }
+
+  @Get('/log/:propertyIdentifier/:env/:identifier')
+  @ApiOperation({ description: 'Get the Build and Deployment logs.' })
+  async getBuildAndDeploymentLogs(
+    @Param('propertyIdentifier') propertyIdentifier: string,
+    @Param('env') env: string,
+    @Param('identifier') identifier: string,
+    @Query('lines') lines: string,
+    @Query('type') type: string
+  ) {
+    return this.applicationService.getBuildAndDeploymentLogs(propertyIdentifier, env, identifier, lines, type);
   }
 }
