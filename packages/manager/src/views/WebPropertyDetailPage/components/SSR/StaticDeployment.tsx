@@ -31,7 +31,7 @@ export const StaticDeployment = () => {
   const parts = url.split('/');
   const applicationName = parts[parts.length - 1];
   const staticDeploymentData = spaProperties?.data?.[applicationName].filter(
-    (data) => data.isSSR === false
+    (data) => data.isContainerized === false
   );
 
   return (
@@ -76,7 +76,7 @@ export const StaticDeployment = () => {
                   <Td textCenter>
                     <Label
                       key={val.env}
-                      color={val.isSSR ? 'blue' : 'gold'}
+                      color={val.isContainerized ? 'blue' : 'gold'}
                       isCompact
                       style={{ marginRight: '8px' }}
                     >

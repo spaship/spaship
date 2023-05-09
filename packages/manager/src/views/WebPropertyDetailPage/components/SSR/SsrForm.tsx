@@ -13,7 +13,7 @@ import {
   TextInput,
   Tooltip
 } from '@patternfly/react-core';
-import { AddCircleOIcon, InfoCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
+import { InfoCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { AxiosError } from 'axios';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
@@ -198,7 +198,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                     Port
                     <Tooltip content={<div>Kindly put port for your application.</div>}>
                       <span>
-                        &nbsp; <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+                        &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
                       </span>
                     </Tooltip>
                   </>
@@ -233,7 +233,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                       }
                     >
                       <span>
-                        &nbsp; <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+                        &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
                       </span>
                     </Tooltip>
                   </>
@@ -286,8 +286,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                         }
                       >
                         <span>
-                          &nbsp;{' '}
-                          <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+                          &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
                         </span>
                       </Tooltip>
                     </>
@@ -332,7 +331,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
                       }
                     >
                       <span>
-                        &nbsp; <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+                        &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
                       </span>
                     </Tooltip>
                   </>
@@ -379,7 +378,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
             }
           >
             <span style={{ marginLeft: '5px' }}>
-              <InfoCircleIcon style={{ color: 'var(--pf-global--link--Color)' }} />
+              <InfoCircleIcon style={{ color: '#6A6E73' }} />
             </span>
           </Tooltip>
         </div>
@@ -390,8 +389,12 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
             justifyContent: 'right'
           }}
         >
-          <Button variant="secondary" onClick={() => append({ key: '', value: '' })}>
-            <AddCircleOIcon />
+          <Button
+            variant="link"
+            style={{ color: '#6A6E73' }}
+            onClick={() => append({ key: '', value: '' })}
+          >
+            Add Key Value
           </Button>
         </SplitItem>
       </Split>

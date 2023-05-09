@@ -1,0 +1,15 @@
+.step-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.step-number {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #ccc;
+  text-align: center;
+  line-height: 24px;
+  margin-right: 8px;
+}
