@@ -53,8 +53,8 @@ import toast from 'react-hot-toast';
 import { ActivityStream } from '@app/components/ActivityStream';
 import { Ephemeral } from './components/Ephemeral';
 import { EmptyInfo } from './components/EmptyInfo';
-import { SSRForm } from './components/SSR/SsrForm';
 import { Dashboard } from './components/Dashboard';
+import { AddDeplyoment } from './components/addDeployment';
 
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 25;
@@ -326,9 +326,12 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                               <Td style={{ wordWrap: 'break-word' }}>
                                 <Split hasGutter>
                                   {spaProperties.data[identifier].map(
-                                    ({ _id, env, isContainerized }) => (
+                                    ({ _id, env, isContainerized, isGit }) => (
                                       <SplitItem key={_id} style={{ marginRight: '8px' }}>
-                                        <Label color={isContainerized ? 'cyan' : 'gold'} isCompact>
+                                        <Label
+                                          color={isContainerized || isGit ? 'cyan' : 'gold'}
+                                          isCompact
+                                        >
                                           {env}
                                         </Label>
                                       </SplitItem>
@@ -499,11 +502,12 @@ export const WebPropertyDetailPage = (): JSX.Element => {
 
       <Modal
         title="Create Containerized Deployment"
-        variant={ModalVariant.medium}
+        variant={ModalVariant.large}
         isOpen={popUp.createSSRDeployment.isOpen}
         onClose={() => handlePopUpClose('createSSRDeployment')}
+        style={{ minHeight: '600px' }}
       >
-        <SSRForm
+        <AddDeplyoment
           propertyIdentifier={propertyIdentifier}
           onClose={() => handlePopUpClose('createSSRDeployment')}
         />
