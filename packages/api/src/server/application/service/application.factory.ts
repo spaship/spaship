@@ -519,14 +519,7 @@ export class ApplicationFactory {
       } catch (error) {
         this.logger.error('GitlabSource', error);
       }
-    } else {
-      try {
-        const githubSource = await this.httpService.axiosRef.head(gitUrl);
-        if (githubSource.status === 200) return true;
-      } catch (error) {
-        this.logger.error('GithubSource', error);
-      }
-    }
+    } else if (await this.checkUrlSource(gitUrl)) return true;
     return false;
   }
 
@@ -618,5 +611,16 @@ export class ApplicationFactory {
       return gitResponse;
     }
     return gitResponse;
+  }
+
+  // @internal Check the source for a particular url
+  async checkUrlSource(url: string) {
+    try {
+      const response = await this.httpService.axiosRef.head(url);
+      if (response.status === 200) return true;
+    } catch (error) {
+      this.logger.error('Source', error);
+    }
+    return false;
   }
 }

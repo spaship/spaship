@@ -111,7 +111,7 @@ export class ApplicationController {
     @Query('id') id: string
   ) {
     // @internal TODO : Pod logs to be implemented
-    return this.applicationService.geLogs(propertyIdentifier, env, identifier, lines, type, id);
+    return this.applicationService.getLogs(propertyIdentifier, env, identifier, lines, type, id);
   }
 
   @Get('/status')
