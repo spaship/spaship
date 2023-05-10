@@ -45,7 +45,7 @@ export class Application {
 
   mergeId: string;
 
-  buildName: string;
+  buildName: string[];
 
   createdBy: string;
 
