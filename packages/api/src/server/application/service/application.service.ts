@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { isURL } from 'class-validator';
 import * as decompress from 'decompress';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
@@ -40,7 +41,7 @@ export class ApplicationService {
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService,
     private readonly agendaService: AgendaService
-  ) { }
+  ) {}
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.application.getAll();
@@ -450,9 +451,9 @@ export class ApplicationService {
         Source.GIT,
         JSON.stringify(response)
       );
-      applicationDetails.buildName = response.buildName;
+      applicationDetails.buildName = [...applicationDetails.buildName, response.buildName];
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: true, isGit: true }, applicationDetails);
-      this.manageBuildAndDeployment(applicationDetails, statusRequest, applicationDetails.buildName, deploymentConnection.baseurl);
+      this.manageBuildAndDeployment(applicationDetails, statusRequest, response.buildName, deploymentConnection.baseurl);
     } else {
       await this.analyticsService.createActivityStream(
         propertyIdentifier,
@@ -666,6 +667,7 @@ export class ApplicationService {
 
   // @internal It will validate the git repository
   async validateGitProps(repoUrl: string, gitRef: string, contextDir: string) {
+    if (!isURL(repoUrl)) this.exceptionService.badRequestException({ message: 'Please provide a valid url.' });
     if (!repoUrl.startsWith(Source.GITHUB) && !repoUrl.startsWith(Source.GITLAB))
       this.exceptionService.badRequestException({
         message: `Currently we only support Github & Gitlab repositories. Please provide a valid url.`
@@ -695,12 +697,25 @@ export class ApplicationService {
   }
 
   // @internal it will get the logs (build/deployment) based on the request
-  async getBuildAndDeploymentLogs(propertyIdentifier: string, env: string, identifier: string, lines: string, type: string): Promise<String> {
+  async getLogs(propertyIdentifier: string, env: string, identifier: string, lines: string, type: string, id: string): Promise<String> {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
     const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
     const logRequest = this.applicationFactory.createLogRequest(propertyIdentifier, env, identifier, property.namespace, lines);
-    if (type === LOG.BUILD) return this.applicationFactory.buildLogRequest(logRequest, deploymentConnection.baseurl);
+    if (type === LOG.BUILD) {
+      if (!id) this.exceptionService.badRequestException({ message: 'Please provide the id for the build logs.' });
+      logRequest.objectName = id;
+      return this.applicationFactory.buildLogRequest(logRequest, deploymentConnection.baseurl);
+    }
     return this.applicationFactory.deploymentLogRequest(logRequest, deploymentConnection.baseurl);
+  }
+
+  // @internal Check the status of an application
+  async checkApplicationStatus(accessUrl: string) {
+    if (!accessUrl) this.exceptionService.badRequestException({ message: 'Please provide the access url.' });
+    if (!isURL(accessUrl)) this.exceptionService.badRequestException({ message: 'Please provide a valid access url.' });
+    if (!(await this.applicationFactory.checkUrlSource(accessUrl)))
+      this.exceptionService.badRequestException({ message: 'Application is currently down.' });
+    return { message: 'Application is running.' };
   }
 }

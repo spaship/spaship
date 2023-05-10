@@ -73,7 +73,7 @@ export class Application {
   mergeId: string;
 
   @Prop({})
-  buildName: string;
+  buildName: string[];
 
   @Prop({ default: 'NA' })
   createdBy: string;

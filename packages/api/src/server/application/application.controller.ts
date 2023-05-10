@@ -101,14 +101,22 @@ export class ApplicationController {
   }
 
   @Get('/log/:propertyIdentifier/:env/:identifier')
-  @ApiOperation({ description: 'Get the Build and Deployment logs.' })
-  async getBuildAndDeploymentLogs(
+  @ApiOperation({ description: 'Get the Build, Deployment & Pod logs.' })
+  async getLogs(
     @Param('propertyIdentifier') propertyIdentifier: string,
     @Param('env') env: string,
     @Param('identifier') identifier: string,
     @Query('lines') lines: string,
-    @Query('type') type: string
+    @Query('type') type: string,
+    @Query('id') id: string
   ) {
-    return this.applicationService.getBuildAndDeploymentLogs(propertyIdentifier, env, identifier, lines, type);
+    // @internal TODO : Pod logs to be implemented
+    return this.applicationService.getLogs(propertyIdentifier, env, identifier, lines, type, id);
+  }
+
+  @Get('/status')
+  @ApiOperation({ description: 'Check the status of the application.' })
+  async checkApplicationStatus(@Query('accessUrl') accessUrl: string) {
+    return this.applicationService.checkApplicationStatus(accessUrl);
   }
 }
