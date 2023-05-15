@@ -1,6 +1,6 @@
 import { TableRowSkeleton } from '@app/components';
 import { usePopUp } from '@app/hooks';
-import { fetchLogsforSpa } from '@app/services/appLogs';
+import { fetchLogsforSpa } from '@app/services/logs';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { useAddSsrSpaProperty } from '@app/services/ssr';
@@ -328,7 +328,7 @@ export const SSRDetails = () => {
                           <Label
                             key={val.env}
                             icon={val.isGit && <GithubIcon />}
-                            color={val.isContainerized || val.isGit ? 'cyan' : 'gold'}
+                            color={val.isContainerized || val.isGit ? 'blue' : 'gold'}
                             isCompact
                             style={{ marginRight: '8px' }}
                           >
