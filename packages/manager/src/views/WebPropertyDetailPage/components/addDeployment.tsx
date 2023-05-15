@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Switch, Tooltip } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import React from 'react';

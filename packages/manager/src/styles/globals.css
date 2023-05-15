@@ -201,3 +201,10 @@ body {
 .pf-c-form__helper-text.pf-m-error {
   --pf-c-form__helper-text--Color: #c9190b;
 }
+.activity {
+  color: 'green' !important;
+}
+
+.pf-c-list .pf-m-expanded {
+  height: 500px !important;
+}
