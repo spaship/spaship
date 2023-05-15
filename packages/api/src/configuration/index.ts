@@ -118,7 +118,8 @@ export enum JOB {
 
 export enum LOG {
   DEPLOYMENT = 'DEPLOYMENT',
-  BUILD = 'BUILD'
+  BUILD = 'BUILD',
+  POD = 'POD'
 }
 
 export const GLOBAL_PREFIX = '/api/v1';
