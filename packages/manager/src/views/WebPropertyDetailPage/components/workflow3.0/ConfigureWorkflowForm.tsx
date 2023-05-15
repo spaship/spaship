@@ -148,8 +148,12 @@ Props): JSX.Element => {
       try {
         const response = await validateSsrSpaProperty.mutateAsync(validateDTO);
 
-        setValidateMessage('');
-        setApiResponse(response?.port);
+        if (Object.keys(response).includes('port')) {
+          setApiResponse(response?.port);
+          setValidateMessage('');
+        } else if (Object.keys(response).includes('warning')) {
+          setValidateMessage(response?.warning);
+        }
       } catch (error) {
         if (error instanceof AxiosError && error.response && error.response.status === 403) {
           toast.error("You don't have access to perform this action");
@@ -163,6 +167,7 @@ Props): JSX.Element => {
     }
 
     if (step === 5) {
+      const toastId = toast.loading('Submitting form...');
       const newdata = {
         ...data,
         path: data.path.trim().startsWith('/') ? data.path.trim() : `/${data.path.trim()}`,
@@ -191,15 +196,15 @@ Props): JSX.Element => {
       try {
         await createSsrSpaProperty.mutateAsync(newdata);
         onClose();
-        toast.success('Deployed Containerized Application successfully');
+        toast.success('Deployed Containerized Application successfully', { id: toastId });
       } catch (error) {
         if (error instanceof AxiosError && error.response && error.response.status === 403) {
-          toast.error("You don't have access to perform this action");
+          toast.error("You don't have access to perform this action", { id: toastId });
           onClose();
         } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
           toast.error(error.response.data.message);
         } else {
-          toast.error('Failed to deploy containerized application');
+          toast.error('Failed to deploy containerized application', { id: toastId });
         }
       }
     }
@@ -1622,7 +1627,11 @@ Props): JSX.Element => {
               >
                 Back
               </Button>
-              <Button variant="primary" type="submit" isDisabled={Object.keys(errors).length > 0}>
+              <Button
+                variant="primary"
+                type="submit"
+                isDisabled={Object.keys(errors).length > 0 || validateMessage !== ''}
+              >
                 Finish
               </Button>
             </>

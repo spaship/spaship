@@ -14,9 +14,10 @@ import {
   TextVariants
 } from '@patternfly/react-core';
 import {
+  BuildIcon,
+  BundleIcon,
   CheckIcon,
   ClusterIcon,
-  CubeIcon,
   CubesIcon,
   ExclamationCircleIcon,
   OutlinedClockIcon,
@@ -47,14 +48,13 @@ const activities = {
     isGlobal
   }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
-      Deployment{' '}
-      <Label color="blue" icon={<CheckIcon />} variant="outline" isCompact>
-        completed
+      <Label color="green" icon={<CheckIcon />}>
+        Deployment completed
       </Label>{' '}
       for{' '}
       {isGlobal ? (
         <>
-          <Label color="blue" icon={<CubesIcon />} variant="outline" isCompact>
+          <Label color="green" icon={<CubesIcon />}>
             <Link
               href={{
                 pathname: '/properties/[propertyIdentifier]',
@@ -69,98 +69,159 @@ const activities = {
       ) : (
         ''
       )}
-      <Label icon={<CubeIcon />} color="blue" isCompact>
-        <Link
-          href={{
-            pathname: '/properties/[propertyIdentifier]/[spaProperty]',
-            query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
-          }}
+      <Link
+        href={{
+          pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+          query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+        }}
+      >
+        <Label
+          icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+          color="green"
         >
           {props.applicationIdentifier}
-        </Link>
-      </Label>{' '}
+        </Label>
+      </Link>{' '}
       in{' '}
-      <Label icon={<ClusterIcon />} color="blue" isCompact>
+      <Label icon={<ClusterIcon />} color="green">
         {props.env}
       </Label>{' '}
-      env with{' '}
-      <Label icon={<OutlinedClockIcon />} color="blue" isCompact>
-        {message}.
+      env in{' '}
+      <Label icon={<OutlinedClockIcon />} color="green">
+        {message.split(' ')[3]} s
       </Label>
     </Text>
   ),
-  PROPERTY_CREATED: ({ propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
+
+  APPLICATION_DEPLOYMENT_STARTED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
-      <Label icon={<CubesIcon />} color="blue" isCompact>
-        {propertyIdentifier}
+      <Label color="blue" icon={<OutlinedClockIcon />}>
+        Deployment started
       </Label>{' '}
-      has been created.{' '}
-    </Text>
-  ),
-  ENV_CREATED: ({ props }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      <Label icon={<ClusterIcon />} color="blue" isCompact>
-        {props.env}
-      </Label>{' '}
-      environment has been created.{' '}
-    </Text>
-  ),
-  APPLICATION_DEPLOYMENT_STARTED: ({ props }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      Deployment{' '}
-      <Label color="blue" icon={<OutlinedClockIcon />} variant="outline">
-        started
-      </Label>{' '}
-      for
-      <Label icon={<CubeIcon />} color="blue" isCompact>
+      for{' '}
+      <Label
+        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+        color="blue"
+      >
         {props.applicationIdentifier}
       </Label>{' '}
       App in the{' '}
-      <Label icon={<ClusterIcon />} color="blue" isCompact>
+      <Label icon={<ClusterIcon />} color="blue">
         {props.env}
       </Label>{' '}
       env.
     </Text>
   ),
-  APIKEY_CREATED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
+  APPLICATION_DEPLOYMENT_FAILED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
+    <Text component={TextVariants.small}>
+      <Label color="red" icon={<ExclamationCircleIcon />}>
+        Deployment failed
+      </Label>{' '}
+      for{' '}
+      <Label
+        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+        color="red"
+      >
+        {props.applicationIdentifier}
+      </Label>{' '}
+      App in the{' '}
+      <Label icon={<ClusterIcon />} color="red">
+        {props.env}
+      </Label>{' '}
+      env.{' '}
+    </Text>
+  ),
+  APPLICATION_BUILD_STARTED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
+    <Text component={TextVariants.small}>
+      <Label color="blue" icon={<OutlinedClockIcon />}>
+        Build started
+      </Label>{' '}
+      for
+      <Label
+        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+        color="blue"
+      >
+        {props.applicationIdentifier}
+      </Label>{' '}
+      App in the{' '}
+      <Label icon={<ClusterIcon />} color="blue">
+        {props.env}
+      </Label>{' '}
+      env.
+    </Text>
+  ),
+  APPLICATION_BUILD_FAILED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
+    <Text component={TextVariants.small}>
+      <Label color="red" icon={<ExclamationCircleIcon />}>
+        Build failed
+      </Label>{' '}
+      for{' '}
+      <Label
+        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+        color="red"
+      >
+        {props.applicationIdentifier}
+      </Label>{' '}
+      App in the{' '}
+      <Label icon={<ClusterIcon />} color="red">
+        {props.env}
+      </Label>{' '}
+      env.{' '}
+    </Text>
+  ),
+  PROPERTY_CREATED: ({ propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
+    <Text component={TextVariants.small}>
+      <Label icon={<CubesIcon />} color="green">
+        {propertyIdentifier}
+      </Label>{' '}
+      has been created.{' '}
+    </Text>
+  ),
+  APIKEY_CREATED: ({ props, propertyIdentifier, message }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
       API key has been
-      <Label color="blue" icon={<CheckIcon />} variant="outline">
+      <Label color="green" icon={<CheckIcon />}>
         created
       </Label>{' '}
       for{' '}
-      <Label icon={<CubeIcon />} color="blue" isCompact>
+      <Label
+        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+        color="green"
+      >
         {propertyIdentifier}
       </Label>{' '}
       with scope{' '}
-      <Label icon={<OutlinedClockIcon />} color="blue" isCompact>
+      <Label icon={<ClusterIcon />} color="green">
         {props.env}.{' '}
       </Label>
     </Text>
   ),
-  APIKEY_DELETED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
+  APIKEY_DELETED: ({ props, propertyIdentifier, message }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
       API key has been{' '}
-      <Label color="red" icon={<TimesIcon />} variant="outline">
+      <Label color="red" icon={<TimesIcon />}>
         deleted{' '}
       </Label>{' '}
       for{' '}
-      <Label icon={<CubeIcon />} color="blue" isCompact>
+      <Label
+        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+        color="red"
+      >
         {propertyIdentifier}
       </Label>{' '}
       with scope{' '}
-      <Label icon={<OutlinedClockIcon />} color="blue" isCompact>
+      <Label icon={<ClusterIcon />} color="red">
         {props.env}.{' '}
       </Label>
     </Text>
   ),
   ENV_SYNCED: ({ props }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
-      <Label icon={<SyncAltIcon />} color="blue" isCompact>
+      <Label icon={<SyncAltIcon />} color="green">
         Sync{' '}
       </Label>
       completed for{' '}
-      <Label icon={<ClusterIcon />} color="blue" isCompact>
+      <Label icon={<ClusterIcon />} color="green">
         {props.env}
       </Label>{' '}
       environment{' '}
@@ -168,45 +229,41 @@ const activities = {
   ),
   APPLICATION_DELETED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
-      <Label icon={<CubeIcon />} color="blue" isCompact>
+      <Label
+        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+        color="red"
+      >
         {props.applicationIdentifier}
       </Label>{' '}
       has been
-      <Label color="red" icon={<TimesIcon />} variant="outline">
+      <Label color="red" icon={<TimesIcon />}>
         deleted
       </Label>{' '}
       for
-      <Label icon={<ClusterIcon />} color="blue" isCompact>
+      <Label icon={<ClusterIcon />} color="red">
         {props.env}
       </Label>{' '}
       Misc:{' '}
-      <Label icon={<OutlinedClockIcon />} color="blue" isCompact>
+      <Label icon={<OutlinedClockIcon />} color="red">
         {message}.
       </Label>
     </Text>
   ),
-  APPLICATION_DEPLOYMENT_FAILED: ({ props }: TWebPropActivityStream): JSX.Element => (
+  ENV_CREATED: ({ props }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
-      <Label icon={<CubeIcon />} color="blue" isCompact>
-        {props.applicationIdentifier}
+      <Label icon={<ClusterIcon />} color="green">
+        {props.env}
       </Label>{' '}
-      has{' '}
-      <Label color="red" icon={<ExclamationCircleIcon />} variant="outline">
-        failed to deploy{' '}
-      </Label>{' '}
-      in{' '}
-      <Label icon={<OutlinedClockIcon />} color="blue" isCompact>
-        {props.env}.{' '}
-      </Label>
+      environment has been created.{' '}
     </Text>
   ),
   ENV_DELETED: ({ props }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
-      <Label icon={<ClusterIcon />} color="blue" isCompact>
+      <Label icon={<ClusterIcon />} color="red">
         {props.env}
       </Label>{' '}
       environment has been{' '}
-      <Label color="red" icon={<TimesIcon />} variant="outline">
+      <Label color="red" icon={<TimesIcon />}>
         {' '}
         deleted{' '}
       </Label>
@@ -214,30 +271,36 @@ const activities = {
   ),
   PERMISSION_CREATED: ({ message }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
-      <Label icon={<CubeIcon />} color="blue" isCompact>
+      <Label
+        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+        color="green"
+      >
         {toPascalCase(message.split(' ')[0]).replace('_', ' ')}
       </Label>{' '}
       access{' '}
-      <Label color="green" icon={<CheckIcon />} variant="outline" isCompact>
+      <Label color="green" icon={<CheckIcon />}>
         {message.split(' ')[2]}
       </Label>{' '}
       for{' '}
-      <Label color="blue" icon={<UserIcon />} isCompact>
+      <Label color="green" icon={<UserIcon />}>
         {message.split(' ')[4]}
       </Label>{' '}
     </Text>
   ),
   PERMISSION_DELETED: ({ message }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
-      <Label icon={<CubeIcon />} color="blue" isCompact>
+      <Label
+        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+        color="red"
+      >
         {toPascalCase(message?.split(' ')[0]).replace('_', ' ')}
       </Label>{' '}
       access{' '}
-      <Label color="red" icon={<TrashIcon />} variant="outline" isCompact>
+      <Label color="red" icon={<TrashIcon />}>
         {message?.split(' ')[2]}
       </Label>{' '}
       for{' '}
-      <Label color="blue" icon={<UserIcon />} isCompact>
+      <Label color="red" icon={<UserIcon />}>
         {message?.split(' ')[4]}
       </Label>{' '}
     </Text>
@@ -265,6 +328,7 @@ export const ActivityStream = ({
     }
   }, [fetchNextPage, inView]);
   const formatDate = useFormatDate();
+
   return (
     <>
       <ProgressStepper isVertical>
@@ -273,12 +337,13 @@ export const ActivityStream = ({
           data.pages?.map((page) =>
             page.map((activity: TWebPropActivityStream) => {
               const modifiedActivity = { ...activity, isGlobal };
+              const startedCondition = activity.action.includes('STARTED') ? 'info' : 'success';
               return (
                 <ProgressStep
                   id={activity._id}
                   titleId={activity._id}
                   key={activity._id}
-                  variant="success"
+                  variant={activity.action.includes('FAIL') ? 'danger' : startedCondition}
                   description={formatDate(activity.createdAt, 'MMM DD YY, hh:mm a')}
                 >
                   <TextContent className="pf-u-mb-sm">
