@@ -313,6 +313,22 @@ export class ApplicationFactory {
     return response?.data;
   }
 
+  // @internal Get the Pod Logs from the Operator
+  async podLogRequest(logRequest: GitApplicationStatusRequest, deploymentBaseURL?: string): Promise<String> {
+    const headers = { Authorization: await AuthFactory.getAccessToken() };
+    let response;
+    try {
+      response = await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/gf/v1/pod-log`, logRequest, {
+        maxBodyLength: Infinity,
+        headers
+      });
+    } catch (err) {
+      this.logger.error('DeploymentLogRequestForOperator', err);
+      this.exceptionService.badRequestException({ message: `No Pod log found for ${logRequest.objectName}.` });
+    }
+    return response?.data;
+  }
+
   // @internal Get the Build Status from the Operator
   async buildStatusRequest(logRequest: GitApplicationStatusRequest, deploymentBaseURL?: string): Promise<GitApplicationStatusResponse> {
     const headers = { Authorization: await AuthFactory.getAccessToken() };
@@ -356,6 +372,24 @@ export class ApplicationFactory {
     } catch (err) {
       this.logger.error('ContainerizedDeploymentConfig', err);
     }
+  }
+
+  // @internal Get the List of the Pods from the Operator
+  async getListOfPods(deploymentName: string, namespace: string, deploymentBaseURL?: string): Promise<String[]> {
+    const headers = { Authorization: await AuthFactory.getAccessToken() };
+    let response;
+    try {
+      response = await this.httpService.axiosRef.get(
+        `${deploymentBaseURL}/api/gf/v1/pods-by-deployment?deploymentName=${deploymentName}&ns=${namespace}`,
+        {
+          headers
+        }
+      );
+    } catch (err) {
+      this.logger.error('buildLogRequestForOperator', err);
+      this.exceptionService.badRequestException({ message: `No Pods found for ${deploymentName}.` });
+    }
+    return response.data.data || [];
   }
 
   // @internal Create the Application request for the Containerized deployment

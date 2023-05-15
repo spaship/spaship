@@ -109,8 +109,7 @@ export class ApplicationController {
     @Query('lines') lines: string,
     @Query('type') type: string,
     @Query('id') id: string
-  ) {
-    // @internal TODO : Pod logs to be implemented
+  ): Promise<String> {
     return this.applicationService.getLogs(propertyIdentifier, env, identifier, lines, type, id);
   }
 
@@ -118,5 +117,15 @@ export class ApplicationController {
   @ApiOperation({ description: 'Check the status of the application.' })
   async checkApplicationStatus(@Query('accessUrl') accessUrl: string) {
     return this.applicationService.checkApplicationStatus(accessUrl);
+  }
+
+  @Get('/pods/:propertyIdentifier/:env/:identifier')
+  @ApiOperation({ description: 'Get the List of the Pods.' })
+  async getListOfPods(
+    @Param('propertyIdentifier') propertyIdentifier: string,
+    @Param('env') env: string,
+    @Param('identifier') identifier: string
+  ): Promise<String[]> {
+    return this.applicationService.getListOfPods(propertyIdentifier, env, identifier);
   }
 }
