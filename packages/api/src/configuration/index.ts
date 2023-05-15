@@ -116,9 +116,10 @@ export enum JOB {
   DELETE_EPH_ENV = 'DELETE_EPH_ENV'
 }
 
-export enum LOG {
+export enum LOG_TYPE {
   DEPLOYMENT = 'DEPLOYMENT',
-  BUILD = 'BUILD'
+  BUILD = 'BUILD',
+  POD = 'POD'
 }
 
 export const GLOBAL_PREFIX = '/api/v1';

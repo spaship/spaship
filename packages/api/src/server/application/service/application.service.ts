@@ -4,7 +4,7 @@ import * as decompress from 'decompress';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
-import { CONTAINERIZED_DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, EPHEMERAL_ENV, JOB, LOG } from 'src/configuration';
+import { CONTAINERIZED_DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, EPHEMERAL_ENV, JOB, LOG_TYPE } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { AgendaService } from 'src/server/agenda/agenda.service';
@@ -696,16 +696,21 @@ export class ApplicationService {
     }
   }
 
-  // @internal it will get the logs (build/deployment) based on the request
+  // @internal It will get the logs (build/deployment/pod) based on the request
   async getLogs(propertyIdentifier: string, env: string, identifier: string, lines: string, type: string, id: string): Promise<String> {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
     const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
     const logRequest = this.applicationFactory.createLogRequest(propertyIdentifier, env, identifier, property.namespace, lines);
-    if (type === LOG.BUILD) {
+    if (type === LOG_TYPE.BUILD) {
       if (!id) this.exceptionService.badRequestException({ message: 'Please provide the id for the build logs.' });
       logRequest.objectName = id;
       return this.applicationFactory.buildLogRequest(logRequest, deploymentConnection.baseurl);
+    }
+    if (type === LOG_TYPE.POD) {
+      if (!id) this.exceptionService.badRequestException({ message: 'Please provide the id for the pod logs.' });
+      logRequest.objectName = id;
+      return this.applicationFactory.podLogRequest(logRequest, deploymentConnection.baseurl);
     }
     return this.applicationFactory.deploymentLogRequest(logRequest, deploymentConnection.baseurl);
   }
@@ -717,5 +722,14 @@ export class ApplicationService {
     if (!(await this.applicationFactory.checkUrlSource(accessUrl)))
       this.exceptionService.badRequestException({ message: 'Application is currently down.' });
     return { message: 'Application is running.' };
+  }
+
+  // @internal Get the list of the pods
+  async getListOfPods(propertyIdentifier: string, env: string, identifier: string): Promise<String[]> {
+    const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+    if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
+    const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
+    const deploymentName = `${propertyIdentifier}-${identifier}-${env}`;
+    return this.applicationFactory.getListOfPods(deploymentName, property.namespace, deploymentConnection.baseurl);
   }
 }
