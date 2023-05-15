@@ -58,5 +58,6 @@ export type TSSRValidate = {
   contextDir: string;
 };
 export type TSSRValidateResponse = {
+  warning: string;
   port: string;
 };

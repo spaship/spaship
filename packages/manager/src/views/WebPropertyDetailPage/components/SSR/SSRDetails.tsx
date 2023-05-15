@@ -1,5 +1,6 @@
 import { TableRowSkeleton } from '@app/components';
 import { usePopUp } from '@app/hooks';
+import { fetchLogsforSpa } from '@app/services/logs';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { useAddSsrSpaProperty } from '@app/services/ssr';
@@ -21,12 +22,15 @@ import {
   Split,
   SplitItem,
   Switch,
+  Tab,
+  Tabs,
   Title,
   Tooltip
 } from '@patternfly/react-core';
 import {
   CubesIcon,
   ExternalLinkAltIcon,
+  GithubIcon,
   InfoCircleIcon,
   PencilAltIcon,
   PlusCircleIcon,
@@ -96,21 +100,26 @@ export const SSRDetails = () => {
     'createSSRDeployment'
   ] as const);
   const handleConfirmRedployment = async () => {
+    const toastId = toast.loading('Submitting form...');
     redeployData.propertyIdentifier = propertyIdentifier;
+
+    redeployData.redeploy = true;
+
     try {
       await createSsrSpaProperty.mutateAsync({
         ...redeployData
       });
-      toast.success('Redeployed SSR successfully');
+      toast.success('Redeployed SSR successfully', { id: toastId });
     } catch (error) {
       if (error instanceof AxiosError && error.response && error.response.status === 403) {
-        toast.error("You don't have access to perform this action");
+        toast.error("You don't have access to perform this action", { id: toastId });
       } else {
-        toast.error('Failed to deploy containerized application');
+        toast.error('Failed to deploy containerized application', { id: toastId });
       }
     }
     handlePopUpClose('redeploySsrApplication');
   };
+
   const url = window.location.href;
   const parts = url.split('/');
   const applicationName = parts[parts.length - 1];
@@ -161,34 +170,89 @@ export const SSRDetails = () => {
 
   const [isExpanded, setIsExpanded] = useState(false);
   const drawerRef = useRef<HTMLDivElement>();
+  const [spaName, setSpaName] = useState('');
+  const [buildId, setBuildId] = useState('');
+  const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
+  const [deploymentLogsForSpa, setDeploymentLogsForSpa] = useState('');
+  const [buildLogsForSpa, setBuildLogsForSpa] = useState('');
+  const [data, setData] = useState<any>({});
+  // Toggle currently active tab
+  const handleTabClick = async (
+    event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
+    tabIndex: string | number
+  ) => {
+    setActiveTabKey(tabIndex);
+    if (tabIndex === 0) {
+      setDeploymentLogsForSpa(await fetchLogsforSpa(propertyIdentifier, data.identifier, data.env));
+    } else {
+      setBuildLogsForSpa(
+        await fetchLogsforSpa(propertyIdentifier, data.identifier, data.env, 'build', buildId)
+      );
+    }
+  };
 
+  const onClick = async (
+    e: React.MouseEvent<any> | React.KeyboardEvent,
+    name: string,
+    buildName: string[],
+    rowData: any
+  ) => {
+    // setDeploymentLogsForSpa(data);
+    setBuildId(buildName[buildName.length - 1]);
+    setSpaName(name);
+    setIsExpanded(!isExpanded);
+    setData(rowData);
+  };
   const onExpand = () => {
     if (drawerRef.current) {
       drawerRef.current.focus();
     }
   };
-
-  const onClick = () => {
-    setIsExpanded(!isExpanded);
-  };
-
   const onCloseClick = () => {
     setIsExpanded(false);
   };
 
+  function NewlineText(props: string) {
+    const text = props;
+    const newText = text.split('\n').map((str: string) => <p key={str}>{str}</p>);
+
+    return newText;
+  }
   const panelContent = (
-    <DrawerPanelContent style={{ height: '150px', position: 'absolute', bottom: 0 }}>
+    <DrawerPanelContent>
       <DrawerHead>
-        <span>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus pretium est a porttitor
-          vehicula. Quisque vel commodo urna. Morbi mattis rutrum ante, id vehicula ex accumsan ut.
-          Morbi viverra, eros vel porttitor facilisis, eros purus aliquet erat,nec lobortis felis
-          elit pulvinar sem. Vivamus vulputate, risus eget commodo eleifend, eros nibh porta quam,
-          vitae lacinia leo libero at magna. Maecenas aliquam sagittis orci, et posuere nisi
-          ultrices sit amet. Aliquam ex odio, malesuada sed posuere quis, pellentesque at mauris.
-          Phasellus venenatis massa ex, eget pulvinar libero auctor pretium. Aliquam erat volutpat.
-          Duis euismod justo in quam ullamcorper, in commodo massa vulputate
-        </span>
+        <b>Logs for {propertyIdentifier}</b>
+
+        <Tabs activeKey={activeTabKey} onSelect={handleTabClick}>
+          <Tab eventKey={0} title="Deployment Logs">
+            {deploymentLogsForSpa ? (
+              <div> {NewlineText(deploymentLogsForSpa)}</div>
+            ) : (
+              <div>
+                <EmptyState>
+                  <EmptyStateIcon icon={CubesIcon} />
+                  <Title headingLevel="h4" size="lg">
+                    No deployment logs found for <b>{spaName}</b> spa.
+                  </Title>
+                </EmptyState>
+              </div>
+            )}
+          </Tab>
+          <Tab eventKey={1} title="Build Logs">
+            {buildLogsForSpa ? (
+              <div> {NewlineText(buildLogsForSpa)}</div>
+            ) : (
+              <div>
+                <EmptyState>
+                  <EmptyStateIcon icon={CubesIcon} />
+                  <Title headingLevel="h4" size="lg">
+                    No build logs found for <b>{spaName}</b> spa.
+                  </Title>
+                </EmptyState>
+              </div>
+            )}
+          </Tab>
+        </Tabs>
         <DrawerActions>
           <DrawerCloseButton onClick={onCloseClick} />
         </DrawerActions>
@@ -202,7 +266,12 @@ export const SSRDetails = () => {
         Add New App
       </Button>
 
-      <Drawer isExpanded={isExpanded} position="bottom" onExpand={onExpand}>
+      <Drawer
+        isExpanded={isExpanded}
+        position="bottom"
+        onExpand={onExpand}
+        style={{ height: '100vh !important' }}
+      >
         <DrawerContent panelContent={panelContent}>
           <DrawerContentBody style={{ overflow: 'hidden' }}>
             {!containerisedDeploymentData?.length ? (
@@ -258,6 +327,7 @@ export const SSRDetails = () => {
                         <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
                           <Label
                             key={val.env}
+                            icon={val.isGit && <GithubIcon />}
                             color={val.isContainerized || val.isGit ? 'blue' : 'gold'}
                             isCompact
                             style={{ marginRight: '8px' }}
@@ -323,7 +393,7 @@ export const SSRDetails = () => {
                                 variant="link"
                                 style={{ color: 'var(--pf-global--link--Color)' }}
                                 aria-expanded={isExpanded}
-                                onClick={onClick}
+                                onClick={(e) => onClick(e, val.name, val.buildName, val)}
                               >
                                 View Logs
                               </Button>
@@ -339,6 +409,7 @@ export const SSRDetails = () => {
           </DrawerContentBody>
         </DrawerContent>
       </Drawer>
+      {/* </div> */}
       <Modal
         title="Confirm Redeployment"
         variant={ModalVariant.medium}
