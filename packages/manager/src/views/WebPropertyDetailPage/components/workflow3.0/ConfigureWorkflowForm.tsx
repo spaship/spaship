@@ -33,9 +33,8 @@ const schema = yup.object({
     .required(),
   contextDir: yup.string().required().label('Context Directory'),
   gitRef: yup.string().required().label('Branch'),
-  type: yup.string().required().label('Repository Type'),
   ref: yup.string(),
-  repoUrl: yup.string().trim().required().label('Repository URL'),
+  repoUrl: yup.string().required().label('Repository URL'),
   env: yup.string().required().label('Environment'),
   healthCheckPath: yup
     .string()
@@ -43,14 +42,14 @@ const schema = yup.object({
     .required(),
   config: yup.array().of(
     yup.object({
-      key: yup.string().trim().required().label('Configuration Key'),
-      value: yup.string().trim().required().label('Configuration Value')
+      key: yup.string().required().label('Configuration Key'),
+      value: yup.string().required().label('Configuration Value')
     })
   ),
   buildArgs: yup.array().of(
     yup.object({
-      key: yup.string().trim().required().label('Key'),
-      value: yup.string().trim().required().label('Value')
+      key: yup.string().required().label('Key'),
+      value: yup.string().required().label('Value')
     })
   ),
   port: yup
@@ -63,14 +62,14 @@ const schema = yup.object({
       'Port must be less than or equal to 65536',
       (value) => parseInt(value as string, 10) <= 65536
     )
-    .trim()
+
     .label('Port')
 });
 
 interface Props {
   onClose: () => void;
   propertyIdentifier: string;
-  // onSubmitWorkflow: (submit: boolean) => void;
+
   dataProps: TDataWorkflow | TDataContainerized;
   flag: string;
 }
@@ -89,8 +88,7 @@ export const ConfigureWorkflowForm = ({
   propertyIdentifier,
   dataProps,
   flag
-}: // onSubmitWorkflow
-Props): JSX.Element => {
+}: Props): JSX.Element => {
   const {
     control,
     handleSubmit,
@@ -101,8 +99,7 @@ Props): JSX.Element => {
   } = useForm<FormData>({
     defaultValues: {
       ...dataProps,
-      // config: keyValuePairsGenerator({ dataProps, property: 'config' }),
-      // buildArgs: keyValuePairsGenerator({ dataProps, property: 'buildArgs' }),
+
       config: keyValuePairsGenerator({ dataProps, property: 'config' }).map((item) => ({
         key: item.key,
         value: item.value as string | undefined
@@ -170,27 +167,26 @@ Props): JSX.Element => {
       const toastId = toast.loading('Submitting form...');
       const newdata = {
         ...data,
-        path: data.path.trim().startsWith('/') ? data.path.trim() : `/${data.path.trim()}`,
-        healthCheckPath: data.healthCheckPath.trim().startsWith('/')
-          ? data.healthCheckPath.trim()
-          : `/${data.healthCheckPath.trim()}`,
+        path: data.path.startsWith('/') ? data.path : `/${data.path}`,
+        healthCheckPath: data.healthCheckPath.startsWith('/')
+          ? data.healthCheckPath
+          : `/${data.healthCheckPath}`,
         config: data.config
           ? data.config.reduce((acc: Record<string, string>, cur: any) => {
-              acc[cur.key.trim()] = cur.value.trim();
+              acc[cur.key] = cur.value;
               return acc;
             }, {})
           : {},
         buildArgs: data.buildArgs
           ? data.buildArgs.reduce((acc: Record<string, string>, cur: any) => {
-              acc[cur.key.trim()] = cur.value.trim();
+              acc[cur.key] = cur.value;
               return acc;
             }, {})
           : {},
-        propertyIdentifier: propertyIdentifier.trim(),
+        propertyIdentifier,
         port: apiResponse
       };
 
-      // onSubmitWorkflow(true);
       onClose();
 
       try {
@@ -438,30 +434,6 @@ Props): JSX.Element => {
                   </SplitItem>
                 </Split>
                 <Split hasGutter>
-                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-                    <Controller
-                      control={control}
-                      name="type"
-                      render={({ field, fieldState: { error } }) => (
-                        <FormGroup
-                          style={{ color: '#000' }}
-                          label="Repository Type"
-                          isRequired
-                          fieldId="type"
-                          validated={error ? 'error' : 'default'}
-                          helperTextInvalid={error?.message}
-                        >
-                          <TextInput
-                            isRequired
-                            placeholder="Enter Repository type"
-                            type="text"
-                            id="type"
-                            {...field}
-                          />
-                        </FormGroup>
-                      )}
-                    />
-                  </SplitItem>
                   <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
                     <Controller
                       control={control}
@@ -1180,31 +1152,6 @@ Props): JSX.Element => {
                   </SplitItem>
                 </Split>
                 <Split hasGutter>
-                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-                    <Controller
-                      control={control}
-                      name="type"
-                      render={({ field, fieldState: { error } }) => (
-                        <FormGroup
-                          style={{ color: '#000' }}
-                          label="Repository Type"
-                          isRequired
-                          fieldId="type"
-                          validated={error ? 'error' : 'default'}
-                          helperTextInvalid={error?.message}
-                        >
-                          <TextInput
-                            isRequired
-                            placeholder="Enter Repository type"
-                            type="text"
-                            id="type"
-                            {...field}
-                            isDisabled
-                          />
-                        </FormGroup>
-                      )}
-                    />
-                  </SplitItem>
                   <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
                     <Controller
                       control={control}

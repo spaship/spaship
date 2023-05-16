@@ -32,7 +32,7 @@ const schema = yup.object({
     .required(),
   contextDir: yup.string().required().label('Context Directory'),
   gitRef: yup.string().required().label('Branch'),
-  type: yup.string().required().label('Repository Type'),
+
   ref: yup.string(),
   repoUrl: yup.string().trim().required().label('Repository URL'),
   env: yup.string().required().label('Environment'),
@@ -89,7 +89,7 @@ export const Workflow3 = ({
       healthCheckPath: '/',
       path: '/',
       gitRef: 'master',
-      type: 'monolothic',
+
       port: '3000'
     },
     mode: 'onBlur',
@@ -413,30 +413,6 @@ export const Workflow3 = ({
                   </SplitItem>
                 </Split>
                 <Split hasGutter>
-                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-                    <Controller
-                      control={control}
-                      name="type"
-                      render={({ field, fieldState: { error } }) => (
-                        <FormGroup
-                          style={{ color: '#000' }}
-                          label="Repository Type"
-                          isRequired
-                          fieldId="type"
-                          validated={error ? 'error' : 'default'}
-                          helperTextInvalid={error?.message}
-                        >
-                          <TextInput
-                            isRequired
-                            placeholder="Enter Repository type"
-                            type="text"
-                            id="type"
-                            {...field}
-                          />
-                        </FormGroup>
-                      )}
-                    />
-                  </SplitItem>
                   <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
                     <Controller
                       control={control}
@@ -1065,31 +1041,6 @@ export const Workflow3 = ({
                   </SplitItem>
                 </Split>
                 <Split hasGutter>
-                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-                    <Controller
-                      control={control}
-                      name="type"
-                      render={({ field, fieldState: { error } }) => (
-                        <FormGroup
-                          style={{ color: '#000' }}
-                          label="Repository Type"
-                          isRequired
-                          fieldId="type"
-                          validated={error ? 'error' : 'default'}
-                          helperTextInvalid={error?.message}
-                        >
-                          <TextInput
-                            isRequired
-                            placeholder="Enter Repository type"
-                            type="text"
-                            id="type"
-                            {...field}
-                            isDisabled
-                          />
-                        </FormGroup>
-                      )}
-                    />
-                  </SplitItem>
                   <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
                     <Controller
                       control={control}

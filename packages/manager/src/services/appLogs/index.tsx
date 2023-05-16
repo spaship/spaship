@@ -1,1 +1,1 @@
-export { useGetLogsforSpa, fetchLogsforSpa } from './queries';
+export { fetchLogsforSpa } from './queries';

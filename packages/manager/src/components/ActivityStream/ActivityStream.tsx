@@ -112,10 +112,49 @@ const activities = {
       env.
     </Text>
   ),
+  APPLICATION_DEPLOYMENT_PROCESSING: ({ props, message }: TWebPropActivityStream): JSX.Element => (
+    <Text component={TextVariants.small}>
+      <Label color="grey" icon={<OutlinedClockIcon />}>
+        Deployment processing
+      </Label>{' '}
+      for{' '}
+      <Label
+        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+        color="grey"
+      >
+        {props.applicationIdentifier}
+      </Label>{' '}
+      App in the{' '}
+      <Label icon={<ClusterIcon />} color="grey">
+        {props.env}
+      </Label>{' '}
+      env.
+    </Text>
+  ),
   APPLICATION_DEPLOYMENT_FAILED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
       <Label color="red" icon={<ExclamationCircleIcon />}>
         Deployment failed
+      </Label>{' '}
+      for{' '}
+      <Label
+        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+        color="red"
+      >
+        {props.applicationIdentifier}
+      </Label>{' '}
+      App in the{' '}
+      <Label icon={<ClusterIcon />} color="red">
+        {props.env}
+      </Label>{' '}
+      env.{' '}
+    </Text>
+  ),
+
+  APPLICATION_DEPLOYMENT_TIMEOUT: ({ props, message }: TWebPropActivityStream): JSX.Element => (
+    <Text component={TextVariants.small}>
+      <Label color="red" icon={<ExclamationCircleIcon />}>
+        Deployment timeout
       </Label>{' '}
       for{' '}
       <Label
@@ -150,10 +189,62 @@ const activities = {
       env.
     </Text>
   ),
+  APPLICATION_BUILD_FINISHED: ({
+    props,
+    message,
+    propertyIdentifier
+  }: TWebPropActivityStream): JSX.Element => (
+    <Text component={TextVariants.small}>
+      <Label color="green" icon={<CheckIcon />}>
+        Build completed
+      </Label>{' '}
+      for{' '}
+      <Link
+        href={{
+          pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+          query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+        }}
+      >
+        <Label
+          icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+          color="green"
+        >
+          {props.applicationIdentifier}
+        </Label>
+      </Link>{' '}
+      in{' '}
+      <Label icon={<ClusterIcon />} color="green">
+        {props.env}
+      </Label>{' '}
+      env in{' '}
+      <Label icon={<OutlinedClockIcon />} color="green">
+        {message.split(' ')[3]} s
+      </Label>
+    </Text>
+  ),
   APPLICATION_BUILD_FAILED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
       <Label color="red" icon={<ExclamationCircleIcon />}>
         Build failed
+      </Label>{' '}
+      for{' '}
+      <Label
+        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+        color="red"
+      >
+        {props.applicationIdentifier}
+      </Label>{' '}
+      App in the{' '}
+      <Label icon={<ClusterIcon />} color="red">
+        {props.env}
+      </Label>{' '}
+      env.{' '}
+    </Text>
+  ),
+  APPLICATION_BUILD_TERMINATED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
+    <Text component={TextVariants.small}>
+      <Label color="red" icon={<ExclamationCircleIcon />}>
+        Build terminated
       </Label>{' '}
       for{' '}
       <Label
@@ -306,6 +397,7 @@ const activities = {
     </Text>
   )
 } as any;
+
 const DeploymentKind = ({ activity }: DeploymentKindProps) => {
   if (Object.prototype.hasOwnProperty.call(activities, activity.action)) {
     return activities[activity.action](activity);
