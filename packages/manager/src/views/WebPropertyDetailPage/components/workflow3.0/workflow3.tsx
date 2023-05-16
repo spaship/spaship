@@ -32,7 +32,7 @@ const schema = yup.object({
     .required(),
   contextDir: yup.string().required().label('Context Directory'),
   gitRef: yup.string().required().label('Branch'),
-  type: yup.string().required().label('Repository Type'),
+
   ref: yup.string(),
   repoUrl: yup.string().trim().required().label('Repository URL'),
   env: yup.string().required().label('Environment'),
@@ -89,7 +89,7 @@ export const Workflow3 = ({
       healthCheckPath: '/',
       path: '/',
       gitRef: 'master',
-      type: 'monolothic',
+
       port: '3000'
     },
     mode: 'onBlur',
@@ -120,12 +120,15 @@ export const Workflow3 = ({
         gitRef: data.gitRef,
         contextDir: data.contextDir
       };
-
       try {
         const response = await validateSsrSpaProperty.mutateAsync(validateDTO);
 
-        setValidateMessage('');
-        setApiResponse(response?.port);
+        if (Object.keys(response).includes('port')) {
+          setApiResponse(response?.port);
+          setValidateMessage('');
+        } else if (Object.keys(response).includes('warning')) {
+          setValidateMessage(response?.warning);
+        }
       } catch (error) {
         if (error instanceof AxiosError && error.response && error.response.status === 403) {
           toast.error("You don't have access to perform this action");
@@ -139,6 +142,7 @@ export const Workflow3 = ({
     }
 
     if (step === 5) {
+      const toastId = toast.loading('Submitting form...');
       const newdata = {
         ...data,
         path: data.path.trim().startsWith('/') ? data.path.trim() : `/${data.path.trim()}`,
@@ -167,15 +171,15 @@ export const Workflow3 = ({
       try {
         await createSsrSpaProperty.mutateAsync(newdata);
         onClose();
-        toast.success('Deployed Containerized Application successfully');
+        toast.success('Deployed Containerized Application successfully', { id: toastId });
       } catch (error) {
         if (error instanceof AxiosError && error.response && error.response.status === 403) {
-          toast.error("You don't have access to perform this action");
+          toast.error("You don't have access to perform this action", { id: toastId });
           onClose();
         } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
           toast.error(error.response.data.message);
         } else {
-          toast.error('Failed to deploy containerized application');
+          toast.error('Failed to deploy containerized application', { id: toastId });
         }
       }
     }
@@ -409,30 +413,6 @@ export const Workflow3 = ({
                   </SplitItem>
                 </Split>
                 <Split hasGutter>
-                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-                    <Controller
-                      control={control}
-                      name="type"
-                      render={({ field, fieldState: { error } }) => (
-                        <FormGroup
-                          style={{ color: '#000' }}
-                          label="Repository Type"
-                          isRequired
-                          fieldId="type"
-                          validated={error ? 'error' : 'default'}
-                          helperTextInvalid={error?.message}
-                        >
-                          <TextInput
-                            isRequired
-                            placeholder="Enter Repository type"
-                            type="text"
-                            id="type"
-                            {...field}
-                          />
-                        </FormGroup>
-                      )}
-                    />
-                  </SplitItem>
                   <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
                     <Controller
                       control={control}
@@ -1064,31 +1044,6 @@ export const Workflow3 = ({
                   <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
                     <Controller
                       control={control}
-                      name="type"
-                      render={({ field, fieldState: { error } }) => (
-                        <FormGroup
-                          style={{ color: '#000' }}
-                          label="Repository Type"
-                          isRequired
-                          fieldId="type"
-                          validated={error ? 'error' : 'default'}
-                          helperTextInvalid={error?.message}
-                        >
-                          <TextInput
-                            isRequired
-                            placeholder="Enter Repository type"
-                            type="text"
-                            id="type"
-                            {...field}
-                            isDisabled
-                          />
-                        </FormGroup>
-                      )}
-                    />
-                  </SplitItem>
-                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-                    <Controller
-                      control={control}
                       name="gitRef"
                       render={({ field, fieldState: { error } }) => (
                         <FormGroup
@@ -1508,7 +1463,11 @@ export const Workflow3 = ({
               >
                 Back
               </Button>
-              <Button variant="primary" type="submit" isDisabled={Object.keys(errors).length > 0}>
+              <Button
+                variant="primary"
+                type="submit"
+                isDisabled={Object.keys(errors).length > 0 || validateMessage !== ''}
+              >
                 Finish
               </Button>
             </>

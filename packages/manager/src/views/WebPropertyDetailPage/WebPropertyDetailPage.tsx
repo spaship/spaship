@@ -41,6 +41,7 @@ import {
   CogIcon,
   CubeIcon,
   ExternalLinkAltIcon,
+  GithubIcon,
   PackageIcon,
   PlusCircleIcon,
   RunningIcon,
@@ -329,6 +330,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                     ({ _id, env, isContainerized, isGit }) => (
                                       <SplitItem key={_id} style={{ marginRight: '8px' }}>
                                         <Label
+                                          icon={isGit && <GithubIcon />}
                                           color={isContainerized || isGit ? 'cyan' : 'gold'}
                                           isCompact
                                         >
