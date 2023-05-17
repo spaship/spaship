@@ -4,7 +4,7 @@ import * as decompress from 'decompress';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
-import { CONTAINERIZED_DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, EPHEMERAL_ENV, JOB, LOG_TYPE } from 'src/configuration';
+import { CONTAINERIZED_DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, EPHEMERAL_ENV, JOB, LOGTYPE } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { AgendaService } from 'src/server/agenda/agenda.service';
@@ -318,8 +318,6 @@ export class ApplicationService {
       const response = await this.applicationFactory.containerizedDeploymentRequest(containerizedRequest, baseUrl);
       this.logger.log('ContainerizedDeploymentResponse', JSON.stringify(response));
       if (!response) return;
-      // @internal TODO : To be removed after the Operator Enhancement
-      await this.applicationFactory.containerizedConfigUpdate(containerizedRequest, baseUrl);
       const applicationDetails = (
         await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: true, isGit: false })
       )[0];
@@ -702,12 +700,12 @@ export class ApplicationService {
     if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
     const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
     const logRequest = this.applicationFactory.createLogRequest(propertyIdentifier, env, identifier, property.namespace, lines);
-    if (type === LOG_TYPE.BUILD) {
+    if (type === LOGTYPE.BUILD) {
       if (!id) this.exceptionService.badRequestException({ message: 'Please provide the id for the build logs.' });
       logRequest.objectName = id;
       return this.applicationFactory.buildLogRequest(logRequest, deploymentConnection.baseurl);
     }
-    if (type === LOG_TYPE.POD) {
+    if (type === LOGTYPE.POD) {
       if (!id) this.exceptionService.badRequestException({ message: 'Please provide the id for the pod logs.' });
       logRequest.objectName = id;
       return this.applicationFactory.podLogRequest(logRequest, deploymentConnection.baseurl);

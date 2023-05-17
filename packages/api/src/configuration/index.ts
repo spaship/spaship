@@ -116,7 +116,7 @@ export enum JOB {
   DELETE_EPH_ENV = 'DELETE_EPH_ENV'
 }
 
-export enum LOG_TYPE {
+export enum LOGTYPE {
   DEPLOYMENT = 'DEPLOYMENT',
   BUILD = 'BUILD',
   POD = 'POD'
