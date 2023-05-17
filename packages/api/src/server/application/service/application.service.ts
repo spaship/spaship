@@ -318,8 +318,6 @@ export class ApplicationService {
       const response = await this.applicationFactory.containerizedDeploymentRequest(containerizedRequest, baseUrl);
       this.logger.log('ContainerizedDeploymentResponse', JSON.stringify(response));
       if (!response) return;
-      // @internal TODO : To be removed after the Operator Enhancement
-      await this.applicationFactory.containerizedConfigUpdate(containerizedRequest, baseUrl);
       const applicationDetails = (
         await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: true, isGit: false })
       )[0];
