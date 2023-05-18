@@ -260,7 +260,6 @@ export class ApplicationService {
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: true, isGit: false }, applicationDetails);
     }
     const containerizedDeploymentRequestForOperator = this.applicationFactory.createContainerizedDeploymentRequestForOperator(
-      applicationRequest,
       propertyIdentifier,
       identifier,
       env,
@@ -418,6 +417,7 @@ export class ApplicationService {
       applicationDetails.gitRef = applicationRequest.gitRef || applicationDetails.gitRef;
       applicationDetails.contextDir = applicationRequest.contextDir || applicationDetails.contextDir;
       applicationDetails.buildArgs = applicationRequest.buildArgs || applicationDetails.buildArgs;
+      applicationDetails.dockerFileName = applicationRequest.dockerFileName || applicationDetails.dockerFileName;
       applicationDetails.commitId = applicationRequest.commitId || applicationDetails.commitId;
       applicationDetails.mergeId = applicationRequest.mergeId || applicationDetails.mergeId;
       applicationDetails.updatedBy = applicationRequest.createdBy;
@@ -444,7 +444,7 @@ export class ApplicationService {
         Action.APPLICATION_BUILD_STARTED,
         env,
         identifier,
-        `Build Started for ${applicationRequest.name} at ${env} [Workflow 3.0]`,
+        `Build [${response.buildName}] Started for ${applicationRequest.name} at ${env} [Workflow 3.0]`,
         applicationRequest.createdBy,
         Source.GIT,
         JSON.stringify(response)
@@ -482,13 +482,13 @@ export class ApplicationService {
       const buildStatus = await this.applicationFactory.buildStatusRequest({ ...statusRequest, objectName: buildName }, baseurl);
       this.logger.log('BuildStatus', `${buildName} : ${buildStatus.data}}`);
       if (buildStatus?.data === 'COMPLETED') {
-        this.logger.log('BuildStatus', `Build Successfully Completed for ${buildName}`);
+        this.logger.log('BuildStatus', `Build Successfully Completed for ${buildName} [Workflow 3.0]`);
         buildCheck = true;
-        this.startDeploymentInterval(application, statusRequest, baseurl);
+        this.startDeploymentInterval(application, statusRequest, baseurl, buildName);
         await clearInterval(buildInterval);
       } else if (buildStatus?.data === 'FAILED') {
         buildCheck = true;
-        this.logger.error('BuildStatus', `Build Failed for ${buildName}`);
+        this.logger.error('BuildStatus', `Build Failed for ${buildName} [Workflow 3.0]`);
         this.analyticsService.createActivityStream(
           application.propertyIdentifier,
           Action.APPLICATION_BUILD_FAILED,
@@ -502,7 +502,7 @@ export class ApplicationService {
         await clearInterval(buildInterval);
       } else if (buildStatus?.data === 'CHECK_OS_CONSOLE') {
         buildCheck = true;
-        this.logger.error('BuildStatus', `Build Terminated for ${buildName}`);
+        this.logger.error('BuildStatus', `Build Terminated for ${buildName} [Workflow 3.0]`);
         this.analyticsService.createActivityStream(
           application.propertyIdentifier,
           Action.APPLICATION_BUILD_TERMINATED,
@@ -518,13 +518,13 @@ export class ApplicationService {
     }, this.period);
     setTimeout(async () => {
       if (!buildCheck) {
-        this.logger.warn('BuildTimeout', `Build Timeout for ${buildName}`);
+        this.logger.warn('BuildTimeout', `Build Timeout for ${buildName} [Workflow 3.0]`);
         this.analyticsService.createActivityStream(
           application.propertyIdentifier,
           Action.APPLICATION_BUILD_TIMEOUT,
           application.env,
           application.identifier,
-          `Build Timeout for ${application.identifier} [Workflow 3.0]`,
+          `Build Timeout for ${buildName} [Workflow 3.0]`,
           application.createdBy,
           Source.GIT,
           JSON.stringify(statusRequest)
@@ -535,7 +535,7 @@ export class ApplicationService {
   }
 
   // @internal Check deployment periodically & update the status
-  async startDeploymentInterval(application: Application, statusRequest: GitApplicationStatusRequest, baseurl: string) {
+  async startDeploymentInterval(application: Application, statusRequest: GitApplicationStatusRequest, baseurl: string, buildName: string) {
     let deploymentCheck = false;
     const deploymentInterval = setInterval(async () => {
       const deploymentStatus = await this.applicationFactory.deploymentStatusRequest(statusRequest, baseurl);
@@ -554,7 +554,7 @@ export class ApplicationService {
         )[0];
         const diff = (applicationDetails.updatedAt.getTime() - new Date().getTime()) / 1000;
         const consumedTime = Math.abs(diff).toFixed(2).toString();
-        this.logger.log('TimeToDeploy', `${consumedTime} seconds`);
+        this.logger.log('TimeToDeploy', `${consumedTime} seconds [BuildId :${buildName}]`);
         const eventTimeTrace = this.applicationFactory.processDeploymentTime(applicationDetails, consumedTime);
         await this.dataServices.eventTimeTrace.create(eventTimeTrace);
         this.analyticsService.createActivityStream(
@@ -562,19 +562,20 @@ export class ApplicationService {
           Action.APPLICATION_DEPLOYED,
           application.env,
           application.identifier,
-          `Deployment Time : ${consumedTime} seconds [Workflow 3.0]`,
+          `Deployment Time : ${consumedTime} seconds  [${buildName}]`,
           application.createdBy,
           Source.GIT,
           JSON.stringify(deploymentStatus.data)
         );
       } else if (deploymentStatus?.status === 'ERR') {
+        this.logger.warn('DeploymentFailed', `Deployment Failed [BuildId : ${buildName}]`);
         deploymentCheck = true;
         this.analyticsService.createActivityStream(
           application.propertyIdentifier,
           Action.APPLICATION_DEPLOYMENT_FAILED,
           application.env,
           application.identifier,
-          `Deployment Failed for ${application.identifier} [Workflow 3.0]`,
+          `Deployment Failed for ${buildName} [Workflow 3.0]`,
           application.createdBy,
           Source.GIT,
           JSON.stringify(statusRequest)
@@ -584,13 +585,13 @@ export class ApplicationService {
     }, this.period);
     setTimeout(async () => {
       if (!deploymentCheck) {
-        this.logger.warn('DeploymentTimeout', `Deployment Timeout for ${statusRequest.objectName}`);
+        this.logger.warn('DeploymentTimeout', `Deployment Timeout for ${statusRequest.objectName} [BuildId : ${buildName}]`);
         this.analyticsService.createActivityStream(
           application.propertyIdentifier,
           Action.APPLICATION_DEPLOYMENT_TIMEOUT,
           application.env,
           application.identifier,
-          `Build Timeout for ${application.identifier} [Workflow 3.0]`,
+          `Deployment Timeout for ${buildName} [Workflow 3.0]`,
           application.createdBy,
           Source.GIT,
           JSON.stringify(statusRequest)
