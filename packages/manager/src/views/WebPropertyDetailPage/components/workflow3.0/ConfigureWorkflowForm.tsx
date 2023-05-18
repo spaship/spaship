@@ -16,7 +16,7 @@ import {
   TextInput,
   Tooltip
 } from '@patternfly/react-core';
-import { InfoCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
+import { ExclamationCircleIcon, InfoCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
@@ -31,8 +31,19 @@ const schema = yup.object({
     .string()
     .matches(/^[a-zA-Z0-9/-]+$/, 'Only letters, numbers, forward slash and dashes are allowed')
     .required(),
-  contextDir: yup.string().required().label('Context Directory'),
-  gitRef: yup.string().required().label('Branch'),
+  contextDir: yup
+    .string()
+    .required()
+    .notOneOf([' '], 'Invalid value. Cannot be only spaces.')
+    .label('Context Directory'),
+  gitRef: yup
+    .string()
+    .required()
+    .matches(
+      /^[a-zA-Z0-9._-]+$/,
+      'Invalid branch name. Branch names must consist of alphanumeric characters, dots, underscores, or hyphens.'
+    )
+    .label('Branch'),
   ref: yup.string(),
   repoUrl: yup.string().required().label('Repository URL'),
   env: yup.string().required().label('Environment'),
@@ -52,17 +63,22 @@ const schema = yup.object({
       value: yup.string().required().label('Value')
     })
   ),
-  port: yup
-    .string()
-    .matches(/^\d+$/, { message: 'Port must contain only numbers', excludeEmptyString: true })
-    .min(1, 'Port is required')
-    .max(5, 'Port must be less than or equal to 5 digits')
-    .test(
-      'port',
-      'Port must be less than or equal to 65536',
-      (value) => parseInt(value as string, 10) <= 65536
-    )
 
+  port: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .typeError('Port must be a number')
+    .integer('Port must be an integer')
+    .positive('Port must be a positive number')
+    .test('port', 'Port must contain only numbers', (value) =>
+      /^\d+$/.test(value?.toString() || '')
+    )
+    .min(1, 'Port is required')
+    .max(99999, 'Port must be less than or equal to 5 digits')
+    .test('port', 'Port must be less than or equal to 65536', (value) => {
+      const portNumber = parseInt(value?.toString() || '', 10);
+      return portNumber <= 65536;
+    })
     .label('Port')
 });
 
@@ -108,8 +124,8 @@ export const ConfigureWorkflowForm = ({
         key: item.key,
         value: item.value as string | undefined
       })),
-
-      port: dataProps.port ? dataProps.port : '3000',
+      contextDir: dataProps.contextDir ? dataProps.contextDir : '/',
+      port: dataProps.port ? dataProps.port : 3000,
       path: dataProps.path ? dataProps.path : '/',
       healthCheckPath: dataProps.healthCheckPath ? dataProps.healthCheckPath : '/'
     },
@@ -120,7 +136,7 @@ export const ConfigureWorkflowForm = ({
   const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const webPropertiesKeys = Object.keys(webProperties.data || {});
-  const [apiResponse, setApiResponse] = useState('3000');
+  const [apiResponse, setApiResponse] = useState(3000);
 
   const validateSsrSpaProperty = useValidateSsrSpaProperty(propertyIdentifier);
   const [validateMessage, setValidateMessage] = useState('');
@@ -155,7 +171,13 @@ export const ConfigureWorkflowForm = ({
         if (error instanceof AxiosError && error.response && error.response.status === 403) {
           toast.error("You don't have access to perform this action");
         } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
-          toast.error(error.response.data.message);
+          toast.error(error.response.data.message, {
+            style: {
+              maxWidth: '400px',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-all'
+            }
+          });
           setValidateMessage(error.response.data.message);
         } else {
           toast.error('Failed to validate the containerized application');
@@ -177,12 +199,12 @@ export const ConfigureWorkflowForm = ({
               return acc;
             }, {})
           : {},
-        buildArgs: data.buildArgs
-          ? data.buildArgs.reduce((acc: Record<string, string>, cur: any) => {
-              acc[cur.key] = cur.value;
-              return acc;
-            }, {})
-          : {},
+        // buildArgs: data.buildArgs
+        //   ? data.buildArgs.reduce((acc: Record<string, string>, cur: any) => {
+        //       acc[cur.key] = cur.value;
+        //       return acc;
+        //     }, {})
+        //   : {},
         propertyIdentifier,
         port: apiResponse
       };
@@ -198,7 +220,13 @@ export const ConfigureWorkflowForm = ({
           toast.error("You don't have access to perform this action", { id: toastId });
           onClose();
         } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
-          toast.error(error.response.data.message);
+          toast.error(error.response.data.message, {
+            style: {
+              maxWidth: '400px',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-all'
+            }
+          });
         } else {
           toast.error('Failed to deploy containerized application', { id: toastId });
         }
@@ -280,7 +308,13 @@ export const ConfigureWorkflowForm = ({
                 >
                   1
                 </span>
-                Repository Details
+                Repository Details{' '}
+                {validateMessage !== '' && (
+                  <span>
+                    &nbsp;
+                    <ExclamationCircleIcon style={{ color: '#c9190b' }} />
+                  </span>
+                )}
               </Button>
             </li>
             <li>
@@ -310,7 +344,7 @@ export const ConfigureWorkflowForm = ({
                 >
                   3
                 </span>
-                Deployment Config
+                Application Configuration
               </Button>
             </li>
             <li>
@@ -325,7 +359,7 @@ export const ConfigureWorkflowForm = ({
                 >
                   4
                 </span>
-                Build Arg
+                Build Arguments
               </Button>
             </li>
             <li>
@@ -363,8 +397,9 @@ export const ConfigureWorkflowForm = ({
                               <Tooltip
                                 content={
                                   <div>
-                                    The registry URL of the application you want to deploy. for
-                                    example, Sample URL : quay.io/spaship/sample-ssr-app
+                                    The https git repository URL of the application, for
+                                    example:&nbsp;
+                                    <em>https://github.com/arkaprovob/cd-demo.git</em>
                                   </div>
                                 }
                               >
@@ -403,10 +438,12 @@ export const ConfigureWorkflowForm = ({
                             <>
                               Context Directory
                               <Tooltip
+                                style={{ backgroundColor: 'white' }}
                                 content={
                                   <div>
-                                    The registry URL of the application you want to deploy. for
-                                    example, Sample URL : quay.io/spaship/sample-ssr-app
+                                    For mono repo, specify the name of the directory where the
+                                    application exists example, <b>package/fe</b> default will be{' '}
+                                    <b>/</b>
                                   </div>
                                 }
                               >
@@ -453,6 +490,16 @@ export const ConfigureWorkflowForm = ({
                   </SplitItem>
                 </Split>
               </div>
+              {validateMessage !== '' && (
+                <Alert
+                  variant="danger"
+                  isInline
+                  title={validateMessage}
+                  timeout={5000}
+                  className="pf-u-mt-lg"
+                />
+              )}
+
               <div style={{ bottom: '0px', position: 'absolute', width: '100%' }}>
                 <Button
                   variant="primary"
@@ -732,6 +779,7 @@ export const ConfigureWorkflowForm = ({
                       )}
                     />
                   </SplitItem>
+
                   <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
                     <Controller
                       control={control}
@@ -759,7 +807,7 @@ export const ConfigureWorkflowForm = ({
                             type="text"
                             id="port"
                             {...field}
-                            value={apiResponse}
+                            defaultValue={3000}
                           />
                         </FormGroup>
                       )}
@@ -767,15 +815,6 @@ export const ConfigureWorkflowForm = ({
                   </SplitItem>
                 </Split>
               </div>
-              {validateMessage !== '' && (
-                <Alert
-                  variant="danger"
-                  isInline
-                  title={validateMessage}
-                  timeout={5000}
-                  className="pf-u-mt-lg"
-                />
-              )}
 
               <div style={{ bottom: '0px', position: 'absolute', width: '100%' }}>
                 <Button
@@ -934,9 +973,8 @@ export const ConfigureWorkflowForm = ({
                   <Tooltip
                     content={
                       <div>
-                        This will store the configuration map in key-value pairs, which will be
-                        required during the application runtime, for example, if your app reads a
-                        value of some env variable to configure itself during start-up.
+                        This will store the build arguments in key-value pairs, which will be
+                        required during the building an application.
                       </div>
                     }
                   >
@@ -1122,8 +1160,9 @@ export const ConfigureWorkflowForm = ({
                               <Tooltip
                                 content={
                                   <div>
-                                    The registry URL of the application you want to deploy. for
-                                    example, Sample URL : quay.io/spaship/sample-ssr-app
+                                    For mono repo, specify the name of the directory where the
+                                    application exists example, <b>package/fe</b> default will be{' '}
+                                    <b>/</b>
                                   </div>
                                 }
                               >
@@ -1579,7 +1618,7 @@ export const ConfigureWorkflowForm = ({
                 type="submit"
                 isDisabled={Object.keys(errors).length > 0 || validateMessage !== ''}
               >
-                Finish
+                Submit
               </Button>
             </>
           )}

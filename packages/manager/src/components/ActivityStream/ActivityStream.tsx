@@ -435,7 +435,11 @@ export const ActivityStream = ({
                   id={activity._id}
                   titleId={activity._id}
                   key={activity._id}
-                  variant={activity.action.includes('FAIL') ? 'danger' : startedCondition}
+                  variant={
+                    activity.action.includes('FAIL') || activity.action.includes('TERMINATED')
+                      ? 'danger'
+                      : startedCondition
+                  }
                   description={formatDate(activity.createdAt, 'MMM DD YY, hh:mm a')}
                 >
                   <TextContent className="pf-u-mb-sm">

@@ -16,6 +16,6 @@ export type TSpaProperty = {
     [key: string]: string;
   };
   imageUrl: string;
-  port: string;
+  port: number;
   buildName: string[];
 };

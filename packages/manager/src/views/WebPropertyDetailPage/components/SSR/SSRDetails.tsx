@@ -40,6 +40,7 @@ import {
 } from '@patternfly/react-icons';
 import { Caption, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { useRef, useState } from 'react';
@@ -75,7 +76,7 @@ export const SSRDetails = () => {
     isContainerized: false,
     isGit: false,
     config: {},
-    port: ''
+    port: 0
   });
   const [configureData, setConfigureData] = useState<TDataWorkflow | TDataContainerized>({
     propertyIdentifier: '',
@@ -93,7 +94,7 @@ export const SSRDetails = () => {
     isContainerized: false,
     isGit: false,
     config: {},
-    port: ''
+    port: 0
   });
 
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
@@ -105,8 +106,7 @@ export const SSRDetails = () => {
     const toastId = toast.loading('Submitting form...');
     redeployData.propertyIdentifier = propertyIdentifier;
 
-    redeployData.redeploy = true;
-
+    redeployData.reDeployment = true;
     try {
       await createSsrSpaProperty.mutateAsync({
         ...redeployData
@@ -150,12 +150,12 @@ export const SSRDetails = () => {
     isContainerized: false,
     isGit: false,
     config: {},
-    port: ''
+    port: 0
   };
   const spaDetailedWorkflowInitialData: TDataWorkflow | TDataContainerized = {
     healthCheckPath: '/',
     path: '/',
-    gitRef: 'master',
+    gitRef: 'main',
     type: 'monolithic',
     name: applicationName,
     env: '',
@@ -165,7 +165,7 @@ export const SSRDetails = () => {
     config: {},
     buildArgs: {},
     propertyIdentifier,
-    port: '3000',
+    port: 3000,
     isGit: true,
     isContainerized: false
   };
@@ -484,8 +484,8 @@ export const SSRDetails = () => {
         <div>
           <Switch
             id="simple-switch"
-            label="Workflow 3.0"
-            labelOff="Workflow 2.0"
+            label="From Git Repo"
+            labelOff="From Container"
             isChecked={isChecked}
             onChange={handleChange}
             className="pf-u-mr-md pf-u-mb-md"
@@ -494,13 +494,16 @@ export const SSRDetails = () => {
             content={
               isChecked ? (
                 <div>
-                  2.0 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam id feugiat
-                  augue, nec fringilla turpis.
+                  Provide your application&apos;s repository details, and SPAship will handle the
+                  entire build and deployment process. No more external CIs are needed! Enjoy a more
+                  direct and interactive deployment experience. To know more check spasip get
+                  started section <Link href="/documents">here</Link>.{' '}
                 </div>
               ) : (
                 <div>
-                  3.0 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam id feugiat
-                  augue, nec fringilla turpis.
+                  Containerized deployment for Supporting the SSR capability. It is assumed the
+                  container for this app is already available. For a more direct and interactive
+                  deployment experience,toggle the switch to From Git Repo
                 </div>
               )
             }

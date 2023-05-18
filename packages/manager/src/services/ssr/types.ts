@@ -59,5 +59,5 @@ export type TSSRValidate = {
 };
 export type TSSRValidateResponse = {
   warning: string;
-  port: string;
+  port: number;
 };
