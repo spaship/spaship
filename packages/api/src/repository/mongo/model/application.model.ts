@@ -75,6 +75,9 @@ export class Application {
   @Prop({})
   buildName: string[];
 
+  @Prop({})
+  dockerFileName: string;
+
   @Prop({ default: 'NA' })
   createdBy: string;
 

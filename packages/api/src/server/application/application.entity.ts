@@ -47,6 +47,8 @@ export class Application {
 
   buildName: string[];
 
+  dockerFileName: string;
+
   createdBy: string;
 
   updatedBy: string;
