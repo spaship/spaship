@@ -484,16 +484,6 @@ export class ApplicationService {
       if (buildStatus?.data === 'COMPLETED') {
         this.logger.log('BuildStatus', `Build Successfully Completed for ${buildName}`);
         buildCheck = true;
-        this.analyticsService.createActivityStream(
-          application.propertyIdentifier,
-          Action.APPLICATION_BUILD_FINISHED,
-          application.env,
-          application.identifier,
-          `Build (${buildName}) Successful for ${application.identifier} [Workflow 3.0]`,
-          application.createdBy,
-          Source.GIT,
-          JSON.stringify(statusRequest)
-        );
         this.startDeploymentInterval(application, statusRequest, baseurl);
         await clearInterval(buildInterval);
       } else if (buildStatus?.data === 'FAILED') {
@@ -673,7 +663,7 @@ export class ApplicationService {
     const gitProps = await this.applicationFactory.validateGitProps(repoUrl, gitRef, contextDir);
     if (!gitProps)
       this.exceptionService.badRequestException({
-        message: `${repoUrl} doesn't exists.`
+        message: `Please check the entered repository details.`
       });
   }
 
