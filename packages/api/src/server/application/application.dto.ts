@@ -92,6 +92,11 @@ export class CreateApplicationDto {
   @ApiProperty()
   @IsOptional()
   @IsString()
+  dockerFileName: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
   commitId: string;
 
   @ApiProperty()
@@ -227,6 +232,11 @@ export class GitValidationRequestDTO {
   @IsString()
   @IsOptional()
   identifier: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  dockerFileName: string;
 }
 
 export class GitDeploymentRequestDTO extends GitValidationRequestDTO {

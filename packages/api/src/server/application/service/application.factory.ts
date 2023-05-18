@@ -429,6 +429,7 @@ export class ApplicationFactory {
     containerizedEnabledGitApplicationRequest.gitRef = applicationRequest.gitRef;
     containerizedEnabledGitApplicationRequest.contextDir = applicationRequest.contextDir;
     containerizedEnabledGitApplicationRequest.buildArgs = applicationRequest.buildArgs;
+    containerizedEnabledGitApplicationRequest.dockerFileName = applicationRequest.dockerFileName || 'Dockerfile';
     containerizedEnabledGitApplicationRequest.commitId = applicationRequest.commitId || 'NA';
     containerizedEnabledGitApplicationRequest.mergeId = applicationRequest.mergeId || 'NA';
     return containerizedEnabledGitApplicationRequest;
@@ -436,7 +437,6 @@ export class ApplicationFactory {
 
   // @internal Create the Deployment Request to the Operator for the Containerized deployment
   createContainerizedDeploymentRequestForOperator(
-    applicationRequest: CreateApplicationDto,
     propertyIdentifier: string,
     identifier: string,
     env: string,
@@ -465,13 +465,7 @@ export class ApplicationFactory {
     namespace: string,
     applicationDetails: Application
   ): ContainerizedGitDeploymentRequest {
-    const deploymentDetails = this.createContainerizedDeploymentRequestForOperator(
-      applicationRequest,
-      propertyIdentifier,
-      identifier,
-      env,
-      applicationDetails
-    );
+    const deploymentDetails = this.createContainerizedDeploymentRequestForOperator(propertyIdentifier, identifier, env, applicationDetails);
     const containerizedEnabledGitDeploymentRequest = new ContainerizedGitDeploymentRequest();
     containerizedEnabledGitDeploymentRequest.nameSpace = namespace;
     containerizedEnabledGitDeploymentRequest.deploymentDetails = deploymentDetails;
@@ -620,7 +614,7 @@ export class ApplicationFactory {
   // @internal extract Port from the DockerFile
   async extractDockerProps(gitRequestDTO: GitValidationRequestDTO): Promise<GitValidateResponse> {
     const gitUrl = this.generateRepoUrl(gitRequestDTO.repoUrl, gitRequestDTO.gitRef, gitRequestDTO.contextDir);
-    const rawDockerFile = `${gitUrl.replace('/tree/', '/raw/')}/Dockerfile`;
+    const rawDockerFile = `${gitUrl.replace('/tree/', '/raw/')}/${gitRequestDTO.dockerFileName || 'Dockerfile1'}`;
     this.logger.log('DockerFileUrl', rawDockerFile);
     const gitResponse = new GitValidateResponse();
     let response;
