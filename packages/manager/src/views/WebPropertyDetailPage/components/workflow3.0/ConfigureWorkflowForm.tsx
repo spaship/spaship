@@ -44,6 +44,14 @@ const schema = yup.object({
       'Invalid branch name. Branch names must consist of alphanumeric characters, dots, underscores, or hyphens.'
     )
     .label('Branch'),
+  dockerFileName: yup
+    .string()
+    .required()
+    .matches(
+      /^[a-zA-Z0-9._-]+$/,
+      'Invalid dockerfile name. Dockerfile name must consist of alphanumeric characters, dots, underscores, or hyphens.'
+    )
+    .label('Dockerfile Name'),
   ref: yup.string(),
   repoUrl: yup.string().required().label('Repository URL'),
   env: yup.string().required().label('Environment'),
@@ -126,7 +134,8 @@ export const ConfigureWorkflowForm = ({
       contextDir: dataProps.contextDir ? dataProps.contextDir : '/',
       port: dataProps.port ? dataProps.port : 3000,
       path: dataProps.path ? dataProps.path : '/',
-      healthCheckPath: dataProps.healthCheckPath ? dataProps.healthCheckPath : '/'
+      healthCheckPath: dataProps.healthCheckPath ? dataProps.healthCheckPath : '/',
+      dockerFileName: dataProps.dockerFileName ? dataProps.dockerFileName : 'Dockerfile'
     },
     mode: 'onBlur',
     resolver: yupResolver(schema)
@@ -148,6 +157,7 @@ export const ConfigureWorkflowForm = ({
       data.repoUrl &&
       data.gitRef &&
       data.contextDir &&
+      data.dockerFileName &&
       step === 2
     ) {
       const validateDTO = {
@@ -155,7 +165,8 @@ export const ConfigureWorkflowForm = ({
         identifier: data.name,
         repoUrl: data.repoUrl,
         gitRef: data.gitRef,
-        contextDir: data.contextDir
+        contextDir: data.contextDir,
+        dockerFileName: data.dockerFileName
       };
 
       try {
@@ -479,6 +490,29 @@ export const ConfigureWorkflowForm = ({
                           helperTextInvalid={error?.message}
                         >
                           <TextInput placeholder="Git Branch" type="text" id="branch" {...field} />
+                        </FormGroup>
+                      )}
+                    />
+                  </SplitItem>
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <Controller
+                      control={control}
+                      name="dockerFileName"
+                      render={({ field, fieldState: { error } }) => (
+                        <FormGroup
+                          style={{ color: '#000' }}
+                          label="Enter Dockerfile name"
+                          fieldId="dockerFileName"
+                          validated={error ? 'error' : 'default'}
+                          helperTextInvalid={error?.message}
+                          isRequired
+                        >
+                          <TextInput
+                            placeholder="dockerfile name"
+                            type="text"
+                            id="dockerFileName"
+                            {...field}
+                          />
                         </FormGroup>
                       )}
                     />
@@ -1202,6 +1236,30 @@ export const ConfigureWorkflowForm = ({
                             placeholder="Git Branch"
                             type="text"
                             id="branch"
+                            {...field}
+                            isDisabled
+                          />
+                        </FormGroup>
+                      )}
+                    />
+                  </SplitItem>
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <Controller
+                      control={control}
+                      name="dockerFileName"
+                      render={({ field, fieldState: { error } }) => (
+                        <FormGroup
+                          style={{ color: '#000' }}
+                          label="Enter Dockerfile name"
+                          fieldId="dockerFileName"
+                          validated={error ? 'error' : 'default'}
+                          helperTextInvalid={error?.message}
+                          isRequired
+                        >
+                          <TextInput
+                            placeholder="dockerfile name"
+                            type="text"
+                            id="dockerFileName"
                             {...field}
                             isDisabled
                           />

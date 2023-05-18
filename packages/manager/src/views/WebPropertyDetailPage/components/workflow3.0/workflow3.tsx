@@ -43,7 +43,14 @@ const schema = yup.object({
       'Invalid branch name. Branch names must consist of alphanumeric characters, dots, underscores, or hyphens.'
     )
     .label('Branch'),
-
+  dockerFileName: yup
+    .string()
+    .required()
+    .matches(
+      /^[a-zA-Z0-9._-]+$/,
+      'Invalid dockerfile name. Dockerfile name must consist of alphanumeric characters, dots, underscores, or hyphens.'
+    )
+    .label('Dockerfile Name'),
   ref: yup.string(),
   repoUrl: yup.string().trim().required().label('Repository URL'),
   env: yup.string().required().label('Environment'),
@@ -105,7 +112,8 @@ export const Workflow3 = ({
       path: '/',
       gitRef: 'main',
       contextDir: '/',
-      port: 3000
+      port: 3000,
+      dockerFileName: 'Dockerfile'
     },
     mode: 'onBlur',
     resolver: yupResolver(schema)
@@ -126,6 +134,7 @@ export const Workflow3 = ({
       data.repoUrl &&
       data.gitRef &&
       data.contextDir &&
+      data.dockerFileName &&
       step === 2
     ) {
       const validateDTO = {
@@ -133,7 +142,8 @@ export const Workflow3 = ({
         identifier: data.name,
         repoUrl: data.repoUrl,
         gitRef: data.gitRef,
-        contextDir: data.contextDir
+        contextDir: data.contextDir,
+        dockerFileName: data.dockerFileName
       };
       try {
         const response = await validateSsrSpaProperty.mutateAsync(validateDTO);
@@ -466,6 +476,30 @@ export const Workflow3 = ({
                           helperTextInvalid={error?.message}
                         >
                           <TextInput placeholder="Git Branch" type="text" id="branch" {...field} />
+                        </FormGroup>
+                      )}
+                    />
+                  </SplitItem>
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <Controller
+                      control={control}
+                      name="dockerFileName"
+                      render={({ field, fieldState: { error } }) => (
+                        <FormGroup
+                          style={{ color: '#000' }}
+                          label="Enter Dockerfile name"
+                          fieldId="dockerFileName"
+                          validated={error ? 'error' : 'default'}
+                          helperTextInvalid={error?.message}
+                          isRequired
+                        >
+                          <TextInput
+                            placeholder="dockerfile name"
+                            type="text"
+                            id="dockerFileName"
+                            {...field}
+                            isDisabled
+                          />
                         </FormGroup>
                       )}
                     />
@@ -1104,6 +1138,30 @@ export const Workflow3 = ({
                             placeholder="Git Branch"
                             type="text"
                             id="branch"
+                            {...field}
+                            isDisabled
+                          />
+                        </FormGroup>
+                      )}
+                    />
+                  </SplitItem>
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <Controller
+                      control={control}
+                      name="dockerFileName"
+                      render={({ field, fieldState: { error } }) => (
+                        <FormGroup
+                          style={{ color: '#000' }}
+                          label="Enter Dockerfile name"
+                          fieldId="dockerFileName"
+                          validated={error ? 'error' : 'default'}
+                          helperTextInvalid={error?.message}
+                          isRequired
+                        >
+                          <TextInput
+                            placeholder="dockerfile name"
+                            type="text"
+                            id="dockerFileName"
                             {...field}
                             isDisabled
                           />
