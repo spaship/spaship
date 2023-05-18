@@ -189,12 +189,8 @@ export const Workflow3 = ({
               return acc;
             }, {})
           : {},
-        // buildArgs: data.buildArgs
-        //   ? data.buildArgs.reduce((acc: Record<string, string>, cur: any) => {
-        //       acc[cur.key.trim()] = cur.value.trim();
-        //       return acc;
-        //     }, {})
-        //   : {},
+
+        buildArgs: data.buildArgs ? data.buildArgs.map((obj) => ({ [obj.key]: obj.value })) : [],
         propertyIdentifier: propertyIdentifier.trim(),
         port: apiResponse
       };

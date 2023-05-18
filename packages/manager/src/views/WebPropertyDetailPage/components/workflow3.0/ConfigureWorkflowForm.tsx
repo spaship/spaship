@@ -120,10 +120,9 @@ export const ConfigureWorkflowForm = ({
         key: item.key,
         value: item.value as string | undefined
       })),
-      buildArgs: keyValuePairsGenerator({ dataProps, property: 'buildArgs' }).map((item) => ({
-        key: item.key,
-        value: item.value as string | undefined
-      })),
+      buildArgs: dataProps.buildArgs.flatMap((obj: any) =>
+        Object.entries(obj).map(([key, value]) => ({ key, value }))
+      ),
       contextDir: dataProps.contextDir ? dataProps.contextDir : '/',
       port: dataProps.port ? dataProps.port : 3000,
       path: dataProps.path ? dataProps.path : '/',
@@ -132,6 +131,7 @@ export const ConfigureWorkflowForm = ({
     mode: 'onBlur',
     resolver: yupResolver(schema)
   });
+
   const [step, setStep] = useState<number>(1);
   const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
@@ -199,12 +199,7 @@ export const ConfigureWorkflowForm = ({
               return acc;
             }, {})
           : {},
-        // buildArgs: data.buildArgs
-        //   ? data.buildArgs.reduce((acc: Record<string, string>, cur: any) => {
-        //       acc[cur.key] = cur.value;
-        //       return acc;
-        //     }, {})
-        //   : {},
+        buildArgs: data.buildArgs ? data.buildArgs.map((obj) => ({ [obj.key]: obj.value })) : [],
         propertyIdentifier,
         port: apiResponse
       };
@@ -1538,6 +1533,7 @@ export const ConfigureWorkflowForm = ({
                     </div>
                   </Split>
                 )}
+
                 {buildArgsFields.map((pair, index) => (
                   <Split key={`buildArgskey-${index + 1}`} hasGutter>
                     <SplitItem
