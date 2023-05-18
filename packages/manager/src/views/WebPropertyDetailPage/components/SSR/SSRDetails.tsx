@@ -76,7 +76,7 @@ export const SSRDetails = () => {
     isContainerized: false,
     isGit: false,
     config: {},
-    port: 0
+    port: 3000
   });
   const [configureData, setConfigureData] = useState<TDataWorkflow | TDataContainerized>({
     propertyIdentifier: '',
@@ -94,7 +94,7 @@ export const SSRDetails = () => {
     isContainerized: false,
     isGit: false,
     config: {},
-    port: 0
+    port: 3000
   });
 
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([

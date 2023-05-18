@@ -498,7 +498,6 @@ export const Workflow3 = ({
                             type="text"
                             id="dockerFileName"
                             {...field}
-                            isDisabled
                           />
                         </FormGroup>
                       )}

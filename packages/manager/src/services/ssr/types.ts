@@ -37,7 +37,7 @@ export interface TSSRResponse {
     _id: string;
     createdAt: string;
     updatedAt: string;
-    port: string;
+    port: number;
     __v: number;
   };
 }

@@ -170,25 +170,33 @@ const activities = {
       env.{' '}
     </Text>
   ),
-  APPLICATION_BUILD_STARTED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      <Label color="blue" icon={<OutlinedClockIcon />}>
-        Build started
-      </Label>{' '}
-      for
-      <Label
-        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-        color="blue"
-      >
-        {props.applicationIdentifier}
-      </Label>{' '}
-      App in the{' '}
-      <Label icon={<ClusterIcon />} color="blue">
-        {props.env}
-      </Label>{' '}
-      env.
-    </Text>
-  ),
+  APPLICATION_BUILD_STARTED: ({ props, message, payload }: TWebPropActivityStream): JSX.Element => {
+    const buildId = JSON.parse(payload).buildName;
+
+    return (
+      <Text component={TextVariants.small}>
+        <Label color="blue" icon={<OutlinedClockIcon />}>
+          Build started
+        </Label>{' '}
+        with{' '}
+        <Label color="blue" variant="outline">
+          ID : {buildId}
+        </Label>{' '}
+        for
+        <Label
+          icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+          color="blue"
+        >
+          {props.applicationIdentifier}
+        </Label>{' '}
+        App in the{' '}
+        <Label icon={<ClusterIcon />} color="blue">
+          {props.env}
+        </Label>{' '}
+        env.
+      </Text>
+    );
+  },
   APPLICATION_BUILD_FINISHED: ({
     props,
     message,

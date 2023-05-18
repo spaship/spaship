@@ -128,7 +128,7 @@ export const ConfigureWorkflowForm = ({
         key: item.key,
         value: item.value as string | undefined
       })),
-      buildArgs: dataProps.buildArgs.flatMap((obj: any) =>
+      buildArgs: dataProps?.buildArgs.flatMap((obj: any) =>
         Object.entries(obj).map(([key, value]) => ({ key, value }))
       ),
       contextDir: dataProps.contextDir ? dataProps.contextDir : '/',
