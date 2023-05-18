@@ -73,16 +73,25 @@ export class EventService implements OnApplicationBootstrap {
             Source.OPERATOR,
             JSON.stringify({ accessUrl: event.accessUrl, path: event.path })
           );
-        }
-        if (event.action === Action.APPLICATION_DEPLOYMENT_FAILED) {
+        } else if (event.action === Action.APPLICATION_DEPLOYMENT_FAILED) {
           await tmpAnalyticsService.createActivityStream(
             event.propertyIdentifier,
             Action.APPLICATION_DEPLOYMENT_FAILED,
             event.env,
             event.applicationIdentifier
           );
-        }
-        if (event.action === Action.APPLICATION_DEPLOYMENT_STARTED) {
+        } else if (event.action === Action.APPLICATION_BUILD_FINISHED && response?.meta?.Phase === 'Complete') {
+          await tmpAnalyticsService.createActivityStream(
+            event.propertyIdentifier,
+            Action.APPLICATION_BUILD_FINISHED,
+            event.env,
+            event.applicationIdentifier,
+            `Build Time : ${response.meta.DurationInSecs} seconds [${response?.meta?.Name}]`,
+            'EventStream',
+            Source.GIT,
+            JSON.stringify(event)
+          );
+        } else if (event.action === Action.APPLICATION_DEPLOYMENT_STARTED) {
           await tmpAnalyticsService.createActivityStream(
             event.propertyIdentifier,
             Action.APPLICATION_DEPLOYMENT_STARTED,
@@ -142,6 +151,7 @@ function getAction(state: string): string {
   if (state === 'spa deployment ops failed') return Action.APPLICATION_DEPLOYMENT_FAILED;
   // @internal State for Workflow 3.0 Deployment
   if (state === 'DEPLOYMENT_STARTED') return Action.APPLICATION_DEPLOYMENT_STARTED;
+  if (state === 'BUILD_ENDED') return Action.APPLICATION_BUILD_FINISHED;
   return Action.APPLICATION_DEPLOYMENT_PROCESSING;
 }
 

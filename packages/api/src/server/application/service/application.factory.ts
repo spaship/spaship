@@ -478,7 +478,7 @@ export class ApplicationFactory {
     containerizedEnabledGitDeploymentRequest.repoUrl = this.configureGitSuffix(applicationRequest.repoUrl);
     containerizedEnabledGitDeploymentRequest.gitRef = applicationRequest.gitRef;
     containerizedEnabledGitDeploymentRequest.contextDir = applicationRequest.contextDir;
-    containerizedEnabledGitDeploymentRequest.buildArgs = applicationRequest.buildArgs;
+    containerizedEnabledGitDeploymentRequest.buildArgs = applicationRequest.buildArgs || [];
     containerizedEnabledGitDeploymentRequest.reDeployment = applicationRequest.reDeployment || false;
     return containerizedEnabledGitDeploymentRequest;
   }

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsObject, IsOptional, IsString, Matches } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsObject, IsOptional, IsString, IsNumber, Matches, IsArray } from 'class-validator';
 import { MESSAGE, VALIDATION } from 'src/configuration';
 
 export class CreateApplicationDto {
@@ -66,6 +66,7 @@ export class CreateApplicationDto {
 
   @ApiProperty()
   @IsOptional()
+  @IsNumber()
   port: number;
 
   @ApiProperty()
@@ -85,6 +86,7 @@ export class CreateApplicationDto {
 
   @ApiProperty()
   @IsOptional()
+  @IsArray()
   buildArgs: object[];
 
   @ApiProperty()
