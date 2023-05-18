@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Switch, Tooltip } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
+import Link from 'next/link';
 import React from 'react';
 import { SSRForm } from './SSR/SsrForm';
 import { Workflow3 } from './workflow3.0';
@@ -22,8 +23,8 @@ export const AddDeplyoment = ({ onClose, propertyIdentifier }: Props): JSX.Eleme
     <div>
       <Switch
         id="simple-switch"
-        label="Workflow 3.0"
-        labelOff="Workflow 2.0"
+        label="From Git Repo"
+        labelOff="From Container"
         isChecked={isChecked}
         onChange={handleChange}
         className="pf-u-mr-md pf-u-mb-md"
@@ -32,13 +33,16 @@ export const AddDeplyoment = ({ onClose, propertyIdentifier }: Props): JSX.Eleme
         content={
           !isChecked ? (
             <div>
-              2.0 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam id feugiat augue,
-              nec fringilla turpis.
+              Containerized deployment for Supporting the SSR capability. It is assumed the
+              container for this app is already available. For a more direct and interactive
+              deployment experience,toggle the switch to From Git Repo
             </div>
           ) : (
             <div>
-              3.0 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam id feugiat augue,
-              nec fringilla turpis.
+              Provide your application&apos;s repository details, and SPAship will handle the entire
+              build and deployment process. No more external CIs are needed! Enjoy a more direct and
+              interactive deployment experience. To know more check spasip get started section{' '}
+              <Link href="/documents">here</Link>
             </div>
           )
         }

@@ -124,7 +124,7 @@ export const ConfigureAccess = ({
           setIsShowAdvancedViewEnabled(!isShowAdvancedViewEnabled);
         }}
       >
-        {!isShowAdvancedViewEnabled ? 'Show Advance Access' : 'Hide Configure Access'}
+        {!isShowAdvancedViewEnabled ? 'Show Detailed Permissions' : 'Hide Detailed Permissions'}
       </Button>
       {isShowAdvancedViewEnabled && Object.keys(columnNames).length ? (
         <TableComposable>

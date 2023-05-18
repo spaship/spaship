@@ -16,7 +16,7 @@ import {
   TextInput,
   Tooltip
 } from '@patternfly/react-core';
-import { InfoCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
+import { ExclamationCircleIcon, InfoCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
@@ -30,9 +30,27 @@ const schema = yup.object({
     .string()
     .matches(/^[a-zA-Z0-9/-]+$/, 'Only letters, numbers, forward slash and dashes are allowed')
     .required(),
-  contextDir: yup.string().required().label('Context Directory'),
-  gitRef: yup.string().required().label('Branch'),
-
+  contextDir: yup
+    .string()
+    .required()
+    .notOneOf([' '], 'Invalid value. Cannot be only spaces.')
+    .label('Context Directory'),
+  gitRef: yup
+    .string()
+    .required()
+    .matches(
+      /^[a-zA-Z0-9._-]+$/,
+      'Invalid branch name. Branch names must consist of alphanumeric characters, dots, underscores, or hyphens.'
+    )
+    .label('Branch'),
+  dockerFileName: yup
+    .string()
+    .required()
+    .matches(
+      /^[a-zA-Z0-9._-]+$/,
+      'Invalid dockerfile name. Dockerfile name must consist of alphanumeric characters, dots, underscores, or hyphens.'
+    )
+    .label('Dockerfile Name'),
   ref: yup.string(),
   repoUrl: yup.string().trim().required().label('Repository URL'),
   env: yup.string().required().label('Environment'),
@@ -53,16 +71,20 @@ const schema = yup.object({
     })
   ),
   port: yup
-    .string()
-    .matches(/^\d+$/, { message: 'Port must contain only numbers', excludeEmptyString: true })
-    .min(1, 'Port is required')
-    .max(5, 'Port must be less than or equal to 5 digits')
-    .test(
-      'port',
-      'Port must be less than or equal to 65536',
-      (value) => parseInt(value as string, 10) <= 65536
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .typeError('Port must be a number')
+    .integer('Port must be an integer')
+    .positive('Port must be a positive number')
+    .test('port', 'Port must contain only numbers', (value) =>
+      /^\d+$/.test(value?.toString() || '')
     )
-    .trim()
+    .min(1, 'Port is required')
+    .max(99999, 'Port must be less than or equal to 5 digits')
+    .test('port', 'Port must be less than or equal to 65536', (value) => {
+      const portNumber = parseInt(value?.toString() || '', 10);
+      return portNumber <= 65536;
+    })
     .label('Port')
 });
 
@@ -88,9 +110,10 @@ export const Workflow3 = ({
     defaultValues: {
       healthCheckPath: '/',
       path: '/',
-      gitRef: 'master',
-
-      port: '3000'
+      gitRef: 'main',
+      contextDir: '/',
+      port: 3000,
+      dockerFileName: 'Dockerfile'
     },
     mode: 'onBlur',
     resolver: yupResolver(schema)
@@ -99,7 +122,7 @@ export const Workflow3 = ({
   const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const webPropertiesKeys = Object.keys(webProperties.data || {});
-  const [apiResponse, setApiResponse] = useState('3000');
+  const [apiResponse, setApiResponse] = useState(3000);
 
   const validateSsrSpaProperty = useValidateSsrSpaProperty(propertyIdentifier);
   const [validateMessage, setValidateMessage] = useState('');
@@ -111,6 +134,7 @@ export const Workflow3 = ({
       data.repoUrl &&
       data.gitRef &&
       data.contextDir &&
+      data.dockerFileName &&
       step === 2
     ) {
       const validateDTO = {
@@ -118,7 +142,8 @@ export const Workflow3 = ({
         identifier: data.name,
         repoUrl: data.repoUrl,
         gitRef: data.gitRef,
-        contextDir: data.contextDir
+        contextDir: data.contextDir,
+        dockerFileName: data.dockerFileName
       };
       try {
         const response = await validateSsrSpaProperty.mutateAsync(validateDTO);
@@ -128,12 +153,31 @@ export const Workflow3 = ({
           setValidateMessage('');
         } else if (Object.keys(response).includes('warning')) {
           setValidateMessage(response?.warning);
+          toast.error(response?.warning, {
+            style: {
+              maxWidth: '400px',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-all'
+            }
+          });
         }
       } catch (error) {
         if (error instanceof AxiosError && error.response && error.response.status === 403) {
-          toast.error("You don't have access to perform this action");
+          toast.error("You don't have access to perform this action", {
+            style: {
+              maxWidth: '400px',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-all'
+            }
+          });
         } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
-          toast.error(error.response.data.message);
+          toast.error(error.response.data.message, {
+            style: {
+              maxWidth: '400px',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-all'
+            }
+          });
           setValidateMessage(error.response.data.message);
         } else {
           toast.error('Failed to validate the containerized application');
@@ -155,16 +199,11 @@ export const Workflow3 = ({
               return acc;
             }, {})
           : {},
-        buildArgs: data.buildArgs
-          ? data.buildArgs.reduce((acc: Record<string, string>, cur: any) => {
-              acc[cur.key.trim()] = cur.value.trim();
-              return acc;
-            }, {})
-          : {},
+
+        buildArgs: data.buildArgs ? data.buildArgs.map((obj) => ({ [obj.key]: obj.value })) : [],
         propertyIdentifier: propertyIdentifier.trim(),
         port: apiResponse
       };
-
       onSubmitWorkflow(true);
       onClose();
 
@@ -177,7 +216,13 @@ export const Workflow3 = ({
           toast.error("You don't have access to perform this action", { id: toastId });
           onClose();
         } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
-          toast.error(error.response.data.message);
+          toast.error(error.response.data.message, {
+            style: {
+              maxWidth: '400px',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-all'
+            }
+          });
         } else {
           toast.error('Failed to deploy containerized application', { id: toastId });
         }
@@ -190,11 +235,9 @@ export const Workflow3 = ({
       try {
         await handleSubmit(onSubmit)();
 
-        if (validateMessage === '') {
-          setStep(step + 1);
-        }
-      } catch (error) {
-        console.error(error);
+        setStep(step + 1);
+      } catch (error: any) {
+        toast.error(error);
       }
     } else {
       try {
@@ -260,6 +303,12 @@ export const Workflow3 = ({
                   1
                 </span>
                 Repository Details
+                {validateMessage !== '' && (
+                  <span>
+                    &nbsp;
+                    <ExclamationCircleIcon style={{ color: '#c9190b' }} />
+                  </span>
+                )}
               </Button>
             </li>
             <li>
@@ -289,7 +338,7 @@ export const Workflow3 = ({
                 >
                   3
                 </span>
-                Deployment Config
+                Application Configuration
               </Button>
             </li>
             <li>
@@ -304,7 +353,7 @@ export const Workflow3 = ({
                 >
                   4
                 </span>
-                Build Arg
+                Build Arguments
               </Button>
             </li>
             <li>
@@ -384,8 +433,9 @@ export const Workflow3 = ({
                               <Tooltip
                                 content={
                                   <div>
-                                    The registry URL of the application you want to deploy. for
-                                    example, Sample URL : quay.io/spaship/sample-ssr-app
+                                    For mono repo, specify the name of the directory where the
+                                    application exists example, <b>package/fe</b> default will be{' '}
+                                    <b>/</b>
                                   </div>
                                 }
                               >
@@ -430,8 +480,40 @@ export const Workflow3 = ({
                       )}
                     />
                   </SplitItem>
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <Controller
+                      control={control}
+                      name="dockerFileName"
+                      render={({ field, fieldState: { error } }) => (
+                        <FormGroup
+                          style={{ color: '#000' }}
+                          label="Enter Dockerfile name"
+                          fieldId="dockerFileName"
+                          validated={error ? 'error' : 'default'}
+                          helperTextInvalid={error?.message}
+                          isRequired
+                        >
+                          <TextInput
+                            placeholder="dockerfile name"
+                            type="text"
+                            id="dockerFileName"
+                            {...field}
+                          />
+                        </FormGroup>
+                      )}
+                    />
+                  </SplitItem>
                 </Split>
               </div>
+              {validateMessage !== '' && (
+                <Alert
+                  variant="danger"
+                  isInline
+                  title={validateMessage}
+                  timeout={5000}
+                  className="pf-u-mt-lg"
+                />
+              )}
               <div style={{ bottom: '0px', position: 'absolute', width: '100%' }}>
                 <Button
                   variant="primary"
@@ -471,6 +553,7 @@ export const Workflow3 = ({
                       )}
                     />
                   </SplitItem>
+
                   <SplitItem isFilled style={{ width: '100%' }}>
                     <Controller
                       control={control}
@@ -491,7 +574,11 @@ export const Workflow3 = ({
                             }}
                             value={value}
                           >
-                            <FormSelectOption key={1} label="Please select an environment" />
+                            <FormSelectOption
+                              key={1}
+                              label="Please select an environment"
+                              isDisabled
+                            />
                             {webPropertiesKeys.map((envName) => (
                               <FormSelectOption key={envName} value={envName} label={envName} />
                             ))}
@@ -621,6 +708,7 @@ export const Workflow3 = ({
                       )}
                     />
                   </SplitItem>
+
                   <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
                     <Controller
                       control={control}
@@ -648,7 +736,7 @@ export const Workflow3 = ({
                             type="text"
                             id="port"
                             {...field}
-                            value={apiResponse}
+                            defaultValue={3000}
                           />
                         </FormGroup>
                       )}
@@ -656,15 +744,6 @@ export const Workflow3 = ({
                   </SplitItem>
                 </Split>
               </div>
-              {validateMessage !== '' && (
-                <Alert
-                  variant="danger"
-                  isInline
-                  title={validateMessage}
-                  timeout={5000}
-                  className="pf-u-mt-lg"
-                />
-              )}
 
               <div style={{ bottom: '0px', position: 'absolute', width: '100%' }}>
                 <Button
@@ -823,9 +902,8 @@ export const Workflow3 = ({
                   <Tooltip
                     content={
                       <div>
-                        This will store the configuration map in key-value pairs, which will be
-                        required during the application runtime, for example, if your app reads a
-                        value of some env variable to configure itself during start-up.
+                        This will store the build arguments in key-value pairs, which will be
+                        required during the building an application.
                       </div>
                     }
                   >
@@ -968,8 +1046,9 @@ export const Workflow3 = ({
                               <Tooltip
                                 content={
                                   <div>
-                                    The registry URL of the application you want to deploy. for
-                                    example, Sample URL : quay.io/spaship/sample-ssr-app
+                                    The https git repository URL of the application, for
+                                    example:&nbsp;
+                                    <em>https://github.com/arkaprovob/cd-demo.git</em>
                                   </div>
                                 }
                               >
@@ -1011,8 +1090,9 @@ export const Workflow3 = ({
                               <Tooltip
                                 content={
                                   <div>
-                                    The registry URL of the application you want to deploy. for
-                                    example, Sample URL : quay.io/spaship/sample-ssr-app
+                                    For mono repo, specify the name of the directory where the
+                                    application exists example, <b>package/fe</b> default will be{' '}
+                                    <b>/</b>
                                   </div>
                                 }
                               >
@@ -1057,6 +1137,30 @@ export const Workflow3 = ({
                             placeholder="Git Branch"
                             type="text"
                             id="branch"
+                            {...field}
+                            isDisabled
+                          />
+                        </FormGroup>
+                      )}
+                    />
+                  </SplitItem>
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <Controller
+                      control={control}
+                      name="dockerFileName"
+                      render={({ field, fieldState: { error } }) => (
+                        <FormGroup
+                          style={{ color: '#000' }}
+                          label="Enter Dockerfile name"
+                          fieldId="dockerFileName"
+                          validated={error ? 'error' : 'default'}
+                          helperTextInvalid={error?.message}
+                          isRequired
+                        >
+                          <TextInput
+                            placeholder="dockerfile name"
+                            type="text"
+                            id="dockerFileName"
                             {...field}
                             isDisabled
                           />
@@ -1468,7 +1572,7 @@ export const Workflow3 = ({
                 type="submit"
                 isDisabled={Object.keys(errors).length > 0 || validateMessage !== ''}
               >
-                Finish
+                Submit
               </Button>
             </>
           )}

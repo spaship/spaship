@@ -8,7 +8,7 @@ export type CommonFields = {
   isContainerized: boolean;
   isGit: boolean;
   config: Record<string, string>;
-  port: string;
+  port: number;
   [key: string]: any;
 };
 export type TDataContainerized = CommonFields & {
