@@ -583,7 +583,7 @@ export class ApplicationService {
         )[0];
         const diff = (applicationDetails.updatedAt.getTime() - new Date().getTime()) / 1000;
         const consumedTime = Math.abs(diff).toFixed(2).toString();
-        this.logger.log('TimeToDeploy', `${consumedTime} seconds [BuildId :${buildName}]`);
+        this.logger.log('TimeToDeploy', `${consumedTime} seconds [${buildName}]`);
         const eventTimeTrace = this.applicationFactory.processDeploymentTime(applicationDetails, consumedTime);
         await this.dataServices.eventTimeTrace.create(eventTimeTrace);
         this.analyticsService.createActivityStream(
@@ -604,7 +604,7 @@ export class ApplicationService {
           Action.APPLICATION_DEPLOYMENT_FAILED,
           application.env,
           application.identifier,
-          `Deployment Failed [BuildId : ${buildName}] [Workflow 3.0]`,
+          `Deployment Failed [${buildName}] [Workflow 3.0]`,
           application.createdBy,
           Source.GIT,
           JSON.stringify(statusRequest)
@@ -620,7 +620,7 @@ export class ApplicationService {
           Action.APPLICATION_DEPLOYMENT_TIMEOUT,
           application.env,
           application.identifier,
-          `Deployment Timeout [BuildId : ${buildName}] [Workflow 3.0]`,
+          `Deployment Timeout [${buildName}] [Workflow 3.0]`,
           application.createdBy,
           Source.GIT,
           JSON.stringify(statusRequest)
