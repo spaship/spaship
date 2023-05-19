@@ -41,7 +41,7 @@ export class ApplicationService {
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService,
     private readonly agendaService: AgendaService
-  ) {}
+  ) { }
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.application.getAll();
@@ -407,6 +407,35 @@ export class ApplicationService {
       this.logger.log('ContainerizedGitApplicationDetails', JSON.stringify(saveApplication));
       applicationDetails = await this.dataServices.application.create(saveApplication);
     } else {
+      if (await this.applicationFactory.compareApplicationConfiguration(applicationDetails, applicationRequest)) {
+        const containerizedDeploymentRequestForOperator = this.applicationFactory.createContainerizedDeploymentRequestForOperator(
+          propertyIdentifier,
+          identifier,
+          env,
+          applicationDetails,
+          property.namespace
+        );
+        containerizedDeploymentRequestForOperator.configMap = applicationRequest.config;
+        this.logger.log('ConfigUpdateRequestToOperator', JSON.stringify(containerizedDeploymentRequestForOperator));
+        applicationDetails.config = applicationRequest.config;
+        applicationDetails.updatedBy = applicationRequest.createdBy;
+        await this.dataServices.application.updateOne(
+          { propertyIdentifier, env, identifier, isContainerized: true, isGit: true },
+          applicationDetails
+        );
+        this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
+        await this.analyticsService.createActivityStream(
+          propertyIdentifier,
+          Action.APPLICATION_CONFIG_UPDATED,
+          env,
+          identifier,
+          `${applicationDetails.name} configuration updated for ${env} [Workflow 3.0]`,
+          applicationRequest.createdBy,
+          Source.MANAGER,
+          JSON.stringify(applicationDetails)
+        );
+        return applicationDetails;
+      }
       applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
       applicationDetails.path = applicationRequest.path;
       applicationDetails.version = this.applicationFactory.incrementVersion(applicationDetails.version);
