@@ -168,6 +168,7 @@ export const ConfigureWorkflowForm = ({
         propertyIdentifier,
         reDeployment: false
       };
+      console.log('>>>conf', newdata);
 
       onClose();
 
