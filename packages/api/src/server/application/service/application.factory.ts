@@ -614,7 +614,7 @@ export class ApplicationFactory {
   // @internal extract Port from the DockerFile
   async extractDockerProps(gitRequestDTO: GitValidationRequestDTO): Promise<GitValidateResponse> {
     const gitUrl = this.generateRepoUrl(gitRequestDTO.repoUrl, gitRequestDTO.gitRef, gitRequestDTO.contextDir);
-    const rawDockerFile = `${gitUrl.replace('/tree/', '/raw/')}/${gitRequestDTO.dockerFileName || 'Dockerfile1'}`;
+    const rawDockerFile = `${gitUrl.replace('/tree/', '/raw/')}/${gitRequestDTO.dockerFileName || 'Dockerfile'}`;
     this.logger.log('DockerFileUrl', rawDockerFile);
     const gitResponse = new GitValidateResponse();
     let response;

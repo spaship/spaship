@@ -494,7 +494,7 @@ export class ApplicationService {
           Action.APPLICATION_BUILD_FAILED,
           application.env,
           application.identifier,
-          `Build (${buildName}) Failed for ${application.identifier} [Workflow 3.0]`,
+          `Build [${buildName}] Failed for ${application.identifier} [Workflow 3.0]`,
           application.createdBy,
           Source.GIT,
           JSON.stringify(statusRequest)
@@ -508,7 +508,7 @@ export class ApplicationService {
           Action.APPLICATION_BUILD_TERMINATED,
           application.env,
           application.identifier,
-          `Build (${buildName}) Terminated for ${application.identifier} [Workflow 3.0]`,
+          `Build [${buildName}] Terminated for ${application.identifier} [Workflow 3.0]`,
           application.createdBy,
           Source.GIT,
           JSON.stringify(statusRequest)
@@ -524,7 +524,7 @@ export class ApplicationService {
           Action.APPLICATION_BUILD_TIMEOUT,
           application.env,
           application.identifier,
-          `Build Timeout for ${buildName} [Workflow 3.0]`,
+          `Build [${buildName}] Timeout for ${application.identifier} [Workflow 3.0]`,
           application.createdBy,
           Source.GIT,
           JSON.stringify(statusRequest)
