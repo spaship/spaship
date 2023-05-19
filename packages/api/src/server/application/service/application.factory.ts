@@ -35,7 +35,7 @@ export class ApplicationFactory {
     private readonly logger: LoggerService,
     private readonly httpService: HttpService,
     private readonly exceptionService: ExceptionsService
-  ) {}
+  ) { }
 
   private static readonly hexadecimalCode: RegExp = /%[0-9a-zA-Z]{2}/g;
 
@@ -175,9 +175,8 @@ export class ApplicationFactory {
       const { hostname } = new URL(baseUrl);
       const appPrefix = hostname.split('.')[4];
       const domain = hostname.split('.').slice(1).join('.');
-      generatedAccessURL = `${protocol}://${appPrefix}.${DEPLOYMENT_DETAILS.namespace}--${application.propertyIdentifier}.${
-        application.propertyIdentifier
-      }.${application.env}.${domain}${this.getGeneratedPath(application.path)}`;
+      generatedAccessURL = `${protocol}://${appPrefix}.${DEPLOYMENT_DETAILS.namespace}--${application.propertyIdentifier}.${application.propertyIdentifier
+        }.${application.env}.${domain}${this.getGeneratedPath(application.path)}`;
     }
     return generatedAccessURL;
   }
@@ -657,6 +656,7 @@ export class ApplicationFactory {
     if (
       applicationDetails.ref === applicationRequest.ref &&
       applicationDetails.path === applicationRequest.path &&
+      applicationDetails.port === applicationRequest.port &&
       applicationDetails.repoUrl === applicationRequest.repoUrl &&
       applicationDetails.contextDir === applicationRequest.contextDir &&
       applicationDetails.dockerFileName === applicationRequest.dockerFileName &&
