@@ -622,7 +622,7 @@ export class ApplicationFactory {
     try {
       response = await this.httpService.axiosRef.get(`${rawDockerFile}`);
     } catch (err) {
-      this.logger.error('ContainerizedOperatorDeployment', err);
+      this.logger.error('DockerError', err);
       gitResponse.warning = 'No DockerFile found in this Repository';
       return gitResponse;
     }
@@ -649,6 +649,41 @@ export class ApplicationFactory {
     } catch (error) {
       this.logger.error('Source', error);
     }
+    return false;
+  }
+
+  // @internal Compare the application and application details changes
+  async compareApplicationConfiguration(applicationDetails: Application, applicationRequest: CreateApplicationDto): Promise<Boolean> {
+    if (
+      applicationDetails.ref === applicationRequest.ref &&
+      applicationDetails.path === applicationRequest.path &&
+      applicationDetails.repoUrl === applicationRequest.repoUrl &&
+      applicationDetails.contextDir === applicationRequest.contextDir &&
+      applicationDetails.dockerFileName === applicationRequest.dockerFileName &&
+      applicationDetails.healthCheckPath === applicationRequest.healthCheckPath &&
+      JSON.stringify(applicationDetails.buildArgs) === JSON.stringify(applicationRequest.buildArgs)
+    ) {
+      this.logger.log(
+        'ApplicationCheck',
+        `No Changes found in the Existing Application details for ${applicationDetails.identifier}-${applicationDetails.env}`
+      );
+      if (JSON.stringify(applicationDetails.config) !== JSON.stringify(applicationRequest.config)) {
+        this.logger.log(
+          'ConfigurationCheck',
+          `Changes found in Application Configuration for ${applicationDetails.identifier}-${applicationDetails.env}`
+        );
+        return true;
+      }
+      this.logger.log(
+        'ConfigurationCheck',
+        `No Changes found in Application Configuration for ${applicationDetails.identifier}-${applicationDetails.env}`
+      );
+      return false;
+    }
+    this.logger.log(
+      'ApplicationCheck',
+      `Changes found in the Existing Application details for ${applicationDetails.identifier}-${applicationDetails.env}`
+    );
     return false;
   }
 }
