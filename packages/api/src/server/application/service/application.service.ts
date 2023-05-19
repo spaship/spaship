@@ -604,7 +604,7 @@ export class ApplicationService {
           Action.APPLICATION_DEPLOYMENT_FAILED,
           application.env,
           application.identifier,
-          `Deployment Failed for ${buildName} [Workflow 3.0]`,
+          `Deployment Failed [BuildId : ${buildName}] [Workflow 3.0]`,
           application.createdBy,
           Source.GIT,
           JSON.stringify(statusRequest)
@@ -620,7 +620,7 @@ export class ApplicationService {
           Action.APPLICATION_DEPLOYMENT_TIMEOUT,
           application.env,
           application.identifier,
-          `Deployment Timeout for ${buildName} [Workflow 3.0]`,
+          `Deployment Timeout [BuildId : ${buildName}] [Workflow 3.0]`,
           application.createdBy,
           Source.GIT,
           JSON.stringify(statusRequest)
