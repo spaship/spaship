@@ -111,7 +111,7 @@ export const SSRDetails = () => {
       await createSsrSpaProperty.mutateAsync({
         ...redeployData
       });
-      toast.success('Redeployed SSR successfully', { id: toastId });
+      toast.success('ReDeployed containerized application successfully', { id: toastId });
     } catch (error) {
       if (error instanceof AxiosError && error.response && error.response.status === 403) {
         toast.error("You don't have access to perform this action", { id: toastId });

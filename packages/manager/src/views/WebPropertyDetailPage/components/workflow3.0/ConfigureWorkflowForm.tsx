@@ -119,7 +119,7 @@ export const ConfigureWorkflowForm = ({
     setValue,
     getValues,
     trigger,
-    formState: { errors }
+    formState: { errors, isDirty }
   } = useForm<FormData>({
     defaultValues: {
       ...dataProps,
@@ -212,7 +212,8 @@ export const ConfigureWorkflowForm = ({
           : {},
         buildArgs: data.buildArgs ? data.buildArgs.map((obj) => ({ [obj.key]: obj.value })) : [],
         propertyIdentifier,
-        port: apiResponse
+        port: apiResponse,
+        reDeployment: false
       };
 
       onClose();
@@ -245,11 +246,9 @@ export const ConfigureWorkflowForm = ({
       try {
         await handleSubmit(onSubmit)();
 
-        if (validateMessage === '') {
-          setStep(step + 1);
-        }
-      } catch (error) {
-        console.error(error);
+        setStep(step + 1);
+      } catch (error: any) {
+        toast.error(error);
       }
     } else {
       try {
@@ -818,7 +817,15 @@ export const ConfigureWorkflowForm = ({
                           label={
                             <>
                               Port
-                              <Tooltip content={<div>Kindly put port for your application.</div>}>
+                              <Tooltip
+                                content={
+                                  <div>
+                                    Specify the port number mentioned in your Dockerfile&apos;s
+                                    EXPOSE instruction, on which the container accepts incoming HTTP
+                                    requests.
+                                  </div>
+                                }
+                              >
                                 <span>
                                   &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
                                 </span>
@@ -1450,7 +1457,15 @@ export const ConfigureWorkflowForm = ({
                           label={
                             <>
                               Port
-                              <Tooltip content={<div>Kindly put port for your application.</div>}>
+                              <Tooltip
+                                content={
+                                  <div>
+                                    Specify the port number mentioned in your Dockerfile&apos;s
+                                    EXPOSE instruction, on which the container accepts incoming HTTP
+                                    requests.
+                                  </div>
+                                }
+                              >
                                 <span>
                                   &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
                                 </span>
@@ -1670,7 +1685,9 @@ export const ConfigureWorkflowForm = ({
               <Button
                 variant="primary"
                 type="submit"
-                isDisabled={Object.keys(errors).length > 0 || validateMessage !== ''}
+                isDisabled={
+                  isDirty ? Object.keys(errors).length > 0 || validateMessage !== '' : false
+                }
               >
                 Submit
               </Button>

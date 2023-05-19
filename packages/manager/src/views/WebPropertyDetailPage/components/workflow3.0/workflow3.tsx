@@ -122,7 +122,6 @@ export const Workflow3 = ({
   const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const webPropertiesKeys = Object.keys(webProperties.data || {});
-  const [apiResponse, setApiResponse] = useState(3000);
 
   const validateSsrSpaProperty = useValidateSsrSpaProperty(propertyIdentifier);
   const [validateMessage, setValidateMessage] = useState('');
@@ -149,7 +148,12 @@ export const Workflow3 = ({
         const response = await validateSsrSpaProperty.mutateAsync(validateDTO);
 
         if (Object.keys(response).includes('port')) {
-          setApiResponse(response?.port);
+          if (data.port !== 3000 && data.port !== response?.port) {
+            setValue('port', data.port);
+          } else {
+            setValue('port', response?.port);
+          }
+
           setValidateMessage('');
         } else if (Object.keys(response).includes('warning')) {
           setValidateMessage(response?.warning);
@@ -201,12 +205,10 @@ export const Workflow3 = ({
           : {},
 
         buildArgs: data.buildArgs ? data.buildArgs.map((obj) => ({ [obj.key]: obj.value })) : [],
-        propertyIdentifier: propertyIdentifier.trim(),
-        port: apiResponse
+        propertyIdentifier: propertyIdentifier.trim()
       };
       onSubmitWorkflow(true);
       onClose();
-
       try {
         await createSsrSpaProperty.mutateAsync(newdata);
         onClose();
@@ -718,7 +720,15 @@ export const Workflow3 = ({
                           label={
                             <>
                               Port
-                              <Tooltip content={<div>Kindly put port for your application.</div>}>
+                              <Tooltip
+                                content={
+                                  <div>
+                                    Specify the port number mentioned in your Dockerfile&apos;s
+                                    EXPOSE instruction, on which the container accepts incoming HTTP
+                                    requests.
+                                  </div>
+                                }
+                              >
                                 <span>
                                   &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
                                 </span>
@@ -737,6 +747,10 @@ export const Workflow3 = ({
                             id="port"
                             {...field}
                             defaultValue={3000}
+                            onChange={(e) => {
+                              const value = parseInt(e, 10); // or parseFloat(e) for decimal numbers
+                              setValue('port', value);
+                            }}
                           />
                         </FormGroup>
                       )}
@@ -1351,7 +1365,15 @@ export const Workflow3 = ({
                           label={
                             <>
                               Port
-                              <Tooltip content={<div>Kindly put port for your application.</div>}>
+                              <Tooltip
+                                content={
+                                  <div>
+                                    Specify the port number mentioned in your Dockerfile&apos;s
+                                    EXPOSE instruction, on which the container accepts incoming HTTP
+                                    requests.
+                                  </div>
+                                }
+                              >
                                 <span>
                                   &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
                                 </span>
@@ -1370,7 +1392,6 @@ export const Workflow3 = ({
                             id="port"
                             {...field}
                             isDisabled
-                            value={apiResponse}
                           />
                         </FormGroup>
                       )}

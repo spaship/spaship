@@ -14,7 +14,7 @@ export const fetchLogsforSpa = async (
         params: {
           type,
           id,
-          lines: 100
+          lines: 2000
         }
       }
     );
