@@ -39,7 +39,14 @@ type Props = {
 type DeploymentKindProps = {
   activity: TWebPropActivityStream;
 };
-
+function extractBuildIdFromMessage(message: string): string | undefined {
+  const regex = /\[(.*?)\]/;
+  const matches = message.match(regex);
+  if (matches && matches.length > 1) {
+    return matches[1];
+  }
+  return '';
+}
 const activities = {
   APPLICATION_DEPLOYED: ({
     props,
@@ -201,73 +208,96 @@ const activities = {
     props,
     message,
     propertyIdentifier
-  }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      <Label color="green" icon={<CheckIcon />}>
-        Build completed
-      </Label>{' '}
-      for{' '}
-      <Link
-        href={{
-          pathname: '/properties/[propertyIdentifier]/[spaProperty]',
-          query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
-        }}
-      >
+  }: TWebPropActivityStream): JSX.Element => {
+    const buildId = extractBuildIdFromMessage(message);
+
+    return (
+      <Text component={TextVariants.small}>
+        <Label color="green" icon={<CheckIcon />}>
+          Build completed
+        </Label>{' '}
+        with{' '}
+        <Label color="green" variant="outline">
+          ID : {buildId}
+        </Label>{' '}
+        for{' '}
+        <Link
+          href={{
+            pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+            query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+          }}
+        >
+          <Label
+            icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+            color="green"
+          >
+            {props.applicationIdentifier}
+          </Label>
+        </Link>{' '}
+        in{' '}
+        <Label icon={<ClusterIcon />} color="green">
+          {props.env}
+        </Label>{' '}
+        env in{' '}
+        <Label icon={<OutlinedClockIcon />} color="green">
+          {message.split(' ')[3]} s
+        </Label>
+      </Text>
+    );
+  },
+  APPLICATION_BUILD_FAILED: ({ props, message }: TWebPropActivityStream): JSX.Element => {
+    const buildId = extractBuildIdFromMessage(message);
+    return (
+      <Text component={TextVariants.small}>
+        <Label color="red" icon={<ExclamationCircleIcon />}>
+          Build failed
+        </Label>{' '}
+        with{' '}
+        <Label color="red" variant="outline">
+          ID : {buildId}
+        </Label>{' '}
+        for{' '}
         <Label
           icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-          color="green"
+          color="red"
         >
           {props.applicationIdentifier}
-        </Label>
-      </Link>{' '}
-      in{' '}
-      <Label icon={<ClusterIcon />} color="green">
-        {props.env}
-      </Label>{' '}
-      env in{' '}
-      <Label icon={<OutlinedClockIcon />} color="green">
-        {message.split(' ')[3]} s
-      </Label>
-    </Text>
-  ),
-  APPLICATION_BUILD_FAILED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      <Label color="red" icon={<ExclamationCircleIcon />}>
-        Build failed
-      </Label>{' '}
-      for{' '}
-      <Label
-        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-        color="red"
-      >
-        {props.applicationIdentifier}
-      </Label>{' '}
-      App in the{' '}
-      <Label icon={<ClusterIcon />} color="red">
-        {props.env}
-      </Label>{' '}
-      env.{' '}
-    </Text>
-  ),
-  APPLICATION_BUILD_TERMINATED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      <Label color="red" icon={<ExclamationCircleIcon />}>
-        Build terminated
-      </Label>{' '}
-      for{' '}
-      <Label
-        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-        color="red"
-      >
-        {props.applicationIdentifier}
-      </Label>{' '}
-      App in the{' '}
-      <Label icon={<ClusterIcon />} color="red">
-        {props.env}
-      </Label>{' '}
-      env.{' '}
-    </Text>
-  ),
+        </Label>{' '}
+        App in the{' '}
+        <Label icon={<ClusterIcon />} color="red">
+          {props.env}
+        </Label>{' '}
+        env.{' '}
+      </Text>
+    );
+  },
+  APPLICATION_BUILD_TERMINATED: ({ props, message }: TWebPropActivityStream): JSX.Element => {
+    const buildId = extractBuildIdFromMessage(message);
+
+    return (
+      <Text component={TextVariants.small}>
+        <Label color="red" icon={<ExclamationCircleIcon />}>
+          Build terminated
+        </Label>{' '}
+        with{' '}
+        <Label color="red" variant="outline">
+          ID : {buildId}
+        </Label>{' '}
+        for{' '}
+        <Label
+          icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+          color="red"
+        >
+          {props.applicationIdentifier}
+        </Label>{' '}
+        App in the{' '}
+        <Label icon={<ClusterIcon />} color="red">
+          {props.env}
+        </Label>{' '}
+        env.{' '}
+      </Text>
+    );
+  },
   PROPERTY_CREATED: ({ propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
     <Text component={TextVariants.small}>
       <Label icon={<CubesIcon />} color="green">
@@ -403,6 +433,29 @@ const activities = {
         {message?.split(' ')[4]}
       </Label>{' '}
     </Text>
+  ),
+  APPLICATION_CONFIG_UPDATED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
+    <Text component={TextVariants.small}>
+      Application
+      <Label color="green" icon={<CheckIcon />}>
+        Configuration Updated
+      </Label>{' '}
+      for{' '}
+      <Label
+        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
+        color="green"
+      >
+        {props.applicationIdentifier}
+      </Label>
+      in{' '}
+      <Label icon={<ClusterIcon />} color="green">
+        {props.env}
+      </Label>{' '}
+      env in{' '}
+      <Label icon={<OutlinedClockIcon />} color="green">
+        {message.split(' ')[3]} s
+      </Label>
+    </Text>
   )
 } as any;
 
@@ -444,7 +497,10 @@ export const ActivityStream = ({
                   titleId={activity._id}
                   key={activity._id}
                   variant={
-                    activity.action.includes('FAIL') || activity.action.includes('TERMINATED')
+                    activity.action.includes('FAIL') ||
+                    activity.action.includes('TERMINATED') ||
+                    activity.action.includes('TIMEOUT') ||
+                    activity.action.includes('DELETED')
                       ? 'danger'
                       : startedCondition
                   }

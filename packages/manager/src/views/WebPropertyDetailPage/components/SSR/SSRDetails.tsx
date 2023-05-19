@@ -111,7 +111,7 @@ export const SSRDetails = () => {
       await createSsrSpaProperty.mutateAsync({
         ...redeployData
       });
-      toast.success('Redeployed SSR successfully', { id: toastId });
+      toast.success('ReDeployed containerized application successfully', { id: toastId });
     } catch (error) {
       if (error instanceof AxiosError && error.response && error.response.status === 403) {
         toast.error("You don't have access to perform this action", { id: toastId });
@@ -496,7 +496,7 @@ export const SSRDetails = () => {
                 <div>
                   Provide your application&apos;s repository details, and SPAship will handle the
                   entire build and deployment process. No more external CIs are needed! Enjoy a more
-                  direct and interactive deployment experience. To know more check spasip get
+                  direct and interactive deployment experience. To know more check SPAship get
                   started section <Link href="/documents">here</Link>.{' '}
                 </div>
               ) : (

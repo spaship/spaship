@@ -98,7 +98,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
     try {
       await createSsrSpaProperty.mutateAsync(newDataf);
       onClose();
-      toast.success('Deployed SSR successfully');
+      toast.success('Deployed containerized application successfully');
     } catch (error) {
       if (error instanceof AxiosError && error.response && error.response.status === 403) {
         toast.error("You don't have access to perform this action");
