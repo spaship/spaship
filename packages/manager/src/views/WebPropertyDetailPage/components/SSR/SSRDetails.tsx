@@ -496,7 +496,7 @@ export const SSRDetails = () => {
                 <div>
                   Provide your application&apos;s repository details, and SPAship will handle the
                   entire build and deployment process. No more external CIs are needed! Enjoy a more
-                  direct and interactive deployment experience. To know more check spasip get
+                  direct and interactive deployment experience. To know more check SPAship get
                   started section <Link href="/documents">here</Link>.{' '}
                 </div>
               ) : (

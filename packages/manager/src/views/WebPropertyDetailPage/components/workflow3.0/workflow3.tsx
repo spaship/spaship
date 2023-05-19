@@ -204,9 +204,12 @@ export const Workflow3 = ({
             }, {})
           : {},
 
-        buildArgs: data.buildArgs ? data.buildArgs.map((obj) => ({ [obj.key]: obj.value })) : [],
+        buildArgs: data.buildArgs
+          ? data.buildArgs.map((obj) => ({ name: obj.key, value: obj.value }))
+          : [],
         propertyIdentifier: propertyIdentifier.trim()
       };
+
       onSubmitWorkflow(true);
       onClose();
       try {

@@ -97,7 +97,10 @@ interface Props {
   dataProps: TDataWorkflow | TDataContainerized;
   flag: string;
 }
-
+type MapItem = {
+  name: string;
+  value: string;
+};
 const keyValuePairsGenerator = ({
   dataProps,
   property
@@ -128,9 +131,10 @@ export const ConfigureWorkflowForm = ({
         key: item.key,
         value: item.value as string | undefined
       })),
-      buildArgs: dataProps?.buildArgs.flatMap((obj: any) =>
-        Object.entries(obj).map(([key, value]) => ({ key, value }))
-      ),
+      buildArgs: dataProps?.buildArgs.map((item: MapItem) => ({
+        key: item.name,
+        value: item.value
+      })),
       contextDir: dataProps.contextDir ? dataProps.contextDir : '/',
       port: dataProps.port ? dataProps.port : 3000,
       path: dataProps.path ? dataProps.path : '/',
@@ -145,7 +149,6 @@ export const ConfigureWorkflowForm = ({
   const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const webPropertiesKeys = Object.keys(webProperties.data || {});
-  const [apiResponse, setApiResponse] = useState(3000);
 
   const validateSsrSpaProperty = useValidateSsrSpaProperty(propertyIdentifier);
   const [validateMessage, setValidateMessage] = useState('');
@@ -171,9 +174,13 @@ export const ConfigureWorkflowForm = ({
 
       try {
         const response = await validateSsrSpaProperty.mutateAsync(validateDTO);
-
         if (Object.keys(response).includes('port')) {
-          setApiResponse(response?.port);
+          if (data.port !== 3000 && data.port !== response?.port) {
+            setValue('port', data.port);
+          } else {
+            setValue('port', response?.port);
+          }
+
           setValidateMessage('');
         } else if (Object.keys(response).includes('warning')) {
           setValidateMessage(response?.warning);
@@ -210,11 +217,13 @@ export const ConfigureWorkflowForm = ({
               return acc;
             }, {})
           : {},
-        buildArgs: data.buildArgs ? data.buildArgs.map((obj) => ({ [obj.key]: obj.value })) : [],
+        buildArgs: data.buildArgs
+          ? data.buildArgs.map((obj) => ({ name: obj.key, value: obj.value }))
+          : [],
         propertyIdentifier,
-        port: apiResponse,
         reDeployment: false
       };
+      console.log('>>>conf', newdata);
 
       onClose();
 
@@ -844,6 +853,10 @@ export const ConfigureWorkflowForm = ({
                             id="port"
                             {...field}
                             defaultValue={3000}
+                            onChange={(e) => {
+                              const value = parseInt(e, 10); // or parseFloat(e) for decimal numbers
+                              setValue('port', value);
+                            }}
                           />
                         </FormGroup>
                       )}
@@ -1484,7 +1497,6 @@ export const ConfigureWorkflowForm = ({
                             id="port"
                             {...field}
                             isDisabled
-                            value={apiResponse}
                           />
                         </FormGroup>
                       )}
