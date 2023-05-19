@@ -657,6 +657,7 @@ export class ApplicationFactory {
     if (
       applicationDetails.ref === applicationRequest.ref &&
       applicationDetails.path === applicationRequest.path &&
+      applicationDetails.port === applicationRequest.port &&
       applicationDetails.repoUrl === applicationRequest.repoUrl &&
       applicationDetails.contextDir === applicationRequest.contextDir &&
       applicationDetails.dockerFileName === applicationRequest.dockerFileName &&
