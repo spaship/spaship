@@ -658,6 +658,7 @@ export class ApplicationFactory {
       applicationDetails.ref === applicationRequest.ref &&
       applicationDetails.path === applicationRequest.path &&
       applicationDetails.port === applicationRequest.port &&
+      applicationDetails.gitRef === applicationRequest.gitRef &&
       applicationDetails.repoUrl === applicationRequest.repoUrl &&
       applicationDetails.contextDir === applicationRequest.contextDir &&
       applicationDetails.dockerFileName === applicationRequest.dockerFileName &&
