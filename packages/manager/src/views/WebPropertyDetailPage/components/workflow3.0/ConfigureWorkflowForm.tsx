@@ -410,9 +410,9 @@ export const ConfigureWorkflowForm = ({
                               <Tooltip
                                 content={
                                   <div>
-                                    The https git repository URL of the application, for
+                                    Public gitlab/github repository URL of the application, for
                                     example:&nbsp;
-                                    <em>https://github.com/arkaprovob/cd-demo.git</em>
+                                    <em>https://github.com/spaship/spaship</em>
                                   </div>
                                 }
                               >
@@ -455,7 +455,7 @@ export const ConfigureWorkflowForm = ({
                                 content={
                                   <div>
                                     For mono repo, specify the name of the directory where the
-                                    application exists example, <b>package/fe</b> default will be{' '}
+                                    application exists example, <b>package/home</b> default will be{' '}
                                     <b>/</b>
                                   </div>
                                 }
@@ -854,7 +854,11 @@ export const ConfigureWorkflowForm = ({
                             defaultValue={3000}
                             onChange={(e) => {
                               const value = parseInt(e, 10); // or parseFloat(e) for decimal numbers
-                              setValue('port', value);
+                              if (!Number.isNaN(value)) {
+                                setValue('port', value);
+                              } else {
+                                setValue('port', 0);
+                              }
                             }}
                           />
                         </FormGroup>
@@ -1165,8 +1169,9 @@ export const ConfigureWorkflowForm = ({
                               <Tooltip
                                 content={
                                   <div>
-                                    The https git repository URL of the application, for example,
-                                    https://github.com/arkaprovob/cd-demo.git
+                                    Public gitlab/github repository URL of the application, for
+                                    example:&nbsp;
+                                    <em>https://github.com/spaship/spaship</em>
                                   </div>
                                 }
                               >
@@ -1209,7 +1214,7 @@ export const ConfigureWorkflowForm = ({
                                 content={
                                   <div>
                                     For mono repo, specify the name of the directory where the
-                                    application exists example, <b>package/fe</b> default will be{' '}
+                                    application exists example, <b>package/home</b> default will be{' '}
                                     <b>/</b>
                                   </div>
                                 }
