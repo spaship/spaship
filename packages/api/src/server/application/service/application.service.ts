@@ -693,7 +693,7 @@ export class ApplicationService {
     const gitProps = await this.applicationFactory.validateGitProps(repoUrl, gitRef, contextDir);
     if (!gitProps)
       this.exceptionService.badRequestException({
-        message: `Please check the entered repository details.`
+        message: `Please verify the repository details (Repository URL / Context Dir / Branch name).`
       });
   }
 
@@ -706,10 +706,10 @@ export class ApplicationService {
     if (existingApplications.length) {
       const listApplications = [];
       existingApplications.forEach((tmp) => {
-        listApplications.push(`${tmp.identifier} ${tmp.env} on ${tmp.propertyIdentifier}`);
+        listApplications.push(`${tmp.propertyIdentifier}-${tmp.env}-${tmp.identifier}`);
       });
       this.exceptionService.badRequestException({
-        message: `${repoUrl}${contextDir} is already registered for ${listApplications}`
+        message: `${repoUrl}${contextDir} is already registered. [${listApplications}]`
       });
     }
   }
