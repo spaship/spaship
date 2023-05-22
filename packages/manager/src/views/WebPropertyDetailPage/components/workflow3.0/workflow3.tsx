@@ -440,7 +440,7 @@ export const Workflow3 = ({
                                 content={
                                   <div>
                                     For mono repo, specify the name of the directory where the
-                                    application exists example, <b>package/fe</b> default will be{' '}
+                                    application exists example, <b>package/home</b> default will be{' '}
                                     <b>/</b>
                                   </div>
                                 }
@@ -1113,7 +1113,7 @@ export const Workflow3 = ({
                                 content={
                                   <div>
                                     For mono repo, specify the name of the directory where the
-                                    application exists example, <b>package/fe</b> default will be{' '}
+                                    application exists example, <b>package/home</b> default will be{' '}
                                     <b>/</b>
                                   </div>
                                 }
