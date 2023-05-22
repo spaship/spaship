@@ -163,7 +163,7 @@ export const SSRDetails = () => {
     ref: '',
     contextDir: '/',
     config: {},
-    buildArgs: {},
+    buildArgs: [],
     propertyIdentifier,
     port: 3000,
     isGit: true,

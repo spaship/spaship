@@ -39,8 +39,8 @@ const schema = yup.object({
     .string()
     .required()
     .matches(
-      /^[a-zA-Z0-9._-]+$/,
-      'Invalid branch name. Branch names must consist of alphanumeric characters, dots, underscores, or hyphens.'
+      /^[a-zA-Z0-9._@#/-]+$/,
+      'Invalid branch name. Branch names must consist of alphanumeric characters, dots, underscores, at symbols (@), hash symbols (#), forward slashes (/), or hyphens.'
     )
     .label('Branch'),
   dockerFileName: yup
