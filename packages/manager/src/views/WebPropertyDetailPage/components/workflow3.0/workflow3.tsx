@@ -396,8 +396,9 @@ export const Workflow3 = ({
                               <Tooltip
                                 content={
                                   <div>
-                                    The https git repository URL of the application, for example,
-                                    https://github.com/arkaprovob/cd-demo.git
+                                    Public git&nbsp;(gitlab/github) repository URL of the
+                                    application, for example:&nbsp;
+                                    <em>https://github.com/spaship/spaship.git</em>
                                   </div>
                                 }
                               >
@@ -751,8 +752,12 @@ export const Workflow3 = ({
                             {...field}
                             defaultValue={3000}
                             onChange={(e) => {
-                              const value = parseInt(e, 10); // or parseFloat(e) for decimal numbers
-                              setValue('port', value);
+                              const value = parseInt(e, 10);
+                              if (!Number.isNaN(value)) {
+                                setValue('port', value);
+                              } else {
+                                setValue('port', 0);
+                              }
                             }}
                           />
                         </FormGroup>
@@ -1063,9 +1068,9 @@ export const Workflow3 = ({
                               <Tooltip
                                 content={
                                   <div>
-                                    The https git repository URL of the application, for
-                                    example:&nbsp;
-                                    <em>https://github.com/arkaprovob/cd-demo.git</em>
+                                    Public git&nbsp;(gitlab/github) repository URL of the
+                                    application, for example:&nbsp;
+                                    <em>https://github.com/spaship/spaship.git</em>
                                   </div>
                                 }
                               >
