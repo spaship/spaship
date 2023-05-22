@@ -396,9 +396,9 @@ export const Workflow3 = ({
                               <Tooltip
                                 content={
                                   <div>
-                                    Public git&nbsp;(gitlab/github) repository URL of the
-                                    application, for example:&nbsp;
-                                    <em>https://github.com/spaship/spaship.git</em>
+                                    Public gitlab/github repository URL of the application, for
+                                    example:&nbsp;
+                                    <em>https://github.com/spaship/spaship</em>
                                   </div>
                                 }
                               >
@@ -1068,9 +1068,9 @@ export const Workflow3 = ({
                               <Tooltip
                                 content={
                                   <div>
-                                    Public git&nbsp;(gitlab/github) repository URL of the
-                                    application, for example:&nbsp;
-                                    <em>https://github.com/spaship/spaship.git</em>
+                                    Public gitlab/github repository URL of the application, for
+                                    example:&nbsp;
+                                    <em>https://github.com/spaship/spaship</em>
                                   </div>
                                 }
                               >
