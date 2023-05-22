@@ -1165,8 +1165,8 @@ export const ConfigureWorkflowForm = ({
                               <Tooltip
                                 content={
                                   <div>
-                                    The registry URL of the application you want to deploy. for
-                                    example, Sample URL : quay.io/spaship/sample-ssr-app
+                                    The https git repository URL of the application, for example,
+                                    https://github.com/arkaprovob/cd-demo.git
                                   </div>
                                 }
                               >
