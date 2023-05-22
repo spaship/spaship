@@ -25,5 +25,5 @@ export type TDataWorkflow = CommonFields & {
   type: string;
   repoUrl: string;
   contextDir: string;
-  buildArgs: Record<string, unknown>;
+  buildArgs: Array<{ [key: string]: string }>;
 };

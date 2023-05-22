@@ -47,7 +47,7 @@ export type TWorkflowResponse = TSSRResponse & {
   type: string;
   repoUrl: string;
   contextDir: string;
-  buildArgs: Record<string, unknown>;
+  buildArgs: Array<{ [key: string]: string }>;
 };
 
 export type TSSRValidate = {
