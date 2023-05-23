@@ -480,6 +480,7 @@ export const Workflow3 = ({
                           fieldId="gitRef"
                           validated={error ? 'error' : 'default'}
                           helperTextInvalid={error?.message}
+                          isRequired
                         >
                           <TextInput placeholder="Git Branch" type="text" id="branch" {...field} />
                         </FormGroup>
@@ -564,21 +565,18 @@ export const Workflow3 = ({
                     <Controller
                       control={control}
                       name="env"
-                      render={({ field: { onChange, value }, fieldState: { error } }) => (
+                      render={({ field }) => (
                         <FormGroup
                           label="Select Environment"
                           fieldId="select-env"
-                          validated={error ? 'error' : 'default'}
+                          validated={errors.env ? 'error' : 'default'}
                           isRequired
-                          helperTextInvalid={error?.message}
+                          helperTextInvalid={errors.env?.message}
                         >
                           <FormSelect
                             label="Select Environment"
                             aria-label="FormSelect Input"
-                            onChange={(event) => {
-                              onChange(event);
-                            }}
-                            value={value}
+                            {...field}
                           >
                             <FormSelectOption
                               key={1}

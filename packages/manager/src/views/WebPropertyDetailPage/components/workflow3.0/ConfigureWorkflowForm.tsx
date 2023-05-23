@@ -165,7 +165,7 @@ export const ConfigureWorkflowForm = ({
     ) {
       const validateDTO = {
         propertyIdentifier,
-        identifier: data.name,
+        identifier: dataProps.identifier,
         repoUrl: data.repoUrl,
         gitRef: data.gitRef,
         contextDir: data.contextDir,
@@ -495,6 +495,7 @@ export const ConfigureWorkflowForm = ({
                           fieldId="gitRef"
                           validated={error ? 'error' : 'default'}
                           helperTextInvalid={error?.message}
+                          isRequired
                         >
                           <TextInput placeholder="Git Branch" type="text" id="branch" {...field} />
                         </FormGroup>
@@ -580,23 +581,24 @@ export const ConfigureWorkflowForm = ({
                     <Controller
                       control={control}
                       name="env"
-                      render={({ field: { onChange, value }, fieldState: { error } }) => (
+                      render={({ field }) => (
                         <FormGroup
                           label="Select Environment"
                           fieldId="select-env"
-                          validated={error ? 'error' : 'default'}
+                          validated={errors.env ? 'error' : 'default'}
                           isRequired
-                          helperTextInvalid={error?.message}
+                          helperTextInvalid={errors.env?.message}
                         >
                           <FormSelect
                             label="Select Environment"
                             aria-label="FormSelect Input"
-                            onChange={(event) => {
-                              onChange(event);
-                            }}
-                            value={value}
+                            {...field}
                           >
-                            <FormSelectOption key={1} label="Please select an environment" />
+                            <FormSelectOption
+                              key={1}
+                              label="Please select an environment"
+                              isDisabled
+                            />
                             {webPropertiesKeys.map((envName) => (
                               <FormSelectOption key={envName} value={envName} label={envName} />
                             ))}
@@ -1702,7 +1704,7 @@ export const ConfigureWorkflowForm = ({
                 variant="primary"
                 type="submit"
                 isDisabled={
-                  isDirty ? Object.keys(errors).length > 0 || validateMessage !== '' : false
+                  isDirty ? Object.keys(errors).length > 0 || validateMessage !== '' : true
                 }
               >
                 Submit
