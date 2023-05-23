@@ -115,7 +115,7 @@ export const ConfigureWorkflowForm = ({
     setValue,
     getValues,
     trigger,
-    formState: { errors, isDirty }
+    formState: { errors, dirtyFields }
   } = useForm<FormData>({
     defaultValues: {
       ...dataProps,
@@ -1697,7 +1697,9 @@ export const ConfigureWorkflowForm = ({
                 variant="primary"
                 type="submit"
                 isDisabled={
-                  isDirty ? Object.keys(errors).length > 0 || validateMessage !== '' : true
+                  Object.keys(dirtyFields).length > 0
+                    ? Object.keys(errors).length > 0 || validateMessage !== ''
+                    : true
                 }
               >
                 Submit
