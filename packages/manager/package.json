@@ -1,7 +1,7 @@
 {
   "name": "@spaship/manager",
   "description": "The SPAship UI.",
-  "version": "2.1.13",
+  "version": "2.4.0",
   "private": true,
   "author": {
     "name": "Akhil Mohan",
