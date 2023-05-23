@@ -35,14 +35,7 @@ const schema = yup.object({
     .required()
     .notOneOf([' '], 'Invalid value. Cannot be only spaces.')
     .label('Context Directory'),
-  gitRef: yup
-    .string()
-    .required()
-    .matches(
-      /^[a-zA-Z0-9._@#/-]+$/,
-      'Invalid branch name. Branch names must consist of alphanumeric characters, dots, underscores, at symbols (@), hash symbols (#), forward slashes (/), or hyphens.'
-    )
-    .label('Branch'),
+  gitRef: yup.string().required().trim().label('Branch'),
   dockerFileName: yup
     .string()
     .required()
