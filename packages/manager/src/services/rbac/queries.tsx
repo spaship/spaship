@@ -92,11 +92,6 @@ export const useDeleteMember = (property: string) => {
   return useMutation(useDeletePermission, {
     onSuccess: () => {
       queryClient.invalidateQueries(rbacKeyQueryKeys.list(property));
-    },
-    onError: (error: any) => {
-      if (error.response.status === 403) {
-        toast.error("You don't have access to perform this action");
-      }
     }
   });
 };

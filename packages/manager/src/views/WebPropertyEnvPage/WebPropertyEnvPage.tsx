@@ -232,9 +232,20 @@ export const WebPropertyEnvPage = (): JSX.Element => {
       propertyIdentifier,
       permissionDetails: deletePerm
     };
-    await deleteMember.mutateAsync(deleteData);
-    toast.success('Member deleted successfully');
-    handlePopUpClose('deleteMember');
+
+    try {
+      await deleteMember.mutateAsync(deleteData);
+      toast.success('Member deleted successfully');
+      handlePopUpClose('deleteMember');
+    } catch (error) {
+      if (error instanceof AxiosError && error.response && error.response.status === 403) {
+        toast.error("You don't have access to perform this action");
+        handlePopUpClose('deleteMember');
+      } else {
+        toast.error('Failed to delete member');
+        handlePopUpClose('deleteMember');
+      }
+    }
   };
 
   // const pageCount = Math.ceil((apiKeys?.data?.length ?? 0) / ITEMS_PER_PAGE);

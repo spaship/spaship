@@ -128,7 +128,7 @@ export const SSRDetails = () => {
   const containerisedDeploymentData = spaProperties?.data?.[applicationName].filter(
     (item) => item.isContainerized === true
   );
-  const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [isChecked, setIsChecked] = useState<boolean>(true);
 
   const handleChange = (checked: boolean) => {
     setIsChecked(checked);

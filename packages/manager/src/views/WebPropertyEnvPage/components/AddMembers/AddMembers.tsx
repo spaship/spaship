@@ -486,7 +486,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
                 style={{ marginBottom: 'var(--pf-global--spacer--lg)' }}
               >
                 {!isShowAdvancedViewEnabledRover
-                  ? ' Show Detailed Permissions Rover'
+                  ? ' Show Detailed Rover Permissions'
                   : 'Hide Detailed Permissions Rover'}
               </Button>
             </FlexItem>

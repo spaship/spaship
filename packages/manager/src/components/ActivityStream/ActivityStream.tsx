@@ -451,10 +451,7 @@ const activities = {
       <Label icon={<ClusterIcon />} color="green">
         {props.env}
       </Label>{' '}
-      env in{' '}
-      <Label icon={<OutlinedClockIcon />} color="green">
-        {message.split(' ')[3]} s
-      </Label>
+      env.
     </Text>
   )
 } as any;
