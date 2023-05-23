@@ -697,10 +697,11 @@ export class ApplicationService {
       });
   }
 
-  // @internal it will validate if the url and context directory is registered for any other property
+  // @internal It will validate if the url and context directory is registered for any other property
   async validateExistingGitDeployment(repoUrl: string, contextDir: string, propertyIdentifier: string, identifier: string) {
     repoUrl = this.applicationFactory.getRepoUrl(repoUrl);
     contextDir = this.applicationFactory.getPath(contextDir);
+    identifier = this.applicationFactory.getContainerizedApplicationIdentifier(identifier);
     const checkGitRegistry = await this.dataServices.application.getByAny({ repoUrl, contextDir });
     const existingApplications = checkGitRegistry.filter((i) => i.propertyIdentifier !== propertyIdentifier || i.identifier !== identifier);
     if (existingApplications.length) {

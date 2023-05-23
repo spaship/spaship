@@ -469,10 +469,11 @@ export class ApplicationFactory {
     const containerizedEnabledGitDeploymentRequest = new ContainerizedGitDeploymentRequest();
     containerizedEnabledGitDeploymentRequest.nameSpace = namespace;
     containerizedEnabledGitDeploymentRequest.deploymentDetails = deploymentDetails;
-    containerizedEnabledGitDeploymentRequest.repoUrl = this.configureGitSuffix(applicationRequest.repoUrl);
-    containerizedEnabledGitDeploymentRequest.gitRef = applicationRequest.gitRef;
-    containerizedEnabledGitDeploymentRequest.contextDir = applicationRequest.contextDir;
-    containerizedEnabledGitDeploymentRequest.buildArgs = applicationRequest.buildArgs || [];
+    containerizedEnabledGitDeploymentRequest.repoUrl = this.configureGitSuffix(applicationDetails.repoUrl);
+    containerizedEnabledGitDeploymentRequest.gitRef = applicationDetails.gitRef;
+    containerizedEnabledGitDeploymentRequest.contextDir = applicationDetails.contextDir;
+    containerizedEnabledGitDeploymentRequest.buildArgs = applicationDetails.buildArgs || [];
+    containerizedEnabledGitDeploymentRequest.dockerFilePath = applicationDetails.dockerFileName;
     containerizedEnabledGitDeploymentRequest.reDeployment = applicationRequest.reDeployment || false;
     return containerizedEnabledGitDeploymentRequest;
   }

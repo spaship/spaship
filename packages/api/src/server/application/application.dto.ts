@@ -170,6 +170,8 @@ export class ContainerizedGitDeploymentRequest {
 
   contextDir: string;
 
+  dockerFilePath: string;
+
   buildArgs: object;
 
   reDeployment: boolean;
