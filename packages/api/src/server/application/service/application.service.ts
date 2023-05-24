@@ -693,7 +693,7 @@ export class ApplicationService {
     const gitProps = await this.applicationFactory.validateGitProps(repoUrl, gitRef, contextDir);
     if (!gitProps)
       this.exceptionService.badRequestException({
-        message: `Please verify the repository details (Repository URL / Context Dir / Branch name).`
+        message: `Please verify the repository details (Public Repository URL / Context Dir / Branch name).`
       });
   }
 
