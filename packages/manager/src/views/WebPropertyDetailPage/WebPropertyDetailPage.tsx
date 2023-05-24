@@ -314,11 +314,11 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                 </Link>
                               </Td>
                               <Td style={{ maxWidth: '25ch', wordWrap: 'break-word' }}>
-                                {`${spaProperties.data[identifier]?.[0]?.path.slice(
+                                {`${spaProperties.data[identifier]?.[0]?.path?.slice(
                                   0,
                                   URL_LENGTH_LIMIT
                                 )} ${
-                                  spaProperties.data[identifier]?.[0]?.path.length >
+                                  spaProperties.data[identifier]?.[0]?.path?.length >
                                   URL_LENGTH_LIMIT
                                     ? '...'
                                     : ''
