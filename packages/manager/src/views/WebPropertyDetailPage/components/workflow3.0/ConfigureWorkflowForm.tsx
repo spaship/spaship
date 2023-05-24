@@ -115,7 +115,7 @@ export const ConfigureWorkflowForm = ({
     setValue,
     getValues,
     trigger,
-    formState: { errors, dirtyFields }
+    formState: { errors, dirtyFields, touchedFields }
   } = useForm<FormData>({
     defaultValues: {
       ...dataProps,
@@ -158,7 +158,7 @@ export const ConfigureWorkflowForm = ({
     ) {
       const validateDTO = {
         propertyIdentifier,
-        identifier: dataProps.identifier,
+        identifier: dataProps.name,
         repoUrl: data.repoUrl,
         gitRef: data.gitRef,
         contextDir: data.contextDir,
@@ -1697,7 +1697,7 @@ export const ConfigureWorkflowForm = ({
                 variant="primary"
                 type="submit"
                 isDisabled={
-                  Object.keys(dirtyFields).length > 0
+                  Object.keys(dirtyFields).length > 0 || Object.keys(touchedFields).length > 0
                     ? Object.keys(errors).length > 0 || validateMessage !== ''
                     : true
                 }
