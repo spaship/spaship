@@ -31,16 +31,20 @@ const schema = yup.object({
     .required(),
   env: yup.string().required().label('Environment'),
   port: yup
-    .string()
-    .matches(/^\d+$/, { message: 'Port must contain only numbers', excludeEmptyString: true })
-    .min(1, 'Port is required')
-    .max(5, 'Port must be less than or equal to 5 digits')
-    .test(
-      'port',
-      'Port must be less than or equal to 65536',
-      (value) => parseInt(value as string, 10) <= 65536
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+    .typeError('Port must be a number')
+    .integer('Port must be an integer')
+    .positive('Port must be a positive number')
+    .test('port', 'Port must contain only numbers', (value) =>
+      /^\d+$/.test(value?.toString() || '')
     )
-    .trim()
+    .min(1, 'Port is required')
+    .max(99999, 'Port must be less than or equal to 5 digits')
+    .test('port', 'Port must be less than or equal to 65536', (value) => {
+      const portNumber = parseInt(value?.toString() || '', 10);
+      return portNumber <= 65536;
+    })
     .label('Port'),
   ref: yup.string(),
   imageUrl: yup.string().trim().required().label('Image URL'),
@@ -67,7 +71,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
     trigger,
     formState: { isSubmitting }
   } = useForm<FormData>({
-    defaultValues: { healthCheckPath: '/', path: '/', port: '3000' },
+    defaultValues: { healthCheckPath: '/', path: '/', port: 3000 },
     mode: 'onBlur',
     resolver: yupResolver(schema)
   });
