@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
-import { ENV, ENV_TYPE } from './configuration';
+import { ENV, ENV_TYPE, SPASHIP_VERSION } from './configuration';
 import { LoggingInterceptor } from './configuration/interceptors/logger.interceptor';
 import { ResponseFormat, ResponseInterceptor } from './configuration/interceptors/response.interceptor';
 import { LoggerService } from './configuration/logger/logger.service';
@@ -36,7 +36,7 @@ async function bootstrap() {
       .addBearerAuth()
       .setTitle('SPAship API Documentation')
       .setDescription('Doc for SPAship apis')
-      .setVersion('3.3.0')
+      .setVersion(SPASHIP_VERSION)
       .build();
     const document = SwaggerModule.createDocument(app, config, {
       extraModels: [ResponseFormat],
