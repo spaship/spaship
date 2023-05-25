@@ -31,12 +31,12 @@ async function bootstrap() {
   });
 
   // swagger & cors config
-  if (env !== 'production') {
+  if (env !== 'production' && env !== 'stage') {
     const config = new DocumentBuilder()
       .addBearerAuth()
       .setTitle('SPAship API Documentation')
       .setDescription('Doc for SPAship apis')
-      .setVersion('3.1.0')
+      .setVersion('3.3.0')
       .build();
     const document = SwaggerModule.createDocument(app, config, {
       extraModels: [ResponseFormat],
