@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
+import { ENV, ENV_TYPE } from './configuration';
 import { LoggingInterceptor } from './configuration/interceptors/logger.interceptor';
 import { ResponseFormat, ResponseInterceptor } from './configuration/interceptors/response.interceptor';
 import { LoggerService } from './configuration/logger/logger.service';
@@ -10,7 +11,6 @@ import { TrimPipe } from './configuration/pipe/trim-pipe.pipe';
 import { AllExceptionFilter } from './server/exceptions/exception.filter';
 
 async function bootstrap() {
-  const env = process.env.NODE_ENV;
   const app = await NestFactory.create(AppModule);
 
   // cookie parser
@@ -31,7 +31,7 @@ async function bootstrap() {
   });
 
   // swagger & cors config
-  if (env !== 'production' && env !== 'stage') {
+  if (ENV_TYPE !== ENV.PRODUCTION && ENV_TYPE !== ENV.STAGE) {
     const config = new DocumentBuilder()
       .addBearerAuth()
       .setTitle('SPAship API Documentation')

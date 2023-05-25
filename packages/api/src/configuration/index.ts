@@ -124,6 +124,15 @@ export enum LOGTYPE {
 
 export const GLOBAL_PREFIX = '/api/v1';
 
+export enum ENV {
+  PRODUCTION = 'PRODUCTION',
+  STAGE = 'STAGE',
+  DEV = 'DEV',
+  QA = 'QA'
+}
+
+export const ENV_TYPE = process.env.NODE_ENV;
+
 function getImageUrlRegex() {
   return new RegExp(process.env.SPASHIP_SSR_IMAGEURL_REGEX);
 }
