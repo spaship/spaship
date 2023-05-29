@@ -263,7 +263,6 @@ export const Workflow3 = ({
 
   const handleAddConfig = () => {
     appendConfig({ key: '', value: '' });
-    console.log('append', configFields);
   };
 
   const handleAddBuildArgs = () => {
