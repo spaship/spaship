@@ -263,6 +263,7 @@ export const Workflow3 = ({
 
   const handleAddConfig = () => {
     appendConfig({ key: '', value: '' });
+    console.log('append', configFields);
   };
 
   const handleAddBuildArgs = () => {
@@ -861,6 +862,7 @@ export const Workflow3 = ({
                     </Button>
                   </SplitItem>
                 </Split>
+
                 {configFields.map((pair, index) => (
                   <Split key={pair.id} hasGutter>
                     <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">
