@@ -404,8 +404,8 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
       </Split>
 
       {fields.map((pair, index) => (
-        <Split key={`key-${index + 1}`} hasGutter>
-          <SplitItem key={`key-${index + 1}`} isFilled>
+        <Split key={pair.id} hasGutter>
+          <SplitItem key={pair.id} isFilled>
             <Controller
               control={control}
               name={`config.${index}.key`}
@@ -431,7 +431,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
               )}
             />
           </SplitItem>
-          <SplitItem key={`value-${index + 1}`} isFilled>
+          <SplitItem key={pair.id} isFilled>
             <Controller
               control={control}
               name={`config.${index}.value`}

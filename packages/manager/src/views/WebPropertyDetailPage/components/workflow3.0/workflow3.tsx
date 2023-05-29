@@ -252,7 +252,6 @@ export const Workflow3 = ({
     control,
     name: 'config'
   });
-
   const {
     fields: buildArgsFields,
     append: appendBuildArgs,
@@ -264,6 +263,7 @@ export const Workflow3 = ({
 
   const handleAddConfig = () => {
     appendConfig({ key: '', value: '' });
+    console.log('append', configFields);
   };
 
   const handleAddBuildArgs = () => {
@@ -862,9 +862,10 @@ export const Workflow3 = ({
                     </Button>
                   </SplitItem>
                 </Split>
+
                 {configFields.map((pair, index) => (
-                  <Split key={`key-${index + 1}`} hasGutter>
-                    <SplitItem key={`key-${index + 1}`} isFilled className="pf-u-mr-md pf-u-mb-lg">
+                  <Split key={pair.id} hasGutter>
+                    <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">
                       <Controller
                         control={control}
                         name={`config.${index}.key`}
@@ -890,11 +891,7 @@ export const Workflow3 = ({
                         )}
                       />
                     </SplitItem>
-                    <SplitItem
-                      key={`value-${index + 1}`}
-                      isFilled
-                      className="pf-u-mr-md pf-u-mb-lg"
-                    >
+                    <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">
                       <Controller
                         control={control}
                         name={`config.${index}.value`}
@@ -932,7 +929,9 @@ export const Workflow3 = ({
                       <Button
                         variant="link"
                         icon={<TimesCircleIcon />}
-                        onClick={() => removeConfig(index)}
+                        onClick={() => {
+                          removeConfig(index);
+                        }}
                       />
                     </SplitItem>
                   </Split>
@@ -994,12 +993,8 @@ export const Workflow3 = ({
                   </SplitItem>
                 </Split>
                 {buildArgsFields.map((pair, index) => (
-                  <Split key={`buildArgskey-${index + 1}`} hasGutter>
-                    <SplitItem
-                      key={`buildArgskey-${index + 1}`}
-                      isFilled
-                      className="pf-u-mr-md pf-u-mb-lg"
-                    >
+                  <Split key={pair.id} hasGutter>
+                    <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">
                       <Controller
                         control={control}
                         name={`buildArgs.${index}.key`}
@@ -1025,11 +1020,7 @@ export const Workflow3 = ({
                         )}
                       />
                     </SplitItem>
-                    <SplitItem
-                      key={`buildArgsvalue-${index + 1}`}
-                      isFilled
-                      className="pf-u-mr-md pf-u-mb-lg"
-                    >
+                    <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">
                       <Controller
                         control={control}
                         name={`buildArgs.${index}.value`}
@@ -1469,14 +1460,11 @@ export const Workflow3 = ({
                     </div>
                   </Split>
                 )}
+
                 {configFields &&
                   configFields.map((pair, index) => (
-                    <Split key={`key-${index + 1}`} hasGutter>
-                      <SplitItem
-                        key={`key-${index + 1}`}
-                        isFilled
-                        className="pf-u-mr-md pf-u-mb-lg"
-                      >
+                    <Split key={pair.id} hasGutter>
+                      <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">
                         <Controller
                           control={control}
                           name={`config.${index}.key`}
@@ -1506,11 +1494,7 @@ export const Workflow3 = ({
                           )}
                         />
                       </SplitItem>
-                      <SplitItem
-                        key={`value-${index + 1}`}
-                        isFilled
-                        className="pf-u-mr-md pf-u-mb-lg"
-                      >
+                      <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">
                         <Controller
                           control={control}
                           name={`config.${index}.value`}
@@ -1564,12 +1548,8 @@ export const Workflow3 = ({
                   </Split>
                 )}
                 {buildArgsFields.map((pair, index) => (
-                  <Split key={`buildArgskey-${index + 1}`} hasGutter>
-                    <SplitItem
-                      key={`buildArgskey-${index + 1}`}
-                      isFilled
-                      className="pf-u-mr-md pf-u-mb-lg"
-                    >
+                  <Split key={pair.id} hasGutter>
+                    <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">
                       <Controller
                         control={control}
                         name={`buildArgs.${index}.key`}
@@ -1596,11 +1576,7 @@ export const Workflow3 = ({
                         )}
                       />
                     </SplitItem>
-                    <SplitItem
-                      key={`buildArgsvalue-${index + 1}`}
-                      isFilled
-                      className="pf-u-mr-md pf-u-mb-lg"
-                    >
+                    <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">
                       <Controller
                         control={control}
                         name={`buildArgs.${index}.value`}
