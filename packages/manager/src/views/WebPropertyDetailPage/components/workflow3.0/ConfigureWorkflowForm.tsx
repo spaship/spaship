@@ -144,58 +144,10 @@ export const ConfigureWorkflowForm = ({
   const webPropertiesKeys = Object.keys(webProperties.data || {});
 
   const validateSsrSpaProperty = useValidateSsrSpaProperty(propertyIdentifier);
-  const [validateMessage, setValidateMessage] = useState('');
+  const [repoValidateMessage, setRepoValidateMessage] = useState('');
+  const [appValidateMessage, setAppValidateMessage] = useState('');
 
   const onSubmit = async (data: FormData) => {
-    if (
-      propertyIdentifier &&
-      data.name &&
-      data.repoUrl &&
-      data.gitRef &&
-      data.contextDir &&
-      data.dockerFileName &&
-      step === 2
-    ) {
-      const validateDTO = {
-        propertyIdentifier,
-        identifier: dataProps.name,
-        repoUrl: data.repoUrl,
-        gitRef: data.gitRef,
-        contextDir: data.contextDir,
-        dockerFileName: data.dockerFileName
-      };
-
-      try {
-        const response = await validateSsrSpaProperty.mutateAsync(validateDTO);
-        if (Object.keys(response).includes('port')) {
-          if (data.port !== 3000 && data.port !== response?.port) {
-            setValue('port', data.port);
-          } else {
-            setValue('port', response?.port);
-          }
-
-          setValidateMessage('');
-        } else if (Object.keys(response).includes('warning')) {
-          setValidateMessage(response?.warning);
-        }
-      } catch (error) {
-        if (error instanceof AxiosError && error.response && error.response.status === 403) {
-          toast.error("You don't have access to perform this action");
-        } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
-          toast.error(error.response.data.message, {
-            style: {
-              maxWidth: '400px',
-              overflowWrap: 'break-word',
-              wordBreak: 'break-all'
-            }
-          });
-          setValidateMessage(error.response.data.message);
-        } else {
-          toast.error('Failed to validate the containerized application');
-        }
-      }
-    }
-
     if (step === 5) {
       const toastId = toast.loading('Submitting form...');
       const newdata = {
@@ -243,25 +195,76 @@ export const ConfigureWorkflowForm = ({
   };
 
   const handleNext = async () => {
-    if (step === 2) {
+    const formData = getValues();
+    if (step !== 3 && step !== 4) {
+      const validateDTO = {
+        propertyIdentifier: propertyIdentifier || '',
+        identifier: formData.name ? formData.name : '',
+        repoUrl: formData.repoUrl,
+        gitRef: formData.gitRef,
+        contextDir: formData.contextDir,
+        dockerFileName: formData.dockerFileName
+      };
       try {
-        await handleSubmit(onSubmit)();
+        const response = await validateSsrSpaProperty.mutateAsync(validateDTO);
 
-        setStep(step + 1);
-      } catch (error: any) {
-        toast.error(error);
-      }
-    } else {
-      try {
-        const formErrors = await trigger();
+        if (Object.keys(response).includes('port')) {
+          if (formData.port !== 3000 && formData.port !== response?.port) {
+            setValue('port', formData.port);
+          } else {
+            setValue('port', response?.port);
+          }
 
-        if (Object.keys(formErrors).length === 0) {
-          setStep(step + 1);
+          setRepoValidateMessage('');
+        } else if (Object.keys(response).includes('warning')) {
+          setRepoValidateMessage(response?.warning);
+          toast.error(response?.warning, {
+            style: {
+              maxWidth: '400px',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-all'
+            }
+          });
         }
       } catch (error) {
-        console.error(error);
+        if (error instanceof AxiosError && error.response && error.response.status === 403) {
+          toast.error("You don't have access to perform this action", {
+            style: {
+              maxWidth: '400px',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-all'
+            }
+          });
+        } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
+          toast.error(error.response.data.message, {
+            style: {
+              maxWidth: '400px',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-all'
+            }
+          });
+          const updatedMessage = error.response.data.message;
+          if (updatedMessage.includes('registered')) {
+            setAppValidateMessage(error.response.data.message);
+          } else {
+            setRepoValidateMessage(error.response.data.message);
+          }
+        } else {
+          toast.error('Failed to validate the containerized application');
+        }
       }
     }
+
+    try {
+      const formErrors = await trigger();
+
+      if (Object.keys(formErrors).length === 0) {
+        setStep(step + 1);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    // }
   };
 
   const handleBack = () => {
@@ -293,10 +296,68 @@ export const ConfigureWorkflowForm = ({
   const handleAddBuildArgs = () => {
     appendBuildArgs({ key: '', value: '' });
   };
-  const handleClick = (stepNumber: number) => {
+  const handleClick = async (stepNumber: number) => {
     setStep(stepNumber);
-  };
+    const formData = getValues();
+    if (step !== 3 && step !== 4) {
+      const validateDTO = {
+        propertyIdentifier: propertyIdentifier || '',
+        identifier: formData.name ? formData.name : '',
+        repoUrl: formData.repoUrl,
+        gitRef: formData.gitRef,
+        contextDir: formData.contextDir,
+        dockerFileName: formData.dockerFileName
+      };
+      try {
+        const response = await validateSsrSpaProperty.mutateAsync(validateDTO);
 
+        if (Object.keys(response).includes('port')) {
+          if (formData.port !== 3000 && formData.port !== response?.port) {
+            setValue('port', formData.port);
+          } else {
+            setValue('port', response?.port);
+          }
+
+          setRepoValidateMessage('');
+        } else if (Object.keys(response).includes('warning')) {
+          setRepoValidateMessage(response?.warning);
+          toast.error(response?.warning, {
+            style: {
+              maxWidth: '400px',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-all'
+            }
+          });
+        }
+      } catch (error) {
+        if (error instanceof AxiosError && error.response && error.response.status === 403) {
+          toast.error("You don't have access to perform this action", {
+            style: {
+              maxWidth: '400px',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-all'
+            }
+          });
+        } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
+          toast.error(error.response.data.message, {
+            style: {
+              maxWidth: '400px',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-all'
+            }
+          });
+          const updatedMessage = error.response.data.message;
+          if (updatedMessage.includes('registered')) {
+            setAppValidateMessage(error.response.data.message);
+          } else {
+            setRepoValidateMessage(error.response.data.message);
+          }
+        } else {
+          toast.error('Failed to validate the containerized application');
+        }
+      }
+    }
+  };
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Grid>
@@ -315,7 +376,7 @@ export const ConfigureWorkflowForm = ({
                   1
                 </span>
                 Repository Details{' '}
-                {validateMessage !== '' && (
+                {repoValidateMessage !== '' && (
                   <span>
                     &nbsp;
                     <ExclamationCircleIcon style={{ color: '#c9190b' }} />
@@ -336,6 +397,12 @@ export const ConfigureWorkflowForm = ({
                   2
                 </span>
                 Application Details
+                {appValidateMessage !== '' && (
+                  <span>
+                    &nbsp;
+                    <ExclamationCircleIcon style={{ color: '#c9190b' }} />
+                  </span>
+                )}
               </Button>
             </li>
             <li>
@@ -520,11 +587,11 @@ export const ConfigureWorkflowForm = ({
                   </SplitItem>
                 </Split>
               </div>
-              {validateMessage !== '' && (
+              {repoValidateMessage !== '' && (
                 <Alert
                   variant="danger"
                   isInline
-                  title={validateMessage}
+                  title={repoValidateMessage}
                   timeout={5000}
                   className="pf-u-mt-lg"
                 />
@@ -862,7 +929,15 @@ export const ConfigureWorkflowForm = ({
                   </SplitItem>
                 </Split>
               </div>
-
+              {appValidateMessage !== '' && (
+                <Alert
+                  variant="danger"
+                  isInline
+                  title={appValidateMessage}
+                  timeout={5000}
+                  className="pf-u-mt-lg"
+                />
+              )}
               <div style={{ bottom: '0px', position: 'absolute', width: '100%' }}>
                 <Button
                   variant="primary"
@@ -1698,7 +1773,9 @@ export const ConfigureWorkflowForm = ({
                 type="submit"
                 isDisabled={
                   Object.keys(dirtyFields).length > 0 || Object.keys(touchedFields).length > 0
-                    ? Object.keys(errors).length > 0 || validateMessage !== ''
+                    ? Object.keys(errors).length > 0 ||
+                      repoValidateMessage !== '' ||
+                      appValidateMessage !== ''
                     : true
                 }
               >
