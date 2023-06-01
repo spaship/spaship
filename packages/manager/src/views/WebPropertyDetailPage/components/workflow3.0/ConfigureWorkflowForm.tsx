@@ -196,7 +196,7 @@ export const ConfigureWorkflowForm = ({
 
   const handleNext = async () => {
     const formData = getValues();
-    if (step !== 3 && step !== 4) {
+    if (step !== 3 && step !== 4 && formData.repoUrl && formData.contextDir && formData.gitRef) {
       const validateDTO = {
         propertyIdentifier: propertyIdentifier || '',
         identifier: formData.name ? formData.name : '',
@@ -299,7 +299,7 @@ export const ConfigureWorkflowForm = ({
   const handleClick = async (stepNumber: number) => {
     setStep(stepNumber);
     const formData = getValues();
-    if (step !== 3 && step !== 4) {
+    if (step !== 3 && step !== 4 && formData.repoUrl && formData.contextDir && formData.gitRef) {
       const validateDTO = {
         propertyIdentifier: propertyIdentifier || '',
         identifier: formData.name ? formData.name : '',
@@ -613,7 +613,7 @@ export const ConfigureWorkflowForm = ({
                         >
                           <TextInput
                             isRequired
-                            placeholder="Application Name"
+                            placeholder="Please enter application name"
                             type="text"
                             id="property-name"
                             {...field}
@@ -1363,7 +1363,7 @@ export const ConfigureWorkflowForm = ({
                         >
                           <TextInput
                             isRequired
-                            placeholder="Application Name"
+                            placeholder="Please enter application name"
                             type="text"
                             id="property-name"
                             {...field}
@@ -1387,7 +1387,7 @@ export const ConfigureWorkflowForm = ({
                         >
                           <TextInput
                             isRequired
-                            placeholder="Environment"
+                            placeholder="Please select an environment"
                             type="text"
                             id="path"
                             {...field}

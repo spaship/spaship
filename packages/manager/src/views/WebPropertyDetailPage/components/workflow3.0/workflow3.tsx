@@ -169,10 +169,10 @@ export const Workflow3 = ({
 
   const handleNext = async () => {
     const formData = getValues();
-    if (step !== 3 && step !== 4) {
+    if (step !== 3 && step !== 4 && formData.repoUrl && formData.contextDir && formData.gitRef) {
       const validateDTO = {
-        propertyIdentifier: propertyIdentifier || '',
-        identifier: formData.name ? formData.name : '',
+        propertyIdentifier,
+        identifier: formData.name,
         repoUrl: formData.repoUrl,
         gitRef: formData.gitRef,
         contextDir: formData.contextDir,
@@ -271,10 +271,10 @@ export const Workflow3 = ({
   const handleClick = async (stepNumber: number) => {
     setStep(stepNumber);
     const formData = getValues();
-    if (step !== 3 && step !== 4) {
+    if (step !== 3 && step !== 4 && formData.repoUrl && formData.contextDir && formData.gitRef) {
       const validateDTO = {
-        propertyIdentifier: propertyIdentifier || '',
-        identifier: formData.name ? formData.name : '',
+        propertyIdentifier,
+        identifier: formData.name,
         repoUrl: formData.repoUrl,
         gitRef: formData.gitRef,
         contextDir: formData.contextDir,
@@ -585,7 +585,7 @@ export const Workflow3 = ({
                         >
                           <TextInput
                             isRequired
-                            placeholder="Application Name"
+                            placeholder="Please enter application name"
                             type="text"
                             id="property-name"
                             {...field}
@@ -1246,7 +1246,7 @@ export const Workflow3 = ({
                         >
                           <TextInput
                             isRequired
-                            placeholder="Application Name"
+                            placeholder="Please enter application name"
                             type="text"
                             id="property-name"
                             {...field}
@@ -1270,7 +1270,7 @@ export const Workflow3 = ({
                         >
                           <TextInput
                             isRequired
-                            placeholder="Environment"
+                            placeholder="Please select an environment"
                             type="text"
                             id="path"
                             {...field}
