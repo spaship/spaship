@@ -613,7 +613,7 @@ export const ConfigureWorkflowForm = ({
                         >
                           <TextInput
                             isRequired
-                            placeholder="Application Name"
+                            placeholder="Please enter application name"
                             type="text"
                             id="property-name"
                             {...field}
@@ -1363,7 +1363,7 @@ export const ConfigureWorkflowForm = ({
                         >
                           <TextInput
                             isRequired
-                            placeholder="Application Name"
+                            placeholder="Please enter application name"
                             type="text"
                             id="property-name"
                             {...field}
@@ -1387,7 +1387,7 @@ export const ConfigureWorkflowForm = ({
                         >
                           <TextInput
                             isRequired
-                            placeholder="Environment"
+                            placeholder="Please select an environment"
                             type="text"
                             id="path"
                             {...field}
