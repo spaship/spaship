@@ -196,7 +196,7 @@ export const ConfigureWorkflowForm = ({
 
   const handleNext = async () => {
     const formData = getValues();
-    if (step !== 3 && step !== 4) {
+    if (step !== 3 && step !== 4 && formData.repoUrl && formData.contextDir && formData.gitRef) {
       const validateDTO = {
         propertyIdentifier: propertyIdentifier || '',
         identifier: formData.name ? formData.name : '',
@@ -299,7 +299,7 @@ export const ConfigureWorkflowForm = ({
   const handleClick = async (stepNumber: number) => {
     setStep(stepNumber);
     const formData = getValues();
-    if (step !== 3 && step !== 4) {
+    if (step !== 3 && step !== 4 && formData.repoUrl && formData.contextDir && formData.gitRef) {
       const validateDTO = {
         propertyIdentifier: propertyIdentifier || '',
         identifier: formData.name ? formData.name : '',
