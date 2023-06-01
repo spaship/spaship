@@ -321,13 +321,6 @@ export const ConfigureWorkflowForm = ({
           setRepoValidateMessage('');
         } else if (Object.keys(response).includes('warning')) {
           setRepoValidateMessage(response?.warning);
-          toast.error(response?.warning, {
-            style: {
-              maxWidth: '400px',
-              overflowWrap: 'break-word',
-              wordBreak: 'break-all'
-            }
-          });
         }
       } catch (error) {
         if (error instanceof AxiosError && error.response && error.response.status === 403) {
@@ -339,13 +332,6 @@ export const ConfigureWorkflowForm = ({
             }
           });
         } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
-          toast.error(error.response.data.message, {
-            style: {
-              maxWidth: '400px',
-              overflowWrap: 'break-word',
-              wordBreak: 'break-all'
-            }
-          });
           const updatedMessage = error.response.data.message;
           if (updatedMessage.includes('registered')) {
             setAppValidateMessage(error.response.data.message);
