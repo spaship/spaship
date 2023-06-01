@@ -848,6 +848,7 @@ export const Workflow3 = ({
                     </span>
                   </Tooltip>
                 </div>
+                {/* {appendConfig({ key: '', value: '' })} */}
                 <Split hasGutter>
                   <SplitItem
                     isFilled
@@ -861,7 +862,6 @@ export const Workflow3 = ({
                     </Button>
                   </SplitItem>
                 </Split>
-
                 {configFields.map((pair, index) => (
                   <Split key={pair.id} hasGutter>
                     <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">

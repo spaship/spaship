@@ -2,7 +2,8 @@ import { TableRowSkeleton } from '@app/components';
 import { usePopUp } from '@app/hooks';
 import { fetchLogsforSpa } from '@app/services/appLogs';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
-import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
+import { fetchStatusForAnApplication, useGetSPAPropGroupByName } from '@app/services/spaProperty';
+import { useGetStatusForAnApplication } from '@app/services/spaProperty/queries';
 import { useAddSsrSpaProperty } from '@app/services/ssr';
 import {
   Button,
@@ -30,7 +31,9 @@ import {
   Tooltip
 } from '@patternfly/react-core';
 import {
+  CheckCircleIcon,
   CubesIcon,
+  ExclamationCircleIcon,
   ExternalLinkAltIcon,
   GithubIcon,
   InfoCircleIcon,
@@ -288,6 +291,23 @@ export const SSRDetails = () => {
       </DrawerHead>
     </DrawerPanelContent>
   );
+  let statusFlag = false;
+  fetchStatusForAnApplication(
+    'https://workflow-demo-prod.apps.int.mpp.preprod.iad2.dc.paas.redhat.com/dx'
+  )
+    .then((status) => {
+      statusFlag = status;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+
+  const sw = useGetStatusForAnApplication(
+    propertyIdentifier,
+    'dev',
+    'https://workflow-demo-prod.apps.int.mpp.preprod.iad2.dc.paas.redhat.com/dx'
+  );
+  console.log('pppp', sw?.data);
 
   return (
     <>
@@ -387,7 +407,12 @@ export const SSRDetails = () => {
                             {`${val?.accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
                               val?.accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
                             }`}
-                          </a>
+                          </a>{' '}
+                          {statusFlag ? (
+                            <CheckCircleIcon style={{ color: 'green' }} />
+                          ) : (
+                            <ExclamationCircleIcon style={{ color: '#F0AB00' }} />
+                          )}
                         </Td>
                         <Td textCenter>
                           <Split hasGutter>

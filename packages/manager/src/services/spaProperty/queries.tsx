@@ -51,3 +51,48 @@ const groupSpaPropertyByName = (spaProperty: TSpaProperty[]) => {
 
 export const useGetSPAPropGroupByName = (webPropertyIdentifier: string, env: string) =>
   useGetSPAProperties(webPropertyIdentifier, env, groupSpaPropertyByName);
+
+// export const fetchStatusForAnApplication = async (link: string): Promise<Boolean> => {
+//   try {
+//     await orchestratorReq.get(`/applications/status?accessUrl=${link}`);
+//     return true;
+//   } catch (err) {
+//     return false;
+//   }
+// };
+
+// export const useGetStatusForAnApplication = (
+//   webPropertyIdentifier: string,
+//   env: string,
+//   link: string
+// ) => {
+//   useQuery(
+//     spaPropertyKeys.list(webPropertyIdentifier, env),
+//     () => fetchStatusForAnApplication(link),
+//     {
+//       refetchInterval: 5000
+//     }
+//   );
+// };
+
+export const fetchStatusForAnApplication = async (f: string): Promise<boolean> => {
+  try {
+    await orchestratorReq.get(f);
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+
+export const useGetStatusForAnApplication = (
+  webPropertyIdentifier: string,
+  env: string,
+  link: string
+) =>
+  useQuery(
+    spaPropertyKeys.list(webPropertyIdentifier, env),
+    () => fetchStatusForAnApplication(link),
+    {
+      refetchInterval: 60000
+    }
+  );

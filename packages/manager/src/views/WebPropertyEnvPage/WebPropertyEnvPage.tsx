@@ -67,6 +67,7 @@ import {
 import { CreateEnvForm, FormData as EnvForm } from './components/CreateEnvForm/CreateEnvForm';
 import { EditMemberAccess } from './components/EditAccess/EditMemberAccess';
 import { SyncServiceForm } from './components/SyncServiceForm';
+import { useGetEphemeralListForProperty } from '@app/services/ephemeral';
 
 function getExpiryDayDiff(expiry: string) {
   const currentDate = new Date();
@@ -126,7 +127,9 @@ export const WebPropertyEnvPage = (): JSX.Element => {
   const [deleteMemberName, setDeleteMemberName] = useState('');
   const [editMemberName, setEditMemberName] = useState('');
   const propertyTitle = envList?.data?.[0]?.propertyIdentifier;
+  const ephemeralPreview = useGetEphemeralListForProperty(propertyIdentifier);
 
+  console.log('Env list', ephemeralPreview.data, envList.data);
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
     'createEnv',
     'createApiKey',
