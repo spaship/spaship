@@ -180,14 +180,13 @@ export const Workflow3 = ({
       };
       try {
         const response = await validateSsrSpaProperty.mutateAsync(validateDTO);
-
         if (Object.keys(response).includes('port')) {
           if (formData.port !== 3000 && formData.port !== response?.port) {
             setValue('port', formData.port);
           } else {
             setValue('port', response?.port);
           }
-
+          setAppValidateMessage('');
           setRepoValidateMessage('');
         } else if (Object.keys(response).includes('warning')) {
           setRepoValidateMessage(response?.warning);
@@ -284,14 +283,13 @@ export const Workflow3 = ({
       };
       try {
         const response = await validateSsrSpaProperty.mutateAsync(validateDTO);
-
         if (Object.keys(response).includes('port')) {
           if (formData.port !== 3000 && formData.port !== response?.port) {
             setValue('port', formData.port);
           } else {
             setValue('port', response?.port);
           }
-
+          setAppValidateMessage('');
           setRepoValidateMessage('');
         } else if (Object.keys(response).includes('warning')) {
           setRepoValidateMessage(response?.warning);

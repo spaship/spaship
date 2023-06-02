@@ -214,7 +214,7 @@ export const ConfigureWorkflowForm = ({
           } else {
             setValue('port', response?.port);
           }
-
+          setAppValidateMessage('');
           setRepoValidateMessage('');
         } else if (Object.keys(response).includes('warning')) {
           setRepoValidateMessage(response?.warning);
@@ -319,7 +319,7 @@ export const ConfigureWorkflowForm = ({
           } else {
             setValue('port', response?.port);
           }
-
+          setAppValidateMessage('');
           setRepoValidateMessage('');
         } else if (Object.keys(response).includes('warning')) {
           setRepoValidateMessage(response?.warning);
