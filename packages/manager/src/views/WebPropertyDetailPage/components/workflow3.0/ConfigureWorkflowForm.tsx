@@ -246,8 +246,10 @@ export const ConfigureWorkflowForm = ({
           const updatedMessage = error.response.data.message;
           if (updatedMessage.includes('registered')) {
             setAppValidateMessage(error.response.data.message);
+            setRepoValidateMessage('');
           } else {
             setRepoValidateMessage(error.response.data.message);
+            setAppValidateMessage('');
           }
         } else {
           toast.error('Failed to validate the containerized application');
@@ -335,8 +337,10 @@ export const ConfigureWorkflowForm = ({
           const updatedMessage = error.response.data.message;
           if (updatedMessage.includes('registered')) {
             setAppValidateMessage(error.response.data.message);
+            setRepoValidateMessage('');
           } else {
             setRepoValidateMessage(error.response.data.message);
+            setAppValidateMessage('');
           }
         } else {
           toast.error('Failed to validate the containerized application');
