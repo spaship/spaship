@@ -129,7 +129,6 @@ export const WebPropertyEnvPage = (): JSX.Element => {
   const ephemeralPreview = useGetEphemeralListForProperty(propertyIdentifier);
   const envWithEphList: any[] = [...(envList?.data ?? []), ...(ephemeralPreview?.data ?? [])];
 
-  console.log('Env list', ephemeralPreview.data, envList.data);
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
     'createEnv',
     'createApiKey',
