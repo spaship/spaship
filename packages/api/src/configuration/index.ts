@@ -55,7 +55,7 @@ export const ROVER_AUTH = {
 };
 
 export const DEPLOYMENT_DETAILS = {
-  namespace: process.env.SPASHIP_NAMESPACE || 'spaship'
+  namespace: process.env.SPASHIP_NAMESPACE_PREFIX || 'spaship'
 };
 
 // @internal this is for validating the minimum length for the Specific requests

@@ -91,12 +91,13 @@ export class ApplicationController {
   @ApiOperation({ description: 'Validate the Git Repository and Dockerfile.' })
   async validateGitCredentials(@Body() gitRequestDTO: GitValidationRequestDTO) {
     await this.applicationService.validateGitProps(gitRequestDTO.repoUrl, gitRequestDTO.gitRef, gitRequestDTO.contextDir);
-    await this.applicationService.validateExistingGitDeployment(
-      gitRequestDTO.repoUrl,
-      gitRequestDTO.contextDir,
-      gitRequestDTO.propertyIdentifier,
-      gitRequestDTO.identifier
-    );
+    if (gitRequestDTO.propertyIdentifier && gitRequestDTO.identifier)
+      await this.applicationService.validateExistingGitDeployment(
+        gitRequestDTO.repoUrl,
+        gitRequestDTO.contextDir,
+        gitRequestDTO.propertyIdentifier,
+        gitRequestDTO.identifier
+      );
     return this.applicationFactory.extractDockerProps(gitRequestDTO);
   }
 
