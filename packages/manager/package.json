@@ -3,12 +3,17 @@
   "description": "The SPAship UI.",
   "version": "2.4.0",
   "private": true,
-  "author": {
-    "name": "Akhil Mohan",
-    "email": "akhilmhdh@gmail.com",
-    "url": "https://akhilmhdh.com"
-  },
   "contributors": [
+    {
+      "name": "Nikhita More",
+      "email": "nikhitamore1@gmail.com",
+      "url": "https://github.com/nikhitamore"
+    },
+    {
+      "name": "Akhil Mohan",
+      "email": "akhilmhdh@gmail.com",
+      "url": "https://akhilmhdh.com"
+    },
     {
       "name": "Sayak Sarkar",
       "email": "sayak.bugsmith@gmail.com",
