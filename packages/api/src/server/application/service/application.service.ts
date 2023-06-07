@@ -32,7 +32,7 @@ export class ApplicationService {
 
   private readonly period: number = 15000;
 
-  private readonly timeout: number = 600000;
+  private readonly timeout: number = 1200000;
 
   constructor(
     private readonly dataServices: IDataServices,
