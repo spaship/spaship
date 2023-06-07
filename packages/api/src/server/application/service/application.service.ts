@@ -32,7 +32,7 @@ export class ApplicationService {
 
   private readonly period: number = 15000;
 
-  private readonly timeout: number = 600000;
+  private readonly timeout: number = 1200000;
 
   constructor(
     private readonly dataServices: IDataServices,
@@ -163,6 +163,7 @@ export class ApplicationService {
     applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
     applicationDetails.version = this.applicationFactory.incrementVersion(applicationDetails.version);
     applicationDetails.name = applicationRequest.name;
+    applicationDetails.path = applicationRequest.path;
     applicationDetails.updatedBy = createdBy;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
     await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false }, applicationDetails);

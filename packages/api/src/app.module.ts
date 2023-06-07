@@ -29,6 +29,7 @@ import { PermissionModule } from './server/permission/service/permission.module'
 import { PermissionController } from './server/permission/permission.controller';
 import { DocumentationModule } from './server/document/service/documentation.module';
 import { DocumentationController } from './server/document/documentation.controller';
+import { HealthController } from './server/health/health.controller';
 
 @Module({
   imports: [
@@ -63,7 +64,8 @@ import { DocumentationController } from './server/document/documentation.control
     AuthActionLookupController,
     RoleController,
     PermissionController,
-    DocumentationController
+    DocumentationController,
+    HealthController
   ],
   providers: []
 })
