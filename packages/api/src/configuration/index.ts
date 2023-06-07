@@ -73,7 +73,7 @@ export enum MAX {
   DEFAULT = 100,
   PROPERTY = 50,
   EXPIRESIN = 4,
-  ENV = 12,
+  ENV = 15,
   REF = 500,
   CLUSTER = 12
 }
