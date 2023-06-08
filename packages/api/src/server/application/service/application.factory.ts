@@ -497,7 +497,7 @@ export class ApplicationFactory {
     containerizedRequest.website = configRequest.propertyIdentifier;
     containerizedRequest.nameSpace = namespace;
     containerizedRequest.environment = configRequest.env;
-    containerizedRequest.configMap = configRequest.config;
+    containerizedRequest.configMap = this.decodeBase64ConfigValues({ ...configRequest.config });
     return containerizedRequest;
   }
 
@@ -691,13 +691,16 @@ export class ApplicationFactory {
     return false;
   }
 
-  // @internal Decode Base64 encoded string from the config value
+  // @internal Decode Base64 encoded string from the config values for operator payload
   decodeBase64ConfigValues(config: Object): Object {
-    Object.entries(config).forEach(([key, value]) => {
-      if (Base64.encode(Base64.decode(value)) === value) {
-        config[key] = Base64.decode(value);
-      }
-    });
+    if (Object.prototype.hasOwnProperty.call(config, CONTAINERIZED_DEPLOYMENT_DETAILS.configSecret)) {
+      const spashipWorkflowSecret: Object = config[CONTAINERIZED_DEPLOYMENT_DETAILS.configSecret];
+      Object.entries(spashipWorkflowSecret).forEach(([key, value]) => {
+        if (Base64.encode(Base64.decode(value)) === value) config[key] = Base64.decode(value);
+        else config[key] = value;
+      });
+      delete config[CONTAINERIZED_DEPLOYMENT_DETAILS.configSecret];
+    }
     return config;
   }
 }
