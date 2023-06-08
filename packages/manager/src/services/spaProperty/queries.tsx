@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { orchestratorReq } from '@app/config/orchestratorReq';
 import { TSpaProperty } from './types';
 
-const spaPropertyKeys = {
+export const spaPropertyKeys = {
   list: (webPropertyIdentifier: string, env: string = '') =>
     ['spa-properties', webPropertyIdentifier, env] as const
 };
@@ -31,8 +31,8 @@ export const useGetSPAProperties = <T extends unknown>(
     spaPropertyKeys.list(webPropertyIdentifier, env),
     () => fetchAppsForProperties(webPropertyIdentifier, env),
     {
-      select,
-      refetchInterval: 10000
+      select
+      // refetchInterval: 10000
     }
   );
 
