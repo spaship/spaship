@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { orchestratorReq } from '@app/config/orchestratorReq';
 import { TSpaProperty } from './types';
 
-const spaPropertyKeys = {
+export const spaPropertyKeys = {
   list: (webPropertyIdentifier: string, env: string = '') =>
     ['spa-properties', webPropertyIdentifier, env] as const
 };
@@ -31,8 +31,8 @@ export const useGetSPAProperties = <T extends unknown>(
     spaPropertyKeys.list(webPropertyIdentifier, env),
     () => fetchAppsForProperties(webPropertyIdentifier, env),
     {
-      select,
-      refetchInterval: 10000
+      select
+      // refetchInterval: 10000
     }
   );
 
@@ -52,47 +52,14 @@ const groupSpaPropertyByName = (spaProperty: TSpaProperty[]) => {
 export const useGetSPAPropGroupByName = (webPropertyIdentifier: string, env: string) =>
   useGetSPAProperties(webPropertyIdentifier, env, groupSpaPropertyByName);
 
-// export const fetchStatusForAnApplication = async (link: string): Promise<Boolean> => {
-//   try {
-//     await orchestratorReq.get(`/applications/status?accessUrl=${link}`);
-//     return true;
-//   } catch (err) {
-//     return false;
-//   }
-// };
-
-// export const useGetStatusForAnApplication = (
-//   webPropertyIdentifier: string,
-//   env: string,
-//   link: string
-// ) => {
-//   useQuery(
-//     spaPropertyKeys.list(webPropertyIdentifier, env),
-//     () => fetchStatusForAnApplication(link),
-//     {
-//       refetchInterval: 5000
-//     }
-//   );
-// };
-
-export const fetchStatusForAnApplication = async (f: string): Promise<boolean> => {
+const fetchStatusForAnApplication = async (link: string): Promise<boolean> => {
   try {
-    await orchestratorReq.get(f);
+    await orchestratorReq.get(`/applications/status?accessUrl=${link}`);
     return true;
   } catch (err) {
     return false;
   }
 };
 
-export const useGetStatusForAnApplication = (
-  webPropertyIdentifier: string,
-  env: string,
-  link: string
-) =>
-  useQuery(
-    spaPropertyKeys.list(webPropertyIdentifier, env),
-    () => fetchStatusForAnApplication(link),
-    {
-      refetchInterval: 60000
-    }
-  );
+export const useGetStatusForAnApplication = (link: string, _id: string) =>
+  useQuery([`${_id}`], () => fetchStatusForAnApplication(link));
