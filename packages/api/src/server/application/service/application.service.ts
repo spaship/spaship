@@ -416,7 +416,7 @@ export class ApplicationService {
           applicationDetails,
           property.namespace
         );
-        containerizedDeploymentRequestForOperator.configMap = applicationRequest.config;
+        containerizedDeploymentRequestForOperator.configMap = this.applicationFactory.decodeBase64ConfigValues({ ...applicationRequest.config });
         this.logger.log('ConfigUpdateRequestToOperator', JSON.stringify(containerizedDeploymentRequestForOperator));
         applicationDetails.config = applicationRequest.config;
         applicationDetails.updatedBy = applicationRequest.createdBy;

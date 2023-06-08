@@ -7,7 +7,8 @@ export const EPHEMERAL_ENV = {
 };
 
 export const CONTAINERIZED_DEPLOYMENT_DETAILS = {
-  port: 3000
+  port: 3000,
+  configSecret: process.env.SPASHIP_CONFIG_SECRET || 'spashipWorkflowSecret'
 };
 
 export const AUTH_DETAILS = {
