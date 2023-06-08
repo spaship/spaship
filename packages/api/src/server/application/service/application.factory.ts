@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
+import { Base64 } from 'js-base64';
 import * as path from 'path';
 import { EPHEMERAL_ENV, CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
@@ -450,7 +451,7 @@ export class ApplicationFactory {
     containerizedRequest.website = propertyIdentifier;
     containerizedRequest.nameSpace = namespace;
     containerizedRequest.environment = env;
-    containerizedRequest.configMap = applicationDetails.config;
+    containerizedRequest.configMap = this.decodeBase64ConfigValues({ ...applicationDetails.config });
     containerizedRequest.healthCheckPath = applicationDetails.healthCheckPath;
     containerizedRequest.port = applicationDetails.port || 3000;
     return containerizedRequest;
@@ -688,5 +689,15 @@ export class ApplicationFactory {
       `Changes found in the Existing Application details for ${applicationDetails.identifier}-${applicationDetails.env}`
     );
     return false;
+  }
+
+  // @internal Decode Base64 encoded string from the config value
+  decodeBase64ConfigValues(config: Object): Object {
+    Object.entries(config).forEach(([key, value]) => {
+      if (Base64.encode(Base64.decode(value)) === value) {
+        config[key] = Base64.decode(value);
+      }
+    });
+    return config;
   }
 }
