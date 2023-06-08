@@ -68,7 +68,7 @@ export const WebPropertyListPage = (): JSX.Element => {
   }
 
   // search filter debounced
-  const filteredWebProperties = (webProperties?.data as []).filter(
+  const filteredWebProperties = (webProperties?.data as [])?.filter(
     ({ title, createdBy }: TWebProperty) => {
       if (filter === MY_PROPERTY_LABEL && createdBy !== session?.user.email) {
         return false;

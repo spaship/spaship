@@ -1,9 +1,9 @@
+/* eslint-disable no-underscore-dangle */
 import { TableRowSkeleton } from '@app/components';
 import { usePopUp } from '@app/hooks';
 import { fetchLogsforSpa } from '@app/services/appLogs';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
-import { fetchStatusForAnApplication, useGetSPAPropGroupByName } from '@app/services/spaProperty';
-import { useGetStatusForAnApplication } from '@app/services/spaProperty/queries';
+import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { useAddSsrSpaProperty } from '@app/services/ssr';
 import {
   Button,
@@ -31,9 +31,7 @@ import {
   Tooltip
 } from '@patternfly/react-core';
 import {
-  CheckCircleIcon,
   CubesIcon,
-  ExclamationCircleIcon,
   ExternalLinkAltIcon,
   GithubIcon,
   InfoCircleIcon,
@@ -50,6 +48,7 @@ import { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { ConfigureWorkflowForm } from '../workflow3.0/ConfigureWorkflowForm';
 import { TDataContainerized, TDataWorkflow } from '../workflow3.0/types';
+import { Access } from './Access';
 import { ConfigureSSRForm } from './ConfigureSSRForm';
 
 const URL_LENGTH_LIMIT = 100;
@@ -58,7 +57,7 @@ const INTERNAL_ACCESS_URL_LENGTH = 25;
 export const SSRDetails = () => {
   const { query } = useRouter();
   const propertyIdentifier = query.propertyIdentifier as string;
-  const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
+  const createSsrSpaProperty = useAddSsrSpaProperty();
   const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, '');
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
@@ -99,7 +98,6 @@ export const SSRDetails = () => {
     config: {},
     port: 3000
   });
-
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
     'redeploySsrApplication',
     'reconfigureSsrApplication',
@@ -291,23 +289,6 @@ export const SSRDetails = () => {
       </DrawerHead>
     </DrawerPanelContent>
   );
-  let statusFlag = false;
-  fetchStatusForAnApplication(
-    'https://workflow-demo-prod.apps.int.mpp.preprod.iad2.dc.paas.redhat.com/dx'
-  )
-    .then((status) => {
-      statusFlag = status;
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-
-  const sw = useGetStatusForAnApplication(
-    propertyIdentifier,
-    'dev',
-    'https://workflow-demo-prod.apps.int.mpp.preprod.iad2.dc.paas.redhat.com/dx'
-  );
-  console.log('pppp', sw?.data);
 
   return (
     <>
@@ -408,11 +389,7 @@ export const SSRDetails = () => {
                               val?.accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
                             }`}
                           </a>{' '}
-                          {statusFlag ? (
-                            <CheckCircleIcon style={{ color: 'green' }} />
-                          ) : (
-                            <ExclamationCircleIcon style={{ color: '#F0AB00' }} />
-                          )}
+                          <Access link={val.accessUrl} _id={String(val._id)} />
                         </Td>
                         <Td textCenter>
                           <Split hasGutter>
@@ -463,7 +440,7 @@ export const SSRDetails = () => {
           </DrawerContentBody>
         </DrawerContent>
       </Drawer>
-      {/* </div> */}
+
       <Modal
         title="Confirm Redeployment"
         variant={ModalVariant.medium}

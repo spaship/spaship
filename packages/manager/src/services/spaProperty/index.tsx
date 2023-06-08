@@ -1,5 +1,5 @@
 export {
   useGetSPAProperties,
   useGetSPAPropGroupByName,
-  fetchStatusForAnApplication
+  useGetStatusForAnApplication
 } from './queries';
