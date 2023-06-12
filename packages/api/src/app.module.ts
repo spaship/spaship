@@ -30,6 +30,7 @@ import { PermissionController } from './server/permission/permission.controller'
 import { DocumentationModule } from './server/document/service/documentation.module';
 import { DocumentationController } from './server/document/documentation.controller';
 import { HealthController } from './server/health/health.controller';
+import { HealthModule } from './server/health/service/health.module';
 
 @Module({
   imports: [
@@ -50,7 +51,8 @@ import { HealthController } from './server/health/health.controller';
     AuthActionLookupModule,
     RoleModule,
     PermissionModule,
-    DocumentationModule
+    DocumentationModule,
+    HealthModule
   ],
   controllers: [
     ApikeyController,
