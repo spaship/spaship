@@ -788,7 +788,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
         <SyncServiceForm
           propertyIdentifier={propertyIdentifier}
           onClose={() => handlePopUpClose('updateSync')}
-          env={envWithEphList || []}
+          env={envWithEphList}
         />
       </Modal>
     </>

@@ -848,7 +848,7 @@ export const Workflow3 = ({
                     </span>
                   </Tooltip>
                 </div>
-                {/* {appendConfig({ key: '', value: '' })} */}
+
                 <Split hasGutter>
                   <SplitItem
                     isFilled
