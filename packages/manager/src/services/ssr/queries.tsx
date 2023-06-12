@@ -31,8 +31,13 @@ export const useAddSsrSpaProperty = () => {
           queryKey: [data._id]
         });
       }, 10000); // 10 seconds in milliseconds
+      const timeoutId = setTimeout(() => {
+        clearInterval(intervalId);
+      }, 600000); // 10 minutes in milliseconds
+
       return () => {
         clearInterval(intervalId);
+        clearTimeout(timeoutId);
       };
     }
   });
