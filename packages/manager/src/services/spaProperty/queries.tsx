@@ -31,8 +31,8 @@ export const useGetSPAProperties = <T extends unknown>(
     spaPropertyKeys.list(webPropertyIdentifier, env),
     () => fetchAppsForProperties(webPropertyIdentifier, env),
     {
-      select
-      // refetchInterval: 10000
+      select,
+      refetchInterval: 10000
     }
   );
 
