@@ -10,9 +10,19 @@
       "url": "https://github.com/nikhitamore"
     },
     {
+      "name": "Soumyadip Chowdhury",
+      "email": "soumyadip.note@gmail.com",
+      "url": "https://github.com/soumyadip007"
+    },
+    {
       "name": "Akhil Mohan",
       "email": "akhilmhdh@gmail.com",
       "url": "https://akhilmhdh.com"
+    },
+     {
+      "name": "Deepesh Nair",
+      "email": "hybridx18@gmail.com",
+      "url": "https://github.com/hybridx"
     },
     {
       "name": "Sayak Sarkar",
@@ -26,16 +36,8 @@
     {
       "name": "Michael Clayton",
       "email": "mclayton@redhat.com"
-    },
-    {
-      "name": "Soumyadip Chowdhury",
-      "email": "soumyadip.note@gmail.com"
-    },
-    {
-      "name": "Deepesh Nair",
-      "email": "hybridx18@gmail.com",
-      "url": "https://github.com/hybridx"
     }
+   
   ],
   "scripts": {
     "dev": "next dev -p 2468",
