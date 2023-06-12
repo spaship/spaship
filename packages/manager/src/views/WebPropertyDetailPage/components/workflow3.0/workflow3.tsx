@@ -848,7 +848,6 @@ export const Workflow3 = ({
                     </span>
                   </Tooltip>
                 </div>
-
                 <Split hasGutter>
                   <SplitItem
                     isFilled
