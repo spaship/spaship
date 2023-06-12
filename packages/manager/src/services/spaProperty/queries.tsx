@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { orchestratorReq } from '@app/config/orchestratorReq';
 import { TSpaProperty } from './types';
 
-export const spaPropertyKeys = {
+const spaPropertyKeys = {
   list: (webPropertyIdentifier: string, env: string = '') =>
     ['spa-properties', webPropertyIdentifier, env] as const
 };
