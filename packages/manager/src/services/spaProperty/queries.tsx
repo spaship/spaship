@@ -51,3 +51,15 @@ const groupSpaPropertyByName = (spaProperty: TSpaProperty[]) => {
 
 export const useGetSPAPropGroupByName = (webPropertyIdentifier: string, env: string) =>
   useGetSPAProperties(webPropertyIdentifier, env, groupSpaPropertyByName);
+
+const fetchStatusForAnApplication = async (link: string): Promise<boolean> => {
+  try {
+    await orchestratorReq.get(`/applications/status?accessUrl=${link}`);
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+
+export const useGetStatusForAnApplication = (link: string, _id: string) =>
+  useQuery([`${_id}`], () => fetchStatusForAnApplication(link));

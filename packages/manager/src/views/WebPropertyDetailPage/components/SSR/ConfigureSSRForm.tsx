@@ -99,7 +99,7 @@ export const ConfigureSSRForm = ({
     name: 'config' as const
   });
 
-  const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
+  const createSsrSpaProperty = useAddSsrSpaProperty();
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const webPropertiesKeys = Object.keys(webProperties.data || {});
   const onSubmit = async (dataf: FormData) => {
@@ -525,8 +525,8 @@ export const ConfigureSSRForm = ({
         </SplitItem>
       </Split>
       {fields.map((pair, index) => (
-        <Split key={`key-${index + 1}`} hasGutter>
-          <SplitItem key={`key-${index + 1}`} isFilled style={{ width: '100%' }}>
+        <Split key={pair.id} hasGutter>
+          <SplitItem key={pair.id} isFilled style={{ width: '100%' }}>
             <Controller
               control={control}
               name={`config.${index}.key`}
@@ -553,7 +553,7 @@ export const ConfigureSSRForm = ({
               )}
             />
           </SplitItem>
-          <SplitItem key={`value-${index + 1}`} isFilled style={{ width: '100%' }}>
+          <SplitItem key={pair.id} isFilled style={{ width: '100%' }}>
             <Controller
               control={control}
               name={`config.${index}.value`}

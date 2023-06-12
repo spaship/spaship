@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { TableRowSkeleton } from '@app/components';
 import { usePopUp } from '@app/hooks';
 import { fetchLogsforSpa } from '@app/services/appLogs';
@@ -47,6 +48,7 @@ import { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { ConfigureWorkflowForm } from '../workflow3.0/ConfigureWorkflowForm';
 import { TDataContainerized, TDataWorkflow } from '../workflow3.0/types';
+import { Access } from './Access';
 import { ConfigureSSRForm } from './ConfigureSSRForm';
 
 const URL_LENGTH_LIMIT = 100;
@@ -55,7 +57,7 @@ const INTERNAL_ACCESS_URL_LENGTH = 25;
 export const SSRDetails = () => {
   const { query } = useRouter();
   const propertyIdentifier = query.propertyIdentifier as string;
-  const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
+  const createSsrSpaProperty = useAddSsrSpaProperty();
   const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, '');
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
@@ -96,7 +98,6 @@ export const SSRDetails = () => {
     config: {},
     port: 3000
   });
-
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
     'redeploySsrApplication',
     'reconfigureSsrApplication',
@@ -387,7 +388,8 @@ export const SSRDetails = () => {
                             {`${val?.accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
                               val?.accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
                             }`}
-                          </a>
+                          </a>{' '}
+                          <Access link={val.accessUrl} _id={String(val._id)} />
                         </Td>
                         <Td textCenter>
                           <Split hasGutter>
@@ -438,7 +440,7 @@ export const SSRDetails = () => {
           </DrawerContentBody>
         </DrawerContent>
       </Drawer>
-      {/* </div> */}
+
       <Modal
         title="Confirm Redeployment"
         variant={ModalVariant.medium}

@@ -1,5 +1,11 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/jsx-props-no-spreading */
+import { Banner, DeleteConfirmationModal, TableRowSkeleton } from '@app/components';
+import { useFormatDate, usePopUp } from '@app/hooks';
+import { pageLinks } from '@app/links';
+import { useCreateAPIKey, useDeleteAPIKey, useGetApiKeys } from '@app/services/apiKeys';
+import { useAddEnv, useGetEnvList } from '@app/services/persistent';
+import { useDeleteMember, useGetMemberforSPA } from '@app/services/rbac';
 import {
   Button,
   Card,
@@ -16,6 +22,7 @@ import {
   Modal,
   ModalVariant,
   PageSection,
+  Pagination,
   Split,
   SplitItem,
   Stack,
@@ -23,8 +30,7 @@ import {
   Text,
   TextVariants,
   Title,
-  Tooltip,
-  Pagination
+  Tooltip
 } from '@patternfly/react-core';
 import {
   CheckCircleIcon,
@@ -48,13 +54,8 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { SetStateAction, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Banner, DeleteConfirmationModal, TableRowSkeleton } from '@app/components';
-import { useFormatDate, usePopUp } from '@app/hooks';
-import { pageLinks } from '@app/links';
-import { useCreateAPIKey, useDeleteAPIKey, useGetApiKeys } from '@app/services/apiKeys';
-import { useAddEnv, useGetEnvList } from '@app/services/persistent';
-import { useDeleteMember, useGetMemberforSPA } from '@app/services/rbac';
 
+import { useGetEphemeralListForProperty } from '@app/services/ephemeral';
 import { toPascalCase } from '@app/utils/toPascalConvert';
 import { AxiosError } from 'axios';
 import Avatar from 'react-avatar';
@@ -126,6 +127,8 @@ export const WebPropertyEnvPage = (): JSX.Element => {
   const [deleteMemberName, setDeleteMemberName] = useState('');
   const [editMemberName, setEditMemberName] = useState('');
   const propertyTitle = envList?.data?.[0]?.propertyIdentifier;
+  const ephemeralPreview = useGetEphemeralListForProperty(propertyIdentifier);
+  const envWithEphList: any[] = [...(envList?.data ?? []), ...(ephemeralPreview?.data ?? [])];
 
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
     'createEnv',
@@ -785,7 +788,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
         <SyncServiceForm
           propertyIdentifier={propertyIdentifier}
           onClose={() => handlePopUpClose('updateSync')}
-          env={envList?.data?.length ? envList.data : []}
+          env={envWithEphList}
         />
       </Modal>
     </>

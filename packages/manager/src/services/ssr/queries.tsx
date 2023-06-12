@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { orchestratorReq } from '@app/config/orchestratorReq';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -8,12 +9,6 @@ import {
   TSSRValidateResponse,
   TWorkflowResponse
 } from './types';
-
-const spaSsrPropertyKeys = {
-  list: ['ssr-spa-properties'] as const,
-  id: (propertyIdentifier: string) =>
-    [...spaSsrPropertyKeys.list, propertyIdentifier, 'envs'] as const
-};
 
 const createSsrSpaProperty = async (
   dto: TSSRProperty
@@ -26,19 +21,22 @@ const createSsrSpaProperty = async (
   return data.data;
 };
 
-export const useAddSsrSpaProperty = (propertyIdentifier?: string) => {
+export const useAddSsrSpaProperty = () => {
   const queryClient = useQueryClient();
 
   return useMutation(createSsrSpaProperty, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(spaSsrPropertyKeys.list);
-      if (propertyIdentifier) {
-        queryClient.invalidateQueries(spaSsrPropertyKeys.id(propertyIdentifier));
-      }
+    onSuccess: (data: any) => {
+      const intervalId = setInterval(() => {
+        queryClient.invalidateQueries({
+          queryKey: [data._id]
+        });
+      }, 10000); // 10 seconds in milliseconds
+      return () => {
+        clearInterval(intervalId);
+      };
     }
   });
 };
-
 const configureSsrSpaProperty = async (
   dto: TSSRConfigure
 ): Promise<TSSRResponse | TWorkflowResponse> => {
@@ -46,33 +44,11 @@ const configureSsrSpaProperty = async (
   return data.data;
 };
 
-export const useConfigureSsrSpaProperty = (propertyIdentifier?: string) => {
-  const queryClient = useQueryClient();
-
-  return useMutation(configureSsrSpaProperty, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(spaSsrPropertyKeys.list);
-      if (propertyIdentifier) {
-        queryClient.invalidateQueries(spaSsrPropertyKeys.id(propertyIdentifier));
-      }
-    }
-  });
-};
+export const useConfigureSsrSpaProperty = () => useMutation(configureSsrSpaProperty);
 
 const validateSsrSpaProperty = async (dto: TSSRValidate): Promise<TSSRValidateResponse> => {
   const { data } = await orchestratorReq.post('/applications/git/validate', dto);
   return data.data;
 };
 
-export const useValidateSsrSpaProperty = (propertyIdentifier?: string) => {
-  const queryClient = useQueryClient();
-
-  return useMutation(validateSsrSpaProperty, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(spaSsrPropertyKeys.list);
-      if (propertyIdentifier) {
-        queryClient.invalidateQueries(spaSsrPropertyKeys.id(propertyIdentifier));
-      }
-    }
-  });
-};
+export const useValidateSsrSpaProperty = () => useMutation(validateSsrSpaProperty);
