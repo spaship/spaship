@@ -26,9 +26,14 @@ export const useAddSsrSpaProperty = () => {
 
   return useMutation(createSsrSpaProperty, {
     onSuccess: (data: any) => {
-      queryClient.invalidateQueries({
-        queryKey: [data._id]
-      });
+      const intervalId = setInterval(() => {
+        queryClient.invalidateQueries({
+          queryKey: [data._id]
+        });
+      }, 10000); // 10 seconds in milliseconds
+      return () => {
+        clearInterval(intervalId);
+      };
     }
   });
 };
