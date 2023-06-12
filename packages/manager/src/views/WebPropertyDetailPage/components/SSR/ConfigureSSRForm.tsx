@@ -99,7 +99,7 @@ export const ConfigureSSRForm = ({
     name: 'config' as const
   });
 
-  const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
+  const createSsrSpaProperty = useAddSsrSpaProperty();
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const webPropertiesKeys = Object.keys(webProperties.data || {});
   const onSubmit = async (dataf: FormData) => {

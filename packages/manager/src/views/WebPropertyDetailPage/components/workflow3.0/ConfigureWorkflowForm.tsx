@@ -139,11 +139,11 @@ export const ConfigureWorkflowForm = ({
   });
 
   const [step, setStep] = useState<number>(1);
-  const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
+  const createSsrSpaProperty = useAddSsrSpaProperty();
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const webPropertiesKeys = Object.keys(webProperties.data || {});
 
-  const validateSsrSpaProperty = useValidateSsrSpaProperty(propertyIdentifier);
+  const validateSsrSpaProperty = useValidateSsrSpaProperty();
   const [repoValidateMessage, setRepoValidateMessage] = useState('');
   const [appValidateMessage, setAppValidateMessage] = useState('');
 

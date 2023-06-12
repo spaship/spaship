@@ -80,7 +80,7 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
     name: 'config' as const
   });
 
-  const createSsrSpaProperty = useAddSsrSpaProperty(propertyIdentifier);
+  const createSsrSpaProperty = useAddSsrSpaProperty();
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const webPropertiesKeys = Object.keys(webProperties.data || {});
 
