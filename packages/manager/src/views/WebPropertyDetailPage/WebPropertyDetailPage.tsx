@@ -408,25 +408,28 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                                 }`}
                                               </a>
                                             </Td>
-
                                             <Td
                                               style={{ maxWidth: '20ch', wordWrap: 'break-word' }}
                                             >
-                                              <a
-                                                href={accessUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                              >
-                                                <ExternalLinkAltIcon />{' '}
-                                                {`${accessUrl.slice(
-                                                  0,
-                                                  INTERNAL_ACCESS_URL_LENGTH
-                                                )} ${
-                                                  accessUrl.length > INTERNAL_ACCESS_URL_LENGTH
-                                                    ? '...'
-                                                    : ''
-                                                }`}
-                                              </a>
+                                              {accessUrl === 'NA' ? (
+                                                'NA'
+                                              ) : (
+                                                <a
+                                                  href={accessUrl}
+                                                  target="_blank"
+                                                  rel="noopener noreferrer"
+                                                >
+                                                  <ExternalLinkAltIcon />{' '}
+                                                  {`${accessUrl.slice(
+                                                    0,
+                                                    INTERNAL_ACCESS_URL_LENGTH
+                                                  )} ${
+                                                    accessUrl.length > INTERNAL_ACCESS_URL_LENGTH
+                                                      ? '...'
+                                                      : ''
+                                                  }`}
+                                                </a>
+                                              )}
                                             </Td>
                                             <Td>
                                               {formatDate(updatedAt, 'MMM DD, YYYY - hh:mm:ss A')}

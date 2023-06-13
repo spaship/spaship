@@ -150,16 +150,20 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
                         <Tr key={`${index + 1}-${application.createdAt}`}>
                           <Td>{application.identifier}</Td>
                           <Td>
-                            <a
-                              href={application.accessUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <ExternalLinkAltIcon />{' '}
-                              {`${application.accessUrl.slice(0, URL_LENGTH_LIMIT)} ${
-                                application.accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
-                              }`}
-                            </a>
+                            {application.accessUrl ? (
+                              'NA'
+                            ) : (
+                              <a
+                                href={application.accessUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <ExternalLinkAltIcon />{' '}
+                                {`${application.accessUrl.slice(0, URL_LENGTH_LIMIT)} ${
+                                  application.accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
+                                }`}
+                              </a>
+                            )}
                           </Td>
                           <Td>{application.createdBy}</Td>
                           <Td>

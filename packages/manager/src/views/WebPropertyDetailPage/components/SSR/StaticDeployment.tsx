@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { TableRowSkeleton } from '@app/components';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
@@ -13,6 +14,7 @@ import {
 import { CubesIcon, ExternalLinkAltIcon, PencilAltIcon, UndoIcon } from '@patternfly/react-icons';
 import { Caption, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useRouter } from 'next/router';
+import { Access } from './Access';
 
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 25;
@@ -86,12 +88,19 @@ export const StaticDeployment = () => {
                   <Td textCenter>{val?.ref}</Td>
                   <Td textCenter>{val?.path}</Td>
                   <Td>
-                    <a href={val?.accessUrl} target="_blank" rel="noopener noreferrer">
-                      <ExternalLinkAltIcon />{' '}
-                      {`${val?.accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                        val?.accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                      }`}
-                    </a>
+                    {val?.accessUrl === 'NA' ? (
+                      'NA'
+                    ) : (
+                      <div>
+                        <a href={val?.accessUrl} target="_blank" rel="noopener noreferrer">
+                          <ExternalLinkAltIcon />{' '}
+                          {`${val?.accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                            val?.accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                          }`}
+                        </a>
+                        <Access link={val.accessUrl} _id={String(val._id)} />
+                      </div>
+                    )}
                   </Td>
                   <Td textCenter style={{ justifyContent: 'flex-end', display: 'grid' }}>
                     <SplitItem isFilled>

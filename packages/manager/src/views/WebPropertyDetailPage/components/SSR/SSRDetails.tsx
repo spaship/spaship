@@ -383,13 +383,19 @@ export const SSRDetails = () => {
                           }`}
                         </Td>
                         <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
-                          <a href={val?.accessUrl} target="_blank" rel="noopener noreferrer">
-                            <ExternalLinkAltIcon />{' '}
-                            {`${val?.accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                              val?.accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                            }`}
-                          </a>{' '}
-                          <Access link={val.accessUrl} _id={String(val._id)} />
+                          {val?.accessUrl === 'NA' ? (
+                            'NA'
+                          ) : (
+                            <div>
+                              <a href={val?.accessUrl} target="_blank" rel="noopener noreferrer">
+                                <ExternalLinkAltIcon />{' '}
+                                {`${val?.accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                  val?.accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                }`}
+                              </a>
+                              <Access link={val.accessUrl} _id={String(val._id)} />
+                            </div>
+                          )}{' '}
                         </Td>
                         <Td textCenter>
                           <Split hasGutter>
