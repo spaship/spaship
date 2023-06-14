@@ -32,6 +32,15 @@ function getDatabaseConfiguration() {
 export const DATA_BASE_CONFIGURATION = {
   mongoConnectionString: getDatabaseConfiguration()
 };
+export const ALLOWED_ORIGIN = {
+  hosts: getAllowedOrigins()
+};
+
+function getAllowedOrigins() {
+  const hosts = process.env.SPASHIP_ALLOWED_ORIGINS;
+  if (hosts) return hosts.split(',');
+  return ['http://localhost:2468'];
+}
 
 export const AUTH_LISTING = {
   deploymentBaseURL: '/api/v1/applications/deploy',
