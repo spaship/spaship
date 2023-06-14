@@ -150,7 +150,7 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
                         <Tr key={`${index + 1}-${application.createdAt}`}>
                           <Td>{application.identifier}</Td>
                           <Td>
-                            {application.accessUrl ? (
+                            {application.accessUrl === 'NA' ? (
                               'NA'
                             ) : (
                               <a
