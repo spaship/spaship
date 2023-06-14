@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { orchestratorReq } from '@app/config/orchestratorReq';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   TSSRProperty,
   TSSRResponse,
@@ -9,6 +9,10 @@ import {
   TSSRValidateResponse,
   TWorkflowResponse
 } from './types';
+
+const ssrKeys = {
+  getPodList: ['getPodList'] as const
+};
 
 const createSsrSpaProperty = async (
   dto: TSSRProperty
@@ -57,3 +61,18 @@ const validateSsrSpaProperty = async (dto: TSSRValidate): Promise<TSSRValidateRe
 };
 
 export const useValidateSsrSpaProperty = () => useMutation(validateSsrSpaProperty);
+
+const fetchListOfPods = async (
+  propertyIdentifier: string,
+  spaName: string,
+  env: string
+): Promise<any> => {
+  console.log('fetch', propertyIdentifier, spaName, env);
+  const { data } = await orchestratorReq.get(
+    `/applications/pods/${propertyIdentifier}/${env}/${spaName}`
+  );
+  return data.data;
+};
+
+export const useListOfPods = (propertyIdentifier: string, spaName: string, env: string) =>
+  useQuery(ssrKeys.getPodList, () => fetchListOfPods(propertyIdentifier, spaName, env));

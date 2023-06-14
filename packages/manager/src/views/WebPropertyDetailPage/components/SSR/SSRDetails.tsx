@@ -50,6 +50,7 @@ import { ConfigureWorkflowForm } from '../workflow3.0/ConfigureWorkflowForm';
 import { TDataContainerized, TDataWorkflow } from '../workflow3.0/types';
 import { Access } from './Access';
 import { ConfigureSSRForm } from './ConfigureSSRForm';
+import { ViewLogs } from './ViewLogs';
 
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 25;
@@ -178,9 +179,11 @@ export const SSRDetails = () => {
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [deploymentLogsForSpa, setDeploymentLogsForSpa] = useState('');
   const [buildLogsForSpa, setBuildLogsForSpa] = useState('');
+  const [podLogsForSpa, setPodLogsForSpa] = useState('');
   const [data, setData] = useState<any>({});
   const [isDepLogsLoading, setIsDepLogsLoading] = useState(true);
   const [isBuildLogsLoading, setIsBuildLogsLoading] = useState(true);
+  const [isPodLogsLoading, setIsPodLogsLoading] = useState(true);
 
   // Toggle currently active tab
   const handleTabClick = async (
@@ -192,12 +195,24 @@ export const SSRDetails = () => {
     if (tabIndex === 0) {
       setIsDepLogsLoading(false);
       setDeploymentLogsForSpa(await fetchLogsforSpa(propertyIdentifier, data.identifier, data.env));
-    } else {
+    } else if (tabIndex === 1) {
       setIsBuildLogsLoading(true);
       await setBuildLogsForSpa(
         await fetchLogsforSpa(propertyIdentifier, data.identifier, data.env, 'BUILD', buildId)
       );
       setIsBuildLogsLoading(false);
+    } else {
+      setIsPodLogsLoading(true);
+      await setPodLogsForSpa(
+        await fetchLogsforSpa(
+          propertyIdentifier,
+          data.identifier,
+          data.env,
+          'POD',
+          'workflow-test-apps-service-prod-668749dcc4-hp4d2'
+        )
+      );
+      setIsPodLogsLoading(false);
     }
   };
 
@@ -207,6 +222,7 @@ export const SSRDetails = () => {
     buildName: string[],
     rowData: any
   ) => {
+    console.log('>>', name, buildName);
     setBuildId(buildName ? buildName[buildName.length - 1] : '');
     setSpaName(name);
     setIsExpanded(!isExpanded);
@@ -217,12 +233,24 @@ export const SSRDetails = () => {
       );
 
       await setIsDepLogsLoading(false);
-    } else {
-      // await setIsBuildLogsLoading(true);
+    } else if (activeTabKey === 1) {
+      await setIsBuildLogsLoading(true);
       await setBuildLogsForSpa(
         await fetchLogsforSpa(propertyIdentifier, data.identifier, data.env, 'BUILD', buildId)
       );
       await setIsBuildLogsLoading(false);
+    } else {
+      setIsPodLogsLoading(true);
+      await setPodLogsForSpa(
+        await fetchLogsforSpa(
+          propertyIdentifier,
+          data.identifier,
+          data.env,
+          'POD',
+          'workflow-test-apps-service-prod-668749dcc4-hp4d2'
+        )
+      );
+      setIsPodLogsLoading(false);
     }
   };
   const onExpand = () => {
@@ -269,6 +297,21 @@ export const SSRDetails = () => {
       </EmptyState>
     </div>
   );
+  const pod = podLogsForSpa ? (
+    <div>
+      {' '}
+      <CodeBlock className="pf-u-mt-md">{NewlineText(podLogsForSpa)}</CodeBlock>
+    </div>
+  ) : (
+    <div>
+      <EmptyState>
+        <EmptyStateIcon icon={CubesIcon} />
+        <Title headingLevel="h4" size="lg">
+          No deployment logs found for <b>{spaName}</b> spa.
+        </Title>
+      </EmptyState>
+    </div>
+  );
   const panelContent = (
     <DrawerPanelContent>
       <DrawerHead>
@@ -281,6 +324,9 @@ export const SSRDetails = () => {
 
           <Tab eventKey={1} title="Build Logs">
             {isBuildLogsLoading ? <Spinner /> : build}
+          </Tab>
+          <Tab eventKey={2} title="Pod Logs">
+            {isPodLogsLoading ? <Spinner /> : pod}
           </Tab>
         </Tabs>
         <DrawerActions>
@@ -295,7 +341,12 @@ export const SSRDetails = () => {
       <Button onClick={() => handlePopUpOpen('createSSRDeployment')} icon={<PlusCircleIcon />}>
         Add New App
       </Button>
-
+      {console.log('propertyIdentifier', propertyIdentifier, spaName)}
+      <ViewLogs
+        propertyIdentifier={propertyIdentifier}
+        spaName="packages/search-service"
+        env="dev"
+      />
       <Drawer
         isExpanded={isExpanded}
         position="bottom"
