@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
-import { ENV, ENV_TYPE, SPASHIP_VERSION } from './configuration';
+import { ALLOWED_ORIGIN, ENV, ENV_TYPE, SPASHIP_VERSION } from './configuration';
 import { LoggingInterceptor } from './configuration/interceptors/logger.interceptor';
 import { ResponseFormat, ResponseInterceptor } from './configuration/interceptors/response.interceptor';
 import { LoggerService } from './configuration/logger/logger.service';
@@ -44,7 +44,7 @@ async function bootstrap() {
     });
     SwaggerModule.setup('api-docs', app, document);
     app.enableCors({
-      origin: ['http://localhost:2468'],
+      origin: ALLOWED_ORIGIN.hosts,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS'
     });
   }
