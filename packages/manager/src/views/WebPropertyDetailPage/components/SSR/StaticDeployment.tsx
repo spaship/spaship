@@ -8,6 +8,7 @@ import {
   EmptyStateBody,
   EmptyStateIcon,
   Label,
+  Spinner,
   SplitItem,
   Title
 } from '@patternfly/react-core';
@@ -89,7 +90,7 @@ export const StaticDeployment = () => {
                   <Td textCenter>{val?.path}</Td>
                   <Td>
                     {val?.accessUrl === 'NA' ? (
-                      'NA'
+                      <Spinner isSVG diameter="30px" />
                     ) : (
                       <div>
                         <a href={val?.accessUrl} target="_blank" rel="noopener noreferrer">
