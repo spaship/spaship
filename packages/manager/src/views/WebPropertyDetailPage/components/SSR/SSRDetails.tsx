@@ -384,7 +384,7 @@ export const SSRDetails = () => {
                         </Td>
                         <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
                           {val?.accessUrl === 'NA' ? (
-                            'NA'
+                            <Spinner isSVG diameter="30px" />
                           ) : (
                             <div>
                               <a href={val?.accessUrl} target="_blank" rel="noopener noreferrer">
