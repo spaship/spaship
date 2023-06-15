@@ -170,16 +170,14 @@ export class ApplicationFactory {
   }
 
   private getAccessUrl(application: Application, baseUrl: string): string {
-    let generatedAccessURL = application.accessUrl;
-    if (generatedAccessURL === 'NA') {
-      const protocol = 'http';
-      const { hostname } = new URL(baseUrl);
-      const appPrefix = hostname.split('.')[4];
-      const domain = hostname.split('.').slice(1).join('.');
-      generatedAccessURL = `${protocol}://${appPrefix}.${DEPLOYMENT_DETAILS.namespace}--${application.propertyIdentifier}.${
-        application.propertyIdentifier
-      }.${application.env}.${domain}${this.getGeneratedPath(application.path)}`;
-    }
+    const protocol = 'http';
+    const { hostname } = new URL(baseUrl);
+    const appPrefix = hostname.split('.')[4];
+    const domain = hostname.split('.').slice(1).join('.');
+    const generatedAccessURL = `${protocol}://${appPrefix}.${DEPLOYMENT_DETAILS.namespace}--${application.propertyIdentifier}.${
+      application.propertyIdentifier
+    }.${application.env}.${domain}${this.getGeneratedPath(application.path)}`;
+
     return generatedAccessURL;
   }
 
