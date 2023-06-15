@@ -184,7 +184,7 @@ export const SSRDetails = () => {
   const [isDepLogsLoading, setIsDepLogsLoading] = useState(true);
   const [isBuildLogsLoading, setIsBuildLogsLoading] = useState(true);
   const [isPodLogsLoading, setIsPodLogsLoading] = useState(true);
-
+  const [temp, setTemp] = useState([]);
   // Toggle currently active tab
   const handleTabClick = async (
     event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
@@ -209,7 +209,7 @@ export const SSRDetails = () => {
           data.identifier,
           data.env,
           'POD',
-          'workflow-test-apps-service-prod-668749dcc4-hp4d2'
+          'workflow-demo-demo-prod-67bb98888d-k6dc4'
         )
       );
       setIsPodLogsLoading(false);
@@ -222,7 +222,7 @@ export const SSRDetails = () => {
     buildName: string[],
     rowData: any
   ) => {
-    console.log('>>', name, buildName);
+    setTemp(buildName);
     setBuildId(buildName ? buildName[buildName.length - 1] : '');
     setSpaName(name);
     setIsExpanded(!isExpanded);
@@ -247,7 +247,7 @@ export const SSRDetails = () => {
           data.identifier,
           data.env,
           'POD',
-          'workflow-test-apps-service-prod-668749dcc4-hp4d2'
+          'workflow-demo-demo-prod-67bb98888d-k6dc4'
         )
       );
       setIsPodLogsLoading(false);
@@ -341,12 +341,7 @@ export const SSRDetails = () => {
       <Button onClick={() => handlePopUpOpen('createSSRDeployment')} icon={<PlusCircleIcon />}>
         Add New App
       </Button>
-      {console.log('propertyIdentifier', propertyIdentifier, spaName)}
-      <ViewLogs
-        propertyIdentifier={propertyIdentifier}
-        spaName="packages/search-service"
-        env="dev"
-      />
+      <ViewLogs propertyIdentifier={propertyIdentifier} spaName="demo" env="prod" temp={temp} />
       <Drawer
         isExpanded={isExpanded}
         position="bottom"

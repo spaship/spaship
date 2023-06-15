@@ -15,41 +15,38 @@ type Props = {
   spaName: string;
   propertyIdentifier: string;
   env: string;
+  temp: string[];
 };
 
-export const ViewLogs = ({ propertyIdentifier, spaName, env }: Props) => {
+export const ViewLogs = ({ propertyIdentifier, spaName, env, temp }: Props) => {
   const [logsData, setLogsData] = useState<any>([]);
   const [isLogsLoading, setIsLogsLoading] = useState<boolean>(true);
-
   const [isOpen, setIsOpen] = useState(false);
   const [podId, setPodId] = useState('');
+
   const podList = useListOfPods(propertyIdentifier, spaName, env);
+
   const onToggle = (isOpen1: boolean) => {
     setIsOpen(isOpen1);
   };
 
-  const onSelect = (event, selection, isPlaceholder) => {
-    if (isPlaceholder) clearSelection();
-    else {
-      setPodId(selection);
-      setIsOpen(false);
-
-      console.log('selected:', selection);
-    }
-  };
-
-  const clearSelection = () => {
-    setPodId('');
+  const onSelect = (
+    event: React.MouseEvent | React.ChangeEvent,
+    selection: string,
+    isPlaceholder?: boolean
+  ) => {
+    setPodId(selection);
     setIsOpen(false);
   };
 
-  //   useEffect(() => {
-  //     fetchLogsforSpa(propertyIdentifier, spaName, env, 'POD', podList?.data[0]).then((data) => {
-  //       setIsLogsLoading(true);
-  //       setLogsData(data);
-  //       setIsLogsLoading(false);
-  //     });
-  //   }, [env, podList.data, propertyIdentifier, spaName]);
+  useEffect(() => {
+    const pID = podId !== '' ? podId : podList?.data && podList?.data[0];
+    fetchLogsforSpa(propertyIdentifier, spaName, env, 'POD', pID).then((data) => {
+      setIsLogsLoading(true);
+      setLogsData(data);
+      setIsLogsLoading(false);
+    });
+  }, [env, podId, podList?.data, propertyIdentifier, spaName]);
 
   function NewlineText(props: string) {
     const text = props;
@@ -57,9 +54,10 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env }: Props) => {
 
     return newText;
   }
-  console.log('log', logsData, podList?.data);
+  console.log('idli', temp);
   return (
     <div>
+      logs
       <Select
         variant="single"
         aria-label="Select Input"
@@ -69,9 +67,12 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env }: Props) => {
         isOpen={isOpen}
         direction="down"
       >
-        {podList.data?.map((item: string) => {
-          <SelectOption key={item} value={item} />;
-        })}
+        {/* {podList?.data?.map((item: string) => (
+          <SelectOption key={item} value={item} />
+        ))} */}
+        {temp?.map((item: string) => (
+          <SelectOption key={item} value={item} />
+        ))}
       </Select>
       {!isLogsLoading ? (
         <CodeBlock className="pf-u-mt-md">{NewlineText(logsData)}</CodeBlock>
