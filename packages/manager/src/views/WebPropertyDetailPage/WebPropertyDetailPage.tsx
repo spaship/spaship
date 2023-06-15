@@ -20,8 +20,7 @@ import {
   SelectOption,
   SelectVariant,
   Modal,
-  ModalVariant,
-  Spinner
+  ModalVariant
 } from '@patternfly/react-core';
 
 import { Banner, TableRowSkeleton } from '@app/components';
@@ -413,7 +412,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                               style={{ maxWidth: '20ch', wordWrap: 'break-word' }}
                                             >
                                               {accessUrl === 'NA' ? (
-                                                <Spinner isSVG diameter="30px" />
+                                                'NA'
                                               ) : (
                                                 <a
                                                   href={accessUrl}

@@ -16,7 +16,6 @@ import {
   EmptyStateIcon,
   EmptyStateVariant,
   Label,
-  Spinner,
   Title
 } from '@patternfly/react-core';
 import {
@@ -152,7 +151,7 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
                           <Td>{application.identifier}</Td>
                           <Td>
                             {application.accessUrl === 'NA' ? (
-                              <Spinner isSVG diameter="30px" />
+                              'NA'
                             ) : (
                               <a
                                 href={application.accessUrl}
