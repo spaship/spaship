@@ -157,8 +157,8 @@ export class ApplicationFactory {
     applicationResponse.env = application.env;
     applicationResponse.ref = this.getRef(application.nextRef);
     applicationResponse.accessUrl = application.isContainerized
-      ? this.getContainerizedAccessUrl(application, baseUrl)
-      : this.getAccessUrl(application, baseUrl);
+      ? this.generateAccessUrlForContainerizedDeployement(application, baseUrl)
+      : this.generateAccessUrl(application, baseUrl);
     if (applicationExists)
       applicationResponse.warning = `SPA(s) - ${applicationExists} already exist(s) on the context path ${applicationResponse.path}. Overriding existing deployment.`;
     return applicationResponse;
@@ -169,17 +169,15 @@ export class ApplicationFactory {
     return nextRef;
   }
 
-  private getAccessUrl(application: Application, baseUrl: string): string {
-    let generatedAccessURL = application.accessUrl;
-    if (generatedAccessURL === 'NA') {
-      const protocol = 'http';
-      const { hostname } = new URL(baseUrl);
-      const appPrefix = hostname.split('.')[4];
-      const domain = hostname.split('.').slice(1).join('.');
-      generatedAccessURL = `${protocol}://${appPrefix}.${DEPLOYMENT_DETAILS.namespace}--${application.propertyIdentifier}.${
-        application.propertyIdentifier
-      }.${application.env}.${domain}${this.getGeneratedPath(application.path)}`;
-    }
+  private generateAccessUrl(application: Application, baseUrl: string): string {
+    const protocol = 'http';
+    const { hostname } = new URL(baseUrl);
+    const appPrefix = hostname.split('.')[4];
+    const domain = hostname.split('.').slice(1).join('.');
+    const generatedAccessURL = `${protocol}://${appPrefix}.${DEPLOYMENT_DETAILS.namespace}--${application.propertyIdentifier}.${
+      application.propertyIdentifier
+    }.${application.env}.${domain}${this.getGeneratedPath(application.path)}`;
+
     return generatedAccessURL;
   }
 
@@ -563,7 +561,7 @@ export class ApplicationFactory {
     return gitUrl;
   }
 
-  private getContainerizedAccessUrl(application: Application, baseUrl: string): string {
+  private generateAccessUrlForContainerizedDeployement(application: Application, baseUrl: string): string {
     const protocol = 'https';
     const { hostname } = new URL(baseUrl);
     const domain = hostname.split('.').slice(1).join('.');
