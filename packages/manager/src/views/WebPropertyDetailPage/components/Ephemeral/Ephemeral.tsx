@@ -29,6 +29,7 @@ import {
 import { TEphemeralEnv } from '@app/services/ephemeral/types';
 import { useFormatDate } from '@app/hooks';
 import { useState } from 'react';
+import { Access } from '../SSR/Access';
 
 type Props = {
   ephemeralEnvs: TEphemeralEnv[] | undefined;
@@ -163,6 +164,10 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
                                 {`${application.accessUrl.slice(0, URL_LENGTH_LIMIT)} ${
                                   application.accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
                                 }`}
+                                <Access
+                                  link={application.accessUrl}
+                                  _id={String(application._id)}
+                                />
                               </a>
                             )}
                           </Td>
