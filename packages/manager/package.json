@@ -1,7 +1,7 @@
 {
   "name": "@spaship/manager",
   "description": "The SPAship UI.",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "private": true,
   "contributors": [
     {
@@ -19,7 +19,7 @@
       "email": "akhilmhdh@gmail.com",
       "url": "https://akhilmhdh.com"
     },
-     {
+    {
       "name": "Deepesh Nair",
       "email": "hybridx18@gmail.com",
       "url": "https://github.com/hybridx"
@@ -37,7 +37,6 @@
       "name": "Michael Clayton",
       "email": "mclayton@redhat.com"
     }
-   
   ],
   "scripts": {
     "dev": "next dev -p 2468",
