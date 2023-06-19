@@ -187,7 +187,7 @@ export const SSRDetails = () => {
     tabIndex: string | number
   ) => {
     setActiveTabKey(tabIndex);
-
+    console.log('tabind', tabIndex);
     // if (tabIndex === 0) {
     //   setIsDepLogsLoading(false);
     //   setDeploymentLogsForSpa(await fetchLogsforSpa(propertyIdentifier, data.identifier, data.env));
@@ -241,6 +241,7 @@ export const SSRDetails = () => {
 
         <Tabs activeKey={activeTabKey} onSelect={handleTabClick}>
           <Tab eventKey={0} title="Deployment Logs">
+            {console.log('inside deplou', activeTabKey)}
             <ViewLogs
               propertyIdentifier={propertyIdentifier}
               spaName={spaName}
@@ -251,6 +252,7 @@ export const SSRDetails = () => {
           </Tab>
 
           <Tab eventKey={1} title="Build Logs">
+            {console.log('inside build', activeTabKey)}
             <ViewLogs
               propertyIdentifier={propertyIdentifier}
               spaName={spaName}
