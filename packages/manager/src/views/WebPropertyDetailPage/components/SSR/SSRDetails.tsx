@@ -187,7 +187,7 @@ export const SSRDetails = () => {
     tabIndex: string | number
   ) => {
     setActiveTabKey(tabIndex);
-    console.log('tabind', tabIndex);
+    console.log('tabind', tabIndex, activeTabKey);
     // if (tabIndex === 0) {
     //   setIsDepLogsLoading(false);
     //   setDeploymentLogsForSpa(await fetchLogsforSpa(propertyIdentifier, data.identifier, data.env));
@@ -211,7 +211,7 @@ export const SSRDetails = () => {
     //   setIsPodLogsLoading(false);
     // }
   };
-
+  console.log('activeTabKey', activeTabKey);
   const onClick = async (
     e: React.MouseEvent<any> | React.KeyboardEvent,
     name: string,
@@ -241,23 +241,22 @@ export const SSRDetails = () => {
 
         <Tabs activeKey={activeTabKey} onSelect={handleTabClick}>
           <Tab eventKey={0} title="Deployment Logs">
-            {console.log('inside deplou', activeTabKey)}
             <ViewLogs
               propertyIdentifier={propertyIdentifier}
               spaName={spaName}
               env={envName}
-              type="POD"
+              type={activeTabKey}
               idList={[]}
             />
           </Tab>
 
           <Tab eventKey={1} title="Build Logs">
-            {console.log('inside build', activeTabKey)}
+            {/* {console.log('inside build', activeTabKey)} */}
             <ViewLogs
               propertyIdentifier={propertyIdentifier}
               spaName={spaName}
               env={envName}
-              type="BUILD"
+              type={activeTabKey}
               idList={buildIDList}
             />
           </Tab>

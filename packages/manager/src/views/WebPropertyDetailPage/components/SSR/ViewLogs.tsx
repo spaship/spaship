@@ -15,7 +15,7 @@ type Props = {
   spaName: string;
   propertyIdentifier: string;
   env: string;
-  type: string;
+  type: string | number;
   idList: string[];
 };
 
