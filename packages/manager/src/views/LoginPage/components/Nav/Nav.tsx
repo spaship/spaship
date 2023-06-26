@@ -9,7 +9,7 @@ import {
   ToolbarGroup,
   ToolbarItem
 } from '@patternfly/react-core';
-import { FileIcon, GithubIcon } from '@patternfly/react-icons';
+import { GithubIcon } from '@patternfly/react-icons';
 
 import { env } from '@app/config/env';
 
@@ -29,16 +29,31 @@ export const Nav = () => (
             spacer={{ default: 'spacerNone', md: 'spacerMd' }}
           >
             <ToolbarItem>
+              <img src="/img/login-mail.svg" alt="email logo" />
               <Button
+                className="pf-u-pl-sm"
+                component="a"
+                aria-label="spaship-dev@redhat.com"
+                variant={ButtonVariant.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  window.location.href = 'mailto:spaship-dev@redhat.com';
+                }}
+              >
+                spaship-dev@redhat.com
+              </Button>
+            </ToolbarItem>
+            <ToolbarItem>
+              <img src="/img/slack-logo.svg" alt="slack logo" />
+              <Button
+                className="pf-u-pl-sm"
                 component="a"
                 aria-label="Documentation"
                 variant={ButtonVariant.link}
-                icon={<FileIcon />}
-                href={env.PUBLIC_DOC_URL}
-                target="_blank"
                 rel="noopener noreferrer"
               >
-                Documentation
+                Spaship Forum
               </Button>
             </ToolbarItem>
             <ToolbarItem>
