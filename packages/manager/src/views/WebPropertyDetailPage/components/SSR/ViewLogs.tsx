@@ -46,10 +46,9 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
   };
 
   useEffect(() => {
-    // const pID = Id !== '' ? Id : setId(podList?.data && podList?.data[0]);
-    // const buildID = Id !== '' ? Id : setId(idList.reverse()[0]);
     const pID = Id !== '' ? Id : podList?.data && podList?.data[0];
     const buildID = Id !== '' ? Id : idList && setId(idList.reverse()[0]);
+
     fetchLogsforSpa(
       propertyIdentifier,
       spaName,
@@ -61,6 +60,30 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
       setLogsData(data);
       setIsLogsLoading(false);
     });
+
+    let counter = 0;
+    const interval = setInterval(() => {
+      fetchLogsforSpa(
+        propertyIdentifier,
+        spaName,
+        env,
+        type === 0 ? 'POD' : 'BUILD',
+        type === 1 ? buildID || undefined : pID || undefined
+      ).then((data) => {
+        setIsLogsLoading(true);
+        setLogsData(data);
+        setIsLogsLoading(false);
+      });
+
+      counter += 1;
+      if (counter >= 72) {
+        clearInterval(interval);
+      }
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+    };
   }, [env, Id, podList?.data, propertyIdentifier, spaName, type, idList]);
 
   function NewlineText(props: string) {
@@ -87,7 +110,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
             isOpen={isOpen}
           >
             {type === 1
-              ? idList.map((item: string) => <SelectOption key={item} value={item} />)
+              ? idList && idList.map((item: string) => <SelectOption key={item} value={item} />)
               : podList?.data?.map((item: string) => <SelectOption key={item} value={item} />)}
           </Select>
           {logsData !== '' ? (
