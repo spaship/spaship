@@ -1,11 +1,10 @@
-import { fetchLogsforSpa, useGetLogsforSpa, useListOfPods } from '@app/services/appLogs';
+import { fetchLogsforSpa, useListOfPods } from '@app/services/appLogs';
 import {
   CodeBlock,
   EmptyState,
   EmptyStateIcon,
   Select,
   SelectOption,
-  Spinner,
   Title
 } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
@@ -24,7 +23,6 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
   const [isLogsLoading, setIsLogsLoading] = useState<boolean>(true);
   const [isOpen, setIsOpen] = useState(false);
   const [Id, setId] = useState('');
-  const [logsType, setLogsType] = useState('');
 
   const podList = useListOfPods(propertyIdentifier, spaName, env);
 
@@ -37,7 +35,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
   };
   const onSelect = (
     event: React.MouseEvent | React.ChangeEvent,
-    selection: string | SelectOptionObject,
+    selection: string,
     isPlaceholder?: boolean
   ) => {
     if (isPlaceholder) clearSelection();
@@ -47,35 +45,24 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
     setIsOpen(false);
   };
 
-  const pID = Id !== '' ? Id : podList?.data && podList?.data[0];
-  const buildID = Id !== '' ? Id : idList[0];
-
-  const { isLoading, isSuccess, data } = useGetLogsforSpa(
-    propertyIdentifier,
-    spaName,
-    env,
-    logsType,
-    logsType === 'BUILD' ? buildID || undefined : pID || undefined
-  );
-
   useEffect(() => {
-    setLogsType(type);
-  }, [type]);
-  console.log('logs', logsType);
-  // const pID = Id !== '' ? Id : podList?.data && podList?.data[0];
-  // const buildID = Id !== '' ? Id : idList[0];
-  // fetchLogsforSpa(
-  //   propertyIdentifier,
-  //   spaName,
-  //   env,
-  //   type,
-  //   type === 'BUILD' ? buildID || undefined : pID || undefined
-  // ).then((data) => {
-  //   setIsLogsLoading(true);
-  //   setLogsData(data);
-  //   setIsLogsLoading(false);
-  // });
-  // env, Id, podList?.data, propertyIdentifier, spaName, type, idList;
+    // const pID = Id !== '' ? Id : setId(podList?.data && podList?.data[0]);
+    // const buildID = Id !== '' ? Id : setId(idList.reverse()[0]);
+    const pID = Id !== '' ? Id : podList?.data && podList?.data[0];
+    const buildID = Id !== '' ? Id : idList && setId(idList.reverse()[0]);
+    fetchLogsforSpa(
+      propertyIdentifier,
+      spaName,
+      env,
+      type === 0 ? 'POD' : 'BUILD',
+      type === 1 ? buildID || undefined : pID || undefined
+    ).then((data) => {
+      setIsLogsLoading(true);
+      setLogsData(data);
+      setIsLogsLoading(false);
+    });
+  }, [env, Id, podList?.data, propertyIdentifier, spaName, type, idList]);
+
   function NewlineText(props: string) {
     const text = props;
     const newText = text.split('\n').map((str: string) => <p key={str}>{str}</p>);
@@ -85,13 +72,10 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
   return (
     <div>
       <div className="pf-u-mb-md pf-u-mt-md">
-        {type} Logs for <b>{spaName}</b>
+        {type === 0 ? 'POD' : 'BUILD'} Logs for <b>{spaName}</b>
       </div>
 
-      {/* {!isLogsLoading ? ( */}
-      {isLoading ? (
-        <Spinner />
-      ) : (
+      {!isLogsLoading ? (
         <div>
           <Select
             class="listID"
@@ -102,22 +86,29 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
             selections={Id}
             isOpen={isOpen}
           >
-            {type === 'BUILD'
+            {type === 1
               ? idList.map((item: string) => <SelectOption key={item} value={item} />)
               : podList?.data?.map((item: string) => <SelectOption key={item} value={item} />)}
           </Select>
-          <CodeBlock className="pf-u-mt-md">{NewlineText(data)}</CodeBlock>
+          {logsData !== '' ? (
+            <CodeBlock className="pf-u-mt-md">{NewlineText(logsData)}</CodeBlock>
+          ) : (
+            <EmptyState>
+              <EmptyStateIcon icon={CubesIcon} />
+              <Title headingLevel="h4" size="lg">
+                No {type === 0 ? 'POD' : 'BUILD'} logs found for <b>{Id}</b>
+              </Title>
+            </EmptyState>
+          )}
         </div>
+      ) : (
+        <EmptyState>
+          <EmptyStateIcon icon={CubesIcon} />
+          <Title headingLevel="h4" size="lg">
+            No {type === 0 ? 'POD' : 'BUILD'} logs found for <b>{spaName}</b> spa.
+          </Title>
+        </EmptyState>
       )}
-
-      {/* ) : ( */}
-      <EmptyState>
-        <EmptyStateIcon icon={CubesIcon} />
-        <Title headingLevel="h4" size="lg">
-          No {type} logs found for <b>{spaName}</b> spa.
-        </Title>
-      </EmptyState>
-      {/* )} */}
     </div>
   );
 };

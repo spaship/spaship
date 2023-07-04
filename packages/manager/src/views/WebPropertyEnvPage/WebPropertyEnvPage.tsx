@@ -40,6 +40,7 @@ import {
   KeyIcon,
   LockIcon,
   OutlinedCalendarAltIcon,
+  OutlinedClockIcon,
   PencilAltIcon,
   PlusIcon,
   SecurityIcon,
@@ -182,12 +183,21 @@ export const WebPropertyEnvPage = (): JSX.Element => {
   };
 
   const handleCreateAPIKey = async (data: APIKeyForm) => {
+    const currentDate = new Date();
+    const futureDate = new Date(
+      currentDate.getFullYear() + 50,
+      currentDate.getMonth(),
+      currentDate.getDate()
+    );
     try {
       const res = await createAPIKey.mutateAsync({
         ...data,
         propertyIdentifier,
         createdBy: session?.user.email || '',
-        expiresIn: getExpiryDayDiff(data.expiresIn)
+        expiresIn:
+          data.expiresIn === undefined || data.expiresIn === ''
+            ? getExpiryDayDiff(String(futureDate))
+            : getExpiryDayDiff(data.expiresIn)
       });
       handlePopUpOpen('createApiKey', res.key);
       toast.success('API Key Created');
@@ -457,8 +467,19 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                             <OutlinedCalendarAltIcon /> {formatDate(key.createdAt, 'MM/DD/YYYY')}
                           </Td>
                           <Td dataLabel={key.expirationDate}>
-                            <OutlinedCalendarAltIcon />
-                            {formatDate(key.expirationDate, 'MM/DD/YYYY')}
+                            {new Date(key.expirationDate).getFullYear() - new Date().getFullYear() >
+                            2 ? (
+                              <div>
+                                <OutlinedClockIcon />
+                                &nbsp; Never Expire
+                              </div>
+                            ) : (
+                              <div>
+                                <OutlinedCalendarAltIcon />
+                                &nbsp;
+                                {formatDate(key.expirationDate, 'MM/DD/YYYY')}
+                              </div>
+                            )}
                           </Td>
                           <Td dataLabel={key.createdAt}>
                             {new Date(key.expirationDate) > new Date() ? (

@@ -9,10 +9,9 @@ export const fetchLogsforSpa = async (
   propertyIdentifier: string,
   applicationIdentifier: string,
   env: string,
-  type?: string,
+  type?: string | number,
   id?: string
 ): Promise<any> => {
-  console.log('fetch', propertyIdentifier, applicationIdentifier, env, type, id);
   try {
     const { data } = await orchestratorReq.get(
       `/applications/log/${propertyIdentifier}/${env}/${applicationIdentifier}/`,
@@ -51,7 +50,6 @@ const fetchListOfPods = async (
   spaName: string,
   env: string
 ): Promise<any> => {
-  console.log('fetch', propertyIdentifier, spaName, env);
   const { data } = await orchestratorReq.get(
     `/applications/pods/${propertyIdentifier}/${env}/${spaName}`
   );

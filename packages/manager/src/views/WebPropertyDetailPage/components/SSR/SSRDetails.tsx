@@ -1,13 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 import { TableRowSkeleton } from '@app/components';
 import { usePopUp } from '@app/hooks';
-import { fetchLogsforSpa } from '@app/services/appLogs';
+import { useListOfPods } from '@app/services/appLogs';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { useAddSsrSpaProperty } from '@app/services/ssr';
 import {
   Button,
-  CodeBlock,
   Drawer,
   DrawerActions,
   DrawerCloseButton,
@@ -175,43 +174,19 @@ export const SSRDetails = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const drawerRef = useRef<HTMLDivElement>();
   const [spaName, setSpaName] = useState('');
-  const [buildId, setBuildId] = useState('');
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [envName, setEnvName] = useState('');
-  const [data, setData] = useState<any>({});
 
+  const podList = useListOfPods(propertyIdentifier, spaName, envName);
   const [buildIDList, setbuildIDList] = useState<string[]>([]);
-  // Toggle currently active tab
+
   const handleTabClick = async (
     event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
     tabIndex: string | number
   ) => {
     setActiveTabKey(tabIndex);
-    console.log('tabind', tabIndex, activeTabKey);
-    // if (tabIndex === 0) {
-    //   setIsDepLogsLoading(false);
-    //   setDeploymentLogsForSpa(await fetchLogsforSpa(propertyIdentifier, data.identifier, data.env));
-    // } else if (tabIndex === 1) {
-    //   setIsBuildLogsLoading(true);
-    //   await setBuildLogsForSpa(
-    //     await fetchLogsforSpa(propertyIdentifier, data.identifier, data.env, 'BUILD', buildId)
-    //   );
-    //   setIsBuildLogsLoading(false);
-    // } else {
-    //   setIsPodLogsLoading(true);
-    //   await setPodLogsForSpa(
-    //     await fetchLogsforSpa(
-    //       propertyIdentifier,
-    //       data.identifier,
-    //       data.env,
-    //       'POD',
-    //       'workflow-demo-demo-prod-67bb98888d-k6dc4'
-    //     )
-    //   );
-    //   setIsPodLogsLoading(false);
-    // }
   };
-  console.log('activeTabKey', activeTabKey);
+
   const onClick = async (
     e: React.MouseEvent<any> | React.KeyboardEvent,
     name: string,
@@ -219,12 +194,11 @@ export const SSRDetails = () => {
     rowData: any
   ) => {
     setbuildIDList(buildName);
-    setBuildId(buildName ? buildName[buildName.length - 1] : '');
     setSpaName(name);
     setEnvName(rowData.env);
     setIsExpanded(!isExpanded);
-    setData(rowData);
   };
+
   const onExpand = () => {
     if (drawerRef.current) {
       drawerRef.current.focus();
@@ -246,12 +220,10 @@ export const SSRDetails = () => {
               spaName={spaName}
               env={envName}
               type={activeTabKey}
-              idList={[]}
+              idList={podList?.data}
             />
           </Tab>
-
           <Tab eventKey={1} title="Build Logs">
-            {/* {console.log('inside build', activeTabKey)} */}
             <ViewLogs
               propertyIdentifier={propertyIdentifier}
               spaName={spaName}
