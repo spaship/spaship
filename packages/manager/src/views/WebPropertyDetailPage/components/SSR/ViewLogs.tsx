@@ -5,6 +5,7 @@ import {
   EmptyStateIcon,
   Select,
   SelectOption,
+  SelectOptionObject,
   Title
 } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
@@ -40,12 +41,12 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
   };
   const onSelect = (
     event: React.MouseEvent | React.ChangeEvent,
-    selection: string,
+    selection: string | SelectOptionObject,
     isPlaceholder?: boolean
   ) => {
     if (isPlaceholder) clearSelection();
     else {
-      setId(selection);
+      setId(selection as string);
     }
     setIsOpen(false);
   };
@@ -106,7 +107,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
       {!isLogsLoading ? (
         <div>
           <Select
-            class="listID"
+            className="listID"
             variant="single"
             aria-label="Select Input"
             onToggle={onToggle}
