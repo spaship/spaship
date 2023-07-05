@@ -1,13 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 import { TableRowSkeleton } from '@app/components';
 import { usePopUp } from '@app/hooks';
-import { fetchLogsforSpa } from '@app/services/appLogs';
+import { useListOfPods } from '@app/services/appLogs';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { useAddSsrSpaProperty } from '@app/services/ssr';
 import {
   Button,
-  CodeBlock,
   Drawer,
   DrawerActions,
   DrawerCloseButton,
@@ -50,6 +49,7 @@ import { ConfigureWorkflowForm } from '../workflow3.0/ConfigureWorkflowForm';
 import { TDataContainerized, TDataWorkflow } from '../workflow3.0/types';
 import { Access } from './Access';
 import { ConfigureSSRForm } from './ConfigureSSRForm';
+import { ViewLogs } from './ViewLogs';
 
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 25;
@@ -174,31 +174,17 @@ export const SSRDetails = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const drawerRef = useRef<HTMLDivElement>();
   const [spaName, setSpaName] = useState('');
-  const [buildId, setBuildId] = useState('');
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
-  const [deploymentLogsForSpa, setDeploymentLogsForSpa] = useState('');
-  const [buildLogsForSpa, setBuildLogsForSpa] = useState('');
-  const [data, setData] = useState<any>({});
-  const [isDepLogsLoading, setIsDepLogsLoading] = useState(true);
-  const [isBuildLogsLoading, setIsBuildLogsLoading] = useState(true);
+  const [envName, setEnvName] = useState('');
 
-  // Toggle currently active tab
+  const podList = useListOfPods(propertyIdentifier, spaName, envName);
+  const [buildIdList, setbuildIdList] = useState<string[]>([]);
+
   const handleTabClick = async (
     event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
     tabIndex: string | number
   ) => {
     setActiveTabKey(tabIndex);
-
-    if (tabIndex === 0) {
-      setIsDepLogsLoading(false);
-      setDeploymentLogsForSpa(await fetchLogsforSpa(propertyIdentifier, data.identifier, data.env));
-    } else {
-      setIsBuildLogsLoading(true);
-      await setBuildLogsForSpa(
-        await fetchLogsforSpa(propertyIdentifier, data.identifier, data.env, 'BUILD', buildId)
-      );
-      setIsBuildLogsLoading(false);
-    }
   };
 
   const onClick = async (
@@ -207,24 +193,12 @@ export const SSRDetails = () => {
     buildName: string[],
     rowData: any
   ) => {
-    setBuildId(buildName ? buildName[buildName.length - 1] : '');
+    setbuildIdList(buildName);
     setSpaName(name);
+    setEnvName(rowData.env);
     setIsExpanded(!isExpanded);
-    setData(rowData);
-    if (activeTabKey === 0) {
-      await setDeploymentLogsForSpa(
-        await fetchLogsforSpa(propertyIdentifier, rowData.identifier, rowData.env)
-      );
-
-      await setIsDepLogsLoading(false);
-    } else {
-      // await setIsBuildLogsLoading(true);
-      await setBuildLogsForSpa(
-        await fetchLogsforSpa(propertyIdentifier, data.identifier, data.env, 'BUILD', buildId)
-      );
-      await setIsBuildLogsLoading(false);
-    }
   };
+
   const onExpand = () => {
     if (drawerRef.current) {
       drawerRef.current.focus();
@@ -234,41 +208,6 @@ export const SSRDetails = () => {
     setIsExpanded(false);
   };
 
-  function NewlineText(props: string) {
-    const text = props;
-    const newText = text.split('\n').map((str: string) => <p key={str}>{str}</p>);
-
-    return newText;
-  }
-  const build = buildLogsForSpa ? (
-    <div>
-      <CodeBlock className="pf-u-mt-md">{NewlineText(buildLogsForSpa)}</CodeBlock>
-    </div>
-  ) : (
-    <div>
-      <EmptyState>
-        <EmptyStateIcon icon={CubesIcon} />
-        <Title headingLevel="h4" size="lg">
-          No build logs found for <b>{spaName}</b> spa.
-        </Title>
-      </EmptyState>
-    </div>
-  );
-  const deployment = deploymentLogsForSpa ? (
-    <div>
-      {' '}
-      <CodeBlock className="pf-u-mt-md">{NewlineText(deploymentLogsForSpa)}</CodeBlock>
-    </div>
-  ) : (
-    <div>
-      <EmptyState>
-        <EmptyStateIcon icon={CubesIcon} />
-        <Title headingLevel="h4" size="lg">
-          No deployment logs found for <b>{spaName}</b> spa.
-        </Title>
-      </EmptyState>
-    </div>
-  );
   const panelContent = (
     <DrawerPanelContent>
       <DrawerHead>
@@ -276,11 +215,22 @@ export const SSRDetails = () => {
 
         <Tabs activeKey={activeTabKey} onSelect={handleTabClick}>
           <Tab eventKey={0} title="Deployment Logs">
-            {isDepLogsLoading ? <Spinner /> : deployment}
+            <ViewLogs
+              propertyIdentifier={propertyIdentifier}
+              spaName={spaName}
+              env={envName}
+              type={activeTabKey}
+              idList={podList?.data}
+            />
           </Tab>
-
           <Tab eventKey={1} title="Build Logs">
-            {isBuildLogsLoading ? <Spinner /> : build}
+            <ViewLogs
+              propertyIdentifier={propertyIdentifier}
+              spaName={spaName}
+              env={envName}
+              type={activeTabKey}
+              idList={buildIdList}
+            />
           </Tab>
         </Tabs>
         <DrawerActions>
@@ -295,7 +245,6 @@ export const SSRDetails = () => {
       <Button onClick={() => handlePopUpOpen('createSSRDeployment')} icon={<PlusCircleIcon />}>
         Add New App
       </Button>
-
       <Drawer
         isExpanded={isExpanded}
         position="bottom"

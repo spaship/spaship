@@ -15,6 +15,7 @@ import {
   SplitItem,
   TextInput
 } from '@patternfly/react-core';
+import { useState } from 'react';
 
 export const schema = yup.object({
   label: yup.string().label('Label').trim().max(50).required(),
@@ -33,6 +34,11 @@ export const schema = yup.object({
     .required(),
   expiresIn: yup
     .string()
+    .when('isChecked', {
+      is: true,
+      then: yup.string().required('API Key Expiry is a required field'),
+      otherwise: yup.string()
+    })
     .label('API Key Expiry')
     .test('is-valid-date', 'Date selected is expired', (value) => {
       if (!value) return true;
@@ -47,7 +53,6 @@ export const schema = yup.object({
       const expiry = new Date(value);
       return maxDate > expiry;
     })
-    .required()
 });
 
 export interface FormData extends yup.InferType<typeof schema> {}
@@ -68,6 +73,11 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
     mode: 'onBlur',
     resolver: yupResolver(schema)
   });
+  const [isChecked, setisChecked] = useState<boolean>(false);
+
+  const handleChange = (checked: boolean) => {
+    setisChecked(checked);
+  };
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -99,17 +109,16 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
           <Controller
             control={control}
             name="expiresIn"
-            defaultValue=""
+            defaultValue={!isChecked ? '' : 'NA'}
             render={({ field: { onChange, value, onBlur }, fieldState: { error } }) => (
               <FormGroup
                 label="API Key Expiry"
                 fieldId="property-env-expiry"
-                isRequired
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
               >
                 <DatePicker
-                  value={value}
+                  value={!isChecked ? value : 'NA'}
                   onBlur={(str) => {
                     onBlur();
                     onChange(str);
@@ -125,6 +134,15 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
                     onChange(str);
                     onBlur();
                   }}
+                  isDisabled={isChecked}
+                />
+                <Checkbox
+                  className="pf-u-mt-md"
+                  label="Never Expire"
+                  isChecked={isChecked}
+                  onChange={handleChange}
+                  id="controlled-check-1"
+                  name="Never Expire"
                 />
               </FormGroup>
             )}
