@@ -53,7 +53,6 @@ export const schema = yup.object({
       const expiry = new Date(value);
       return maxDate > expiry;
     })
-  // .required()
 });
 
 export interface FormData extends yup.InferType<typeof schema> {}
@@ -115,7 +114,6 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
               <FormGroup
                 label="API Key Expiry"
                 fieldId="property-env-expiry"
-                // isRequired
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
               >
