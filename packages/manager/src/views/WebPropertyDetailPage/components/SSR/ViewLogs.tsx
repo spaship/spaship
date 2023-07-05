@@ -18,6 +18,11 @@ type Props = {
   idList: string[];
 };
 
+const logType = {
+  POD: 'POD',
+  BUILD: 'BUILD'
+};
+
 export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Props) => {
   const [logsData, setLogsData] = useState<any>([]);
   const [isLogsLoading, setIsLogsLoading] = useState<boolean>(true);
@@ -26,8 +31,8 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
 
   const podList = useListOfPods(propertyIdentifier, spaName, env);
 
-  const onToggle = (isOpen1: boolean) => {
-    setIsOpen(isOpen1);
+  const onToggle = (isSelectOpen: boolean) => {
+    setIsOpen(isSelectOpen);
   };
   const clearSelection = () => {
     setId('');
@@ -46,15 +51,15 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
   };
 
   useEffect(() => {
-    const pID = id !== '' ? id : podList?.data && podList?.data[0];
-    const buildID = id !== '' ? id : idList && setId(idList.reverse()[0]);
+    const pId = id !== '' ? id : podList?.data && podList?.data[0];
+    const buildId = id !== '' ? id : idList && setId(idList.reverse()[0]);
 
     fetchLogsforSpa(
       propertyIdentifier,
       spaName,
       env,
-      type === 0 ? 'POD' : 'BUILD',
-      type === 1 ? buildID || undefined : pID || undefined
+      type === 0 ? logType.POD : logType.BUILD,
+      type === 1 ? buildId || undefined : pId || undefined
     ).then((data) => {
       setIsLogsLoading(true);
       setLogsData(data);
@@ -67,8 +72,8 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
         propertyIdentifier,
         spaName,
         env,
-        type === 0 ? 'POD' : 'BUILD',
-        type === 1 ? buildID || undefined : pID || undefined
+        type === 0 ? logType.POD : logType.BUILD,
+        type === 1 ? buildId || undefined : pId || undefined
       ).then((data) => {
         setIsLogsLoading(true);
         setLogsData(data);
@@ -95,7 +100,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
   return (
     <div>
       <div className="pf-u-mb-md pf-u-mt-md">
-        {type === 0 ? 'POD' : 'BUILD'} Logs for <b>{spaName}</b>
+        {type === 0 ? logType.POD : logType.BUILD} Logs for <b>{spaName}</b>
       </div>
 
       {!isLogsLoading ? (
@@ -119,7 +124,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
             <EmptyState>
               <EmptyStateIcon icon={CubesIcon} />
               <Title headingLevel="h4" size="lg">
-                No {type === 0 ? 'POD' : 'BUILD'} logs found for <b>{id}</b>
+                No {type === 0 ? logType.POD : logType.BUILD} logs found for <b>{id}</b>
               </Title>
             </EmptyState>
           )}
@@ -128,7 +133,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
         <EmptyState>
           <EmptyStateIcon icon={CubesIcon} />
           <Title headingLevel="h4" size="lg">
-            No {type === 0 ? 'POD' : 'BUILD'} logs found for <b>{spaName}</b> spa.
+            No {type === 0 ? logType.POD : logType.BUILD} logs found for <b>{spaName}</b> spa.
           </Title>
         </EmptyState>
       )}
