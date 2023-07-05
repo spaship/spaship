@@ -178,7 +178,7 @@ export const SSRDetails = () => {
   const [envName, setEnvName] = useState('');
 
   const podList = useListOfPods(propertyIdentifier, spaName, envName);
-  const [buildIDList, setbuildIDList] = useState<string[]>([]);
+  const [buildIdList, setbuildIdList] = useState<string[]>([]);
 
   const handleTabClick = async (
     event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
@@ -193,7 +193,7 @@ export const SSRDetails = () => {
     buildName: string[],
     rowData: any
   ) => {
-    setbuildIDList(buildName);
+    setbuildIdList(buildName);
     setSpaName(name);
     setEnvName(rowData.env);
     setIsExpanded(!isExpanded);
@@ -229,7 +229,7 @@ export const SSRDetails = () => {
               spaName={spaName}
               env={envName}
               type={activeTabKey}
-              idList={buildIDList}
+              idList={buildIdList}
             />
           </Tab>
         </Tabs>
@@ -245,7 +245,6 @@ export const SSRDetails = () => {
       <Button onClick={() => handlePopUpOpen('createSSRDeployment')} icon={<PlusCircleIcon />}>
         Add New App
       </Button>
-      {/* <ViewLogs propertyIdentifier={propertyIdentifier} spaName="demo" env="prod" temp={temp} /> */}
       <Drawer
         isExpanded={isExpanded}
         position="bottom"

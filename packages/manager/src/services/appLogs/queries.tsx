@@ -36,14 +36,17 @@ export const useGetLogsforSpa = (
   env: string,
   type?: string,
   id?: string
-) =>
-  useQuery(
+) => {
+  const refetchInterval = 5000;
+
+  return useQuery(
     logKeys.logs,
     () => fetchLogsforSpa(webPropertyIdentifier, applicationIdentifier, env, type, id),
     {
-      refetchInterval: 5000
+      refetchInterval
     }
   );
+};
 
 const fetchListOfPods = async (
   propertyIdentifier: string,

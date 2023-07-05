@@ -22,7 +22,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
   const [logsData, setLogsData] = useState<any>([]);
   const [isLogsLoading, setIsLogsLoading] = useState<boolean>(true);
   const [isOpen, setIsOpen] = useState(false);
-  const [Id, setId] = useState('');
+  const [id, setId] = useState('');
 
   const podList = useListOfPods(propertyIdentifier, spaName, env);
 
@@ -46,8 +46,8 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
   };
 
   useEffect(() => {
-    const pID = Id !== '' ? Id : podList?.data && podList?.data[0];
-    const buildID = Id !== '' ? Id : idList && setId(idList.reverse()[0]);
+    const pID = id !== '' ? id : podList?.data && podList?.data[0];
+    const buildID = id !== '' ? id : idList && setId(idList.reverse()[0]);
 
     fetchLogsforSpa(
       propertyIdentifier,
@@ -84,7 +84,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
     return () => {
       clearInterval(interval);
     };
-  }, [env, Id, podList?.data, propertyIdentifier, spaName, type, idList]);
+  }, [env, id, podList?.data, propertyIdentifier, spaName, type, idList]);
 
   function NewlineText(props: string) {
     const text = props;
@@ -106,7 +106,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
             aria-label="Select Input"
             onToggle={onToggle}
             onSelect={onSelect}
-            selections={Id}
+            selections={id}
             isOpen={isOpen}
           >
             {type === 1
@@ -119,7 +119,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
             <EmptyState>
               <EmptyStateIcon icon={CubesIcon} />
               <Title headingLevel="h4" size="lg">
-                No {type === 0 ? 'POD' : 'BUILD'} logs found for <b>{Id}</b>
+                No {type === 0 ? 'POD' : 'BUILD'} logs found for <b>{id}</b>
               </Title>
             </EmptyState>
           )}
