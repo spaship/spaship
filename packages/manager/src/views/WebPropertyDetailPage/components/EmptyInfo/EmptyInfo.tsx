@@ -71,7 +71,7 @@ export const EmptyInfo = ({ propertyIdentifier }: Props): JSX.Element => (
         <CodeBlock>
           <CodeBlockCode>
             <ClipboardCopy hoverTip="Copy" clickTip="Copied" variant="inline-compact" isCode>
-              {`spaship env --name=<new-env-name> --url=${window.location.origin}/applications/deploy/${propertyIdentifier}/<env-name> --apikey=<your-api-key>`}
+              {`spaship env --name=<new-env-name> --url=${window.location.origin}/api/v1/applications/deploy/${propertyIdentifier}/<env-name> --apikey=<your-api-key>`}
             </ClipboardCopy>
           </CodeBlockCode>
         </CodeBlock>

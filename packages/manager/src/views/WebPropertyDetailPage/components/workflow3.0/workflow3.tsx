@@ -2,9 +2,11 @@
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useAddSsrSpaProperty, useValidateSsrSpaProperty } from '@app/services/ssr';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Base64 } from 'js-base64';
 import {
   Alert,
   Button,
+  Checkbox,
   Form,
   FormGroup,
   FormSelect,
@@ -54,7 +56,8 @@ const schema = yup.object({
   config: yup.array().of(
     yup.object({
       key: yup.string().trim().required().label('Configuration Key'),
-      value: yup.string().trim().required().label('Configuration Value')
+      value: yup.string().trim().required().label('Configuration Value'),
+      isSecret: yup.boolean().label('isSecret')
     })
   ),
   buildArgs: yup.array().of(
@@ -130,8 +133,15 @@ export const Workflow3 = ({
           ? data.healthCheckPath.trim()
           : `/${data.healthCheckPath.trim()}`,
         config: data.config
-          ? data.config.reduce((acc: Record<string, string>, cur: any) => {
-              acc[cur.key.trim()] = cur.value.trim();
+          ? data.config.reduce((acc: Record<string, any>, cur: any) => {
+              if (cur.isSecret) {
+                if (!acc.spashipWorkflowSecret) {
+                  acc.spashipWorkflowSecret = {};
+                }
+                acc.spashipWorkflowSecret[cur.key] = Base64.encode(cur.value);
+              } else {
+                acc[cur.key] = cur.value;
+              }
               return acc;
             }, {})
           : {},
@@ -262,7 +272,7 @@ export const Workflow3 = ({
   });
 
   const handleAddConfig = () => {
-    appendConfig({ key: '', value: '' });
+    appendConfig({ key: '', value: '', isSecret: false });
   };
 
   const handleAddBuildArgs = () => {
@@ -318,6 +328,13 @@ export const Workflow3 = ({
     }
   };
 
+  const [enabledStates, setEnabledStates] = useState(configFields.map((pair) => pair.isSecret));
+
+  const handleEnabledChange = (index: number, checked: boolean) => {
+    const newEnabledStates = [...enabledStates];
+    newEnabledStates[index] = checked;
+    setEnabledStates(newEnabledStates);
+  };
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Grid>
@@ -861,6 +878,7 @@ export const Workflow3 = ({
                     </Button>
                   </SplitItem>
                 </Split>
+
                 {configFields.map((pair, index) => (
                   <Split key={pair.id} hasGutter>
                     <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">
@@ -903,7 +921,7 @@ export const Workflow3 = ({
                           >
                             <TextInput
                               id={`value-${index}`}
-                              type="text"
+                              type={enabledStates[index] ? 'password' : 'text'}
                               placeholder="Configuration Value"
                               value={value}
                               onChange={(event) => {
@@ -912,6 +930,24 @@ export const Workflow3 = ({
                               onBlur={onBlur}
                             />
                           </FormGroup>
+                        )}
+                      />
+                    </SplitItem>
+                    <SplitItem>
+                      <Controller
+                        control={control}
+                        name={`config.${index}.isSecret`}
+                        defaultValue={enabledStates[index]}
+                        render={({ field: { onChange, value } }) => (
+                          <Checkbox
+                            id={`enabled-${index}`}
+                            isChecked={value}
+                            onChange={(checked) => {
+                              handleEnabledChange(index, checked);
+                              onChange(checked);
+                            }}
+                            label="Is Secret"
+                          />
                         )}
                       />
                     </SplitItem>

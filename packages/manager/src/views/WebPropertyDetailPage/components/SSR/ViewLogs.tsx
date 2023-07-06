@@ -1,4 +1,5 @@
 import { fetchLogsforSpa, useListOfPods } from '@app/services/appLogs';
+import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
   CodeBlock,
   EmptyState,
@@ -101,13 +102,14 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
   return (
     <div>
       <div className="pf-u-mb-md pf-u-mt-md">
-        {type === 0 ? logType.POD : logType.BUILD} Logs for <b>{spaName}</b>
+        {type === 0 ? toPascalCase(logType.POD) : toPascalCase(logType.BUILD)} Logs for{' '}
+        <b>{spaName}</b>
       </div>
 
       {!isLogsLoading ? (
         <div>
           <Select
-            className="listID"
+            className="custom-select"
             variant="single"
             aria-label="Select Input"
             onToggle={onToggle}
@@ -125,7 +127,8 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
             <EmptyState>
               <EmptyStateIcon icon={CubesIcon} />
               <Title headingLevel="h4" size="lg">
-                No {type === 0 ? logType.POD : logType.BUILD} logs found for <b>{id}</b>
+                No {type === 0 ? toPascalCase(logType.POD) : toPascalCase(logType.BUILD)} logs found
+                for <b>{spaName}</b> spa.
               </Title>
             </EmptyState>
           )}
@@ -134,7 +137,8 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
         <EmptyState>
           <EmptyStateIcon icon={CubesIcon} />
           <Title headingLevel="h4" size="lg">
-            No {type === 0 ? logType.POD : logType.BUILD} logs found for <b>{spaName}</b> spa.
+            No {type === 0 ? toPascalCase(logType.POD) : toPascalCase(logType.BUILD)} logs found for{' '}
+            <b>{spaName}</b> spa.
           </Title>
         </EmptyState>
       )}
