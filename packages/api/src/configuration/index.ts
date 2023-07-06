@@ -82,7 +82,7 @@ export enum MAX {
   NAME = 100,
   DEFAULT = 100,
   PROPERTY = 50,
-  EXPIRESIN = 4,
+  EXPIRESIN = 6,
   ENV = 15,
   REF = 500,
   CLUSTER = 12
