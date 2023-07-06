@@ -2,9 +2,11 @@
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useAddSsrSpaProperty, useValidateSsrSpaProperty } from '@app/services/ssr';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Base64 } from 'js-base64';
 import {
   Alert,
   Button,
+  Checkbox,
   Form,
   FormGroup,
   FormSelect,
@@ -22,8 +24,8 @@ import { useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import * as yup from 'yup';
+import { TDataContainerized, TDataWorkflow } from './types';
 import './workflow.css';
-import { TDataWorkflow, TDataContainerized } from './types';
 
 const schema = yup.object({
   name: yup.string().required().label('Application Name'),
@@ -55,7 +57,8 @@ const schema = yup.object({
   config: yup.array().of(
     yup.object({
       key: yup.string().required().label('Configuration Key'),
-      value: yup.string().required().label('Configuration Value')
+      value: yup.string().required().label('Configuration Value'),
+      isSecret: yup.boolean().label('isSecret')
     })
   ),
   buildArgs: yup.array().of(
@@ -86,7 +89,6 @@ const schema = yup.object({
 interface Props {
   onClose: () => void;
   propertyIdentifier: string;
-
   dataProps: TDataWorkflow | TDataContainerized;
   flag: string;
 }
@@ -94,13 +96,19 @@ type MapItem = {
   name: string;
   value: string;
 };
+
 const keyValuePairsGenerator = ({
   dataProps,
   property
 }: {
-  dataProps: TDataWorkflow | TDataContainerized;
+  dataProps: Record<string, any>;
   property: string;
-}) => Object.entries(dataProps?.[property] || {}).map(([key, value]) => ({ key, value }));
+}) =>
+  Object.entries(dataProps?.[property] || {}).map(([key, value]) => ({
+    key,
+    value: Base64.decode(value as string), // Type assertion to enforce string type
+    isSecret: property === 'spashipWorkflowSecret'
+  }));
 
 export type FormData = yup.InferType<typeof schema>;
 export const ConfigureWorkflowForm = ({
@@ -119,11 +127,14 @@ export const ConfigureWorkflowForm = ({
   } = useForm<FormData>({
     defaultValues: {
       ...dataProps,
-
-      config: keyValuePairsGenerator({ dataProps, property: 'config' }).map((item) => ({
-        key: item.key,
-        value: item.value as string | undefined
-      })),
+      config: keyValuePairsGenerator({
+        dataProps: dataProps.config,
+        property: 'spashipWorkflowSecret'
+      }).concat(
+        Object.entries(dataProps.config)
+          .filter(([key]) => key !== 'spashipWorkflowSecret')
+          .map(([key, value]) => ({ key, value, isSecret: false }))
+      ),
       buildArgs: dataProps?.buildArgs.map((item: MapItem) => ({
         key: item.name,
         value: item.value
@@ -146,53 +157,6 @@ export const ConfigureWorkflowForm = ({
   const validateSsrSpaProperty = useValidateSsrSpaProperty();
   const [repoValidateMessage, setRepoValidateMessage] = useState('');
   const [appValidateMessage, setAppValidateMessage] = useState('');
-
-  const onSubmit = async (data: FormData) => {
-    if (step === 5) {
-      const toastId = toast.loading('Submitting form...');
-      const newdata = {
-        ...data,
-        path: data.path.startsWith('/') ? data.path : `/${data.path}`,
-        healthCheckPath: data.healthCheckPath.startsWith('/')
-          ? data.healthCheckPath
-          : `/${data.healthCheckPath}`,
-        config: data.config
-          ? data.config.reduce((acc: Record<string, string>, cur: any) => {
-              acc[cur.key] = cur.value;
-              return acc;
-            }, {})
-          : {},
-        buildArgs: data.buildArgs
-          ? data.buildArgs.map((obj) => ({ name: obj.key, value: obj.value }))
-          : [],
-        propertyIdentifier,
-        reDeployment: false
-      };
-
-      onClose();
-
-      try {
-        await createSsrSpaProperty.mutateAsync(newdata);
-        onClose();
-        toast.success('Deployed Containerized Application successfully', { id: toastId });
-      } catch (error) {
-        if (error instanceof AxiosError && error.response && error.response.status === 403) {
-          toast.error("You don't have access to perform this action", { id: toastId });
-          onClose();
-        } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
-          toast.error(error.response.data.message, {
-            style: {
-              maxWidth: '400px',
-              overflowWrap: 'break-word',
-              wordBreak: 'break-all'
-            }
-          });
-        } else {
-          toast.error('Failed to deploy containerized application', { id: toastId });
-        }
-      }
-    }
-  };
 
   const handleNext = async () => {
     const formData = getValues();
@@ -292,7 +256,7 @@ export const ConfigureWorkflowForm = ({
   });
 
   const handleAddConfig = () => {
-    appendConfig({ key: '', value: '' });
+    appendConfig({ key: '', value: '', isSecret: false });
   };
 
   const handleAddBuildArgs = () => {
@@ -344,6 +308,66 @@ export const ConfigureWorkflowForm = ({
           }
         } else {
           toast.error('Failed to validate the containerized application');
+        }
+      }
+    }
+  };
+  const [enabledStates, setEnabledStates] = useState(configFields.map((pair) => pair.isSecret));
+
+  const handleEnabledChange = (index: number, checked: boolean) => {
+    const newEnabledStates = [...enabledStates];
+    newEnabledStates[index] = checked;
+    setEnabledStates(newEnabledStates);
+  };
+  const onSubmit = async (data: FormData) => {
+    if (step === 5) {
+      const toastId = toast.loading('Submitting form...');
+      const newdata = {
+        ...data,
+        path: data.path.startsWith('/') ? data.path : `/${data.path}`,
+        healthCheckPath: data.healthCheckPath.startsWith('/')
+          ? data.healthCheckPath
+          : `/${data.healthCheckPath}`,
+        config: data.config
+          ? data.config.reduce((acc: Record<string, any>, cur: any) => {
+              if (cur.isSecret) {
+                if (!acc.spashipWorkflowSecret) {
+                  acc.spashipWorkflowSecret = {};
+                }
+                acc.spashipWorkflowSecret[cur.key] = Base64.encode(cur.value);
+              } else {
+                acc[cur.key] = cur.value;
+              }
+              return acc;
+            }, {})
+          : {},
+        buildArgs: data.buildArgs
+          ? data.buildArgs.map((obj) => ({ name: obj.key, value: obj.value }))
+          : [],
+        propertyIdentifier,
+        reDeployment: false
+      };
+
+      onClose();
+
+      try {
+        await createSsrSpaProperty.mutateAsync(newdata);
+        onClose();
+        toast.success('Deployed Containerized Application successfully', { id: toastId });
+      } catch (error) {
+        if (error instanceof AxiosError && error.response && error.response.status === 403) {
+          toast.error("You don't have access to perform this action", { id: toastId });
+          onClose();
+        } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
+          toast.error(error.response.data.message, {
+            style: {
+              maxWidth: '400px',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-all'
+            }
+          });
+        } else {
+          toast.error('Failed to deploy containerized application', { id: toastId });
         }
       }
     }
@@ -1023,7 +1047,7 @@ export const ConfigureWorkflowForm = ({
                           >
                             <TextInput
                               id={`value-${index}`}
-                              type="text"
+                              type={enabledStates[index] ? 'password' : 'text'}
                               placeholder="Configuration Value"
                               value={value}
                               onChange={(event) => {
@@ -1032,6 +1056,24 @@ export const ConfigureWorkflowForm = ({
                               onBlur={onBlur}
                             />
                           </FormGroup>
+                        )}
+                      />
+                    </SplitItem>
+                    <SplitItem>
+                      <Controller
+                        control={control}
+                        name={`config.${index}.isSecret`}
+                        defaultValue={enabledStates[index]}
+                        render={({ field: { onChange, value } }) => (
+                          <Checkbox
+                            id={`enabled-${index}`}
+                            isChecked={value}
+                            onChange={(checked) => {
+                              handleEnabledChange(index, checked);
+                              onChange(checked);
+                            }}
+                            label="Is Secret"
+                          />
                         )}
                       />
                     </SplitItem>
@@ -1730,6 +1772,7 @@ export const ConfigureWorkflowForm = ({
               >
                 Back
               </Button>
+
               <Button
                 variant="primary"
                 type="submit"

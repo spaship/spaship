@@ -196,7 +196,7 @@ export const SSRDetails = () => {
     setbuildIdList(buildName);
     setSpaName(name);
     setEnvName(rowData.env);
-    setIsExpanded(!isExpanded);
+    setIsExpanded(true);
   };
 
   const onExpand = () => {
@@ -204,7 +204,8 @@ export const SSRDetails = () => {
       drawerRef.current.focus();
     }
   };
-  const onCloseClick = () => {
+  const onCloseClick = (event: any) => {
+    event.stopPropagation();
     setIsExpanded(false);
   };
 

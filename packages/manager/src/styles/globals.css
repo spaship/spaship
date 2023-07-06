@@ -205,6 +205,6 @@ body {
   color: 'green' !important;
 }
 
-.pf-c-list .pf-m-expanded {
+.pf-c-list > .pf-m-expanded {
   height: 500px !important;
 }
