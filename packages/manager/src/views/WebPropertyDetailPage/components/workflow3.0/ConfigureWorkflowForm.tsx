@@ -96,7 +96,7 @@ type MapItem = {
   name: string;
   value: string;
 };
-
+const secretKey = 'spashipWorkflowSecret';
 const keyValuePairsGenerator = ({
   dataProps,
   property
@@ -107,7 +107,7 @@ const keyValuePairsGenerator = ({
   Object.entries(dataProps?.[property] || {}).map(([key, value]) => ({
     key,
     value: Base64.decode(value as string), // Type assertion to enforce string type
-    isSecret: property === 'spashipWorkflowSecret'
+    isSecret: property === secretKey
   }));
 
 export type FormData = yup.InferType<typeof schema>;
@@ -129,10 +129,10 @@ export const ConfigureWorkflowForm = ({
       ...dataProps,
       config: keyValuePairsGenerator({
         dataProps: dataProps.config,
-        property: 'spashipWorkflowSecret'
+        property: secretKey
       }).concat(
         Object.entries(dataProps.config)
-          .filter(([key]) => key !== 'spashipWorkflowSecret')
+          .filter(([key]) => key !== secretKey)
           .map(([key, value]) => ({ key, value, isSecret: false }))
       ),
       buildArgs: dataProps?.buildArgs.map((item: MapItem) => ({
