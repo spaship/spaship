@@ -68,29 +68,29 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
       setIsLogsLoading(false);
     });
 
-    // let counter = 0;
-    // const interval = setInterval(() => {
-    //   fetchLogsforSpa(
-    //     propertyIdentifier,
-    //     spaName,
-    //     env,
-    //     type === 0 ? logType.POD : logType.BUILD,
-    //     type === 1 ? buildId || undefined : pId || undefined
-    //   ).then((data) => {
-    //     setIsLogsLoading(true);
-    //     setLogsData(data);
-    //     setIsLogsLoading(false);
-    //   });
+    let counter = 0;
+    const interval = setInterval(() => {
+      fetchLogsforSpa(
+        propertyIdentifier,
+        spaName,
+        env,
+        type === 0 ? logType.POD : logType.BUILD,
+        type === 1 ? buildId || undefined : pId || undefined
+      ).then((data) => {
+        setIsLogsLoading(true);
+        setLogsData(data);
+        setIsLogsLoading(false);
+      });
 
-    //   counter += 1;
-    //   if (counter >= 72) {
-    //     clearInterval(interval);
-    //   }
-    // }, 5000);
+      counter += 1;
+      if (counter >= 72) {
+        clearInterval(interval);
+      }
+    }, 5000);
 
-    // return () => {
-    //   clearInterval(interval);
-    // };
+    return () => {
+      clearInterval(interval);
+    };
   }, [env, id, podList?.data, propertyIdentifier, spaName, type, idList]);
 
   function NewlineText(props: string) {
