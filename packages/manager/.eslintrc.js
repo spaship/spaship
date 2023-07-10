@@ -22,7 +22,13 @@ module.exports = {
     'prettier/prettier': ['error'],
     'jsx-a11y/anchor-is-valid': 'off',
     'react/jsx-filename-extension': [1, { extensions: ['.tsx', '.ts'] }],
-    'import/no-extraneous-dependencies': ['error', {'devDependencies': true}],
+    'import/no-extraneous-dependencies': ['error',  {
+        'devDependencies': true,
+        'optionalDependencies': false,
+        'peerDependencies': false,
+        'packageDir': './'
+      }],
+    
     'react/function-component-definition': [
       2,
       {

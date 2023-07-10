@@ -1545,7 +1545,7 @@ export const Workflow3 = ({
                             >
                               <TextInput
                                 id={`value-${index}`}
-                                type="text"
+                                type={enabledStates[index] ? 'password' : 'text'}
                                 placeholder="Configuration Value"
                                 value={value}
                                 onChange={(event) => {

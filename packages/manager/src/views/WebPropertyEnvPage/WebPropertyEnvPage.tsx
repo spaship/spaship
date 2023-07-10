@@ -195,7 +195,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
         propertyIdentifier,
         createdBy: session?.user.email || '',
         expiresIn:
-          data.expiresIn === undefined || data.expiresIn === ''
+          data.expiresIn === undefined || data.expiresIn === '' || data.expiresIn === 'NA'
             ? getExpiryDayDiff(String(futureDate))
             : getExpiryDayDiff(data.expiresIn)
       });
