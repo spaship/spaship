@@ -33,25 +33,28 @@ export const schema = yup.object({
     .min(1)
     .required(),
   expiresIn: yup
-    .string()
-    .when('isChecked', {
-      is: true,
-      then: yup.string().required('API Key Expiry is a required field'),
-      otherwise: yup.string()
-    })
-    .label('API Key Expiry')
+    .mixed()
+    .test(
+      'valid-value',
+      'Invalid value',
+      (value) => ['NA', ''].includes(value) || yup.date().isValidSync(value)
+    )
     .test('is-valid-date', 'Date selected is expired', (value) => {
-      if (!value) return true;
-      const present = new Date();
-      const expiry = new Date(value);
-      return present < expiry;
+      if (value !== 'NA' && value !== '') {
+        const present = new Date();
+        const expiry = new Date(value);
+        return present < expiry;
+      }
+      return true;
     })
     .test('is-invalid-range', 'Expiry should not be more than 1 year', (value) => {
-      if (!value) return true;
-      const maxDate = new Date();
-      maxDate.setDate(maxDate.getDate() + 365);
-      const expiry = new Date(value);
-      return maxDate > expiry;
+      if (value !== 'NA' && value !== '') {
+        const maxDate = new Date();
+        maxDate.setDate(maxDate.getDate() + 365);
+        const expiry = new Date(value);
+        return maxDate > expiry;
+      }
+      return true;
     })
 });
 
@@ -131,7 +134,9 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
                     } as any
                   }
                   onChange={(str) => {
-                    onChange(str);
+                    if (!isChecked) {
+                      onChange(str);
+                    }
                     onBlur();
                   }}
                   isDisabled={isChecked}
@@ -140,7 +145,14 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
                   className="pf-u-mt-md"
                   label="Never Expire"
                   isChecked={isChecked}
-                  onChange={handleChange}
+                  onChange={(checked) => {
+                    if (checked) {
+                      onChange('NA');
+                    } else {
+                      onChange('');
+                    }
+                    handleChange(checked);
+                  }}
                   id="controlled-check-1"
                   name="Never Expire"
                 />

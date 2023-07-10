@@ -106,7 +106,7 @@ const keyValuePairsGenerator = ({
 }) =>
   Object.entries(dataProps?.[property] || {}).map(([key, value]) => ({
     key,
-    value: Base64.decode(value as string), // Type assertion to enforce string type
+    value: Base64.decode(value as string),
     isSecret: property === secretKey
   }));
 
@@ -128,23 +128,25 @@ export const ConfigureWorkflowForm = ({
     defaultValues: {
       ...dataProps,
       config: keyValuePairsGenerator({
-        dataProps: dataProps.config,
+        dataProps: dataProps?.config || {},
         property: secretKey
       }).concat(
-        Object.entries(dataProps.config)
+        Object.entries(dataProps?.config || {})
           .filter(([key]) => key !== secretKey)
           .map(([key, value]) => ({ key, value, isSecret: false }))
       ),
-      buildArgs: dataProps?.buildArgs.map((item: MapItem) => ({
+      buildArgs: (dataProps?.buildArgs || []).map((item: MapItem) => ({
         key: item.name,
         value: item.value
       })),
-      contextDir: dataProps.contextDir ? dataProps.contextDir : '/',
-      port: dataProps.port ? dataProps.port : 3000,
-      path: dataProps.path ? dataProps.path : '/',
-      healthCheckPath: dataProps.healthCheckPath ? dataProps.healthCheckPath : '/',
-      dockerFileName: dataProps.dockerFileName ? dataProps.dockerFileName : 'Dockerfile'
+      contextDir: dataProps && dataProps.contextDir ? dataProps.contextDir : '/',
+      port: dataProps && dataProps.port ? dataProps.port : 3000,
+      path: dataProps && dataProps.path ? dataProps.path : '/',
+      healthCheckPath: dataProps && dataProps.healthCheckPath ? dataProps.healthCheckPath : '/',
+      dockerFileName:
+        dataProps && dataProps.dockerFileName ? dataProps.dockerFileName : 'Dockerfile'
     },
+
     mode: 'onBlur',
     resolver: yupResolver(schema)
   });
@@ -230,7 +232,6 @@ export const ConfigureWorkflowForm = ({
     } catch (error) {
       console.error(error);
     }
-    // }
   };
 
   const handleBack = () => {
@@ -929,7 +930,7 @@ export const ConfigureWorkflowForm = ({
                             {...field}
                             defaultValue={3000}
                             onChange={(e) => {
-                              const value = parseInt(e, 10); // or parseFloat(e) for decimal numbers
+                              const value = parseInt(e, 10);
                               if (!Number.isNaN(value)) {
                                 setValue('port', value);
                               } else {
@@ -1668,7 +1669,7 @@ export const ConfigureWorkflowForm = ({
                             >
                               <TextInput
                                 id={`value-${index}`}
-                                type="text"
+                                type={enabledStates[index] ? 'password' : 'text'}
                                 placeholder="Configuration Value"
                                 value={value}
                                 onChange={(event) => {

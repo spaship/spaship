@@ -51,36 +51,34 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
     }
     setIsOpen(false);
   };
-
   useEffect(() => {
-    const pId = id !== '' ? id : podList?.data && podList?.data[0];
-    const buildId = id !== '' ? id : idList && setId(idList.reverse()[0]);
+    const fetchData = async () => {
+      try {
+        const pId = id || (podList?.data && podList?.data[0]);
+        const buildId = id || (idList && idList.reverse()[0]);
 
-    fetchLogsforSpa(
-      propertyIdentifier,
-      spaName,
-      env,
-      type === 0 ? logType.POD : logType.BUILD,
-      type === 1 ? buildId || undefined : pId || undefined
-    ).then((data) => {
-      setIsLogsLoading(true);
-      setLogsData(data);
-      setIsLogsLoading(false);
-    });
+        setIsLogsLoading(true);
+
+        const data = await fetchLogsforSpa(
+          propertyIdentifier,
+          spaName,
+          env,
+          type === 0 ? logType.POD : logType.BUILD,
+          type === 1 ? buildId : pId
+        );
+
+        setLogsData(data);
+        setIsLogsLoading(false);
+      } catch (error) {
+        console.error('Error fetching logs:', error);
+      }
+    };
+
+    fetchData();
 
     let counter = 0;
     const interval = setInterval(() => {
-      fetchLogsforSpa(
-        propertyIdentifier,
-        spaName,
-        env,
-        type === 0 ? logType.POD : logType.BUILD,
-        type === 1 ? buildId || undefined : pId || undefined
-      ).then((data) => {
-        setIsLogsLoading(true);
-        setLogsData(data);
-        setIsLogsLoading(false);
-      });
+      fetchData();
 
       counter += 1;
       if (counter >= 72) {
