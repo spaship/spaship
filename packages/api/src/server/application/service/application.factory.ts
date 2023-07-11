@@ -5,21 +5,21 @@ import * as FormData from 'form-data';
 import * as fs from 'fs';
 import { Base64 } from 'js-base64';
 import * as path from 'path';
-import { EPHEMERAL_ENV, CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS } from 'src/configuration';
+import { CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS, EPHEMERAL_ENV } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import {
   ApplicationConfigDTO,
   ApplicationResponse,
-  CreateApplicationDto,
-  GitValidateResponse,
-  GitValidationRequestDTO,
   ContainerizedDeploymentRequest,
   ContainerizedDeploymentResponse,
   ContainerizedGitDeploymentRequest,
-  GitDeploymentRequestDTO,
-  GitApplicationStatusRequest,
   ContainerizedGitDeploymentResponse,
-  GitApplicationStatusResponse
+  CreateApplicationDto,
+  GitApplicationStatusRequest,
+  GitApplicationStatusResponse,
+  GitDeploymentRequestDTO,
+  GitValidateResponse,
+  GitValidationRequestDTO
 } from 'src/server/application/application.dto';
 import { Application } from 'src/server/application/application.entity';
 import { AuthFactory } from 'src/server/auth/auth.factory';
@@ -373,6 +373,21 @@ export class ApplicationFactory {
     }
   }
 
+  // @internal Update the secret for a Containerized application
+  async containerizedSecretUpdate(request?: ContainerizedDeploymentRequest, deploymentBaseURL?: string) {
+    const headers = { Authorization: await AuthFactory.getAccessToken() };
+    this.logger.log('ContainerizedContainerizedSecretRequest', JSON.stringify(request));
+    try {
+      const response = await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/deployment/v1/secret`, request, {
+        maxBodyLength: Infinity,
+        headers
+      });
+      this.logger.log('ContainerizedDeploymentSecretResponse', JSON.stringify(response.data));
+    } catch (err) {
+      this.logger.error('ContainerizedDeploymentConfig', err);
+    }
+  }
+
   // @internal Get the List of the Pods from the Operator
   async getListOfPods(deploymentName: string, namespace: string, deploymentBaseURL?: string): Promise<String[]> {
     const headers = { Authorization: await AuthFactory.getAccessToken() };
@@ -404,6 +419,7 @@ export class ApplicationFactory {
     containerizedApplicationRequest.imageUrl = applicationRequest.imageUrl;
     containerizedApplicationRequest.healthCheckPath = applicationRequest.healthCheckPath || applicationRequest.path;
     containerizedApplicationRequest.config = applicationRequest.config;
+    containerizedApplicationRequest.secret = applicationRequest.secret;
     containerizedApplicationRequest.port = applicationRequest.port || CONTAINERIZED_DEPLOYMENT_DETAILS.port;
     return containerizedApplicationRequest;
   }
@@ -449,7 +465,7 @@ export class ApplicationFactory {
     containerizedRequest.website = propertyIdentifier;
     containerizedRequest.nameSpace = namespace;
     containerizedRequest.environment = env;
-    containerizedRequest.configMap = this.decodeBase64ConfigValues({ ...applicationDetails.config });
+    containerizedRequest.configMap = applicationDetails.config;
     containerizedRequest.healthCheckPath = applicationDetails.healthCheckPath;
     containerizedRequest.port = applicationDetails.port || 3000;
     return containerizedRequest;
@@ -495,7 +511,7 @@ export class ApplicationFactory {
     containerizedRequest.website = configRequest.propertyIdentifier;
     containerizedRequest.nameSpace = namespace;
     containerizedRequest.environment = configRequest.env;
-    containerizedRequest.configMap = this.decodeBase64ConfigValues({ ...configRequest.config });
+    containerizedRequest.configMap = configRequest.config;
     return containerizedRequest;
   }
 
@@ -669,7 +685,10 @@ export class ApplicationFactory {
         'ApplicationCheck',
         `No Changes found in the Existing Application details for ${applicationDetails.identifier}-${applicationDetails.env}`
       );
-      if (JSON.stringify(applicationDetails.config) !== JSON.stringify(applicationRequest.config)) {
+      if (
+        JSON.stringify(applicationDetails.config) !== JSON.stringify(applicationRequest.config) ||
+        JSON.stringify(applicationDetails.secret) !== JSON.stringify(applicationRequest.secret)
+      ) {
         this.logger.log(
           'ConfigurationCheck',
           `Changes found in Application Configuration for ${applicationDetails.identifier}-${applicationDetails.env}`
@@ -689,16 +708,13 @@ export class ApplicationFactory {
     return false;
   }
 
-  // @internal Decode Base64 encoded string from the config values for operator payload
-  decodeBase64ConfigValues(config: Object): Object {
-    if (Object.prototype.hasOwnProperty.call(config, CONTAINERIZED_DEPLOYMENT_DETAILS.configSecret)) {
-      const spashipWorkflowSecret: Object = config[CONTAINERIZED_DEPLOYMENT_DETAILS.configSecret];
-      Object.entries(spashipWorkflowSecret).forEach(([key, value]) => {
-        if (Base64.encode(Base64.decode(value)) === value) config[key] = Base64.decode(value);
-        else config[key] = value;
-      });
-      delete config[CONTAINERIZED_DEPLOYMENT_DETAILS.configSecret];
-    }
-    return config;
+  // @internal Decode Base64 encoded string from the secret values for operator payload
+  decodeBase64SecretValues(secret: Object): Object {
+    const secretMap = {};
+    Object.entries(secret).forEach(([key, value]) => {
+      if (Base64.encode(Base64.decode(value)) === value) secretMap[key] = Base64.decode(value);
+      else secretMap[key] = value;
+    });
+    return secretMap;
   }
 }
