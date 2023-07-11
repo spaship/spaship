@@ -1,4 +1,4 @@
-import { fetchLogsforSpa, useListOfPods } from '@app/services/appLogs';
+import { useGetLogsforSpa, useListOfPods } from '@app/services/appLogs';
 import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
   CodeBlock,
@@ -18,6 +18,7 @@ type Props = {
   env: string;
   type: string | number;
   idList: string[];
+  id: string;
 };
 
 const logType = {
@@ -25,78 +26,66 @@ const logType = {
   BUILD: 'BUILD'
 };
 
-export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Props) => {
+function NewlineText(props: string) {
+  const text = props;
+  const newText = text.split('\n').map((str: string) => <p key={str}>{str}</p>);
+
+  return newText;
+}
+
+export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, id }: Props) => {
   const [logsData, setLogsData] = useState<any>([]);
   const [isLogsLoading, setIsLogsLoading] = useState<boolean>(true);
   const [isOpen, setIsOpen] = useState(false);
-  const [id, setId] = useState('');
-
   const podList = useListOfPods(propertyIdentifier, spaName, env);
+  const [pId, setPId] = useState<string | undefined>(idList && idList.reverse()[0]);
+  const [buildId, setBuildId] = useState<string | undefined>(idList && idList.reverse()[0]);
+
+  const { data: logs, isLoading: isFetchingLogs } = useGetLogsforSpa(
+    propertyIdentifier,
+    spaName,
+    env,
+    type === 0 ? 'POD' : 'BUILD',
+    type === 0 ? pId : buildId
+  );
+  // console.log('>> data', propertyIdentifier, spaName, env, pId, buildId);
+  useEffect(() => {
+    setLogsData(logs);
+    setIsLogsLoading(isFetchingLogs);
+  }, [logs, isFetchingLogs]);
 
   const onToggle = (isSelectOpen: boolean) => {
     setIsOpen(isSelectOpen);
   };
+  useEffect(() => {
+    setPId(idList && idList.reverse()[0]);
+    setBuildId(idList && idList.reverse()[0]);
+  }, [propertyIdentifier, spaName, env, idList]);
+
   const clearSelection = () => {
-    setId('');
+    if (type === 0) {
+      setPId(id);
+    } else {
+      setBuildId(id);
+    }
     setIsOpen(false);
   };
+
   const onSelect = (
     event: React.MouseEvent | React.ChangeEvent,
     selection: string | SelectOptionObject,
     isPlaceholder?: boolean
   ) => {
-    if (isPlaceholder) clearSelection();
-    else {
-      setId(selection as string);
+    if (isPlaceholder) {
+      clearSelection();
+    } else if (type === 0) {
+      setPId(selection as string);
+    } else {
+      setBuildId(selection as string);
     }
     setIsOpen(false);
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const pId = id || (podList?.data && podList?.data[0]);
-        const buildId = id || (idList && idList.reverse()[0]);
 
-        setIsLogsLoading(true);
-
-        const data = await fetchLogsforSpa(
-          propertyIdentifier,
-          spaName,
-          env,
-          type === 0 ? logType.POD : logType.BUILD,
-          type === 1 ? buildId : pId
-        );
-
-        setLogsData(data);
-        setIsLogsLoading(false);
-      } catch (error) {
-        console.error('Error fetching logs:', error);
-      }
-    };
-
-    fetchData();
-
-    let counter = 0;
-    const interval = setInterval(() => {
-      fetchData();
-
-      counter += 1;
-      if (counter >= 72) {
-        clearInterval(interval);
-      }
-    }, 5000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [env, id, podList?.data, propertyIdentifier, spaName, type, idList]);
-
-  function NewlineText(props: string) {
-    const text = props;
-    const newText = text.split('\n').map((str: string) => <p key={str}>{str}</p>);
-
-    return newText;
-  }
   return (
     <div>
       <div className="pf-u-mb-md pf-u-mt-md">
@@ -106,19 +95,21 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
 
       {!isLogsLoading ? (
         <div>
-          <Select
-            className="custom-select"
-            variant="single"
-            aria-label="Select Input"
-            onToggle={onToggle}
-            onSelect={onSelect}
-            selections={id}
-            isOpen={isOpen}
-          >
-            {type === 1
-              ? idList && idList.map((item: string) => <SelectOption key={item} value={item} />)
-              : podList?.data?.map((item: string) => <SelectOption key={item} value={item} />)}
-          </Select>
+          {(idList || podList?.data) && (
+            <Select
+              className="custom-select"
+              variant="single"
+              aria-label="Select Input"
+              onToggle={onToggle}
+              onSelect={onSelect}
+              selections={type === 0 ? pId : buildId} // Use separate IDs based on the type
+              isOpen={isOpen}
+            >
+              {type === 1
+                ? idList && idList.map((item: string) => <SelectOption key={item} value={item} />)
+                : podList?.data?.map((item: string) => <SelectOption key={item} value={item} />)}
+            </Select>
+          )}
           {logsData !== '' ? (
             <CodeBlock className="pf-u-mt-md">{NewlineText(logsData)}</CodeBlock>
           ) : (

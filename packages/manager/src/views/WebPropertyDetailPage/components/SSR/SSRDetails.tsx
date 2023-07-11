@@ -178,7 +178,9 @@ export const SSRDetails = () => {
   const [envName, setEnvName] = useState('');
 
   const podList = useListOfPods(propertyIdentifier, spaName, envName);
+  // console.log('>>podlist', podList?.data, propertyIdentifier, spaName, envName);
   const [buildIdList, setbuildIdList] = useState<string[]>([]);
+  const [buildId, setBuildId] = useState('');
 
   const handleTabClick = async (
     event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
@@ -193,6 +195,7 @@ export const SSRDetails = () => {
     buildName: string[],
     rowData: any
   ) => {
+    setBuildId(buildName ? buildName[buildName.length - 1] : '');
     setbuildIdList(buildName);
     setSpaName(name);
     setEnvName(rowData.env);
@@ -208,7 +211,6 @@ export const SSRDetails = () => {
     event.stopPropagation();
     setIsExpanded(false);
   };
-
   const panelContent = (
     <DrawerPanelContent>
       <DrawerHead>
@@ -216,22 +218,28 @@ export const SSRDetails = () => {
 
         <Tabs activeKey={activeTabKey} onSelect={handleTabClick}>
           <Tab eventKey={0} title="Deployment Logs">
-            <ViewLogs
-              propertyIdentifier={propertyIdentifier}
-              spaName={spaName}
-              env={envName}
-              type={activeTabKey}
-              idList={podList?.data}
-            />
+            {activeTabKey === 0 && (
+              <ViewLogs
+                propertyIdentifier={propertyIdentifier}
+                spaName={spaName}
+                env={envName}
+                type={activeTabKey}
+                idList={podList?.data}
+                id={podList?.data && podList?.data[0]}
+              />
+            )}
           </Tab>
           <Tab eventKey={1} title="Build Logs">
-            <ViewLogs
-              propertyIdentifier={propertyIdentifier}
-              spaName={spaName}
-              env={envName}
-              type={activeTabKey}
-              idList={buildIdList}
-            />
+            {activeTabKey === 1 && (
+              <ViewLogs
+                propertyIdentifier={propertyIdentifier}
+                spaName={spaName}
+                env={envName}
+                type={activeTabKey}
+                idList={buildIdList}
+                id={buildId}
+              />
+            )}
           </Tab>
         </Tabs>
         <DrawerActions>

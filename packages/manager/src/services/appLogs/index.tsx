@@ -1,1 +1,1 @@
-export { fetchLogsforSpa, useGetLogsforSpa, useListOfPods } from './queries';
+export { fetchLogsforSpa, useGetLogsforSpa, useListOfPods, fetchListOfPods } from './queries';
