@@ -65,6 +65,11 @@ export class CreateApplicationDto {
   config: object;
 
   @ApiProperty()
+  @IsObject()
+  @IsOptional()
+  secret: object;
+
+  @ApiProperty()
   @IsOptional()
   @IsNumber()
   port: number;
@@ -152,6 +157,8 @@ export class ContainerizedDeploymentRequest {
 
   configMap: object;
 
+  secretMap: object;
+
   port: number;
 }
 
@@ -205,6 +212,11 @@ export class ApplicationConfigDTO {
   @IsObject()
   @IsNotEmpty()
   config: object;
+
+  @ApiProperty()
+  @IsObject()
+  @IsNotEmpty()
+  secret: object;
 
   createdBy: string;
 }

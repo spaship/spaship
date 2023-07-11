@@ -42,6 +42,9 @@ export class Application {
   @Prop({ type: 'object' })
   config: object;
 
+  @Prop({ type: 'object' })
+  secret: object;
+
   @Prop({})
   healthCheckPath: string;
 

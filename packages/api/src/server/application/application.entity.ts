@@ -25,6 +25,8 @@ export class Application {
 
   config: object;
 
+  secret: object;
+
   healthCheckPath: string;
 
   version: number;
