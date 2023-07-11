@@ -254,6 +254,7 @@ export class ApplicationService {
       applicationDetails.imageUrl = applicationRequest.imageUrl;
       applicationDetails.version = this.applicationFactory.incrementVersion(applicationDetails.version);
       applicationDetails.healthCheckPath = applicationRequest.healthCheckPath || applicationDetails.healthCheckPath;
+      applicationDetails.secret = applicationRequest.secret || applicationDetails.secret;
       applicationDetails.config = applicationRequest.config || applicationDetails.config;
       applicationDetails.port = applicationRequest.port || applicationDetails.port || CONTAINERIZED_DEPLOYMENT_DETAILS.port;
       applicationDetails.updatedBy = applicationRequest.createdBy;
@@ -366,9 +367,15 @@ export class ApplicationService {
     const { property, deploymentConnection } = await this.getDeploymentConnection(configDTO.propertyIdentifier, configDTO.env);
     const containerizedDeploymentRequestForOperator = this.applicationFactory.createContainerizedOperatorConfigRequest(configDTO, property.namespace);
     applicationDetails.config = configDTO.config;
+    applicationDetails.secret = configDTO.secret;
     applicationDetails.updatedBy = configDTO.createdBy;
+    this.logger.log('containerizedDeploymentRequestForOperator', JSON.stringify(containerizedDeploymentRequestForOperator));
     await this.dataServices.application.updateOne(search, applicationDetails);
-    this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
+    await this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
+    if (configDTO.secret) {
+      containerizedDeploymentRequestForOperator.configMap = await this.applicationFactory.decodeBase64SecretValues({ ...configDTO.secret });
+      this.applicationFactory.containerizedSecretUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
+    }
     await this.analyticsService.createActivityStream(
       configDTO.propertyIdentifier,
       Action.APPLICATION_CONFIG_UPDATED,
@@ -416,7 +423,7 @@ export class ApplicationService {
           applicationDetails,
           property.namespace
         );
-        containerizedDeploymentRequestForOperator.configMap = this.applicationFactory.decodeBase64ConfigValues({ ...applicationRequest.config });
+        containerizedDeploymentRequestForOperator.configMap = applicationRequest.config;
         this.logger.log('ConfigUpdateRequestToOperator', JSON.stringify(containerizedDeploymentRequestForOperator));
         applicationDetails.config = applicationRequest.config;
         applicationDetails.updatedBy = applicationRequest.createdBy;
@@ -424,7 +431,13 @@ export class ApplicationService {
           { propertyIdentifier, env, identifier, isContainerized: true, isGit: true },
           applicationDetails
         );
-        this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
+        await this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
+        if (applicationRequest.secret) {
+          containerizedDeploymentRequestForOperator.configMap = await this.applicationFactory.decodeBase64SecretValues({
+            ...applicationRequest.secret
+          });
+          this.applicationFactory.containerizedSecretUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
+        }
         await this.analyticsService.createActivityStream(
           propertyIdentifier,
           Action.APPLICATION_CONFIG_UPDATED,
@@ -442,6 +455,7 @@ export class ApplicationService {
       applicationDetails.version = this.applicationFactory.incrementVersion(applicationDetails.version);
       applicationDetails.healthCheckPath = applicationRequest.healthCheckPath || applicationDetails.healthCheckPath;
       applicationDetails.config = applicationRequest.config || applicationDetails.config;
+      applicationDetails.secret = applicationRequest.secret || applicationDetails.secret;
       applicationDetails.port = applicationRequest.port || applicationDetails.port || CONTAINERIZED_DEPLOYMENT_DETAILS.port;
       applicationDetails.repoUrl = applicationRequest.repoUrl || applicationDetails.repoUrl;
       applicationDetails.gitRef = applicationRequest.gitRef || applicationDetails.gitRef;
