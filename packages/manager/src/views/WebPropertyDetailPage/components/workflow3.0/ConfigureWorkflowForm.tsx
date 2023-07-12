@@ -57,6 +57,12 @@ const schema = yup.object({
   config: yup.array().of(
     yup.object({
       key: yup.string().required().label('Configuration Key'),
+      value: yup.string().required().label('Configuration Value')
+    })
+  ),
+  secret: yup.array().of(
+    yup.object({
+      key: yup.string().required().label('Configuration Key'),
       value: yup.string().required().label('Configuration Value'),
       isSecret: yup.boolean().label('isSecret')
     })
@@ -114,15 +120,12 @@ export const ConfigureWorkflowForm = ({
   } = useForm<FormData>({
     defaultValues: {
       ...dataProps,
-      config: Object.entries(dataProps?.config || {})
-        .map(([key, value]) => ({ key, value, isSecret: false }))
-        .concat(
-          Object.entries(dataProps?.secret || {}).map(([key, value]) => ({
-            key,
-            value: Base64.decode(value as string),
-            isSecret: true
-          }))
-        ),
+      config: Object.entries(dataProps?.config || {}).map(([key, value]) => ({ key, value })),
+      secret: Object.entries(dataProps?.secret || {}).map(([key, value]) => ({
+        key,
+        value: Base64.decode(value as string),
+        isSecret: true
+      })),
       buildArgs: (dataProps?.buildArgs || []).map((item: MapItem) => ({
         key: item.name,
         value: item.value
@@ -243,11 +246,20 @@ export const ConfigureWorkflowForm = ({
     control,
     name: 'buildArgs'
   });
-
+  const {
+    fields: secretFields,
+    append: appendSecret,
+    remove: removeSecret
+  } = useFieldArray({
+    control,
+    name: 'secret'
+  });
   const handleAddConfig = () => {
-    appendConfig({ key: '', value: '', isSecret: false });
+    appendConfig({ key: '', value: '' });
   };
-
+  const handleAddSecret = () => {
+    appendSecret({ key: '', value: '', isSecret: false });
+  };
   const handleAddBuildArgs = () => {
     appendBuildArgs({ key: '', value: '' });
   };
@@ -301,13 +313,8 @@ export const ConfigureWorkflowForm = ({
       }
     }
   };
-  const [enabledStates, setEnabledStates] = useState(configFields.map((pair) => pair.isSecret));
+  const [enabledStates, setEnabledStates] = useState(secretFields.map((pair) => pair.isSecret));
 
-  const handleEnabledChange = (index: number, checked: boolean) => {
-    const newEnabledStates = [...enabledStates];
-    newEnabledStates[index] = checked;
-    setEnabledStates(newEnabledStates);
-  };
   const onSubmit = async (data: FormData) => {
     if (step === 5) {
       const toastId = toast.loading('Submitting form...');
@@ -319,14 +326,12 @@ export const ConfigureWorkflowForm = ({
           : `/${data.healthCheckPath}`,
         config: data.config
           ? data.config.reduce((acc: Record<string, any>, item) => {
-              if (!item.isSecret) {
-                acc[item.key] = item.value;
-              }
+              acc[item.key] = item.value;
               return acc;
             }, {})
           : {},
-        secret: data.config
-          ? data.config.reduce((acc: Record<string, any>, item) => {
+        secret: data.secret
+          ? data.secret.reduce((acc: Record<string, any>, item) => {
               if (item.isSecret) {
                 acc[item.key] = Base64.encode(item.value);
               }
@@ -1038,8 +1043,109 @@ export const ConfigureWorkflowForm = ({
                           >
                             <TextInput
                               id={`value-${index}`}
-                              type={enabledStates[index] ? 'password' : 'text'}
+                              type="text"
                               placeholder="Configuration Value"
+                              value={value}
+                              onChange={(event) => {
+                                onChange(event);
+                              }}
+                              onBlur={onBlur}
+                            />
+                          </FormGroup>
+                        )}
+                      />
+                    </SplitItem>
+
+                    <SplitItem
+                      key={`remove-config-${pair.id}`}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        marginLeft: 'var(--pf-global--spacer--md)'
+                      }}
+                    >
+                      <Button
+                        variant="link"
+                        icon={<TimesCircleIcon />}
+                        onClick={() => removeConfig(index)}
+                      />
+                    </SplitItem>
+                  </Split>
+                ))}
+              </div>
+              <div>
+                <div className="form-header">
+                  Secret
+                  <Tooltip
+                    content={
+                      <div>
+                        This will store the secret map in key-value pairs, these values can be
+                        accessed internally from the applications.
+                      </div>
+                    }
+                  >
+                    <span style={{ marginLeft: '5px' }}>
+                      <InfoCircleIcon style={{ color: '#6A6E73' }} />
+                    </span>
+                  </Tooltip>
+                </div>
+                <Split hasGutter>
+                  <SplitItem
+                    isFilled
+                    style={{
+                      display: 'grid',
+                      justifyContent: 'right'
+                    }}
+                  >
+                    <Button variant="link" style={{ color: '#6A6E73' }} onClick={handleAddSecret}>
+                      Add Secret
+                    </Button>
+                  </SplitItem>
+                </Split>
+                {secretFields.map((pair, index) => (
+                  <Split key={pair.id} hasGutter>
+                    <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">
+                      <Controller
+                        control={control}
+                        name={`secret.${index}.key`}
+                        defaultValue={pair.key}
+                        render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
+                          <FormGroup
+                            label="Key"
+                            fieldId={`key-${index}`}
+                            validated={error ? 'error' : 'default'}
+                            helperTextInvalid={error?.message}
+                          >
+                            <TextInput
+                              id={`key-${index}`}
+                              type="text"
+                              placeholder="Secret Key"
+                              value={value}
+                              onChange={(event) => {
+                                onChange(event);
+                              }}
+                              onBlur={onBlur}
+                            />
+                          </FormGroup>
+                        )}
+                      />
+                    </SplitItem>
+                    <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">
+                      <Controller
+                        control={control}
+                        name={`secret.${index}.value`}
+                        defaultValue={pair.value}
+                        render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
+                          <FormGroup
+                            label="Value"
+                            fieldId={`value-${index}`}
+                            validated={error ? 'error' : 'default'}
+                            helperTextInvalid={error?.message}
+                          >
+                            <TextInput
+                              id={`value-${index}`}
+                              type={enabledStates[index] ? 'text' : 'password'}
+                              placeholder="Secret Value"
                               value={value}
                               onChange={(event) => {
                                 onChange(event);
@@ -1053,23 +1159,25 @@ export const ConfigureWorkflowForm = ({
                     <SplitItem style={{ paddingTop: 'var(--pf-global--spacer--xl)' }}>
                       <Controller
                         control={control}
-                        name={`config.${index}.isSecret`}
+                        name={`secret.${index}.isSecret`}
                         defaultValue={enabledStates[index]}
                         render={({ field: { onChange, value } }) => (
                           <Checkbox
                             id={`enabled-${index}`}
-                            isChecked={value}
+                            isChecked={!value}
                             onChange={(checked) => {
-                              handleEnabledChange(index, checked);
-                              onChange(checked);
+                              const updatedEnabledStates = [...enabledStates];
+                              updatedEnabledStates[index] = !checked;
+                              setEnabledStates(updatedEnabledStates);
+                              onChange(!checked);
                             }}
-                            label="Is Secret"
+                            label="Show Secret"
                           />
                         )}
                       />
                     </SplitItem>
                     <SplitItem
-                      key={`remove-${index + 1}`}
+                      key={`remove-secret-${pair.id}`}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -1079,7 +1187,7 @@ export const ConfigureWorkflowForm = ({
                       <Button
                         variant="link"
                         icon={<TimesCircleIcon />}
-                        onClick={() => removeConfig(index)}
+                        onClick={() => removeSecret(index)}
                       />
                     </SplitItem>
                   </Split>
@@ -1105,6 +1213,7 @@ export const ConfigureWorkflowForm = ({
               </div>
             </>
           )}
+
           {step === 4 && (
             <>
               <div>
@@ -1587,7 +1696,6 @@ export const ConfigureWorkflowForm = ({
                     />
                   </SplitItem>
                 </Split>
-
                 {configFields.length !== 0 && (
                   <Split hasGutter>
                     <div className="form-header">
@@ -1658,7 +1766,7 @@ export const ConfigureWorkflowForm = ({
                             >
                               <TextInput
                                 id={`value-${index}`}
-                                type={enabledStates[index] ? 'password' : 'text'}
+                                type="text"
                                 placeholder="Configuration Value"
                                 value={value}
                                 onChange={(event) => {
@@ -1673,7 +1781,88 @@ export const ConfigureWorkflowForm = ({
                       </SplitItem>
                     </Split>
                   ))}
-
+                {secretFields.length !== 0 && (
+                  <Split>
+                    Secret
+                    <Tooltip
+                      content={
+                        <div>
+                          This will store the secret map in key-value pairs, these values can be
+                          accessed internally from the applications.
+                        </div>
+                      }
+                    >
+                      <span style={{ marginLeft: '5px' }}>
+                        <InfoCircleIcon style={{ color: '#6A6E73' }} />
+                      </span>
+                    </Tooltip>
+                  </Split>
+                )}
+                {secretFields &&
+                  secretFields.map((pair, index) => (
+                    <Split key={pair.id} hasGutter>
+                      <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">
+                        <Controller
+                          control={control}
+                          name={`secret.${index}.key`}
+                          defaultValue={pair.key}
+                          render={({
+                            field: { onChange, onBlur, value },
+                            fieldState: { error }
+                          }) => (
+                            <FormGroup
+                              label="Key"
+                              fieldId={`key-${index}`}
+                              validated={error ? 'error' : 'default'}
+                              helperTextInvalid={error?.message}
+                            >
+                              <TextInput
+                                id={`key-${index}`}
+                                type="text"
+                                placeholder="Secret Key"
+                                value={value}
+                                onChange={(event) => {
+                                  onChange(event);
+                                }}
+                                onBlur={onBlur}
+                                isDisabled
+                              />
+                            </FormGroup>
+                          )}
+                        />
+                      </SplitItem>
+                      <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">
+                        <Controller
+                          control={control}
+                          name={`secret.${index}.value`}
+                          defaultValue={pair.value}
+                          render={({
+                            field: { onChange, onBlur, value },
+                            fieldState: { error }
+                          }) => (
+                            <FormGroup
+                              label="Value"
+                              fieldId={`value-${index}`}
+                              validated={error ? 'error' : 'default'}
+                              helperTextInvalid={error?.message}
+                            >
+                              <TextInput
+                                id={`value-${index}`}
+                                type="password"
+                                placeholder="Secret Value"
+                                value={value}
+                                onChange={(event) => {
+                                  onChange(event);
+                                }}
+                                onBlur={onBlur}
+                                isDisabled
+                              />
+                            </FormGroup>
+                          )}
+                        />
+                      </SplitItem>
+                    </Split>
+                  ))}
                 {buildArgsFields.length !== 0 && (
                   <Split hasGutter>
                     <div className="form-header">
@@ -1694,7 +1883,6 @@ export const ConfigureWorkflowForm = ({
                     </div>
                   </Split>
                 )}
-
                 {buildArgsFields.map((pair, index) => (
                   <Split key={pair.id} hasGutter>
                     <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">
