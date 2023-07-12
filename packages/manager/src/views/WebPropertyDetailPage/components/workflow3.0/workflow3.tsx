@@ -20,7 +20,7 @@ import {
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon, InfoCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { AxiosError } from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import * as yup from 'yup';
@@ -287,7 +287,7 @@ export const Workflow3 = ({
     appendConfig({ key: '', value: '' });
   };
   const handleAddSecret = () => {
-    appendSecret({ key: '', value: '', isSecret: false });
+    appendSecret({ key: '', value: '', isSecret: true });
   };
   const handleAddBuildArgs = () => {
     appendBuildArgs({ key: '', value: '' });
@@ -343,7 +343,9 @@ export const Workflow3 = ({
   };
 
   const [enabledStates, setEnabledStates] = useState(secretFields.map((pair) => pair.isSecret));
-
+  useEffect(() => {
+    setEnabledStates(secretFields.map((pair) => pair.isSecret));
+  }, [secretFields]);
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Grid>
@@ -941,7 +943,6 @@ export const Workflow3 = ({
                         )}
                       />
                     </SplitItem>
-
                     <SplitItem
                       key={`remove-config-${pair.id}`}
                       style={{
@@ -1030,7 +1031,7 @@ export const Workflow3 = ({
                           >
                             <TextInput
                               id={`value-${index}`}
-                              type={enabledStates[index] ? 'text' : 'password'}
+                              type={enabledStates[index] ? 'password' : 'text'}
                               placeholder="Secret Value"
                               value={value}
                               onChange={(event) => {
@@ -1046,7 +1047,7 @@ export const Workflow3 = ({
                       <Controller
                         control={control}
                         name={`secret.${index}.isSecret`}
-                        defaultValue={enabledStates[index]}
+                        defaultValue={!enabledStates[index]}
                         render={({ field: { onChange, value } }) => (
                           <Checkbox
                             id={`enabled-${index}`}
