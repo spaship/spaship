@@ -96,19 +96,6 @@ type MapItem = {
   name: string;
   value: string;
 };
-const secretKey = 'spashipWorkflowSecret';
-const keyValuePairsGenerator = ({
-  dataProps,
-  property
-}: {
-  dataProps: Record<string, any>;
-  property: string;
-}) =>
-  Object.entries(dataProps?.[property] || {}).map(([key, value]) => ({
-    key,
-    value: Base64.decode(value as string),
-    isSecret: property === secretKey
-  }));
 
 export type FormData = yup.InferType<typeof schema>;
 export const ConfigureWorkflowForm = ({
@@ -127,14 +114,15 @@ export const ConfigureWorkflowForm = ({
   } = useForm<FormData>({
     defaultValues: {
       ...dataProps,
-      config: keyValuePairsGenerator({
-        dataProps: dataProps?.config || {},
-        property: secretKey
-      }).concat(
-        Object.entries(dataProps?.config || {})
-          .filter(([key]) => key !== secretKey)
-          .map(([key, value]) => ({ key, value, isSecret: false }))
-      ),
+      config: Object.entries(dataProps?.config || {})
+        .map(([key, value]) => ({ key, value, isSecret: false }))
+        .concat(
+          Object.entries(dataProps?.secret || {}).map(([key, value]) => ({
+            key,
+            value: Base64.decode(value as string),
+            isSecret: true
+          }))
+        ),
       buildArgs: (dataProps?.buildArgs || []).map((item: MapItem) => ({
         key: item.name,
         value: item.value
@@ -330,14 +318,17 @@ export const ConfigureWorkflowForm = ({
           ? data.healthCheckPath
           : `/${data.healthCheckPath}`,
         config: data.config
-          ? data.config.reduce((acc: Record<string, any>, cur: any) => {
-              if (cur.isSecret) {
-                if (!acc.spashipWorkflowSecret) {
-                  acc.spashipWorkflowSecret = {};
-                }
-                acc.spashipWorkflowSecret[cur.key] = Base64.encode(cur.value);
-              } else {
-                acc[cur.key] = cur.value;
+          ? data.config.reduce((acc: Record<string, any>, item) => {
+              if (!item.isSecret) {
+                acc[item.key] = item.value;
+              }
+              return acc;
+            }, {})
+          : {},
+        secret: data.config
+          ? data.config.reduce((acc: Record<string, any>, item) => {
+              if (item.isSecret) {
+                acc[item.key] = Base64.encode(item.value);
               }
               return acc;
             }, {})
@@ -348,7 +339,7 @@ export const ConfigureWorkflowForm = ({
         propertyIdentifier,
         reDeployment: false
       };
-
+      console.log('data in confi', newdata);
       onClose();
 
       try {

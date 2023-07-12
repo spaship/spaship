@@ -1,5 +1,6 @@
 export type TSSRProperty = {
   config: Record<string, string>;
+  secret: Record<string, string>;
   propertyIdentifier: string;
   name: string;
   path: string;
@@ -14,6 +15,7 @@ export type TSSRConfigure = {
   env: string;
   identifier: string;
   config: Record<string, string>;
+  secret: Record<string, string>;
 };
 export interface TSSRResponse {
   data: {
@@ -30,6 +32,7 @@ export interface TSSRResponse {
     isGit: boolean;
     imageUrl: string;
     config: Record<string, string>;
+    secret: Record<string, string>;
     healthCheckPath: string;
     version: number;
     createdBy: string;
