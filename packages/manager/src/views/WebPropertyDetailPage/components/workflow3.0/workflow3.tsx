@@ -934,7 +934,7 @@ export const Workflow3 = ({
                         )}
                       />
                     </SplitItem>
-                    <SplitItem>
+                    <SplitItem style={{ paddingTop: 'var(--pf-global--spacer--xl)' }}>
                       <Controller
                         control={control}
                         name={`config.${index}.isSecret`}
@@ -957,8 +957,7 @@ export const Workflow3 = ({
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        marginLeft: 'var(--pf-global--spacer--md)',
-                        marginTop: 'var(--pf-global--spacer--lg)'
+                        marginLeft: 'var(--pf-global--spacer--md)'
                       }}
                     >
                       <Button

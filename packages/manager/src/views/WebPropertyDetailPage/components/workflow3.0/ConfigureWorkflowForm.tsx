@@ -1050,7 +1050,7 @@ export const ConfigureWorkflowForm = ({
                         )}
                       />
                     </SplitItem>
-                    <SplitItem>
+                    <SplitItem style={{ paddingTop: '5%' }}>
                       <Controller
                         control={control}
                         name={`config.${index}.isSecret`}
@@ -1073,8 +1073,7 @@ export const ConfigureWorkflowForm = ({
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        marginLeft: 'var(--pf-global--spacer--md)',
-                        marginTop: 'var(--pf-global--spacer--lg)'
+                        marginLeft: 'var(--pf-global--spacer--md)'
                       }}
                     >
                       <Button
