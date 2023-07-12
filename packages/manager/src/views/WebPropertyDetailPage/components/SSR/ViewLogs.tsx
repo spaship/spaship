@@ -7,7 +7,8 @@ import {
   Select,
   SelectOption,
   SelectOptionObject,
-  Title
+  Title,
+  Spinner
 } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useEffect, useState } from 'react';
@@ -18,7 +19,6 @@ type Props = {
   env: string;
   type: string | number;
   idList: string[];
-  id: string;
 };
 
 const logType = {
@@ -33,102 +33,89 @@ function NewlineText(props: string) {
   return newText;
 }
 
-export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, id }: Props) => {
-  const [logsData, setLogsData] = useState<any>([]);
+export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Props) => {
+  const [logsData, setLogsData] = useState<string>('');
   const [isLogsLoading, setIsLogsLoading] = useState<boolean>(true);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const podList = useListOfPods(propertyIdentifier, spaName, env);
-  const [pId, setPId] = useState<string | undefined>(idList && idList.reverse()[0]);
-  const [buildId, setBuildId] = useState<string | undefined>(idList && idList.reverse()[0]);
+
+  const [selectedId, setSelectedId] = useState<string | undefined>(idList && idList.reverse()[0]);
 
   const { data: logs, isLoading: isFetchingLogs } = useGetLogsforSpa(
     propertyIdentifier,
     spaName,
     env,
-    type === 0 ? 'POD' : 'BUILD',
-    type === 0 ? pId : buildId
+    type === 0 ? logType.POD : logType.BUILD,
+    selectedId
   );
-  // console.log('>> data', propertyIdentifier, spaName, env, pId, buildId);
+
   useEffect(() => {
     setLogsData(logs);
     setIsLogsLoading(isFetchingLogs);
   }, [logs, isFetchingLogs]);
 
-  const onToggle = (isSelectOpen: boolean) => {
+  useEffect(() => {
+    setSelectedId(idList && idList.reverse()[0]);
+    setLogsData('');
+    setIsLogsLoading(true);
+  }, [idList, type]);
+
+  const handleToggle = (isSelectOpen: boolean) => {
     setIsOpen(isSelectOpen);
   };
-  useEffect(() => {
-    setPId(idList && idList.reverse()[0]);
-    setBuildId(idList && idList.reverse()[0]);
-  }, [propertyIdentifier, spaName, env, idList]);
-
-  const clearSelection = () => {
-    if (type === 0) {
-      setPId(id);
-    } else {
-      setBuildId(id);
-    }
-    setIsOpen(false);
-  };
-
-  const onSelect = (
+  console.log(idList);
+  const handleSelect = (
     event: React.MouseEvent | React.ChangeEvent,
     selection: string | SelectOptionObject,
     isPlaceholder?: boolean
   ) => {
     if (isPlaceholder) {
-      clearSelection();
-    } else if (type === 0) {
-      setPId(selection as string);
-    } else {
-      setBuildId(selection as string);
+      return;
     }
+    setSelectedId(selection as string);
     setIsOpen(false);
   };
 
   return (
     <div>
       <div className="pf-u-mb-md pf-u-mt-md">
-        {type === 0 ? toPascalCase(logType.POD) : toPascalCase(logType.BUILD)} Logs for{' '}
-        <b>{spaName}</b>
+        {toPascalCase(type === 0 ? logType.POD : logType.BUILD)} Logs for <b>{spaName}</b>
       </div>
 
       {!isLogsLoading ? (
         <div>
-          {(idList || podList?.data) && (
+          {idList && (
             <Select
               className="custom-select"
               variant="single"
               aria-label="Select Input"
-              onToggle={onToggle}
-              onSelect={onSelect}
-              selections={type === 0 ? pId : buildId} // Use separate IDs based on the type
+              onToggle={handleToggle}
+              onSelect={handleSelect}
+              selections={selectedId}
               isOpen={isOpen}
             >
               {type === 1
                 ? idList && idList.map((item: string) => <SelectOption key={item} value={item} />)
-                : podList?.data?.map((item: string) => <SelectOption key={item} value={item} />)}
+                : (podList?.data || []).map((item: string) => (
+                    <SelectOption key={item} value={item} />
+                  ))}
             </Select>
           )}
-          {logsData !== '' ? (
+          {logsData ? (
             <CodeBlock className="pf-u-mt-md">{NewlineText(logsData)}</CodeBlock>
           ) : (
             <EmptyState>
               <EmptyStateIcon icon={CubesIcon} />
               <Title headingLevel="h4" size="lg">
-                No {type === 0 ? toPascalCase(logType.POD) : toPascalCase(logType.BUILD)} logs found
-                for <b>{spaName}</b> spa.
+                No {toPascalCase(type === 0 ? logType.POD : logType.BUILD)} logs found for{' '}
+                <b>{spaName}</b> spa.
               </Title>
             </EmptyState>
           )}
         </div>
       ) : (
         <EmptyState>
-          <EmptyStateIcon icon={CubesIcon} />
-          <Title headingLevel="h4" size="lg">
-            No {type === 0 ? toPascalCase(logType.POD) : toPascalCase(logType.BUILD)} logs found for{' '}
-            <b>{spaName}</b> spa.
-          </Title>
+          <Spinner className="pf-u-mt-lg" />
         </EmptyState>
       )}
     </div>

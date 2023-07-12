@@ -12,7 +12,6 @@ export const fetchLogsforSpa = async (
   type?: string | number,
   id?: string
 ): Promise<any> => {
-  // console.log('fetchLogsforSpa', propertyIdentifier, applicationIdentifier, env, type, id);
   try {
     const { data } = await orchestratorReq.get(
       `/applications/log/${propertyIdentifier}/${env}/${applicationIdentifier}/`,
@@ -51,9 +50,10 @@ export const useGetLogsforSpa = (
           fetchLogsforSpa(webPropertyIdentifier, applicationIdentifier, env, type, id)
         );
       },
-      enabled: id !== undefined, // Only enable the query when id is defined
-      cacheTime: 0, // Disable cache for immediate updates
-      staleTime: 0 // Disable cache for immediate updates
+      enabled: id !== undefined,
+      cacheTime: 0,
+      staleTime: 0,
+      onError: () => ({ data: '' })
     }
   );
 };
@@ -63,49 +63,16 @@ const fetchListOfPods = async (
   spaName: string,
   env: string
 ): Promise<any> => {
-  const { data } = await orchestratorReq.get(
-    `/applications/pods/${propertyIdentifier}/${env}/${spaName}`
-  );
-  console.log('>>>>fetch', propertyIdentifier, spaName, env, data.data);
+  try {
+    const { data } = await orchestratorReq.get(
+      `/applications/pods/${propertyIdentifier}/${env}/${spaName}`
+    );
 
-  return data.data;
+    return data?.data || [];
+  } catch (e) {
+    return '';
+  }
 };
 
 export const useListOfPods = (propertyIdentifier: string, spaName: string, env: string) =>
   useQuery(logKeys.getPodList, () => fetchListOfPods(propertyIdentifier, spaName, env));
-
-// const fetchListOfPods = async (
-//   propertyIdentifier: string,
-//   spaName: string,
-//   env: string
-// ): Promise<any> => {
-//   const { data } = await orchestratorReq.get(
-//     `/applications/pods/${propertyIdentifier}/${env}/${spaName}`
-//   );
-//   console.log('>>>>fetch', propertyIdentifier, spaName, env, data.data);
-
-//   return data.data;
-// };
-
-// export const useListOfPods = (propertyIdentifier: string, spaName: string, env: string) => {
-//   console.log('useListOfPods', propertyIdentifier, spaName, env);
-//   return useQuery(logKeys.getPodList, () => fetchListOfPods(propertyIdentifier, spaName, env));
-// };
-
-// export const useListOfPods = async (propertyIdentifier: string, spaName: string, env: string) => {
-//   try {
-//     const result = await fetchListOfPods(propertyIdentifier, spaName, env);
-//     console.log('>>fetch', result);
-//     return result;
-//   } catch (error) {
-//     console.log('error', error.response.data);
-//   }
-// };
-
-// export const useListOfPods = (propertyIdentifier: string, spaName: string, env: string) => {
-//   const queryClient = useQueryClient();
-
-//   return queryClient.fetchQuery(logKeys.getPodList, () =>
-//     fetchListOfPods(propertyIdentifier, spaName, env)
-//   );
-// };
