@@ -433,9 +433,11 @@ export class ApplicationService {
         );
         await this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
         if (applicationRequest.secret) {
-          containerizedDeploymentRequestForOperator.configMap = await this.applicationFactory.decodeBase64SecretValues({
+          containerizedDeploymentRequestForOperator.secretMap = await this.applicationFactory.decodeBase64SecretValues({
             ...applicationRequest.secret
           });
+          // @internal TODO : To be removed after the fix from the Operator
+          containerizedDeploymentRequestForOperator.configMap = containerizedDeploymentRequestForOperator.secretMap;
           this.applicationFactory.containerizedSecretUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
         }
         await this.analyticsService.createActivityStream(
