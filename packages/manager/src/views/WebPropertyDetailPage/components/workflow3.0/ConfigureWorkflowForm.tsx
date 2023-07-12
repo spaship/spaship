@@ -1055,7 +1055,6 @@ export const ConfigureWorkflowForm = ({
                         )}
                       />
                     </SplitItem>
-
                     <SplitItem
                       key={`remove-config-${pair.id}`}
                       style={{
