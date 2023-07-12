@@ -153,7 +153,6 @@ export const Workflow3 = ({
           : [],
         propertyIdentifier: propertyIdentifier.trim()
       };
-      console.log('>>data in wo', newdata);
       onSubmitWorkflow(true);
       onClose();
       try {
