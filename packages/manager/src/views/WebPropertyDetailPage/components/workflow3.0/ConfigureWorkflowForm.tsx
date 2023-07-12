@@ -20,7 +20,7 @@ import {
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon, InfoCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { AxiosError } from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import * as yup from 'yup';
@@ -258,7 +258,7 @@ export const ConfigureWorkflowForm = ({
     appendConfig({ key: '', value: '' });
   };
   const handleAddSecret = () => {
-    appendSecret({ key: '', value: '', isSecret: false });
+    appendSecret({ key: '', value: '', isSecret: true });
   };
   const handleAddBuildArgs = () => {
     appendBuildArgs({ key: '', value: '' });
@@ -314,6 +314,9 @@ export const ConfigureWorkflowForm = ({
     }
   };
   const [enabledStates, setEnabledStates] = useState(secretFields.map((pair) => pair.isSecret));
+  useEffect(() => {
+    setEnabledStates(secretFields.map((pair) => pair.isSecret));
+  }, [secretFields]);
 
   const onSubmit = async (data: FormData) => {
     if (step === 5) {
@@ -1143,7 +1146,7 @@ export const ConfigureWorkflowForm = ({
                           >
                             <TextInput
                               id={`value-${index}`}
-                              type={enabledStates[index] ? 'text' : 'password'}
+                              type={enabledStates[index] ? 'password' : 'text'}
                               placeholder="Secret Value"
                               value={value}
                               onChange={(event) => {
@@ -1159,7 +1162,7 @@ export const ConfigureWorkflowForm = ({
                       <Controller
                         control={control}
                         name={`secret.${index}.isSecret`}
-                        defaultValue={enabledStates[index]}
+                        defaultValue={!enabledStates[index]}
                         render={({ field: { onChange, value } }) => (
                           <Checkbox
                             id={`enabled-${index}`}
