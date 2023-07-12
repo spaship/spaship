@@ -63,7 +63,6 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
   const handleToggle = (isSelectOpen: boolean) => {
     setIsOpen(isSelectOpen);
   };
-  console.log(idList);
   const handleSelect = (
     event: React.MouseEvent | React.ChangeEvent,
     selection: string | SelectOptionObject,
