@@ -216,22 +216,28 @@ export const SSRDetails = () => {
 
         <Tabs activeKey={activeTabKey} onSelect={handleTabClick}>
           <Tab eventKey={0} title="Deployment Logs">
-            <ViewLogs
-              propertyIdentifier={propertyIdentifier}
-              spaName={spaName}
-              env={envName}
-              type={activeTabKey}
-              idList={podList?.data}
-            />
+            {activeTabKey === 0 && (
+              <ViewLogs
+                key={envName}
+                propertyIdentifier={propertyIdentifier}
+                spaName={spaName}
+                env={envName}
+                type={activeTabKey}
+                idList={podList?.data}
+              />
+            )}
           </Tab>
           <Tab eventKey={1} title="Build Logs">
-            <ViewLogs
-              propertyIdentifier={propertyIdentifier}
-              spaName={spaName}
-              env={envName}
-              type={activeTabKey}
-              idList={buildIdList}
-            />
+            {activeTabKey === 1 && (
+              <ViewLogs
+                key={envName}
+                propertyIdentifier={propertyIdentifier}
+                spaName={spaName}
+                env={envName}
+                type={activeTabKey}
+                idList={buildIdList}
+              />
+            )}
           </Tab>
         </Tabs>
         <DrawerActions>

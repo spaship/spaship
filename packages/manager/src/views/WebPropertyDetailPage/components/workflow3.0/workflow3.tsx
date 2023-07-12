@@ -133,25 +133,26 @@ export const Workflow3 = ({
           ? data.healthCheckPath.trim()
           : `/${data.healthCheckPath.trim()}`,
         config: data.config
-          ? data.config.reduce((acc: Record<string, any>, cur: any) => {
-              if (cur.isSecret) {
-                if (!acc.spashipWorkflowSecret) {
-                  acc.spashipWorkflowSecret = {};
-                }
-                acc.spashipWorkflowSecret[cur.key] = Base64.encode(cur.value);
-              } else {
-                acc[cur.key] = cur.value;
+          ? data.config.reduce((acc: Record<string, any>, item) => {
+              if (!item.isSecret) {
+                acc[item.key] = item.value;
               }
               return acc;
             }, {})
           : {},
-
+        secret: data.config
+          ? data.config.reduce((acc: Record<string, any>, item) => {
+              if (item.isSecret) {
+                acc[item.key] = Base64.encode(item.value);
+              }
+              return acc;
+            }, {})
+          : {},
         buildArgs: data.buildArgs
           ? data.buildArgs.map((obj) => ({ name: obj.key, value: obj.value }))
           : [],
         propertyIdentifier: propertyIdentifier.trim()
       };
-
       onSubmitWorkflow(true);
       onClose();
       try {
