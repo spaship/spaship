@@ -335,9 +335,7 @@ export const ConfigureWorkflowForm = ({
           : {},
         secret: data.secret
           ? data.secret.reduce((acc: Record<string, any>, item) => {
-              if (item.isSecret) {
-                acc[item.key] = Base64.encode(item.value);
-              }
+              acc[item.key] = Base64.encode(item.value);
               return acc;
             }, {})
           : {},

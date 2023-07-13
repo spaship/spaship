@@ -84,7 +84,7 @@ export const SLAPage = (): JSX.Element => (
             <Td>
               arbhatta@redhat.com
               <br />
-              schowd@redhat.com
+              souchowd@redhat.com
             </Td>
             <Td>
               Significant issue that impacts some end users or non-critical business functions.
@@ -108,7 +108,7 @@ export const SLAPage = (): JSX.Element => (
               <b>Slack : </b>forum-spaship - Internal Red Hat - Slack
             </Td>
             <Td>
-              schowd@redhat.com
+              souchowd@redhat.com
               <br />
               spaship-dev@redhat.com{' '}
             </Td>
