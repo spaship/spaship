@@ -426,6 +426,7 @@ export class ApplicationService {
         containerizedDeploymentRequestForOperator.configMap = applicationRequest.config;
         this.logger.log('ConfigUpdateRequestToOperator', JSON.stringify(containerizedDeploymentRequestForOperator));
         applicationDetails.config = applicationRequest.config;
+        applicationDetails.secret = applicationRequest.secret;
         applicationDetails.updatedBy = applicationRequest.createdBy;
         await this.dataServices.application.updateOne(
           { propertyIdentifier, env, identifier, isContainerized: true, isGit: true },
