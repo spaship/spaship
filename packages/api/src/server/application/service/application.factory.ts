@@ -466,7 +466,7 @@ export class ApplicationFactory {
     containerizedRequest.nameSpace = namespace;
     containerizedRequest.environment = env;
     containerizedRequest.configMap = applicationDetails.config;
-    containerizedRequest.secretMap = applicationDetails.secret;
+    containerizedRequest.secretMap = this.decodeBase64SecretValues({ ...applicationDetails.secret });
     containerizedRequest.healthCheckPath = applicationDetails.healthCheckPath;
     containerizedRequest.port = applicationDetails.port || 3000;
     return containerizedRequest;

@@ -41,7 +41,7 @@ export class ApplicationService {
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService,
     private readonly agendaService: AgendaService
-  ) { }
+  ) {}
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.application.getAll();
@@ -373,7 +373,7 @@ export class ApplicationService {
     await this.dataServices.application.updateOne(search, applicationDetails);
     await this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
     if (configDTO.secret) {
-      containerizedDeploymentRequestForOperator.configMap = await this.applicationFactory.decodeBase64SecretValues({ ...configDTO.secret });
+      containerizedDeploymentRequestForOperator.secretMap = await this.applicationFactory.decodeBase64SecretValues({ ...configDTO.secret });
       this.applicationFactory.containerizedSecretUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
     }
     await this.analyticsService.createActivityStream(
