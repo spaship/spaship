@@ -173,11 +173,10 @@ export const SSRDetails = () => {
 
   const [isExpanded, setIsExpanded] = useState(false);
   const drawerRef = useRef<HTMLDivElement>();
-  const [spaName, setSpaName] = useState('');
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [envName, setEnvName] = useState('');
-
-  const podList = useListOfPods(propertyIdentifier, spaName, envName);
+  const [isGit, setIsGit] = useState(false);
+  const podList = useListOfPods(propertyIdentifier, applicationName, envName);
   const [buildIdList, setbuildIdList] = useState<string[]>([]);
 
   const handleTabClick = async (
@@ -194,9 +193,9 @@ export const SSRDetails = () => {
     rowData: any
   ) => {
     setbuildIdList(buildName);
-    setSpaName(name);
     setEnvName(rowData.env);
     setIsExpanded(true);
+    setIsGit(rowData.isGit);
   };
 
   const onExpand = () => {
@@ -220,10 +219,11 @@ export const SSRDetails = () => {
               <ViewLogs
                 key={envName}
                 propertyIdentifier={propertyIdentifier}
-                spaName={spaName}
+                spaName={applicationName}
                 env={envName}
                 type={activeTabKey}
                 idList={podList?.data}
+                isGit={isGit}
               />
             )}
           </Tab>
@@ -232,10 +232,11 @@ export const SSRDetails = () => {
               <ViewLogs
                 key={envName}
                 propertyIdentifier={propertyIdentifier}
-                spaName={spaName}
+                spaName={applicationName}
                 env={envName}
                 type={activeTabKey}
                 idList={buildIdList}
+                isGit={isGit}
               />
             )}
           </Tab>

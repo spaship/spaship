@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { useGetLogsforSpa, useListOfPods } from '@app/services/appLogs';
 import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
@@ -19,6 +20,7 @@ type Props = {
   env: string;
   type: string | number;
   idList: string[];
+  isGit: boolean;
 };
 
 const logType = {
@@ -33,13 +35,15 @@ function NewlineText(props: string) {
   return newText;
 }
 
-export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Props) => {
+export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit }: Props) => {
   const [logsData, setLogsData] = useState<string>('');
   const [isLogsLoading, setIsLogsLoading] = useState<boolean>(true);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const podList = useListOfPods(propertyIdentifier, spaName, env);
 
-  const [selectedId, setSelectedId] = useState<string | undefined>(idList && idList.reverse()[0]);
+  const [selectedId, setSelectedId] = useState<string | undefined>(
+    idList && idList.length > 0 ? idList[idList.length - 1] : undefined
+  );
 
   const { data: logs, isLoading: isFetchingLogs } = useGetLogsforSpa(
     propertyIdentifier,
@@ -52,17 +56,18 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
   useEffect(() => {
     setLogsData(logs);
     setIsLogsLoading(isFetchingLogs);
-  }, [logs, isFetchingLogs]);
+  }, [logs, isFetchingLogs, type]);
 
   useEffect(() => {
-    setSelectedId(idList && idList.reverse()[0]);
+    setSelectedId(idList && idList.length > 0 ? idList[idList.length - 1] : undefined);
     setLogsData('');
     setIsLogsLoading(true);
-  }, [idList, type]);
+  }, [idList, type, isGit, isFetchingLogs]);
 
   const handleToggle = (isSelectOpen: boolean) => {
     setIsOpen(isSelectOpen);
   };
+
   const handleSelect = (
     event: React.MouseEvent | React.ChangeEvent,
     selection: string | SelectOptionObject,
@@ -81,41 +86,53 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList }: Pro
         {toPascalCase(type === 0 ? logType.POD : logType.BUILD)} Logs for <b>{spaName}</b>
       </div>
 
-      {!isLogsLoading ? (
+      {!isGit && type === 1 ? (
+        <EmptyState>
+          <EmptyStateIcon icon={CubesIcon} />
+          <Title headingLevel="h4" size="lg">
+            No {toPascalCase(logType.POD)} logs found for <b>{spaName}</b> spa.
+          </Title>
+        </EmptyState>
+      ) : (
         <div>
-          {idList && (
-            <Select
-              className="custom-select"
-              variant="single"
-              aria-label="Select Input"
-              onToggle={handleToggle}
-              onSelect={handleSelect}
-              selections={selectedId}
-              isOpen={isOpen}
-            >
-              {type === 1
-                ? idList && idList.map((item: string) => <SelectOption key={item} value={item} />)
-                : (podList?.data || []).map((item: string) => (
-                    <SelectOption key={item} value={item} />
-                  ))}
-            </Select>
-          )}
-          {logsData ? (
-            <CodeBlock className="pf-u-mt-md">{NewlineText(logsData)}</CodeBlock>
-          ) : (
+          {isLogsLoading ? (
             <EmptyState>
-              <EmptyStateIcon icon={CubesIcon} />
-              <Title headingLevel="h4" size="lg">
-                No {toPascalCase(type === 0 ? logType.POD : logType.BUILD)} logs found for{' '}
-                <b>{spaName}</b> spa.
-              </Title>
+              <Spinner className="pf-u-mt-lg" />
             </EmptyState>
+          ) : (
+            <>
+              {idList && (
+                <Select
+                  className="custom-select"
+                  variant="single"
+                  aria-label="Select Input"
+                  onToggle={handleToggle}
+                  onSelect={handleSelect}
+                  selections={selectedId}
+                  isOpen={isOpen}
+                >
+                  {type === 1
+                    ? idList &&
+                      idList.map((item: string) => <SelectOption key={item} value={item} />)
+                    : (podList?.data || []).map((item: string) => (
+                        <SelectOption key={item} value={item} />
+                      ))}
+                </Select>
+              )}
+              {logsData ? (
+                <CodeBlock className="pf-u-mt-md">{NewlineText(logsData)}</CodeBlock>
+              ) : (
+                <EmptyState>
+                  <EmptyStateIcon icon={CubesIcon} />
+                  <Title headingLevel="h4" size="lg">
+                    No {toPascalCase(type === 0 ? logType.POD : logType.BUILD)} logs found for{' '}
+                    <b>{spaName}</b> spa.
+                  </Title>
+                </EmptyState>
+              )}
+            </>
           )}
         </div>
-      ) : (
-        <EmptyState>
-          <Spinner className="pf-u-mt-lg" />
-        </EmptyState>
       )}
     </div>
   );
