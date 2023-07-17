@@ -53,7 +53,7 @@ export const useGetLogsforSpa = (
       enabled: id !== undefined,
       cacheTime: 0,
       staleTime: 0,
-      onError: () => ({ data: '' })
+      onError: () => ({ data: '', isError: true })
     }
   );
 };
@@ -63,15 +63,12 @@ const fetchListOfPods = async (
   spaName: string,
   env: string
 ): Promise<any> => {
-  try {
-    const { data } = await orchestratorReq.get(
-      `/applications/pods/${propertyIdentifier}/${env}/${spaName}`
-    );
+  // try {
+  const { data } = await orchestratorReq.get(
+    `/applications/pods/${propertyIdentifier}/${env}/${spaName}`
+  );
 
-    return data?.data || [];
-  } catch (e) {
-    return '';
-  }
+  return data?.data || [];
 };
 
 export const useListOfPods = (propertyIdentifier: string, spaName: string, env: string) =>

@@ -39,13 +39,17 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
   const [logsData, setLogsData] = useState<string>('');
   const [isLogsLoading, setIsLogsLoading] = useState<boolean>(true);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const podList = useListOfPods(propertyIdentifier, spaName, env);
+  const { data: podList, isError: isErrorPods } = useListOfPods(propertyIdentifier, spaName, env);
 
   const [selectedId, setSelectedId] = useState<string | undefined>(
     idList && idList.length > 0 ? idList[idList.length - 1] : undefined
   );
 
-  const { data: logs, isLoading: isFetchingLogs } = useGetLogsforSpa(
+  const {
+    data: logs,
+    isLoading: isFetchingLogs,
+    isError: isLogsforSpaError
+  } = useGetLogsforSpa(
     propertyIdentifier,
     spaName,
     env,
@@ -54,15 +58,24 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
   );
 
   useEffect(() => {
-    setLogsData(logs);
-    setIsLogsLoading(isFetchingLogs);
-  }, [logs, isFetchingLogs, type]);
-
-  useEffect(() => {
     setSelectedId(idList && idList.length > 0 ? idList[idList.length - 1] : undefined);
     setLogsData('');
     setIsLogsLoading(true);
-  }, [idList, type, isGit, isFetchingLogs]);
+  }, [idList, type, isGit, isFetchingLogs, isErrorPods]);
+
+  useEffect(() => {
+    if (!isFetchingLogs && logs) {
+      setLogsData(logs);
+      setIsLogsLoading(false);
+    }
+  }, [logs, isFetchingLogs]);
+
+  useEffect(() => {
+    if (isLogsforSpaError) {
+      setLogsData('');
+      setIsLogsLoading(false);
+    }
+  }, [isLogsforSpaError]);
 
   const handleToggle = (isSelectOpen: boolean) => {
     setIsOpen(isSelectOpen);
@@ -78,8 +91,8 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
     }
     setSelectedId(selection as string);
     setIsOpen(false);
+    setIsLogsLoading(true);
   };
-
   return (
     <div>
       <div className="pf-u-mb-md pf-u-mt-md">
@@ -95,7 +108,15 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
         </EmptyState>
       ) : (
         <div>
-          {isLogsLoading ? (
+          {isErrorPods ? (
+            <EmptyState>
+              <EmptyStateIcon icon={CubesIcon} />
+              <Title headingLevel="h4" size="lg">
+                No {toPascalCase(type === 0 ? logType.POD : logType.BUILD)} logs found for{' '}
+                <b>{spaName}</b> spa.
+              </Title>
+            </EmptyState>
+          ) : isLogsLoading ? (
             <EmptyState>
               <Spinner className="pf-u-mt-lg" />
             </EmptyState>
