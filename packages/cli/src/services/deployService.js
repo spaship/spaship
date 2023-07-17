@@ -95,7 +95,7 @@ const upload = (url, data, apiKey, onUploadProgress) => {
           }
         } catch (e) {
           reject(
-            "The server returned an invalid message.  The server may be down, or your .spashiprc.yml may be pointing at the wrong server (Please upgrade your CLI version and try again)."
+            "SPAship returned an invalid response. The deployment url may be wrong or SPAship may be unreachable."
           );
         }
       });
