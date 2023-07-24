@@ -139,9 +139,9 @@ export class ApplicationService {
       JSON.stringify(applicationRequest)
     );
     if (this.applicationFactory.isEphemeral(applicationRequest)) {
-      const expiresIn = Number(EPHEMERAL_ENV.expiresIn);
+      const expiresIn = this.getExpiresIn(applicationRequest.expiresIn);
       const scheduledDate = new Date();
-      scheduledDate.setSeconds(scheduledDate.getSeconds() + expiresIn);
+      scheduledDate.setSeconds(scheduledDate.getSeconds() + Number(expiresIn));
       const agendaResponse = await this.agendaService.agenda.schedule(scheduledDate, JOB.DELETE_EPH_ENV, {
         propertyIdentifier,
         env
@@ -168,6 +168,13 @@ export class ApplicationService {
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
     await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false }, applicationDetails);
     return this.applicationFactory.createApplicationResponse(applicationDetails, deploymentConnection.baseurl, applicationExists);
+  }
+
+  private getExpiresIn(expiresIn: string) {
+    if (!expiresIn) {
+      return EPHEMERAL_ENV.expiresIn;
+    }
+    return Number(expiresIn) * 60;
   }
 
   /* @internal

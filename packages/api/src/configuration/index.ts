@@ -85,7 +85,8 @@ export enum MAX {
   EXPIRESIN = 6,
   ENV = 15,
   REF = 500,
-  CLUSTER = 12
+  CLUSTER = 12,
+  EPH_EXPIRESIN = 4
 }
 
 export enum MESSAGE {
@@ -103,7 +104,10 @@ export enum MESSAGE {
   INVALID_REF = 'Invalid Reference [Correct format : 1.2, v1@1.2.3].',
   INVALID_ENV = 'Invalid Environment [Correct format : prod, stage, dev]',
   INVALID_LABEL = 'Invalid Label [Correct format : all-access, prod-key].',
-  INVALID_IMAGEURL = 'Invalid Image URL.'
+  INVALID_IMAGEURL = 'Invalid Image URL. Please check the image url',
+  INVALID_EPHEXPIRESIN = 'Time is Invalid',
+  INVALID_CMDB_CODE = 'Invalid CMDB Code.',
+  INVALID_SEVERITY = 'Invalid Severity.'
 }
 
 export const VALIDATION = {
@@ -119,7 +123,9 @@ export const VALIDATION = {
   ENV: /^[a-zA-Z0-9-]+$/,
   REF: /^[_a-zA-Z0-9/@ -.]+$/,
   EXPIRESIN: /^[a-zA-Z0-9]+$/,
-  IMAGEURL: getImageUrlRegex()
+  CMDB: /^[a-zA-Z0-9-]+$/,
+  IMAGEURL: getImageUrlRegex(),
+  EPH_EXPIRESIN: /^[0-9]+$/
 };
 
 export enum JOB {
