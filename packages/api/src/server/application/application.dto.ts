@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsObject, IsOptional, IsString, IsNumber, Matches, IsArray } from 'class-validator';
-import { MESSAGE, VALIDATION } from 'src/configuration';
+import { IsBoolean, IsNotEmpty, IsObject, IsOptional, IsString, IsNumber, Matches, IsArray, Length } from 'class-validator';
+import { MAX, MESSAGE, MIN, VALIDATION } from 'src/configuration';
 
 export class CreateApplicationDto {
   @ApiProperty()
@@ -23,6 +23,13 @@ export class CreateApplicationDto {
   @IsString()
   @IsOptional()
   ephemeral: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  @Length(MIN.DEFAULT, MAX.EPH_EXPIRESIN, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Matches(VALIDATION.EPH_EXPIRESIN, { message: MESSAGE.INVALID_EPHEXPIRESIN, always: true })
+  expiresIn: string;
 
   @ApiProperty()
   @IsString()
