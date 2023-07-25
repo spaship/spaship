@@ -720,11 +720,10 @@ export class ApplicationFactory {
   }
 
   // @internal get the expires in for the ephemeral environment
-   getExpiresIn(expiresIn: string) {
+  getExpiresIn(expiresIn: string) {
     if (!expiresIn) {
       return EPHEMERAL_ENV.expiresIn;
     }
     return Number(expiresIn) * 60 * 60;
   }
-
 }
