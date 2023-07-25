@@ -192,7 +192,7 @@ export class ApplicationFactory {
     return applicationRequest.ephemeral === 'true';
   }
 
-  createEphemeralPreview(propertyIdentifier: string, actionEnabled: boolean, actionId: string, createdBy: string): Environment {
+  createEphemeralPreview(propertyIdentifier: string, actionEnabled: boolean, actionId: string, createdBy: string, expiresIn?: string): Environment {
     const ephEnvironment = new Environment();
     ephEnvironment.propertyIdentifier = propertyIdentifier;
     ephEnvironment.env = `ephemeral-${uuidv4().substring(0, 4)}`;
@@ -201,7 +201,7 @@ export class ApplicationFactory {
     ephEnvironment.isEph = true;
     ephEnvironment.actionEnabled = actionEnabled;
     ephEnvironment.actionId = actionId;
-    ephEnvironment.expiresIn = EPHEMERAL_ENV.expiresIn.toString();
+    ephEnvironment.expiresIn = this.getExpiresIn(expiresIn).toString();
     ephEnvironment.createdBy = createdBy;
     return ephEnvironment;
   }
@@ -718,4 +718,13 @@ export class ApplicationFactory {
     });
     return secretMap;
   }
+
+  // @internal get the expires in for the ephemeral environment
+   getExpiresIn(expiresIn: string) {
+    if (!expiresIn) {
+      return EPHEMERAL_ENV.expiresIn;
+    }
+    return Number(expiresIn) * 60 * 60;
+  }
+
 }

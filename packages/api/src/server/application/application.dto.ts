@@ -27,7 +27,7 @@ export class CreateApplicationDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  @Length(MIN.DEFAULT, MAX.EPH_EXPIRESIN, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Length(MIN.EPH_EXPIRESIN, MAX.EPH_EXPIRESIN, { message: MESSAGE.INVALID_LENGTH, always: true })
   @Matches(VALIDATION.EPH_EXPIRESIN, { message: MESSAGE.INVALID_EPHEXPIRESIN, always: true })
   expiresIn: string;
 

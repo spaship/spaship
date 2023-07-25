@@ -4,7 +4,7 @@ import * as decompress from 'decompress';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
-import { CONTAINERIZED_DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, EPHEMERAL_ENV, JOB, LOGTYPE } from 'src/configuration';
+import { CONTAINERIZED_DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, JOB, LOGTYPE } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { AgendaService } from 'src/server/agenda/agenda.service';
@@ -88,7 +88,7 @@ export class ApplicationService {
         env = ephemeral.env;
         this.logger.log('Ephemeral', JSON.stringify(ephemeral));
       } else {
-        const tmpEph = this.applicationFactory.createEphemeralPreview(propertyIdentifier, actionEnabled, actionId, 'NA');
+        const tmpEph = this.applicationFactory.createEphemeralPreview(propertyIdentifier, actionEnabled, actionId, 'NA', applicationRequest.expiresIn);
         await this.dataServices.environment.create(tmpEph);
         this.logger.log('NewEphemeral', JSON.stringify(tmpEph));
         env = tmpEph.env;
@@ -139,7 +139,7 @@ export class ApplicationService {
       JSON.stringify(applicationRequest)
     );
     if (this.applicationFactory.isEphemeral(applicationRequest)) {
-      const expiresIn = this.getExpiresIn(applicationRequest.expiresIn);
+      const expiresIn = this.applicationFactory.getExpiresIn(applicationRequest.expiresIn);
       const scheduledDate = new Date();
       scheduledDate.setSeconds(scheduledDate.getSeconds() + Number(expiresIn));
       const agendaResponse = await this.agendaService.agenda.schedule(scheduledDate, JOB.DELETE_EPH_ENV, {
@@ -168,13 +168,6 @@ export class ApplicationService {
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
     await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false }, applicationDetails);
     return this.applicationFactory.createApplicationResponse(applicationDetails, deploymentConnection.baseurl, applicationExists);
-  }
-
-  private getExpiresIn(expiresIn: string) {
-    if (!expiresIn) {
-      return EPHEMERAL_ENV.expiresIn;
-    }
-    return Number(expiresIn) * 60;
   }
 
   /* @internal
