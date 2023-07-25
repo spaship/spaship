@@ -3,7 +3,7 @@ export const DIRECTORY_CONFIGURATION = {
 };
 
 export const EPHEMERAL_ENV = {
-  expiresIn: process.env.SPASHIP_EPH__TTL || 3600
+  expiresIn: process.env.SPASHIP_EPH__TTL || 1
 };
 
 export const CONTAINERIZED_DEPLOYMENT_DETAILS = {
@@ -73,7 +73,8 @@ export enum MIN {
   DEFAULT = 2,
   PATH = 1,
   ACTIONID = 1,
-  URL = 3
+  URL = 3,
+  EPH_EXPIRESIN = 1
 }
 
 // @internal this is for validating the maximum length for the Specific requests
@@ -86,7 +87,7 @@ export enum MAX {
   ENV = 15,
   REF = 500,
   CLUSTER = 12,
-  EPH_EXPIRESIN = 4
+  EPH_EXPIRESIN = 3
 }
 
 export enum MESSAGE {
