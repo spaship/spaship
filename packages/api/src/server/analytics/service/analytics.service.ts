@@ -24,6 +24,8 @@ export class AnalyticsService {
 
   private static readonly defaultDays: number = 120;
 
+  private static readonly standardTimeToDeploy: number = 300;
+
   constructor(
     private readonly dataServices: IDataServices,
     private readonly analyticsFactory: AnalyticsFactory,
@@ -100,14 +102,16 @@ export class AnalyticsService {
     return deploymentCount;
   }
 
-  async getMonthlyDeploymentCount(propertyIdentifier: string, applicationIdentifier: string): Promise<Object> {
+  async getMonthlyDeploymentCount(propertyIdentifier: string, applicationIdentifier: string, previous: number): Promise<Object> {
     const response = {};
     const monthlyCountResponse = [];
     const [searchQuery, groupQuery, projectQuery] = await this.analyticsFactory.getMonthlyDeploymentCountQuery(
       propertyIdentifier,
       applicationIdentifier
     );
-    const monthlyDateFrame = await this.analyticsFactory.buildWeeklyDateFrame();
+    let monthlyDateFrame;
+    if (!previous) monthlyDateFrame = await this.analyticsFactory.buildWeeklyDateFrame();
+    else monthlyDateFrame = await this.analyticsFactory.buildMonthlyDateFrame(previous);
     for (const week of monthlyDateFrame) {
       const element = { startDate: week.startDate, endDate: week.endDate };
       const query = await this.analyticsFactory.buildMonthlyCountQuery(element.startDate, element.endDate, searchQuery, groupQuery, projectQuery);
@@ -179,5 +183,13 @@ export class AnalyticsService {
         .catch((err) => {
           this.logger.error('WebhookError', err);
         });
+  }
+
+  async getDeploymentTimeSaved(): Promise<Object> {
+    const response = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.defaultDays * 30);
+    const totalTimeForStandardDeployment = AnalyticsService.standardTimeToDeploy * response.count;
+    const timeSavedInSec = totalTimeForStandardDeployment - response.totalTime;
+    const timeSavedInHours = Math.round(timeSavedInSec / 60 / 60);
+    return { timeSavedInHours };
   }
 }

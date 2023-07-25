@@ -10,7 +10,7 @@ export class AnalyticsFactory {
     return [{ $match: searchQuery }, { $group: groupQuery }, { $project: projectionQuery }];
   }
 
-  async getDeploymentCountQuery(propertyIdentifier: string): Promise<Object> {
+  async getDeploymentCountQuery(propertyIdentifier?: string): Promise<Object> {
     let searchQuery;
     if (!propertyIdentifier) searchQuery = { action: Action.APPLICATION_DEPLOYED };
     else searchQuery = { action: Action.APPLICATION_DEPLOYED, propertyIdentifier };
@@ -99,6 +99,21 @@ export class AnalyticsFactory {
       startDate.setDate(recentDate.getDate() - 7);
       dateFrame.push({ startDate, endDate });
       recentDate = startDate;
+    }
+    return dateFrame;
+  }
+
+  async buildMonthlyDateFrame(previous: number): Promise<any[]> {
+    const dateFrame = [];
+    const startDate = new Date();
+    const endDate = new Date();
+    startDate.setDate(1);
+    endDate.setDate(31);
+    dateFrame.push({ startDate: new Date(startDate), endDate: new Date(endDate) });
+    for (let i = 1; i < previous; i += 1) {
+      startDate.setMonth(startDate.getMonth() - 1);
+      endDate.setMonth(endDate.getMonth() - 1);
+      dateFrame.push({ startDate: new Date(startDate), endDate: new Date(endDate) });
     }
     return dateFrame;
   }
