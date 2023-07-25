@@ -29,7 +29,7 @@ body {
 }
 
 .pf-c-page {
-  --pf-c-page--BackgroundColor: #fff !important;
+  --pf-c-page--BackgroundColor: #f0f0f0 !important;
   --pf-c-page__main-section--BackgroundColor: #fff !important;
   height: 100vh !important;
 }

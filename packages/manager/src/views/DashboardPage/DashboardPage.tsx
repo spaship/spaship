@@ -9,11 +9,13 @@ import {
 } from '@app/services/analytics';
 import { ActivityStreamDashboard } from './components/ActivityStreamDashboard';
 import { Analytics } from './components/Analytics';
+import { DashboardChart } from './components/DashboardChart';
 
 export const DashboardPage = (): JSX.Element => {
   const TotalDeploymentData = useGetTotalDeployments();
   const TotalDeployment = TotalDeploymentData.data?.reduce((acc, obj) => acc + obj.count, 0);
   const TotalDeploymentCountsData = useGetDeploymentCounts();
+
   const TotalProperty = Object.keys(TotalDeploymentCountsData.data || {}).length;
   const TotalMonthlyDeploymentData = useGetMonthlyDeploymentChartWithEphemeral().data;
   const averageDeploymentTime = [
@@ -27,28 +29,41 @@ export const DashboardPage = (): JSX.Element => {
     (time) => time === bestDeploymentTime
   );
   return (
-    <div style={{ display: 'flex', flexDirection: 'row', height: '10%' }}>
-      <div style={{ width: '55%' }}>
-        <Analytics
-          TotalMonthlyDeploymentData={{
-            qa: TotalMonthlyDeploymentData?.qa ?? [],
-            prod: TotalMonthlyDeploymentData?.prod ?? [],
-            dev: TotalMonthlyDeploymentData?.dev ?? [],
-            stage: TotalMonthlyDeploymentData?.stage ?? []
-          }}
-          TotalDeployment={TotalDeployment}
-          TotalProperty={TotalProperty}
-          averageDeploymentTime={averageDeploymentTime}
-          bestDeploymentTime={bestDeploymentTime}
-          bestDeploymentTimeIndex={bestDeploymentTimeIndex || 0}
-          TotalDeploymentData={TotalDeploymentData}
-          minCount={TotalMonthlyDeploymentData?.minDeploymentCount || 0}
-          maxCount={TotalMonthlyDeploymentData?.maxDeploymentCount || 0}
-        />
+    <>
+      <Analytics
+        TotalMonthlyDeploymentData={{
+          qa: TotalMonthlyDeploymentData?.qa ?? [],
+          prod: TotalMonthlyDeploymentData?.prod ?? [],
+          dev: TotalMonthlyDeploymentData?.dev ?? [],
+          stage: TotalMonthlyDeploymentData?.stage ?? []
+        }}
+        TotalDeployment={TotalDeployment}
+        TotalProperty={TotalProperty}
+        averageDeploymentTime={averageDeploymentTime}
+        bestDeploymentTime={bestDeploymentTime}
+        bestDeploymentTimeIndex={bestDeploymentTimeIndex || 0}
+        TotalDeploymentData={TotalDeploymentData}
+        minCount={TotalMonthlyDeploymentData?.minDeploymentCount || 0}
+        maxCount={TotalMonthlyDeploymentData?.maxDeploymentCount || 0}
+      />
+
+      <div style={{ display: 'flex', flexDirection: 'row', height: '10%' }}>
+        <div style={{ width: '50%' }}>
+          <DashboardChart
+            TotalMonthlyDeploymentData={{
+              qa: TotalMonthlyDeploymentData?.qa ?? [],
+              prod: TotalMonthlyDeploymentData?.prod ?? [],
+              dev: TotalMonthlyDeploymentData?.dev ?? [],
+              stage: TotalMonthlyDeploymentData?.stage ?? []
+            }}
+            minCount={TotalMonthlyDeploymentData?.minDeploymentCount || 0}
+            maxCount={TotalMonthlyDeploymentData?.maxDeploymentCount || 0}
+          />
+        </div>
+        <div style={{ width: '50%' }}>
+          <ActivityStreamDashboard />
+        </div>
       </div>
-      <div style={{ width: '45%' }}>
-        <ActivityStreamDashboard />
-      </div>
-    </div>
+    </>
   );
 };
