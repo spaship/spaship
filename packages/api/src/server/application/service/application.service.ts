@@ -88,7 +88,13 @@ export class ApplicationService {
         env = ephemeral.env;
         this.logger.log('Ephemeral', JSON.stringify(ephemeral));
       } else {
-        const tmpEph = this.applicationFactory.createEphemeralPreview(propertyIdentifier, actionEnabled, actionId, 'NA', applicationRequest.expiresIn);
+        const tmpEph = this.applicationFactory.createEphemeralPreview(
+          propertyIdentifier,
+          actionEnabled,
+          actionId,
+          'NA',
+          applicationRequest.expiresIn
+        );
         await this.dataServices.environment.create(tmpEph);
         this.logger.log('NewEphemeral', JSON.stringify(tmpEph));
         env = tmpEph.env;
