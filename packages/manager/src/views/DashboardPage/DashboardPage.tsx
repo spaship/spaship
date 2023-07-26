@@ -17,7 +17,7 @@ export const DashboardPage = (): JSX.Element => {
   const TotalDeploymentCountsData = useGetDeploymentCounts();
 
   const TotalProperty = Object.keys(TotalDeploymentCountsData.data || {}).length;
-  const TotalMonthlyDeploymentData = useGetMonthlyDeploymentChartWithEphemeral().data;
+  const TotalMonthlyDeploymentData = useGetMonthlyDeploymentChartWithEphemeral('', '').data;
   const averageDeploymentTime = [
     useGetMonthlyDeploymentsTime().data || 0,
     useGetQuarterlyDeploymentsTime().data || 0,
@@ -31,20 +31,12 @@ export const DashboardPage = (): JSX.Element => {
   return (
     <>
       <Analytics
-        TotalMonthlyDeploymentData={{
-          qa: TotalMonthlyDeploymentData?.qa ?? [],
-          prod: TotalMonthlyDeploymentData?.prod ?? [],
-          dev: TotalMonthlyDeploymentData?.dev ?? [],
-          stage: TotalMonthlyDeploymentData?.stage ?? []
-        }}
         TotalDeployment={TotalDeployment}
         TotalProperty={TotalProperty}
         averageDeploymentTime={averageDeploymentTime}
         bestDeploymentTime={bestDeploymentTime}
         bestDeploymentTimeIndex={bestDeploymentTimeIndex || 0}
         TotalDeploymentData={TotalDeploymentData}
-        minCount={TotalMonthlyDeploymentData?.minDeploymentCount || 0}
-        maxCount={TotalMonthlyDeploymentData?.maxDeploymentCount || 0}
       />
 
       <div style={{ display: 'flex', flexDirection: 'row', height: '10%' }}>

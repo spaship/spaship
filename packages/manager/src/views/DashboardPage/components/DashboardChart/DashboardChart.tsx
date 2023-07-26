@@ -24,7 +24,6 @@ import {
   Tabs,
   TabTitleText,
   Text,
-  TextContent,
   TextVariants
 } from '@patternfly/react-core';
 import dayjs from 'dayjs';
@@ -87,23 +86,21 @@ export const DashboardChart = ({ TotalMonthlyDeploymentData, minCount, maxCount 
 
   return (
     <Grid>
-      <TextContent style={{ marginTop: '24px', marginLeft: '24px', fontSize: '20px' }}>
-        <Text component={TextVariants.h1}>Past 30 days Deployment History</Text>
-      </TextContent>
       <Card
         isSelectable
         isFullHeight
         style={{
-          margin: '24px 24px',
+          margin: '0px 24px',
           overflow: 'auto',
           scrollbarWidth: 'none',
           height: '450px'
         }}
-        isRounded
       >
         <CardHeader>
           <SplitItem>
-            <CardTitle>Deployment</CardTitle>
+            <CardTitle>
+              <Text component={TextVariants.h5}>Deployment</Text>
+            </CardTitle>
           </SplitItem>
           <SplitItem isFilled />
           <SplitItem>

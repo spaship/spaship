@@ -4,7 +4,6 @@ import { TSPADeploymentCount } from '@app/services/analytics/types';
 import {
   Card,
   CardBody,
-  CardTitle,
   Grid,
   GridItem,
   Text,
@@ -17,61 +16,51 @@ import Link from 'next/link';
 const TotalDeploymentCardFields = ['Dev', 'QA', 'Stage', 'Prod'];
 const DeploymentTimeFrames = ['30 days', '90 days', '180 days', '365 days'];
 
-type ITotalMonthlyDeploymentData = {
-  [key: string]: {
-    count: number;
-    startDate: string;
-    endDate: string;
-  }[];
-};
 type Props = {
-  TotalMonthlyDeploymentData: ITotalMonthlyDeploymentData;
   TotalDeployment?: number;
   TotalProperty: number;
   averageDeploymentTime: number[];
   bestDeploymentTime?: number;
   bestDeploymentTimeIndex: number;
   TotalDeploymentData: UseQueryResult<TSPADeploymentCount[]>;
-  minCount: number;
-  maxCount: number;
 };
 
 export const Analytics = ({
-  TotalMonthlyDeploymentData,
   TotalDeployment,
   TotalProperty,
   averageDeploymentTime,
   bestDeploymentTime,
   bestDeploymentTimeIndex,
-  TotalDeploymentData,
-  minCount,
-  maxCount
+  TotalDeploymentData
 }: Props) => (
   <Card style={{ margin: '24px 24px' }}>
     <TextContent
-      style={{ marginBottom: '10px', marginTop: '24px', marginLeft: '24px', fontSize: '20px' }}
+      style={{
+        paddingBottom: '24px',
+        marginTop: '24px',
+        paddingLeft: '24px',
+        fontSize: '16px',
+        borderBottom: '1px solid #D2D2D2'
+      }}
     >
-      <Text component={TextVariants.h1}>SPAship Deployment Analysis</Text>
+      <Text component={TextVariants.h5}>Deployment Analysis</Text>
     </TextContent>
-    <Grid>
-      <GridItem span={3}>
+    <Grid span={3}>
+      <GridItem>
         <Link href={pageLinks.webPropertyListPage}>
           <a className="text-decoration-none">
             <Card
               isSelectable
               isFullHeight
               style={{
-                // margin: '12px 12px',
-                // overflow: 'auto',
+                overflow: 'auto',
                 scrollbarWidth: 'none',
-                height: '190px',
-                border: '1px solid grey'
+                borderRight: '1px  solid #D2D2D2'
               }}
-              isRounded
             >
-              <CardTitle>Total Deployments</CardTitle>
               <CardBody>
-                <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{TotalDeployment}</h1>
+                <p style={{ color: '#06C', fontSize: '24px' }}>{TotalDeployment}</p>
+                <Text component={TextVariants.h2}>Total Deployments</Text>
                 <div
                   style={{
                     display: 'flex',
@@ -82,17 +71,25 @@ export const Analytics = ({
                 >
                   {TotalDeploymentCardFields.map((field) => (
                     <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
-                      <h1 style={{ fontSize: '12px' }}>{field}</h1>
-                      <h1 style={{ fontSize: '12px' }}>
+                      <p style={{ fontSize: '20px', color: '#151515' }}>
                         {TotalDeploymentData.data
                           ?.filter((ele) => ele.env === field.toLocaleLowerCase())
                           .map((ele) => ele.count)}
-                      </h1>
+                      </p>
+                      <p
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: 400,
+                          color: '#3C3F42'
+                        }}
+                      >
+                        {field}
+                      </p>
                     </div>
                   ))}
+
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <h1 style={{ fontSize: '12px' }}>Others</h1>
-                    <h1 style={{ fontSize: '12px' }}>
+                    <p style={{ fontSize: '20px', color: '#151515' }}>
                       {TotalDeploymentData.data
                         ?.filter(
                           (ele) =>
@@ -101,7 +98,16 @@ export const Analytics = ({
                             ).includes(ele.env)
                         )
                         .reduce((acc, ele) => acc + ele.count, 0)}
-                    </h1>
+                    </p>
+                    <p
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: 400,
+                        color: '#3C3F42'
+                      }}
+                    >
+                      Others
+                    </p>
                   </div>
                 </div>
               </CardBody>
@@ -109,27 +115,27 @@ export const Analytics = ({
           </a>
         </Link>
       </GridItem>
-      <GridItem span={3}>
+      <GridItem>
         <Card
           isSelectable
           isFullHeight
           style={{
-            margin: '12px 12px',
             overflow: 'auto',
             scrollbarWidth: 'none',
-            height: '190px'
+            borderRight: '1px  solid #D2D2D2'
           }}
-          isRounded
         >
-          <CardTitle>Average time to deploy</CardTitle>
           <CardBody>
             {bestDeploymentTime ? (
-              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}>
-                <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{bestDeploymentTime}s</h1>
-                <h1 style={{ fontSize: '14px', paddingLeft: '8px' }}>
-                  in past {DeploymentTimeFrames[bestDeploymentTimeIndex]}
-                </h1>
-              </div>
+              <>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}>
+                  <p style={{ color: '#06C', fontSize: '24px' }}>{bestDeploymentTime}s</p>
+                  <p style={{ fontSize: '14px', paddingLeft: '8px', fontFamily: 'Red Hat Text' }}>
+                    in past {DeploymentTimeFrames[bestDeploymentTimeIndex]}
+                  </p>
+                </div>
+                <Text component={TextVariants.h2}>Average time to deploy</Text>
+              </>
             ) : (
               ''
             )}
@@ -137,57 +143,75 @@ export const Analytics = ({
             <div style={{ display: 'flex', flexDirection: 'row', gap: '35px', marginTop: '24px' }}>
               {DeploymentTimeFrames.map((field, index) => (
                 <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
-                  <h1 style={{ fontSize: '12px' }}>{`Past ${field}`}</h1>
-                  <h1 style={{ fontSize: '12px' }}>
+                  <p style={{ fontSize: '20px', color: '#151515' }}>
                     {averageDeploymentTime[index] ? `${averageDeploymentTime[index]}s` : ''}
-                  </h1>
+                  </p>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: 400,
+                      color: '#3C3F42'
+                    }}
+                  >{`Past ${field}`}</p>
                 </div>
               ))}
             </div>
           </CardBody>
         </Card>
       </GridItem>
-      <GridItem span={3}>
+      <GridItem>
         <Link href={pageLinks.webPropertyListPage}>
           <a className="text-decoration-none">
             <Card
               isSelectable
               isFullHeight
               style={{
-                margin: '12px 12px',
                 overflow: 'auto',
                 scrollbarWidth: 'none',
-                height: '130px'
+                borderRight: '1px  solid #D2D2D2'
               }}
-              isRounded
             >
-              <CardTitle>Total Properties</CardTitle>
               <CardBody>
-                <h1 style={{ color: '#0066CC', fontSize: '28px' }}>{TotalProperty}</h1>
+                <p style={{ color: '#06C', fontSize: '24px', fontWeight: 500 }}>{TotalProperty}</p>
+                <Text component={TextVariants.h2}>Total Web Properties</Text>
+                <div
+                  style={{
+                    marginTop: '24px'
+                  }}
+                >
+                  <p style={{ fontSize: '20px', color: '#151515' }}>53hr 36mins</p>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: 400,
+                      color: '#3C3F42'
+                    }}
+                  >
+                    Total Time Saved
+                  </p>
+                </div>
               </CardBody>
             </Card>
           </a>
         </Link>
       </GridItem>
-      <GridItem span={3}>
+      <GridItem>
         <Card
           isSelectable
           isFullHeight
           style={{
-            margin: '12px 12px',
             overflow: 'auto',
             scrollbarWidth: 'none',
-            height: '130px'
+            borderRight: '1px  solid #D2D2D2'
           }}
-          isRounded
         >
-          <CardTitle>Total Ephemeral Deployments</CardTitle>
           <CardBody>
-            <h1 style={{ color: '#0066CC', fontSize: '28px' }}>
+            <p style={{ color: '#06C', fontSize: '24px' }}>
               {TotalDeploymentData.data
                 ?.filter((ele) => ele.env === 'ephemeral')
                 .reduce((acc, ele) => acc + ele.count, 0)}
-            </h1>
+            </p>
+            <Text component={TextVariants.h2}>Total Ephemeral Deployments</Text>
           </CardBody>
         </Card>
       </GridItem>
