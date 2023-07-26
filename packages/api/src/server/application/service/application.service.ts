@@ -607,6 +607,7 @@ export class ApplicationService {
             isGit: true
           })
         )[0];
+        // @internal conversion from the milliseconds to seconds
         const diff = (applicationDetails.updatedAt.getTime() - new Date().getTime()) / 1000;
         const consumedTime = Math.abs(diff).toFixed(2).toString();
         this.logger.log('TimeToDeploy', `${consumedTime} seconds [${buildName}]`);

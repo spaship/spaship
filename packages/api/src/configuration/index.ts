@@ -161,9 +161,10 @@ function getImageUrlRegex() {
   return new RegExp(process.env.SPASHIP_SSR_IMAGEURL_REGEX);
 }
 
+// @internal Env variables to be added
 export const ANALYTICS = {
   averageTimeToDeploy: 1800,
   developerHourlyRate: 46,
   workingDays: 23,
-  workingHours: 8
+  workingHours: 23
 };

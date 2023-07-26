@@ -27,6 +27,12 @@ export class AnalyticsService {
 
   private static readonly standardTimeToDeploy: number = 300;
 
+  private static readonly days = 30;
+
+  private static readonly seconds = 60;
+
+  private static readonly minutes = 60;
+
   constructor(
     private readonly dataServices: IDataServices,
     private readonly analyticsFactory: AnalyticsFactory,
@@ -198,10 +204,10 @@ export class AnalyticsService {
   }
 
   async getDeploymentTimeSaved(): Promise<Object> {
-    const response = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.defaultDays * 30);
+    const response = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.defaultDays * AnalyticsService.days);
     const totalTimeForStandardDeployment = ANALYTICS.averageTimeToDeploy * response.count;
     const timeSavedInSec = totalTimeForStandardDeployment - response.totalTime;
-    const timeSavedInHours = Math.round(timeSavedInSec / 60 / 60);
+    const timeSavedInHours = Math.round(timeSavedInSec / AnalyticsService.seconds / AnalyticsService.minutes);
     return { timeSavedInHours };
   }
 
@@ -210,15 +216,19 @@ export class AnalyticsService {
     const { averageTimeToDeploy } = ANALYTICS;
     const response = [];
     for (const tmpMonth of monthlyDateFrame) {
-      const monthlyAnalytics = await this.getAverageDeploymentTime('', 'NA', 30, tmpMonth, cluster, type);
+      const monthlyAnalytics = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.days, tmpMonth, cluster, type);
       const spashipAverageTime = monthlyAnalytics.averageTime;
       const averageSavedTime = averageTimeToDeploy - monthlyAnalytics.averageTime;
       const totalWorkingHours = ANALYTICS.workingDays * ANALYTICS.workingHours;
       const totalDeploymentCount = monthlyAnalytics.count;
-      const totalDeploymentHours = parseFloat(((monthlyAnalytics.averageTime * totalDeploymentCount) / 60 / 60).toFixed(2));
+      const totalDeploymentHours = parseFloat(
+        ((monthlyAnalytics.averageTime * totalDeploymentCount) / AnalyticsService.seconds / AnalyticsService.minutes).toFixed(2)
+      );
       const frequencyOfDeployment = parseFloat((totalDeploymentCount / totalWorkingHours).toFixed(2));
       const { developerHourlyRate } = ANALYTICS;
-      const costSavingPerHour = parseFloat(((averageSavedTime / 60 / 60) * frequencyOfDeployment * developerHourlyRate).toFixed(2));
+      const costSavingPerHour = parseFloat(
+        ((averageSavedTime / AnalyticsService.seconds / AnalyticsService.minutes) * frequencyOfDeployment * developerHourlyRate).toFixed(2)
+      );
       const totalCostSaved = parseFloat((costSavingPerHour * totalDeploymentHours).toFixed(2));
       response.push({
         ...tmpMonth,
