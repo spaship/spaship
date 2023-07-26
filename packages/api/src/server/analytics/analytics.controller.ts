@@ -70,7 +70,7 @@ export class AnalyticsController {
     @Query('isEph') isEph: string,
     @Query('save') save: boolean
   ): Promise<any> {
-    if (save) return this.analyticsService.getDeploymentTimeSaved1();
+    if (save) return this.analyticsService.getDeploymentTimeSaved();
     return this.analyticsService.getAverageDeploymentTime(propertyIdentifier, isEph, days);
   }
 

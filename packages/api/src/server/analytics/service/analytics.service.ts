@@ -197,7 +197,7 @@ export class AnalyticsService {
         });
   }
 
-  async getDeploymentTimeSaved1(): Promise<Object> {
+  async getDeploymentTimeSaved(): Promise<Object> {
     const response = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.defaultDays * 30);
     const totalTimeForStandardDeployment = ANALYTICS.averageTimeToDeploy * response.count;
     const timeSavedInSec = totalTimeForStandardDeployment - response.totalTime;
