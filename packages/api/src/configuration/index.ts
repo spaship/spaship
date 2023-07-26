@@ -65,7 +65,11 @@ export const ROVER_AUTH = {
 };
 
 export const DEPLOYMENT_DETAILS = {
-  namespace: process.env.SPASHIP_NAMESPACE_PREFIX || 'spaship'
+  type: {
+    containerized: 'containerized',
+    static: 'static'
+  },
+  namespace: process.env.SPASHIP_NAMESPACE || 'spaship-sandbox'
 };
 
 // @internal this is for validating the minimum length for the Specific requests
@@ -156,3 +160,10 @@ export const SPASHIP_VERSION = process.env.npm_package_version;
 function getImageUrlRegex() {
   return new RegExp(process.env.SPASHIP_SSR_IMAGEURL_REGEX);
 }
+
+export const ANALYTICS = {
+  averageTimeToDeploy: 1800,
+  developerHourlyRate: 46,
+  workingDays: 23,
+  workingHours: 8
+};

@@ -217,7 +217,7 @@ export class AnalyticsService {
       const totalDeploymentCount = monthlyAnalytics.count;
       const totalDeploymentHours = parseFloat(((monthlyAnalytics.averageTime * totalDeploymentCount) / 60 / 60).toFixed(2));
       const frequencyOfDeployment = parseFloat((totalDeploymentCount / totalWorkingHours).toFixed(2));
-      const developerHourlyRate = ANALYTICS.developerHourlyRate;
+      const { developerHourlyRate } = ANALYTICS;
       const costSavingPerHour = parseFloat(((averageSavedTime / 60 / 60) * frequencyOfDeployment * developerHourlyRate).toFixed(2));
       const totalCostSaved = parseFloat((costSavingPerHour * totalDeploymentHours).toFixed(2));
       response.push({
@@ -233,6 +233,6 @@ export class AnalyticsService {
         totalCostSaved
       });
     }
-    return { response };
+    return response;
   }
 }
