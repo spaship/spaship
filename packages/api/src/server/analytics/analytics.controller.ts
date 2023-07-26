@@ -70,7 +70,14 @@ export class AnalyticsController {
     @Query('isEph') isEph: string,
     @Query('save') save: boolean
   ): Promise<any> {
-    if (save) return this.analyticsService.getDeploymentTimeSaved();
+    if (save) return this.analyticsService.getDeploymentTimeSaved1();
     return this.analyticsService.getAverageDeploymentTime(propertyIdentifier, isEph, days);
+  }
+
+  @Get('/developer')
+  @ApiCreatedResponse({ status: 200, description: 'Details for the average time to deployment.', type: DeploymentTime })
+  @ApiOperation({ description: 'Get the Average time for the Deployments & the time saved by SPAship.' })
+  async getDeveloperMetrics(@Query('month') month: string, @Query('cluster') cluster: string, @Query('type') type: string): Promise<any> {
+    return this.analyticsService.getDeveloperMetrics(Number(month), cluster, type);
   }
 }
