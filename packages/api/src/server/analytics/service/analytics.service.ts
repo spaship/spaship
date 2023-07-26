@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { fromEvent } from 'rxjs';
+import { ANALYTICS } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { ActivityStream, Props } from '../activity-stream.entity';
@@ -41,7 +42,9 @@ export class AnalyticsService {
     message?: string,
     createdBy?: string,
     source?: string,
-    payload?: string
+    payload?: string,
+    cluster?: string,
+    type?: string
   ): Promise<ActivityStream> {
     const activityStream = new ActivityStream();
     const props = new Props();
@@ -49,6 +52,8 @@ export class AnalyticsService {
     activityStream.action = action;
     props.applicationIdentifier = applicationIdentifier || 'NA';
     props.env = env || 'NA';
+    props.cluster = cluster || 'NA';
+    props.type = type || 'NA';
     activityStream.props = props;
     activityStream.message = message;
     activityStream.payload = payload;
@@ -143,8 +148,15 @@ export class AnalyticsService {
     AnalyticsService.emitter.emit(channel, data);
   }
 
-  async getAverageDeploymentTime(propertyIdentifier: string, isEph: string, days: number = AnalyticsService.defaultDays): Promise<DeploymentTime> {
-    const query = await this.analyticsFactory.getAverageDeploymentTimeQuery(propertyIdentifier, days, isEph);
+  async getAverageDeploymentTime(
+    propertyIdentifier: string,
+    isEph: string,
+    days: number = AnalyticsService.defaultDays,
+    monthFrame?: any,
+    cluster?: string,
+    type?: string
+  ): Promise<DeploymentTime> {
+    const query = await this.analyticsFactory.getAverageDeploymentTimeQuery(propertyIdentifier, days, isEph, monthFrame, cluster, type);
     const response = await this.dataServices.eventTimeTrace.aggregate(query);
     let sumOfDeploymentTime = 0;
     let sumOfDeploymentCount = 0;
@@ -185,11 +197,42 @@ export class AnalyticsService {
         });
   }
 
-  async getDeploymentTimeSaved(): Promise<Object> {
+  async getDeploymentTimeSaved1(): Promise<Object> {
     const response = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.defaultDays * 30);
-    const totalTimeForStandardDeployment = AnalyticsService.standardTimeToDeploy * response.count;
+    const totalTimeForStandardDeployment = ANALYTICS.averageTimeToDeploy * response.count;
     const timeSavedInSec = totalTimeForStandardDeployment - response.totalTime;
     const timeSavedInHours = Math.round(timeSavedInSec / 60 / 60);
     return { timeSavedInHours };
+  }
+
+  async getDeveloperMetrics(month: number, cluster: string, type: string): Promise<Object> {
+    const monthlyDateFrame = await this.analyticsFactory.buildMonthlyDateFrame(month || 1);
+    const { averageTimeToDeploy } = ANALYTICS;
+    const response = [];
+    for (const tmpMonth of monthlyDateFrame) {
+      const monthlyAnalytics = await this.getAverageDeploymentTime('', 'NA', 30, tmpMonth, cluster, type);
+      const spashipAverageTime = monthlyAnalytics.averageTime;
+      const averageSavedTime = averageTimeToDeploy - monthlyAnalytics.averageTime;
+      const totalWorkingHours = ANALYTICS.workingDays * ANALYTICS.workingHours;
+      const totalDeploymentCount = monthlyAnalytics.count;
+      const totalDeploymentHours = parseFloat(((monthlyAnalytics.averageTime * totalDeploymentCount) / 60 / 60).toFixed(2));
+      const frequencyOfDeployment = parseFloat((totalDeploymentCount / totalWorkingHours).toFixed(2));
+      const developerHourlyRate = ANALYTICS.developerHourlyRate;
+      const costSavingPerHour = parseFloat(((averageSavedTime / 60 / 60) * frequencyOfDeployment * developerHourlyRate).toFixed(2));
+      const totalCostSaved = parseFloat((costSavingPerHour * totalDeploymentHours).toFixed(2));
+      response.push({
+        ...tmpMonth,
+        averageSavedTime,
+        spashipAverageTime,
+        totalWorkingHours,
+        totalDeploymentCount,
+        totalDeploymentHours,
+        frequencyOfDeployment,
+        developerHourlyRate,
+        costSavingPerHour,
+        totalCostSaved
+      });
+    }
+    return { response };
   }
 }
