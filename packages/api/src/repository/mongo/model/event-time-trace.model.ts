@@ -16,6 +16,12 @@ export class EventTimeTrace {
   @Prop({ required: true })
   env: string;
 
+  @Prop({})
+  cluster: string;
+
+  @Prop({})
+  type: string;
+
   @Prop({ required: true })
   consumedTime: string;
 

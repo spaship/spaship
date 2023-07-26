@@ -18,6 +18,10 @@ export class Props {
   env: string;
 
   applicationIdentifier: string;
+
+  cluster: string;
+
+  type: string;
 }
 
 export enum Action {
