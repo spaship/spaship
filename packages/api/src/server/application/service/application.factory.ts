@@ -517,13 +517,15 @@ export class ApplicationFactory {
   }
 
   // @internal Process the Deployment time for the analytics
-  processDeploymentTime(application: Application, consumedTime: string): EventTimeTrace {
+  processDeploymentTime(application: Application, consumedTime: string, cluster: string): EventTimeTrace {
     const eventTimeTrace = new EventTimeTrace();
     eventTimeTrace.traceId = 'Containerized';
     eventTimeTrace.propertyIdentifier = application.propertyIdentifier;
     eventTimeTrace.env = application.env;
     eventTimeTrace.applicationIdentifier = application.identifier;
     eventTimeTrace.consumedTime = consumedTime;
+    eventTimeTrace.cluster = cluster;
+    eventTimeTrace.type = DEPLOYMENT_DETAILS.type.containerized;
     return eventTimeTrace;
   }
 
