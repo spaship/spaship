@@ -205,7 +205,7 @@ export class AnalyticsService {
 
   async getDeploymentTimeSaved(): Promise<Object> {
     const response = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.defaultDays * AnalyticsService.days);
-    const totalTimeForStandardDeployment = ANALYTICS.averageTimeToDeploy * response.count;
+    const totalTimeForStandardDeployment = Number(ANALYTICS.averageTimeToDeploy) * response.count;
     const timeSavedInSec = totalTimeForStandardDeployment - response.totalTime;
     const timeSavedInHours = Math.round(timeSavedInSec / AnalyticsService.seconds / AnalyticsService.minutes);
     return { timeSavedInHours };
@@ -218,8 +218,8 @@ export class AnalyticsService {
     for (const tmpMonth of monthlyDateFrame) {
       const monthlyAnalytics = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.days, tmpMonth, cluster, type);
       const spashipAverageTime = monthlyAnalytics.averageTime;
-      const averageSavedTime = averageTimeToDeploy - monthlyAnalytics.averageTime;
-      const totalWorkingHours = ANALYTICS.workingDays * ANALYTICS.workingHours;
+      const averageSavedTime = Number(averageTimeToDeploy) - monthlyAnalytics.averageTime;
+      const totalWorkingHours = Number(ANALYTICS.workingDays) * Number(ANALYTICS.workingHours);
       const totalDeploymentCount = monthlyAnalytics.count;
       const totalDeploymentHours = parseFloat(
         ((monthlyAnalytics.averageTime * totalDeploymentCount) / AnalyticsService.seconds / AnalyticsService.minutes).toFixed(2)
@@ -227,7 +227,7 @@ export class AnalyticsService {
       const frequencyOfDeployment = parseFloat((totalDeploymentCount / totalWorkingHours).toFixed(2));
       const { developerHourlyRate } = ANALYTICS;
       const costSavingPerHour = parseFloat(
-        ((averageSavedTime / AnalyticsService.seconds / AnalyticsService.minutes) * frequencyOfDeployment * developerHourlyRate).toFixed(2)
+        ((averageSavedTime / AnalyticsService.seconds / AnalyticsService.minutes) * frequencyOfDeployment * Number(developerHourlyRate)).toFixed(2)
       );
       const totalCostSaved = parseFloat((costSavingPerHour * totalDeploymentHours).toFixed(2));
       response.push({
