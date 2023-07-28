@@ -109,9 +109,10 @@ export class ApplicationController {
     @Param('identifier') identifier: string,
     @Query('lines') lines: string,
     @Query('type') type: string,
-    @Query('id') id: string
+    @Query('id') id: string,
+    @Query('cluster') cluster: string
   ): Promise<String> {
-    return this.applicationService.getLogs(propertyIdentifier, env, identifier, lines, type, id);
+    return this.applicationService.getLogs(propertyIdentifier, env, identifier, lines, type, id, cluster);
   }
 
   @Get('/status')

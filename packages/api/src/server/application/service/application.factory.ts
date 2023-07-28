@@ -5,24 +5,25 @@ import * as FormData from 'form-data';
 import * as fs from 'fs';
 import { Base64 } from 'js-base64';
 import * as path from 'path';
-import { CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS, EPHEMERAL_ENV } from 'src/configuration';
+import { EPHEMERAL_ENV, CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import {
   ApplicationConfigDTO,
   ApplicationResponse,
+  CreateApplicationDto,
+  GitValidateResponse,
+  GitValidationRequestDTO,
   ContainerizedDeploymentRequest,
   ContainerizedDeploymentResponse,
   ContainerizedGitDeploymentRequest,
-  ContainerizedGitDeploymentResponse,
-  CreateApplicationDto,
-  GitApplicationStatusRequest,
-  GitApplicationStatusResponse,
   GitDeploymentRequestDTO,
-  GitValidateResponse,
-  GitValidationRequestDTO
+  GitApplicationStatusRequest,
+  ContainerizedGitDeploymentResponse,
+  GitApplicationStatusResponse
 } from 'src/server/application/application.dto';
 import { Application } from 'src/server/application/application.entity';
 import { AuthFactory } from 'src/server/auth/auth.factory';
+import { DeploymentConnection } from 'src/server/deployment-connection/deployment-connection.entity';
 import { Cluster, Environment } from 'src/server/environment/environment.entity';
 import { EventTimeTrace } from 'src/server/event/event-time-trace.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
@@ -125,6 +126,8 @@ export class ApplicationFactory {
     applicationRequest: CreateApplicationDto,
     identifier: string,
     env: string,
+    deploymentConnection: DeploymentConnection[],
+    isContainerized: boolean,
     createdBy: string
   ): Application {
     const saveApplication = new Application();
@@ -136,7 +139,7 @@ export class ApplicationFactory {
     saveApplication.env = env;
     saveApplication.propertyIdentifier = propertyIdentifier;
     saveApplication.ref = 'NA';
-    saveApplication.accessUrl = 'NA';
+    saveApplication.accessUrl = this.getAccessUrl(deploymentConnection, applicationRequest, propertyIdentifier, env, isContainerized);
     saveApplication.isContainerized = false;
     saveApplication.isGit = false;
     saveApplication.createdBy = createdBy;
@@ -145,20 +148,35 @@ export class ApplicationFactory {
     return saveApplication;
   }
 
+  getAccessUrl(
+    deploymentConnection: DeploymentConnection[],
+    applicationRequest: CreateApplicationDto,
+    propertyIdentifier: string,
+    env: string,
+    isContainerized: boolean
+  ) {
+    const response = [];
+    for (const con of deploymentConnection) {
+      const accessUrl = isContainerized
+        ? this.generateAccessUrlForContainerizedDeployement(applicationRequest, propertyIdentifier, env, con.baseurl)
+        : this.generateAccessUrlForStaticDeployment(applicationRequest, propertyIdentifier, env, con.baseurl);
+      response.push(accessUrl);
+    }
+    return response;
+  }
+
   getNextRef(ref: string): string {
     if (ref === 'undefined') return 'NA';
     return ref;
   }
 
-  createApplicationResponse(application: Application, baseUrl: string, applicationExists: string): ApplicationResponse {
+  createApplicationResponse(application: Application, applicationExists: string): ApplicationResponse {
     const applicationResponse = new ApplicationResponse();
     applicationResponse.name = application.name;
     applicationResponse.path = application.path;
     applicationResponse.env = application.env;
     applicationResponse.ref = this.getRef(application.nextRef);
-    applicationResponse.accessUrl = application.isContainerized
-      ? this.generateAccessUrlForContainerizedDeployement(application, baseUrl)
-      : this.generateAccessUrl(application, baseUrl);
+    applicationResponse.accessUrl = application.accessUrl;
     if (applicationExists)
       applicationResponse.warning = `SPA(s) - ${applicationExists} already exist(s) on the context path ${applicationResponse.path}. Overriding existing deployment.`;
     return applicationResponse;
@@ -169,15 +187,14 @@ export class ApplicationFactory {
     return nextRef;
   }
 
-  private generateAccessUrl(application: Application, baseUrl: string): string {
+  private generateAccessUrlForStaticDeployment(application: CreateApplicationDto, propertyIdentifier, env, baseUrl: string): string {
     const protocol = 'http';
     const { hostname } = new URL(baseUrl);
     const appPrefix = hostname.split('.')[4];
     const domain = hostname.split('.').slice(1).join('.');
-    const generatedAccessURL = `${protocol}://${appPrefix}.${DEPLOYMENT_DETAILS.namespace}--${application.propertyIdentifier}.${
-      application.propertyIdentifier
-    }.${application.env}.${domain}${this.getGeneratedPath(application.path)}`;
-
+    const generatedAccessURL = `${protocol}://${appPrefix}.${
+      DEPLOYMENT_DETAILS.namespace
+    }--${propertyIdentifier}.${propertyIdentifier}.${env}.${domain}${this.getGeneratedPath(application.path)}`;
     return generatedAccessURL;
   }
 
@@ -403,7 +420,7 @@ export class ApplicationFactory {
       this.logger.error('buildLogRequestForOperator', err);
       this.exceptionService.badRequestException({ message: `No Pods found for ${deploymentName}.` });
     }
-    return response.data.data || [];
+    return response?.data.data || [];
   }
 
   // @internal Create the Application request for the Containerized deployment
@@ -412,9 +429,18 @@ export class ApplicationFactory {
     applicationRequest: CreateApplicationDto,
     identifier: string,
     env: string,
+    deploymentConnection: DeploymentConnection[],
     createdBy: string
   ): Application {
-    const containerizedApplicationRequest = this.createApplicationRequest(propertyIdentifier, applicationRequest, identifier, env, createdBy);
+    const containerizedApplicationRequest = this.createApplicationRequest(
+      propertyIdentifier,
+      applicationRequest,
+      identifier,
+      env,
+      deploymentConnection,
+      true,
+      createdBy
+    );
     containerizedApplicationRequest.isContainerized = true;
     containerizedApplicationRequest.imageUrl = applicationRequest.imageUrl;
     containerizedApplicationRequest.healthCheckPath = applicationRequest.healthCheckPath || applicationRequest.path;
@@ -430,6 +456,7 @@ export class ApplicationFactory {
     applicationRequest: CreateApplicationDto,
     identifier: string,
     env: string,
+    deploymentConnection: DeploymentConnection[],
     createdBy: string
   ): Application {
     const containerizedEnabledGitApplicationRequest = this.createContainerizedApplicationRequest(
@@ -437,6 +464,7 @@ export class ApplicationFactory {
       applicationRequest,
       identifier,
       env,
+      deploymentConnection,
       createdBy
     );
     containerizedEnabledGitApplicationRequest.isGit = true;
@@ -580,11 +608,16 @@ export class ApplicationFactory {
     return gitUrl;
   }
 
-  private generateAccessUrlForContainerizedDeployement(application: Application, baseUrl: string): string {
+  private generateAccessUrlForContainerizedDeployement(
+    application: CreateApplicationDto,
+    propertyIdentifier: string,
+    env: string,
+    baseUrl: string
+  ): string {
     const protocol = 'https';
     const { hostname } = new URL(baseUrl);
     const domain = hostname.split('.').slice(1).join('.');
-    const generatedAccessURL = `${protocol}://${application.propertyIdentifier}-${application.env}.${domain}${application.path}`;
+    const generatedAccessURL = `${protocol}://${propertyIdentifier}-${env}.${domain}${application.path}`;
     return generatedAccessURL;
   }
 
