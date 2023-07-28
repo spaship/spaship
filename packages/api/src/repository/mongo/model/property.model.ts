@@ -14,6 +14,12 @@ export class Property {
   @Prop({ required: true })
   namespace: string;
 
+  @Prop({ required: true })
+  cmdbCode: string;
+
+  @Prop({ required: true })
+  severity: string;
+
   @Prop({})
   deploymentRecord: DeploymentRecord[];
 

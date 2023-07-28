@@ -31,6 +31,8 @@ import { DocumentationModule } from './server/document/service/documentation.mod
 import { DocumentationController } from './server/document/documentation.controller';
 import { HealthController } from './server/health/health.controller';
 import { HealthModule } from './server/health/service/health.module';
+import { CMDBModule } from './server/sot/cmdb/service/cmdb.module';
+import { CMDBController } from './server/sot/cmdb/cmdb.controller';
 
 @Module({
   imports: [
@@ -52,7 +54,8 @@ import { HealthModule } from './server/health/service/health.module';
     RoleModule,
     PermissionModule,
     DocumentationModule,
-    HealthModule
+    HealthModule,
+    CMDBModule
   ],
   controllers: [
     ApikeyController,
@@ -67,7 +70,8 @@ import { HealthModule } from './server/health/service/health.module';
     RoleController,
     PermissionController,
     DocumentationController,
-    HealthController
+    HealthController,
+    CMDBController
   ],
   providers: []
 })

@@ -35,6 +35,20 @@ export class CreatePropertyDto {
   @IsString()
   @IsNotEmpty()
   @Length(MIN.DEFAULT, MAX.DEFAULT, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Matches(VALIDATION.CMDB, { message: MESSAGE.INVALID_CMDB_CODE, always: true })
+  cmdbCode: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @Length(MIN.DEFAULT, MAX.DEFAULT, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Matches(VALIDATION.PROPERTY_TITLE, { message: MESSAGE.INVALID_SEVERITY, always: true })
+  severity: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @Length(MIN.DEFAULT, MAX.DEFAULT, { message: MESSAGE.INVALID_LENGTH, always: true })
   @Matches(VALIDATION.URL, { message: MESSAGE.INVALID_URL, always: true })
   url: string;
 
