@@ -73,4 +73,11 @@ export class AnalyticsController {
     if (save) return this.analyticsService.getDeploymentTimeSaved();
     return this.analyticsService.getAverageDeploymentTime(propertyIdentifier, isEph, days);
   }
+
+  @Get('/developer')
+  @ApiCreatedResponse({ status: 200, description: 'Details for the average time to deployment.', type: DeploymentTime })
+  @ApiOperation({ description: 'Get the Average time for the Deployments & the time saved by SPAship.' })
+  async getDeveloperMetrics(@Query('month') month: string, @Query('cluster') cluster: string, @Query('type') type: string): Promise<any> {
+    return this.analyticsService.getDeveloperMetrics(Number(month), cluster, type);
+  }
 }

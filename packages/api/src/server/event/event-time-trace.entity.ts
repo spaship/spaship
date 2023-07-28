@@ -7,6 +7,10 @@ export class EventTimeTrace {
 
   env: string;
 
+  cluster: string;
+
+  type: string;
+
   consumedTime: string;
 
   failure: boolean;

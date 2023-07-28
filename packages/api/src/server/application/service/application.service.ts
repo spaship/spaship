@@ -4,7 +4,7 @@ import * as decompress from 'decompress';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
-import { CONTAINERIZED_DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, JOB, LOGTYPE } from 'src/configuration';
+import { CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, JOB, LOGTYPE } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { AgendaService } from 'src/server/agenda/agenda.service';
@@ -336,7 +336,8 @@ export class ApplicationService {
       const diff = (applicationDetails.updatedAt.getTime() - new Date().getTime()) / 1000;
       const consumedTime = Math.abs(diff).toFixed(2).toString();
       this.logger.log('TimeToDeploy', `${consumedTime} seconds`);
-      const eventTimeTrace = this.applicationFactory.processDeploymentTime(applicationDetails, consumedTime);
+      const envDetails = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+      const eventTimeTrace = this.applicationFactory.processDeploymentTime(applicationDetails, consumedTime, envDetails.cluster);
       await this.dataServices.eventTimeTrace.create(eventTimeTrace);
       await this.analyticsService.createActivityStream(
         propertyIdentifier,
@@ -346,7 +347,9 @@ export class ApplicationService {
         `Deployment Time : ${consumedTime} seconds [Containerized]`,
         createdBy,
         `${Source.OPERATOR}-Containerized`,
-        JSON.stringify(response)
+        JSON.stringify(response),
+        envDetails.cluster,
+        DEPLOYMENT_DETAILS.type.containerized
       );
     } catch (err) {
       this.logger.warn('ContainerizedDeployment', err);
@@ -604,10 +607,14 @@ export class ApplicationService {
             isGit: true
           })
         )[0];
+        // @internal conversion from the milliseconds to seconds
         const diff = (applicationDetails.updatedAt.getTime() - new Date().getTime()) / 1000;
         const consumedTime = Math.abs(diff).toFixed(2).toString();
         this.logger.log('TimeToDeploy', `${consumedTime} seconds [${buildName}]`);
-        const eventTimeTrace = this.applicationFactory.processDeploymentTime(applicationDetails, consumedTime);
+        const envDetails = (
+          await this.dataServices.environment.getByAny({ propertyIdentifier: application.propertyIdentifier, env: application.env })
+        )[0];
+        const eventTimeTrace = this.applicationFactory.processDeploymentTime(applicationDetails, consumedTime, envDetails.cluster);
         await this.dataServices.eventTimeTrace.create(eventTimeTrace);
         this.analyticsService.createActivityStream(
           application.propertyIdentifier,
@@ -617,7 +624,9 @@ export class ApplicationService {
           `Deployment Time : ${consumedTime} seconds  [${buildName}]`,
           application.createdBy,
           Source.GIT,
-          JSON.stringify(deploymentStatus.data)
+          JSON.stringify(deploymentStatus.data),
+          envDetails.cluster,
+          DEPLOYMENT_DETAILS.type.containerized
         );
       } else if (deploymentStatus?.status === 'ERR') {
         this.logger.warn('DeploymentFailed', `Deployment Failed [BuildId : ${buildName}]`);
