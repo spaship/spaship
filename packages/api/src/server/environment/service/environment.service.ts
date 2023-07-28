@@ -160,26 +160,18 @@ export class EnvironmentService {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     this.logger.log('Environment', JSON.stringify(environment));
     if (!environment) this.exceptionService.badRequestException({ message: 'Property and Env not found.' });
-    const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
-    const applications = await this.dataServices.application.getByAny({ propertyIdentifier, env });
-    this.logger.log('Property', JSON.stringify(property));
-    this.logger.log('Applications', JSON.stringify(applications));
     const operatorPayload = JSON.parse(syncEnvironment.sync);
     this.logger.log('OperatorPayload', JSON.stringify(operatorPayload));
-    const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === environment.cluster);
-    const deploymentConnection = (await this.dataServices.deploymentConnection.getByAny({ name: deploymentRecord.name }))[0];
-    this.logger.log('DeploymentConnection', JSON.stringify(deploymentConnection));
-    try {
-      const response = await this.environmentFactory.syncRequest(
-        operatorPayload,
-        deploymentConnection.baseurl,
-        propertyIdentifier,
-        env,
-        property.namespace
-      );
-      this.logger.log('OperatorResponse', JSON.stringify(response.data));
-    } catch (err) {
-      this.exceptionService.internalServerErrorException(err.message);
+    const { property, deploymentConnection } = await this.environmentFactory.applicationService.getDeploymentConnection(propertyIdentifier, env);
+    const applications = await this.dataServices.application.getByAny({ propertyIdentifier, env });
+    this.logger.log('Applications', JSON.stringify(applications));
+    for (const con of deploymentConnection) {
+      try {
+        const response = await this.environmentFactory.syncRequest(operatorPayload, con.baseurl, propertyIdentifier, env, property.namespace);
+        this.logger.log('OperatorResponse', JSON.stringify(response.data));
+      } catch (err) {
+        this.exceptionService.internalServerErrorException(err.message);
+      }
     }
     environment.sync = syncEnvironment.sync;
     environment.updatedBy = syncEnvironment.createdBy;
