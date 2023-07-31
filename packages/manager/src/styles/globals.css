@@ -208,3 +208,20 @@ body {
 .pf-c-list > .pf-m-expanded {
   height: 500px !important;
 }
+
+.dashboard-card {
+  color: #06c;
+  font-family: 'Red Hat Display';
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 37px; /* 154.167% */
+}
+
+.dashboard-card-subheadings {
+  color: #151515;
+  font-family: 'Red Hat Text';
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+}

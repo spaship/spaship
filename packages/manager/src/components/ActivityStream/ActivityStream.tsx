@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 /* eslint-disable no-underscore-dangle */
 import { useFormatDate } from '@app/hooks';
 import { useGetWebPropActivityStream } from '@app/services/analytics';
@@ -5,8 +6,6 @@ import { TWebPropActivityStream } from '@app/services/analytics/types';
 import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
   Label,
-  ProgressStep,
-  ProgressStepper,
   Skeleton,
   Spinner,
   Split,
@@ -461,116 +460,79 @@ export const ActivityStream = ({
             const modifiedActivity = { ...activity, isGlobal };
 
             return (
-              <>
-                <Split hasGutter className="pf-u-mb-sm">
-                  <SplitItem style={{ width: '90px' }}>
-                    <p
-                      className="pf-u-md-sm"
+              <Split hasGutter className="pf-u-mb-sm">
+                <SplitItem style={{ width: '90px' }}>
+                  <p
+                    className="pf-u-md-sm"
+                    style={{
+                      color: '#151515',
+                      fontFamily: 'Red Hat Display',
+                      fontSize: '16px',
+                      fontWeight: 500,
+                      lineHeight: '24px'
+                    }}
+                  >
+                    {formatDate(activity.createdAt, 'hh:mm a')}
+                    {'\n'}
+                    <span
                       style={{
-                        color: '#151515',
                         fontFamily: 'Red Hat Display',
-                        fontSize: '16px',
+                        fontSize: '12px',
                         fontWeight: 500,
-                        lineHeight: '24px'
+                        color: '#6A6E73'
                       }}
                     >
-                      {formatDate(activity.createdAt, 'hh:mm a')}
-                      {'\n'}
-                      <span
-                        style={{
-                          fontFamily: 'Red Hat Display',
-                          fontSize: '12px',
-                          fontWeight: 500,
-                          color: '#6A6E73'
-                        }}
-                      >
-                        {formatDate(activity.createdAt, 'MMMDD YYYY')}
-                      </span>
-                    </p>
-                  </SplitItem>
-                  <SplitItem className="pf-u-mt-xs">
-                    {activity.action.includes('FAIL') ||
-                    activity.action.includes('TERMINATED') ||
-                    activity.action.includes('TIMEOUT') ||
-                    activity.action.includes('DELETED') ? (
-                      <ExclamationCircleIcon
-                        style={{
-                          width: '20px',
-                          height: '20px',
-                          color: '#C9190B'
-                        }}
-                      />
-                    ) : (
-                      <CheckCircleIcon
-                        style={{
-                          width: '20px',
-                          height: '20px',
-                          color: '#3E8635'
-                        }}
-                      />
-                    )}
-                  </SplitItem>
-                  <SplitItem>
-                    <p
+                      {formatDate(activity.createdAt, 'MMMDD YYYY')}
+                    </span>
+                  </p>
+                </SplitItem>
+                <SplitItem className="pf-u-mt-xs">
+                  {activity.action.includes('FAIL') ||
+                  activity.action.includes('TERMINATED') ||
+                  activity.action.includes('TIMEOUT') ||
+                  activity.action.includes('DELETED') ? (
+                    <ExclamationCircleIcon
                       style={{
-                        fontFamily: 'Red Hat Display',
-                        fontSize: '16px',
-                        fontWeight: 400,
-                        color: '#000',
-                        lineHeight: '24px'
+                        width: '20px',
+                        height: '20px',
+                        color: '#C9190B'
                       }}
-                    >
-                      <TextContent className="pf-u-mb-sm">
-                        <DeploymentKind activity={modifiedActivity} />
-                      </TextContent>
-                      {/* Deployment complete{' '}
-                      <span style={{ fontWeight: 100 }}>for Customer Portal</span> Decoupled
-                      products <span style={{ fontWeight: 100 }}>for </span>
-                      <span style={{ fontWeight: 100 }}>environment within 11.49s view logs</span> */}
-                    </p>
-                  </SplitItem>
-                </Split>
-
-                {/* <ProgressStep
-                    id={activity._id}
-                    titleId={activity._id}
-                    key={activity._id}
-                    variant={
-                      activity.action.includes('FAIL') ||
-                      activity.action.includes('TERMINATED') ||
-                      activity.action.includes('TIMEOUT') ||
-                      activity.action.includes('DELETED')
-                        ? 'danger'
-                        : startedCondition
-                    }
-                    description={formatDate(activity.createdAt, 'MMM DD YY, hh:mm a')}
+                    />
+                  ) : (
+                    <CheckCircleIcon
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        color: '#3E8635'
+                      }}
+                    />
+                  )}
+                </SplitItem>
+                <SplitItem>
+                  <p
+                    style={{
+                      fontFamily: 'Red Hat Display',
+                      fontSize: '16px',
+                      fontWeight: 400,
+                      color: '#000',
+                      lineHeight: '24px'
+                    }}
                   >
                     <TextContent className="pf-u-mb-sm">
                       <DeploymentKind activity={modifiedActivity} />
                     </TextContent>
-                  </ProgressStep> */}
-              </>
+                  </p>
+                </SplitItem>
+              </Split>
             );
           })
         )}
-      {/* </ProgressStepper> */}
-      {isFetchingNextPage && (
-        <ProgressStepper isVertical>
-          {Array.from(Array(5).keys()).map((key) => (
-            <ProgressStep
-              key={key}
-              variant="success"
-              description={
-                <Skeleton width="15%" fontSize="md" screenreaderText="Loading activity stream" />
-              }
-            >
-              <TextContent className="pf-u-mb-sm">
-                <Skeleton width="60%" fontSize="md" screenreaderText="Loading activity stream" />
-              </TextContent>
-            </ProgressStep>
-          ))}
-        </ProgressStepper>
-      )}
+      {isFetchingNextPage &&
+        Array.from(Array(5).keys()).map((key) => (
+          <TextContent key={key} className="pf-u-m-md">
+            <Skeleton width="80%" fontSize="md" screenreaderText="Loading activity stream" />
+          </TextContent>
+        ))}
       <div ref={ref} />
     </>
   );

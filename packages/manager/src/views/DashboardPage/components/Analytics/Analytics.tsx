@@ -23,6 +23,7 @@ type Props = {
   bestDeploymentTime?: number;
   bestDeploymentTimeIndex: number;
   TotalDeploymentData: UseQueryResult<TSPADeploymentCount[]>;
+  totalTimeSaved?: number;
 };
 
 export const Analytics = ({
@@ -31,7 +32,8 @@ export const Analytics = ({
   averageDeploymentTime,
   bestDeploymentTime,
   bestDeploymentTimeIndex,
-  TotalDeploymentData
+  TotalDeploymentData,
+  totalTimeSaved
 }: Props) => (
   <Card style={{ margin: '24px 24px' }}>
     <TextContent
@@ -59,24 +61,32 @@ export const Analytics = ({
               }}
             >
               <CardBody>
-                <p style={{ color: '#06C', fontSize: '24px' }}>{TotalDeployment}</p>
-                <Text component={TextVariants.h2}>Total Deployments</Text>
+                <Text className="dashboard-card">{TotalDeployment}</Text>
+
+                <Text component={TextVariants.h2} style={{ fontFamily: 'Red Hat Text' }}>
+                  Total Deployments
+                </Text>
                 <div
                   style={{
                     display: 'flex',
                     flexDirection: 'row',
-                    gap: '35px',
+                    gap: '7%',
                     marginTop: '24px'
                   }}
+                  className="dashboard-card-subheadings"
                 >
                   {TotalDeploymentCardFields.map((field) => (
                     <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
-                      <p style={{ fontSize: '20px', color: '#151515' }}>
+                      <Text
+                        component={TextVariants.p}
+                        style={{ fontSize: '20px', color: '#151515' }}
+                      >
                         {TotalDeploymentData.data
                           ?.filter((ele) => ele.env === field.toLocaleLowerCase())
                           .map((ele) => ele.count)}
-                      </p>
-                      <p
+                      </Text>
+                      <Text
+                        component={TextVariants.p}
                         style={{
                           fontSize: '14px',
                           fontWeight: 400,
@@ -84,12 +94,12 @@ export const Analytics = ({
                         }}
                       >
                         {field}
-                      </p>
+                      </Text>
                     </div>
                   ))}
 
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <p style={{ fontSize: '20px', color: '#151515' }}>
+                    <Text component={TextVariants.p} style={{ fontSize: '20px', color: '#151515' }}>
                       {TotalDeploymentData.data
                         ?.filter(
                           (ele) =>
@@ -98,8 +108,9 @@ export const Analytics = ({
                             ).includes(ele.env)
                         )
                         .reduce((acc, ele) => acc + ele.count, 0)}
-                    </p>
-                    <p
+                    </Text>
+                    <Text
+                      component={TextVariants.p}
                       style={{
                         fontSize: '14px',
                         fontWeight: 400,
@@ -107,7 +118,7 @@ export const Analytics = ({
                       }}
                     >
                       Others
-                    </p>
+                    </Text>
                   </div>
                 </div>
               </CardBody>
@@ -129,10 +140,15 @@ export const Analytics = ({
             {bestDeploymentTime ? (
               <>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}>
-                  <p style={{ color: '#06C', fontSize: '24px' }}>{bestDeploymentTime}s</p>
-                  <p style={{ fontSize: '14px', paddingLeft: '8px', fontFamily: 'Red Hat Text' }}>
+                  <Text component={TextVariants.p} className="dashboard-card">
+                    {bestDeploymentTime}s
+                  </Text>
+                  <Text
+                    component={TextVariants.p}
+                    style={{ fontSize: '14px', paddingLeft: '8px', fontFamily: 'Red Hat Text' }}
+                  >
                     in past {DeploymentTimeFrames[bestDeploymentTimeIndex]}
-                  </p>
+                  </Text>
                 </div>
                 <Text component={TextVariants.h2}>Average time to deploy</Text>
               </>
@@ -143,16 +159,17 @@ export const Analytics = ({
             <div style={{ display: 'flex', flexDirection: 'row', gap: '35px', marginTop: '24px' }}>
               {DeploymentTimeFrames.map((field, index) => (
                 <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
-                  <p style={{ fontSize: '20px', color: '#151515' }}>
+                  <Text component={TextVariants.p} className="dashboard-card-subheadings">
                     {averageDeploymentTime[index] ? `${averageDeploymentTime[index]}s` : ''}
-                  </p>
-                  <p
+                  </Text>
+                  <Text
+                    component={TextVariants.p}
                     style={{
                       fontSize: '14px',
                       fontWeight: 400,
                       color: '#3C3F42'
                     }}
-                  >{`Past ${field}`}</p>
+                  >{`Past ${field}`}</Text>
                 </div>
               ))}
             </div>
@@ -172,15 +189,20 @@ export const Analytics = ({
               }}
             >
               <CardBody>
-                <p style={{ color: '#06C', fontSize: '24px', fontWeight: 500 }}>{TotalProperty}</p>
+                <Text component={TextVariants.p} className="dashboard-card">
+                  {TotalProperty}
+                </Text>
                 <Text component={TextVariants.h2}>Total Web Properties</Text>
                 <div
                   style={{
                     marginTop: '24px'
                   }}
                 >
-                  <p style={{ fontSize: '20px', color: '#151515' }}>53hr 36mins</p>
-                  <p
+                  <Text component={TextVariants.p} className="dashboard-card-subheadings">
+                    {totalTimeSaved} hrs
+                  </Text>
+                  <Text
+                    component={TextVariants.p}
                     style={{
                       fontSize: '14px',
                       fontWeight: 400,
@@ -188,7 +210,7 @@ export const Analytics = ({
                     }}
                   >
                     Total Time Saved
-                  </p>
+                  </Text>
                 </div>
               </CardBody>
             </Card>
@@ -206,11 +228,11 @@ export const Analytics = ({
           }}
         >
           <CardBody>
-            <p style={{ color: '#06C', fontSize: '24px' }}>
+            <Text component={TextVariants.p} className="dashboard-card">
               {TotalDeploymentData.data
                 ?.filter((ele) => ele.env === 'ephemeral')
                 .reduce((acc, ele) => acc + ele.count, 0)}
-            </p>
+            </Text>
             <Text component={TextVariants.h2}>Total Ephemeral Deployments</Text>
           </CardBody>
         </Card>

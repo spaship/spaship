@@ -6,12 +6,12 @@ import 'simplebar/src/simplebar.css';
 
 export const ActivityStreamDashboard = () => (
   <Card
-    isSelectable
+    // isSelectable
     isFullHeight
     style={{
       margin: '0px 24px 24px 0px',
       paddingLeft: '12px',
-      height: '800px',
+      height: '770px',
       overflow: 'hidden'
     }}
     className={css('pf-u-px-lg rounded-md transition hover:shadow-sm')}
@@ -20,7 +20,7 @@ export const ActivityStreamDashboard = () => (
       <Text component={TextVariants.h5}>Activity Stream</Text>
     </CardTitle>
 
-    <SimpleBarReact style={{ maxHeight: 650 }}>
+    <SimpleBarReact style={{ maxHeight: 600 }}>
       <div style={{ marginTop: '30px' }}>
         <ActivityStream action="APPLICATION_DEPLOYED" isGlobal />
       </div>

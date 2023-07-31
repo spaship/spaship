@@ -1,9 +1,11 @@
 /* eslint-disable react/require-default-props */
 import { useGetMonthlyDeploymentChartWithEphemeral } from '@app/services/analytics';
+import { TSPADeploymentCount } from '@app/services/analytics/types';
 import {
   Chart,
   ChartAxis,
   ChartBar,
+  ChartDonut,
   ChartGroup,
   ChartLine,
   ChartThemeColor,
@@ -14,20 +16,26 @@ import {
   CardBody,
   CardHeader,
   CardTitle,
+  EmptyState,
+  EmptyStateIcon,
   Grid,
   Select,
   SelectOption,
   SelectOptionObject,
   SelectVariant,
+  Skeleton,
   SplitItem,
   Tab,
   Tabs,
   TabTitleText,
   Text,
-  TextVariants
+  TextVariants,
+  Title
 } from '@patternfly/react-core';
+import { CubesIcon } from '@patternfly/react-icons';
+import { UseQueryResult } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { MouseEvent, useEffect, useState } from 'react';
+import { MouseEvent, useEffect, useMemo, useState } from 'react';
 
 type ITotalMonthlyDeploymentData = {
   [key: string]: {
@@ -40,10 +48,24 @@ type Props = {
   TotalMonthlyDeploymentData: ITotalMonthlyDeploymentData;
   minCount: number;
   maxCount: number;
+  TotalDeploymentData: UseQueryResult<TSPADeploymentCount[]>;
 };
 
+interface Result {
+  x: string;
+  y: number;
+}
+interface DataItem {
+  count: number;
+  env: string;
+}
 const DATE_FORMAT = 'DD MMM';
-export const DashboardChart = ({ TotalMonthlyDeploymentData, minCount, maxCount }: Props) => {
+export const DashboardChart = ({
+  TotalMonthlyDeploymentData,
+  minCount,
+  maxCount,
+  TotalDeploymentData
+}: Props) => {
   const lineChartLegend = Object.keys(TotalMonthlyDeploymentData || {}).map((key) => ({
     name: key
   }));
@@ -83,6 +105,49 @@ export const DashboardChart = ({ TotalMonthlyDeploymentData, minCount, maxCount 
   ) => {
     setActiveTabKey(tabIndex);
   };
+  const sortedDeployCount = TotalDeploymentData?.data?.sort((x, y) => x.count - y.count);
+
+  const donutChartAggregatedData: Result[] = sortedDeployCount?.reduce(
+    (acc: Result[], { count, env }: DataItem) => {
+      if (['dev', 'qa', 'stage', 'prod'].includes(env)) {
+        const existingIndex = acc.findIndex((item) => item.x === env);
+        if (existingIndex !== -1) {
+          acc[existingIndex].y += count;
+        } else {
+          acc.push({ x: env, y: count });
+        }
+      } else {
+        const otherItem = acc.find((item) => item.x === 'other');
+        if (otherItem) {
+          otherItem.y += count;
+        } else {
+          acc.push({ x: 'other', y: count });
+        }
+      }
+      return acc;
+    },
+    []
+  ) as Result[];
+
+  const donutChartData = useMemo(
+    () => ({
+      data: sortedDeployCount?.map(({ env, count }) => ({
+        x: env,
+        y: count
+      })),
+      names: sortedDeployCount?.map(({ env, count }) => ({
+        name: `${env} ${count}`
+      })),
+      total: sortedDeployCount?.reduce((prev, curr) => curr.count + prev, 0)
+    }),
+    [sortedDeployCount]
+  );
+
+  const legendValues: any = [];
+
+  donutChartAggregatedData?.forEach((item: Result) => {
+    legendValues.push({ name: item.x });
+  });
 
   return (
     <Grid>
@@ -90,10 +155,9 @@ export const DashboardChart = ({ TotalMonthlyDeploymentData, minCount, maxCount 
         isSelectable
         isFullHeight
         style={{
-          margin: '0px 24px',
+          margin: '0px 24px 24px 24px',
           overflow: 'auto',
-          scrollbarWidth: 'none',
-          height: '450px'
+          scrollbarWidth: 'none'
         }}
       >
         <CardHeader>
@@ -125,23 +189,17 @@ export const DashboardChart = ({ TotalMonthlyDeploymentData, minCount, maxCount 
             </Select>
           </SplitItem>
         </CardHeader>
-        <CardBody>
-          {/* //bar chart */}
-          <Tabs
-            activeKey={activeTabKey}
-            onSelect={handleTabClick}
-            aria-label="Tabs in the default example"
-            role="region"
-          >
+        <CardBody style={{ paddingBottom: '0px' }}>
+          <Tabs activeKey={activeTabKey} onSelect={handleTabClick}>
             <Tab
               eventKey={0}
               title={<TabTitleText>Bar Chart</TabTitleText>}
-              aria-label="Default content - users"
+              aria-label="deployment-chart"
             >
-              <div style={{ height: '300px' }}>
+              <div style={{ height: '250px', width: '700px' }}>
                 <Chart
                   ariaDesc="Number of deployments per env"
-                  ariaTitle="Bar chart example"
+                  ariaTitle="Number of deployments per env"
                   containerComponent={
                     <ChartVoronoiContainer
                       labels={({ datum }) => `${datum.name}: ${datum.y}`}
@@ -154,16 +212,16 @@ export const DashboardChart = ({ TotalMonthlyDeploymentData, minCount, maxCount 
                   legendData={lineChartLegend}
                   legendOrientation="vertical"
                   legendPosition="right"
-                  height={300}
+                  height={250}
                   name="chart1"
                   padding={{
-                    bottom: 70,
-                    left: 20,
-                    right: 50, // Adjusted to accommodate legend
+                    bottom: 50,
+                    left: 50,
+                    right: 150,
                     top: 50
                   }}
-                  // themeColor={ChartThemeColor.multiUnordered}
-                  width={800}
+                  width={700}
+                  themeColor={ChartThemeColor.multiUnordered}
                 >
                   <ChartAxis />
                   <ChartAxis dependentAxis showGrid />
@@ -188,7 +246,7 @@ export const DashboardChart = ({ TotalMonthlyDeploymentData, minCount, maxCount 
               </div>
             </Tab>
             <Tab eventKey={1} title={<TabTitleText>Line Chart</TabTitleText>}>
-              <div style={{ height: '275px' }}>
+              <div style={{ height: '300px' }}>
                 <Chart
                   ariaDesc="Average number of pets"
                   containerComponent={
@@ -200,18 +258,18 @@ export const DashboardChart = ({ TotalMonthlyDeploymentData, minCount, maxCount 
                   legendData={lineChartLegend}
                   legendOrientation="vertical"
                   legendPosition="right"
-                  height={275}
+                  height={300}
                   name="chart1"
                   maxDomain={{ y: maxCount + (maxCount - minCount) * 0.2 }}
                   minDomain={{ y: 0 }}
                   padding={{
                     bottom: 75,
                     left: 50,
-                    right: 50,
+                    right: 150,
                     top: 50
                   }}
                   themeColor={ChartThemeColor.multiUnordered}
-                  width={850}
+                  width={700}
                 >
                   <ChartAxis />
                   <ChartAxis dependentAxis showGrid tickFormat={(x) => Number(x)} />
@@ -236,6 +294,56 @@ export const DashboardChart = ({ TotalMonthlyDeploymentData, minCount, maxCount 
               </div>
             </Tab>
           </Tabs>
+        </CardBody>
+      </Card>
+      <br />
+
+      <Card
+        style={{
+          margin: '0px 24px  ',
+          overflow: 'auto',
+          scrollbarWidth: 'none'
+        }}
+      >
+        <CardHeader>
+          <CardTitle>
+            <Title headingLevel="h6">Total Deployments per Environment</Title>
+          </CardTitle>
+        </CardHeader>
+        <CardBody className="x-y-center pf-u-h-100">
+          {TotalDeploymentData.isLoading && <Skeleton shape="circle" width="160px" />}
+          {!TotalDeploymentData.isLoading && !TotalDeploymentData.data && (
+            <EmptyState>
+              <EmptyStateIcon icon={CubesIcon} />
+              <Title headingLevel="h4" size="lg">
+                No deployments found
+              </Title>
+            </EmptyState>
+          )}
+          {TotalDeploymentData.isSuccess && (
+            <div style={{ height: '250px', width: '350px' }}>
+              <ChartDonut
+                ariaTitle="Number of deployments per env"
+                constrainToVisibleArea
+                data={donutChartAggregatedData}
+                labels={({ datum }) => `${datum.x}: ${datum.y}%`}
+                legendData={legendValues}
+                legendOrientation="vertical"
+                legendPosition="right"
+                name="monthly-deployment"
+                padding={{
+                  bottom: 20,
+                  left: 20,
+                  right: 140,
+                  top: 20
+                }}
+                subTitle="Deployments"
+                title={`${donutChartData.total}`}
+                themeColor={ChartThemeColor.multiOrdered}
+                width={350}
+              />
+            </div>
+          )}
         </CardBody>
       </Card>
     </Grid>

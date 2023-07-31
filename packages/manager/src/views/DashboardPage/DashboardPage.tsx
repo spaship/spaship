@@ -5,7 +5,8 @@ import {
   useGetQuarterlyDeploymentsTime,
   useGetHalfYearlyDeploymentsTime,
   useGetYearlyDeploymentsTime,
-  useGetMonthlyDeploymentChartWithEphemeral
+  useGetMonthlyDeploymentChartWithEphemeral,
+  useGetTotalTimeSaved
 } from '@app/services/analytics';
 import { ActivityStreamDashboard } from './components/ActivityStreamDashboard';
 import { Analytics } from './components/Analytics';
@@ -28,6 +29,8 @@ export const DashboardPage = (): JSX.Element => {
   const bestDeploymentTimeIndex = averageDeploymentTime.findIndex(
     (time) => time === bestDeploymentTime
   );
+  const totalTimeSaved = useGetTotalTimeSaved();
+
   return (
     <>
       <Analytics
@@ -37,6 +40,7 @@ export const DashboardPage = (): JSX.Element => {
         bestDeploymentTime={bestDeploymentTime}
         bestDeploymentTimeIndex={bestDeploymentTimeIndex || 0}
         TotalDeploymentData={TotalDeploymentData}
+        totalTimeSaved={totalTimeSaved?.data?.timeSavedInHours}
       />
 
       <div style={{ display: 'flex', flexDirection: 'row', height: '10%' }}>
@@ -50,6 +54,7 @@ export const DashboardPage = (): JSX.Element => {
             }}
             minCount={TotalMonthlyDeploymentData?.minDeploymentCount || 0}
             maxCount={TotalMonthlyDeploymentData?.maxDeploymentCount || 0}
+            TotalDeploymentData={TotalDeploymentData}
           />
         </div>
         <div style={{ width: '50%' }}>
