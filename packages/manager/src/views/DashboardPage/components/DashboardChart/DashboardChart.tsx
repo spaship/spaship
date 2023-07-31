@@ -246,9 +246,9 @@ export const DashboardChart = ({
               </div>
             </Tab>
             <Tab eventKey={1} title={<TabTitleText>Line Chart</TabTitleText>}>
-              <div style={{ height: '300px' }}>
+              <div style={{ height: '250px' }}>
                 <Chart
-                  ariaDesc="Average number of pets"
+                  ariaDesc="Line chart for no of deployments/env"
                   containerComponent={
                     <ChartVoronoiContainer
                       labels={({ datum }) => `${datum.name}: ${datum.y}`}
@@ -265,11 +265,11 @@ export const DashboardChart = ({
                   padding={{
                     bottom: 75,
                     left: 50,
-                    right: 150,
+                    right: 50,
                     top: 50
                   }}
                   themeColor={ChartThemeColor.multiUnordered}
-                  width={700}
+                  width={850}
                 >
                   <ChartAxis />
                   <ChartAxis dependentAxis showGrid tickFormat={(x) => Number(x)} />
