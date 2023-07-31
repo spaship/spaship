@@ -1,0 +1,21 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: spaship-cli
+  title: SPAship CLI
+  namespace: devex
+  description: A command line interface for SPAship to deploy SPAs to SPAship host.
+  annotations:
+    github.com/project-slug: 'spaship/spaship'
+    servicenow.com/appcode: SPAS-001
+  tags:
+    - nodejs
+    - spaship
+    - developers
+    - xe
+spec:
+  type: database
+  owner: group:redhat/spaship-devs
+  system: devex/spaship
+  lifecycle: production
