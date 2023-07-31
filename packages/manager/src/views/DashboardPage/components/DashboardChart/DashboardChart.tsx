@@ -265,11 +265,11 @@ export const DashboardChart = ({
                   padding={{
                     bottom: 75,
                     left: 50,
-                    right: 50,
+                    right: 150,
                     top: 50
                   }}
                   themeColor={ChartThemeColor.multiUnordered}
-                  width={850}
+                  width={700}
                 >
                   <ChartAxis />
                   <ChartAxis dependentAxis showGrid tickFormat={(x) => Number(x)} />
