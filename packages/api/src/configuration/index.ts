@@ -3,7 +3,7 @@ export const DIRECTORY_CONFIGURATION = {
 };
 
 export const EPHEMERAL_ENV = {
-  expiresIn: process.env.SPASHIP_EPH__TTL || 3600
+  expiresIn: process.env.SPASHIP_EPHEMERAL_EXPIRES_IN || 3600
 };
 
 export const CONTAINERIZED_DEPLOYMENT_DETAILS = {
@@ -25,7 +25,7 @@ export const DE_AUTH = {
 };
 
 function getDatabaseConfiguration() {
-  const spashipMongoUrl = process.env.SPASHIP_DB__MONGO__URL || 'localhost:27017/nest';
+  const spashipMongoUrl = process.env.SPASHIP_DB__MONGO__URL || 'localhost:27017/spaship';
   return `mongodb://${spashipMongoUrl}`;
 }
 
@@ -177,10 +177,10 @@ export const ANALYTICS = {
 
 export const CMDB_DETAILS = {
   baseUrl: process.env.SPASHIP_CMDB_BASE_URL,
-  cred: getCMDBAuth()
+  cred: generateCMDBCred()
 };
 
-function getCMDBAuth() {
+function generateCMDBCred() {
   const username = process.env.SPASHIP_CMDB_USERNAME;
   const password = process.env.SPASHIP_CMDB_PASSWORD;
   const base64EncodedCreds = Buffer.from(`${username}:${password}`);
