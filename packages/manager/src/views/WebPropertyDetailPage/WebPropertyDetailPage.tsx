@@ -128,8 +128,18 @@ export const WebPropertyDetailPage = (): JSX.Element => {
           </LevelItem>
         </Level>
       </Banner>
-      <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
-        <Tabs activeKey={openTab} onSelect={(_, tab) => handleTabChange(tab as number)}>
+      <PageSection
+        isCenterAligned
+        isWidthLimited
+        // className="pf-u-px-lg"
+        style={{ backgroundColor: '#F0F0F0' }}
+      >
+        <Tabs
+          className="pf-u-mx-lg"
+          activeKey={openTab}
+          onSelect={(_, tab) => handleTabChange(tab as number)}
+          style={{ backgroundColor: '#fff' }}
+        >
           <Tab
             eventKey={0}
             title={

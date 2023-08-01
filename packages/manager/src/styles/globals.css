@@ -169,7 +169,7 @@ body {
   > main
   > div
   > div.pf-m-grow
-  > section.pf-c-page__main-section.pf-m-limit-width.pf-m-align-center.pf-u-px-3xl
+  > section.pf-c-page__main-section.pf-m-limit-width.pf-m-align-center.pf-u-px-xl
   > div
   > div
   > div:nth-child(3)
@@ -211,7 +211,7 @@ body {
 
 .dashboard-card {
   color: #06c;
-  font-family: 'Red Hat Display';
+  font-family: 'REDHATDISPLAY';
   font-size: 24px;
   font-style: normal;
   font-weight: 500;
@@ -220,8 +220,12 @@ body {
 
 .dashboard-card-subheadings {
   color: #151515;
-  font-family: 'Red Hat Text';
+  font-family: 'RedHatText';
   font-size: 20px;
   font-style: normal;
   font-weight: 500;
+}
+.activityStream {
+  font-weight: 400;
+  font-family: 'RedHatText';
 }

@@ -5,7 +5,6 @@ import { useGetWebPropActivityStream } from '@app/services/analytics';
 import { TWebPropActivityStream } from '@app/services/analytics/types';
 import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
-  Label,
   Skeleton,
   Spinner,
   Split,
@@ -14,20 +13,7 @@ import {
   TextContent,
   TextVariants
 } from '@patternfly/react-core';
-import {
-  BuildIcon,
-  BundleIcon,
-  CheckCircleIcon,
-  CheckIcon,
-  ClusterIcon,
-  CubesIcon,
-  ExclamationCircleIcon,
-  OutlinedClockIcon,
-  SyncAltIcon,
-  TimesIcon,
-  TrashIcon,
-  UserIcon
-} from '@patternfly/react-icons';
+import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -56,9 +42,11 @@ const activities = {
     propertyIdentifier,
     isGlobal
   }: TWebPropActivityStream): JSX.Element => (
-    <Text className="activityStream" component={TextVariants.p}>
-      Deployment complete for {isGlobal ? propertyIdentifier : ''}{' '}
-      <span>{props.applicationIdentifier}</span> for <span>{props.env} </span> environment within{' '}
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Deployment complete</span> for{' '}
+      {isGlobal ? propertyIdentifier : ''}{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment within{' '}
       {message.split(' ')[3]}s{' '}
       <Link
         href={{
@@ -66,112 +54,108 @@ const activities = {
           query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
         }}
       >
-        View Details
+        view details
       </Link>
     </Text>
   ),
 
-  APPLICATION_DEPLOYMENT_STARTED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      <Label color="blue" icon={<OutlinedClockIcon />}>
-        Deployment started
-      </Label>{' '}
-      for{' '}
-      <Label
-        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-        color="blue"
+  APPLICATION_DEPLOYMENT_STARTED: ({
+    props,
+    propertyIdentifier
+  }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Deployment started</span> for {propertyIdentifier}{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+      <Link
+        href={{
+          pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+          query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+        }}
       >
-        {props.applicationIdentifier}
-      </Label>{' '}
-      App in the{' '}
-      <Label icon={<ClusterIcon />} color="blue">
-        {props.env}
-      </Label>{' '}
-      env.
+        view details
+      </Link>
     </Text>
   ),
-  APPLICATION_DEPLOYMENT_PROCESSING: ({ props, message }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      <Label color="grey" icon={<OutlinedClockIcon />}>
-        Deployment processing
-      </Label>{' '}
-      for{' '}
-      <Label
-        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-        color="grey"
+  APPLICATION_DEPLOYMENT_PROCESSING: ({
+    props,
+    propertyIdentifier
+  }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Deployment processing</span> for {propertyIdentifier}{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+      <Link
+        href={{
+          pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+          query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+        }}
       >
-        {props.applicationIdentifier}
-      </Label>{' '}
-      App in the{' '}
-      <Label icon={<ClusterIcon />} color="grey">
-        {props.env}
-      </Label>{' '}
-      env.
+        view details
+      </Link>
     </Text>
   ),
-  APPLICATION_DEPLOYMENT_FAILED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      <Label color="red" icon={<ExclamationCircleIcon />}>
-        Deployment failed
-      </Label>{' '}
-      for{' '}
-      <Label
-        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-        color="red"
+  APPLICATION_DEPLOYMENT_FAILED: ({
+    props,
+    propertyIdentifier
+  }: TWebPropActivityStream): JSX.Element => (
+    // "message": "NA",
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Deployment Failed</span> for {propertyIdentifier}{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+      <Link
+        href={{
+          pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+          query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+        }}
       >
-        {props.applicationIdentifier}
-      </Label>{' '}
-      App in the{' '}
-      <Label icon={<ClusterIcon />} color="red">
-        {props.env}
-      </Label>{' '}
-      env.{' '}
+        view details
+      </Link>
     </Text>
   ),
 
-  APPLICATION_DEPLOYMENT_TIMEOUT: ({ props, message }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      <Label color="red" icon={<ExclamationCircleIcon />}>
-        Deployment timeout
-      </Label>{' '}
-      for{' '}
-      <Label
-        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-        color="red"
+  APPLICATION_DEPLOYMENT_TIMEOUT: ({
+    props,
+    propertyIdentifier
+  }: TWebPropActivityStream): JSX.Element => (
+    //  "message": "Deployment Timeout [product360-catalog-product360-catalog-staging-2] [Workflow 3.0]",
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Deployment Timeout</span> for {propertyIdentifier}{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+      <Link
+        href={{
+          pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+          query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+        }}
       >
-        {props.applicationIdentifier}
-      </Label>{' '}
-      App in the{' '}
-      <Label icon={<ClusterIcon />} color="red">
-        {props.env}
-      </Label>{' '}
-      env.{' '}
+        view details
+      </Link>
     </Text>
   ),
-  APPLICATION_BUILD_STARTED: ({ props, message, payload }: TWebPropActivityStream): JSX.Element => {
+  APPLICATION_BUILD_STARTED: ({
+    props,
+    propertyIdentifier,
+    payload
+  }: TWebPropActivityStream): JSX.Element => {
     const buildId = JSON.parse(payload).buildName;
 
     return (
-      <Text component={TextVariants.small}>
-        <Label color="blue" icon={<OutlinedClockIcon />}>
-          Build started
-        </Label>{' '}
-        with{' '}
-        <Label color="blue" variant="outline">
-          ID : {buildId}
-        </Label>{' '}
-        for
-        <Label
-          icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-          color="blue"
+      <Text className="activityStream">
+        <span style={{ fontWeight: '600' }}>Build started </span>with{' '}
+        <span style={{ fontWeight: '600' }}> ID : {buildId}</span> for {propertyIdentifier}{' '}
+        <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+        <span style={{ fontWeight: '600' }}>{props.env} </span> environment{' '}
+        <Link
+          style={{ textDecoration: 'underline' }}
+          href={{
+            pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+            query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+          }}
         >
-          {props.applicationIdentifier}
-        </Label>{' '}
-        App in the{' '}
-        <Label icon={<ClusterIcon />} color="blue">
-          {props.env}
-        </Label>{' '}
-        env.
+          view details
+        </Link>
       </Text>
     );
   },
@@ -183,246 +167,137 @@ const activities = {
     const buildId = extractBuildIdFromMessage(message);
 
     return (
-      <Text component={TextVariants.small}>
-        <Label color="green" icon={<CheckIcon />}>
-          Build completed
-        </Label>{' '}
-        with{' '}
-        <Label color="green" variant="outline">
-          ID : {buildId}
-        </Label>{' '}
-        for{' '}
+      <Text className="activityStream">
+        <span style={{ fontWeight: '600' }}> Build completed </span> with{' '}
+        <span style={{ fontWeight: '600' }}>ID : {buildId}</span> for {propertyIdentifier}{' '}
+        <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+        <span style={{ fontWeight: '600' }}>{props.env} </span> environment within{' '}
+        {message.split(' ')[3]} s
         <Link
           href={{
             pathname: '/properties/[propertyIdentifier]/[spaProperty]',
             query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
           }}
         >
-          <Label
-            icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-            color="green"
-          >
-            {props.applicationIdentifier}
-          </Label>
-        </Link>{' '}
-        in{' '}
-        <Label icon={<ClusterIcon />} color="green">
-          {props.env}
-        </Label>{' '}
-        env in{' '}
-        <Label icon={<OutlinedClockIcon />} color="green">
-          {message.split(' ')[3]} s
-        </Label>
+          view details
+        </Link>
       </Text>
     );
   },
-  APPLICATION_BUILD_FAILED: ({ props, message }: TWebPropActivityStream): JSX.Element => {
+  APPLICATION_BUILD_FAILED: ({
+    props,
+    message,
+    propertyIdentifier
+  }: TWebPropActivityStream): JSX.Element => {
     const buildId = extractBuildIdFromMessage(message);
     return (
-      <Text component={TextVariants.small}>
-        <Label color="red" icon={<ExclamationCircleIcon />}>
-          Build failed
-        </Label>{' '}
-        with{' '}
-        <Label color="red" variant="outline">
-          ID : {buildId}
-        </Label>{' '}
-        for{' '}
-        <Label
-          icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-          color="red"
+      <Text className="activityStream">
+        <span style={{ fontWeight: '600' }}> Build failed </span> with{' '}
+        <span style={{ fontWeight: '600' }}>ID : {buildId}</span> for {propertyIdentifier}{' '}
+        <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+        <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+        <Link
+          href={{
+            pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+            query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+          }}
         >
-          {props.applicationIdentifier}
-        </Label>{' '}
-        App in the{' '}
-        <Label icon={<ClusterIcon />} color="red">
-          {props.env}
-        </Label>{' '}
-        env.{' '}
+          view details
+        </Link>
       </Text>
     );
   },
-  APPLICATION_BUILD_TERMINATED: ({ props, message }: TWebPropActivityStream): JSX.Element => {
+  APPLICATION_BUILD_TERMINATED: ({
+    props,
+    propertyIdentifier,
+    message
+  }: TWebPropActivityStream): JSX.Element => {
     const buildId = extractBuildIdFromMessage(message);
-
     return (
-      <Text component={TextVariants.small}>
-        <Label color="red" icon={<ExclamationCircleIcon />}>
-          Build terminated
-        </Label>{' '}
-        with{' '}
-        <Label color="red" variant="outline">
-          ID : {buildId}
-        </Label>{' '}
-        for{' '}
-        <Label
-          icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-          color="red"
+      <Text className="activityStream">
+        <span style={{ fontWeight: '600' }}> Build terminated </span> with{' '}
+        <span style={{ fontWeight: '600' }}>ID : {buildId}</span> for {propertyIdentifier}{' '}
+        <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+        <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+        <Link
+          href={{
+            pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+            query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+          }}
         >
-          {props.applicationIdentifier}
-        </Label>{' '}
-        App in the{' '}
-        <Label icon={<ClusterIcon />} color="red">
-          {props.env}
-        </Label>{' '}
-        env.{' '}
+          view details
+        </Link>
       </Text>
     );
   },
-  PROPERTY_CREATED: ({ propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      <Label icon={<CubesIcon />} color="green">
-        {propertyIdentifier}
-      </Label>{' '}
-      has been created.{' '}
+  PROPERTY_CREATED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}> {propertyIdentifier} </span> has been created.{' '}
+      <Link
+        href={{
+          pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+          query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+        }}
+      >
+        view details
+      </Link>
     </Text>
   ),
-  APIKEY_CREATED: ({ props, propertyIdentifier, message }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      API key has been
-      <Label color="green" icon={<CheckIcon />}>
-        created
-      </Label>{' '}
-      for{' '}
-      <Label
-        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-        color="green"
-      >
-        {propertyIdentifier}
-      </Label>{' '}
-      with scope{' '}
-      <Label icon={<ClusterIcon />} color="green">
-        {props.env}.{' '}
-      </Label>
+  APIKEY_CREATED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}> API key created </span> for {propertyIdentifier} for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
     </Text>
   ),
-  APIKEY_DELETED: ({ props, propertyIdentifier, message }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      API key has been{' '}
-      <Label color="red" icon={<TimesIcon />}>
-        deleted{' '}
-      </Label>{' '}
-      for{' '}
-      <Label
-        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-        color="red"
-      >
-        {propertyIdentifier}
-      </Label>{' '}
-      with scope{' '}
-      <Label icon={<ClusterIcon />} color="red">
-        {props.env}.{' '}
-      </Label>
+  APIKEY_DELETED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}> API key deleted </span> for {propertyIdentifier} for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
     </Text>
   ),
   ENV_SYNCED: ({ props }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      <Label icon={<SyncAltIcon />} color="green">
-        Sync{' '}
-      </Label>
-      completed for{' '}
-      <Label icon={<ClusterIcon />} color="green">
-        {props.env}
-      </Label>{' '}
-      environment{' '}
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}> Sync completed</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
     </Text>
   ),
   APPLICATION_DELETED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      <Label
-        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-        color="red"
-      >
-        {props.applicationIdentifier}
-      </Label>{' '}
-      has been
-      <Label color="red" icon={<TimesIcon />}>
-        deleted
-      </Label>{' '}
-      for
-      <Label icon={<ClusterIcon />} color="red">
-        {props.env}
-      </Label>{' '}
-      Misc:{' '}
-      <Label icon={<OutlinedClockIcon />} color="red">
-        {message}.
-      </Label>
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier} has been deleted</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env}</span> for Misc: {message}
     </Text>
   ),
   ENV_CREATED: ({ props }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      <Label icon={<ClusterIcon />} color="green">
-        {props.env}
-      </Label>{' '}
-      environment has been created.{' '}
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>{props.env}</span> environment has been created.
     </Text>
   ),
   ENV_DELETED: ({ props }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      <Label icon={<ClusterIcon />} color="red">
-        {props.env}
-      </Label>{' '}
-      environment has been{' '}
-      <Label color="red" icon={<TimesIcon />}>
-        {' '}
-        deleted{' '}
-      </Label>
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>{props.env}</span> environment has been deleted.
     </Text>
   ),
   PERMISSION_CREATED: ({ message }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      <Label
-        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-        color="green"
-      >
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>
         {toPascalCase(message.split(' ')[0]).replace('_', ' ')}
-      </Label>{' '}
-      access{' '}
-      <Label color="green" icon={<CheckIcon />}>
-        {message.split(' ')[2]}
-      </Label>{' '}
-      for{' '}
-      <Label color="green" icon={<UserIcon />}>
-        {message.split(' ')[4]}
-      </Label>{' '}
+      </span>{' '}
+      access has been {message.split(' ')[2]} for {message.split(' ')[4]}
     </Text>
   ),
   PERMISSION_DELETED: ({ message }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      <Label
-        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-        color="red"
-      >
-        {toPascalCase(message?.split(' ')[0]).replace('_', ' ')}
-      </Label>{' '}
-      access{' '}
-      <Label color="red" icon={<TrashIcon />}>
-        {message?.split(' ')[2]}
-      </Label>{' '}
-      for{' '}
-      <Label color="red" icon={<UserIcon />}>
-        {message?.split(' ')[4]}
-      </Label>{' '}
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>
+        {toPascalCase(message.split(' ')[0]).replace('_', ' ')}
+      </span>{' '}
+      access has been {message.split(' ')[2]} for {message.split(' ')[4]}
     </Text>
   ),
-  APPLICATION_CONFIG_UPDATED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
-    <Text component={TextVariants.small}>
-      Application
-      <Label color="green" icon={<CheckIcon />}>
-        Configuration Updated
-      </Label>{' '}
-      for{' '}
-      <Label
-        icon={message.toLowerCase().includes('contain') ? <BuildIcon /> : <BundleIcon />}
-        color="green"
-      >
-        {props.applicationIdentifier}
-      </Label>
-      in{' '}
-      <Label icon={<ClusterIcon />} color="green">
-        {props.env}
-      </Label>{' '}
-      env.
+  APPLICATION_CONFIG_UPDATED: ({ props }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Configuration Updated</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> in{' '}
+      <span style={{ fontWeight: '600' }}>{props.env}</span> env.
     </Text>
   )
 } as any;
@@ -452,7 +327,6 @@ export const ActivityStream = ({
 
   return (
     <>
-      {/* <ProgressStepper isVertical> */}
       {isLoading && <Spinner isSVG aria-label="Activity stream loading" />}
       {isSuccess &&
         data.pages?.map((page) =>
