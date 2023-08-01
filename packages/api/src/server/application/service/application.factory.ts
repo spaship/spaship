@@ -23,6 +23,7 @@ import {
 } from 'src/server/application/application.dto';
 import { Application } from 'src/server/application/application.entity';
 import { AuthFactory } from 'src/server/auth/auth.factory';
+import { DeploymentConnection } from 'src/server/deployment-connection/deployment-connection.entity';
 import { Cluster, Environment } from 'src/server/environment/environment.entity';
 import { EventTimeTrace } from 'src/server/event/event-time-trace.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
@@ -125,6 +126,8 @@ export class ApplicationFactory {
     applicationRequest: CreateApplicationDto,
     identifier: string,
     env: string,
+    deploymentConnection: DeploymentConnection[],
+    isContainerized: boolean,
     createdBy: string
   ): Application {
     const saveApplication = new Application();
@@ -136,7 +139,7 @@ export class ApplicationFactory {
     saveApplication.env = env;
     saveApplication.propertyIdentifier = propertyIdentifier;
     saveApplication.ref = 'NA';
-    saveApplication.accessUrl = 'NA';
+    saveApplication.accessUrl = this.getAccessUrl(deploymentConnection, applicationRequest, propertyIdentifier, env, isContainerized);
     saveApplication.isContainerized = false;
     saveApplication.isGit = false;
     saveApplication.createdBy = createdBy;
@@ -145,20 +148,35 @@ export class ApplicationFactory {
     return saveApplication;
   }
 
+  getAccessUrl(
+    deploymentConnection: DeploymentConnection[],
+    applicationRequest: CreateApplicationDto,
+    propertyIdentifier: string,
+    env: string,
+    isContainerized: boolean
+  ) {
+    const response = [];
+    for (const con of deploymentConnection) {
+      const accessUrl = isContainerized
+        ? this.generateAccessUrlForContainerizedDeployement(applicationRequest, propertyIdentifier, env, con.baseurl)
+        : this.generateAccessUrlForStaticDeployment(applicationRequest, propertyIdentifier, env, con.baseurl);
+      response.push(accessUrl);
+    }
+    return response;
+  }
+
   getNextRef(ref: string): string {
     if (ref === 'undefined') return 'NA';
     return ref;
   }
 
-  createApplicationResponse(application: Application, baseUrl: string, applicationExists: string): ApplicationResponse {
+  createApplicationResponse(application: Application, applicationExists: string): ApplicationResponse {
     const applicationResponse = new ApplicationResponse();
     applicationResponse.name = application.name;
     applicationResponse.path = application.path;
     applicationResponse.env = application.env;
     applicationResponse.ref = this.getRef(application.nextRef);
-    applicationResponse.accessUrl = application.isContainerized
-      ? this.generateAccessUrlForContainerizedDeployement(application, baseUrl)
-      : this.generateAccessUrl(application, baseUrl);
+    applicationResponse.accessUrl = application.accessUrl;
     if (applicationExists)
       applicationResponse.warning = `SPA(s) - ${applicationExists} already exist(s) on the context path ${applicationResponse.path}. Overriding existing deployment.`;
     return applicationResponse;
@@ -169,15 +187,14 @@ export class ApplicationFactory {
     return nextRef;
   }
 
-  private generateAccessUrl(application: Application, baseUrl: string): string {
+  private generateAccessUrlForStaticDeployment(application: CreateApplicationDto, propertyIdentifier, env, baseUrl: string): string {
     const protocol = 'http';
     const { hostname } = new URL(baseUrl);
     const appPrefix = hostname.split('.')[4];
     const domain = hostname.split('.').slice(1).join('.');
-    const generatedAccessURL = `${protocol}://${appPrefix}.${DEPLOYMENT_DETAILS.namespace}--${application.propertyIdentifier}.${
-      application.propertyIdentifier
-    }.${application.env}.${domain}${this.getGeneratedPath(application.path)}`;
-
+    const generatedAccessURL = `${protocol}://${appPrefix}.${
+      DEPLOYMENT_DETAILS.namespace
+    }--${propertyIdentifier}.${propertyIdentifier}.${env}.${domain}${this.getGeneratedPath(application.path)}`;
     return generatedAccessURL;
   }
 
@@ -192,7 +209,7 @@ export class ApplicationFactory {
     return applicationRequest.ephemeral === 'true';
   }
 
-  createEphemeralPreview(propertyIdentifier: string, actionEnabled: boolean, actionId: string, createdBy: string): Environment {
+  createEphemeralPreview(propertyIdentifier: string, actionEnabled: boolean, actionId: string, createdBy: string, expiresIn?: string): Environment {
     const ephEnvironment = new Environment();
     ephEnvironment.propertyIdentifier = propertyIdentifier;
     ephEnvironment.env = `ephemeral-${uuidv4().substring(0, 4)}`;
@@ -201,7 +218,7 @@ export class ApplicationFactory {
     ephEnvironment.isEph = true;
     ephEnvironment.actionEnabled = actionEnabled;
     ephEnvironment.actionId = actionId;
-    ephEnvironment.expiresIn = EPHEMERAL_ENV.expiresIn.toString();
+    ephEnvironment.expiresIn = this.getExpiresIn(expiresIn).toString();
     ephEnvironment.createdBy = createdBy;
     return ephEnvironment;
   }
@@ -373,6 +390,21 @@ export class ApplicationFactory {
     }
   }
 
+  // @internal Update the secret for a Containerized application
+  async containerizedSecretUpdate(request?: ContainerizedDeploymentRequest, deploymentBaseURL?: string) {
+    const headers = { Authorization: await AuthFactory.getAccessToken() };
+    this.logger.log('ContainerizedContainerizedSecretRequest', JSON.stringify(request));
+    try {
+      const response = await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/deployment/v1/secret`, request, {
+        maxBodyLength: Infinity,
+        headers
+      });
+      this.logger.log('ContainerizedDeploymentSecretResponse', JSON.stringify(response.data));
+    } catch (err) {
+      this.logger.error('ContainerizedDeploymentConfig', err);
+    }
+  }
+
   // @internal Get the List of the Pods from the Operator
   async getListOfPods(deploymentName: string, namespace: string, deploymentBaseURL?: string): Promise<String[]> {
     const headers = { Authorization: await AuthFactory.getAccessToken() };
@@ -388,7 +420,7 @@ export class ApplicationFactory {
       this.logger.error('buildLogRequestForOperator', err);
       this.exceptionService.badRequestException({ message: `No Pods found for ${deploymentName}.` });
     }
-    return response.data.data || [];
+    return response?.data.data || [];
   }
 
   // @internal Create the Application request for the Containerized deployment
@@ -397,13 +429,23 @@ export class ApplicationFactory {
     applicationRequest: CreateApplicationDto,
     identifier: string,
     env: string,
+    deploymentConnection: DeploymentConnection[],
     createdBy: string
   ): Application {
-    const containerizedApplicationRequest = this.createApplicationRequest(propertyIdentifier, applicationRequest, identifier, env, createdBy);
+    const containerizedApplicationRequest = this.createApplicationRequest(
+      propertyIdentifier,
+      applicationRequest,
+      identifier,
+      env,
+      deploymentConnection,
+      true,
+      createdBy
+    );
     containerizedApplicationRequest.isContainerized = true;
     containerizedApplicationRequest.imageUrl = applicationRequest.imageUrl;
     containerizedApplicationRequest.healthCheckPath = applicationRequest.healthCheckPath || applicationRequest.path;
     containerizedApplicationRequest.config = applicationRequest.config;
+    containerizedApplicationRequest.secret = applicationRequest.secret;
     containerizedApplicationRequest.port = applicationRequest.port || CONTAINERIZED_DEPLOYMENT_DETAILS.port;
     return containerizedApplicationRequest;
   }
@@ -414,6 +456,7 @@ export class ApplicationFactory {
     applicationRequest: CreateApplicationDto,
     identifier: string,
     env: string,
+    deploymentConnection: DeploymentConnection[],
     createdBy: string
   ): Application {
     const containerizedEnabledGitApplicationRequest = this.createContainerizedApplicationRequest(
@@ -421,6 +464,7 @@ export class ApplicationFactory {
       applicationRequest,
       identifier,
       env,
+      deploymentConnection,
       createdBy
     );
     containerizedEnabledGitApplicationRequest.isGit = true;
@@ -449,7 +493,8 @@ export class ApplicationFactory {
     containerizedRequest.website = propertyIdentifier;
     containerizedRequest.nameSpace = namespace;
     containerizedRequest.environment = env;
-    containerizedRequest.configMap = this.decodeBase64ConfigValues({ ...applicationDetails.config });
+    containerizedRequest.configMap = applicationDetails.config;
+    containerizedRequest.secretMap = this.decodeBase64SecretValues({ ...applicationDetails.secret });
     containerizedRequest.healthCheckPath = applicationDetails.healthCheckPath;
     containerizedRequest.port = applicationDetails.port || 3000;
     return containerizedRequest;
@@ -495,18 +540,20 @@ export class ApplicationFactory {
     containerizedRequest.website = configRequest.propertyIdentifier;
     containerizedRequest.nameSpace = namespace;
     containerizedRequest.environment = configRequest.env;
-    containerizedRequest.configMap = this.decodeBase64ConfigValues({ ...configRequest.config });
+    containerizedRequest.configMap = configRequest.config;
     return containerizedRequest;
   }
 
   // @internal Process the Deployment time for the analytics
-  processDeploymentTime(application: Application, consumedTime: string): EventTimeTrace {
+  processDeploymentTime(application: Application, consumedTime: string, cluster: string): EventTimeTrace {
     const eventTimeTrace = new EventTimeTrace();
     eventTimeTrace.traceId = 'Containerized';
     eventTimeTrace.propertyIdentifier = application.propertyIdentifier;
     eventTimeTrace.env = application.env;
     eventTimeTrace.applicationIdentifier = application.identifier;
     eventTimeTrace.consumedTime = consumedTime;
+    eventTimeTrace.cluster = cluster;
+    eventTimeTrace.type = DEPLOYMENT_DETAILS.type.containerized;
     return eventTimeTrace;
   }
 
@@ -561,11 +608,16 @@ export class ApplicationFactory {
     return gitUrl;
   }
 
-  private generateAccessUrlForContainerizedDeployement(application: Application, baseUrl: string): string {
+  private generateAccessUrlForContainerizedDeployement(
+    application: CreateApplicationDto,
+    propertyIdentifier: string,
+    env: string,
+    baseUrl: string
+  ): string {
     const protocol = 'https';
     const { hostname } = new URL(baseUrl);
     const domain = hostname.split('.').slice(1).join('.');
-    const generatedAccessURL = `${protocol}://${application.propertyIdentifier}-${application.env}.${domain}${application.path}`;
+    const generatedAccessURL = `${protocol}://${propertyIdentifier}-${env}.${domain}${application.path}`;
     return generatedAccessURL;
   }
 
@@ -669,7 +721,10 @@ export class ApplicationFactory {
         'ApplicationCheck',
         `No Changes found in the Existing Application details for ${applicationDetails.identifier}-${applicationDetails.env}`
       );
-      if (JSON.stringify(applicationDetails.config) !== JSON.stringify(applicationRequest.config)) {
+      if (
+        JSON.stringify(applicationDetails.config) !== JSON.stringify(applicationRequest.config) ||
+        JSON.stringify(applicationDetails.secret) !== JSON.stringify(applicationRequest.secret)
+      ) {
         this.logger.log(
           'ConfigurationCheck',
           `Changes found in Application Configuration for ${applicationDetails.identifier}-${applicationDetails.env}`
@@ -689,16 +744,21 @@ export class ApplicationFactory {
     return false;
   }
 
-  // @internal Decode Base64 encoded string from the config values for operator payload
-  decodeBase64ConfigValues(config: Object): Object {
-    if (Object.prototype.hasOwnProperty.call(config, CONTAINERIZED_DEPLOYMENT_DETAILS.configSecret)) {
-      const spashipWorkflowSecret: Object = config[CONTAINERIZED_DEPLOYMENT_DETAILS.configSecret];
-      Object.entries(spashipWorkflowSecret).forEach(([key, value]) => {
-        if (Base64.encode(Base64.decode(value)) === value) config[key] = Base64.decode(value);
-        else config[key] = value;
-      });
-      delete config[CONTAINERIZED_DEPLOYMENT_DETAILS.configSecret];
+  // @internal Decode Base64 encoded string from the secret values for operator payload
+  decodeBase64SecretValues(secret: Object): Object {
+    const secretMap = {};
+    Object.entries(secret).forEach(([key, value]) => {
+      if (Base64.encode(Base64.decode(value)) === value) secretMap[key] = Base64.decode(value);
+      else secretMap[key] = value;
+    });
+    return secretMap;
+  }
+
+  // @internal get the expires in for the ephemeral environment
+  getExpiresIn(expiresIn: string) {
+    if (!expiresIn) {
+      return EPHEMERAL_ENV.expiresIn;
     }
-    return config;
+    return Number(expiresIn) * 60 * 60;
   }
 }

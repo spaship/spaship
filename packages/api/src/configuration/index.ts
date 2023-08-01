@@ -3,7 +3,7 @@ export const DIRECTORY_CONFIGURATION = {
 };
 
 export const EPHEMERAL_ENV = {
-  expiresIn: process.env.SPASHIP_EPH__TTL || 3600
+  expiresIn: process.env.SPASHIP_EPHEMERAL_EXPIRES_IN || 3600
 };
 
 export const CONTAINERIZED_DEPLOYMENT_DETAILS = {
@@ -25,7 +25,7 @@ export const DE_AUTH = {
 };
 
 function getDatabaseConfiguration() {
-  const spashipMongoUrl = process.env.SPASHIP_DB__MONGO__URL || 'localhost:27017/nest';
+  const spashipMongoUrl = process.env.SPASHIP_DB__MONGO__URL || 'localhost:27017/spaship';
   return `mongodb://${spashipMongoUrl}`;
 }
 
@@ -65,15 +65,27 @@ export const ROVER_AUTH = {
 };
 
 export const DEPLOYMENT_DETAILS = {
-  namespace: process.env.SPASHIP_NAMESPACE_PREFIX || 'spaship'
+  type: {
+    containerized: 'containerized',
+    static: 'static'
+  },
+  namespace: process.env.SPASHIP_NAMESPACE || 'spaship-sandbox',
+  severity: getSeverity()
 };
+
+function getSeverity() {
+  const severities = process.env.SPASHIP_SEVERITY;
+  if (severities) return severities.split(',');
+  return ['C1', 'C2'];
+}
 
 // @internal this is for validating the minimum length for the Specific requests
 export enum MIN {
   DEFAULT = 2,
   PATH = 1,
   ACTIONID = 1,
-  URL = 3
+  URL = 3,
+  EPH_EXPIRESIN = 1
 }
 
 // @internal this is for validating the maximum length for the Specific requests
@@ -85,7 +97,8 @@ export enum MAX {
   EXPIRESIN = 6,
   ENV = 15,
   REF = 500,
-  CLUSTER = 12
+  CLUSTER = 12,
+  EPH_EXPIRESIN = 3
 }
 
 export enum MESSAGE {
@@ -103,7 +116,10 @@ export enum MESSAGE {
   INVALID_REF = 'Invalid Reference [Correct format : 1.2, v1@1.2.3].',
   INVALID_ENV = 'Invalid Environment [Correct format : prod, stage, dev]',
   INVALID_LABEL = 'Invalid Label [Correct format : all-access, prod-key].',
-  INVALID_IMAGEURL = 'Invalid Image URL.'
+  INVALID_IMAGEURL = 'Invalid Image URL. Please check the image url',
+  INVALID_EPHEXPIRESIN = 'Time is Invalid',
+  INVALID_CMDB_CODE = 'Invalid CMDB Code.',
+  INVALID_SEVERITY = 'Invalid Severity.'
 }
 
 export const VALIDATION = {
@@ -119,7 +135,9 @@ export const VALIDATION = {
   ENV: /^[a-zA-Z0-9-]+$/,
   REF: /^[_a-zA-Z0-9/@ -.]+$/,
   EXPIRESIN: /^[a-zA-Z0-9]+$/,
-  IMAGEURL: getImageUrlRegex()
+  CMDB: /^[a-zA-Z0-9-]+$/,
+  IMAGEURL: getImageUrlRegex(),
+  EPH_EXPIRESIN: /^[0-9]+$/
 };
 
 export enum JOB {
@@ -148,4 +166,24 @@ export const SPASHIP_VERSION = process.env.npm_package_version;
 
 function getImageUrlRegex() {
   return new RegExp(process.env.SPASHIP_SSR_IMAGEURL_REGEX);
+}
+
+export const ANALYTICS = {
+  averageTimeToDeploy: process.env.SPASHIP_ANALYTICS_AVERAGE_TIME_TO_DEPLOY || 300,
+  averageDevelopmentHours: process.env.SPASHIP_ANALYTICS_AVERAGE_DEVELOPMENT_HOURS || 1800,
+  developerHourlyRate: process.env.SPASHIP_ANALYTICS_DEVELOPER_HOURLY_RATE || 46,
+  workingDays: process.env.SPASHIOP_ANALYTICS_WORKING_DAYS || 23,
+  workingHours: process.env.SPASHIP_ANALYTICS_WORKING_HOURS || 23
+};
+
+export const CMDB_DETAILS = {
+  baseUrl: process.env.SPASHIP_CMDB_BASE_URL,
+  cred: generateCMDBCred()
+};
+
+function generateCMDBCred() {
+  const username = process.env.SPASHIP_CMDB_USERNAME;
+  const password = process.env.SPASHIP_CMDB_PASSWORD;
+  const base64EncodedCreds = Buffer.from(`${username}:${password}`);
+  return base64EncodedCreds.toString('base64');
 }

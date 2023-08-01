@@ -14,6 +14,8 @@ export class PropertyFactory {
     newProperty.title = createPropertyDto.title || createPropertyDto.identifier;
     newProperty.identifier = createPropertyDto.identifier;
     newProperty.namespace = `${DEPLOYMENT_DETAILS.namespace}--${createPropertyDto.identifier}`;
+    newProperty.cmdbCode = createPropertyDto.cmdbCode || 'NA';
+    newProperty.severity = createPropertyDto.severity || 'NA';
     newProperty.createdBy = createPropertyDto.createdBy;
     newProperty.updatedBy = createPropertyDto.createdBy;
     newProperty.deploymentRecord = [deploymentRecord];

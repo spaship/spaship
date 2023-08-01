@@ -55,19 +55,29 @@ export class AnalyticsController {
   @ApiOperation({ description: 'Get the Deployment Count for the Environment for a monhth.' })
   async getMonthlyDeploymentCount(
     @Query('propertyIdentifier') propertyIdentifier: string,
-    @Query('applicationIdentifier') applicationIdentifier: string
+    @Query('applicationIdentifier') applicationIdentifier: string,
+    @Query('previous') previous: string
   ): Promise<any> {
-    return this.analyticsService.getMonthlyDeploymentCount(propertyIdentifier, applicationIdentifier);
+    return this.analyticsService.getMonthlyDeploymentCount(propertyIdentifier, applicationIdentifier, Number(previous));
   }
 
   @Get('/deployment/time')
   @ApiCreatedResponse({ status: 200, description: 'Details for the average time to deployment.', type: DeploymentTime })
-  @ApiOperation({ description: 'Get the Average time for the Deployments.' })
+  @ApiOperation({ description: 'Get the Average time for the Deployments & the time saved by SPAship.' })
   async getAverageDeploymentTime(
     @Query('propertyIdentifier') propertyIdentifier: string,
     @Query('days') days: number,
-    @Query('isEph') isEph: string
-  ): Promise<DeploymentTime> {
+    @Query('isEph') isEph: string,
+    @Query('save') save: boolean
+  ): Promise<any> {
+    if (save) return this.analyticsService.getDeploymentTimeSaved();
     return this.analyticsService.getAverageDeploymentTime(propertyIdentifier, isEph, days);
+  }
+
+  @Get('/developer')
+  @ApiCreatedResponse({ status: 200, description: 'Details for the average time to deployment.', type: DeploymentTime })
+  @ApiOperation({ description: 'Get the Average time for the Deployments & the time saved by SPAship.' })
+  async getDeveloperMetrics(@Query('month') month: string, @Query('cluster') cluster: string, @Query('type') type: string): Promise<any> {
+    return this.analyticsService.getDeveloperMetrics(Number(month), cluster, type);
   }
 }

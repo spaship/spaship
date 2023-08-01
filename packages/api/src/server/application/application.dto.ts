@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsObject, IsOptional, IsString, IsNumber, Matches, IsArray } from 'class-validator';
-import { MESSAGE, VALIDATION } from 'src/configuration';
+import { IsBoolean, IsNotEmpty, IsObject, IsOptional, IsString, IsNumber, Matches, IsArray, Length } from 'class-validator';
+import { MAX, MESSAGE, MIN, VALIDATION } from 'src/configuration';
 
 export class CreateApplicationDto {
   @ApiProperty()
@@ -23,6 +23,13 @@ export class CreateApplicationDto {
   @IsString()
   @IsOptional()
   ephemeral: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  @Length(MIN.EPH_EXPIRESIN, MAX.EPH_EXPIRESIN, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Matches(VALIDATION.EPH_EXPIRESIN, { message: MESSAGE.INVALID_EPHEXPIRESIN, always: true })
+  expiresIn: string;
 
   @ApiProperty()
   @IsString()
@@ -63,6 +70,11 @@ export class CreateApplicationDto {
   @IsObject()
   @IsOptional()
   config: object;
+
+  @ApiProperty()
+  @IsObject()
+  @IsOptional()
+  secret: object;
 
   @ApiProperty()
   @IsOptional()
@@ -126,7 +138,7 @@ export class ApplicationResponse {
   env: string;
 
   @ApiProperty()
-  accessUrl: string;
+  accessUrl: string[];
 
   @ApiProperty()
   deployedBy: string;
@@ -151,6 +163,8 @@ export class ContainerizedDeploymentRequest {
   healthCheckPath: string;
 
   configMap: object;
+
+  secretMap: object;
 
   port: number;
 }
@@ -205,6 +219,11 @@ export class ApplicationConfigDTO {
   @IsObject()
   @IsNotEmpty()
   config: object;
+
+  @ApiProperty()
+  @IsObject()
+  @IsNotEmpty()
+  secret: object;
 
   createdBy: string;
 }

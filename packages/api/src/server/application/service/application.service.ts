@@ -4,14 +4,16 @@ import * as decompress from 'decompress';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
-import { CONTAINERIZED_DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, EPHEMERAL_ENV, JOB, LOGTYPE } from 'src/configuration';
+import { CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, JOB, LOGTYPE } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { AgendaService } from 'src/server/agenda/agenda.service';
 import { Action } from 'src/server/analytics/activity-stream.entity';
 import { AnalyticsService } from 'src/server/analytics/service/analytics.service';
 import { Application } from 'src/server/application/application.entity';
+import { DeploymentConnection } from 'src/server/deployment-connection/deployment-connection.entity';
 import { Cluster } from 'src/server/environment/environment.entity';
+import { EnvironmentFactory } from 'src/server/environment/service/environment.factory';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { Source } from 'src/server/property/property.entity';
 import {
@@ -38,6 +40,7 @@ export class ApplicationService {
     private readonly dataServices: IDataServices,
     private readonly logger: LoggerService,
     private readonly applicationFactory: ApplicationFactory,
+    private readonly environmentFactory: EnvironmentFactory,
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService,
     private readonly agendaService: AgendaService
@@ -88,7 +91,13 @@ export class ApplicationService {
         env = ephemeral.env;
         this.logger.log('Ephemeral', JSON.stringify(ephemeral));
       } else {
-        const tmpEph = this.applicationFactory.createEphemeralPreview(propertyIdentifier, actionEnabled, actionId, 'NA');
+        const tmpEph = this.applicationFactory.createEphemeralPreview(
+          propertyIdentifier,
+          actionEnabled,
+          actionId,
+          'NA',
+          applicationRequest.expiresIn
+        );
         await this.dataServices.environment.create(tmpEph);
         this.logger.log('NewEphemeral', JSON.stringify(tmpEph));
         env = tmpEph.env;
@@ -112,9 +121,7 @@ export class ApplicationService {
     const applicationDetails = (
       await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false })
     )[0];
-    const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
-    const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === environment.cluster);
-    const deploymentConnection = (await this.dataServices.deploymentConnection.getByAny({ name: deploymentRecord.name }))[0];
+    const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
     const searchedApplicationsByPath = await this.dataServices.application.getByOptions(
       {
         propertyIdentifier,
@@ -129,7 +136,7 @@ export class ApplicationService {
     );
     const applicationExists = this.applicationFactory.getExistingApplicationsByPath(searchedApplicationsByPath, identifier);
     await this.analyticsService.createActivityStream(
-      propertyIdentifier,
+      property.identifier,
       Action.APPLICATION_DEPLOYMENT_STARTED,
       env,
       identifier,
@@ -139,9 +146,9 @@ export class ApplicationService {
       JSON.stringify(applicationRequest)
     );
     if (this.applicationFactory.isEphemeral(applicationRequest)) {
-      const expiresIn = Number(EPHEMERAL_ENV.expiresIn);
+      const expiresIn = this.applicationFactory.getExpiresIn(applicationRequest.expiresIn);
       const scheduledDate = new Date();
-      scheduledDate.setSeconds(scheduledDate.getSeconds() + expiresIn);
+      scheduledDate.setSeconds(scheduledDate.getSeconds() + Number(expiresIn));
       const agendaResponse = await this.agendaService.agenda.schedule(scheduledDate, JOB.DELETE_EPH_ENV, {
         propertyIdentifier,
         env
@@ -154,20 +161,23 @@ export class ApplicationService {
         applicationRequest,
         identifier,
         env,
+        deploymentConnection,
+        false,
         createdBy
       );
       this.logger.log('NewApplicationDetails', JSON.stringify(saveApplication));
       this.dataServices.application.create(saveApplication);
-      return this.applicationFactory.createApplicationResponse(saveApplication, deploymentConnection.baseurl, applicationExists);
+      return this.applicationFactory.createApplicationResponse(saveApplication, applicationExists);
     }
     applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
     applicationDetails.version = this.applicationFactory.incrementVersion(applicationDetails.version);
     applicationDetails.name = applicationRequest.name;
     applicationDetails.path = applicationRequest.path;
+    applicationDetails.accessUrl = this.applicationFactory.getAccessUrl(deploymentConnection, applicationRequest, propertyIdentifier, env, false);
     applicationDetails.updatedBy = createdBy;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
     await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false }, applicationDetails);
-    return this.applicationFactory.createApplicationResponse(applicationDetails, deploymentConnection.baseurl, applicationExists);
+    return this.applicationFactory.createApplicationResponse(applicationDetails, applicationExists);
   }
 
   /* @internal
@@ -180,11 +190,9 @@ export class ApplicationService {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     const identifier = this.applicationFactory.getIdentifier(applicationRequest.name);
     if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
-    const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
+    const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
     this.logger.log('Environment', JSON.stringify(environment));
     this.logger.log('Property', JSON.stringify(property));
-    const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === environment.cluster);
-    const deploymentConnection = (await this.dataServices.deploymentConnection.getByAny({ name: deploymentRecord.name }))[0];
     this.logger.log('DeploymentConnection', JSON.stringify(deploymentConnection));
     const { ref } = applicationRequest;
     const appPath = applicationRequest.path;
@@ -194,15 +202,26 @@ export class ApplicationService {
     await fs.mkdirSync(`${tmpDir}`, { recursive: true });
     await decompress(path.resolve(applicationPath), path.resolve(tmpDir));
     const zipPath = await this.applicationFactory.createTemplateAndZip(appPath, ref, identifier, tmpDir, propertyIdentifier, env, property.namespace);
-    const formData: any = new FormData();
     try {
-      const fileStream = await fs.createReadStream(zipPath);
-      formData.append('spa', fileStream);
-      formData.append('description', `${propertyIdentifier}_${env}`);
-      formData.append('website', propertyIdentifier);
-      const response = await this.applicationFactory.deploymentRequest(formData, deploymentConnection.baseurl);
-      this.logger.log('OperatorResponse', JSON.stringify(response.data));
-      return response;
+      for (const con of deploymentConnection) {
+        const formData: any = new FormData();
+        const fileStream = await fs.createReadStream(zipPath);
+        formData.append('spa', fileStream);
+        formData.append('description', `${propertyIdentifier}_${env}`);
+        formData.append('website', propertyIdentifier);
+        const response = await this.applicationFactory.deploymentRequest(formData, con.baseurl);
+        this.logger.log('OperatorResponse', JSON.stringify(response.data));
+        if (environment.sync !== 'NA') {
+          const operatorPayload = JSON.parse(environment.sync);
+          this.logger.log('OperatorPayload', JSON.stringify(operatorPayload));
+          try {
+            const syncResponse = await this.environmentFactory.syncRequest(operatorPayload, con.baseurl, propertyIdentifier, env, property.namespace);
+            this.logger.log('SyncOperatorResponse', JSON.stringify(syncResponse.data));
+          } catch (err) {
+            this.exceptionService.internalServerErrorException(err.message);
+          }
+        }
+      }
     } catch (err) {
       this.exceptionService.internalServerErrorException(err);
     }
@@ -243,6 +262,7 @@ export class ApplicationService {
         applicationRequest,
         identifier,
         env,
+        deploymentConnection,
         applicationRequest.createdBy
       );
       this.logger.log('ContainerizedApplicationDetails', JSON.stringify(saveApplication));
@@ -256,6 +276,7 @@ export class ApplicationService {
       applicationDetails.healthCheckPath = applicationRequest.healthCheckPath || applicationDetails.healthCheckPath;
       applicationDetails.config = applicationRequest.config || applicationDetails.config;
       applicationDetails.port = applicationRequest.port || applicationDetails.port || CONTAINERIZED_DEPLOYMENT_DETAILS.port;
+      applicationDetails.accessUrl = this.applicationFactory.getAccessUrl(deploymentConnection, applicationRequest, propertyIdentifier, env, true);
       applicationDetails.updatedBy = applicationRequest.createdBy;
       this.logger.log('ContainerizedApplicationUpdatedDetails', JSON.stringify(applicationDetails));
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: true, isGit: false }, applicationDetails);
@@ -273,7 +294,7 @@ export class ApplicationService {
       propertyIdentifier,
       env,
       identifier,
-      deploymentConnection.baseurl,
+      deploymentConnection,
       applicationRequest.createdBy
     );
     await this.analyticsService.createActivityStream(
@@ -286,17 +307,23 @@ export class ApplicationService {
       Source.MANAGER,
       JSON.stringify(applicationRequest)
     );
-    return this.applicationFactory.createApplicationResponse(applicationDetails, deploymentConnection.baseurl, applicationExists);
+    return this.applicationFactory.createApplicationResponse(applicationDetails, applicationExists);
   }
 
   // @internal Get the deployment connection for the property
-  private async getDeploymentConnection(propertyIdentifier: string, env: string) {
+  async getDeploymentConnection(propertyIdentifier: string, env: string) {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
     this.logger.log('Environment', JSON.stringify(environment));
     this.logger.log('Property', JSON.stringify(property));
-    const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === environment.cluster);
-    const deploymentConnection = (await this.dataServices.deploymentConnection.getByAny({ name: deploymentRecord.name }))[0];
+    let deploymentConnection;
+    // @internal checking property severity, if that is higher then deploy it in multi-cluster
+    if (DEPLOYMENT_DETAILS.severity.includes(property.severity) && environment.cluster === Cluster.PROD) {
+      deploymentConnection = await this.dataServices.deploymentConnection.getByAny({ cluster: Cluster.PROD });
+    } else {
+      const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === environment.cluster);
+      deploymentConnection = await this.dataServices.deploymentConnection.getByAny({ name: deploymentRecord.name });
+    }
     this.logger.log('DeploymentConnection', JSON.stringify(deploymentConnection));
     return { property, deploymentConnection };
   }
@@ -311,35 +338,42 @@ export class ApplicationService {
     propertyIdentifier: string,
     env: string,
     identifier: string,
-    baseUrl: string,
+    deploymentConnection: DeploymentConnection[],
     createdBy: string
   ) {
     try {
-      const response = await this.applicationFactory.containerizedDeploymentRequest(containerizedRequest, baseUrl);
-      this.logger.log('ContainerizedDeploymentResponse', JSON.stringify(response));
-      if (!response) return;
-      const applicationDetails = (
-        await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: true, isGit: false })
-      )[0];
-      applicationDetails.accessUrl = response.accessUrl;
-      applicationDetails.ref = applicationDetails.nextRef;
-      await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: true, isGit: false }, applicationDetails);
-      this.logger.log('UpdatedContainerizedApplication', JSON.stringify(applicationDetails));
-      const diff = (applicationDetails.updatedAt.getTime() - new Date().getTime()) / 1000;
-      const consumedTime = Math.abs(diff).toFixed(2).toString();
-      this.logger.log('TimeToDeploy', `${consumedTime} seconds`);
-      const eventTimeTrace = this.applicationFactory.processDeploymentTime(applicationDetails, consumedTime);
-      await this.dataServices.eventTimeTrace.create(eventTimeTrace);
-      await this.analyticsService.createActivityStream(
-        propertyIdentifier,
-        Action.APPLICATION_DEPLOYED,
-        env,
-        identifier,
-        `Deployment Time : ${consumedTime} seconds [Containerized]`,
-        createdBy,
-        `${Source.OPERATOR}-Containerized`,
-        JSON.stringify(response)
-      );
+      for (const con of deploymentConnection) {
+        const response = await this.applicationFactory.containerizedDeploymentRequest(containerizedRequest, con.baseurl);
+        this.logger.log('ContainerizedDeploymentResponse', JSON.stringify(response));
+        if (!response) return;
+        const applicationDetails = (
+          await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: true, isGit: false })
+        )[0];
+        applicationDetails.ref = applicationDetails.nextRef;
+        await this.dataServices.application.updateOne(
+          { propertyIdentifier, env, identifier, isContainerized: true, isGit: false },
+          applicationDetails
+        );
+        this.logger.log('UpdatedContainerizedApplication', JSON.stringify(applicationDetails));
+        const diff = (applicationDetails.updatedAt.getTime() - new Date().getTime()) / 1000;
+        const consumedTime = Math.abs(diff).toFixed(2).toString();
+        this.logger.log('TimeToDeploy', `${consumedTime} seconds`);
+        const envDetails = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+        const eventTimeTrace = this.applicationFactory.processDeploymentTime(applicationDetails, consumedTime, envDetails.cluster);
+        await this.dataServices.eventTimeTrace.create(eventTimeTrace);
+        await this.analyticsService.createActivityStream(
+          propertyIdentifier,
+          Action.APPLICATION_DEPLOYED,
+          env,
+          identifier,
+          `Deployment Time : ${consumedTime} seconds [Containerized]`,
+          createdBy,
+          `${Source.OPERATOR}-Containerized`,
+          JSON.stringify(response),
+          envDetails.cluster,
+          DEPLOYMENT_DETAILS.type.containerized
+        );
+      }
     } catch (err) {
       this.logger.warn('ContainerizedDeployment', err);
     }
@@ -403,6 +437,7 @@ export class ApplicationService {
         applicationRequest,
         identifier,
         env,
+        deploymentConnection,
         applicationRequest.createdBy
       );
       this.logger.log('ContainerizedGitApplicationDetails', JSON.stringify(saveApplication));
@@ -416,15 +451,22 @@ export class ApplicationService {
           applicationDetails,
           property.namespace
         );
-        containerizedDeploymentRequestForOperator.configMap = this.applicationFactory.decodeBase64ConfigValues({ ...applicationRequest.config });
+        containerizedDeploymentRequestForOperator.configMap = applicationRequest.config;
         this.logger.log('ConfigUpdateRequestToOperator', JSON.stringify(containerizedDeploymentRequestForOperator));
         applicationDetails.config = applicationRequest.config;
+        applicationDetails.secret = applicationRequest.secret;
         applicationDetails.updatedBy = applicationRequest.createdBy;
         await this.dataServices.application.updateOne(
           { propertyIdentifier, env, identifier, isContainerized: true, isGit: true },
           applicationDetails
         );
-        this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
+        await this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
+        if (applicationRequest.secret) {
+          containerizedDeploymentRequestForOperator.secretMap = await this.applicationFactory.decodeBase64SecretValues({
+            ...applicationRequest.secret
+          });
+          this.applicationFactory.containerizedSecretUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
+        }
         await this.analyticsService.createActivityStream(
           propertyIdentifier,
           Action.APPLICATION_CONFIG_UPDATED,
@@ -442,7 +484,9 @@ export class ApplicationService {
       applicationDetails.version = this.applicationFactory.incrementVersion(applicationDetails.version);
       applicationDetails.healthCheckPath = applicationRequest.healthCheckPath || applicationDetails.healthCheckPath;
       applicationDetails.config = applicationRequest.config || applicationDetails.config;
+      applicationDetails.secret = applicationRequest.secret || applicationDetails.secret;
       applicationDetails.port = applicationRequest.port || applicationDetails.port || CONTAINERIZED_DEPLOYMENT_DETAILS.port;
+      applicationDetails.accessUrl = this.applicationFactory.getAccessUrl(deploymentConnection, applicationRequest, propertyIdentifier, env, true);
       applicationDetails.repoUrl = applicationRequest.repoUrl || applicationDetails.repoUrl;
       applicationDetails.gitRef = applicationRequest.gitRef || applicationDetails.gitRef;
       applicationDetails.contextDir = applicationRequest.contextDir || applicationDetails.contextDir;
@@ -463,39 +507,41 @@ export class ApplicationService {
       applicationDetails
     );
     this.logger.log('ContainerizedGitOperatorRequest', JSON.stringify(containerizedGitOperatorRequest));
-    const response = await this.applicationFactory.containerizedEnabledGitDeploymentRequest(
-      containerizedGitOperatorRequest,
-      deploymentConnection.baseurl
-    );
-    if (response) {
-      const statusRequest = this.applicationFactory.createLogRequest(propertyIdentifier, env, identifier, property.namespace);
-      await this.analyticsService.createActivityStream(
-        propertyIdentifier,
-        Action.APPLICATION_BUILD_STARTED,
-        env,
-        identifier,
-        `Build [${response.buildName}] Started for ${applicationRequest.name} at ${env} [Workflow 3.0]`,
-        applicationRequest.createdBy,
-        Source.GIT,
-        JSON.stringify(response)
-      );
-      applicationDetails.buildName = [...applicationDetails.buildName, response.buildName];
-      await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: true, isGit: true }, applicationDetails);
-      this.manageBuildAndDeployment(applicationDetails, statusRequest, response.buildName, deploymentConnection.baseurl);
-    } else {
-      await this.analyticsService.createActivityStream(
-        propertyIdentifier,
-        Action.APPLICATION_DEPLOYMENT_FAILED,
-        env,
-        identifier,
-        `Deployment Failed ${applicationRequest.name} at ${env} [Workflow 3.0]`,
-        applicationRequest.createdBy,
-        Source.GIT,
-        JSON.stringify(applicationRequest)
-      );
-      this.exceptionService.internalServerErrorException({
-        message: `Application Deployment is Failed currently, please try after sometime.`
-      });
+    for (const con of deploymentConnection) {
+      const response = await this.applicationFactory.containerizedEnabledGitDeploymentRequest(containerizedGitOperatorRequest, con.baseurl);
+      if (response) {
+        const statusRequest = this.applicationFactory.createLogRequest(propertyIdentifier, env, identifier, property.namespace);
+        await this.analyticsService.createActivityStream(
+          propertyIdentifier,
+          Action.APPLICATION_BUILD_STARTED,
+          env,
+          identifier,
+          `Build [${response.buildName}] Started for ${applicationRequest.name} at ${env} [Workflow 3.0]`,
+          applicationRequest.createdBy,
+          Source.GIT,
+          JSON.stringify(response)
+        );
+        applicationDetails.buildName = [...applicationDetails.buildName, { name: response.buildName, deploymentConnection: con.name }];
+        await this.dataServices.application.updateOne(
+          { propertyIdentifier, env, identifier, isContainerized: true, isGit: true },
+          applicationDetails
+        );
+        this.manageBuildAndDeployment(applicationDetails, statusRequest, response.buildName, con.baseurl);
+      } else {
+        await this.analyticsService.createActivityStream(
+          propertyIdentifier,
+          Action.APPLICATION_DEPLOYMENT_FAILED,
+          env,
+          identifier,
+          `Deployment Failed ${applicationRequest.name} at ${env} [Workflow 3.0]`,
+          applicationRequest.createdBy,
+          Source.GIT,
+          JSON.stringify(applicationRequest)
+        );
+        this.exceptionService.internalServerErrorException({
+          message: `Application Deployment is Failed currently, please try after sometime.`
+        });
+      }
     }
     return applicationDetails;
   }
@@ -582,10 +628,14 @@ export class ApplicationService {
             isGit: true
           })
         )[0];
+        // @internal conversion from the milliseconds to seconds
         const diff = (applicationDetails.updatedAt.getTime() - new Date().getTime()) / 1000;
         const consumedTime = Math.abs(diff).toFixed(2).toString();
         this.logger.log('TimeToDeploy', `${consumedTime} seconds [${buildName}]`);
-        const eventTimeTrace = this.applicationFactory.processDeploymentTime(applicationDetails, consumedTime);
+        const envDetails = (
+          await this.dataServices.environment.getByAny({ propertyIdentifier: application.propertyIdentifier, env: application.env })
+        )[0];
+        const eventTimeTrace = this.applicationFactory.processDeploymentTime(applicationDetails, consumedTime, envDetails.cluster);
         await this.dataServices.eventTimeTrace.create(eventTimeTrace);
         this.analyticsService.createActivityStream(
           application.propertyIdentifier,
@@ -595,7 +645,9 @@ export class ApplicationService {
           `Deployment Time : ${consumedTime} seconds  [${buildName}]`,
           application.createdBy,
           Source.GIT,
-          JSON.stringify(deploymentStatus.data)
+          JSON.stringify(deploymentStatus.data),
+          envDetails.cluster,
+          DEPLOYMENT_DETAILS.type.containerized
         );
       } else if (deploymentStatus?.status === 'ERR') {
         this.logger.warn('DeploymentFailed', `Deployment Failed [BuildId : ${buildName}]`);
@@ -717,10 +769,23 @@ export class ApplicationService {
   }
 
   // @internal It will get the logs (build/deployment/pod) based on the request
-  async getLogs(propertyIdentifier: string, env: string, identifier: string, lines: string, type: string, id: string): Promise<String> {
+  async getLogs(
+    propertyIdentifier: string,
+    env: string,
+    identifier: string,
+    lines: string,
+    type: string,
+    id: string,
+    cluster: string
+  ): Promise<String> {
+    let response;
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
-    const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
+    const connectionDetails = await this.getDeploymentConnection(propertyIdentifier, env);
+    const { property } = connectionDetails;
+    let { deploymentConnection } = connectionDetails;
+    if (cluster) [response] = await this.dataServices.deploymentConnection.getByAny({ name: cluster });
+    deploymentConnection = response || deploymentConnection[0];
     const logRequest = this.applicationFactory.createLogRequest(propertyIdentifier, env, identifier, property.namespace, lines);
     if (type === LOGTYPE.BUILD) {
       if (!id) this.exceptionService.badRequestException({ message: 'Please provide the id for the build logs.' });
@@ -750,6 +815,15 @@ export class ApplicationService {
     if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
     const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
     const deploymentName = `${propertyIdentifier}-${identifier}-${env}`;
-    return this.applicationFactory.getListOfPods(deploymentName, property.namespace, deploymentConnection.baseurl);
+    const response = [];
+    for (const con of deploymentConnection) {
+      try {
+        const listOfPods = await this.applicationFactory.getListOfPods(deploymentName, property.namespace, con.baseurl);
+        response.push({ con: con.name, pods: listOfPods });
+      } catch (err) {
+        response.push(err.message);
+      }
+    }
+    return response;
   }
 }

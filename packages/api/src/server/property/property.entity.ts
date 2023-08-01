@@ -7,6 +7,10 @@ export class Property {
 
   deploymentRecord: DeploymentRecord[];
 
+  cmdbCode: string;
+
+  severity: string;
+
   createdBy: string;
 
   updatedBy: string;

@@ -1,0 +1,14 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: spaship-root-config
+  title: SPAship Root Configuration
+  namespace: devex
+  description: A root collection of all SPAship configurations for Backstage.
+spec:
+  owner: user:redhat/roommen
+  targets:
+    - ./catalog/systems/SPAship.yml
+    - ./packages/api/catalog-info.yml
+    - ./packages/cli/catalog-info.yml
+    - ./packages/manager/catalog-info.yml

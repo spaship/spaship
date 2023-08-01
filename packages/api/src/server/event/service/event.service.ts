@@ -1,5 +1,6 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import * as EventSource from 'eventsource';
+import { DEPLOYMENT_DETAILS } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { Action } from 'src/server/analytics/activity-stream.entity';
@@ -51,7 +52,6 @@ export class EventService implements OnApplicationBootstrap {
           };
           const latestApplication = (await tmpDataService.application.getByAny(searchApplication))[0];
           if (!latestApplication?.accessUrl) return;
-          latestApplication.accessUrl = event.accessUrl;
           latestApplication.ref = latestApplication.nextRef;
           await tmpDataService.application.updateOne(searchApplication, latestApplication);
           tmpLogger.log('UpdatedApplication', JSON.stringify(latestApplication));
@@ -60,7 +60,8 @@ export class EventService implements OnApplicationBootstrap {
           const diff = (eventRequest.createdAt.getTime() - currentTime.getTime()) / 1000;
           const consumedTime = Math.abs(diff).toFixed(2).toString();
           tmpLogger.log('TimeToDeploy', `${consumedTime} seconds`);
-          const eventTimeTrace = processDeploymentTime(event, consumedTime);
+          const envDetails = (await tmpDataService.environment.getByAny({ propertyIdentifier: event.propertyIdentifier, env: event.env }))[0];
+          const eventTimeTrace = processDeploymentTime(event, consumedTime, envDetails.cluster);
           const message = `Deployment Time : ${consumedTime} seconds`;
           await tmpDataService.eventTimeTrace.create(eventTimeTrace);
           await tmpAnalyticsService.createActivityStream(
@@ -71,7 +72,9 @@ export class EventService implements OnApplicationBootstrap {
             message,
             'EventStream',
             Source.OPERATOR,
-            JSON.stringify({ accessUrl: event.accessUrl, path: event.path })
+            JSON.stringify({ accessUrl: event.accessUrl, path: event.path }),
+            envDetails.cluster,
+            DEPLOYMENT_DETAILS.type.static
           );
         } else if (event.action === Action.APPLICATION_DEPLOYMENT_FAILED) {
           await tmpAnalyticsService.createActivityStream(
@@ -111,7 +114,6 @@ export class EventService implements OnApplicationBootstrap {
           };
           const latestApplication = (await tmpDataService.application.getByAny(searchApplication))[0];
           if (!latestApplication?.accessUrl) return;
-          latestApplication.accessUrl = response.contextPath;
           latestApplication.ref = latestApplication.nextRef;
           await tmpDataService.application.updateOne(searchApplication, latestApplication);
         }
@@ -120,13 +122,15 @@ export class EventService implements OnApplicationBootstrap {
   }
 }
 
-function processDeploymentTime(event: Event, consumedTime: string): EventTimeTrace {
+function processDeploymentTime(event: Event, consumedTime: string, cluster: string): EventTimeTrace {
   const eventTimeTrace = new EventTimeTrace();
   eventTimeTrace.traceId = event.traceId;
   eventTimeTrace.propertyIdentifier = event.propertyIdentifier;
   eventTimeTrace.env = event.env;
   eventTimeTrace.applicationIdentifier = event.applicationIdentifier;
   eventTimeTrace.consumedTime = consumedTime;
+  eventTimeTrace.cluster = cluster;
+  eventTimeTrace.type = DEPLOYMENT_DETAILS.type.static;
   return eventTimeTrace;
 }
 

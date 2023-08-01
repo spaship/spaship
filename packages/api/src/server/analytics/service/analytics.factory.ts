@@ -10,7 +10,7 @@ export class AnalyticsFactory {
     return [{ $match: searchQuery }, { $group: groupQuery }, { $project: projectionQuery }];
   }
 
-  async getDeploymentCountQuery(propertyIdentifier: string): Promise<Object> {
+  async getDeploymentCountQuery(propertyIdentifier?: string): Promise<Object> {
     let searchQuery;
     if (!propertyIdentifier) searchQuery = { action: Action.APPLICATION_DEPLOYED };
     else searchQuery = { action: Action.APPLICATION_DEPLOYED, propertyIdentifier };
@@ -59,11 +59,24 @@ export class AnalyticsFactory {
     return [searchQuery, groupQuery, projectQuery];
   }
 
-  async getAverageDeploymentTimeQuery(propertyIdentifier: string, days: number, isEph: string): Promise<Object> {
+  async getAverageDeploymentTimeQuery(
+    propertyIdentifier: string,
+    days: number,
+    isEph: string,
+    monthFrame: any,
+    cluster: string,
+    type: string
+  ): Promise<Object> {
     let searchQuery;
     let groupQuery;
     let projectQuery;
-    const [startDate, endDate] = await this.getStartAndEndDate(days);
+    let startDate;
+    let endDate;
+    if (!monthFrame) [startDate, endDate] = await this.getStartAndEndDate(days);
+    else {
+      startDate = monthFrame.startDate;
+      endDate = monthFrame.endDate;
+    }
     if (isEph === 'true') searchQuery = { env: { $regex: /^ephemeral/ } };
     else searchQuery = { env: { $not: /ephemeral/ } };
     const groupOperations = { count: { $sum: 1 }, totalTime: { $sum: { $toDecimal: '$consumedTime' } } };
@@ -79,6 +92,12 @@ export class AnalyticsFactory {
     } else {
       groupQuery = { $group: { _id: { propertyIdentifier: '$propertyIdentifier' }, ...groupOperations } };
       projectQuery = { $project: { _id: 0, propertyIdentifier: '$_id.propertyIdentifier', ...projectOperations } };
+    }
+    if (cluster) {
+      searchQuery = { ...searchQuery, cluster };
+    }
+    if (type) {
+      searchQuery = { ...searchQuery, type };
     }
     const query = [
       { $match: { createdAt: { $gte: startDate, $lt: endDate } } },
@@ -99,6 +118,22 @@ export class AnalyticsFactory {
       startDate.setDate(recentDate.getDate() - 7);
       dateFrame.push({ startDate, endDate });
       recentDate = startDate;
+    }
+    return dateFrame;
+  }
+
+  async buildMonthlyDateFrame(previous: number): Promise<any[]> {
+    const dateFrame = [];
+    const startDate = new Date();
+    const endDate = new Date();
+    startDate.setDate(1);
+    endDate.setMonth(endDate.getMonth() + 1);
+    endDate.setDate(0);
+    dateFrame.push({ startDate: new Date(startDate), endDate: new Date(endDate) });
+    for (let i = 1; i < previous; i += 1) {
+      startDate.setMonth(startDate.getMonth() - 1);
+      endDate.setDate(0);
+      dateFrame.push({ startDate: new Date(startDate), endDate: new Date(endDate) });
     }
     return dateFrame;
   }

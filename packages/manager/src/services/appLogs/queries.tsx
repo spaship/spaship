@@ -1,5 +1,5 @@
 import { orchestratorReq } from '@app/config/orchestratorReq';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const logKeys = {
   logs: ['logs'] as const,
@@ -34,16 +34,26 @@ export const useGetLogsforSpa = (
   webPropertyIdentifier: string,
   applicationIdentifier: string,
   env: string,
-  type?: string,
+  type?: string | number,
   id?: string
 ) => {
   const refetchInterval = 5000;
+  const queryClient = useQueryClient();
 
   return useQuery(
     logKeys.logs,
     () => fetchLogsforSpa(webPropertyIdentifier, applicationIdentifier, env, type, id),
     {
-      refetchInterval
+      refetchInterval,
+      initialData: () => {
+        queryClient.prefetchQuery(logKeys.logs, () =>
+          fetchLogsforSpa(webPropertyIdentifier, applicationIdentifier, env, type, id)
+        );
+      },
+      enabled: id !== undefined,
+      cacheTime: 0,
+      staleTime: 0,
+      onError: () => ({ data: '', isError: true })
     }
   );
 };
@@ -53,10 +63,12 @@ const fetchListOfPods = async (
   spaName: string,
   env: string
 ): Promise<any> => {
+  // try {
   const { data } = await orchestratorReq.get(
     `/applications/pods/${propertyIdentifier}/${env}/${spaName}`
   );
-  return data.data;
+
+  return data?.data || [];
 };
 
 export const useListOfPods = (propertyIdentifier: string, spaName: string, env: string) =>

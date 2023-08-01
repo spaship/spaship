@@ -1,7 +1,7 @@
 {
   "name": "@spaship/cli",
   "description": "A command line interface for SPAship!",
-  "version": "1.5.6",
+  "version": "1.5.7",
   "author": "mclayton@redhat.com",
   "bin": {
     "spaship": "./bin/run"

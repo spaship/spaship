@@ -1,7 +1,7 @@
 {
   "name": "@spaship/manager",
   "description": "The SPAship UI.",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "private": true,
   "contributors": [
     {
@@ -55,6 +55,7 @@
     "@tanstack/react-query": "4.24.4",
     "axios": "0.27.2",
     "dayjs": "1.11.7",
+    "js-base64": "^3.7.5",
     "next": "12.3.4",
     "next-auth": "4.19.2",
     "next-global-css": "1.3.1",

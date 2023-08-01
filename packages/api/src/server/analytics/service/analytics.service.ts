@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { fromEvent } from 'rxjs';
+import { ANALYTICS } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { ActivityStream, Props } from '../activity-stream.entity';
@@ -24,6 +25,14 @@ export class AnalyticsService {
 
   private static readonly defaultDays: number = 120;
 
+  private static readonly standardTimeToDeploy: number = 300;
+
+  private static readonly days = 30;
+
+  private static readonly seconds = 60;
+
+  private static readonly minutes = 60;
+
   constructor(
     private readonly dataServices: IDataServices,
     private readonly analyticsFactory: AnalyticsFactory,
@@ -39,7 +48,9 @@ export class AnalyticsService {
     message?: string,
     createdBy?: string,
     source?: string,
-    payload?: string
+    payload?: string,
+    cluster?: string,
+    type?: string
   ): Promise<ActivityStream> {
     const activityStream = new ActivityStream();
     const props = new Props();
@@ -47,6 +58,8 @@ export class AnalyticsService {
     activityStream.action = action;
     props.applicationIdentifier = applicationIdentifier || 'NA';
     props.env = env || 'NA';
+    props.cluster = cluster || 'NA';
+    props.type = type || 'NA';
     activityStream.props = props;
     activityStream.message = message;
     activityStream.payload = payload;
@@ -100,14 +113,16 @@ export class AnalyticsService {
     return deploymentCount;
   }
 
-  async getMonthlyDeploymentCount(propertyIdentifier: string, applicationIdentifier: string): Promise<Object> {
+  async getMonthlyDeploymentCount(propertyIdentifier: string, applicationIdentifier: string, previous: number): Promise<Object> {
     const response = {};
     const monthlyCountResponse = [];
     const [searchQuery, groupQuery, projectQuery] = await this.analyticsFactory.getMonthlyDeploymentCountQuery(
       propertyIdentifier,
       applicationIdentifier
     );
-    const monthlyDateFrame = await this.analyticsFactory.buildWeeklyDateFrame();
+    let monthlyDateFrame;
+    if (!previous) monthlyDateFrame = await this.analyticsFactory.buildWeeklyDateFrame();
+    else monthlyDateFrame = await this.analyticsFactory.buildMonthlyDateFrame(previous);
     for (const week of monthlyDateFrame) {
       const element = { startDate: week.startDate, endDate: week.endDate };
       const query = await this.analyticsFactory.buildMonthlyCountQuery(element.startDate, element.endDate, searchQuery, groupQuery, projectQuery);
@@ -139,8 +154,15 @@ export class AnalyticsService {
     AnalyticsService.emitter.emit(channel, data);
   }
 
-  async getAverageDeploymentTime(propertyIdentifier: string, isEph: string, days: number = AnalyticsService.defaultDays): Promise<DeploymentTime> {
-    const query = await this.analyticsFactory.getAverageDeploymentTimeQuery(propertyIdentifier, days, isEph);
+  async getAverageDeploymentTime(
+    propertyIdentifier: string,
+    isEph: string,
+    days: number = AnalyticsService.defaultDays,
+    monthFrame?: any,
+    cluster?: string,
+    type?: string
+  ): Promise<DeploymentTime> {
+    const query = await this.analyticsFactory.getAverageDeploymentTimeQuery(propertyIdentifier, days, isEph, monthFrame, cluster, type);
     const response = await this.dataServices.eventTimeTrace.aggregate(query);
     let sumOfDeploymentTime = 0;
     let sumOfDeploymentCount = 0;
@@ -179,5 +201,48 @@ export class AnalyticsService {
         .catch((err) => {
           this.logger.error('WebhookError', err);
         });
+  }
+
+  async getDeploymentTimeSaved(): Promise<Object> {
+    const response = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.defaultDays * AnalyticsService.days);
+    const totalTimeForStandardDeployment = Number(ANALYTICS.averageTimeToDeploy) * response.count;
+    const timeSavedInSec = totalTimeForStandardDeployment - response.totalTime;
+    const timeSavedInHours = Math.round(timeSavedInSec / AnalyticsService.seconds / AnalyticsService.minutes);
+    return { timeSavedInHours };
+  }
+
+  async getDeveloperMetrics(month: number, cluster: string, type: string): Promise<Object> {
+    const monthlyDateFrame = await this.analyticsFactory.buildMonthlyDateFrame(month || 1);
+    const { averageTimeToDeploy } = ANALYTICS;
+    const response = [];
+    for (const tmpMonth of monthlyDateFrame) {
+      const monthlyAnalytics = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.days, tmpMonth, cluster, type);
+      const spashipAverageTime = monthlyAnalytics.averageTime;
+      const averageSavedTime = Number(averageTimeToDeploy) - monthlyAnalytics.averageTime;
+      const totalWorkingHours = Number(ANALYTICS.workingDays) * Number(ANALYTICS.averageDevelopmentHours);
+      const totalDeploymentCount = monthlyAnalytics.count;
+      const totalDeploymentHours = parseFloat(
+        ((monthlyAnalytics.averageTime * totalDeploymentCount) / AnalyticsService.seconds / AnalyticsService.minutes).toFixed(2)
+      );
+      const frequencyOfDeployment = parseFloat((totalDeploymentCount / totalWorkingHours).toFixed(2));
+      const { developerHourlyRate } = ANALYTICS;
+      const costSavingPerHour = parseFloat(
+        ((averageSavedTime / AnalyticsService.seconds / AnalyticsService.minutes) * frequencyOfDeployment * Number(developerHourlyRate)).toFixed(2)
+      );
+      const totalCostSaved = parseFloat((costSavingPerHour * totalDeploymentHours).toFixed(2));
+      response.push({
+        ...tmpMonth,
+        averageSavedTime,
+        spashipAverageTime,
+        totalWorkingHours,
+        totalDeploymentCount,
+        totalDeploymentHours,
+        frequencyOfDeployment,
+        developerHourlyRate,
+        costSavingPerHour,
+        totalCostSaved
+      });
+    }
+    return response;
   }
 }

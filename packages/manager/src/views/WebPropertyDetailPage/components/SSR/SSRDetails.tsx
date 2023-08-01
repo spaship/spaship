@@ -173,11 +173,10 @@ export const SSRDetails = () => {
 
   const [isExpanded, setIsExpanded] = useState(false);
   const drawerRef = useRef<HTMLDivElement>();
-  const [spaName, setSpaName] = useState('');
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [envName, setEnvName] = useState('');
-
-  const podList = useListOfPods(propertyIdentifier, spaName, envName);
+  const [isGit, setIsGit] = useState(false);
+  const podList = useListOfPods(propertyIdentifier, applicationName, envName);
   const [buildIdList, setbuildIdList] = useState<string[]>([]);
 
   const handleTabClick = async (
@@ -194,9 +193,9 @@ export const SSRDetails = () => {
     rowData: any
   ) => {
     setbuildIdList(buildName);
-    setSpaName(name);
     setEnvName(rowData.env);
-    setIsExpanded(!isExpanded);
+    setIsExpanded(true);
+    setIsGit(rowData.isGit);
   };
 
   const onExpand = () => {
@@ -204,7 +203,8 @@ export const SSRDetails = () => {
       drawerRef.current.focus();
     }
   };
-  const onCloseClick = () => {
+  const onCloseClick = (event: any) => {
+    event.stopPropagation();
     setIsExpanded(false);
   };
 
@@ -215,22 +215,30 @@ export const SSRDetails = () => {
 
         <Tabs activeKey={activeTabKey} onSelect={handleTabClick}>
           <Tab eventKey={0} title="Deployment Logs">
-            <ViewLogs
-              propertyIdentifier={propertyIdentifier}
-              spaName={spaName}
-              env={envName}
-              type={activeTabKey}
-              idList={podList?.data}
-            />
+            {activeTabKey === 0 && (
+              <ViewLogs
+                key={envName}
+                propertyIdentifier={propertyIdentifier}
+                spaName={applicationName}
+                env={envName}
+                type={activeTabKey}
+                idList={podList?.data}
+                isGit={isGit}
+              />
+            )}
           </Tab>
           <Tab eventKey={1} title="Build Logs">
-            <ViewLogs
-              propertyIdentifier={propertyIdentifier}
-              spaName={spaName}
-              env={envName}
-              type={activeTabKey}
-              idList={buildIdList}
-            />
+            {activeTabKey === 1 && (
+              <ViewLogs
+                key={envName}
+                propertyIdentifier={propertyIdentifier}
+                spaName={applicationName}
+                env={envName}
+                type={activeTabKey}
+                idList={buildIdList}
+                isGit={isGit}
+              />
+            )}
           </Tab>
         </Tabs>
         <DrawerActions>
