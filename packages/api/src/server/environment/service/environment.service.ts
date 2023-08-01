@@ -192,4 +192,33 @@ export class EnvironmentService {
     }
     return environment;
   }
+
+  /* @internal
+   * This will update the Environment
+   */
+  async updateEnvironment(createPropertyDto: CreateEnvironmentDto): Promise<Environment> {
+    const { propertyIdentifier, env } = createPropertyDto;
+    const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+    this.logger.log('Environment', JSON.stringify(environment));
+    if (!environment) this.exceptionService.badRequestException({ message: 'Property and Env not found.' });
+    environment.cluster = createPropertyDto.cluster;
+    environment.url = createPropertyDto.url;
+    environment.updatedBy = createPropertyDto.createdBy;
+    try {
+      await this.dataServices.environment.updateOne({ propertyIdentifier, env }, environment);
+      await this.analyticsService.createActivityStream(
+        propertyIdentifier,
+        Action.ENV_UPDATED,
+        env,
+        'NA',
+        `${env} updated for ${propertyIdentifier}`,
+        createPropertyDto.createdBy,
+        Source.MANAGER,
+        JSON.stringify(createPropertyDto)
+      );
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err);
+    }
+    return environment;
+  }
 }

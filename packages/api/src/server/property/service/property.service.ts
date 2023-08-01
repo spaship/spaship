@@ -7,7 +7,7 @@ import { EnvironmentFactory } from 'src/server/environment/service/environment.f
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { PermissionService } from 'src/server/permission/service/permission.service';
 import { CreatePropertyDto } from 'src/server/property/property.dto';
-import { DeploymentRecord } from '../property.entity';
+import { DeploymentRecord, Source } from '../property.entity';
 import { PropertyResponseDto } from '../property.response.dto';
 import { PropertyFactory } from './property.factory';
 
@@ -101,5 +101,37 @@ export class PropertyService {
     }
     this.logger.log('DeploymentRecord', JSON.stringify(deploymentRecord));
     return deploymentRecord;
+  }
+
+  /* @internal
+   * This will update the property
+   * CMDB code and severity
+   */
+  async updateProperty(createPropertyDto: CreatePropertyDto): Promise<PropertyResponseDto> {
+    const propertyDetails = (
+      await this.dataServices.property.getByAny({
+        identifier: createPropertyDto.identifier
+      })
+    )[0];
+    if (!propertyDetails) this.exceptionService.badRequestException({ message: 'No Property Found.' });
+    propertyDetails.title = createPropertyDto.title;
+    propertyDetails.cmdbCode = createPropertyDto.cmdbCode;
+    propertyDetails.severity = createPropertyDto.severity;
+    try {
+      await this.dataServices.property.updateOne({ identifier: propertyDetails.identifier }, propertyDetails);
+      await this.analyticsService.createActivityStream(
+        createPropertyDto.identifier,
+        Action.PROPERTY_UPDATED,
+        'NA',
+        'NA',
+        `${createPropertyDto.identifier} details updated`,
+        createPropertyDto.createdBy,
+        Source.MANAGER,
+        JSON.stringify(createPropertyDto)
+      );
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err);
+    }
+    return this.getPropertyDetails(createPropertyDto.identifier);
   }
 }

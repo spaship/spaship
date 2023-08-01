@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from '../auth/auth.guard';
 import { CreatePropertyDto } from './property.dto';
+import { PropertyResponseDto } from './property.response.dto';
 import { PropertyService } from './service/property.service';
 
 @Controller('property')
@@ -19,7 +20,13 @@ export class PropertyController {
 
   @Post()
   @ApiOperation({ description: 'Create a New Property.' })
-  async createProperty(@Body() propertyDto: CreatePropertyDto): Promise<any> {
+  async createProperty(@Body() propertyDto: CreatePropertyDto): Promise<PropertyResponseDto> {
     return this.propertyService.createProperty(propertyDto);
+  }
+
+  @Put()
+  @ApiOperation({ description: 'Update a Property.' })
+  async updateProperty(@Body() propertyDto: CreatePropertyDto): Promise<PropertyResponseDto> {
+    return this.propertyService.updateProperty(propertyDto);
   }
 }

@@ -169,7 +169,8 @@ function getImageUrlRegex() {
 }
 
 export const ANALYTICS = {
-  averageTimeToDeploy: process.env.SPASHIP_ANALYTICS_AVERAGE_TIME_TO_DEPLOY || 1800,
+  averageTimeToDeploy: process.env.SPASHIP_ANALYTICS_AVERAGE_TIME_TO_DEPLOY || 300,
+  averageDevelopmentHours: process.env.SPASHIP_ANALYTICS_AVERAGE_DEVELOPMENT_HOURS || 1800,
   developerHourlyRate: process.env.SPASHIP_ANALYTICS_DEVELOPER_HOURLY_RATE || 46,
   workingDays: process.env.SPASHIOP_ANALYTICS_WORKING_DAYS || 23,
   workingHours: process.env.SPASHIP_ANALYTICS_WORKING_HOURS || 23
