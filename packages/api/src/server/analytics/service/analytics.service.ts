@@ -219,7 +219,7 @@ export class AnalyticsService {
       const monthlyAnalytics = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.days, tmpMonth, cluster, type);
       const spashipAverageTime = monthlyAnalytics.averageTime;
       const averageSavedTime = Number(averageTimeToDeploy) - monthlyAnalytics.averageTime;
-      const totalWorkingHours = Number(ANALYTICS.workingDays) * Number(ANALYTICS.workingHours);
+      const totalWorkingHours = Number(ANALYTICS.workingDays) * Number(ANALYTICS.averageDeveloperHours);
       const totalDeploymentCount = monthlyAnalytics.count;
       const totalDeploymentHours = parseFloat(
         ((monthlyAnalytics.averageTime * totalDeploymentCount) / AnalyticsService.seconds / AnalyticsService.minutes).toFixed(2)
