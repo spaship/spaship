@@ -28,7 +28,7 @@ export class Application {
   nextRef: string;
 
   @Prop({})
-  accessUrl: string;
+  accessUrl: string[];
 
   @Prop({ required: true, default: true })
   isActive: boolean;
@@ -76,7 +76,7 @@ export class Application {
   mergeId: string;
 
   @Prop({})
-  buildName: string[];
+  buildName: object[];
 
   @Prop({})
   dockerFileName: string;

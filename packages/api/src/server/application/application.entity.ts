@@ -15,7 +15,7 @@ export class Application {
 
   nextRef: string;
 
-  accessUrl: string;
+  accessUrl: string[];
 
   isActive: boolean;
 
@@ -47,7 +47,7 @@ export class Application {
 
   mergeId: string;
 
-  buildName: string[];
+  buildName: object[];
 
   dockerFileName: string;
 

@@ -20,7 +20,7 @@ export class EnvironmentFactory {
     private readonly logger: LoggerService,
     private readonly httpService: HttpService,
     @Inject(forwardRef(() => ApplicationService))
-    private readonly applicationService: ApplicationService
+    readonly applicationService: ApplicationService
   ) {}
 
   createNewEnvironment(createEnvironmentDto: CreateEnvironmentDto): Environment {

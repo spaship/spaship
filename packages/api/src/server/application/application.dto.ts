@@ -138,7 +138,7 @@ export class ApplicationResponse {
   env: string;
 
   @ApiProperty()
-  accessUrl: string;
+  accessUrl: string[];
 
   @ApiProperty()
   deployedBy: string;

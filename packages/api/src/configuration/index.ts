@@ -3,7 +3,7 @@ export const DIRECTORY_CONFIGURATION = {
 };
 
 export const EPHEMERAL_ENV = {
-  expiresIn: process.env.SPASHIP_EPH__TTL || 1
+  expiresIn: process.env.SPASHIP_EPHEMERAL_EXPIRES_IN || 3600
 };
 
 export const CONTAINERIZED_DEPLOYMENT_DETAILS = {
@@ -25,7 +25,7 @@ export const DE_AUTH = {
 };
 
 function getDatabaseConfiguration() {
-  const spashipMongoUrl = process.env.SPASHIP_DB__MONGO__URL || 'localhost:27017/nest';
+  const spashipMongoUrl = process.env.SPASHIP_DB__MONGO__URL || 'localhost:27017/spaship';
   return `mongodb://${spashipMongoUrl}`;
 }
 
@@ -69,8 +69,15 @@ export const DEPLOYMENT_DETAILS = {
     containerized: 'containerized',
     static: 'static'
   },
-  namespace: process.env.SPASHIP_NAMESPACE || 'spaship-sandbox'
+  namespace: process.env.SPASHIP_NAMESPACE || 'spaship-sandbox',
+  severity: getSeverity()
 };
+
+function getSeverity() {
+  const severities = process.env.SPASHIP_SEVERITY;
+  if (severities) return severities.split(',');
+  return ['C1', 'C2'];
+}
 
 // @internal this is for validating the minimum length for the Specific requests
 export enum MIN {
@@ -167,3 +174,15 @@ export const ANALYTICS = {
   workingDays: process.env.SPASHIOP_ANALYTICS_WORKING_DAYS || 23,
   workingHours: process.env.SPASHIP_ANALYTICS_WORKING_HOURS || 23
 };
+
+export const CMDB_DETAILS = {
+  baseUrl: process.env.SPASHIP_CMDB_BASE_URL,
+  cred: generateCMDBCred()
+};
+
+function generateCMDBCred() {
+  const username = process.env.SPASHIP_CMDB_USERNAME;
+  const password = process.env.SPASHIP_CMDB_PASSWORD;
+  const base64EncodedCreds = Buffer.from(`${username}:${password}`);
+  return base64EncodedCreds.toString('base64');
+}
