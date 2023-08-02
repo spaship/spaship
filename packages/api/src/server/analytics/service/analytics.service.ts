@@ -213,6 +213,7 @@ export class AnalyticsService {
 
   async getDeveloperMetrics(month: number, cluster: string, type: string): Promise<Object> {
     const monthlyDateFrame = await this.analyticsFactory.buildMonthlyDateFrame(month || 1);
+    let overallCostSaved = 0;
     const { averageDevelopmentHours } = ANALYTICS;
     const response = [];
     for (const tmpMonth of monthlyDateFrame) {
@@ -234,6 +235,7 @@ export class AnalyticsService {
         ).toFixed(2)
       );
       const totalCostSaved = parseFloat((costSavingPerHour * totalDeploymentHours).toFixed(2));
+      if (totalCostSaved) overallCostSaved += totalCostSaved;
       response.push({
         ...tmpMonth,
         averageSavedTimeInSecs,
@@ -247,6 +249,6 @@ export class AnalyticsService {
         totalCostSaved
       });
     }
-    return response;
+    return { monthlyAnalytics: response, overallCostSaved };
   }
 }
