@@ -152,20 +152,20 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
                         <Tr key={`${index + 1}-${application.createdAt}`}>
                           <Td>{application.identifier}</Td>
                           <Td>
-                            {application.accessUrl === 'NA' ? (
+                            {application.accessUrl[0] === 'NA' ? (
                               <Spinner isSVG diameter="30px" />
                             ) : (
                               <a
-                                href={application.accessUrl}
+                                href={application.accessUrl[0]}
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >
                                 <ExternalLinkAltIcon />{' '}
-                                {`${application.accessUrl.slice(0, URL_LENGTH_LIMIT)} ${
-                                  application.accessUrl.length > URL_LENGTH_LIMIT ? '...' : ''
+                                {`${application.accessUrl[0].slice(0, URL_LENGTH_LIMIT)} ${
+                                  application.accessUrl[0].length > URL_LENGTH_LIMIT ? '...' : ''
                                 }`}
                                 <Access
-                                  link={application.accessUrl}
+                                  link={application.accessUrl[0]}
                                   _id={String(application._id)}
                                 />
                               </a>

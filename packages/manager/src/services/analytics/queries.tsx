@@ -6,7 +6,8 @@ import {
   TSPADeploymentTime,
   TSPAMonthlyDeploymentChart,
   TSPAMonthlyDeploymentCount,
-  TWebPropActivityStream
+  TWebPropActivityStream,
+  TTotalTimeSaved
 } from './types';
 
 type IDeploymentData = {
@@ -29,7 +30,8 @@ const analyticsKeys = {
   spaDeployments: (propertyId: string, spaID?: string) =>
     [...analyticsKeys.propertyActivityStream(propertyId), spaID] as const,
   spaMonthyDeploymentChart: (propertyId: string, spaID?: string) =>
-    [...analyticsKeys.propertyActivityStream(propertyId), spaID, 'monthly-chart'] as const
+    [...analyticsKeys.propertyActivityStream(propertyId), spaID, 'monthly-chart'] as const,
+  timeSaved: ['time-saved'] as const
 };
 
 const fetchDeploymentCounts = async (): Promise<TDeploymentCount[]> => {
@@ -137,20 +139,25 @@ export const useGetMonthlyDeploymentChart = (webProperty: string, spaName?: stri
   );
 
 const fetchMonthlyDeploymentChartWithEphemeral = async (
-  propertyIdentifier?: string
+  propertyIdentifier?: string,
+  previous?: string
 ): Promise<Record<string, TSPAMonthlyDeploymentChart[]>> => {
   const { data } = await orchestratorReq.get('/analytics/deployment/env/month', {
     params: {
-      propertyIdentifier
+      propertyIdentifier,
+      previous
     }
   });
   return data.data;
 };
 
-export const useGetMonthlyDeploymentChartWithEphemeral = (propertyIdentifier?: string) =>
+export const useGetMonthlyDeploymentChartWithEphemeral = (
+  propertyIdentifier?: string,
+  previous?: string
+) =>
   useQuery({
     queryKey: analyticsKeys.spaMonthyDeploymentChartWithEphemeral,
-    queryFn: () => fetchMonthlyDeploymentChartWithEphemeral(propertyIdentifier),
+    queryFn: () => fetchMonthlyDeploymentChartWithEphemeral(propertyIdentifier, previous),
     select: (data: {
       qa?: IDeploymentData[];
       stage?: IDeploymentData[];
@@ -293,3 +300,9 @@ export const useGetYearlyDeploymentsTime = (
         : data.deploymentDetails.filter((m) => m.applicationIdentifier === applicationIdentifier)[0]
             .averageTime
   });
+
+const fetchTotalTimeSaved = async (): Promise<TTotalTimeSaved> => {
+  const { data } = await orchestratorReq.get('/analytics/deployment/time?save=true');
+  return data.data;
+};
+export const useGetTotalTimeSaved = () => useQuery(analyticsKeys.timeSaved, fetchTotalTimeSaved);

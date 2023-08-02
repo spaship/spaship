@@ -26,7 +26,6 @@ export const DashboardPage = (): JSX.Element => {
   const bestDeploymentTimeIndex = averageDeploymentTime.findIndex(
     (time) => time === bestDeploymentTime
   );
-
   return (
     <div style={{ display: 'flex', flexDirection: 'row', height: '10%' }}>
       <div style={{ width: '55%' }}>
