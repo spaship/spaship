@@ -133,7 +133,7 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
                   height={210}
                   name="chart1"
                   padding={{
-                    bottom: 60,
+                    bottom: 30,
                     left: 50,
                     right: 50, // Adjusted to accommodate legend
                     top: 20
