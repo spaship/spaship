@@ -213,13 +213,13 @@ export class AnalyticsService {
 
   async getDeveloperMetrics(month: number, cluster: string, type: string): Promise<Object> {
     const monthlyDateFrame = await this.analyticsFactory.buildMonthlyDateFrame(month || 1);
-    const { averageTimeToDeploy } = ANALYTICS;
+    const { averageDevelopmentHours } = ANALYTICS;
     const response = [];
     for (const tmpMonth of monthlyDateFrame) {
       const monthlyAnalytics = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.days, tmpMonth, cluster, type);
-      const spashipAverageTime = monthlyAnalytics.averageTime;
-      const averageSavedTime = Number(averageTimeToDeploy) - monthlyAnalytics.averageTime;
-      const totalWorkingHours = Number(ANALYTICS.workingDays) * Number(ANALYTICS.averageDevelopmentHours);
+      const spashipAverageTimeInSecs = monthlyAnalytics.averageTime;
+      const averageSavedTimeInSecs = Number(averageDevelopmentHours) - monthlyAnalytics.averageTime;
+      const totalWorkingHours = Number(ANALYTICS.workingDays) * Number(ANALYTICS.workingHours);
       const totalDeploymentCount = monthlyAnalytics.count;
       const totalDeploymentHours = parseFloat(
         ((monthlyAnalytics.averageTime * totalDeploymentCount) / AnalyticsService.seconds / AnalyticsService.minutes).toFixed(2)
@@ -227,13 +227,17 @@ export class AnalyticsService {
       const frequencyOfDeployment = parseFloat((totalDeploymentCount / totalWorkingHours).toFixed(2));
       const { developerHourlyRate } = ANALYTICS;
       const costSavingPerHour = parseFloat(
-        ((averageSavedTime / AnalyticsService.seconds / AnalyticsService.minutes) * frequencyOfDeployment * Number(developerHourlyRate)).toFixed(2)
+        (
+          (averageSavedTimeInSecs / AnalyticsService.seconds / AnalyticsService.minutes) *
+          frequencyOfDeployment *
+          Number(developerHourlyRate)
+        ).toFixed(2)
       );
       const totalCostSaved = parseFloat((costSavingPerHour * totalDeploymentHours).toFixed(2));
       response.push({
         ...tmpMonth,
-        averageSavedTime,
-        spashipAverageTime,
+        averageSavedTimeInSecs,
+        spashipAverageTimeInSecs,
         totalWorkingHours,
         totalDeploymentCount,
         totalDeploymentHours,
