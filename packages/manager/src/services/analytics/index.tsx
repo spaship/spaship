@@ -8,5 +8,6 @@ export {
   useGetMonthlyDeploymentsTime,
   useGetQuarterlyDeploymentsTime,
   useGetHalfYearlyDeploymentsTime,
-  useGetYearlyDeploymentsTime
+  useGetYearlyDeploymentsTime,
+  useGetTotalTimeSaved
 } from './queries';
