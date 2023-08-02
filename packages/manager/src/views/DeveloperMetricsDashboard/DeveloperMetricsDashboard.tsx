@@ -125,7 +125,7 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
                   domain={{ y: [0, maxCount || 0] }}
                   domainPadding={{ x: [30, 30] }}
                   legendData={[
-                    { name: 'Cost Saved per month' },
+                    { name: 'Cost Saved per month ($)' },
                     { name: 'Deployment count per month' }
                   ]}
                   legendOrientation="horizontal"
