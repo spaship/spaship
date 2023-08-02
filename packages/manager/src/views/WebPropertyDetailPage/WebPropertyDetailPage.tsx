@@ -131,11 +131,10 @@ export const WebPropertyDetailPage = (): JSX.Element => {
       <PageSection
         isCenterAligned
         isWidthLimited
-        // className="pf-u-px-lg"
-        style={{ backgroundColor: '#F0F0F0' }}
+        className="pf-u-px-3xl"
+        // style={{ backgroundColor: '#F0F0F0' }}
       >
         <Tabs
-          className="pf-u-mx-lg"
           activeKey={openTab}
           onSelect={(_, tab) => handleTabChange(tab as number)}
           style={{ backgroundColor: '#fff' }}
