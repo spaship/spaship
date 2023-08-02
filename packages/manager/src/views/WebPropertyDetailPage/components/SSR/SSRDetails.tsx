@@ -340,17 +340,17 @@ export const SSRDetails = () => {
                           }`}
                         </Td>
                         <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
-                          {val?.accessUrl === 'NA' ? (
+                          {val?.accessUrl[0] === 'NA' ? (
                             <Spinner isSVG diameter="30px" />
                           ) : (
                             <div>
-                              <a href={val?.accessUrl} target="_blank" rel="noopener noreferrer">
+                              <a href={val?.accessUrl[0]} target="_blank" rel="noopener noreferrer">
                                 <ExternalLinkAltIcon />{' '}
-                                {`${val?.accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                                  val?.accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                {`${val?.accessUrl[0].slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                  val?.accessUrl[0].length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
                                 }`}
                               </a>
-                              <Access link={val.accessUrl} _id={String(val._id)} />
+                              <Access link={val.accessUrl[0]} _id={String(val._id)} />
                             </div>
                           )}{' '}
                         </Td>

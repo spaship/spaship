@@ -1,8 +1,12 @@
 export type THoursSaved = {
+  monthlyAnalytics: TMonthlyAnalytics[];
+  overallCostSaved: string;
+};
+type TMonthlyAnalytics = {
   startDate: string;
   endDate: string;
-  averageSavedTime: number;
-  spashipAverageTime: number;
+  averageSavedTimeInSecs: number;
+  spashipAverageTimeInSecs: number;
   totalWorkingHours: number;
   totalDeploymentCount: number;
   totalDeploymentHours: number;

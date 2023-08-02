@@ -412,20 +412,20 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                             <Td
                                               style={{ maxWidth: '20ch', wordWrap: 'break-word' }}
                                             >
-                                              {accessUrl === 'NA' ? (
+                                              {accessUrl[0] === 'NA' ? (
                                                 <Spinner isSVG diameter="30px" />
                                               ) : (
                                                 <a
-                                                  href={accessUrl}
+                                                  href={accessUrl[0]}
                                                   target="_blank"
                                                   rel="noopener noreferrer"
                                                 >
                                                   <ExternalLinkAltIcon />{' '}
-                                                  {`${accessUrl.slice(
+                                                  {`${accessUrl[0].slice(
                                                     0,
                                                     INTERNAL_ACCESS_URL_LENGTH
                                                   )} ${
-                                                    accessUrl.length > INTERNAL_ACCESS_URL_LENGTH
+                                                    accessUrl[0].length > INTERNAL_ACCESS_URL_LENGTH
                                                       ? '...'
                                                       : ''
                                                   }`}

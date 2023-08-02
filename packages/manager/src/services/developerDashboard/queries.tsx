@@ -6,11 +6,10 @@ const developerMetricsKeys = {
   developerMetrics: ['developer-metrics-keys'] as const
 };
 
-const fetchTotalSavingsByDevelopers = async (month?: string): Promise<THoursSaved[]> => {
+const fetchTotalSavingsByDevelopers = async (month?: string): Promise<THoursSaved> => {
   const { data } = await orchestratorReq.get('analytics/developer', {
     params: { month }
   });
-
   return data.data;
 };
 
