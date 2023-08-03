@@ -201,7 +201,16 @@ export class ApplicationService {
     const tmpDir = `${baseDir}/${identifier.split('.')[0]}-${Date.now()}-extracted`;
     await fs.mkdirSync(`${tmpDir}`, { recursive: true });
     await decompress(path.resolve(applicationPath), path.resolve(tmpDir));
-    const zipPath = await this.applicationFactory.createTemplateAndZip(appPath, ref, identifier, tmpDir, propertyIdentifier, env, property.namespace);
+    const zipPath = await this.applicationFactory.createTemplateAndZip(
+      appPath,
+      ref,
+      identifier,
+      tmpDir,
+      propertyIdentifier,
+      env,
+      property.namespace,
+      property.cmdbCode
+    );
     try {
       for (const con of deploymentConnection) {
         const formData: any = new FormData();
@@ -286,6 +295,7 @@ export class ApplicationService {
       identifier,
       env,
       applicationDetails,
+      property.cmdbCode,
       property.namespace
     );
     this.logger.log('OperatorRequestForContainerizedDeployment', JSON.stringify(containerizedDeploymentRequestForOperator));
@@ -449,6 +459,7 @@ export class ApplicationService {
           identifier,
           env,
           applicationDetails,
+          property.cmdbCode,
           property.namespace
         );
         containerizedDeploymentRequestForOperator.configMap = applicationRequest.config;
@@ -503,6 +514,7 @@ export class ApplicationService {
       propertyIdentifier,
       identifier,
       env,
+      property.cmdbCode,
       property.namespace,
       applicationDetails
     );
