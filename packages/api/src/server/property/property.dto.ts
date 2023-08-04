@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, Length, Matches } from 'class-validator';
 import { MAX, MESSAGE, MIN, VALIDATION } from 'src/configuration';
 
 export class CreatePropertyDto {
@@ -34,6 +34,7 @@ export class CreatePropertyDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   @Length(MIN.DEFAULT, MAX.DEFAULT, { message: MESSAGE.INVALID_LENGTH, always: true })
   @Matches(VALIDATION.CMDB, { message: MESSAGE.INVALID_CMDB_CODE, always: true })
   cmdbCode: string;
@@ -41,6 +42,7 @@ export class CreatePropertyDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   @Length(MIN.DEFAULT, MAX.DEFAULT, { message: MESSAGE.INVALID_LENGTH, always: true })
   @Matches(VALIDATION.PROPERTY_TITLE, { message: MESSAGE.INVALID_SEVERITY, always: true })
   severity: string;
