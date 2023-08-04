@@ -167,6 +167,8 @@ export class ContainerizedDeploymentRequest {
   secretMap: object;
 
   port: number;
+
+  cmdbCode: string;
 }
 
 export class ContainerizedDeploymentResponse {

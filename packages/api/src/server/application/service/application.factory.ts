@@ -62,7 +62,8 @@ export class ApplicationFactory {
     tmpDir: string,
     propertyIdentifier: string,
     env: string,
-    namespace: string
+    namespace: string,
+    cmdbCode: string
   ): Promise<string> {
     const fileExists = async (filePath) => !!(await fs.promises.stat(filePath).catch(() => false));
     const rootspa = 'ROOTSPA';
@@ -75,6 +76,7 @@ export class ApplicationFactory {
       websiteName: propertyIdentifier,
       name,
       mapping: appPath,
+      cmdbCode,
       environments: [{ name: env, updateRestriction: false, exclude: false, ns: namespace }]
     };
     this.logger.log('SpashipFile', JSON.stringify(spashipFile));
@@ -484,6 +486,7 @@ export class ApplicationFactory {
     identifier: string,
     env: string,
     applicationDetails: Application,
+    cmdbCode: string,
     namespace?: string
   ): ContainerizedDeploymentRequest {
     const containerizedRequest = new ContainerizedDeploymentRequest();
@@ -497,6 +500,7 @@ export class ApplicationFactory {
     containerizedRequest.secretMap = this.decodeBase64SecretValues({ ...applicationDetails.secret });
     containerizedRequest.healthCheckPath = applicationDetails.healthCheckPath;
     containerizedRequest.port = applicationDetails.port || 3000;
+    containerizedRequest.cmdbCode = cmdbCode;
     return containerizedRequest;
   }
 
@@ -506,10 +510,11 @@ export class ApplicationFactory {
     propertyIdentifier: string,
     identifier: string,
     env: string,
+    cmdbCode: string,
     namespace: string,
     applicationDetails: Application
   ): ContainerizedGitDeploymentRequest {
-    const deploymentDetails = this.createContainerizedDeploymentRequestForOperator(propertyIdentifier, identifier, env, applicationDetails);
+    const deploymentDetails = this.createContainerizedDeploymentRequestForOperator(propertyIdentifier, identifier, env, applicationDetails, cmdbCode);
     const containerizedEnabledGitDeploymentRequest = new ContainerizedGitDeploymentRequest();
     containerizedEnabledGitDeploymentRequest.nameSpace = namespace;
     containerizedEnabledGitDeploymentRequest.deploymentDetails = deploymentDetails;
