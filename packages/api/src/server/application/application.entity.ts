@@ -51,6 +51,8 @@ export class Application {
 
   dockerFileName: string;
 
+  autoSync: boolean;
+
   createdBy: string;
 
   updatedBy: string;
