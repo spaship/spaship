@@ -4,7 +4,15 @@ import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DIRECTORY_CONFIGURATION } from '../../configuration';
 import { AuthenticationGuard } from '../auth/auth.guard';
 import { ExceptionsService } from '../exceptions/exceptions.service';
-import { ApplicationConfigDTO, ApplicationResponse, CreateApplicationDto, GitDeploymentRequestDTO, GitValidationRequestDTO } from './application.dto';
+import {
+  ApplicationConfigDTO,
+  ApplicationResponse,
+  CreateApplicationDto,
+  EnableApplicationSyncDTO,
+  GitDeploymentRequestDTO,
+  GitValidationRequestDTO
+} from './application.dto';
+import { Application } from './application.entity';
 import { ApplicationFactory } from './service/application.factory';
 import { ApplicationService } from './service/application.service';
 
@@ -16,7 +24,7 @@ export class ApplicationController {
     private readonly applicationService: ApplicationService,
     private readonly applicationFactory: ApplicationFactory,
     private readonly exceptionService: ExceptionsService
-  ) {}
+  ) { }
 
   @Get('/property/:identifier')
   @ApiOperation({ description: 'Get the list of Properties.' })
@@ -129,5 +137,11 @@ export class ApplicationController {
     @Param('identifier') identifier: string
   ): Promise<String[]> {
     return this.applicationService.getListOfPods(propertyIdentifier, env, identifier);
+  }
+
+  @Post('/sync')
+  @ApiOperation({ description: 'Enable Auto Sync for Applications.' })
+  async enableApplicationAutoSync(@Body() enableApplicationSyncDTO: EnableApplicationSyncDTO): Promise<Application> {
+    return this.applicationService.enableApplicationAutoSync(enableApplicationSyncDTO);
   }
 }
