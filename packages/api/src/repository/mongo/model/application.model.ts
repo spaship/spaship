@@ -81,6 +81,9 @@ export class Application {
   @Prop({})
   dockerFileName: string;
 
+  @Prop({ default: false })
+  autoSync: boolean;
+
   @Prop({ default: 'NA' })
   createdBy: string;
 

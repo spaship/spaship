@@ -144,6 +144,7 @@ export class ApplicationFactory {
     saveApplication.accessUrl = this.getAccessUrl(deploymentConnection, applicationRequest, propertyIdentifier, env, isContainerized);
     saveApplication.isContainerized = false;
     saveApplication.isGit = false;
+    saveApplication.autoSync = false;
     saveApplication.createdBy = createdBy;
     saveApplication.updatedBy = createdBy;
     saveApplication.version = 1;

@@ -15,12 +15,13 @@ import { DeploymentConnection } from 'src/server/deployment-connection/deploymen
 import { Cluster } from 'src/server/environment/environment.entity';
 import { EnvironmentFactory } from 'src/server/environment/service/environment.factory';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
-import { Source } from 'src/server/property/property.entity';
+import { Property, Source } from 'src/server/property/property.entity';
 import {
   ApplicationConfigDTO,
   ApplicationResponse,
   ContainerizedDeploymentRequest,
   CreateApplicationDto,
+  EnableApplicationSyncDTO,
   GitApplicationStatusRequest,
   GitDeploymentRequestDTO
 } from '../application.dto';
@@ -113,14 +114,14 @@ export class ApplicationService {
         JSON.stringify(environment)
       );
     }
-    try {
-      await this.deployApplication(applicationRequest, applicationPath, propertyIdentifier, env);
-    } catch (err) {
-      this.exceptionService.internalServerErrorException(err.message);
-    }
     const applicationDetails = (
       await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false })
     )[0];
+    try {
+      await this.deployApplication(applicationRequest, applicationPath, propertyIdentifier, env, applicationDetails?.autoSync);
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err.message);
+    }
     const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
     const searchedApplicationsByPath = await this.dataServices.application.getByOptions(
       {
@@ -186,7 +187,13 @@ export class ApplicationService {
    * Extract & process the uploaded distribution file, add spaship config (.spaship)
    * Zip the folder and upload it to the deployment engine
    */
-  async deployApplication(applicationRequest: CreateApplicationDto, applicationPath: string, propertyIdentifier: string, env: string): Promise<any> {
+  async deployApplication(
+    applicationRequest: CreateApplicationDto,
+    applicationPath: string,
+    propertyIdentifier: string,
+    env: string,
+    autoSync: boolean = false
+  ): Promise<any> {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     const identifier = this.applicationFactory.getIdentifier(applicationRequest.name);
     if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
@@ -220,21 +227,43 @@ export class ApplicationService {
         formData.append('website', propertyIdentifier);
         const response = await this.applicationFactory.deploymentRequest(formData, con.baseurl);
         this.logger.log('OperatorResponse', JSON.stringify(response.data));
-        if (environment.sync !== 'NA') {
+        if (autoSync && environment.sync !== 'NA') {
           const operatorPayload = JSON.parse(environment.sync);
           this.logger.log('OperatorPayload', JSON.stringify(operatorPayload));
-          try {
-            const syncResponse = await this.environmentFactory.syncRequest(operatorPayload, con.baseurl, propertyIdentifier, env, property.namespace);
-            this.logger.log('SyncOperatorResponse', JSON.stringify(syncResponse.data));
-          } catch (err) {
-            this.exceptionService.internalServerErrorException(err.message);
-          }
+          this.triggerSync(operatorPayload, con.baseurl, propertyIdentifier, env, property, applicationRequest);
         }
       }
     } catch (err) {
       this.exceptionService.internalServerErrorException(err);
     }
     return applicationRequest;
+  }
+
+  // @internal it will trigger the sync for the specific application
+  private async triggerSync(
+    operatorPayload: Object,
+    baseurl: string,
+    propertyIdentifier: string,
+    env: string,
+    property: Property,
+    applicationRequest: CreateApplicationDto
+  ) {
+    try {
+      const syncResponse = await this.environmentFactory.syncRequest(operatorPayload, baseurl, propertyIdentifier, env, property.namespace);
+      this.logger.log('SyncOperatorResponse', JSON.stringify(syncResponse.data));
+      await this.analyticsService.createActivityStream(
+        propertyIdentifier,
+        Action.ENV_SYNCED,
+        env,
+        'NA',
+        `${env} synced for ${propertyIdentifier}`,
+        applicationRequest.createdBy,
+        Source.MANAGER,
+        JSON.stringify(applicationRequest)
+      );
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err.message);
+    }
   }
 
   /* @internal
@@ -837,5 +866,28 @@ export class ApplicationService {
       }
     }
     return response;
+  }
+
+  /* @internal
+   * Enable auto sync for the Applications
+   * It will enable auto sync for the Static Applications
+   */
+  async enableApplicationAutoSync(enableApplicationSync: EnableApplicationSyncDTO): Promise<Application> {
+    const search = {
+      identifier: enableApplicationSync.identifier,
+      propertyIdentifier: enableApplicationSync.propertyIdentifier,
+      env: enableApplicationSync.env,
+      isContainerized: false,
+      isGit: false
+    };
+    const applicationDetails = (await this.dataServices.application.getByAny(search))[0];
+    if (!applicationDetails)
+      this.exceptionService.badRequestException({
+        message: `${enableApplicationSync.identifier} application doesn't exist for ${enableApplicationSync.propertyIdentifier}.`
+      });
+    applicationDetails.autoSync = enableApplicationSync.autoSync;
+    applicationDetails.updatedBy = enableApplicationSync.createdBy;
+    await this.dataServices.application.updateOne(search, applicationDetails);
+    return applicationDetails;
   }
 }
