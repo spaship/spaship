@@ -11,7 +11,7 @@ export const ActivityStreamDashboard = () => (
     style={{
       margin: '0px 24px 24px 0px',
       paddingLeft: '12px',
-      height: '770px',
+      height: '730px',
       overflow: 'hidden'
     }}
     className={css('pf-u-px-lg rounded-md transition hover:shadow-sm')}

@@ -62,7 +62,6 @@ export const Dashboard = (): JSX.Element => {
   const bestDeploymentTimeIndex = averageDeploymentTime.findIndex(
     (time) => time === bestDeploymentTime
   );
-  console.log('>>TotalDeploymentData inpd', TotalDeploymentData, TotalMonthlyDeploymentData);
   return (
     <div style={{ backgroundColor: '#15' }}>
       <div style={{ display: 'flex', flexDirection: 'row', height: '10%' }}>
@@ -113,9 +112,13 @@ export const Dashboard = (): JSX.Element => {
                                 component={TextVariants.p}
                                 style={{ fontSize: '20px', color: '#151515' }}
                               >
-                                {TotalDeploymentData.data
-                                  ?.filter((ele) => ele.env === field.toLocaleLowerCase())
-                                  .map((ele) => ele.count)}
+                                {TotalDeploymentData.data?.filter(
+                                  (ele) => ele.env === field.toLocaleLowerCase()
+                                ).length
+                                  ? TotalDeploymentData.data
+                                      ?.filter((ele) => ele.env === field.toLocaleLowerCase())
+                                      .map((ele) => ele.count)
+                                  : 0}
                               </Text>
                               <Text
                                 component={TextVariants.p}
@@ -243,9 +246,9 @@ export const Dashboard = (): JSX.Element => {
             // isSelectable
             isFullHeight
             style={{
-              margin: '0px 24px 24px 0px',
+              margin: '24px 24px 24px 0px',
               paddingLeft: '12px',
-              height: '770px',
+              height: '1010px',
               overflow: 'hidden'
             }}
             className={css('pf-u-px-lg rounded-md transition hover:shadow-sm')}
@@ -254,7 +257,7 @@ export const Dashboard = (): JSX.Element => {
               <Text component={TextVariants.h5}>Activity Stream</Text>
             </CardTitle>
 
-            <SimpleBarReact style={{ maxHeight: 600 }}>
+            <SimpleBarReact style={{ maxHeight: 900 }}>
               <div style={{ marginTop: '30px' }}>
                 <ActivityStream action="APPLICATION_DEPLOYED" isGlobal />
               </div>

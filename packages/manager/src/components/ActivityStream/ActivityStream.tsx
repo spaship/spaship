@@ -5,10 +5,10 @@ import { useGetWebPropActivityStream } from '@app/services/analytics';
 import { TWebPropActivityStream } from '@app/services/analytics/types';
 import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
+  Grid,
+  GridItem,
   Skeleton,
   Spinner,
-  Split,
-  SplitItem,
   Text,
   TextContent,
   TextVariants
@@ -139,8 +139,7 @@ const activities = {
     propertyIdentifier,
     payload
   }: TWebPropActivityStream): JSX.Element => {
-    const buildId = JSON.parse(payload).buildName;
-
+    const buildId = payload === 'NA' ? '' : JSON.parse(payload).buildName;
     return (
       <Text className="activityStream">
         <span style={{ fontWeight: '600' }}>Build started </span>with{' '}
@@ -334,21 +333,22 @@ export const ActivityStream = ({
             const modifiedActivity = { ...activity, isGlobal };
 
             return (
-              <Split hasGutter className="pf-u-mb-sm">
-                <SplitItem style={{ width: '90px' }}>
-                  <p
-                    className="pf-u-md-sm"
-                    style={{
-                      color: '#151515',
-                      fontFamily: 'Red Hat Display',
-                      fontSize: '16px',
-                      fontWeight: 500,
-                      lineHeight: '24px'
-                    }}
-                  >
-                    {formatDate(activity.createdAt, 'hh:mm a')}
-                    {'\n'}
-                    <span
+              <Grid hasGutter className="pf-u-mb-sm">
+                <GridItem span={2}>
+                  <div>
+                    <p
+                      // className="pf-u-md-sm"
+                      style={{
+                        color: '#151515',
+                        fontFamily: 'Red Hat Display',
+                        fontSize: '14px',
+                        fontWeight: 500,
+                        lineHeight: '24px'
+                      }}
+                    >
+                      {formatDate(activity.createdAt, 'hh:mm a')}
+                    </p>
+                    <p
                       style={{
                         fontFamily: 'Red Hat Display',
                         fontSize: '12px',
@@ -356,11 +356,12 @@ export const ActivityStream = ({
                         color: '#6A6E73'
                       }}
                     >
-                      {formatDate(activity.createdAt, 'MMMDD YYYY')}
-                    </span>
-                  </p>
-                </SplitItem>
-                <SplitItem className="pf-u-mt-xs">
+                      {formatDate(activity.createdAt, 'MMM DD YYYY')}
+                    </p>
+                  </div>
+                </GridItem>
+
+                <GridItem className="pf-u-mt-xs" span={1}>
                   {activity.action.includes('FAIL') ||
                   activity.action.includes('TERMINATED') ||
                   activity.action.includes('TIMEOUT') ||
@@ -381,12 +382,12 @@ export const ActivityStream = ({
                       }}
                     />
                   )}
-                </SplitItem>
-                <SplitItem>
+                </GridItem>
+                <GridItem span={8}>
                   <p
                     style={{
                       fontFamily: 'Red Hat Display',
-                      fontSize: '16px',
+                      fontSize: '14px',
                       fontWeight: 400,
                       color: '#000',
                       lineHeight: '24px'
@@ -396,8 +397,8 @@ export const ActivityStream = ({
                       <DeploymentKind activity={modifiedActivity} />
                     </TextContent>
                   </p>
-                </SplitItem>
-              </Split>
+                </GridItem>
+              </Grid>
             );
           })
         )}

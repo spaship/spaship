@@ -137,7 +137,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
           </LevelItem>
         </Level>
       </Banner>
-      <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
+      <PageSection isCenterAligned isWidthLimited className="pf-u-px-xl">
         <Tabs activeKey={openTab} onSelect={(_, tab) => handleTabChange(tab as number)}>
           <Tab
             eventKey={0}
