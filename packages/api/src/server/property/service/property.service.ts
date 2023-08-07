@@ -7,7 +7,7 @@ import { EnvironmentFactory } from 'src/server/environment/service/environment.f
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { PermissionService } from 'src/server/permission/service/permission.service';
 import { CreatePropertyDto } from 'src/server/property/property.dto';
-import { DeploymentRecord, Source } from '../property.entity';
+import { DeploymentRecord, Property, Source } from '../property.entity';
 import { PropertyResponseDto } from '../property.response.dto';
 import { PropertyFactory } from './property.factory';
 
@@ -133,5 +133,44 @@ export class PropertyService {
       this.exceptionService.internalServerErrorException(err);
     }
     return this.getPropertyDetails(createPropertyDto.identifier);
+  }
+
+  /* @internal
+   * Delete the specific property
+   * Delete related applications, environment, permission,apikey
+   * TBD : Operator API call to be added for the Property deletion
+   */
+  async deleteProperty(createPropertyDto: CreatePropertyDto): Promise<Property> {
+    const propertyDetails = (
+      await this.dataServices.property.getByAny({
+        identifier: createPropertyDto.identifier
+      })
+    )[0];
+    if (!propertyDetails) this.exceptionService.badRequestException({ message: 'No Property Found.' });
+    try {
+      const propertyResponse = await this.dataServices.property.getByAny({ identifier: createPropertyDto.identifier });
+      const environmentResponse = await this.dataServices.environment.getByAny({ propertyIdentifer: createPropertyDto.identifier });
+      const applicationResponse = await this.dataServices.application.getByAny({ propertyIdentifer: createPropertyDto.identifier });
+      const permissionResponse = await this.dataServices.permission.getByAny({ propertyIdentifer: createPropertyDto.identifier });
+      const apikeyResponse = await this.dataServices.apikey.getByAny({ propertyIdentifer: createPropertyDto.identifier });
+      await this.dataServices.property.delete({ identifier: propertyDetails.identifier });
+      await this.dataServices.application.delete({ identifier: propertyDetails.identifier });
+      await this.dataServices.environment.delete({ identifier: propertyDetails.identifier });
+      await this.dataServices.permission.delete({ identifier: propertyDetails.identifier });
+      await this.dataServices.apikey.delete({ identifier: propertyDetails.identifier });
+      await this.analyticsService.createActivityStream(
+        createPropertyDto.identifier,
+        Action.PROPERTY_DELETED,
+        'NA',
+        'NA',
+        `${createPropertyDto.identifier} deleted`,
+        createPropertyDto.createdBy,
+        Source.MANAGER,
+        JSON.stringify({ propertyResponse, environmentResponse, applicationResponse, permissionResponse, apikeyResponse })
+      );
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err);
+    }
+    return propertyDetails;
   }
 }
