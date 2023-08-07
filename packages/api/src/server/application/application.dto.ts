@@ -307,6 +307,39 @@ export class EnableApplicationSyncDTO {
   createdBy: string;
 }
 
+export class DeleteApplicationSyncDTO {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  identifier: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @Length(MIN.DEFAULT, MAX.PROPERTY, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Matches(VALIDATION.PROPERTY_IDENTIFIER, { message: MESSAGE.INVALID_PROPERTY_IDENTIFIER, always: true })
+  propertyIdentifier: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @Length(MIN.DEFAULT, MAX.ENV, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Matches(VALIDATION.ENV, { message: MESSAGE.INVALID_ENV, always: true })
+  env: string;
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsNotEmpty()
+  isContainerized: boolean;
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsNotEmpty()
+  isGit: boolean;
+
+  createdBy: string;
+}
+
 export class GitValidateResponse {
   port: string;
 
