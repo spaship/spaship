@@ -241,7 +241,7 @@ export class ApplicationService {
 
   // @internal it will trigger the sync for the specific application
   private async triggerSync(
-    operatorPayload: any,
+    operatorPayload: Object,
     baseurl: string,
     propertyIdentifier: string,
     env: string,
