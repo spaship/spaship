@@ -24,7 +24,7 @@ export class ApplicationController {
     private readonly applicationService: ApplicationService,
     private readonly applicationFactory: ApplicationFactory,
     private readonly exceptionService: ExceptionsService
-  ) { }
+  ) {}
 
   @Get('/property/:identifier')
   @ApiOperation({ description: 'Get the list of Properties.' })
