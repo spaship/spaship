@@ -5,21 +5,21 @@ import * as FormData from 'form-data';
 import * as fs from 'fs';
 import { Base64 } from 'js-base64';
 import * as path from 'path';
-import { EPHEMERAL_ENV, CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS } from 'src/configuration';
+import { CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, EPHEMERAL_ENV } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import {
   ApplicationConfigDTO,
   ApplicationResponse,
-  CreateApplicationDto,
-  GitValidateResponse,
-  GitValidationRequestDTO,
   ContainerizedDeploymentRequest,
   ContainerizedDeploymentResponse,
   ContainerizedGitDeploymentRequest,
-  GitDeploymentRequestDTO,
-  GitApplicationStatusRequest,
   ContainerizedGitDeploymentResponse,
-  GitApplicationStatusResponse
+  CreateApplicationDto,
+  GitApplicationStatusRequest,
+  GitApplicationStatusResponse,
+  GitDeploymentRequestDTO,
+  GitValidateResponse,
+  GitValidationRequestDTO
 } from 'src/server/application/application.dto';
 import { Application } from 'src/server/application/application.entity';
 import { AuthFactory } from 'src/server/auth/auth.factory';
@@ -27,7 +27,7 @@ import { DeploymentConnection } from 'src/server/deployment-connection/deploymen
 import { Cluster, Environment } from 'src/server/environment/environment.entity';
 import { EventTimeTrace } from 'src/server/event/event-time-trace.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
-import { Source } from 'src/server/property/property.entity';
+import { Property, Source } from 'src/server/property/property.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { zip } from 'zip-a-folder';
 
@@ -57,7 +57,7 @@ export class ApplicationFactory {
    */
   async createTemplateAndZip(
     appPath: string,
-    ref: string,
+    version: string,
     name: string,
     tmpDir: string,
     propertyIdentifier: string,
@@ -69,7 +69,7 @@ export class ApplicationFactory {
     const rootspa = 'ROOTSPA';
     if (appPath.charAt(0) === '/' && appPath.length === 1) appPath = rootspa;
     else if (appPath.charAt(0) === '/') appPath = appPath.substr(1);
-    const tmpWebsiteVersion = ref || 'v1';
+    const tmpWebsiteVersion = version || 'v1';
     const websiteVersion = this.getIdentifier(tmpWebsiteVersion);
     const spashipFile = {
       websiteVersion: this.trimWebsiteVersion(websiteVersion),
@@ -766,5 +766,40 @@ export class ApplicationFactory {
       return EPHEMERAL_ENV.expiresIn;
     }
     return Number(expiresIn) * 60 * 60;
+  }
+
+  /* @internal
+   * Create the spaship config (.spaship) from the application
+   * Check the distribution folder from the archive
+   * Write the .spaship file in the distribution folder with the exclude true
+   * Zip the distribution folder
+   */
+  async createApplicationDeletionTemplateAndZip(property: Property, application: Application): Promise<string> {
+    const spashipFile = {
+      websiteVersion: application.version,
+      websiteName: property.identifier,
+      name: application.identifier,
+      mapping: application.path,
+      cmdbCode: property.cmdbCode,
+      environments: [{ name: application.env, updateRestriction: false, exclude: true, ns: property.namespace }]
+    };
+    this.logger.log('SpashipFile', JSON.stringify(spashipFile));
+    const { baseDir } = DIRECTORY_CONFIGURATION;
+    const fileOriginalName = property.identifier;
+    const tmpDir = `${baseDir}/${fileOriginalName.split('.')[0]}-${Date.now()}`;
+    try {
+      await fs.mkdirSync(`${tmpDir}`, { recursive: true });
+      await fs.writeFileSync(path.join(tmpDir, '.spaship'), JSON.stringify(spashipFile, null, '\t'));
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err);
+    }
+    const zipPath = path.join(tmpDir, `../SPAship${Date.now()}.zip`);
+    this.logger.log('ZipPath', zipPath);
+    try {
+      await zip(tmpDir, zipPath);
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err);
+    }
+    return zipPath;
   }
 }
