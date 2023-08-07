@@ -174,23 +174,23 @@ export const useGetMonthlyDeploymentChartWithEphemeral = (
         maxDeploymentCount?: number;
         minDeploymentCount?: number;
       } = {};
-      monthlyDelpoymentData.qa = data.qa || [];
-      monthlyDelpoymentData.stage = data.stage || [];
-      monthlyDelpoymentData.dev = data.dev || [];
-      monthlyDelpoymentData.prod = data.prod || [];
+      monthlyDelpoymentData.qa = data.qa ?? [];
+      monthlyDelpoymentData.stage = data.stage ?? [];
+      monthlyDelpoymentData.dev = data.dev ?? [];
+      monthlyDelpoymentData.prod = data.prod ?? [];
       monthlyDelpoymentData.lastMonthEphemeral =
-        data.ephemeral?.reduce((acc, obj) => acc + obj.count, 0) || 0;
+        data.ephemeral?.reduce((acc, obj) => acc + obj.count, 0) ?? 0;
       monthlyDelpoymentData.minDeploymentCount = Math.min(
-        data.qa?.reduce((acc, obj) => Math.min(acc, obj.count), data?.qa?.[0]?.count) || 0,
-        data.stage?.reduce((acc, obj) => Math.min(acc, obj.count), data?.stage?.[0]?.count) || 0,
-        data.dev?.reduce((acc, obj) => Math.min(acc, obj.count), data?.dev?.[0]?.count) || 0,
-        data.prod?.reduce((acc, obj) => Math.min(acc, obj.count), data?.prod?.[0]?.count) || 0
+        data.qa?.reduce((acc, obj) => Math.min(acc, obj.count), data?.qa?.[0]?.count) ?? 0,
+        data.stage?.reduce((acc, obj) => Math.min(acc, obj.count), data?.stage?.[0]?.count) ?? 0,
+        data.dev?.reduce((acc, obj) => Math.min(acc, obj.count), data?.dev?.[0]?.count) ?? 0,
+        data.prod?.reduce((acc, obj) => Math.min(acc, obj.count), data?.prod?.[0]?.count) ?? 0
       );
       monthlyDelpoymentData.maxDeploymentCount = Math.max(
-        data.qa?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0,
-        data.stage?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0,
-        data.dev?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0,
-        data.prod?.reduce((acc, obj) => Math.max(acc, obj.count), 0) || 0
+        data.qa?.reduce((acc, obj) => Math.max(acc, obj.count), 0) ?? 0,
+        data.stage?.reduce((acc, obj) => Math.max(acc, obj.count), 0) ?? 0,
+        data.dev?.reduce((acc, obj) => Math.max(acc, obj.count), 0) ?? 0,
+        data.prod?.reduce((acc, obj) => Math.max(acc, obj.count), 0) ?? 0
       );
       return monthlyDelpoymentData;
     }

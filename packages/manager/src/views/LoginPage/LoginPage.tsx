@@ -17,6 +17,14 @@ import {
   Title,
   TitleSizes
 } from '@patternfly/react-core';
+import {
+  useGetHalfYearlyDeploymentsTime,
+  useGetMonthlyDeploymentsTime,
+  useGetQuarterlyDeploymentsTime,
+  useGetTotalDeployments,
+  useGetTotalTimeSaved,
+  useGetYearlyDeploymentsTime
+} from '@app/services/analytics';
 import { Nav } from './components/Nav';
 
 export const LoginPage = (): JSX.Element => {
@@ -35,7 +43,17 @@ export const LoginPage = (): JSX.Element => {
       setIsLoggingIn.off();
     });
   };
+  const averageDeploymentTime = [
+    useGetMonthlyDeploymentsTime().data || 0,
+    useGetQuarterlyDeploymentsTime().data || 0,
+    useGetHalfYearlyDeploymentsTime().data || 0,
+    useGetYearlyDeploymentsTime().data || 0
+  ];
+  const bestDeploymentTime = Math.min(...averageDeploymentTime.map((time) => time || 0));
 
+  const totalTimeSaved = useGetTotalTimeSaved();
+  const TotalDeploymentData = useGetTotalDeployments();
+  const TotalDeployment = TotalDeploymentData.data?.reduce((acc, obj) => acc + obj.count, 0);
   return (
     <Page header={<Nav />}>
       <PageSection>
@@ -74,7 +92,10 @@ export const LoginPage = (): JSX.Element => {
                       <img src="/img/avg-time-deploy.svg" alt="logo" />
                     </FlexItem>
                     <FlexItem style={{ margin: '0px' }}>
-                      <Text style={{ fontWeight: 900, fontSize: 'larger' }}>6.07s</Text>
+                      <Text style={{ fontWeight: 900, fontSize: 'larger' }}>
+                        {' '}
+                        {bestDeploymentTime}s
+                      </Text>
                       <Text style={{ fontSize: 'small' }}>Avg. time to deploy</Text>
                     </FlexItem>
                   </Flex>
@@ -86,7 +107,9 @@ export const LoginPage = (): JSX.Element => {
                       <img src="/img/hours_saved.svg" alt="logo" />
                     </FlexItem>
                     <FlexItem style={{ margin: '0px' }}>
-                      <Text style={{ fontWeight: 900, fontSize: 'larger' }}>200+</Text>
+                      <Text style={{ fontWeight: 900, fontSize: 'larger' }}>
+                        {totalTimeSaved?.data?.timeSavedInHours ?? 0} hrs+
+                      </Text>
                       <Text style={{ fontSize: 'small' }}>Hours Saved</Text>
                     </FlexItem>
                   </Flex>
@@ -99,7 +122,9 @@ export const LoginPage = (): JSX.Element => {
                       <img src="/img/number-of-deployments.svg" alt="logo" />
                     </FlexItem>
                     <FlexItem style={{ margin: '0px' }}>
-                      <Text style={{ fontWeight: 900, fontSize: 'larger' }}>400+</Text>
+                      <Text style={{ fontWeight: 900, fontSize: 'larger' }}>
+                        {TotalDeployment ?? 0}+
+                      </Text>
                       <Text style={{ fontSize: 'small' }}>No of deployments</Text>
                     </FlexItem>
                   </Flex>
