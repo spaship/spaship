@@ -80,4 +80,11 @@ export class AnalyticsController {
   async getDeveloperMetrics(@Query('month') month: string, @Query('cluster') cluster: string, @Query('type') type: string): Promise<any> {
     return this.analyticsService.getDeveloperMetrics(Number(month), cluster, type);
   }
+
+  @Get('/deployment/time-saved')
+  @ApiCreatedResponse({ status: 200, description: 'Get the Average time for the Deployments saved by SPAship.', type: DeploymentTime })
+  @ApiOperation({ description: 'Get the Average time for the Deployments saved by SPAship.' })
+  async getAverageDeploymentTimeSaved(): Promise<any> {
+    return this.analyticsService.getDeploymentTimeSaved();
+  }
 }
