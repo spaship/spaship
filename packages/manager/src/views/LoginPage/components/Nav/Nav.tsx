@@ -52,6 +52,7 @@ export const Nav = () => (
                 aria-label="Documentation"
                 variant={ButtonVariant.link}
                 rel="noopener noreferrer"
+                href="https://app.slack.com/client/T027F3GAJ/C04F5PRKEMC"
               >
                 SPAship Forum
               </Button>

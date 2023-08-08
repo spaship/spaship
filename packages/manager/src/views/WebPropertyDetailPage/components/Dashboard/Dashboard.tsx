@@ -33,7 +33,10 @@ const TotalDeploymentCardFields = ['Dev', 'QA', 'Stage', 'Prod'];
 const DeploymentTimeFrames = ['30 days', '90 days', '180 days', '365 days'];
 // const DATE_FORMAT = 'DD MMM';
 
-export const Dashboard = (): JSX.Element => {
+interface DashboardProps {
+  type: string;
+}
+export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
   const router = useRouter();
   const propertyIdentifier = router.query.propertyIdentifier as string;
   const spaProperty = router.query.spaProperty as string;
@@ -258,7 +261,7 @@ export const Dashboard = (): JSX.Element => {
 
             <SimpleBarReact style={{ maxHeight: 900 }}>
               <div style={{ marginTop: '30px' }}>
-                <ActivityStream action="APPLICATION_DEPLOYED" isGlobal />
+                <ActivityStream action="APPLICATION_DEPLOYED" type={type} />
               </div>
             </SimpleBarReact>
           </Card>

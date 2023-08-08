@@ -487,7 +487,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             }
             aria-label="Dashboard"
           >
-            <Dashboard />
+            <Dashboard type="web-property" />
           </Tab>
         </Tabs>
       </PageSection>
