@@ -7,7 +7,6 @@ import {
   Label,
   Level,
   LevelItem,
-  List,
   PageSection,
   SearchInput,
   Split,
@@ -45,14 +44,12 @@ import {
   GithubIcon,
   PackageIcon,
   PlusCircleIcon,
-  RunningIcon,
   TimesCircleIcon
 } from '@patternfly/react-icons';
 import { useDebounce, useFormatDate, useTabs, useToggle, usePopUp } from '@app/hooks';
 import { pageLinks } from '@app/links';
 
 import toast from 'react-hot-toast';
-import { ActivityStream } from '@app/components/ActivityStream';
 import { Ephemeral } from './components/Ephemeral';
 import { EmptyInfo } from './components/EmptyInfo';
 import { Dashboard } from './components/Dashboard';
@@ -128,8 +125,12 @@ export const WebPropertyDetailPage = (): JSX.Element => {
           </LevelItem>
         </Level>
       </Banner>
-      <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
-        <Tabs activeKey={openTab} onSelect={(_, tab) => handleTabChange(tab as number)}>
+      <PageSection isCenterAligned isWidthLimited className="pf-u-px-xl">
+        <Tabs
+          activeKey={openTab}
+          onSelect={(_, tab) => handleTabChange(tab as number)}
+          style={{ backgroundColor: '#fff' }}
+        >
           <Tab
             eventKey={0}
             title={
@@ -451,24 +452,9 @@ export const WebPropertyDetailPage = (): JSX.Element => {
               </>
             )}
           </Tab>
+
           <Tab
             eventKey={1}
-            title={
-              <>
-                <TabTitleIcon>
-                  <RunningIcon />
-                </TabTitleIcon>
-                <TabTitleText>Activity Stream</TabTitleText>{' '}
-              </>
-            }
-            aria-label="SPA activity"
-          >
-            <List>
-              <ActivityStream propertyIdentifier={propertyIdentifier} isGlobal={false} />
-            </List>
-          </Tab>
-          <Tab
-            eventKey={2}
             title={
               <>
                 <TabTitleIcon>
@@ -490,7 +476,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             />
           </Tab>
           <Tab
-            eventKey={3}
+            eventKey={2}
             title={
               <>
                 <TabTitleIcon>

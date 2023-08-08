@@ -51,7 +51,7 @@ export const Banner = ({ children, backRef, title }: Props): JSX.Element => {
     <PageSection
       isWidthLimited
       isCenterAligned
-      className="pf-u-px-4xl pf-u-pb-lg"
+      className="pf-u-px-xl pf-u-pb-lg"
       style={{ borderBottom: '1px solid #d2d2d2' }}
     >
       <Stack hasGutter>
