@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DIRECTORY_CONFIGURATION } from '../../configuration';
@@ -8,6 +8,7 @@ import {
   ApplicationConfigDTO,
   ApplicationResponse,
   CreateApplicationDto,
+  DeleteApplicationSyncDTO,
   EnableApplicationSyncDTO,
   GitDeploymentRequestDTO,
   GitValidationRequestDTO
@@ -143,5 +144,11 @@ export class ApplicationController {
   @ApiOperation({ description: 'Enable Auto Sync for Applications.' })
   async enableApplicationAutoSync(@Body() enableApplicationSyncDTO: EnableApplicationSyncDTO): Promise<Application> {
     return this.applicationService.enableApplicationAutoSync(enableApplicationSyncDTO);
+  }
+
+  @Delete()
+  @ApiOperation({ description: 'Delete the Specific Application.' })
+  async deleteApplication(@Body() deleteApplicationSyncDTO: DeleteApplicationSyncDTO): Promise<Application> {
+    return this.applicationService.deleteApplication(deleteApplicationSyncDTO);
   }
 }

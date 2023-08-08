@@ -21,6 +21,7 @@ import {
   ApplicationResponse,
   ContainerizedDeploymentRequest,
   CreateApplicationDto,
+  DeleteApplicationSyncDTO,
   EnableApplicationSyncDTO,
   GitApplicationStatusRequest,
   GitDeploymentRequestDTO
@@ -118,7 +119,14 @@ export class ApplicationService {
       await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false })
     )[0];
     try {
-      await this.deployApplication(applicationRequest, applicationPath, propertyIdentifier, env, applicationDetails?.autoSync);
+      await this.deployApplication(
+        applicationRequest,
+        applicationPath,
+        propertyIdentifier,
+        env,
+        this.applicationFactory.incrementVersion(applicationDetails?.version),
+        applicationDetails?.autoSync
+      );
     } catch (err) {
       this.exceptionService.internalServerErrorException(err.message);
     }
@@ -192,6 +200,7 @@ export class ApplicationService {
     applicationPath: string,
     propertyIdentifier: string,
     env: string,
+    version: number = 1,
     autoSync: boolean = false
   ): Promise<any> {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
@@ -201,7 +210,6 @@ export class ApplicationService {
     this.logger.log('Environment', JSON.stringify(environment));
     this.logger.log('Property', JSON.stringify(property));
     this.logger.log('DeploymentConnection', JSON.stringify(deploymentConnection));
-    const { ref } = applicationRequest;
     const appPath = applicationRequest.path;
     this.logger.log('ApplicationRequest', JSON.stringify(applicationRequest));
     const { baseDir } = DIRECTORY_CONFIGURATION;
@@ -210,7 +218,7 @@ export class ApplicationService {
     await decompress(path.resolve(applicationPath), path.resolve(tmpDir));
     const zipPath = await this.applicationFactory.createTemplateAndZip(
       appPath,
-      ref,
+      `${version}`,
       identifier,
       tmpDir,
       propertyIdentifier,
@@ -888,6 +896,63 @@ export class ApplicationService {
     applicationDetails.autoSync = enableApplicationSync.autoSync;
     applicationDetails.updatedBy = enableApplicationSync.createdBy;
     await this.dataServices.application.updateOne(search, applicationDetails);
+    return applicationDetails;
+  }
+
+  /* @internal
+   * Delete Application from an env of specific property
+   * TBD : Currently we're only doing the Static Property deletion
+   * We've already have the containerized deletion in the env delete service
+   * We'll prioritize it accordingly
+   */
+  async deleteApplication(deleteApplicationSyncDTO: DeleteApplicationSyncDTO) {
+    const { propertyIdentifier } = deleteApplicationSyncDTO;
+    const { env } = deleteApplicationSyncDTO;
+    const search = {
+      identifier: deleteApplicationSyncDTO.identifier,
+      propertyIdentifier,
+      env,
+      isContainerized: false,
+      isGit: false
+    };
+    const applicationDetails = (await this.dataServices.application.getByAny(search))[0];
+    if (!applicationDetails)
+      this.exceptionService.badRequestException({
+        message: `${deleteApplicationSyncDTO.identifier} application doesn't exist for ${propertyIdentifier}.`
+      });
+    const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
+    const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+    if (environment.cluster === Cluster.PROD)
+      this.exceptionService.badRequestException({
+        message: `Deleting the Application form Prod Cluster is Restricted. Please Connect with the SPAship Team`
+      });
+    const zipPath = await this.applicationFactory.createApplicationDeletionTemplateAndZip(property, applicationDetails);
+    try {
+      for (const con of deploymentConnection) {
+        const formData: any = new FormData();
+        const fileStream = await fs.createReadStream(zipPath);
+        formData.append('spa', fileStream);
+        formData.append('description', `${propertyIdentifier}_${env}`);
+        formData.append('website', propertyIdentifier);
+        const response = await this.applicationFactory.deploymentRequest(formData, con.baseurl);
+        this.logger.log('OperatorResponse', JSON.stringify(response.data));
+      }
+    } catch (err) {
+      this.logger.error('ApplicationDeletion', err);
+      this.exceptionService.internalServerErrorException(err.message);
+    }
+    const deletionResponse = await this.dataServices.application.delete({ ...search });
+    if (deletionResponse)
+      await this.analyticsService.createActivityStream(
+        propertyIdentifier,
+        Action.APPLICATION_DELETED,
+        'NA',
+        'NA',
+        `${applicationDetails.identifier} deleted from ${env} of ${propertyIdentifier}`,
+        deleteApplicationSyncDTO.createdBy,
+        Source.MANAGER,
+        JSON.stringify(applicationDetails)
+      );
     return applicationDetails;
   }
 }
