@@ -53,7 +53,7 @@ export const Nav = () => (
                 variant={ButtonVariant.link}
                 rel="noopener noreferrer"
               >
-                Spaship Forum
+                SPAship Forum
               </Button>
             </ToolbarItem>
             <ToolbarItem>

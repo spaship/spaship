@@ -19,7 +19,7 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
     startDate: 'Start Date',
     endDate: 'End Date',
     averageSavedTimeInSecs: 'Average Time Saved',
-    spashipAverageTimeInSecs: 'Average Time taken by Spaship',
+    spashipAverageTimeInSecs: 'Average Time taken by SPAship',
     totalWorkingHours: 'Total working hours',
     totalDeploymentCount: 'Total deployment count',
     totalDeploymentHours: 'Total deployment Hours',
@@ -169,13 +169,12 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
       <Grid hasGutter className="pf-u-px-md" style={{ backgroundColor: '#F0F0F0' }}>
         <GridItem span={12}>
           <Card>
-            <CardTitle>Hours Saved by Spaship</CardTitle>
+            <CardTitle>Hours Saved by SPAship</CardTitle>
 
             <CardBody>
               {hoursSaved.isLoading && <Skeleton />}
               {hoursSaved.isSuccess && hoursSaved.data ? (
                 <Table aria-label="Simple table" variant="compact" borders={false}>
-                  {/* <Caption>Efforts saved by developers in hours using Spaship</Caption> */}
                   <Thead>
                     <Tr>
                       <Th textCenter modifier="wrap" width={10}>
@@ -212,7 +211,7 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
                       <Th
                         textCenter
                         modifier="wrap"
-                        info={{ tooltip: 'Total Deployments using Spaship in a month ' }}
+                        info={{ tooltip: 'Total Deployments using SPAship in a month ' }}
                       >
                         {columnNames.totalDeploymentCount}
                       </Th>
@@ -220,7 +219,7 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
                         textCenter
                         modifier="wrap"
                         info={{
-                          tooltip: 'Total working hours * Total Deployments count using Spaship'
+                          tooltip: 'Total working hours * Total Deployments count using SPAship'
                         }}
                       >
                         {columnNames.totalDeploymentHours} (hrs.)

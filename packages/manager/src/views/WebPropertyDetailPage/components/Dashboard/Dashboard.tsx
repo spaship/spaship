@@ -243,7 +243,6 @@ export const Dashboard = (): JSX.Element => {
         </div>
         <div style={{ width: '50%' }}>
           <Card
-            // isSelectable
             isFullHeight
             style={{
               margin: '24px 24px 24px 0px',

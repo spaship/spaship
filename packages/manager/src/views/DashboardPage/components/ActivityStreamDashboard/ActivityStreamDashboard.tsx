@@ -6,7 +6,6 @@ import 'simplebar/src/simplebar.css';
 
 export const ActivityStreamDashboard = () => (
   <Card
-    // isSelectable
     isFullHeight
     style={{
       margin: '0px 24px 24px 0px',
