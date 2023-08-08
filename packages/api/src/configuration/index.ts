@@ -46,7 +46,8 @@ export const AUTH_LISTING = {
   deploymentBaseURL: '/api/v1/applications/deploy',
   eventsBaseURL: '/api/v1/analytics/events',
   propertyBaseURL: '/api/v1/property',
-  gitDeploymentBaseURL: '/api/v1/applications/git/deploy'
+  gitDeploymentBaseURL: '/api/v1/applications/git/deploy',
+  hourSavedAnalyticsBaseURL: '/api/v1/analytics/deployment/time-saved'
 };
 
 const ROVER_AUTH_DETAILS = {
