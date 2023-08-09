@@ -11,6 +11,8 @@ import { EnvironmentService } from 'src/server/environment/service/environment.s
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { PermissionFactory } from 'src/server/permission/service/permission.factory';
 import { PermissionService } from 'src/server/permission/service/permission.service';
+import { CMDBFactory } from 'src/server/sot/cmdb/service/cmdb.factory';
+import { CMDBService } from 'src/server/sot/cmdb/service/cmdb.service';
 import { DataServicesModule } from '../../../repository/data-services.module';
 import { PropertyFactory } from './property.factory';
 import { PropertyService } from './property.service';
@@ -30,7 +32,9 @@ import { PropertyService } from './property.service';
     AgendaService,
     LoggerService,
     PermissionService,
-    PermissionFactory
+    PermissionFactory,
+    CMDBService,
+    CMDBFactory
   ],
   exports: [PropertyFactory, PropertyService]
 })

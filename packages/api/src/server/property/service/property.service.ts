@@ -7,6 +7,7 @@ import { EnvironmentFactory } from 'src/server/environment/service/environment.f
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { PermissionService } from 'src/server/permission/service/permission.service';
 import { CreatePropertyDto } from 'src/server/property/property.dto';
+import { CMDBService } from 'src/server/sot/cmdb/service/cmdb.service';
 import { DeploymentRecord, Source } from '../property.entity';
 import { PropertyResponseDto } from '../property.response.dto';
 import { PropertyFactory } from './property.factory';
@@ -20,7 +21,8 @@ export class PropertyService {
     private readonly logger: LoggerService,
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly cmdbService: CMDBService
   ) {}
 
   /* @internal
@@ -68,6 +70,10 @@ export class PropertyService {
       identifier: createPropertyDto.identifier
     });
     if (checkProperty.length > 0) this.exceptionService.badRequestException({ message: 'Property already exist.' });
+    if (createPropertyDto.cmdbCode && createPropertyDto.cmdbCode !== 'NA') {
+      const validateCMDB = await this.cmdbService.getCMDBDetailsByCode(createPropertyDto.cmdbCode);
+      if (!validateCMDB.length) this.exceptionService.badRequestException({ message: 'CMDB code is not valid.' });
+    }
     const deploymentRecord = await this.getDeploymentRecord(createPropertyDto.cluster);
     const property = this.propertyFactory.createNewProperty(createPropertyDto, deploymentRecord);
     const environmentDTO = this.propertyFactory.transformToEnvironmentDTO(createPropertyDto);
@@ -114,6 +120,10 @@ export class PropertyService {
       })
     )[0];
     if (!propertyDetails) this.exceptionService.badRequestException({ message: 'No Property Found.' });
+    if (createPropertyDto.cmdbCode && createPropertyDto.cmdbCode !== 'NA') {
+      const validateCMDB = await this.cmdbService.getCMDBDetailsByCode(createPropertyDto.cmdbCode);
+      if (!validateCMDB.length) this.exceptionService.badRequestException({ message: 'CMDB code is not valid.' });
+    }
     propertyDetails.title = createPropertyDto.title;
     propertyDetails.cmdbCode = createPropertyDto.cmdbCode;
     propertyDetails.severity = createPropertyDto.severity;

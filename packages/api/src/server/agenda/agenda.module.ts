@@ -13,6 +13,8 @@ import { PermissionFactory } from '../permission/service/permission.factory';
 import { PermissionService } from '../permission/service/permission.service';
 import { PropertyFactory } from '../property/service/property.factory';
 import { PropertyService } from '../property/service/property.service';
+import { CMDBFactory } from '../sot/cmdb/service/cmdb.factory';
+import { CMDBService } from '../sot/cmdb/service/cmdb.service';
 import { AgendaService } from './agenda.service';
 
 @Module({
@@ -30,7 +32,9 @@ import { AgendaService } from './agenda.service';
     PropertyService,
     PropertyFactory,
     PermissionService,
-    PermissionFactory
+    PermissionFactory,
+    CMDBService,
+    CMDBFactory
   ],
   exports: [AgendaService]
 })

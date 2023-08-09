@@ -11,6 +11,8 @@ import { PermissionFactory } from 'src/server/permission/service/permission.fact
 import { PermissionService } from 'src/server/permission/service/permission.service';
 import { PropertyFactory } from 'src/server/property/service/property.factory';
 import { PropertyService } from 'src/server/property/service/property.service';
+import { CMDBFactory } from 'src/server/sot/cmdb/service/cmdb.factory';
+import { CMDBService } from 'src/server/sot/cmdb/service/cmdb.service';
 import { DataServicesModule } from '../../../repository/data-services.module';
 import { ApplicationFactory } from './application.factory';
 import { ApplicationService } from './application.service';
@@ -30,7 +32,9 @@ import { ApplicationService } from './application.service';
     PropertyFactory,
     PropertyService,
     PermissionService,
-    PermissionFactory
+    PermissionFactory,
+    CMDBService,
+    CMDBFactory
   ],
   exports: [ApplicationFactory, ApplicationService]
 })
