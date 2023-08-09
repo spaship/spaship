@@ -76,7 +76,7 @@ export class ApplicationFactory {
       websiteName: propertyIdentifier,
       name,
       mapping: appPath,
-      cmdbCode,
+      cmdbCode: this.getCMDBCode(cmdbCode),
       environments: [{ name: env, updateRestriction: false, exclude: false, ns: namespace }]
     };
     this.logger.log('SpashipFile', JSON.stringify(spashipFile));
@@ -780,7 +780,7 @@ export class ApplicationFactory {
       websiteName: property.identifier,
       name: application.identifier,
       mapping: application.path,
-      cmdbCode: property.cmdbCode,
+      cmdbCode: this.getCMDBCode(property.cmdbCode),
       environments: [{ name: application.env, updateRestriction: false, exclude: true, ns: property.namespace }]
     };
     this.logger.log('SpashipFile', JSON.stringify(spashipFile));
@@ -801,5 +801,11 @@ export class ApplicationFactory {
       this.exceptionService.internalServerErrorException(err);
     }
     return zipPath;
+  }
+
+  private getCMDBCode(cmdbCode: string) {
+    // @internal if CMDB code is not present we'll send the SPAS-001 as the default CMDB code
+    if (cmdbCode === 'NA') return 'SPAS-001';
+    return cmdbCode;
   }
 }
