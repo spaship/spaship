@@ -3,7 +3,8 @@ export const DIRECTORY_CONFIGURATION = {
 };
 
 export const EPHEMERAL_ENV = {
-  expiresIn: process.env.SPASHIP_EPHEMERAL_EXPIRES_IN || 3600
+  expiresIn: process.env.SPASHIP_EPH__TTL || 3600,
+  maximumDuration: process.env.SPASHIP_EPH__MAX_DURATION || 500
 };
 
 export const CONTAINERIZED_DEPLOYMENT_DETAILS = {
@@ -118,7 +119,7 @@ export enum MESSAGE {
   INVALID_ENV = 'Invalid Environment [Correct format : prod, stage, dev]',
   INVALID_LABEL = 'Invalid Label [Correct format : all-access, prod-key].',
   INVALID_IMAGEURL = 'Invalid Image URL. Please check the image url',
-  INVALID_EPHEXPIRESIN = 'Time is Invalid',
+  INVALID_EPHEXPIRESIN = 'Time is Invalid, duration for the Ephemeral Environment should be with in 1-500 hr.',
   INVALID_CMDB_CODE = 'Invalid CMDB Code.',
   INVALID_SEVERITY = 'Invalid Severity.'
 }
