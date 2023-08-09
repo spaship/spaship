@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DIRECTORY_CONFIGURATION, EPHEMERAL_ENV, MESSAGE } from '../../configuration';
+import { DIRECTORY_CONFIGURATION } from '../../configuration';
 import { AuthenticationGuard } from '../auth/auth.guard';
 import { ExceptionsService } from '../exceptions/exceptions.service';
 import {
@@ -78,13 +78,7 @@ export class ApplicationController {
     if (!file?.originalname) this.exceptionService.badRequestException({ message: 'Please provide a valid file for the deployment.' });
     const fileFilter = file?.originalname.split('.');
     if (!types.includes(fileFilter[fileFilter.length - 1])) this.exceptionService.badRequestException({ message: 'Invalid file type.' });
-    if (
-      applicationDto.ephemeral &&
-      applicationDto.expiresIn &&
-      (Number(applicationDto.expiresIn) < 1 || Number(applicationDto.expiresIn) > Number(EPHEMERAL_ENV.maximumDuration))
-    ) {
-      this.exceptionService.badRequestException({ message: MESSAGE.INVALID_EPHEXPIRESIN });
-    }
+    this.applicationFactory.validateEphemeralRequestForDuration(applicationDto);
     const application = this.applicationService.saveApplication(applicationDto, file.path, params.propertyIdentifier, params.env, queries.createdBy);
     return application;
   }
