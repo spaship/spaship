@@ -501,7 +501,7 @@ export class ApplicationFactory {
     containerizedRequest.secretMap = this.decodeBase64SecretValues({ ...applicationDetails.secret });
     containerizedRequest.healthCheckPath = applicationDetails.healthCheckPath;
     containerizedRequest.port = applicationDetails.port || 3000;
-    containerizedRequest.cmdbCode = cmdbCode;
+    containerizedRequest.cmdbCode = this.getCMDBCode(cmdbCode);
     return containerizedRequest;
   }
 
