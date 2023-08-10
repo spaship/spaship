@@ -38,6 +38,8 @@ export class PropertyService {
       groupedDetails.title = prop.title;
       groupedDetails.identifier = prop.identifier;
       groupedDetails.createdBy = prop.createdBy;
+      groupedDetails.cmdbCode = prop.cmdbCode;
+      groupedDetails.severity = prop.severity;
       groupedDetails.env = environmentDetails.filter((key) => key.propertyIdentifier === prop.identifier);
       response.push(groupedDetails);
     }
@@ -55,6 +57,8 @@ export class PropertyService {
     response.title = propertyResponse.title;
     response.identifier = propertyResponse.identifier;
     response.createdBy = propertyResponse.createdBy;
+    response.cmdbCode = propertyResponse.cmdbCode;
+    response.severity = propertyResponse.severity;
     response.env = environmentResponse;
     return response;
   }
