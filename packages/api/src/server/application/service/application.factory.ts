@@ -812,7 +812,7 @@ export class ApplicationFactory {
   validateEphemeralRequestForDuration(applicationDto: CreateApplicationDto) {
     const expiresIn = Number(applicationDto?.expiresIn);
     const maxDuration = Number(EPHEMERAL_ENV.maximumDuration);
-    const isEphemeralWithCustomDuration = applicationDto.ephemeral && expiresIn;
+    const isEphemeralWithCustomDuration = applicationDto?.ephemeral && expiresIn;
     if (isEphemeralWithCustomDuration && (expiresIn < 1 || expiresIn > maxDuration)) {
       this.exceptionService.badRequestException({ message: MESSAGE.INVALID_EPHEXPIRESIN });
     }

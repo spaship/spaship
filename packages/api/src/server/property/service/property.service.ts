@@ -70,7 +70,7 @@ export class PropertyService {
       identifier: createPropertyDto.identifier
     });
     if (checkProperty.length > 0) this.exceptionService.badRequestException({ message: 'Property already exist.' });
-    if (createPropertyDto.cmdbCode && createPropertyDto.cmdbCode !== 'NA') {
+    if (createPropertyDto?.cmdbCode && createPropertyDto?.cmdbCode !== 'NA') {
       const validateCMDB = await this.cmdbService.getCMDBDetailsByCode(createPropertyDto.cmdbCode);
       if (!validateCMDB.length) this.exceptionService.badRequestException({ message: 'CMDB code is not valid.' });
     }
@@ -120,7 +120,7 @@ export class PropertyService {
       })
     )[0];
     if (!propertyDetails) this.exceptionService.badRequestException({ message: 'No Property Found.' });
-    if (createPropertyDto.cmdbCode && createPropertyDto.cmdbCode !== 'NA') {
+    if (createPropertyDto?.cmdbCode && createPropertyDto?.cmdbCode !== 'NA') {
       const validateCMDB = await this.cmdbService.getCMDBDetailsByCode(createPropertyDto.cmdbCode);
       if (!validateCMDB.length) this.exceptionService.badRequestException({ message: 'CMDB code is not valid.' });
     }
