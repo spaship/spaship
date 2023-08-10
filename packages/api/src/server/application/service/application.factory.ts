@@ -5,7 +5,7 @@ import * as FormData from 'form-data';
 import * as fs from 'fs';
 import { Base64 } from 'js-base64';
 import * as path from 'path';
-import { CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, EPHEMERAL_ENV } from 'src/configuration';
+import { CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, EPHEMERAL_ENV, MESSAGE } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import {
   ApplicationConfigDTO,
@@ -76,7 +76,7 @@ export class ApplicationFactory {
       websiteName: propertyIdentifier,
       name,
       mapping: appPath,
-      cmdbCode,
+      cmdbCode: this.getCMDBCode(cmdbCode),
       environments: [{ name: env, updateRestriction: false, exclude: false, ns: namespace }]
     };
     this.logger.log('SpashipFile', JSON.stringify(spashipFile));
@@ -780,7 +780,7 @@ export class ApplicationFactory {
       websiteName: property.identifier,
       name: application.identifier,
       mapping: application.path,
-      cmdbCode: property.cmdbCode,
+      cmdbCode: this.getCMDBCode(property.cmdbCode),
       environments: [{ name: application.env, updateRestriction: false, exclude: true, ns: property.namespace }]
     };
     this.logger.log('SpashipFile', JSON.stringify(spashipFile));
@@ -801,5 +801,20 @@ export class ApplicationFactory {
       this.exceptionService.internalServerErrorException(err);
     }
     return zipPath;
+  }
+
+  private getCMDBCode(cmdbCode: string) {
+    // @internal if CMDB code is not present we'll send the SPAS-001 as the default CMDB code
+    if (cmdbCode === 'NA') return 'SPAS-001';
+    return cmdbCode;
+  }
+
+  validateEphemeralRequestForDuration(applicationDto: CreateApplicationDto) {
+    const expiresIn = Number(applicationDto?.expiresIn);
+    const maxDuration = Number(EPHEMERAL_ENV.maximumDuration);
+    const isEphemeralWithCustomDuration = applicationDto?.ephemeral && expiresIn;
+    if (isEphemeralWithCustomDuration && (expiresIn < 1 || expiresIn > maxDuration)) {
+      this.exceptionService.badRequestException({ message: MESSAGE.INVALID_EPHEXPIRESIN });
+    }
   }
 }

@@ -78,6 +78,7 @@ export class ApplicationController {
     if (!file?.originalname) this.exceptionService.badRequestException({ message: 'Please provide a valid file for the deployment.' });
     const fileFilter = file?.originalname.split('.');
     if (!types.includes(fileFilter[fileFilter.length - 1])) this.exceptionService.badRequestException({ message: 'Invalid file type.' });
+    this.applicationFactory.validateEphemeralRequestForDuration(applicationDto);
     const application = this.applicationService.saveApplication(applicationDto, file.path, params.propertyIdentifier, params.env, queries.createdBy);
     return application;
   }
