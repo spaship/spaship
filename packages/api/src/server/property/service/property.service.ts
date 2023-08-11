@@ -31,6 +31,7 @@ export class PropertyService {
    */
   async getAllProperties(): Promise<PropertyResponseDto[]> {
     const propertyDetails = await this.dataServices.property.getAll();
+    if (!propertyDetails) this.exceptionService.badRequestException({ message: 'No Property found.' })
     const environmentDetails = await this.dataServices.environment.getAll();
     const response: PropertyResponseDto[] = [];
     for (const prop of propertyDetails) {
@@ -52,6 +53,7 @@ export class PropertyService {
    */
   async getPropertyDetails(propertyIdentifier: string): Promise<PropertyResponseDto> {
     const propertyResponse = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
+    if (!propertyResponse) this.exceptionService.badRequestException({ message: 'Property not found.' });
     const environmentResponse = await this.dataServices.environment.getByAny({ propertyIdentifier });
     const response = new PropertyResponseDto();
     response.title = propertyResponse.title;
