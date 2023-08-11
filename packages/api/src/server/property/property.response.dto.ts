@@ -15,6 +15,12 @@ export class PropertyResponseDto {
   url: string;
 
   @ApiProperty()
+  cmdbCode: string;
+
+  @ApiProperty()
+  severity: string;
+
+  @ApiProperty()
   env: Environment[];
 
   @ApiProperty()
