@@ -10,7 +10,6 @@ const webPropertyKeys = {
 // GET Operations
 const fetchWebProperties = async (): Promise<TWebProperty[]> => {
   const { data } = await orchestratorReq.get('property');
-  console.log('>>>fetch', data, data.data);
   return data.data;
 };
 
