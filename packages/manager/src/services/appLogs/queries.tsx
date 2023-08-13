@@ -10,7 +10,8 @@ export const fetchLogsforSpa = async (
   applicationIdentifier: string,
   env: string,
   type?: string | number,
-  id?: string
+  id?: string,
+  con?: string
 ): Promise<any> => {
   try {
     const { data } = await orchestratorReq.get(
@@ -19,6 +20,7 @@ export const fetchLogsforSpa = async (
         params: {
           type,
           id,
+          con,
           lines: 2000
         }
       }
@@ -35,19 +37,20 @@ export const useGetLogsforSpa = (
   applicationIdentifier: string,
   env: string,
   type?: string | number,
-  id?: string
+  id?: string,
+  con?: string
 ) => {
   const refetchInterval = 5000;
   const queryClient = useQueryClient();
 
   return useQuery(
     logKeys.logs,
-    () => fetchLogsforSpa(webPropertyIdentifier, applicationIdentifier, env, type, id),
+    () => fetchLogsforSpa(webPropertyIdentifier, applicationIdentifier, env, type, id, con),
     {
       refetchInterval,
       initialData: () => {
         queryClient.prefetchQuery(logKeys.logs, () =>
-          fetchLogsforSpa(webPropertyIdentifier, applicationIdentifier, env, type, id)
+          fetchLogsforSpa(webPropertyIdentifier, applicationIdentifier, env, type, id, con)
         );
       },
       enabled: id !== undefined,
@@ -63,7 +66,6 @@ const fetchListOfPods = async (
   spaName: string,
   env: string
 ): Promise<any> => {
-  // try {
   const { data } = await orchestratorReq.get(
     `/applications/pods/${propertyIdentifier}/${env}/${spaName}`
   );

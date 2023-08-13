@@ -105,13 +105,11 @@ export const AddWebPropertyPage = (): JSX.Element => {
   };
 
   const onFormSubmit = async (data: FormData) => {
-    console.log('onFormSubmit', data);
     const updatedData = {
       ...data,
       cmdbCode: cmdbData[0]?.code || 'NA',
       severity: cmdbData[0]?.severity || 'NA'
     };
-    console.log('Add new', updatedData);
 
     try {
       await createWebPropertyMutation.mutateAsync({

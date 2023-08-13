@@ -22,7 +22,7 @@ const fetchAppsForProperties = async (propertyIdentifier: string, env: string) =
   return data.data || [];
 };
 
-export const useGetSPAProperties = <T extends unknown>(
+export const useGetSPAProperties = <T,>(
   webPropertyIdentifier: string,
   env: string,
   select?: (data: TSpaProperty[]) => T
