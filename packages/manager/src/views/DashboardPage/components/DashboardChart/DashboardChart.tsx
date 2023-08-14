@@ -361,36 +361,34 @@ export const DashboardChart = ({
             </EmptyState>
           )}
 
-          {TotalDeploymentData.isSuccess && (
-            <div style={{ height: '250px', width: '350px' }}>
-              {lineChartLegend.some(
-                ({ name }) => TotalMonthlyDeploymentData?.[name]?.length > 0
-              ) ? (
-                <ChartDonut
-                  ariaTitle="Number of deployments per env"
-                  constrainToVisibleArea
-                  data={donutChartAggregatedData}
-                  labels={({ datum }) => `${datum.x}: ${datum.y}`}
-                  legendData={legendValues}
-                  legendOrientation="vertical"
-                  legendPosition="right"
-                  name="monthly-deployment"
-                  padding={{
-                    bottom: 20,
-                    left: 20,
-                    right: 140,
-                    top: 20
-                  }}
-                  subTitle="Deployments"
-                  title={`${donutChartData.total}`}
-                  themeColor={ChartThemeColor.multiOrdered}
-                  width={350}
-                />
-              ) : (
-                EmptyChart
+          {donutChartAggregatedData?.length === 1 &&
+          donutChartAggregatedData &&
+          donutChartAggregatedData[0]?.y === 0
+            ? EmptyChart
+            : TotalDeploymentData.isSuccess && (
+                <div style={{ height: '250px', width: '350px' }}>
+                  <ChartDonut
+                    ariaTitle="Number of deployments per env"
+                    constrainToVisibleArea
+                    data={donutChartAggregatedData}
+                    labels={({ datum }) => `${datum.x}: ${datum.y}`}
+                    legendData={legendValues}
+                    legendOrientation="vertical"
+                    legendPosition="right"
+                    name="monthly-deployment"
+                    padding={{
+                      bottom: 20,
+                      left: 20,
+                      right: 140,
+                      top: 20
+                    }}
+                    subTitle="Deployments"
+                    title={`${donutChartData.total}`}
+                    themeColor={ChartThemeColor.multiOrdered}
+                    width={350}
+                  />
+                </div>
               )}
-            </div>
-          )}
         </CardBody>
       </Card>
     </Grid>
