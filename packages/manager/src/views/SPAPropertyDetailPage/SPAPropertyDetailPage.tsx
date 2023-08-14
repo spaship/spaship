@@ -13,11 +13,10 @@ import {
 import { useRouter } from 'next/router';
 
 import { Banner } from '@app/components';
-import { ActivityStream } from '@app/components/ActivityStream';
 import { useTabs } from '@app/hooks';
 import { pageLinks } from '@app/links';
 import { useGetTotalDeploymentsForApps } from '@app/services/analytics';
-import { BuildIcon, BundleIcon, CogIcon, PackageIcon, RunningIcon } from '@patternfly/react-icons';
+import { BuildIcon, BundleIcon, CogIcon, PackageIcon } from '@patternfly/react-icons';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { Dashboard } from '../WebPropertyDetailPage/components/Dashboard';
@@ -35,7 +34,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
     router.push(`/properties/${propertyIdentifier}`);
   }
 
-  const { handleTabChange, openTab } = useTabs(4);
+  const { handleTabChange, openTab } = useTabs(3);
 
   return (
     <>
@@ -111,26 +110,6 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             aria-label="SPA listing"
           >
             <Dashboard type="spa" />
-          </Tab>
-          <Tab
-            eventKey={3}
-            title={
-              <>
-                <TabTitleIcon>
-                  <RunningIcon />
-                </TabTitleIcon>
-                <TabTitleText>Activity Stream</TabTitleText>{' '}
-              </>
-            }
-            aria-label="SPA activity"
-          >
-            <List className="pf-u-mt-lg">
-              <ActivityStream
-                propertyIdentifier={propertyIdentifier}
-                applicationIdentifier={spaProperty}
-                isGlobal={false}
-              />
-            </List>
           </Tab>
         </Tabs>
       </PageSection>
