@@ -23,9 +23,8 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
     totalWorkingHours: 'Total working hours',
     totalDeploymentCount: 'Total deployment count',
     totalDeploymentHours: 'Total deployment Hours',
-    frequencyOfDeployment: 'Frequency of deployment',
+    totalDeploymentHoursSaved: 'Total deployment hours saved',
     developerHourlyRate: 'Developer hourly Rate',
-    costSavingPerHour: 'Cost saved per hour',
     totalCostSaved: 'Total cost saved'
   };
 
@@ -58,7 +57,7 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
                 fontSize: '30px'
               }}
             >
-              Developer Metrics
+              Deployment Cost Saving Metrics
             </Text>
           </CardTitle>
         </Card>
@@ -130,15 +129,15 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
                   ]}
                   legendOrientation="horizontal"
                   legendPosition="bottom"
-                  height={210}
+                  height={200}
                   name="chart1"
                   padding={{
-                    bottom: 30,
-                    left: 50,
-                    right: 50, // Adjusted to accommodate legend
-                    top: 20
+                    bottom: 50,
+                    left: 70,
+                    right: 10, // Adjusted to accommodate legend
+                    top: 10
                   }}
-                  width={1000}
+                  width={950}
                 >
                   <ChartAxis tickFormat={(d) => d} />
                   <ChartAxis dependentAxis showGrid />
@@ -228,10 +227,10 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
                         textCenter
                         modifier="wrap"
                         info={{
-                          tooltip: 'Total number of deployments in an hour'
+                          tooltip: 'Avg deployment time saved * Total number of deployments'
                         }}
                       >
-                        {columnNames.frequencyOfDeployment} (per hr)
+                        {columnNames.totalDeploymentHoursSaved} (hr)
                       </Th>
                       <Th
                         textCenter
@@ -242,21 +241,12 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
                       >
                         {columnNames.developerHourlyRate} ($)
                       </Th>
+
                       <Th
                         textCenter
                         modifier="wrap"
                         info={{
-                          tooltip:
-                            'Avg time Saved per Deployment (minutes)/60 * Frequency of Deployment (per hour)* Developer Hourly Rate ($)'
-                        }}
-                      >
-                        {columnNames.costSavingPerHour} ($)
-                      </Th>
-                      <Th
-                        textCenter
-                        modifier="wrap"
-                        info={{
-                          tooltip: 'Cost Savings per hour ($) * Total deploymet hours'
+                          tooltip: ' * Total deploymet hours saved'
                         }}
                       >
                         {columnNames.totalCostSaved} ($)
@@ -288,14 +278,11 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
                         <Td textCenter dataLabel={columnNames.totalDeploymentHours}>
                           {item.totalDeploymentHours ? item.totalDeploymentHours : 'NA'}
                         </Td>
-                        <Td textCenter dataLabel={columnNames.frequencyOfDeployment}>
-                          {item.frequencyOfDeployment ? item.frequencyOfDeployment : 'NA'}
+                        <Td textCenter dataLabel={columnNames.totalDeploymentHoursSaved}>
+                          {item.totalDeploymentHoursSaved ? item.totalDeploymentHoursSaved : 'NA'}
                         </Td>
                         <Td textCenter dataLabel={columnNames.developerHourlyRate}>
                           {item.developerHourlyRate ? item.developerHourlyRate : 'NA'}
-                        </Td>
-                        <Td textCenter dataLabel={columnNames.costSavingPerHour}>
-                          {item.costSavingPerHour ? item.costSavingPerHour : 'NA'}
                         </Td>
 
                         <Td textCenter dataLabel={columnNames.totalCostSaved}>
