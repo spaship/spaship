@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable no-underscore-dangle */
+/* eslint-disable react/require-default-props */
 import { useFormatDate } from '@app/hooks';
 import { useGetWebPropActivityStream } from '@app/services/analytics';
 import { TWebPropActivityStream } from '@app/services/analytics/types';
@@ -22,6 +23,7 @@ type Props = {
   propertyIdentifier?: string;
   applicationIdentifier?: string;
   action?: string;
+  type?: string;
   isGlobal?: boolean;
 };
 type DeploymentKindProps = {
@@ -312,6 +314,7 @@ export const ActivityStream = ({
   propertyIdentifier = '',
   applicationIdentifier = '',
   action,
+  type,
   isGlobal = false
 }: Props): JSX.Element => {
   const { isLoading, isSuccess, data, isFetchingNextPage, fetchNextPage } =
@@ -416,5 +419,6 @@ ActivityStream.defaultProps = {
   propertyIdentifier: '',
   applicationIdentifier: '',
   action: '',
+  type: '',
   isGlobal: false
 };

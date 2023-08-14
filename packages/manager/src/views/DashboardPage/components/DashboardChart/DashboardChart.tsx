@@ -49,6 +49,8 @@ type Props = {
   minCount: number;
   maxCount: number;
   TotalDeploymentData: UseQueryResult<TSPADeploymentCount[]>;
+  propertyIdentifier: string;
+  applicationIdentifier: string;
 };
 
 interface Result {
@@ -64,26 +66,32 @@ export const DashboardChart = ({
   TotalMonthlyDeploymentData,
   minCount,
   maxCount,
-  TotalDeploymentData
+  TotalDeploymentData,
+  propertyIdentifier,
+  applicationIdentifier
 }: Props) => {
   const lineChartLegend = Object.keys(TotalMonthlyDeploymentData || {}).map((key) => ({
     name: key
   }));
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<string>('');
+  const [previous, setPrevious] = useState<string>('');
 
-  const { refetch } = useGetMonthlyDeploymentChartWithEphemeral('', selected);
+  const { refetch } = useGetMonthlyDeploymentChartWithEphemeral(
+    propertyIdentifier,
+    applicationIdentifier,
+    previous
+  );
 
   useEffect(() => {
     refetch();
-  }, [refetch, selected]);
+  }, [refetch, previous]);
 
   const onToggle = (isSelectOpen: boolean) => {
     setIsOpen(isSelectOpen);
   };
   const clearSelection = () => {
-    setSelected('');
+    setPrevious('');
     setIsOpen(false);
   };
 
@@ -94,7 +102,7 @@ export const DashboardChart = ({
   ) => {
     if (isPlaceholder) clearSelection();
     else {
-      setSelected(selection as string);
+      setPrevious(selection as string);
       setIsOpen(false);
     }
   };
@@ -174,17 +182,17 @@ export const DashboardChart = ({
               aria-label="Select Input with descriptions"
               onToggle={onToggle}
               onSelect={onSelect}
-              selections={selected}
+              selections={previous}
               isOpen={isOpen}
             >
               <SelectOption key={0} value="1" isPlaceholder>
                 Past 30 Days
               </SelectOption>
               <SelectOption key={1} value="3">
-                Past 90 Days
+                Past 3 months
               </SelectOption>
               <SelectOption key={2} value="6">
-                Past 180 Days
+                Past 6 Months
               </SelectOption>
             </Select>
           </SplitItem>
@@ -224,19 +232,28 @@ export const DashboardChart = ({
               >
                 <ChartAxis />
                 <ChartAxis dependentAxis showGrid />
+
                 <ChartGroup offset={17}>
                   {lineChartLegend.map(({ name }) => {
                     const chartData = (TotalMonthlyDeploymentData?.[name] || [])
                       .sort(
                         (a, b) => new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf()
                       )
-                      .map(({ count, startDate, endDate }) => ({
-                        name,
-                        x: `${dayjs(startDate).format(DATE_FORMAT)} - ${dayjs(endDate).format(
-                          DATE_FORMAT
-                        )}`,
-                        y: count
-                      }));
+                      .map(({ count, startDate, endDate }) => {
+                        const xLabel =
+                          TotalMonthlyDeploymentData?.[name]?.length <= 3
+                            ? `${dayjs(startDate).format(DATE_FORMAT)} - ${dayjs(endDate).format(
+                                DATE_FORMAT
+                              )}`
+                            : dayjs(startDate).format('MMM');
+
+                        return {
+                          name,
+                          x: xLabel,
+                          y: count
+                        };
+                      });
+
                     return <ChartBar key={`key-${name}`} barWidth={15} data={chartData} />;
                   })}
                 </ChartGroup>
@@ -275,13 +292,21 @@ export const DashboardChart = ({
                       .sort(
                         (a, b) => new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf()
                       )
-                      .map(({ count, startDate, endDate }) => ({
-                        name,
-                        x: `${dayjs(startDate).format(DATE_FORMAT)} - ${dayjs(endDate).format(
-                          DATE_FORMAT
-                        )}`,
-                        y: count
-                      }));
+                      .map(({ count, startDate, endDate }) => {
+                        const xLabel =
+                          TotalMonthlyDeploymentData?.[name]?.length <= 3
+                            ? `${dayjs(startDate).format(DATE_FORMAT)} - ${dayjs(endDate).format(
+                                DATE_FORMAT
+                              )}`
+                            : dayjs(startDate).format('MMM');
+
+                        return {
+                          name,
+                          x: xLabel,
+                          y: count
+                        };
+                      });
+
                     return <ChartLine key={`key-${name}`} data={chartData} />;
                   })}
                 </ChartGroup>
