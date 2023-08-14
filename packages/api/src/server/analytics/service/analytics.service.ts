@@ -5,6 +5,7 @@ import { fromEvent } from 'rxjs';
 import { ANALYTICS } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
+import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { ActivityStream, Props } from '../activity-stream.entity';
 import { DeploymentCount } from '../deployment-count-response.dto';
 import { AverageDeploymentDetails, DeploymentTime } from '../deployment-time-response.dto';
@@ -37,7 +38,8 @@ export class AnalyticsService {
     private readonly dataServices: IDataServices,
     private readonly analyticsFactory: AnalyticsFactory,
     private readonly logger: LoggerService,
-    private readonly httpService: HttpService
+    private readonly httpService: HttpService,
+    private readonly exceptionService: ExceptionsService
   ) {}
 
   async createActivityStream(
@@ -86,17 +88,22 @@ export class AnalyticsService {
   ): Promise<ActivityStream[]> {
     const keys = { propertyIdentifier, 'props.applicationIdentifier': applicationIdentifier, action };
     Object.keys(keys).forEach((key) => (keys[key] === undefined || keys[key] === '') && delete keys[key]);
-    return this.dataServices.activityStream.getByOptions(keys, { createdAt: -1 }, skip, limit);
+    const response = await this.dataServices.activityStream.getByOptions(keys, { createdAt: -1 }, skip, limit);
+    if (!response) this.exceptionService.badRequestException({ message: 'No Activity Stream Present.' });
+    return response;
   }
 
-  async getDeploymentCount(propertyIdentifier: string): Promise<DeploymentCount[]> {
+  async getDeploymentCount(propertyIdentifier?: string): Promise<DeploymentCount[]> {
     const query = await this.analyticsFactory.getDeploymentCountQuery(propertyIdentifier);
-    return Promise.resolve(this.dataServices.activityStream.aggregate(query));
+    const response = await this.dataServices.activityStream.aggregate(query);
+    if (!response) this.exceptionService.badRequestException({ message: 'No Analytics Present.' });
+    return response;
   }
 
   async getDeploymentCountForEnv(propertyIdentifier: string, applicationIdentifier: string): Promise<DeploymentCount[]> {
     const query = await this.analyticsFactory.getDeploymentCountForEnv(propertyIdentifier, applicationIdentifier);
     const response = await this.dataServices.activityStream.aggregate(query);
+    if (!response) this.exceptionService.badRequestException({ message: 'No Analytics Present.' });
     const deploymentCount = [];
     const ephemeralCount = new DeploymentCount();
     ephemeralCount.env = AnalyticsService.ephemeral;
@@ -164,6 +171,7 @@ export class AnalyticsService {
   ): Promise<DeploymentTime> {
     const query = await this.analyticsFactory.getAverageDeploymentTimeQuery(propertyIdentifier, days, isEph, monthFrame, cluster, type);
     const response = await this.dataServices.eventTimeTrace.aggregate(query);
+    if (!response) this.exceptionService.badRequestException({ message: 'No Analytics Present.' });
     let sumOfDeploymentTime = 0;
     let sumOfDeploymentCount = 0;
     const deploymentTimeResponse = new DeploymentTime();
@@ -204,11 +212,16 @@ export class AnalyticsService {
   }
 
   async getDeploymentTimeSaved(): Promise<Object> {
-    const response = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.defaultDays * AnalyticsService.days);
+    let response;
+    try {
+      response = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.defaultDays * AnalyticsService.days);
+    } catch (error) {
+      this.exceptionService.badRequestException(error);
+    }
     const totalTimeForStandardDeployment = Number(ANALYTICS.averageTimeToDeploy) * response.count;
     const timeSavedInSec = totalTimeForStandardDeployment - response.totalTime;
     const timeSavedInHours = Math.round(timeSavedInSec / AnalyticsService.seconds / AnalyticsService.minutes);
-    return { timeSavedInHours };
+    return { timeSavedInHours, averageTime: response.averageTime, deploymentCount: response.count };
   }
 
   async getDeveloperMetrics(month: number, cluster: string, type: string): Promise<Object> {
