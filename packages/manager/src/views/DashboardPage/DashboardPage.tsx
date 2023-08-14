@@ -55,6 +55,8 @@ export const DashboardPage = (): JSX.Element => {
             minCount={TotalMonthlyDeploymentData?.minDeploymentCount || 0}
             maxCount={TotalMonthlyDeploymentData?.maxDeploymentCount || 0}
             TotalDeploymentData={TotalDeploymentData}
+            propertyIdentifier=""
+            applicationIdentifier=""
           />
         </div>
         <div style={{ width: '50%' }}>

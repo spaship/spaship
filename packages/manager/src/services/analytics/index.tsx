@@ -9,5 +9,6 @@ export {
   useGetQuarterlyDeploymentsTime,
   useGetHalfYearlyDeploymentsTime,
   useGetYearlyDeploymentsTime,
-  useGetTotalTimeSaved
+  useGetTotalTimeSaved,
+  useGetTotalTimeSavedForLogin
 } from './queries';

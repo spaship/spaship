@@ -131,7 +131,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             }
             aria-label="SPA listing"
           >
-            <Dashboard type="SPA" />
+            <Dashboard type="spa" />
           </Tab>
           <Tab
             eventKey={3}

@@ -48,12 +48,13 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
   }
 
   const TotalDeploymentData = useGetTotalDeployments(propertyIdentifier);
-
   const TotalDeployment = TotalDeploymentData.data?.reduce((acc, obj) => acc + obj.count, 0);
   const TotalMonthlyDeploymentData = useGetMonthlyDeploymentChartWithEphemeral(
     propertyIdentifier,
+    '',
     ''
   ).data;
+
   const averageDeploymentTime = [
     useGetMonthlyDeploymentsTime(propertyIdentifier).data || 0,
     useGetQuarterlyDeploymentsTime(propertyIdentifier).data || 0,
@@ -61,7 +62,9 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
     useGetYearlyDeploymentsTime(propertyIdentifier).data || 0
   ];
   const bestDeploymentFiltered = averageDeploymentTime.filter((e) => e);
-  const bestDeploymentTime = Math.min(...bestDeploymentFiltered.map((time) => time || 0));
+  const bestDeploymentTime = bestDeploymentFiltered.length
+    ? Math.min(...bestDeploymentFiltered.map((time) => time ?? 0))
+    : 0;
   const bestDeploymentTimeIndex = averageDeploymentTime.findIndex(
     (time) => time === bestDeploymentTime
   );
@@ -178,30 +181,26 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
                   }}
                 >
                   <CardBody>
-                    {bestDeploymentTime ? (
-                      <>
-                        <div
-                          style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}
+                    <>
+                      <div
+                        style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}
+                      >
+                        <Text component={TextVariants.p} className="dashboard-card">
+                          {bestDeploymentTime} s
+                        </Text>
+                        <Text
+                          component={TextVariants.p}
+                          style={{
+                            fontSize: '14px',
+                            paddingLeft: '8px',
+                            fontFamily: 'Red Hat Text'
+                          }}
                         >
-                          <Text component={TextVariants.p} className="dashboard-card">
-                            {bestDeploymentTime}s
-                          </Text>
-                          <Text
-                            component={TextVariants.p}
-                            style={{
-                              fontSize: '14px',
-                              paddingLeft: '8px',
-                              fontFamily: 'Red Hat Text'
-                            }}
-                          >
-                            in past {DeploymentTimeFrames[bestDeploymentTimeIndex]}
-                          </Text>
-                        </div>
-                        <Text component={TextVariants.h2}>Average time to deploy</Text>
-                      </>
-                    ) : (
-                      ''
-                    )}
+                          in past {DeploymentTimeFrames[bestDeploymentTimeIndex]}
+                        </Text>
+                      </div>
+                      <Text component={TextVariants.h2}>Average time to deploy</Text>
+                    </>
 
                     <div
                       style={{
@@ -214,7 +213,9 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
                       {DeploymentTimeFrames.map((field, index) => (
                         <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
                           <Text component={TextVariants.p} className="dashboard-card-subheadings">
-                            {averageDeploymentTime[index] ? `${averageDeploymentTime[index]}s` : ''}
+                            {averageDeploymentTime[index]
+                              ? `${averageDeploymentTime[index]}s`
+                              : '0'}
                           </Text>
                           <Text
                             component={TextVariants.p}
@@ -242,6 +243,8 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
             minCount={TotalMonthlyDeploymentData?.minDeploymentCount || 0}
             maxCount={TotalMonthlyDeploymentData?.maxDeploymentCount || 0}
             TotalDeploymentData={TotalDeploymentData}
+            propertyIdentifier={propertyIdentifier}
+            applicationIdentifier={spaProperty}
           />
         </div>
         <div style={{ width: '50%' }}>
@@ -261,7 +264,12 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
 
             <SimpleBarReact style={{ maxHeight: 900 }}>
               <div style={{ marginTop: '30px' }}>
-                <ActivityStream action="APPLICATION_DEPLOYED" type={type} />
+                <ActivityStream
+                  action="APPLICATION_DEPLOYED"
+                  type={type}
+                  propertyIdentifier={propertyIdentifier}
+                  applicationIdentifier={type === 'spa' ? spaProperty : ''}
+                />
               </div>
             </SimpleBarReact>
           </Card>

@@ -326,16 +326,7 @@ export const ActivityStream = ({
     }
   }, [fetchNextPage, inView]);
   const formatDate = useFormatDate();
-  console.log(
-    '>>>',
-    propertyIdentifier,
-    'applicationIdentifier',
-    applicationIdentifier,
-    'action',
-    action,
-    'type',
-    type
-  );
+
   return (
     <>
       {isLoading && <Spinner isSVG aria-label="Activity stream loading" />}

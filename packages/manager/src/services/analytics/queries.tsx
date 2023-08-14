@@ -140,24 +140,30 @@ export const useGetMonthlyDeploymentChart = (webProperty: string, spaName?: stri
 
 const fetchMonthlyDeploymentChartWithEphemeral = async (
   propertyIdentifier?: string,
+  applicationIdentifier?: string,
   previous?: string
 ): Promise<Record<string, TSPAMonthlyDeploymentChart[]>> => {
+  console.log('inquery', propertyIdentifier, 'previous', previous);
   const { data } = await orchestratorReq.get('/analytics/deployment/env/month', {
     params: {
       propertyIdentifier,
+      applicationIdentifier,
       previous
     }
   });
+
   return data.data;
 };
 
 export const useGetMonthlyDeploymentChartWithEphemeral = (
   propertyIdentifier?: string,
+  applicationIdentifier?: string,
   previous?: string
 ) =>
   useQuery({
     queryKey: analyticsKeys.spaMonthyDeploymentChartWithEphemeral,
-    queryFn: () => fetchMonthlyDeploymentChartWithEphemeral(propertyIdentifier, previous),
+    queryFn: () =>
+      fetchMonthlyDeploymentChartWithEphemeral(propertyIdentifier, applicationIdentifier, previous),
     select: (data: {
       qa?: IDeploymentData[];
       stage?: IDeploymentData[];
@@ -306,3 +312,11 @@ const fetchTotalTimeSaved = async (): Promise<TTotalTimeSaved> => {
   return data.data;
 };
 export const useGetTotalTimeSaved = () => useQuery(analyticsKeys.timeSaved, fetchTotalTimeSaved);
+
+const fetchTotalTimeSavedForLogin = async (): Promise<TTotalTimeSaved> => {
+  const { data } = await orchestratorReq.get('/analytics/deployment/time-saved');
+  console.log('use', data.data);
+  return data.data;
+};
+export const useGetTotalTimeSavedForLogin = () =>
+  useQuery(analyticsKeys.timeSaved, fetchTotalTimeSavedForLogin);
