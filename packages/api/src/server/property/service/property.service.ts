@@ -23,7 +23,7 @@ export class PropertyService {
     private readonly analyticsService: AnalyticsService,
     private readonly permissionService: PermissionService,
     private readonly cmdbService: CMDBService
-  ) { }
+  ) {}
 
   /* @internal
    * Get all the Property Details from the SPAship
@@ -41,7 +41,7 @@ export class PropertyService {
       groupedDetails.createdBy = prop.createdBy;
       groupedDetails.cmdbCode = prop.cmdbCode;
       groupedDetails.severity = prop.severity;
-      groupedDetails.env = (environmentDetails) ? environmentDetails.filter((key) => key.propertyIdentifier === prop.identifier) : [];
+      groupedDetails.env = environmentDetails ? environmentDetails.filter((key) => key.propertyIdentifier === prop.identifier) : [];
       response.push(groupedDetails);
     }
     return response;
