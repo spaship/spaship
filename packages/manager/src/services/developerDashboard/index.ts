@@ -1,1 +1,1 @@
-export { useGeTotalSavingsByDevelopers } from './queries';
+export { useGeTotalSavingsByDevelopers, useGeTotalSavingsByDevelopersForAdmin } from './queries';

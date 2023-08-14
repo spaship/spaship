@@ -10,7 +10,8 @@ type TMonthlyAnalytics = {
   totalWorkingHours: number;
   totalDeploymentCount: number;
   totalDeploymentHours: number;
-  frequencyOfDeployment: number;
+  frequencyOfDeployment?: number;
+  totalDeploymentHoursSaved: number;
   developerHourlyRate: number;
   costSavingPerHour: number;
   totalCostSaved: number;

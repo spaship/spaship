@@ -1,5 +1,5 @@
 import { NextPageWithLayout } from '@app/types';
-import { DeveloperMetricsDashboard } from '@app/views/DeveloperMetricsDashboard';
+import { DeveloperMetricsDashboard } from '@app/views/DeveloperDashboard/DeveloperMetricsDashboard/';
 import { getAppLayout } from '@app/layouts/AppLayout';
 
 const DeveloperMetrics: NextPageWithLayout = () => <DeveloperMetricsDashboard />;

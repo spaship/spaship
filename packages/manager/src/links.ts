@@ -8,5 +8,6 @@ export const pageLinks = {
   dashboardPage: '/dashboard',
   documentsPage: '/documents',
   slaPage: '/sla',
-  developerMetricsDashboard: '/developerMetrics'
+  developerMetricsAdminDashboard: '/developer-metrics-admin',
+  developerMetricsDashboard: '/developer-metrics'
 };
