@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { orchestratorReq } from '@app/config/orchestratorReq';
-import { TCreateWebPropertyDTO, TWebProperty } from './types';
+import { TCreateWebPropertyDTO, TWebProperty, TCmdbValidation } from './types';
 
 const webPropertyKeys = {
   list: ['web-properties'] as const,
@@ -34,3 +34,21 @@ export const useAddWebProperty = (propertyIdentifier?: string) => {
     }
   });
 };
+
+export const fetchCmdbCodeByName = async (name?: string): Promise<TCmdbValidation[]> => {
+  const { data } = await orchestratorReq.get('/sot/cmdb', {
+    params: { name }
+  });
+  return data.data;
+};
+
+export const useGetCmdbCodeByName = (name?: string) => fetchCmdbCodeByName(name);
+
+export const fetchCmdbCodeById = async (code?: string): Promise<TCmdbValidation[]> => {
+  const { data } = await orchestratorReq.get('/sot/cmdb', {
+    params: { code }
+  });
+  return data.data;
+};
+
+export const useGetCmdbCodeById = (code?: string) => fetchCmdbCodeById(code);

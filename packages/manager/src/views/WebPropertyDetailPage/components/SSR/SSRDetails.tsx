@@ -176,8 +176,11 @@ export const SSRDetails = () => {
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [envName, setEnvName] = useState('');
   const [isGit, setIsGit] = useState(false);
-  const podList = useListOfPods(propertyIdentifier, applicationName, envName);
+  const podIdList = useListOfPods(propertyIdentifier, applicationName, envName);
+  const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
+
   const [buildIdList, setbuildIdList] = useState<string[]>([]);
+  const [buildDetails, setBuildDetails] = useState<string[]>([]);
 
   const handleTabClick = async (
     event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
@@ -192,7 +195,9 @@ export const SSRDetails = () => {
     buildName: string[],
     rowData: any
   ) => {
-    setbuildIdList(buildName);
+    const buildNamesOnly: string[] = buildName.map((item: any) => item.name);
+    setBuildDetails(buildName);
+    setbuildIdList(buildNamesOnly);
     setEnvName(rowData.env);
     setIsExpanded(true);
     setIsGit(rowData.isGit);
@@ -222,8 +227,9 @@ export const SSRDetails = () => {
                 spaName={applicationName}
                 env={envName}
                 type={activeTabKey}
-                idList={podList?.data}
+                idList={podList}
                 isGit={isGit}
+                con={podIdList}
               />
             )}
           </Tab>
@@ -237,6 +243,7 @@ export const SSRDetails = () => {
                 type={activeTabKey}
                 idList={buildIdList}
                 isGit={isGit}
+                con={buildDetails}
               />
             )}
           </Tab>

@@ -26,3 +26,11 @@ export type TCreateWebPropertyDTO = {
   createdBy: string;
   cluster: string;
 };
+
+export type TCmdbValidation = {
+  name: string;
+  code: string;
+  url: string;
+  email: string;
+  severity: string;
+};

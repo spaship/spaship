@@ -21,6 +21,7 @@ type Props = {
   type: string | number;
   idList: string[];
   isGit: boolean;
+  con: any;
 };
 
 const logType = {
@@ -35,32 +36,14 @@ function NewlineText(props: string) {
   return newText;
 }
 
-export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit }: Props) => {
+export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit, con }: Props) => {
   const [logsData, setLogsData] = useState<string>('');
   const [isLogsLoading, setIsLogsLoading] = useState<boolean>(true);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const podList = useListOfPods(propertyIdentifier, spaName, env);
+  const podIdList = useListOfPods(propertyIdentifier, spaName, env);
+  const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
 
   const [selectedId, setSelectedId] = useState<string | undefined>(idList && idList.reverse()[0]);
-
-  const { data: logs, isLoading: isFetchingLogs } = useGetLogsforSpa(
-    propertyIdentifier,
-    spaName,
-    env,
-    type === 0 ? logType.POD : logType.BUILD,
-    selectedId
-  );
-
-  useEffect(() => {
-    setLogsData(logs);
-    setIsLogsLoading(isFetchingLogs);
-  }, [logs, isFetchingLogs]);
-
-  useEffect(() => {
-    setSelectedId(idList && idList.reverse()[0]);
-    setLogsData('');
-    setIsLogsLoading(true);
-  }, [idList, type]);
 
   const handleToggle = (isSelectOpen: boolean) => {
     setIsOpen(isSelectOpen);
@@ -76,6 +59,30 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
     setSelectedId(selection as string);
     setIsOpen(false);
   };
+  const handleConValueforBuild = (conBuild: any) =>
+    conBuild.find((item: { name: string | undefined }) => item.name === selectedId)
+      ?.deploymentConnection || '';
+
+  const handleConValueforPod = (conPod: any) => conPod?.data && conPod?.data[0].con;
+
+  const { data: logs, isLoading: isFetchingLogs } = useGetLogsforSpa(
+    propertyIdentifier,
+    spaName,
+    env,
+    type === 0 ? logType.POD : logType.BUILD,
+    selectedId,
+    type === 0 ? handleConValueforPod(con) : handleConValueforBuild(con)
+  );
+  useEffect(() => {
+    setLogsData(logs);
+    setIsLogsLoading(isFetchingLogs);
+  }, [logs, isFetchingLogs]);
+
+  useEffect(() => {
+    setSelectedId(idList && idList.reverse()[0]);
+    setLogsData('');
+    setIsLogsLoading(true);
+  }, [idList, type]);
 
   return (
     <div>
@@ -103,9 +110,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
             >
               {type === 1
                 ? idList && idList.map((item: string) => <SelectOption key={item} value={item} />)
-                : (podList?.data || []).map((item: string) => (
-                    <SelectOption key={item} value={item} />
-                  ))}
+                : (podList || []).map((item: string) => <SelectOption key={item} value={item} />)}
             </Select>
           )}
           {logsData ? (

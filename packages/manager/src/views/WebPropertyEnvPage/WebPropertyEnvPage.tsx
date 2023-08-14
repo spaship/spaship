@@ -4,8 +4,11 @@ import { Banner, DeleteConfirmationModal, TableRowSkeleton } from '@app/componen
 import { useFormatDate, usePopUp } from '@app/hooks';
 import { pageLinks } from '@app/links';
 import { useCreateAPIKey, useDeleteAPIKey, useGetApiKeys } from '@app/services/apiKeys';
+import { useGetEphemeralListForProperty } from '@app/services/ephemeral';
 import { useAddEnv, useGetEnvList } from '@app/services/persistent';
 import { useDeleteMember, useGetMemberforSPA } from '@app/services/rbac';
+import { useGetWebProperties } from '@app/services/webProperty';
+import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
   Button,
   Card,
@@ -51,14 +54,12 @@ import {
   WrenchIcon
 } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { AxiosError } from 'axios';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { SetStateAction, useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
-import { useGetEphemeralListForProperty } from '@app/services/ephemeral';
-import { toPascalCase } from '@app/utils/toPascalConvert';
-import { AxiosError } from 'axios';
 import Avatar from 'react-avatar';
+import toast from 'react-hot-toast';
 import { AddMembers } from './components/AddMembers/AddMembers';
 import { ConfigureAccess } from './components/ConfigureAccess/ConfigureAccess';
 import {
@@ -105,6 +106,15 @@ type EnvItem = {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+};
+
+type TCmdbDetails = {
+  cmdbCode: string;
+  severity: string;
+  title: string;
+  identifier: string;
+  createdBy: string;
+  env: string;
 };
 const perPageOptions = [
   { title: '5', value: 5 },
@@ -168,7 +178,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
         ...data,
         env: data.env.toLowerCase(),
         propertyIdentifier,
-        createdBy: session?.user.email || ''
+        createdBy: session?.user?.email || ''
       });
       toast.success('Environment Created');
       handlePopUpClose('createEnv');
@@ -193,7 +203,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
       const res = await createAPIKey.mutateAsync({
         ...data,
         propertyIdentifier,
-        createdBy: session?.user.email || '',
+        createdBy: session?.user?.email || '',
         expiresIn:
           data.expiresIn === undefined || data.expiresIn === '' || data.expiresIn === 'NA'
             ? getExpiryDayDiff(String(futureDate))
@@ -294,6 +304,10 @@ export const WebPropertyEnvPage = (): JSX.Element => {
     }
   };
 
+  const listOfWebProperties = useGetWebProperties();
+  const cmdbDetails = (listOfWebProperties?.data as [])?.filter(
+    (item: any) => item.identifier === propertyIdentifier
+  );
   return (
     <>
       <Banner
@@ -400,6 +414,45 @@ export const WebPropertyEnvPage = (): JSX.Element => {
               </CardBody>
             </Card>
           </StackItem>
+          <Stack hasGutter>
+            <StackItem className="pf-u-mb-md">
+              <Card>
+                <CardHeader>
+                  <CardTitle>CMDB Details</CardTitle>
+                </CardHeader>
+                <CardBody>
+                  <TableComposable>
+                    <Tbody>
+                      {listOfWebProperties.isLoading && <TableRowSkeleton columns={4} rows={3} />}
+                      {listOfWebProperties.isSuccess && cmdbDetails.length === 0 && (
+                        <Tr>
+                          <Td colSpan={6}>
+                            <EmptyState>
+                              <EmptyStateIcon icon={CubesIcon} />
+                              <Title headingLevel="h4" size="lg">
+                                Cmdb details not found
+                              </Title>
+                              <EmptyStateBody>Kindly Add CMDB Details</EmptyStateBody>
+                            </EmptyState>
+                          </Td>
+                        </Tr>
+                      )}
+                      <Tr>
+                        <Td>CMDB Code</Td>
+                        <Td dataLabel="CMDB Code">{(cmdbDetails[0] as TCmdbDetails).cmdbCode}</Td>
+                      </Tr>
+                      <Tr>
+                        <Td>Severity</Td>
+                        <Td dataLabel="CMDB Severity">
+                          {(cmdbDetails[0] as TCmdbDetails).severity}
+                        </Td>
+                      </Tr>
+                    </Tbody>
+                  </TableComposable>
+                </CardBody>
+              </Card>
+            </StackItem>
+          </Stack>
           <StackItem>
             <Card className="pf-u-mt-lg">
               <CardHeader>
@@ -617,7 +670,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                                 <Button
                                   variant="secondary"
                                   isDanger
-                                  isDisabled={key.email === session?.user.email}
+                                  isDisabled={key.email === session?.user?.email}
                                   icon={<TrashIcon />}
                                   onClick={() => {
                                     handlePopUpOpen('deleteMember');
