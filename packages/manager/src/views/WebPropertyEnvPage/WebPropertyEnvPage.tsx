@@ -178,7 +178,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
         ...data,
         env: data.env.toLowerCase(),
         propertyIdentifier,
-        createdBy: session?.user.email || ''
+        createdBy: session?.user?.email || ''
       });
       toast.success('Environment Created');
       handlePopUpClose('createEnv');
@@ -203,7 +203,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
       const res = await createAPIKey.mutateAsync({
         ...data,
         propertyIdentifier,
-        createdBy: session?.user.email || '',
+        createdBy: session?.user?.email || '',
         expiresIn:
           data.expiresIn === undefined || data.expiresIn === '' || data.expiresIn === 'NA'
             ? getExpiryDayDiff(String(futureDate))
@@ -670,7 +670,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                                 <Button
                                   variant="secondary"
                                   isDanger
-                                  isDisabled={key.email === session?.user.email}
+                                  isDisabled={key.email === session?.user?.email}
                                   icon={<TrashIcon />}
                                   onClick={() => {
                                     handlePopUpOpen('deleteMember');

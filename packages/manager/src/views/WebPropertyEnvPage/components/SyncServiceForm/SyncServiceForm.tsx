@@ -49,7 +49,7 @@ export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JS
       await updateSync.mutateAsync({
         ...formData,
         propertyIdentifier,
-        createdBy: session?.user.email || ''
+        createdBy: session?.user?.email || ''
       });
       toast.success('Successfully updated Sync');
       onClose();

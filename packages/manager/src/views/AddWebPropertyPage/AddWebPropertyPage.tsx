@@ -63,8 +63,8 @@ export const AddWebPropertyPage = (): JSX.Element => {
   const createWebPropertyMutation = useAddWebProperty();
   const { data: session } = useSession();
   const router = useRouter();
-  const [cmdbName, setcmdbName] = useState(false);
-  const [cmdbId, setcmdbId] = useState(true);
+  const [cmdbName, setCmdbName] = useState(false);
+  const [cmdbId, setCmdbId] = useState(true);
   const title = watch('title');
   const propertyID = title?.toLowerCase().replaceAll(' ', '-') || '';
   const [cmdbCode, setCmdbCode] = useState('');
@@ -95,13 +95,13 @@ export const AddWebPropertyPage = (): JSX.Element => {
   }, [cmdbCode, cmdbName, cmdbId]);
 
   const handleChangecmdbName = () => {
-    setcmdbName(true);
-    setcmdbId(false);
+    setCmdbName(true);
+    setCmdbId(false);
   };
 
   const handleChangecmdbId = () => {
-    setcmdbId(true);
-    setcmdbName(false);
+    setCmdbId(true);
+    setCmdbName(false);
   };
 
   const onFormSubmit = async (data: FormData) => {
@@ -116,7 +116,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
         ...updatedData,
         env: data.env?.toLowerCase() || '',
         identifier: propertyID,
-        createdBy: session?.user.email || ''
+        createdBy: session?.user?.email || ''
       });
       toast.success('Web Property Created');
       router.push(pageLinks.webPropertyDetailPage.replace('[propertyIdentifier]', propertyID));
@@ -247,7 +247,6 @@ export const AddWebPropertyPage = (): JSX.Element => {
               />
             </SplitItem>
           </Split>
-
           <Split hasGutter>
             <SplitItem isFilled>
               <Controller
@@ -298,14 +297,13 @@ export const AddWebPropertyPage = (): JSX.Element => {
               />
             </SplitItem>
           </Split>
-
+          {/* //TO DO: remove the Inline CSS in Code revamp */}
           {cmdbError && (
             <p style={{ color: '#c9190b', fontFamily: 'REDHATTEXT', fontSize: '14px' }}>
               The entered CMDB code is incorrect. Please verify the value you entered and the
               selected type.
             </p>
           )}
-
           <Split hasGutter>
             <SplitItem>
               <Controller
@@ -353,7 +351,7 @@ Unfamiliar with the CMDB code for an application."
             <div>
               Please get in touch with the{' '}
               <strong>
-                <a href="https://yourforumlink.com">SPAship team</a>
+                <a href="https://app.slack.com/client/T027F3GAJ/C04F5PRKEMC">SPAship team</a>
               </strong>{' '}
               through the <strong>SPAship Forum</strong> to begin the onboarding process for your
               Single Page Application (SPA) on this platform. You have the option to take advantage
