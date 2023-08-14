@@ -143,7 +143,6 @@ const fetchMonthlyDeploymentChartWithEphemeral = async (
   applicationIdentifier?: string,
   previous?: string
 ): Promise<Record<string, TSPAMonthlyDeploymentChart[]>> => {
-  console.log('inquery', propertyIdentifier, 'previous', previous);
   const { data } = await orchestratorReq.get('/analytics/deployment/env/month', {
     params: {
       propertyIdentifier,
@@ -203,17 +202,23 @@ export const useGetMonthlyDeploymentChartWithEphemeral = (
   });
 
 const fetchTotalDeployment = async (
-  propertyIdentifier?: string
+  propertyIdentifier?: string,
+  applicationIdentifier?: string
 ): Promise<TSPADeploymentCount[]> => {
   const { data } = await orchestratorReq.get('analytics/deployment/env', {
-    params: { propertyIdentifier }
+    params: { propertyIdentifier, applicationIdentifier }
   });
 
   return data.data;
 };
 
-export const useGetTotalDeployments = (propertyIdentifier?: string) =>
-  useQuery(analyticsKeys.spaDeployments(''), () => fetchTotalDeployment(propertyIdentifier));
+export const useGetTotalDeployments = (
+  propertyIdentifier?: string,
+  applicationIdentifier?: string
+) =>
+  useQuery(analyticsKeys.spaDeployments(''), () =>
+    fetchTotalDeployment(propertyIdentifier, applicationIdentifier)
+  );
 
 const fetchTotalMonthlyDeploymentTime = async (
   propertyIdentifier?: string
@@ -315,7 +320,6 @@ export const useGetTotalTimeSaved = () => useQuery(analyticsKeys.timeSaved, fetc
 
 const fetchTotalTimeSavedForLogin = async (): Promise<TTotalTimeSaved> => {
   const { data } = await orchestratorReq.get('/analytics/deployment/time-saved');
-  console.log('use', data.data);
   return data.data;
 };
 export const useGetTotalTimeSavedForLogin = () =>

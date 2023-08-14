@@ -1,5 +1,4 @@
 import { ActivityStream } from '@app/components/ActivityStream';
-import { pageLinks } from '@app/links';
 import {
   useGetHalfYearlyDeploymentsTime,
   // useGetMonthlyDeploymentChart,
@@ -22,7 +21,6 @@ import {
   TextVariants
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 // import { useMemo } from 'react';
 import toast from 'react-hot-toast';
@@ -47,7 +45,8 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
     router.push(`/properties/${propertyIdentifier}`);
   }
 
-  const TotalDeploymentData = useGetTotalDeployments(propertyIdentifier);
+  const TotalDeploymentData = useGetTotalDeployments(propertyIdentifier, spaProperty);
+
   const TotalDeployment = TotalDeploymentData.data?.reduce((acc, obj) => acc + obj.count, 0);
   const TotalMonthlyDeploymentData = useGetMonthlyDeploymentChartWithEphemeral(
     propertyIdentifier,
@@ -56,10 +55,10 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
   ).data;
 
   const averageDeploymentTime = [
-    useGetMonthlyDeploymentsTime(propertyIdentifier).data || 0,
-    useGetQuarterlyDeploymentsTime(propertyIdentifier).data || 0,
-    useGetHalfYearlyDeploymentsTime(propertyIdentifier).data || 0,
-    useGetYearlyDeploymentsTime(propertyIdentifier).data || 0
+    useGetMonthlyDeploymentsTime(propertyIdentifier, spaProperty).data || 0,
+    useGetQuarterlyDeploymentsTime(propertyIdentifier, spaProperty).data || 0,
+    useGetHalfYearlyDeploymentsTime(propertyIdentifier, spaProperty).data || 0,
+    useGetYearlyDeploymentsTime(propertyIdentifier, spaProperty).data || 0
   ];
   const bestDeploymentFiltered = averageDeploymentTime.filter((e) => e);
   const bestDeploymentTime = bestDeploymentFiltered.length
@@ -86,93 +85,87 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
             </TextContent>
             <Grid span={6}>
               <GridItem>
-                <Link href={pageLinks.webPropertyListPage}>
-                  <a className="text-decoration-none">
-                    <Card
-                      isSelectable
-                      isFullHeight
+                <Card
+                  isFullHeight
+                  style={{
+                    overflow: 'auto',
+                    scrollbarWidth: 'none',
+                    borderRight: '1px  solid #D2D2D2'
+                  }}
+                >
+                  <CardBody>
+                    <Text className="dashboard-card">{TotalDeployment}</Text>
+
+                    <Text component={TextVariants.h2} style={{ fontFamily: 'Red Hat Text' }}>
+                      Total Deployments
+                    </Text>
+                    <div
                       style={{
-                        overflow: 'auto',
-                        scrollbarWidth: 'none',
-                        borderRight: '1px  solid #D2D2D2'
+                        display: 'flex',
+                        flexDirection: 'row',
+                        gap: '7%',
+                        marginTop: '24px'
                       }}
+                      className="dashboard-card-subheadings"
                     >
-                      <CardBody>
-                        <Text className="dashboard-card">{TotalDeployment}</Text>
-
-                        <Text component={TextVariants.h2} style={{ fontFamily: 'Red Hat Text' }}>
-                          Total Deployments
-                        </Text>
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            gap: '7%',
-                            marginTop: '24px'
-                          }}
-                          className="dashboard-card-subheadings"
-                        >
-                          {TotalDeploymentCardFields.map((field) => (
-                            <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
-                              <Text
-                                component={TextVariants.p}
-                                style={{ fontSize: '20px', color: '#151515' }}
-                              >
-                                {TotalDeploymentData.data?.filter(
-                                  (ele) => ele.env === field.toLocaleLowerCase()
-                                ).length
-                                  ? TotalDeploymentData.data
-                                      ?.filter((ele) => ele.env === field.toLocaleLowerCase())
-                                      .map((ele) => ele.count)
-                                  : 0}
-                              </Text>
-                              <Text
-                                component={TextVariants.p}
-                                style={{
-                                  fontSize: '14px',
-                                  fontWeight: 400,
-                                  color: '#3C3F42'
-                                }}
-                              >
-                                {field}
-                              </Text>
-                            </div>
-                          ))}
-
-                          <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <Text
-                              component={TextVariants.p}
-                              style={{ fontSize: '20px', color: '#151515' }}
-                            >
-                              {TotalDeploymentData.data
-                                ?.filter(
-                                  (ele) =>
-                                    !TotalDeploymentCardFields.map((str) =>
-                                      str.toLocaleLowerCase()
-                                    ).includes(ele.env)
-                                )
-                                .reduce((acc, ele) => acc + ele.count, 0)}
-                            </Text>
-                            <Text
-                              component={TextVariants.p}
-                              style={{
-                                fontSize: '14px',
-                                fontWeight: 400,
-                                color: '#3C3F42'
-                              }}
-                            >
-                              Others
-                            </Text>
-                          </div>
+                      {TotalDeploymentCardFields.map((field) => (
+                        <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
+                          <Text
+                            component={TextVariants.p}
+                            style={{ fontSize: '20px', color: '#151515' }}
+                          >
+                            {TotalDeploymentData.data?.filter(
+                              (ele) => ele.env === field.toLocaleLowerCase()
+                            ).length
+                              ? TotalDeploymentData.data
+                                  ?.filter((ele) => ele.env === field.toLocaleLowerCase())
+                                  .map((ele) => ele.count)
+                              : 0}
+                          </Text>
+                          <Text
+                            component={TextVariants.p}
+                            style={{
+                              fontSize: '14px',
+                              fontWeight: 400,
+                              color: '#3C3F42'
+                            }}
+                          >
+                            {field}
+                          </Text>
                         </div>
-                      </CardBody>
-                    </Card>
-                  </a>
-                </Link>
+                      ))}
+
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <Text
+                          component={TextVariants.p}
+                          style={{ fontSize: '20px', color: '#151515' }}
+                        >
+                          {TotalDeploymentData.data
+                            ?.filter(
+                              (ele) =>
+                                !TotalDeploymentCardFields.map((str) =>
+                                  str.toLocaleLowerCase()
+                                ).includes(ele.env)
+                            )
+                            .reduce((acc, ele) => acc + ele.count, 0)}
+                        </Text>
+                        <Text
+                          component={TextVariants.p}
+                          style={{
+                            fontSize: '14px',
+                            fontWeight: 400,
+                            color: '#3C3F42'
+                          }}
+                        >
+                          Others
+                        </Text>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
               </GridItem>
               <GridItem>
                 <Card
-                  isSelectable
                   isFullHeight
                   style={{
                     overflow: 'auto',
@@ -265,8 +258,6 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
             <SimpleBarReact style={{ maxHeight: 900 }}>
               <div style={{ marginTop: '30px' }}>
                 <ActivityStream
-                  action="APPLICATION_DEPLOYED"
-                  type={type}
                   propertyIdentifier={propertyIdentifier}
                   applicationIdentifier={type === 'spa' ? spaProperty : ''}
                 />

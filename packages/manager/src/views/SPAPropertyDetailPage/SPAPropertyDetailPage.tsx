@@ -16,20 +16,13 @@ import { Banner } from '@app/components';
 import { ActivityStream } from '@app/components/ActivityStream';
 import { useTabs } from '@app/hooks';
 import { pageLinks } from '@app/links';
-import {
-  useGetHalfYearlyDeploymentsTime,
-  useGetMonthlyDeploymentChart,
-  useGetMonthlyDeploymentsTime,
-  useGetQuarterlyDeploymentsTime,
-  useGetTotalDeploymentsForApps,
-  useGetYearlyDeploymentsTime
-} from '@app/services/analytics';
+import { useGetTotalDeploymentsForApps } from '@app/services/analytics';
 import { BuildIcon, BundleIcon, CogIcon, PackageIcon, RunningIcon } from '@patternfly/react-icons';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+import { Dashboard } from '../WebPropertyDetailPage/components/Dashboard';
 import { SSRDetails } from '../WebPropertyDetailPage/components/SSR/SSRDetails';
 import { StaticDeployment } from '../WebPropertyDetailPage/components/SSR/StaticDeployment';
-import { Dashboard } from '../WebPropertyDetailPage/components/Dashboard';
 
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
@@ -37,26 +30,12 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
   const spaProperty = router.query.spaProperty as string;
 
   const deploymentCount = useGetTotalDeploymentsForApps(propertyIdentifier, spaProperty);
-  const monthlyDeployChart = useGetMonthlyDeploymentChart(propertyIdentifier, spaProperty);
   if (deploymentCount.isError === true) {
     toast.error(`Sorry cannot find ${spaProperty}`);
     router.push(`/properties/${propertyIdentifier}`);
   }
 
   const { handleTabChange, openTab } = useTabs(4);
-
-  // TODO: Backend must sort this before giving
-  const sortedDeployCount = deploymentCount?.data?.sort((x, y) => x.count - y.count);
-
-  const averageDeploymentTime = [
-    useGetMonthlyDeploymentsTime(propertyIdentifier, spaProperty).data,
-    useGetQuarterlyDeploymentsTime(propertyIdentifier, spaProperty).data,
-    useGetHalfYearlyDeploymentsTime(propertyIdentifier, spaProperty).data,
-    useGetYearlyDeploymentsTime(propertyIdentifier, spaProperty).data
-  ];
-
-  const bestDeploymentFiltered = averageDeploymentTime.filter((e) => e);
-  const bestDeploymentTime = Math.min(...bestDeploymentFiltered.map((time) => time || 0));
 
   return (
     <>
