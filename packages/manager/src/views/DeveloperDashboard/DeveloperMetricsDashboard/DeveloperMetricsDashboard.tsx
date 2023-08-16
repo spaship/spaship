@@ -35,6 +35,7 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
        (Avg deployment time saved * Total number of deployment)
       </span>
     </p>`,
+    // color: '#FF00FF',
     data: hoursSaved?.data?.monthlyAnalytics.map((item) => item.totalDeploymentHoursSaved),
     type: 'line',
     dataLabels: {
