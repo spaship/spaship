@@ -29,7 +29,12 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
   };
 
   const LineData = {
-    name: 'Total deployment hours saved per month (hr)',
+    name: `<p>
+      Total deployment hours saved per month (hr)<br/><br/>
+      <span style="color: #6A6E73; font-size: 10px; padding-top:10px; " >
+       (Avg deployment time saved * Total number of deployment)
+      </span>
+    </p>`,
     data: hoursSaved?.data?.monthlyAnalytics.map((item) => item.totalDeploymentHoursSaved),
     type: 'line',
     dataLabels: {
