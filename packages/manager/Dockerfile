@@ -7,7 +7,7 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
-RUN npm i --legacy-peer-deps 
+RUN npm i --force 
 #TO DO: remove this flag and chnage to npm ci
 
 # Rebuild the source code only when needed
