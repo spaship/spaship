@@ -18,6 +18,7 @@ COPY . .
 
 ARG NEXT_PUBLIC_SPASHIP_API_BASE_URL
 ARG NEXT_PUBLIC_SPASHIP_INTRO_VIDEO_URL
+ENV NEXT_TELEMETRY_DISABLED 0
 
 RUN npm run build
 
@@ -26,6 +27,7 @@ FROM node:16-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 0
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
