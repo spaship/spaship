@@ -27,10 +27,17 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
     data: hoursSaved?.data?.monthlyAnalytics.map((item) => item.totalDeploymentCount),
     type: 'column'
   };
+
   const LineData = {
     name: 'Total deployment hours saved per month (hr)',
     data: hoursSaved?.data?.monthlyAnalytics.map((item) => item.totalDeploymentHoursSaved),
-    type: 'line'
+    type: 'line',
+    dataLabels: {
+      enabled: true,
+      align: 'right',
+      color: '#151515',
+      x: 10
+    }
   };
   const MonthData = hoursSaved?.data?.monthlyAnalytics.map((item) =>
     dayjs(item.startDate).format(DATE_FORMAT)
