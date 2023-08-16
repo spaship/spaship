@@ -68,23 +68,30 @@ export class AnalyticsController {
     @Query('propertyIdentifier') propertyIdentifier: string,
     @Query('days') days: number,
     @Query('isEph') isEph: string,
-    @Query('save') save: boolean
+    @Query('save') save: boolean,
+    @Query('averageDeploymentTimeInSecs') averageDeploymentTimeInSecs: string
   ): Promise<any> {
-    if (save) return this.analyticsService.getDeploymentTimeSaved();
+    if (save) return this.analyticsService.getDeploymentTimeSaved(averageDeploymentTimeInSecs);
     return this.analyticsService.getAverageDeploymentTime(propertyIdentifier, isEph, days);
   }
 
   @Get('/developer')
   @ApiCreatedResponse({ status: 200, description: 'Details for the average time to deployment.', type: DeploymentTime })
   @ApiOperation({ description: 'Get the Average time for the Deployments & the time saved by SPAship.' })
-  async getDeveloperMetrics(@Query('month') month: string, @Query('cluster') cluster: string, @Query('type') type: string): Promise<any> {
-    return this.analyticsService.getDeveloperMetrics(Number(month), cluster, type);
+  async getDeveloperMetrics(
+    @Query('month') month: string,
+    @Query('cluster') cluster: string,
+    @Query('type') type: string,
+    @Query('averageDeploymentTimeInSecs') averageDeploymentTimeInSecs: string,
+    @Query('mode') mode: string
+  ): Promise<any> {
+    return this.analyticsService.getDeveloperMetrics(Number(month), cluster, type, mode, averageDeploymentTimeInSecs);
   }
 
   @Get('/deployment/time-saved')
   @ApiCreatedResponse({ status: 200, description: 'Get the Average time for the Deployments saved by SPAship.', type: DeploymentTime })
   @ApiOperation({ description: 'Get the Average time for the Deployments saved by SPAship.' })
-  async getAverageDeploymentTimeSaved(): Promise<any> {
-    return this.analyticsService.getDeploymentTimeSaved();
+  async getAverageDeploymentTimeSaved(@Query('averageDeploymentTimeInSecs') averageDeploymentTimeInSecs: string): Promise<any> {
+    return this.analyticsService.getDeploymentTimeSaved(averageDeploymentTimeInSecs);
   }
 }

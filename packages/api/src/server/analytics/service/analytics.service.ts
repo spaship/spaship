@@ -211,57 +211,80 @@ export class AnalyticsService {
         });
   }
 
-  async getDeploymentTimeSaved(): Promise<Object> {
+  async getDeploymentTimeSaved(averageDeploymentTimeInSecs: string): Promise<Object> {
     let response;
     try {
       response = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.defaultDays * AnalyticsService.days);
     } catch (error) {
       this.exceptionService.badRequestException(error);
     }
-    const totalTimeForStandardDeployment = Number(ANALYTICS.averageTimeToDeploy) * response.count;
+    const totalTimeForStandardDeployment = Number(averageDeploymentTimeInSecs || ANALYTICS.averageTimeToDeploy) * response.count;
     const timeSavedInSec = totalTimeForStandardDeployment - response.totalTime;
     const timeSavedInHours = Math.round(timeSavedInSec / AnalyticsService.seconds / AnalyticsService.minutes);
     return { timeSavedInHours, averageTime: response.averageTime, deploymentCount: response.count };
   }
 
-  async getDeveloperMetrics(month: number, cluster: string, type: string): Promise<Object> {
+  async getDeveloperMetrics(month: number, cluster: string, type: string, mode: string, averageDeploymentTimeInSecs: string): Promise<Object> {
     const monthlyDateFrame = await this.analyticsFactory.buildMonthlyDateFrame(month || 1);
+    // @internal TODO : To be implemented in another way
+    const spashipAdmin = 'spaship-admin';
     let overallCostSaved = 0;
-    const { averageDevelopmentHours } = ANALYTICS;
+    const averageDevelopmentHours = Number(averageDeploymentTimeInSecs || ANALYTICS.averageDevelopmentHours);
+    const { developerHourlyRate } = ANALYTICS;
     const response = [];
     for (const tmpMonth of monthlyDateFrame) {
-      const monthlyAnalytics = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.days, tmpMonth, cluster, type);
-      const spashipAverageTimeInSecs = monthlyAnalytics.averageTime;
-      const averageSavedTimeInSecs = Number(averageDevelopmentHours) - monthlyAnalytics.averageTime;
-      const totalWorkingHours = Number(ANALYTICS.workingDays) * Number(ANALYTICS.workingHours);
-      const totalDeploymentCount = monthlyAnalytics.count;
-      const totalDeploymentHours = parseFloat(
-        ((monthlyAnalytics.averageTime * totalDeploymentCount) / AnalyticsService.seconds / AnalyticsService.minutes).toFixed(2)
-      );
-      const frequencyOfDeployment = parseFloat((totalDeploymentCount / totalWorkingHours).toFixed(2));
-      const { developerHourlyRate } = ANALYTICS;
-      const costSavingPerHour = parseFloat(
-        (
-          (averageSavedTimeInSecs / AnalyticsService.seconds / AnalyticsService.minutes) *
-          frequencyOfDeployment *
-          Number(developerHourlyRate)
-        ).toFixed(2)
-      );
-      const totalCostSaved = parseFloat((costSavingPerHour * totalDeploymentHours).toFixed(2));
-      if (totalCostSaved) overallCostSaved += totalCostSaved;
-      response.push({
-        ...tmpMonth,
-        averageSavedTimeInSecs,
-        spashipAverageTimeInSecs,
-        totalWorkingHours,
-        totalDeploymentCount,
-        totalDeploymentHours,
-        frequencyOfDeployment,
-        developerHourlyRate,
-        costSavingPerHour,
-        totalCostSaved
-      });
+      let frequencyOfDeployment;
+      let costSavingPerHour;
+      let totalCostSaved;
+      try {
+        const monthlyAnalytics = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.days, tmpMonth, cluster, type);
+        const spashipAverageTimeInSecs = monthlyAnalytics.averageTime;
+        const averageSavedTimeInSecs = Number(averageDevelopmentHours) - monthlyAnalytics.averageTime;
+        const totalWorkingHours = Number(ANALYTICS.workingDays) * Number(ANALYTICS.workingHours);
+        const totalDeploymentCount = monthlyAnalytics.count;
+        const totalDeploymentHours = parseFloat(
+          ((monthlyAnalytics.averageTime * totalDeploymentCount) / AnalyticsService.seconds / AnalyticsService.minutes).toFixed(2)
+        );
+        const totalDeploymentHoursSaved = parseFloat(
+          ((averageSavedTimeInSecs * totalDeploymentCount) / AnalyticsService.seconds / AnalyticsService.minutes).toFixed(2)
+        );
+        if (mode === spashipAdmin) {
+          frequencyOfDeployment = parseFloat((totalDeploymentCount / totalWorkingHours).toFixed(2));
+          costSavingPerHour = parseFloat(
+            (
+              (averageSavedTimeInSecs / AnalyticsService.seconds / AnalyticsService.minutes) *
+              frequencyOfDeployment *
+              Number(developerHourlyRate)
+            ).toFixed(2)
+          );
+          totalCostSaved = parseFloat((costSavingPerHour * totalDeploymentHours).toFixed(2));
+        } else {
+          totalCostSaved = parseFloat((totalDeploymentHoursSaved * Number(developerHourlyRate)).toFixed(2));
+        }
+        if (totalCostSaved) overallCostSaved += totalCostSaved;
+        if (spashipAverageTimeInSecs)
+          response.push({
+            ...tmpMonth,
+            averageSavedTimeInSecs,
+            spashipAverageTimeInSecs,
+            totalWorkingHours,
+            totalDeploymentCount,
+            totalDeploymentHours,
+            totalDeploymentHoursSaved,
+            frequencyOfDeployment,
+            developerHourlyRate,
+            costSavingPerHour,
+            totalCostSaved
+          });
+      } catch (error) {
+        /* @internal
+         * As we're accumulating multiple months in the iteration
+         * If any exception occurs in the query we'll skip that month
+         */
+        this.logger.error('DeveloperMetrics', error);
+      }
     }
-    return { monthlyAnalytics: response, overallCostSaved };
+    if (!response.length && !overallCostSaved) this.exceptionService.badRequestException({ message: 'No Analytics Present.' });
+    return { monthlyAnalytics: response, overallCostSaved: parseFloat(overallCostSaved.toFixed(2)) };
   }
 }
