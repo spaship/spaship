@@ -7,6 +7,7 @@ import {
   ChartThemeColor,
   ChartVoronoiContainer
 } from '@patternfly/react-charts';
+import { useGetTotalTimeSavedForLogin } from '@app/services/analytics';
 import { Card, CardBody, CardTitle, Grid, GridItem, Skeleton, Text } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import dayjs from 'dayjs';
@@ -28,21 +29,17 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
     totalCostSaved: 'Total cost saved'
   };
 
-  const totalCostSaved = hoursSaved?.data?.monthlyAnalytics.reduce(
-    (total, item) => total + (item.totalCostSaved || 0),
-    0
-  );
-
   const maxCount = hoursSaved?.data?.monthlyAnalytics.reduce(
     (maxValue, currentItem) =>
-      currentItem.totalCostSaved > maxValue ? currentItem.totalCostSaved : maxValue,
+      currentItem.totalDeploymentCount > maxValue ? currentItem.totalDeploymentCount : maxValue,
     0
   );
   const chartData = hoursSaved?.data?.monthlyAnalytics.map((item) => ({
     name: dayjs(item.startDate).format(DATE_FORMAT),
-    totalCostSaved: item.totalCostSaved,
+    totalDeploymentHoursSaved: item.totalDeploymentHoursSaved,
     totalDeploymentCount: item.totalDeploymentCount
   }));
+  const totalTimeSaved = useGetTotalTimeSavedForLogin();
 
   const colors = ['#06C', '#4CB140'];
   return (
@@ -64,7 +61,7 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
 
         <GridItem span={3}>
           <Card className="pf-u-mb-md" style={{ height: '160px' }}>
-            <CardTitle>Total Cost Saved</CardTitle>
+            <CardTitle>Total Hours Saved</CardTitle>
             <CardBody>
               <Text
                 style={{
@@ -78,9 +75,9 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
                     fontSize: '36px'
                   }}
                 >
-                  {totalCostSaved?.toFixed(2)}{' '}
+                  {totalTimeSaved?.data?.timeSavedInHours}{' '}
                 </span>{' '}
-                USD
+                hrs
               </Text>
             </CardBody>
           </Card>
@@ -110,7 +107,7 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
 
         <GridItem span={9}>
           <Card>
-            <CardTitle> Efforts saved per month</CardTitle>
+            <CardTitle> Deployment hours saved per month</CardTitle>
             <CardBody>
               <div style={{ height: '250px' }}>
                 <Chart
@@ -124,15 +121,15 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
                   domain={{ y: [0, maxCount || 0] }}
                   domainPadding={{ x: [30, 30] }}
                   legendData={[
-                    { name: 'Cost Saved per month ($)' },
-                    { name: 'Deployment count per month' }
+                    { name: 'Deployment count per month' },
+                    { name: 'Total deployment hours saved per month (hr)' }
                   ]}
                   legendOrientation="horizontal"
                   legendPosition="bottom"
                   height={200}
                   name="chart1"
                   padding={{
-                    bottom: 50,
+                    bottom: 60,
                     left: 70,
                     right: 10, // Adjusted to accommodate legend
                     top: 10
@@ -147,15 +144,15 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
                     <ChartBar
                       data={chartData}
                       x="name"
-                      y="totalCostSaved"
-                      style={{ data: { fill: colors[0] } }}
+                      y="totalDeploymentCount"
+                      style={{ data: { fill: colors[1] } }}
                       barWidth={15} // Adjust the bar width for better spacing
                     />
                     <ChartBar
                       data={chartData}
                       x="name"
-                      y="totalDeploymentCount"
-                      style={{ data: { fill: colors[1] } }}
+                      y="totalDeploymentHoursSaved"
+                      style={{ data: { fill: colors[0] } }}
                       barWidth={15} // Adjust the bar width for better spacing
                     />
                   </ChartGroup>
