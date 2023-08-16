@@ -1,7 +1,6 @@
 import { ActivityStream } from '@app/components/ActivityStream';
 import {
   useGetHalfYearlyDeploymentsTime,
-  // useGetMonthlyDeploymentChart,
   useGetMonthlyDeploymentChartWithEphemeral,
   useGetMonthlyDeploymentsTime,
   useGetQuarterlyDeploymentsTime,
@@ -22,14 +21,13 @@ import {
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useRouter } from 'next/router';
-// import { useMemo } from 'react';
+
 import toast from 'react-hot-toast';
 import SimpleBarReact from 'simplebar-react';
 import 'simplebar/src/simplebar.css';
 
 const TotalDeploymentCardFields = ['Dev', 'QA', 'Stage', 'Prod'];
 const DeploymentTimeFrames = ['30 days', '90 days', '180 days', '365 days'];
-// const DATE_FORMAT = 'DD MMM';
 
 interface DashboardProps {
   type: string;
@@ -39,7 +37,7 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
   const propertyIdentifier = router.query.propertyIdentifier as string;
   const spaProperty = router.query.spaProperty as string;
   const deploymentCount = useGetTotalDeploymentsForApps(propertyIdentifier);
-  // const monthlyDeployChart = useGetMonthlyDeploymentChart(propertyIdentifier, spaProperty);
+
   if (deploymentCount.isError === true) {
     toast.error(`Sorry cannot find ${spaProperty}`);
     router.push(`/properties/${propertyIdentifier}`);
