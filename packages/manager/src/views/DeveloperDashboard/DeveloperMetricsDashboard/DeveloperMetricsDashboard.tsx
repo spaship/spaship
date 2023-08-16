@@ -1,16 +1,9 @@
-import { useGeTotalSavingsByDevelopers } from '@app/services/developerDashboard';
-import {
-  Chart,
-  ChartAxis,
-  ChartBar,
-  ChartGroup,
-  ChartThemeColor,
-  ChartVoronoiContainer
-} from '@patternfly/react-charts';
 import { useGetTotalTimeSavedForLogin } from '@app/services/analytics';
+import { useGeTotalSavingsByDevelopers } from '@app/services/developerDashboard';
 import { Card, CardBody, CardTitle, Grid, GridItem, Skeleton, Text } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import dayjs from 'dayjs';
+import ReactHighcharts from 'react-highcharts';
 
 const DATE_FORMAT = 'MMM YY';
 export const DeveloperMetricsDashboard = (): JSX.Element => {
@@ -29,19 +22,40 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
     totalCostSaved: 'Total cost saved'
   };
 
-  const maxCount = hoursSaved?.data?.monthlyAnalytics.reduce(
-    (maxValue, currentItem) =>
-      currentItem.totalDeploymentCount > maxValue ? currentItem.totalDeploymentCount : maxValue,
-    0
+  const BarData = {
+    name: 'Deployment count per month',
+    data: hoursSaved?.data?.monthlyAnalytics.map((item) => item.totalDeploymentCount),
+    type: 'column'
+  };
+  const LineData = {
+    name: 'Total deployment hours saved per month (hr)',
+    data: hoursSaved?.data?.monthlyAnalytics.map((item) => item.totalDeploymentHoursSaved),
+    type: 'line'
+  };
+  const MonthData = hoursSaved?.data?.monthlyAnalytics.map((item) =>
+    dayjs(item.startDate).format(DATE_FORMAT)
   );
-  const chartData = hoursSaved?.data?.monthlyAnalytics.map((item) => ({
-    name: dayjs(item.startDate).format(DATE_FORMAT),
-    totalDeploymentHoursSaved: item.totalDeploymentHoursSaved,
-    totalDeploymentCount: item.totalDeploymentCount
-  }));
+  const config = {
+    chart: { height: '285px', type: 'column' },
+
+    title: {
+      text: 'Deployment hours saved per month'
+    },
+
+    xAxis: {
+      categories: MonthData
+    },
+    yAxis: {
+      title: {
+        text: 'Count'
+      }
+    },
+    series: [BarData, LineData],
+    colors: ['#06C', '#4CB140']
+  };
+
   const totalTimeSaved = useGetTotalTimeSavedForLogin();
 
-  const colors = ['#06C', '#4CB140'];
   return (
     <>
       <Grid hasGutter className="pf-u-p-md" style={{ backgroundColor: '#F0F0F0' }}>
@@ -107,56 +121,9 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
 
         <GridItem span={9}>
           <Card>
-            <CardTitle> Deployment hours saved per month</CardTitle>
             <CardBody>
-              <div style={{ height: '250px' }}>
-                <Chart
-                  containerComponent={
-                    <ChartVoronoiContainer
-                      labels={({ datum }) => `${datum.name}: ${datum.totalCostSaved}`}
-                      activateLabels
-                    />
-                  }
-                  themeColor={ChartThemeColor.multiOrdered}
-                  domain={{ y: [0, maxCount || 0] }}
-                  domainPadding={{ x: [30, 30] }}
-                  legendData={[
-                    { name: 'Deployment count per month' },
-                    { name: 'Total deployment hours saved per month (hr)' }
-                  ]}
-                  legendOrientation="horizontal"
-                  legendPosition="bottom"
-                  height={200}
-                  name="chart1"
-                  padding={{
-                    bottom: 60,
-                    left: 70,
-                    right: 10, // Adjusted to accommodate legend
-                    top: 10
-                  }}
-                  width={950}
-                >
-                  <ChartAxis tickFormat={(d) => d} />
-                  <ChartAxis dependentAxis showGrid />
-                  <ChartGroup
-                    offset={15} /* Adjust offset to create space between bars and labels */
-                  >
-                    <ChartBar
-                      data={chartData}
-                      x="name"
-                      y="totalDeploymentCount"
-                      style={{ data: { fill: colors[1] } }}
-                      barWidth={15} // Adjust the bar width for better spacing
-                    />
-                    <ChartBar
-                      data={chartData}
-                      x="name"
-                      y="totalDeploymentHoursSaved"
-                      style={{ data: { fill: colors[0] } }}
-                      barWidth={15} // Adjust the bar width for better spacing
-                    />
-                  </ChartGroup>
-                </Chart>
+              <div>
+                <ReactHighcharts config={config as any} />
               </div>
             </CardBody>
           </Card>
