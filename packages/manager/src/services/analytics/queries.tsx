@@ -140,24 +140,29 @@ export const useGetMonthlyDeploymentChart = (webProperty: string, spaName?: stri
 
 const fetchMonthlyDeploymentChartWithEphemeral = async (
   propertyIdentifier?: string,
+  applicationIdentifier?: string,
   previous?: string
 ): Promise<Record<string, TSPAMonthlyDeploymentChart[]>> => {
   const { data } = await orchestratorReq.get('/analytics/deployment/env/month', {
     params: {
       propertyIdentifier,
+      applicationIdentifier,
       previous
     }
   });
+
   return data.data;
 };
 
 export const useGetMonthlyDeploymentChartWithEphemeral = (
   propertyIdentifier?: string,
+  applicationIdentifier?: string,
   previous?: string
 ) =>
   useQuery({
     queryKey: analyticsKeys.spaMonthyDeploymentChartWithEphemeral,
-    queryFn: () => fetchMonthlyDeploymentChartWithEphemeral(propertyIdentifier, previous),
+    queryFn: () =>
+      fetchMonthlyDeploymentChartWithEphemeral(propertyIdentifier, applicationIdentifier, previous),
     select: (data: {
       qa?: IDeploymentData[];
       stage?: IDeploymentData[];
@@ -197,17 +202,23 @@ export const useGetMonthlyDeploymentChartWithEphemeral = (
   });
 
 const fetchTotalDeployment = async (
-  propertyIdentifier?: string
+  propertyIdentifier?: string,
+  applicationIdentifier?: string
 ): Promise<TSPADeploymentCount[]> => {
   const { data } = await orchestratorReq.get('analytics/deployment/env', {
-    params: { propertyIdentifier }
+    params: { propertyIdentifier, applicationIdentifier }
   });
 
   return data.data;
 };
 
-export const useGetTotalDeployments = (propertyIdentifier?: string) =>
-  useQuery(analyticsKeys.spaDeployments(''), () => fetchTotalDeployment(propertyIdentifier));
+export const useGetTotalDeployments = (
+  propertyIdentifier?: string,
+  applicationIdentifier?: string
+) =>
+  useQuery(analyticsKeys.spaDeployments(''), () =>
+    fetchTotalDeployment(propertyIdentifier, applicationIdentifier)
+  );
 
 const fetchTotalMonthlyDeploymentTime = async (
   propertyIdentifier?: string
