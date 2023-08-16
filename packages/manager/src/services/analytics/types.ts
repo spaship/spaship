@@ -5,6 +5,8 @@ export type TDeploymentCount = {
 };
 export type TTotalTimeSaved = {
   timeSavedInHours: number;
+  averageTime: number;
+  deploymentCount: number;
 };
 export type TWebPropActivityStream = {
   propertyIdentifier: string;

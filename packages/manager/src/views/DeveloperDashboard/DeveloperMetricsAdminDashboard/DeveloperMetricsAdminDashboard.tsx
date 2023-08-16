@@ -1,15 +1,8 @@
 import { useGeTotalSavingsByDevelopersForAdmin } from '@app/services/developerDashboard';
-import {
-  Chart,
-  ChartAxis,
-  ChartBar,
-  ChartGroup,
-  ChartThemeColor,
-  ChartVoronoiContainer
-} from '@patternfly/react-charts';
 import { Card, CardBody, CardTitle, Grid, GridItem, Skeleton, Text } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import dayjs from 'dayjs';
+import ReactHighcharts from 'react-highcharts';
 
 const DATE_FORMAT = 'MMM YY';
 export const DeveloperMetricsAdminDashboard = (): JSX.Element => {
@@ -34,18 +27,38 @@ export const DeveloperMetricsAdminDashboard = (): JSX.Element => {
     0
   );
 
-  const maxCount = hoursSaved?.data?.monthlyAnalytics.reduce(
-    (maxValue, currentItem) =>
-      currentItem.totalCostSaved > maxValue ? currentItem.totalCostSaved : maxValue,
-    0
+  const BarData = {
+    name: 'Deployment count per month',
+    data: hoursSaved?.data?.monthlyAnalytics.map((item) => item.totalDeploymentCount),
+    type: 'column'
+  };
+  const LineData = {
+    name: 'Total deployment hours saved per month (hr)',
+    data: hoursSaved?.data?.monthlyAnalytics.map((item) => item.totalDeploymentHoursSaved),
+    type: 'line'
+  };
+  const MonthData = hoursSaved?.data?.monthlyAnalytics.map((item) =>
+    dayjs(item.startDate).format(DATE_FORMAT)
   );
-  const chartData = hoursSaved?.data?.monthlyAnalytics.map((item) => ({
-    name: dayjs(item.startDate).format(DATE_FORMAT),
-    totalCostSaved: item.totalCostSaved,
-    totalDeploymentCount: item.totalDeploymentCount
-  }));
+  const config = {
+    chart: { height: '285px', type: 'column' },
 
-  const colors = ['#06C', '#4CB140'];
+    title: {
+      text: 'Deployment hours saved per month'
+    },
+
+    xAxis: {
+      categories: MonthData
+    },
+    yAxis: {
+      title: {
+        text: 'Count'
+      }
+    },
+    series: [BarData, LineData],
+    colors: ['#06C', '#4CB140']
+  };
+
   return (
     <>
       <Grid hasGutter className="pf-u-p-md" style={{ backgroundColor: '#F0F0F0' }}>
@@ -111,56 +124,9 @@ export const DeveloperMetricsAdminDashboard = (): JSX.Element => {
 
         <GridItem span={9}>
           <Card>
-            <CardTitle> Efforts saved per month</CardTitle>
             <CardBody>
-              <div style={{ height: '250px' }}>
-                <Chart
-                  containerComponent={
-                    <ChartVoronoiContainer
-                      labels={({ datum }) => `${datum.name}: ${datum.totalCostSaved}`}
-                      activateLabels
-                    />
-                  }
-                  themeColor={ChartThemeColor.multiOrdered}
-                  domain={{ y: [0, maxCount || 0] }}
-                  domainPadding={{ x: [30, 30] }}
-                  legendData={[
-                    { name: 'Cost Saved per month ($)' },
-                    { name: 'Deployment count per month' }
-                  ]}
-                  legendOrientation="horizontal"
-                  legendPosition="bottom"
-                  height={210}
-                  name="chart1"
-                  padding={{
-                    bottom: 50,
-                    left: 70,
-                    right: 50, // Adjusted to accommodate legend
-                    top: 20
-                  }}
-                  width={1000}
-                >
-                  <ChartAxis tickFormat={(d) => d} />
-                  <ChartAxis dependentAxis showGrid />
-                  <ChartGroup
-                    offset={15} /* Adjust offset to create space between bars and labels */
-                  >
-                    <ChartBar
-                      data={chartData}
-                      x="name"
-                      y="totalCostSaved"
-                      style={{ data: { fill: colors[0] } }}
-                      barWidth={15} // Adjust the bar width for better spacing
-                    />
-                    <ChartBar
-                      data={chartData}
-                      x="name"
-                      y="totalDeploymentCount"
-                      style={{ data: { fill: colors[1] } }}
-                      barWidth={15} // Adjust the bar width for better spacing
-                    />
-                  </ChartGroup>
-                </Chart>
+              <div>
+                <ReactHighcharts config={config as any} />
               </div>
             </CardBody>
           </Card>

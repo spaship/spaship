@@ -302,7 +302,18 @@ export const useGetYearlyDeploymentsTime = (
   });
 
 const fetchTotalTimeSaved = async (): Promise<TTotalTimeSaved> => {
-  const { data } = await orchestratorReq.get('/analytics/deployment/time?save=true');
+  const { data } = await orchestratorReq.get('/analytics/deployment/time?save=true', {
+    params: { averageDeploymentTimeInSecs: 1800 }
+  });
   return data.data;
 };
 export const useGetTotalTimeSaved = () => useQuery(analyticsKeys.timeSaved, fetchTotalTimeSaved);
+
+const fetchTotalTimeSavedForLogin = async (): Promise<TTotalTimeSaved> => {
+  const { data } = await orchestratorReq.get('/analytics/deployment/time-saved', {
+    params: { averageDeploymentTimeInSecs: 1800 }
+  });
+  return data.data;
+};
+export const useGetTotalTimeSavedForLogin = () =>
+  useQuery(analyticsKeys.timeSaved, fetchTotalTimeSavedForLogin);
