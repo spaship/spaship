@@ -49,6 +49,8 @@ type Props = {
   minCount: number;
   maxCount: number;
   TotalDeploymentData: UseQueryResult<TSPADeploymentCount[]>;
+  propertyIdentifier: string;
+  applicationIdentifier: string;
 };
 
 interface Result {
@@ -64,26 +66,32 @@ export const DashboardChart = ({
   TotalMonthlyDeploymentData,
   minCount,
   maxCount,
-  TotalDeploymentData
+  TotalDeploymentData,
+  propertyIdentifier,
+  applicationIdentifier
 }: Props) => {
   const lineChartLegend = Object.keys(TotalMonthlyDeploymentData || {}).map((key) => ({
     name: key
   }));
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<string>('');
+  const [previous, setPrevious] = useState<string>('');
 
-  const { refetch } = useGetMonthlyDeploymentChartWithEphemeral('', selected);
+  const { refetch } = useGetMonthlyDeploymentChartWithEphemeral(
+    propertyIdentifier,
+    applicationIdentifier,
+    previous
+  );
 
   useEffect(() => {
     refetch();
-  }, [refetch, selected]);
+  }, [refetch, previous]);
 
   const onToggle = (isSelectOpen: boolean) => {
     setIsOpen(isSelectOpen);
   };
   const clearSelection = () => {
-    setSelected('');
+    setPrevious('');
     setIsOpen(false);
   };
 
@@ -94,7 +102,7 @@ export const DashboardChart = ({
   ) => {
     if (isPlaceholder) clearSelection();
     else {
-      setSelected(selection as string);
+      setPrevious(selection as string);
       setIsOpen(false);
     }
   };
@@ -106,7 +114,6 @@ export const DashboardChart = ({
     setActiveTabKey(tabIndex);
   };
   const sortedDeployCount = TotalDeploymentData?.data?.sort((x, y) => x.count - y.count);
-
   const donutChartAggregatedData: Result[] = sortedDeployCount?.reduce(
     (acc: Result[], { count, env }: DataItem) => {
       if (['dev', 'qa', 'stage', 'prod'].includes(env)) {
@@ -149,6 +156,15 @@ export const DashboardChart = ({
     legendValues.push({ name: item.x });
   });
 
+  const EmptyChart = (
+    <EmptyState>
+      <EmptyStateIcon icon={CubesIcon} />
+      <Title headingLevel="h4" size="lg">
+        No deployments data found
+      </Title>
+    </EmptyState>
+  );
+
   return (
     <Grid>
       <Card
@@ -174,17 +190,17 @@ export const DashboardChart = ({
               aria-label="Select Input with descriptions"
               onToggle={onToggle}
               onSelect={onSelect}
-              selections={selected}
+              selections={previous}
               isOpen={isOpen}
             >
               <SelectOption key={0} value="1" isPlaceholder>
                 Past 30 Days
               </SelectOption>
               <SelectOption key={1} value="3">
-                Past 90 Days
+                Past 3 months
               </SelectOption>
               <SelectOption key={2} value="6">
-                Past 180 Days
+                Past 6 Months
               </SelectOption>
             </Select>
           </SplitItem>
@@ -196,96 +212,126 @@ export const DashboardChart = ({
               title={<TabTitleText>Bar Chart</TabTitleText>}
               aria-label="deployment-chart"
             >
-              <Chart
-                ariaDesc="Number of deployments per env"
-                ariaTitle="Number of deployments per env"
-                containerComponent={
-                  <ChartVoronoiContainer
-                    labels={({ datum }) => `${datum.name}: ${datum.y}`}
-                    constrainToVisibleArea
-                  />
-                }
-                domain={{ y: [0, maxCount + (maxCount - minCount) * 0.2] }}
-                minDomain={{ y: 0 }}
-                domainPadding={{ x: [50, 25] }}
-                legendData={lineChartLegend}
-                legendOrientation="vertical"
-                legendPosition="right"
-                height={300}
-                name="chart1"
-                padding={{
-                  bottom: 50,
-                  left: 50,
-                  right: 150,
-                  top: 50
-                }}
-                width={700}
-                themeColor={ChartThemeColor.multiUnordered}
-              >
-                <ChartAxis />
-                <ChartAxis dependentAxis showGrid />
-                <ChartGroup offset={17}>
-                  {lineChartLegend.map(({ name }) => {
-                    const chartData = (TotalMonthlyDeploymentData?.[name] || [])
-                      .sort(
-                        (a, b) => new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf()
-                      )
-                      .map(({ count, startDate, endDate }) => ({
-                        name,
-                        x: `${dayjs(startDate).format(DATE_FORMAT)} - ${dayjs(endDate).format(
-                          DATE_FORMAT
-                        )}`,
-                        y: count
-                      }));
-                    return <ChartBar key={`key-${name}`} barWidth={15} data={chartData} />;
-                  })}
-                </ChartGroup>
-              </Chart>
+              {lineChartLegend.some(
+                ({ name }) => TotalMonthlyDeploymentData?.[name]?.length > 0
+              ) ? (
+                <Chart
+                  ariaDesc="Number of deployments per env"
+                  ariaTitle="Number of deployments per env"
+                  containerComponent={
+                    <ChartVoronoiContainer
+                      labels={({ datum }) => `${datum.name}: ${datum.y}`}
+                      constrainToVisibleArea
+                    />
+                  }
+                  domain={{ y: [0, maxCount + (maxCount - minCount) * 0.2] }}
+                  minDomain={{ y: 0 }}
+                  domainPadding={{ x: [50, 25] }}
+                  legendData={lineChartLegend}
+                  legendOrientation="vertical"
+                  legendPosition="right"
+                  height={300}
+                  name="chart1"
+                  padding={{
+                    bottom: 50,
+                    left: 50,
+                    right: 150,
+                    top: 50
+                  }}
+                  width={700}
+                  themeColor={ChartThemeColor.multiUnordered}
+                >
+                  <ChartAxis />
+                  <ChartAxis dependentAxis showGrid />
+
+                  <ChartGroup offset={17}>
+                    {lineChartLegend.map(({ name }) => {
+                      const chartData = (TotalMonthlyDeploymentData?.[name] || [])
+                        .sort(
+                          (a, b) =>
+                            new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf()
+                        )
+                        .map(({ count, startDate, endDate }) => {
+                          const xLabel =
+                            TotalMonthlyDeploymentData?.[name]?.length <= 3
+                              ? `${dayjs(startDate).format(DATE_FORMAT)} - ${dayjs(endDate).format(
+                                  DATE_FORMAT
+                                )}`
+                              : dayjs(startDate).format('MMM');
+                          return {
+                            name,
+                            x: xLabel,
+                            y: count
+                          };
+                        });
+
+                      return <ChartBar key={`key-${name}`} barWidth={15} data={chartData} />;
+                    })}
+                  </ChartGroup>
+                </Chart>
+              ) : (
+                EmptyChart
+              )}
             </Tab>
             <Tab eventKey={1} title={<TabTitleText>Line Chart</TabTitleText>}>
-              <Chart
-                ariaDesc="Line chart for no of deployments/env"
-                containerComponent={
-                  <ChartVoronoiContainer
-                    labels={({ datum }) => `${datum.name}: ${datum.y}`}
-                    constrainToVisibleArea
-                  />
-                }
-                legendData={lineChartLegend}
-                legendOrientation="vertical"
-                legendPosition="right"
-                height={300}
-                name="chart1"
-                maxDomain={{ y: maxCount + (maxCount - minCount) * 0.2 }}
-                minDomain={{ y: 0 }}
-                padding={{
-                  bottom: 50,
-                  left: 50,
-                  right: 150,
-                  top: 50
-                }}
-                themeColor={ChartThemeColor.multiUnordered}
-                width={700}
-              >
-                <ChartAxis />
-                <ChartAxis dependentAxis showGrid tickFormat={(x) => Number(x)} />
-                <ChartGroup>
-                  {lineChartLegend.map(({ name }) => {
-                    const chartData = (TotalMonthlyDeploymentData?.[name] || [])
-                      .sort(
-                        (a, b) => new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf()
-                      )
-                      .map(({ count, startDate, endDate }) => ({
-                        name,
-                        x: `${dayjs(startDate).format(DATE_FORMAT)} - ${dayjs(endDate).format(
-                          DATE_FORMAT
-                        )}`,
-                        y: count
-                      }));
-                    return <ChartLine key={`key-${name}`} data={chartData} />;
-                  })}
-                </ChartGroup>
-              </Chart>
+              {lineChartLegend.some(
+                ({ name }) => TotalMonthlyDeploymentData?.[name]?.length > 0
+              ) ? (
+                <Chart
+                  ariaDesc="Line chart for no of deployments/env"
+                  containerComponent={
+                    <ChartVoronoiContainer
+                      labels={({ datum }) => `${datum.name}: ${datum.y}`}
+                      constrainToVisibleArea
+                    />
+                  }
+                  legendData={lineChartLegend}
+                  legendOrientation="vertical"
+                  legendPosition="right"
+                  height={300}
+                  name="chart1"
+                  maxDomain={{ y: maxCount + (maxCount - minCount) * 0.2 }}
+                  minDomain={{ y: 0 }}
+                  padding={{
+                    bottom: 50,
+                    left: 50,
+                    right: 150,
+                    top: 50
+                  }}
+                  themeColor={ChartThemeColor.multiUnordered}
+                  width={700}
+                >
+                  <ChartAxis />
+                  <ChartAxis dependentAxis showGrid tickFormat={(x) => Number(x)} />
+                  <ChartGroup>
+                    {lineChartLegend.map(({ name }) => {
+                      const chartData = (TotalMonthlyDeploymentData?.[name] || [])
+                        .sort(
+                          (a, b) =>
+                            new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf()
+                        )
+                        .map(({ count, startDate, endDate }) => {
+                          const xLabel =
+                            TotalMonthlyDeploymentData?.[name]?.length <= 3
+                              ? `${dayjs(startDate).format(DATE_FORMAT)} - ${dayjs(endDate).format(
+                                  DATE_FORMAT
+                                )}`
+                              : dayjs(startDate).format('MMM');
+
+                          return {
+                            name,
+                            x: xLabel,
+                            y: count
+                          };
+                        });
+
+                      return <ChartLine key={`key-${name}`} data={chartData} />;
+                    })}
+                  </ChartGroup>
+                </Chart>
+              ) : (
+                EmptyChart
+              )}
             </Tab>
           </Tabs>
         </CardBody>
@@ -314,30 +360,35 @@ export const DashboardChart = ({
               </Title>
             </EmptyState>
           )}
-          {TotalDeploymentData.isSuccess && (
-            <div style={{ height: '250px', width: '350px' }}>
-              <ChartDonut
-                ariaTitle="Number of deployments per env"
-                constrainToVisibleArea
-                data={donutChartAggregatedData}
-                labels={({ datum }) => `${datum.x}: ${datum.y}%`}
-                legendData={legendValues}
-                legendOrientation="vertical"
-                legendPosition="right"
-                name="monthly-deployment"
-                padding={{
-                  bottom: 20,
-                  left: 20,
-                  right: 140,
-                  top: 20
-                }}
-                subTitle="Deployments"
-                title={`${donutChartData.total}`}
-                themeColor={ChartThemeColor.multiOrdered}
-                width={350}
-              />
-            </div>
-          )}
+
+          {donutChartAggregatedData?.length === 1 &&
+          donutChartAggregatedData &&
+          donutChartAggregatedData[0]?.y === 0
+            ? EmptyChart
+            : TotalDeploymentData.isSuccess && (
+                <div style={{ height: '250px', width: '350px' }}>
+                  <ChartDonut
+                    ariaTitle="Number of deployments per env"
+                    constrainToVisibleArea
+                    data={donutChartAggregatedData}
+                    labels={({ datum }) => `${datum.x}: ${datum.y}`}
+                    legendData={legendValues}
+                    legendOrientation="vertical"
+                    legendPosition="right"
+                    name="monthly-deployment"
+                    padding={{
+                      bottom: 20,
+                      left: 20,
+                      right: 140,
+                      top: 20
+                    }}
+                    subTitle="Deployments"
+                    title={`${donutChartData.total}`}
+                    themeColor={ChartThemeColor.multiOrdered}
+                    width={350}
+                  />
+                </div>
+              )}
         </CardBody>
       </Card>
     </Grid>

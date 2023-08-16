@@ -209,22 +209,6 @@ body {
   height: 500px !important;
 }
 
-.dashboard-card {
-  color: #06c;
-  font-family: 'REDHATDISPLAY';
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 37px; /* 154.167% */
-}
-
-.dashboard-card-subheadings {
-  color: #151515;
-  font-family: 'RedHatText';
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 500;
-}
 .activityStream {
   font-weight: 400;
   font-family: 'RedHatText';
