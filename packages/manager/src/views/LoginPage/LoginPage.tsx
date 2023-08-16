@@ -1,13 +1,14 @@
-import { useEffect } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import Router from 'next/router';
+import { useEffect } from 'react';
 
+import { env } from '@app/config/env';
+import { useToggle } from '@app/hooks';
+import { pageLinks } from '@app/links';
+import { useGetTotalTimeSavedForLogin } from '@app/services/analytics';
 import {
   Bullseye,
   Button,
-  Card,
-  CardBody,
-  CardTitle,
   Flex,
   FlexItem,
   Page,
@@ -17,11 +18,6 @@ import {
   Title,
   TitleSizes
 } from '@patternfly/react-core';
-
-import { useToggle } from '@app/hooks';
-import { pageLinks } from '@app/links';
-import { env } from '@app/config/env';
-
 import { Nav } from './components/Nav';
 
 export const LoginPage = (): JSX.Element => {
@@ -41,6 +37,8 @@ export const LoginPage = (): JSX.Element => {
     });
   };
 
+  const totalTimeSaved = useGetTotalTimeSavedForLogin();
+
   return (
     <Page header={<Nav />}>
       <PageSection>
@@ -50,59 +48,100 @@ export const LoginPage = (): JSX.Element => {
           </Bullseye>
         ) : (
           <Flex
-            justifyContent={{ default: 'justifyContentSpaceEvenly' }}
+            justifyContent={{ default: 'justifyContentCenter' }}
             alignItems={{ default: 'alignItemsCenter' }}
-            style={{ marginTop: '10rem' }}
+            style={{ marginTop: '8%' }}
           >
-            <FlexItem style={{ width: '500px' }}>
-              {Boolean(env.PUBLIC_SPASHIP_INTRO_VIDEO_URL) && (
-                <iframe
-                  src={env.PUBLIC_SPASHIP_INTRO_VIDEO_URL}
-                  title="spaship-intro"
-                  className="pf-u-w-100 pf-u-mb-md rounded-sm"
-                  style={{
-                    height: '200px',
-                    backgroundColor: '#025891',
-                    border: 'hidden'
-                  }}
-                  allowFullScreen
-                />
-              )}
-              <Title headingLevel="h1" size={TitleSizes['4xl']} style={{ fontSize: '2.4rem' }}>
-                develop fast ·{' '}
-                <span
-                  style={{
-                    color: 'var(--spaship-global--Color--solar-orange)',
-                    backgroundColor: 'var(--spaship-global--Color--black)',
-                    padding: '0.2rem 0.5rem',
-                    borderRadius: '4px'
-                  }}
-                >
-                  deploy faster
-                </span>
+            <FlexItem>
+              <Title headingLevel="h6" style={{ fontSize: '2.4rem', fontWeight: '100' }}>
+                Develop fast
               </Title>
-              <Text className="pf-u-mt-sm pf-u-color-400">
+              <Title headingLevel="h1" size={TitleSizes['4xl']} style={{ fontSize: '2.4rem' }}>
+                Deploy faster
+              </Title>
+              <Text className="pf-u-mt-lg pf-u-mb-lg pf-u-color-100" style={{ width: '400px' }}>
                 SPAship is a open source platform for deploying, integrating, and managing
                 single-page apps (SPAs).
               </Text>
-            </FlexItem>
-            <FlexItem flex={{ default: 'flex_1' }} style={{ maxWidth: '320px' }}>
-              <Card>
-                <CardTitle>Sign in with</CardTitle>
-                <CardBody>
-                  <Button
-                    isBlock
-                    isLoading={isLoggingIn}
-                    isDisabled={isLoggingIn}
-                    onClick={(event) => {
-                      event.preventDefault(); // Prevent default button click behavior
-                      onLogin(); // Call the login function
-                    }}
+
+              <Flex
+                className="pf-u-mt-lg pf-u-mb-lg"
+                alignItems={{ default: 'alignItemsFlexStart' }}
+              >
+                <FlexItem>
+                  <Flex
+                    alignItems={{ default: 'alignItemsFlexStart' }}
+                    style={{ marginRight: '0px' }}
                   >
-                    Red Hat SSO
-                  </Button>
-                </CardBody>
-              </Card>
+                    <FlexItem style={{ margin: '0px' }}>
+                      <img src="/img/avg-time-deploy.svg" alt="logo" />
+                    </FlexItem>
+                    <FlexItem style={{ margin: '0px' }}>
+                      <Text style={{ fontWeight: 900, fontSize: 'larger' }}>
+                        {totalTimeSaved?.data?.averageTime ?? 0}s
+                      </Text>
+                      <Text style={{ fontSize: 'small' }}>Avg. time to deploy</Text>
+                    </FlexItem>
+                  </Flex>
+                </FlexItem>
+                <FlexItem>
+                  <Flex alignItems={{ default: 'alignItemsFlexStart' }}>
+                    <FlexItem style={{ margin: '0px' }}>
+                      {' '}
+                      <img src="/img/hours_saved.svg" alt="logo" />
+                    </FlexItem>
+                    <FlexItem style={{ margin: '0px' }}>
+                      <Text style={{ fontWeight: 900, fontSize: 'larger' }}>
+                        {totalTimeSaved?.data?.timeSavedInHours ?? 0} hrs+
+                      </Text>
+                      <Text style={{ fontSize: 'small' }}>Hours Saved</Text>
+                    </FlexItem>
+                  </Flex>
+                </FlexItem>
+
+                <FlexItem>
+                  <Flex alignItems={{ default: 'alignItemsFlexStart' }}>
+                    <FlexItem style={{ margin: '0px' }}>
+                      {' '}
+                      <img src="/img/number-of-deployments.svg" alt="logo" />
+                    </FlexItem>
+                    <FlexItem style={{ margin: '0px' }}>
+                      <Text style={{ fontWeight: 900, fontSize: 'larger' }}>
+                        {totalTimeSaved?.data?.deploymentCount ?? 0}
+                      </Text>
+                      <Text style={{ fontSize: 'small' }}>No of deployments</Text>
+                    </FlexItem>
+                  </Flex>
+                </FlexItem>
+              </Flex>
+              <Button
+                style={{ width: '40%', display: 'inline-block' }}
+                className="pf-u-mr-md"
+                isBlock
+                isLoading={isLoggingIn}
+                isDisabled={isLoggingIn}
+                onClick={(event) => {
+                  event.preventDefault(); // Prevent default button click behavior
+                  onLogin(); // Call the login function
+                }}
+                variant="primary"
+              >
+                Red Hat SSO
+              </Button>
+              <Button
+                className="pf-u-mr-md"
+                component="a"
+                variant="secondary"
+                aria-label="Documentation"
+                href={env.PUBLIC_DOC_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Documentation
+              </Button>
+            </FlexItem>
+            <FlexItem style={{ width: '400px' }}>
+              <img src="/img/login.svg" alt="login logo" />
             </FlexItem>
           </Flex>
         )}

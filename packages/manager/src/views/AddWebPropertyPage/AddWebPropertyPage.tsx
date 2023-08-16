@@ -199,7 +199,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
                     fieldId="property-env"
                     validated={error ? 'error' : 'default'}
                     helperTextInvalid={error?.message}
-                    helperText="The CMDB code can only consist of letters, numbers, and dashes."
+                    helperText="Environment Name shouldn't contain any space, numbers, special-character "
                   >
                     <TextInput
                       isRequired
