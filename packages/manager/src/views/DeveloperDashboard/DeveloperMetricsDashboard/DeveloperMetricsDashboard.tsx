@@ -217,7 +217,7 @@ export const DeveloperMetricsDashboard = (): JSX.Element => {
                         textCenter
                         modifier="wrap"
                         info={{
-                          tooltip: ' * Total deploymet hours saved'
+                          tooltip: 'Developer hourly Rate ($) * Total deploymet hours saved'
                         }}
                       >
                         {columnNames.totalCostSaved} ($)
