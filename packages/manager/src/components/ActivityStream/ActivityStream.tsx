@@ -1,5 +1,5 @@
-/* eslint-disable react/jsx-key */
-/* eslint-disable no-underscore-dangle */
+/* eslint-disable react/jsx-key, no-underscore-dangle, react/require-default-props */
+
 import { useFormatDate } from '@app/hooks';
 import { useGetWebPropActivityStream } from '@app/services/analytics';
 import { TWebPropActivityStream } from '@app/services/analytics/types';
@@ -43,111 +43,13 @@ const activities = {
     isGlobal
   }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
-      <span style={{ fontWeight: '600' }}>Deployment complete</span> for{' '}
-      {isGlobal ? propertyIdentifier : ''}{' '}
+      <span style={{ fontWeight: '600' }}>Deployment complete</span> for property :{' '}
+      <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
       <span style={{ fontWeight: '600' }}>{props.env} </span> environment within{' '}
       {message.split(' ')[3]}s{' '}
-      <Link
-        href={{
-          pathname: '/properties/[propertyIdentifier]/[spaProperty]',
-          query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
-        }}
-      >
-        view details
-      </Link>
-    </Text>
-  ),
-
-  APPLICATION_DEPLOYMENT_STARTED: ({
-    props,
-    propertyIdentifier
-  }: TWebPropActivityStream): JSX.Element => (
-    <Text className="activityStream">
-      <span style={{ fontWeight: '600' }}>Deployment started</span> for {propertyIdentifier}{' '}
-      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
-      <Link
-        href={{
-          pathname: '/properties/[propertyIdentifier]/[spaProperty]',
-          query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
-        }}
-      >
-        view details
-      </Link>
-    </Text>
-  ),
-  APPLICATION_DEPLOYMENT_PROCESSING: ({
-    props,
-    propertyIdentifier
-  }: TWebPropActivityStream): JSX.Element => (
-    <Text className="activityStream">
-      <span style={{ fontWeight: '600' }}>Deployment processing</span> for {propertyIdentifier}{' '}
-      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
-      <Link
-        href={{
-          pathname: '/properties/[propertyIdentifier]/[spaProperty]',
-          query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
-        }}
-      >
-        view details
-      </Link>
-    </Text>
-  ),
-  APPLICATION_DEPLOYMENT_FAILED: ({
-    props,
-    propertyIdentifier
-  }: TWebPropActivityStream): JSX.Element => (
-    // "message": "NA",
-    <Text className="activityStream">
-      <span style={{ fontWeight: '600' }}>Deployment Failed</span> for {propertyIdentifier}{' '}
-      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
-      <Link
-        href={{
-          pathname: '/properties/[propertyIdentifier]/[spaProperty]',
-          query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
-        }}
-      >
-        view details
-      </Link>
-    </Text>
-  ),
-
-  APPLICATION_DEPLOYMENT_TIMEOUT: ({
-    props,
-    propertyIdentifier
-  }: TWebPropActivityStream): JSX.Element => (
-    //  "message": "Deployment Timeout [product360-catalog-product360-catalog-staging-2] [Workflow 3.0]",
-    <Text className="activityStream">
-      <span style={{ fontWeight: '600' }}>Deployment Timeout</span> for {propertyIdentifier}{' '}
-      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
-      <Link
-        href={{
-          pathname: '/properties/[propertyIdentifier]/[spaProperty]',
-          query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
-        }}
-      >
-        view details
-      </Link>
-    </Text>
-  ),
-  APPLICATION_BUILD_STARTED: ({
-    props,
-    propertyIdentifier,
-    payload
-  }: TWebPropActivityStream): JSX.Element => {
-    const buildId = payload === 'NA' ? '' : JSON.parse(payload).buildName;
-    return (
-      <Text className="activityStream">
-        <span style={{ fontWeight: '600' }}>Build started </span>with{' '}
-        <span style={{ fontWeight: '600' }}> ID : {buildId}</span> for {propertyIdentifier}{' '}
-        <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-        <span style={{ fontWeight: '600' }}>{props.env} </span> environment{' '}
+      {isGlobal && (
         <Link
-          style={{ textDecoration: 'underline' }}
           href={{
             pathname: '/properties/[propertyIdentifier]/[spaProperty]',
             query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
@@ -155,13 +57,134 @@ const activities = {
         >
           view details
         </Link>
+      )}
+    </Text>
+  ),
+
+  APPLICATION_DEPLOYMENT_STARTED: ({
+    props,
+    propertyIdentifier,
+    isGlobal
+  }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Deployment started</span> for property :{' '}
+      <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+      {isGlobal && (
+        <Link
+          href={{
+            pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+            query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+          }}
+        >
+          view details
+        </Link>
+      )}
+    </Text>
+  ),
+  APPLICATION_DEPLOYMENT_PROCESSING: ({
+    props,
+    propertyIdentifier,
+    isGlobal
+  }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Deployment processing</span> for property :{' '}
+      <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+      {isGlobal && (
+        <Link
+          href={{
+            pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+            query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+          }}
+        >
+          view details
+        </Link>
+      )}
+    </Text>
+  ),
+  APPLICATION_DEPLOYMENT_FAILED: ({
+    props,
+    propertyIdentifier,
+    isGlobal
+  }: TWebPropActivityStream): JSX.Element => (
+    // "message": "NA",
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Deployment Failed</span> for property :{' '}
+      <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+      {isGlobal && (
+        <Link
+          href={{
+            pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+            query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+          }}
+        >
+          view details
+        </Link>
+      )}
+    </Text>
+  ),
+
+  APPLICATION_DEPLOYMENT_TIMEOUT: ({
+    props,
+    propertyIdentifier,
+    isGlobal
+  }: TWebPropActivityStream): JSX.Element => (
+    //  "message": "Deployment Timeout [product360-catalog-product360-catalog-staging-2] [Workflow 3.0]",
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Deployment Timeout</span> for property :{' '}
+      <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+      {isGlobal && (
+        <Link
+          href={{
+            pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+            query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+          }}
+        >
+          view details
+        </Link>
+      )}
+    </Text>
+  ),
+  APPLICATION_BUILD_STARTED: ({
+    props,
+    propertyIdentifier,
+    isGlobal,
+    payload
+  }: TWebPropActivityStream): JSX.Element => {
+    const buildId = payload === 'NA' ? '' : JSON.parse(payload).buildName;
+    return (
+      <Text className="activityStream">
+        <span style={{ fontWeight: '600' }}>Build started </span>with{' '}
+        <span style={{ fontWeight: '600' }}> ID : {buildId}</span> for property :{' '}
+        <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
+        <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+        <span style={{ fontWeight: '600' }}>{props.env} </span> environment{' '}
+        {isGlobal && (
+          <Link
+            style={{ textDecoration: 'underline' }}
+            href={{
+              pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+              query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+            }}
+          >
+            view details
+          </Link>
+        )}
       </Text>
     );
   },
   APPLICATION_BUILD_FINISHED: ({
     props,
     message,
-    propertyIdentifier
+    propertyIdentifier,
+    isGlobal
   }: TWebPropActivityStream): JSX.Element => {
     const buildId = extractBuildIdFromMessage(message);
 
@@ -172,52 +195,81 @@ const activities = {
         <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
         <span style={{ fontWeight: '600' }}>{props.env} </span> environment within{' '}
         {message.split(' ')[3]} s
-        <Link
-          href={{
-            pathname: '/properties/[propertyIdentifier]/[spaProperty]',
-            query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
-          }}
-        >
-          view details
-        </Link>
+        {isGlobal && (
+          <Link
+            href={{
+              pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+              query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+            }}
+          >
+            view details
+          </Link>
+        )}
       </Text>
     );
   },
   APPLICATION_BUILD_FAILED: ({
     props,
     message,
-    propertyIdentifier
+    propertyIdentifier,
+    isGlobal
   }: TWebPropActivityStream): JSX.Element => {
     const buildId = extractBuildIdFromMessage(message);
     return (
       <Text className="activityStream">
         <span style={{ fontWeight: '600' }}> Build failed </span> with{' '}
-        <span style={{ fontWeight: '600' }}>ID : {buildId}</span> for {propertyIdentifier}{' '}
+        <span style={{ fontWeight: '600' }}>ID : {buildId}</span> for property :{' '}
+        <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
         <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
         <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
-        <Link
-          href={{
-            pathname: '/properties/[propertyIdentifier]/[spaProperty]',
-            query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
-          }}
-        >
-          view details
-        </Link>
+        {isGlobal && (
+          <Link
+            href={{
+              pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+              query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+            }}
+          >
+            view details
+          </Link>
+        )}
       </Text>
     );
   },
   APPLICATION_BUILD_TERMINATED: ({
     props,
     propertyIdentifier,
+    isGlobal,
     message
   }: TWebPropActivityStream): JSX.Element => {
     const buildId = extractBuildIdFromMessage(message);
     return (
       <Text className="activityStream">
         <span style={{ fontWeight: '600' }}> Build terminated </span> with{' '}
-        <span style={{ fontWeight: '600' }}>ID : {buildId}</span> for {propertyIdentifier}{' '}
+        <span style={{ fontWeight: '600' }}>ID : {buildId}</span> for property :{' '}
+        <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
         <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
         <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+        {isGlobal && (
+          <Link
+            href={{
+              pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+              query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+            }}
+          >
+            view details
+          </Link>
+        )}
+      </Text>
+    );
+  },
+  PROPERTY_CREATED: ({
+    props,
+    propertyIdentifier,
+    isGlobal
+  }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}> Property : {propertyIdentifier} </span> has been created.{' '}
+      {isGlobal && (
         <Link
           href={{
             pathname: '/properties/[propertyIdentifier]/[spaProperty]',
@@ -226,31 +278,20 @@ const activities = {
         >
           view details
         </Link>
-      </Text>
-    );
-  },
-  PROPERTY_CREATED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
-    <Text className="activityStream">
-      <span style={{ fontWeight: '600' }}> {propertyIdentifier} </span> has been created.{' '}
-      <Link
-        href={{
-          pathname: '/properties/[propertyIdentifier]/[spaProperty]',
-          query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
-        }}
-      >
-        view details
-      </Link>
+      )}
     </Text>
   ),
   APIKEY_CREATED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
-      <span style={{ fontWeight: '600' }}> API key created </span> for {propertyIdentifier} for{' '}
+      <span style={{ fontWeight: '600' }}> API key created </span> for property :{' '}
+      <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> for{' '}
       <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
     </Text>
   ),
   APIKEY_DELETED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
-      <span style={{ fontWeight: '600' }}> API key deleted </span> for {propertyIdentifier} for{' '}
+      <span style={{ fontWeight: '600' }}> API key deleted </span> for property :{' '}
+      <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span>for{' '}
       <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
     </Text>
   ),
@@ -312,6 +353,7 @@ export const ActivityStream = ({
   propertyIdentifier = '',
   applicationIdentifier = '',
   action,
+
   isGlobal = false
 }: Props): JSX.Element => {
   const { isLoading, isSuccess, data, isFetchingNextPage, fetchNextPage } =
@@ -328,7 +370,7 @@ export const ActivityStream = ({
     <>
       {isLoading && <Spinner isSVG aria-label="Activity stream loading" />}
       {isSuccess &&
-        data.pages?.map((page) =>
+        data?.pages?.map((page) =>
           page.map((activity: TWebPropActivityStream) => {
             const modifiedActivity = { ...activity, isGlobal };
 
@@ -416,5 +458,6 @@ ActivityStream.defaultProps = {
   propertyIdentifier: '',
   applicationIdentifier: '',
   action: '',
+
   isGlobal: false
 };
