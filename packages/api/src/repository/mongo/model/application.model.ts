@@ -30,6 +30,9 @@ export class Application {
   @Prop({})
   accessUrl: string[];
 
+  @Prop({})
+  routerUrl: string[];
+
   @Prop({ required: true, default: true })
   isActive: boolean;
 
