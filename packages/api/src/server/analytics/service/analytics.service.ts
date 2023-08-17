@@ -212,16 +212,19 @@ export class AnalyticsService {
   }
 
   async getDeploymentTimeSaved(averageDeploymentTimeInSecs: string): Promise<Object> {
-    let response;
+    let deploymentTimeResponse;
+    let deploymentCountResponse;
     try {
-      response = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.defaultDays * AnalyticsService.days);
+      deploymentTimeResponse = await this.getAverageDeploymentTime('', 'NA', AnalyticsService.defaultDays * AnalyticsService.days);
+      deploymentCountResponse = await this.getDeploymentCount();
     } catch (error) {
       this.exceptionService.badRequestException(error);
     }
-    const totalTimeForStandardDeployment = Number(averageDeploymentTimeInSecs || ANALYTICS.averageTimeToDeploy) * response.count;
-    const timeSavedInSec = totalTimeForStandardDeployment - response.totalTime;
+    const totalDeploymentCount = deploymentCountResponse.reduce((acc, obj) => acc + obj.count, 0);
+    const totalTimeForStandardDeployment = Number(averageDeploymentTimeInSecs || ANALYTICS.averageTimeToDeploy) * deploymentTimeResponse.count;
+    const timeSavedInSec = totalTimeForStandardDeployment - deploymentTimeResponse.totalTime;
     const timeSavedInHours = Math.round(timeSavedInSec / AnalyticsService.seconds / AnalyticsService.minutes);
-    return { timeSavedInHours, averageTime: response.averageTime, deploymentCount: response.count };
+    return { timeSavedInHours, averageTime: deploymentTimeResponse.averageTime, deploymentCount: totalDeploymentCount };
   }
 
   async getDeveloperMetrics(month: number, cluster: string, type: string, mode: string, averageDeploymentTimeInSecs: string): Promise<Object> {
