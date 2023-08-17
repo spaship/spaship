@@ -142,6 +142,7 @@ export class ApplicationFactory {
     saveApplication.propertyIdentifier = propertyIdentifier;
     saveApplication.ref = 'NA';
     saveApplication.accessUrl = this.getAccessUrl(deploymentConnection, applicationRequest, propertyIdentifier, env, isContainerized);
+    saveApplication.routerUrl = this.getRouterUrl(deploymentConnection, applicationRequest, propertyIdentifier, env, isContainerized);
     saveApplication.isContainerized = false;
     saveApplication.isGit = false;
     saveApplication.autoSync = false;
@@ -168,6 +169,22 @@ export class ApplicationFactory {
     return response;
   }
 
+  getRouterUrl(
+    deploymentConnection: DeploymentConnection[],
+    applicationRequest: CreateApplicationDto,
+    propertyIdentifier: string,
+    env: string,
+    isContainerized: boolean
+  ) {
+    const response = [];
+    if (!isContainerized)
+      for (const con of deploymentConnection) {
+        const routerUrl = this.generateRouteUrlForStaticDeployment(applicationRequest, propertyIdentifier, env, con.baseurl);
+        response.push(routerUrl);
+      }
+    return response;
+  }
+
   getNextRef(ref: string): string {
     if (ref === 'undefined') return 'NA';
     return ref;
@@ -190,7 +207,7 @@ export class ApplicationFactory {
     return nextRef;
   }
 
-  private generateAccessUrlForStaticDeployment(application: CreateApplicationDto, propertyIdentifier, env, baseUrl: string): string {
+  private generateAccessUrlForStaticDeployment(application: CreateApplicationDto, propertyIdentifier: string, env: string, baseUrl: string): string {
     const protocol = 'http';
     const { hostname } = new URL(baseUrl);
     const appPrefix = hostname.split('.')[4];
@@ -816,5 +833,14 @@ export class ApplicationFactory {
     if (isEphemeralWithCustomDuration && (expiresIn < 1 || expiresIn > maxDuration)) {
       this.exceptionService.badRequestException({ message: MESSAGE.INVALID_EPHEXPIRESIN });
     }
+  }
+
+  private generateRouteUrlForStaticDeployment(application: CreateApplicationDto, propertyIdentifier: string, env: string, baseUrl: string): string {
+    const protocol = 'https';
+    const { hostname } = new URL(baseUrl);
+    const appPrefix = hostname.split('.')[4];
+    const domain = hostname.split('.').slice(1).join('.');
+    const generatedRouteURL = `${protocol}://route-${propertyIdentifier}-${env}-${appPrefix}.${domain}${application.path}`;
+    return generatedRouteURL;
   }
 }
