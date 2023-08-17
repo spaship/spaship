@@ -17,6 +17,8 @@ export class Application {
 
   accessUrl: string[];
 
+  routerUrl: string[];
+
   isActive: boolean;
 
   isContainerized: boolean;
