@@ -439,12 +439,19 @@ export const WebPropertyEnvPage = (): JSX.Element => {
                       )}
                       <Tr>
                         <Td>CMDB Code</Td>
-                        <Td dataLabel="CMDB Code">{(cmdbDetails[0] as TCmdbDetails).cmdbCode}</Td>
+                        <Td dataLabel="CMDB Code">
+                          {' '}
+                          {cmdbDetails && cmdbDetails.length > 0
+                            ? (cmdbDetails[0] as TCmdbDetails)?.cmdbCode
+                            : 'NA'}
+                        </Td>
                       </Tr>
                       <Tr>
                         <Td>Severity</Td>
                         <Td dataLabel="CMDB Severity">
-                          {(cmdbDetails[0] as TCmdbDetails).severity}
+                          {cmdbDetails && cmdbDetails.length > 0
+                            ? (cmdbDetails[0] as TCmdbDetails)?.severity
+                            : 'NA'}
                         </Td>
                       </Tr>
                     </Tbody>
