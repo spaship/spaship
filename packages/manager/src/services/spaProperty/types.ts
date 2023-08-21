@@ -12,6 +12,7 @@ export type TSpaProperty = {
   isContainerized: boolean;
   isGit: boolean;
   healthCheckPath: string;
+  autoSync: boolean;
   config: {
     [key: string]: string;
   };

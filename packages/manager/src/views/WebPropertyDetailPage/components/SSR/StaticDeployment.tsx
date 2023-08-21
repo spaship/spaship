@@ -1,20 +1,29 @@
 /* eslint-disable no-underscore-dangle */
 import { TableRowSkeleton } from '@app/components';
+import { usePopUp } from '@app/hooks';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
+import { TSpaProperty } from '@app/services/spaProperty/types';
+import { useApplicationAutoSync } from '@app/services/sync';
 import {
+  ActionGroup,
   Button,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
   Label,
+  Modal,
+  ModalVariant,
   Spinner,
   SplitItem,
   Title
 } from '@patternfly/react-core';
-import { CubesIcon, ExternalLinkAltIcon, PencilAltIcon, UndoIcon } from '@patternfly/react-icons';
+import { CubesIcon, ExternalLinkAltIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { Caption, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { Access } from './Access';
 
 const URL_LENGTH_LIMIT = 100;
@@ -36,9 +45,54 @@ export const StaticDeployment = () => {
   const staticDeploymentData = spaProperties?.data?.[applicationName].filter(
     (data) => data.isContainerized === false
   );
+  const [syncData, setSyncData] = useState<TSpaProperty | undefined>();
+
+  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['autoSync'] as const);
+
+  const autoSyncData = useApplicationAutoSync();
+  const openModel = async (data: any) => {
+    handlePopUpOpen('autoSync');
+    setSyncData(data);
+  };
+
+  const handleAutoSync = async () => {
+    if (syncData) {
+      const { propertyIdentifier: propertyIdentifierForAutoSync, env, identifier } = syncData;
+      try {
+        await autoSyncData.mutateAsync({
+          propertyIdentifier: propertyIdentifierForAutoSync,
+          env,
+          identifier,
+          autoSync: true
+        });
+
+        handlePopUpClose('autoSync');
+        toast.success('Auto Sync enabled successfully');
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (error.response && error.response.status === 403) {
+            toast.error("You don't have access to perform this action");
+            handlePopUpClose('autoSync');
+          } else {
+            toast.error('Failed to autosync');
+          }
+        } else {
+          console.error('An error occurred:', error);
+        }
+      }
+    }
+  };
 
   return (
     <div>
+      <p style={{ justifyContent: 'end', display: 'flex', fontSize: '14px' }}>
+        <Label color="gold" isCompact style={{ marginRight: '8px' }}>
+          <>
+            <SyncAltIcon /> &nbsp; Enabled
+          </>
+        </Label>
+        AutoSync Enabled for application
+      </p>
       {!staticDeploymentData?.length ? (
         <EmptyState>
           <EmptyStateIcon icon={CubesIcon} />
@@ -85,7 +139,20 @@ export const StaticDeployment = () => {
                     >
                       {val.env}
                     </Label>
+                    {val.autoSync && (
+                      <Label
+                        key={val.env}
+                        color={val.isContainerized ? 'blue' : 'gold'}
+                        isCompact
+                        style={{ marginRight: '8px' }}
+                      >
+                        <>
+                          <SyncAltIcon /> &nbsp;Enabled
+                        </>
+                      </Label>
+                    )}
                   </Td>
+
                   <Td textCenter>{val?.ref}</Td>
                   <Td textCenter>{val?.path}</Td>
                   <Td>
@@ -105,12 +172,13 @@ export const StaticDeployment = () => {
                   </Td>
                   <Td textCenter style={{ justifyContent: 'flex-end', display: 'grid' }}>
                     <SplitItem isFilled>
-                      <Button variant="primary" isSmall icon={<PencilAltIcon />} isDisabled>
-                        Configure
-                      </Button>
-                      &nbsp;&nbsp;
-                      <Button variant="secondary" isSmall icon={<UndoIcon />} isDisabled>
-                        ReDeploy
+                      <Button
+                        variant="primary"
+                        isSmall
+                        icon={<SyncAltIcon />}
+                        onClick={() => openModel(val)}
+                      >
+                        Auto Sync
                       </Button>
                     </SplitItem>
                   </Td>
@@ -120,6 +188,24 @@ export const StaticDeployment = () => {
           )}
         </TableComposable>
       )}
+      <Modal
+        title="AutoSync Confirmation"
+        variant={ModalVariant.small}
+        isOpen={popUp.autoSync.isOpen}
+        onClose={() => handlePopUpClose('autoSync')}
+        // style={{ minHeight: '600px' }}
+      >
+        <p>Enable Auto sync for the SPA?</p>
+        <ActionGroup>
+          <Button onClick={() => handleAutoSync()} className="pf-u-mr-md pf-u-mt-md">
+            {' '}
+            Confirm
+          </Button>
+          <Button onClick={() => handlePopUpClose('autoSync')} className="pf-u-mt-md">
+            Cancel
+          </Button>
+        </ActionGroup>
+      </Modal>
     </div>
   );
 };

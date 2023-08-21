@@ -1,1 +1,1 @@
-export { useUpdateSync } from './queries';
+export { useUpdateSync, useApplicationAutoSync } from './queries';
