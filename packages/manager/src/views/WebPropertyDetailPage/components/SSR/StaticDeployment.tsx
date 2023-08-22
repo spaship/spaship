@@ -17,9 +17,10 @@ import {
   ModalVariant,
   Spinner,
   SplitItem,
-  Title
+  Title,
+  Tooltip
 } from '@patternfly/react-core';
-import { CubesIcon, ExternalLinkAltIcon, SyncAltIcon } from '@patternfly/react-icons';
+import { CubesIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { Caption, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
@@ -160,21 +161,48 @@ export const StaticDeployment = () => {
 
                   <Td textCenter>{val?.ref}</Td>
                   <Td textCenter>{val?.path}</Td>
-                  <Td>
-                    {val?.accessUrl[0] === 'NA' ? (
-                      <Spinner isSVG diameter="30px" />
-                    ) : (
-                      <div>
-                        <a href={val?.accessUrl[0]} target="_blank" rel="noopener noreferrer">
-                          <ExternalLinkAltIcon />{' '}
-                          {`${val?.accessUrl[0].slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                            val?.accessUrl[0].length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                          }`}
-                        </a>
-                        <Access link={val.accessUrl[0]} _id={String(val._id)} />
-                      </div>
-                    )}
+                  <Td textCenter>
+                    <Td textCenter>
+                      {val?.accessUrl?.map((accessUrl: string) => (
+                        <div key={accessUrl}>
+                          {accessUrl === 'NA' ? (
+                            <Spinner isSVG diameter="30px" />
+                          ) : (
+                            <div style={{ textAlign: 'center' }}>
+                              <Tooltip
+                                className="my-custom-tooltip"
+                                content={
+                                  <div>
+                                    <a
+                                      className="text-decoration-none"
+                                      href={accessUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      {accessUrl}
+                                    </a>
+                                  </div>
+                                }
+                              >
+                                <a
+                                  href={accessUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ textDecoration: 'none', marginRight: '8px' }}
+                                >
+                                  {`${accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                    accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                  }`}
+                                </a>
+                              </Tooltip>{' '}
+                              <Access link={accessUrl} _id={String(val._id)} />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </Td>
                   </Td>
+
                   <Td textCenter style={{ justifyContent: 'flex-end', display: 'grid' }}>
                     <SplitItem isFilled>
                       <Button
