@@ -128,7 +128,6 @@ export const Analytics = ({
       </GridItem>
       <GridItem>
         <Card
-          isSelectable
           isFullHeight
           style={{
             overflow: 'auto',
@@ -219,7 +218,6 @@ export const Analytics = ({
       </GridItem>
       <GridItem>
         <Card
-          isSelectable
           isFullHeight
           style={{
             overflow: 'auto',
