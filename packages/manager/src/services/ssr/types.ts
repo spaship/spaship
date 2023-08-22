@@ -24,7 +24,7 @@ export interface TSSRResponse {
     path: string;
     ref: string;
     nextRef: string;
-    accessUrl: string;
+    accessUrl: string[];
     isActive: boolean;
     isContainerized: boolean;
     isGit: boolean;

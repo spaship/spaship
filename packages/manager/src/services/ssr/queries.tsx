@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { orchestratorReq } from '@app/config/orchestratorReq';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { analyticsKeys } from '../analytics/queries';
 import {
   TSSRProperty,
   TSSRResponse,
@@ -26,14 +27,15 @@ export const useAddSsrSpaProperty = () => {
 
   return useMutation(createSsrSpaProperty, {
     onSuccess: (data: any) => {
+      queryClient.invalidateQueries(analyticsKeys.spaDeployments(''));
       const intervalId = setInterval(() => {
         queryClient.invalidateQueries({
           queryKey: [data._id]
         });
-      }, 10000); // 10 seconds in milliseconds
+      }, 10000);
       const timeoutId = setTimeout(() => {
         clearInterval(intervalId);
-      }, 600000); // 10 minutes in milliseconds
+      }, 600000);
 
       return () => {
         clearInterval(intervalId);

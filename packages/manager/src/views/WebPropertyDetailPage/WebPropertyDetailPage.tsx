@@ -20,7 +20,8 @@ import {
   SelectVariant,
   Modal,
   ModalVariant,
-  Spinner
+  Spinner,
+  Tooltip
 } from '@patternfly/react-core';
 
 import { Banner, TableRowSkeleton } from '@app/components';
@@ -40,7 +41,6 @@ import {
 import {
   CogIcon,
   CubeIcon,
-  ExternalLinkAltIcon,
   GithubIcon,
   PackageIcon,
   PlusCircleIcon,
@@ -54,6 +54,7 @@ import { Ephemeral } from './components/Ephemeral';
 import { EmptyInfo } from './components/EmptyInfo';
 import { Dashboard } from './components/Dashboard';
 import { AddDeplyoment } from './components/addDeployment';
+import { Access } from './components/SSR/Access';
 
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 25;
@@ -272,7 +273,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                         <Tr>
                           <Th />
                           <Th>Name</Th>
-                          <Th>URL Path</Th>
+                          <Th textCenter>URL Path</Th>
                           <Th>Environments</Th>
                         </Tr>
                       </Thead>
@@ -315,7 +316,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                   }`}
                                 </Link>
                               </Td>
-                              <Td style={{ maxWidth: '25ch', wordWrap: 'break-word' }}>
+                              <Td textCenter style={{ maxWidth: '25ch', wordWrap: 'break-word' }}>
                                 {`${spaProperties.data[identifier]?.[0]?.path?.slice(
                                   0,
                                   URL_LENGTH_LIMIT
@@ -326,7 +327,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                     : ''
                                 }`}
                               </Td>
-                              <Td style={{ wordWrap: 'break-word' }}>
+                              <Td textCenter style={{ wordWrap: 'break-word' }}>
                                 <Split hasGutter>
                                   {spaProperties.data[identifier].map(
                                     ({ _id, env, isContainerized, isGit }) => (
@@ -345,20 +346,16 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                               </Td>
                             </Tr>
                             <Tr isExpanded={Boolean(isRowExpanded?.[identifier])}>
-                              <Td colSpan={4} noPadding={false}>
+                              <Td colSpan={4} noPadding={false} textCenter>
                                 <ExpandableRowContent>
-                                  <TableComposable
-                                    variant="compact"
-                                    aria-label="expandable-table"
-                                    borders={false}
-                                  >
+                                  <TableComposable aria-label="expandable-table">
                                     <Thead noWrap>
                                       <Tr>
-                                        <Th>Environment Name</Th>
-                                        <Th>Ref</Th>
-                                        <Th>Publish Domain</Th>
-                                        <Th>Internal Access URL</Th>
-                                        <Th>Updated At</Th>
+                                        <Th textCenter>Environment Name</Th>
+                                        <Th textCenter>Ref</Th>
+                                        <Th textCenter>Publish Domain</Th>
+                                        <Th textCenter>Internal Access URL</Th>
+                                        <Th textCenter>Updated At</Th>
                                       </Tr>
                                     </Thead>
                                     <Tbody>
@@ -373,6 +370,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                         }) => (
                                           <Tr key={_id}>
                                             <Td
+                                              textCenter
                                               style={{ maxWidth: '20ch', wordWrap: 'break-word' }}
                                             >
                                               <Label
@@ -383,6 +381,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                               </Label>
                                             </Td>
                                             <Td
+                                              textCenter
                                               style={{ maxWidth: '20ch', wordWrap: 'break-word' }}
                                             >
                                               {`${ref.slice(0, URL_LENGTH_LIMIT)} ${
@@ -390,6 +389,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                               }`}
                                             </Td>
                                             <Td
+                                              textCenter
                                               style={{ maxWidth: '20ch', wordWrap: 'break-word' }}
                                             >
                                               <a
@@ -397,7 +397,6 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                               >
-                                                <ExternalLinkAltIcon />{' '}
                                                 {`${webProperties?.data?.[env]?.url.slice(
                                                   0,
                                                   URL_LENGTH_LIMIT
@@ -411,29 +410,57 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                               </a>
                                             </Td>
                                             <Td
+                                              textCenter
                                               style={{ maxWidth: '20ch', wordWrap: 'break-word' }}
                                             >
-                                              {accessUrl[0] === 'NA' ? (
-                                                <Spinner isSVG diameter="30px" />
-                                              ) : (
-                                                <a
-                                                  href={accessUrl[0]}
-                                                  target="_blank"
-                                                  rel="noopener noreferrer"
-                                                >
-                                                  <ExternalLinkAltIcon />{' '}
-                                                  {`${accessUrl[0].slice(
-                                                    0,
-                                                    INTERNAL_ACCESS_URL_LENGTH
-                                                  )} ${
-                                                    accessUrl[0].length > INTERNAL_ACCESS_URL_LENGTH
-                                                      ? '...'
-                                                      : ''
-                                                  }`}
-                                                </a>
-                                              )}
+                                              {accessUrl?.map((access_url: string) => (
+                                                <div key={access_url}>
+                                                  {access_url === 'NA' ? (
+                                                    <Spinner isSVG diameter="30px" />
+                                                  ) : (
+                                                    <div style={{ textAlign: 'center' }}>
+                                                      <Tooltip
+                                                        className="my-custom-tooltip"
+                                                        content={
+                                                          <div>
+                                                            <a
+                                                              className="text-decoration-none"
+                                                              href={access_url}
+                                                              target="_blank"
+                                                              rel="noopener noreferrer"
+                                                            >
+                                                              {access_url}
+                                                            </a>
+                                                          </div>
+                                                        }
+                                                      >
+                                                        <a
+                                                          href={access_url}
+                                                          target="_blank"
+                                                          rel="noopener noreferrer"
+                                                          style={{
+                                                            textDecoration: 'none',
+                                                            marginRight: '8px'
+                                                          }}
+                                                        >
+                                                          {`${access_url.slice(
+                                                            0,
+                                                            INTERNAL_ACCESS_URL_LENGTH
+                                                          )} ${
+                                                            access_url.length >
+                                                            INTERNAL_ACCESS_URL_LENGTH
+                                                              ? '...'
+                                                              : ''
+                                                          }`}
+                                                        </a>
+                                                      </Tooltip>{' '}
+                                                      <Access link={access_url} _id={String(_id)} />
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              ))}
                                             </Td>
-                                            <Td>
+                                            <Td textCenter>
                                               {formatDate(updatedAt, 'MMM DD, YYYY - hh:mm:ss A')}
                                             </Td>
                                           </Tr>

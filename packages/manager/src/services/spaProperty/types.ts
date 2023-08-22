@@ -6,12 +6,13 @@ export type TSpaProperty = {
   env: string;
   identifier: string;
   nextRef: string;
-  accessUrl: string;
+  accessUrl: string[];
   updatedAt: string;
   _id: number;
   isContainerized: boolean;
   isGit: boolean;
   healthCheckPath: string;
+  autoSync: boolean;
   config: {
     [key: string]: string;
   };

@@ -31,7 +31,6 @@ import {
 } from '@patternfly/react-core';
 import {
   CubesIcon,
-  ExternalLinkAltIcon,
   GithubIcon,
   InfoCircleIcon,
   PencilAltIcon,
@@ -53,7 +52,6 @@ import { ViewLogs } from './ViewLogs';
 
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 25;
-
 export const SSRDetails = () => {
   const { query } = useRouter();
   const propertyIdentifier = query.propertyIdentifier as string;
@@ -70,7 +68,7 @@ export const SSRDetails = () => {
     env: '',
     identifier: '',
     nextRef: '',
-    accessUrl: '',
+    accessUrl: [],
     updatedAt: '',
     imageUrl: '',
     healthCheckPath: '',
@@ -88,7 +86,7 @@ export const SSRDetails = () => {
     env: '',
     identifier: '',
     nextRef: '',
-    accessUrl: '',
+    accessUrl: [],
     updatedAt: '',
     imageUrl: '',
     healthCheckPath: '',
@@ -143,7 +141,7 @@ export const SSRDetails = () => {
     env: '',
     identifier: '',
     nextRef: '',
-    accessUrl: '',
+    accessUrl: [],
     updatedAt: '',
     imageUrl: '',
     healthCheckPath: '',
@@ -277,7 +275,7 @@ export const SSRDetails = () => {
                 <EmptyStateBody>Please create an deployment to view them here</EmptyStateBody>
               </EmptyState>
             ) : (
-              <TableComposable aria-label="spa-property-list" className="">
+              <TableComposable aria-label="spa-property-list">
                 <>
                   <Caption>SPA&apos;s DEPLOYED</Caption>
                   <Thead noWrap>
@@ -346,20 +344,49 @@ export const SSRDetails = () => {
                             val?.healthCheckPath.length > URL_LENGTH_LIMIT ? '...' : ''
                           }`}
                         </Td>
-                        <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
-                          {val?.accessUrl[0] === 'NA' ? (
-                            <Spinner isSVG diameter="30px" />
-                          ) : (
-                            <div>
-                              <a href={val?.accessUrl[0]} target="_blank" rel="noopener noreferrer">
-                                <ExternalLinkAltIcon />{' '}
-                                {`${val?.accessUrl[0].slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                                  val?.accessUrl[0].length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                                }`}
-                              </a>
-                              <Access link={val.accessUrl[0]} _id={String(val._id)} />
-                            </div>
-                          )}{' '}
+                        <Td
+                          textCenter
+                          style={{ maxWidth: '20ch', wordWrap: 'break-word', padding: '24px 8px' }}
+                        >
+                          <Td textCenter>
+                            {val?.accessUrl?.map((accessUrl: string) => (
+                              <div key={accessUrl}>
+                                {accessUrl === 'NA' ? (
+                                  <Spinner isSVG diameter="30px" />
+                                ) : (
+                                  <div style={{ textAlign: 'center' }}>
+                                    <Tooltip
+                                      className="my-custom-tooltip"
+                                      content={
+                                        <div>
+                                          <a
+                                            className="text-decoration-none"
+                                            href={accessUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                          >
+                                            {accessUrl}
+                                          </a>
+                                        </div>
+                                      }
+                                    >
+                                      <a
+                                        href={accessUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ textDecoration: 'none', marginRight: '8px' }}
+                                      >
+                                        {`${accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                          accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                        }`}
+                                      </a>
+                                    </Tooltip>{' '}
+                                    <Access link={accessUrl} _id={String(val._id)} />
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </Td>
                         </Td>
                         <Td textCenter>
                           <Split hasGutter>

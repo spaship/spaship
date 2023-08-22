@@ -1,6 +1,6 @@
 import { orchestratorReq } from '@app/config/orchestratorReq';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { TCreateSync, TSyncResponse } from './types';
+import { TCreateSync, TSyncResponse, TEnableAutoSync } from './types';
 
 const syncKeys = {
   list: ['persistent-env'] as const,
@@ -22,6 +22,20 @@ export const useUpdateSync = (propertyIdentifier: string) => {
       if (propertyIdentifier) {
         queryClient.invalidateQueries(syncKeys.id(propertyIdentifier));
       }
+    }
+  });
+};
+const updateApplicationAutoSync = async (dto: TEnableAutoSync): Promise<TSyncResponse> => {
+  const { data } = await orchestratorReq.post(`applications/sync/`, dto);
+  return data.data;
+};
+
+export const useApplicationAutoSync = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(updateApplicationAutoSync, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(syncKeys.list);
     }
   });
 };

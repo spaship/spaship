@@ -18,3 +18,9 @@ export type TSyncResponse = {
   createdAt: string;
   updatedAt: string;
 };
+export type TEnableAutoSync = {
+  propertyIdentifier: string;
+  env: string;
+  identifier: string;
+  autoSync: boolean;
+};

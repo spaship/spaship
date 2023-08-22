@@ -61,7 +61,7 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
   const bestDeploymentFiltered = averageDeploymentTime.filter((e) => e);
   const bestDeploymentTime = bestDeploymentFiltered.length
     ? Math.min(...bestDeploymentFiltered.map((time) => time ?? 0))
-    : 0;
+    : 'NA';
   const bestDeploymentTimeIndex = averageDeploymentTime.findIndex(
     (time) => time === bestDeploymentTime
   );
@@ -173,26 +173,32 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
                 >
                   <CardBody>
                     <>
-                      <div
-                        style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}
-                      >
-                        <Text component={TextVariants.p} className="dashboard-card">
-                          {bestDeploymentTime} s
-                        </Text>
-                        <Text
-                          component={TextVariants.p}
-                          style={{
-                            fontSize: '14px',
-                            paddingLeft: '8px',
-                            fontFamily: 'Red Hat Text'
-                          }}
+                      {bestDeploymentTime !== 'NA' ? (
+                        <div
+                          style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}
                         >
-                          in past {DeploymentTimeFrames[bestDeploymentTimeIndex]}
+                          <Text component={TextVariants.p} className="dashboard-card">
+                            {bestDeploymentTime} s
+                          </Text>
+
+                          <Text
+                            component={TextVariants.p}
+                            style={{
+                              fontSize: '14px',
+                              paddingLeft: '8px',
+                              fontFamily: 'Red Hat Text'
+                            }}
+                          >
+                            in past {DeploymentTimeFrames[bestDeploymentTimeIndex]}
+                          </Text>
+                        </div>
+                      ) : (
+                        <Text component={TextVariants.p} className="dashboard-card">
+                          NA
                         </Text>
-                      </div>
+                      )}
                       <Text component={TextVariants.h2}>Average time to deploy</Text>
                     </>
-
                     <div
                       style={{
                         display: 'flex',

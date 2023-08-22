@@ -17,7 +17,7 @@ type IDeploymentData = {
   endDate: string;
 };
 
-const analyticsKeys = {
+export const analyticsKeys = {
   deploy: ['deployment-count'] as const,
   deploymentTimeMonthly: ['deployment-time-monthly'] as const,
   deploymentTimeQuarterly: ['deployment-time-quarterly'] as const,
@@ -86,6 +86,8 @@ export const useGetWebPropActivityStream = (
       fetchWebPropertyActivityStream(propertyIdentifier, applicationIdentifier, pageParam, action),
     {
       refetchOnWindowFocus: true,
+      refetchInterval: 10000,
+
       getNextPageParam: (lastPage, allPages) =>
         lastPage.length ? allPages.length * LIMIT : undefined
     }
@@ -107,8 +109,12 @@ const fetchTotalDeploymentForApps = async (
 };
 
 export const useGetTotalDeploymentsForApps = (webProperty: string, spaName?: string) =>
-  useQuery(analyticsKeys.spaDeployments(webProperty, spaName), () =>
-    fetchTotalDeploymentForApps(webProperty, spaName)
+  useQuery(
+    analyticsKeys.spaDeployments(webProperty, spaName),
+    () => fetchTotalDeploymentForApps(webProperty, spaName),
+    {
+      refetchOnWindowFocus: true
+    }
   );
 
 const fetchMonthlyDeploymentChart = async (
@@ -134,8 +140,12 @@ const fetchMonthlyDeploymentChart = async (
 };
 
 export const useGetMonthlyDeploymentChart = (webProperty: string, spaName?: string) =>
-  useQuery(analyticsKeys.spaMonthyDeploymentChart(webProperty, spaName), () =>
-    fetchMonthlyDeploymentChart(webProperty, spaName)
+  useQuery(
+    analyticsKeys.spaMonthyDeploymentChart(webProperty, spaName),
+    () => fetchMonthlyDeploymentChart(webProperty, spaName),
+    {
+      refetchOnWindowFocus: true
+    }
   );
 
 const fetchMonthlyDeploymentChartWithEphemeral = async (
@@ -216,8 +226,12 @@ export const useGetTotalDeployments = (
   propertyIdentifier?: string,
   applicationIdentifier?: string
 ) =>
-  useQuery(analyticsKeys.spaDeployments(''), () =>
-    fetchTotalDeployment(propertyIdentifier, applicationIdentifier)
+  useQuery(
+    analyticsKeys.spaDeployments(''),
+    () => fetchTotalDeployment(propertyIdentifier, applicationIdentifier),
+    {
+      refetchOnWindowFocus: true
+    }
   );
 
 const fetchTotalMonthlyDeploymentTime = async (

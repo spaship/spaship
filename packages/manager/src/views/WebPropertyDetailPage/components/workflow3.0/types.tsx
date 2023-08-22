@@ -14,7 +14,7 @@ export type CommonFields = {
 export type TDataContainerized = CommonFields & {
   imageUrl: string;
   nextRef: string;
-  accessUrl: string;
+  accessUrl: string[];
   identifier: string;
   updatedAt: string;
   _id: number;

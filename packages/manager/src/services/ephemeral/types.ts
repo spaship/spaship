@@ -23,7 +23,7 @@ export type TPreviewSPA = {
   ref: string;
   nextRef: string;
   namespace: string;
-  accessUrl: string;
+  accessUrl: string[];
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

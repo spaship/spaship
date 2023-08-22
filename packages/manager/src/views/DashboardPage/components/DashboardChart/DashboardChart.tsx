@@ -160,7 +160,7 @@ export const DashboardChart = ({
     <EmptyState>
       <EmptyStateIcon icon={CubesIcon} />
       <Title headingLevel="h4" size="lg">
-        No deployments data found
+        No Deployment data found
       </Title>
     </EmptyState>
   );
@@ -253,11 +253,11 @@ export const DashboardChart = ({
                         )
                         .map(({ count, startDate, endDate }) => {
                           const xLabel =
-                            TotalMonthlyDeploymentData?.[name]?.length <= 3
-                              ? `${dayjs(startDate).format(DATE_FORMAT)} - ${dayjs(endDate).format(
+                            previous === '3' || previous === '6'
+                              ? dayjs(startDate).format('MMM')
+                              : `${dayjs(startDate).format(DATE_FORMAT)} - ${dayjs(endDate).format(
                                   DATE_FORMAT
-                                )}`
-                              : dayjs(startDate).format('MMM');
+                                )}`;
                           return {
                             name,
                             x: xLabel,
@@ -312,11 +312,11 @@ export const DashboardChart = ({
                         )
                         .map(({ count, startDate, endDate }) => {
                           const xLabel =
-                            TotalMonthlyDeploymentData?.[name]?.length <= 3
-                              ? `${dayjs(startDate).format(DATE_FORMAT)} - ${dayjs(endDate).format(
+                            previous === '3' || previous === '6'
+                              ? dayjs(startDate).format('MMM')
+                              : `${dayjs(startDate).format(DATE_FORMAT)} - ${dayjs(endDate).format(
                                   DATE_FORMAT
-                                )}`
-                              : dayjs(startDate).format('MMM');
+                                )}`;
 
                           return {
                             name,
@@ -356,7 +356,7 @@ export const DashboardChart = ({
             <EmptyState>
               <EmptyStateIcon icon={CubesIcon} />
               <Title headingLevel="h4" size="lg">
-                No deployments found
+                No Deployment found
               </Title>
             </EmptyState>
           )}
