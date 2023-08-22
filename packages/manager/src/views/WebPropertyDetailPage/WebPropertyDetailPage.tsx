@@ -54,7 +54,6 @@ import { Ephemeral } from './components/Ephemeral';
 import { EmptyInfo } from './components/EmptyInfo';
 import { Dashboard } from './components/Dashboard';
 import { AddDeplyoment } from './components/addDeployment';
-import { Access } from './components/SSR/Access';
 
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 25;
@@ -454,7 +453,6 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                                           }`}
                                                         </a>
                                                       </Tooltip>{' '}
-                                                      <Access link={access_url} _id={String(_id)} />
                                                     </div>
                                                   )}
                                                 </div>
