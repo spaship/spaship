@@ -86,6 +86,8 @@ export const useGetWebPropActivityStream = (
       fetchWebPropertyActivityStream(propertyIdentifier, applicationIdentifier, pageParam, action),
     {
       refetchOnWindowFocus: true,
+      refetchInterval: 10000,
+
       getNextPageParam: (lastPage, allPages) =>
         lastPage.length ? allPages.length * LIMIT : undefined
     }
