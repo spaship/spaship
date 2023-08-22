@@ -36,17 +36,18 @@ type Props = {
   isSuccess: boolean;
 };
 
-const msToTime = (milliseconds: number) => {
-  let seconds = Math.floor(milliseconds / 1000);
-  let minutes = Math.floor(seconds / 60);
-  let hours = Math.floor(minutes / 60);
-  seconds %= 60;
-  minutes = seconds >= 30 ? minutes + 1 : minutes;
-  minutes %= 60;
-  hours %= 24;
-  const padTo2Digits = (num: number) => num.toString().padStart(2, '0');
-  return `${padTo2Digits(hours)} hr ${padTo2Digits(minutes)} min`;
-};
+function msToTime(duration: number) {
+  const minutes = Math.floor((duration / (1000 * 60)) % 60);
+  const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+  const days = Math.floor(duration / (1000 * 60 * 60 * 24));
+
+  const daysText = days > 0 ? `${days}d ` : '';
+  const hoursText = hours > 0 ? `${hours}h ` : '';
+  const minutesText = minutes > 0 ? `${minutes}m ` : '';
+
+  return `${daysText}${hoursText}${minutesText}`;
+}
+
 const getExpiresTime = (createdAt: string, totalTime: number) => {
   const currentTime = new Date();
   const envDeletionAt = new Date(createdAt);
