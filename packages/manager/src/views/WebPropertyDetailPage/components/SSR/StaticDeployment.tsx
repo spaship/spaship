@@ -8,6 +8,7 @@ import { useApplicationAutoSync } from '@app/services/sync';
 import {
   ActionGroup,
   Button,
+  Checkbox,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
@@ -46,7 +47,7 @@ export const StaticDeployment = () => {
     (data) => data.isContainerized === false
   );
   const [syncData, setSyncData] = useState<TSpaProperty | undefined>();
-
+  const [isChecked, setIsChecked] = useState<boolean>(syncData?.autoSync || false);
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['autoSync'] as const);
 
   const autoSyncData = useApplicationAutoSync();
@@ -63,11 +64,15 @@ export const StaticDeployment = () => {
           propertyIdentifier: propertyIdentifierForAutoSync,
           env,
           identifier,
-          autoSync: true
+          autoSync: isChecked
         });
 
         handlePopUpClose('autoSync');
-        toast.success('Auto Sync enabled successfully');
+        if (isChecked) {
+          toast.success('Auto Sync has been enabled successfully.');
+        } else {
+          toast.success('Auto Sync has been disabled successfully.');
+        }
       } catch (error) {
         if (error instanceof AxiosError) {
           if (error.response && error.response.status === 403) {
@@ -141,7 +146,7 @@ export const StaticDeployment = () => {
                     </Label>
                     {val.autoSync && (
                       <Label
-                        key={val.env}
+                        key={val.name}
                         color={val.isContainerized ? 'blue' : 'gold'}
                         isCompact
                         style={{ marginRight: '8px' }}
@@ -196,10 +201,21 @@ export const StaticDeployment = () => {
         // style={{ minHeight: '600px' }}
       >
         <p>Enable Auto sync for the SPA?</p>
+        <Checkbox
+          className="pf-u-mt-md"
+          label={isChecked ? 'AutoSync Enabled' : 'AutoSync Disabled'}
+          isChecked={isChecked}
+          onChange={(checked: boolean) => {
+            setIsChecked(checked);
+          }}
+          id="controlled-check-1"
+          name="AutoSync"
+        />
+
         <ActionGroup>
           <Button onClick={() => handleAutoSync()} className="pf-u-mr-md pf-u-mt-md">
             {' '}
-            Confirm
+            Submit
           </Button>
           <Button onClick={() => handlePopUpClose('autoSync')} className="pf-u-mt-md">
             Cancel
