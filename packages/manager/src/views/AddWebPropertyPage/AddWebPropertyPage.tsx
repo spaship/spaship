@@ -255,6 +255,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
                 render={({ fieldState: { error }, field }) => (
                   <FormGroup
                     label="CMDB Code"
+                    isRequired
                     fieldId="property-cmdb"
                     validated={error ? 'error' : 'default'}
                     helperTextInvalid={error?.message}
@@ -338,8 +339,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
           <Split hasGutter>
             <SplitItem>
               <Checkbox
-                label="
-Unfamiliar with the CMDB code for an application."
+                label="Unfamiliar with the CMDB code for an application, but still want to onboard?"
                 isChecked={knowCmdbCode}
                 onChange={(checked) => setKnowCmdbCode(checked)}
                 id="controlled-check-1"

@@ -7,6 +7,7 @@ export type TSpaProperty = {
   identifier: string;
   nextRef: string;
   accessUrl: string[];
+  routerUrl: string[];
   updatedAt: string;
   _id: number;
   isContainerized: boolean;

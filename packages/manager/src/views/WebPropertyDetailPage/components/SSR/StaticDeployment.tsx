@@ -117,6 +117,7 @@ export const StaticDeployment = () => {
               <Th textCenter>Ref</Th>
               <Th textCenter>Path</Th>
               <Th textCenter>Internal Access URL</Th>
+              <Th textCenter>Router URL</Th>
               <Th textCenter style={{ justifyContent: 'space-evenly', display: 'grid' }}>
                 Actions
               </Th>
@@ -161,46 +162,84 @@ export const StaticDeployment = () => {
 
                   <Td textCenter>{val?.ref}</Td>
                   <Td textCenter>{val?.path}</Td>
+
                   <Td textCenter>
-                    <Td textCenter>
-                      {val?.accessUrl?.map((accessUrl: string) => (
-                        <div key={accessUrl}>
-                          {accessUrl === 'NA' ? (
-                            <Spinner isSVG diameter="30px" />
-                          ) : (
-                            <div style={{ textAlign: 'center' }}>
-                              <Tooltip
-                                className="my-custom-tooltip"
-                                content={
-                                  <div>
-                                    <a
-                                      className="text-decoration-none"
-                                      href={accessUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
-                                      {accessUrl}
-                                    </a>
-                                  </div>
-                                }
+                    {val?.accessUrl?.map((accessUrl: string) => (
+                      <div key={accessUrl}>
+                        {accessUrl === 'NA' ? (
+                          <Spinner isSVG diameter="30px" />
+                        ) : (
+                          <div style={{ textAlign: 'center' }}>
+                            <Tooltip
+                              className="my-custom-tooltip"
+                              content={
+                                <div>
+                                  <a
+                                    className="text-decoration-none"
+                                    href={accessUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    {accessUrl}
+                                  </a>
+                                </div>
+                              }
+                            >
+                              <a
+                                href={accessUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ textDecoration: 'none', marginRight: '8px' }}
                               >
-                                <a
-                                  href={accessUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  style={{ textDecoration: 'none', marginRight: '8px' }}
-                                >
-                                  {`${accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                                    accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                                  }`}
-                                </a>
-                              </Tooltip>{' '}
-                              <Access link={accessUrl} _id={String(val._id)} />
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </Td>
+                                {`${accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                  accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                }`}
+                              </a>
+                            </Tooltip>{' '}
+                            <Access link={accessUrl} _id={String(val._id)} />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </Td>
+                  <Td textCenter>
+                    {val?.routerUrl?.map((routerUrl: string) => (
+                      <div key={routerUrl}>
+                        {routerUrl === 'NA' ? (
+                          <Spinner isSVG diameter="30px" />
+                        ) : (
+                          <div style={{ textAlign: 'center' }}>
+                            <Tooltip
+                              className="my-custom-tooltip"
+                              content={
+                                <div>
+                                  <a
+                                    className="text-decoration-none"
+                                    href={routerUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    {routerUrl}
+                                  </a>
+                                </div>
+                              }
+                            >
+                              <a
+                                href={routerUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ textDecoration: 'none', marginRight: '8px' }}
+                              >
+                                {`${routerUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                  routerUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                }`}
+                              </a>
+                            </Tooltip>{' '}
+                            <Access link={routerUrl} _id={String(val._id)} />
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </Td>
 
                   <Td textCenter style={{ justifyContent: 'flex-end', display: 'grid' }}>
