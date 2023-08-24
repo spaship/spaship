@@ -117,7 +117,7 @@ export class EnvironmentService {
       const response = await this.environmentFactory.deleteRequest(operatorPayload, deploymentConnection.baseurl);
       this.logger.log('OperatorResponse', JSON.stringify(response.data));
     } catch (err) {
-      this.exceptionService.internalServerErrorException(err.message);
+      this.logger.error('AgendaError', err.message);
     }
     try {
       await this.analyticsService.createActivityStream(
@@ -145,7 +145,7 @@ export class EnvironmentService {
       }
       await this.dataServices.environment.delete({ propertyIdentifier, env });
     } catch (err) {
-      this.exceptionService.internalServerErrorException(err);
+      this.logger.error('DeletionError', err.message);
     }
     return { environment, applications };
   }
