@@ -1,4 +1,6 @@
 /* eslint-disable no-underscore-dangle */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 import { TableRowSkeleton } from '@app/components';
 import { usePopUp } from '@app/hooks';
 import { useListOfPods } from '@app/services/appLogs';
@@ -20,6 +22,8 @@ import {
   Label,
   Modal,
   ModalVariant,
+  Pagination,
+  PaginationVariant,
   Spinner,
   Split,
   SplitItem,
@@ -37,12 +41,11 @@ import {
   PlusCircleIcon,
   UndoIcon
 } from '@patternfly/react-icons';
-import { Caption, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { ConfigureWorkflowForm } from '../workflow3.0/ConfigureWorkflowForm';
 import { TDataContainerized, TDataWorkflow } from '../workflow3.0/types';
@@ -52,14 +55,23 @@ import { ViewLogs } from './ViewLogs';
 
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 25;
+
 export const SSRDetails = () => {
   const { query } = useRouter();
   const propertyIdentifier = query.propertyIdentifier as string;
   const createSsrSpaProperty = useAddSsrSpaProperty();
   const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, '');
+  const url = window.location.href;
+  const parts = url.split('/');
+  const applicationName = parts[parts.length - 1];
+  const containerisedDeploymentData = spaProperties?.data?.[applicationName].filter(
+    (item) => item.isContainerized === true
+  );
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(4);
   const [redeployData, setRedeployData] = useState<TDataContainerized>({
     propertyIdentifier: '',
     name: '',
@@ -96,6 +108,14 @@ export const SSRDetails = () => {
     config: {},
     port: 3000
   });
+  const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
+  const [envName, setEnvName] = useState('');
+  const [isGit, setIsGit] = useState(false);
+  const [buildIdList, setbuildIdList] = useState<string[]>([]);
+  const [buildDetails, setBuildDetails] = useState<string[]>([]);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const podIdList = useListOfPods(propertyIdentifier, applicationName, envName);
+  const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
     'redeploySsrApplication',
     'reconfigureSsrApplication',
@@ -121,12 +141,16 @@ export const SSRDetails = () => {
     handlePopUpClose('redeploySsrApplication');
   };
 
-  const url = window.location.href;
-  const parts = url.split('/');
-  const applicationName = parts[parts.length - 1];
-  const containerisedDeploymentData = spaProperties?.data?.[applicationName].filter(
-    (item) => item.isContainerized === true
-  );
+  const drawerRef = useRef<HTMLDivElement>();
+
+  const onExpand = () => {
+    drawerRef.current && drawerRef.current.focus();
+  };
+
+  const onCloseClick = () => {
+    setIsExpanded(false);
+  };
+
   const [isChecked, setIsChecked] = useState<boolean>(true);
 
   const handleChange = (checked: boolean) => {
@@ -169,17 +193,6 @@ export const SSRDetails = () => {
     isContainerized: false
   };
 
-  const [isExpanded, setIsExpanded] = useState(false);
-  const drawerRef = useRef<HTMLDivElement>();
-  const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
-  const [envName, setEnvName] = useState('');
-  const [isGit, setIsGit] = useState(false);
-  const podIdList = useListOfPods(propertyIdentifier, applicationName, envName);
-  const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
-
-  const [buildIdList, setbuildIdList] = useState<string[]>([]);
-  const [buildDetails, setBuildDetails] = useState<string[]>([]);
-
   const handleTabClick = async (
     event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
     tabIndex: string | number
@@ -201,21 +214,9 @@ export const SSRDetails = () => {
     setIsGit(rowData.isGit);
   };
 
-  const onExpand = () => {
-    if (drawerRef.current) {
-      drawerRef.current.focus();
-    }
-  };
-  const onCloseClick = (event: any) => {
-    event.stopPropagation();
-    setIsExpanded(false);
-  };
-
   const panelContent = (
-    <DrawerPanelContent>
+    <DrawerPanelContent isResizable>
       <DrawerHead>
-        <b>Logs for {propertyIdentifier}</b>
-
         <Tabs activeKey={activeTabKey} onSelect={handleTabClick}>
           <Tab eventKey={0} title="Deployment Logs">
             {activeTabKey === 0 && (
@@ -253,188 +254,208 @@ export const SSRDetails = () => {
     </DrawerPanelContent>
   );
 
+  const onPageSet = (_: any, pageNumber: number) => {
+    setPage(pageNumber);
+  };
+  const onPerPageSelect = (
+    _event: React.MouseEvent | React.KeyboardEvent | MouseEvent,
+    newPerPage: number,
+    newPage: number
+  ) => {
+    setPerPage(newPerPage);
+    setPage(newPage);
+  };
+
+  const startIdx = (page - 1) * perPage;
+  const endIdx = startIdx + perPage;
+
+  const paginatedData = containerisedDeploymentData?.slice(startIdx, endIdx);
+
+  const drawerContent = !containerisedDeploymentData?.length ? (
+    <EmptyState>
+      <EmptyStateIcon icon={CubesIcon} />
+      <Title headingLevel="h4" size="lg">
+        No Containerized Deployment exists.
+      </Title>
+      <EmptyStateBody>Please create an deployment to view them here</EmptyStateBody>
+    </EmptyState>
+  ) : (
+    <>
+      <TableComposable aria-label="spa-property-list" variant="compact">
+        <Thead noWrap>
+          <Tr>
+            <Th textCenter width={15}>
+              SPA Name
+            </Th>
+            <Th textCenter width={15}>
+              Environments
+            </Th>
+            <Th textCenter width={15}>
+              Ref
+            </Th>
+            <Th textCenter width={15}>
+              Path
+            </Th>
+            <Th textCenter width={15}>
+              HealthCheck Path
+            </Th>
+            <Th textCenter width={15}>
+              Internal Access URL
+            </Th>
+            <Th textCenter style={{ justifyContent: 'space-evenly', display: 'grid' }}>
+              Actions
+            </Th>
+          </Tr>
+        </Thead>
+        {(spaProperties.isLoading && webProperties.isLoading) ||
+        (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
+          <TableRowSkeleton rows={3} columns={7} />
+        ) : (
+          <Tbody>
+            {paginatedData?.map((val) => (
+              <Tr key={val.name}>
+                <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
+                  {`${val?.name.slice(0, URL_LENGTH_LIMIT)} ${
+                    val?.name.length > URL_LENGTH_LIMIT ? '...' : ''
+                  }`}
+                </Td>
+                <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
+                  <Label
+                    key={val.env}
+                    icon={val.isGit && <GithubIcon />}
+                    color={val.isContainerized || val.isGit ? 'cyan' : 'gold'}
+                    isCompact
+                    style={{ marginRight: '8px' }}
+                  >
+                    {val.env}
+                  </Label>
+                </Td>
+                <Td
+                  textCenter
+                  style={{ maxWidth: '15ch', wordWrap: 'break-word' }}
+                >{`${val?.ref.slice(0, URL_LENGTH_LIMIT)} ${
+                  val?.ref.length > URL_LENGTH_LIMIT ? '...' : ''
+                }`}</Td>
+                <Td
+                  textCenter
+                  style={{ maxWidth: '15ch', wordWrap: 'break-word' }}
+                >{`${val?.path.slice(0, URL_LENGTH_LIMIT)} ${
+                  val?.path.length > URL_LENGTH_LIMIT ? '...' : ''
+                }`}</Td>
+                <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
+                  {`${val?.healthCheckPath.slice(0, URL_LENGTH_LIMIT)} ${
+                    val?.healthCheckPath.length > URL_LENGTH_LIMIT ? '...' : ''
+                  }`}
+                </Td>
+                <Td
+                  textCenter
+                  style={{ maxWidth: '20ch', wordWrap: 'break-word', padding: '24px 8px' }}
+                >
+                  <Td textCenter>
+                    {val?.accessUrl?.map((accessUrl: string) => (
+                      <div key={accessUrl}>
+                        {accessUrl === 'NA' ? (
+                          <Spinner isSVG diameter="30px" />
+                        ) : (
+                          <div style={{ textAlign: 'center' }}>
+                            <Tooltip
+                              className="my-custom-tooltip"
+                              content={
+                                <div>
+                                  <a
+                                    className="text-decoration-none"
+                                    href={accessUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    {accessUrl}
+                                  </a>
+                                </div>
+                              }
+                            >
+                              <a
+                                href={accessUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ textDecoration: 'none', marginRight: '8px' }}
+                              >
+                                {`${accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                  accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                }`}
+                              </a>
+                            </Tooltip>{' '}
+                            <Access link={accessUrl} _id={String(val._id)} />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </Td>
+                </Td>
+                <Td textCenter>
+                  <Split hasGutter>
+                    <SplitItem isFilled>
+                      <Button
+                        variant="primary"
+                        isSmall
+                        icon={<PencilAltIcon />}
+                        onClick={() => {
+                          handlePopUpOpen('reconfigureSsrApplication');
+                          setConfigureData(val);
+                        }}
+                      >
+                        Configure
+                      </Button>
+                    </SplitItem>
+                    <SplitItem isFilled>
+                      <Button
+                        variant="secondary"
+                        isSmall
+                        icon={<UndoIcon />}
+                        onClick={() => {
+                          handlePopUpOpen('redeploySsrApplication');
+                          setRedeployData(val);
+                        }}
+                      >
+                        ReDeploy
+                      </Button>
+                    </SplitItem>
+                    <SplitItem isFilled>
+                      <Button
+                        variant="link"
+                        style={{ color: 'var(--pf-global--link--Color)' }}
+                        aria-expanded={isExpanded}
+                        onClick={(e) => onClick(e, val.name, val.buildName, val)}
+                      >
+                        View Logs
+                      </Button>
+                    </SplitItem>
+                  </Split>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        )}
+      </TableComposable>
+      <Pagination
+        itemCount={containerisedDeploymentData.length || 0}
+        widgetId="bottom-example"
+        perPage={perPage}
+        page={page}
+        variant={PaginationVariant.bottom}
+        onSetPage={onPageSet}
+        onPerPageSelect={onPerPageSelect}
+      />
+    </>
+  );
   return (
     <>
       <Button onClick={() => handlePopUpOpen('createSSRDeployment')} icon={<PlusCircleIcon />}>
         Add New App
       </Button>
-      <Drawer
-        isExpanded={isExpanded}
-        position="bottom"
-        onExpand={onExpand}
-        style={{ height: '100vh !important' }}
-      >
+
+      <Drawer position="bottom" onExpand={onExpand} isExpanded={isExpanded}>
         <DrawerContent panelContent={panelContent}>
-          <DrawerContentBody style={{ overflow: 'hidden' }}>
-            {!containerisedDeploymentData?.length ? (
-              <EmptyState>
-                <EmptyStateIcon icon={CubesIcon} />
-                <Title headingLevel="h4" size="lg">
-                  No Containerized Deployment exists.
-                </Title>
-                <EmptyStateBody>Please create an deployment to view them here</EmptyStateBody>
-              </EmptyState>
-            ) : (
-              <TableComposable aria-label="spa-property-list">
-                <>
-                  <Caption>SPA&apos;s DEPLOYED</Caption>
-                  <Thead noWrap>
-                    <Tr>
-                      <Th textCenter width={15}>
-                        SPA Name
-                      </Th>
-                      <Th textCenter width={15}>
-                        Environments
-                      </Th>
-                      <Th textCenter width={15}>
-                        Ref
-                      </Th>
-                      <Th textCenter width={15}>
-                        Path
-                      </Th>
-                      <Th textCenter width={15}>
-                        HealthCheck Path
-                      </Th>
-                      <Th textCenter width={15}>
-                        Internal Access URL
-                      </Th>
-                      <Th textCenter style={{ justifyContent: 'space-evenly', display: 'grid' }}>
-                        Actions
-                      </Th>
-                    </Tr>
-                  </Thead>
-                </>
-                {(spaProperties.isLoading && webProperties.isLoading) ||
-                (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
-                  <TableRowSkeleton rows={3} columns={7} />
-                ) : (
-                  <Tbody>
-                    {containerisedDeploymentData?.map((val) => (
-                      <Tr key={val.name}>
-                        <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
-                          {`${val?.name.slice(0, URL_LENGTH_LIMIT)} ${
-                            val?.name.length > URL_LENGTH_LIMIT ? '...' : ''
-                          }`}
-                        </Td>
-                        <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
-                          <Label
-                            key={val.env}
-                            icon={val.isGit && <GithubIcon />}
-                            color={val.isContainerized || val.isGit ? 'cyan' : 'gold'}
-                            isCompact
-                            style={{ marginRight: '8px' }}
-                          >
-                            {val.env}
-                          </Label>
-                        </Td>
-                        <Td
-                          textCenter
-                          style={{ maxWidth: '15ch', wordWrap: 'break-word' }}
-                        >{`${val?.ref.slice(0, URL_LENGTH_LIMIT)} ${
-                          val?.ref.length > URL_LENGTH_LIMIT ? '...' : ''
-                        }`}</Td>
-                        <Td
-                          textCenter
-                          style={{ maxWidth: '15ch', wordWrap: 'break-word' }}
-                        >{`${val?.path.slice(0, URL_LENGTH_LIMIT)} ${
-                          val?.path.length > URL_LENGTH_LIMIT ? '...' : ''
-                        }`}</Td>
-                        <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
-                          {`${val?.healthCheckPath.slice(0, URL_LENGTH_LIMIT)} ${
-                            val?.healthCheckPath.length > URL_LENGTH_LIMIT ? '...' : ''
-                          }`}
-                        </Td>
-                        <Td
-                          textCenter
-                          style={{ maxWidth: '20ch', wordWrap: 'break-word', padding: '24px 8px' }}
-                        >
-                          <Td textCenter>
-                            {val?.accessUrl?.map((accessUrl: string) => (
-                              <div key={accessUrl}>
-                                {accessUrl === 'NA' ? (
-                                  <Spinner isSVG diameter="30px" />
-                                ) : (
-                                  <div style={{ textAlign: 'center' }}>
-                                    <Tooltip
-                                      className="my-custom-tooltip"
-                                      content={
-                                        <div>
-                                          <a
-                                            className="text-decoration-none"
-                                            href={accessUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                          >
-                                            {accessUrl}
-                                          </a>
-                                        </div>
-                                      }
-                                    >
-                                      <a
-                                        href={accessUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{ textDecoration: 'none', marginRight: '8px' }}
-                                      >
-                                        {`${accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                                          accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                                        }`}
-                                      </a>
-                                    </Tooltip>{' '}
-                                    <Access link={accessUrl} _id={String(val._id)} />
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                          </Td>
-                        </Td>
-                        <Td textCenter>
-                          <Split hasGutter>
-                            <SplitItem isFilled>
-                              <Button
-                                variant="primary"
-                                isSmall
-                                icon={<PencilAltIcon />}
-                                onClick={() => {
-                                  handlePopUpOpen('reconfigureSsrApplication');
-                                  setConfigureData(val);
-                                }}
-                              >
-                                Configure
-                              </Button>
-                            </SplitItem>
-                            <SplitItem isFilled>
-                              <Button
-                                variant="secondary"
-                                isSmall
-                                icon={<UndoIcon />}
-                                onClick={() => {
-                                  handlePopUpOpen('redeploySsrApplication');
-                                  setRedeployData(val);
-                                }}
-                              >
-                                ReDeploy
-                              </Button>
-                            </SplitItem>
-                            <SplitItem isFilled>
-                              <Button
-                                variant="link"
-                                style={{ color: 'var(--pf-global--link--Color)' }}
-                                aria-expanded={isExpanded}
-                                onClick={(e) => onClick(e, val.name, val.buildName, val)}
-                              >
-                                View Logs
-                              </Button>
-                            </SplitItem>
-                          </Split>
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                )}
-              </TableComposable>
-            )}
-          </DrawerContentBody>
+          <DrawerContentBody style={{ overflowX: 'hidden' }}>{drawerContent}</DrawerContentBody>
         </DrawerContent>
       </Drawer>
 
@@ -449,7 +470,6 @@ export const SSRDetails = () => {
           Confirm Redeployment
         </Button>
       </Modal>
-
       <Modal
         title="Configure SPA"
         variant={ModalVariant.large}
@@ -526,7 +546,7 @@ export const SSRDetails = () => {
           )}
           {/* <Divider />
 
-      {isWorkflowSubmitted && <DeploymentProgress propertyIdentifier={propertyIdentifier} />} */}
+      {isWorkflowSubmitted && <DeploymentProgress propertyIdentifier={propertyIdentifier} />}  */}
         </div>
       </Modal>
     </>
