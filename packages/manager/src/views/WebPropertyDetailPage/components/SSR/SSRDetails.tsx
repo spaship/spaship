@@ -116,6 +116,7 @@ export const SSRDetails = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const podIdList = useListOfPods(propertyIdentifier, applicationName, envName);
   const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
+
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
     'redeploySsrApplication',
     'reconfigureSsrApplication',
@@ -253,7 +254,6 @@ export const SSRDetails = () => {
       </DrawerHead>
     </DrawerPanelContent>
   );
-
   const onPageSet = (_: any, pageNumber: number) => {
     setPage(pageNumber);
   };
