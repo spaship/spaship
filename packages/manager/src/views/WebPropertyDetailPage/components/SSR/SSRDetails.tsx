@@ -116,6 +116,7 @@ export const SSRDetails = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const podIdList = useListOfPods(propertyIdentifier, applicationName, envName);
   const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
+
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
     'redeploySsrApplication',
     'reconfigureSsrApplication',
