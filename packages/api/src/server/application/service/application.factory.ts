@@ -413,7 +413,6 @@ export class ApplicationFactory {
   // @internal Update the secret for a Containerized application
   async containerizedSecretUpdate(request?: ContainerizedDeploymentRequest, deploymentBaseURL?: string) {
     const headers = { Authorization: await AuthFactory.getAccessToken() };
-    this.logger.log('ContainerizedContainerizedSecretRequest', JSON.stringify(request));
     try {
       const response = await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/deployment/v1/secret`, request, {
         maxBodyLength: Infinity,
@@ -829,8 +828,7 @@ export class ApplicationFactory {
   validateEphemeralRequestForDuration(applicationDto: CreateApplicationDto) {
     const expiresIn = Number(applicationDto?.expiresIn);
     const maxDuration = Number(EPHEMERAL_ENV.maximumDuration);
-    const isEphemeralWithCustomDuration = applicationDto?.ephemeral && expiresIn;
-    if (isEphemeralWithCustomDuration && (expiresIn < 1 || expiresIn > maxDuration)) {
+    if (applicationDto.ephemeral && (expiresIn < 1 || expiresIn > maxDuration)) {
       this.exceptionService.badRequestException({ message: MESSAGE.INVALID_EPHEXPIRESIN });
     }
   }
@@ -839,7 +837,7 @@ export class ApplicationFactory {
     const protocol = 'https';
     const { hostname } = new URL(baseUrl);
     const appPrefix = hostname.split('.')[4];
-    const domain = hostname.split('.').slice(1).join('.');
+    const domain = hostname.split('.').slice(1).join('.').replace('int', 'ext-waf');
     const generatedRouteURL = `${protocol}://route-${propertyIdentifier}-${env}-${appPrefix}.${domain}${application.path}`;
     return generatedRouteURL;
   }
