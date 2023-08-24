@@ -103,6 +103,14 @@ export class ApplicationService {
         await this.dataServices.environment.create(tmpEph);
         this.logger.log('NewEphemeral', JSON.stringify(tmpEph));
         env = tmpEph.env;
+        const expiresIn = this.applicationFactory.getExpiresIn(applicationRequest.expiresIn);
+        const scheduledDate = new Date();
+        scheduledDate.setSeconds(scheduledDate.getSeconds() + Number(expiresIn));
+        const agendaResponse = await this.agendaService.agenda.schedule(scheduledDate, JOB.DELETE_EPH_ENV, {
+          propertyIdentifier,
+          env
+        });
+        this.logger.log('Agenda', JSON.stringify(agendaResponse));
       }
       await this.analyticsService.createActivityStream(
         propertyIdentifier,
@@ -154,16 +162,6 @@ export class ApplicationService {
       Source.CLI,
       JSON.stringify(applicationRequest)
     );
-    if (this.applicationFactory.isEphemeral(applicationRequest)) {
-      const expiresIn = this.applicationFactory.getExpiresIn(applicationRequest.expiresIn);
-      const scheduledDate = new Date();
-      scheduledDate.setSeconds(scheduledDate.getSeconds() + Number(expiresIn));
-      const agendaResponse = await this.agendaService.agenda.schedule(scheduledDate, JOB.DELETE_EPH_ENV, {
-        propertyIdentifier,
-        env
-      });
-      this.logger.log('Agenda', JSON.stringify(agendaResponse));
-    }
     if (!applicationDetails) {
       const saveApplication = await this.applicationFactory.createApplicationRequest(
         propertyIdentifier,
@@ -544,7 +542,6 @@ export class ApplicationService {
       applicationDetails.commitId = applicationRequest.commitId || applicationDetails.commitId;
       applicationDetails.mergeId = applicationRequest.mergeId || applicationDetails.mergeId;
       applicationDetails.updatedBy = applicationRequest.createdBy;
-      this.logger.log('ContainerizedGitUpdatedApplicationDetails', JSON.stringify(applicationDetails));
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: true, isGit: true }, applicationDetails);
     }
     const containerizedGitOperatorRequest = this.applicationFactory.createContainerizedGitOperatorRequest(
