@@ -49,7 +49,7 @@ import React, { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { ConfigureWorkflowForm } from '../workflow3.0/ConfigureWorkflowForm';
 import { TDataContainerized, TDataWorkflow } from '../workflow3.0/types';
-import { Access } from './Access';
+import { ApplicationStatus } from './ApplicationStatus';
 import { ConfigureSSRForm } from './ConfigureSSRForm';
 import { ViewLogs } from './ViewLogs';
 
@@ -384,7 +384,7 @@ export const SSRDetails = () => {
                                 }`}
                               </a>
                             </Tooltip>{' '}
-                            <Access link={accessUrl} _id={String(val._id)} />
+                            <ApplicationStatus link={accessUrl} _id={String(val._id)} />
                           </div>
                         )}
                       </div>

@@ -29,7 +29,7 @@ import {
 import { TEphemeralEnv } from '@app/services/ephemeral/types';
 import { useFormatDate } from '@app/hooks';
 import { useState } from 'react';
-import { Access } from '../SSR/Access';
+import { ApplicationStatus } from '../SSR/ApplicationStatus';
 
 type Props = {
   ephemeralEnvs: TEphemeralEnv[] | undefined;
@@ -185,7 +185,10 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
                                         }`}
                                       </a>
                                     </Tooltip>{' '}
-                                    <Access link={accessUrl} _id={String(application._id)} />
+                                    <ApplicationStatus
+                                      link={accessUrl}
+                                      _id={String(application._id)}
+                                    />
                                   </div>
                                 )}
                               </div>

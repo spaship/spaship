@@ -26,7 +26,7 @@ import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { Access } from './Access';
+import { ApplicationStatus } from './ApplicationStatus';
 
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 25;
@@ -196,7 +196,7 @@ export const StaticDeployment = () => {
                                 }`}
                               </a>
                             </Tooltip>{' '}
-                            <Access link={accessUrl} _id={String(val._id)} />
+                            <ApplicationStatus link={accessUrl} _id={String(val._id)} />
                           </div>
                         )}
                       </div>
@@ -235,7 +235,7 @@ export const StaticDeployment = () => {
                                 }`}
                               </a>
                             </Tooltip>{' '}
-                            <Access link={routerUrl} _id={String(val._id)} />
+                            <ApplicationStatus link={routerUrl} _id={String(val._id + routerUrl)} />
                           </div>
                         )}
                       </div>
@@ -265,11 +265,8 @@ export const StaticDeployment = () => {
         variant={ModalVariant.small}
         isOpen={popUp.autoSync.isOpen}
         onClose={() => handlePopUpClose('autoSync')}
-        // style={{ minHeight: '600px' }}
       >
-        <p>Enable Auto sync for the SPA?</p>
         <Checkbox
-          className="pf-u-mt-md"
           label={isChecked ? 'AutoSync Enabled' : 'AutoSync Disabled'}
           isChecked={isChecked}
           onChange={(checked: boolean) => {
