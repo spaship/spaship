@@ -26,7 +26,7 @@ import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { Access } from './Access';
+import { ApplicationStatus } from './ApplicationStatus';
 
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 25;
@@ -196,46 +196,53 @@ export const StaticDeployment = () => {
                                 }`}
                               </a>
                             </Tooltip>{' '}
-                            <Access link={accessUrl} _id={String(val._id)} />
+                            <ApplicationStatus link={accessUrl} _id={String(val._id)} />
                           </div>
                         )}
                       </div>
                     ))}
                   </Td>
                   <Td textCenter>
-                    {val?.routerUrl?.map((routerUrl: string) => (
-                      <div key={routerUrl}>
+                    {val?.routerUrl?.map((routerUrl: string | undefined) => (
+                      <div key={routerUrl ?? 'NA'}>
                         {routerUrl === 'NA' ? (
                           <Spinner isSVG diameter="30px" />
                         ) : (
                           <div style={{ textAlign: 'center' }}>
-                            <Tooltip
-                              className="my-custom-tooltip"
-                              content={
-                                <div>
-                                  <a
-                                    className="text-decoration-none"
-                                    href={routerUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    {routerUrl}
-                                  </a>
-                                </div>
-                              }
-                            >
-                              <a
-                                href={routerUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{ textDecoration: 'none', marginRight: '8px' }}
+                            {routerUrl ? (
+                              <Tooltip
+                                className="my-custom-tooltip"
+                                content={
+                                  <div>
+                                    <a
+                                      className="text-decoration-none"
+                                      href={routerUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      {routerUrl}
+                                    </a>
+                                  </div>
+                                }
                               >
-                                {`${routerUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                                  routerUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                                }`}
-                              </a>
-                            </Tooltip>{' '}
-                            <Access link={routerUrl} _id={String(val._id)} />
+                                <a
+                                  href={routerUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ textDecoration: 'none', marginRight: '8px' }}
+                                >
+                                  {`${routerUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                    routerUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                  }`}
+                                </a>
+                              </Tooltip>
+                            ) : (
+                              'NA'
+                            )}
+                            <ApplicationStatus
+                              link={routerUrl ?? 'NA'}
+                              _id={String(val._id + (routerUrl ?? 'NA'))}
+                            />
                           </div>
                         )}
                       </div>
@@ -265,11 +272,8 @@ export const StaticDeployment = () => {
         variant={ModalVariant.small}
         isOpen={popUp.autoSync.isOpen}
         onClose={() => handlePopUpClose('autoSync')}
-        // style={{ minHeight: '600px' }}
       >
-        <p>Enable Auto sync for the SPA?</p>
         <Checkbox
-          className="pf-u-mt-md"
           label={isChecked ? 'AutoSync Enabled' : 'AutoSync Disabled'}
           isChecked={isChecked}
           onChange={(checked: boolean) => {
