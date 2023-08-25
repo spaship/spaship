@@ -203,39 +203,46 @@ export const StaticDeployment = () => {
                     ))}
                   </Td>
                   <Td textCenter>
-                    {val?.routerUrl?.map((routerUrl: string) => (
-                      <div key={routerUrl}>
+                    {val?.routerUrl?.map((routerUrl: string | undefined) => (
+                      <div key={routerUrl ?? 'NA'}>
                         {routerUrl === 'NA' ? (
                           <Spinner isSVG diameter="30px" />
                         ) : (
                           <div style={{ textAlign: 'center' }}>
-                            <Tooltip
-                              className="my-custom-tooltip"
-                              content={
-                                <div>
-                                  <a
-                                    className="text-decoration-none"
-                                    href={routerUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    {routerUrl}
-                                  </a>
-                                </div>
-                              }
-                            >
-                              <a
-                                href={routerUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{ textDecoration: 'none', marginRight: '8px' }}
+                            {routerUrl ? (
+                              <Tooltip
+                                className="my-custom-tooltip"
+                                content={
+                                  <div>
+                                    <a
+                                      className="text-decoration-none"
+                                      href={routerUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      {routerUrl}
+                                    </a>
+                                  </div>
+                                }
                               >
-                                {`${routerUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                                  routerUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                                }`}
-                              </a>
-                            </Tooltip>{' '}
-                            <ApplicationStatus link={routerUrl} _id={String(val._id + routerUrl)} />
+                                <a
+                                  href={routerUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ textDecoration: 'none', marginRight: '8px' }}
+                                >
+                                  {`${routerUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                    routerUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                  }`}
+                                </a>
+                              </Tooltip>
+                            ) : (
+                              'NA'
+                            )}
+                            <ApplicationStatus
+                              link={routerUrl ?? 'NA'}
+                              _id={String(val._id + (routerUrl ?? 'NA'))}
+                            />
                           </div>
                         )}
                       </div>
