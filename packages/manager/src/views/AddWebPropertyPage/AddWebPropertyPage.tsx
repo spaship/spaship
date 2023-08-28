@@ -260,19 +260,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
                       <>
                         CMDB Code
                         <Tooltip
-                          content={
-                            <div>
-                              Please provide the CMDB code for your application. For instructions on
-                              how to create it, you can visit the this link
-                              <a
-                                href="https://redhat.service-now.com/help?id=kb_article_view&sysparm_article=KB0011576"
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                &nbsp;here
-                              </a>
-                            </div>
-                          }
+                          content={<div>Please provide the CMDB code for your application.</div>}
                         >
                           <span>
                             &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
