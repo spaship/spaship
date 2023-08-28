@@ -242,3 +242,6 @@ body {
 .pf-c-drawer__body {
   padding-top: 0px;
 }
+.pf-c-tabs__link {
+  display: inline !important;
+}
