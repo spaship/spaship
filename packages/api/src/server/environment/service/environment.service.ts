@@ -107,7 +107,7 @@ export class EnvironmentService {
       name: environment.env,
       websiteName: property.identifier,
       nameSpace: property.namespace,
-      cmdbCode: this.environmentFactory.getCMDBCode(property.cmdbCode),
+      cmdbCode: this.environmentFactory.checkAndReturnCMDBCode(property.cmdbCode),
       websiteVersion: 'v1'
     };
     this.logger.log('OperatorPayload', JSON.stringify(operatorPayload));

@@ -79,7 +79,7 @@ export class EnvironmentFactory {
     return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/environment/sync`, payload, { params, headers });
   }
 
-  getCMDBCode(cmdbCode: string) {
+  checkAndReturnCMDBCode(cmdbCode: string) {
     // @internal if CMDB code is not present we'll send the SPAS-001 as the default CMDB code
     if (cmdbCode === 'NA') return 'SPAS-001';
     return cmdbCode;
