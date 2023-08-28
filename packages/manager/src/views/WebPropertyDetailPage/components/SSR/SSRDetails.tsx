@@ -30,6 +30,7 @@ import {
   Switch,
   Tab,
   Tabs,
+  TabTitleText,
   Title,
   Tooltip
 } from '@patternfly/react-core';
@@ -219,7 +220,11 @@ export const SSRDetails = () => {
     <DrawerPanelContent isResizable>
       <DrawerHead>
         <Tabs activeKey={activeTabKey} onSelect={handleTabClick}>
-          <Tab eventKey={0} title="Deployment Logs">
+          <Tab
+            eventKey={0}
+            style={{ paddingBottom: '0px' }}
+            title={<TabTitleText style={{ paddingBottom: '10px' }}>Deployment Logs</TabTitleText>}
+          >
             {activeTabKey === 0 && (
               <ViewLogs
                 key={envName}
@@ -233,7 +238,11 @@ export const SSRDetails = () => {
               />
             )}
           </Tab>
-          <Tab eventKey={1} title="Build Logs">
+          <Tab
+            eventKey={1}
+            style={{ paddingBottom: '4px' }}
+            title={<TabTitleText>Build Logs</TabTitleText>}
+          >
             {activeTabKey === 1 && (
               <ViewLogs
                 key={envName}
