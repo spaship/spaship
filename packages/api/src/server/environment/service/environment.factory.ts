@@ -78,4 +78,10 @@ export class EnvironmentFactory {
     const params: Object = { envName: env, websiteName: propertyIdentifier, namespace };
     return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/environment/sync`, payload, { params, headers });
   }
+
+  checkAndReturnCMDBCode(cmdbCode: string) {
+    // @internal if CMDB code is not present we'll send the SPAS-001 as the default CMDB code
+    if (cmdbCode === 'NA') return 'SPAS-001';
+    return cmdbCode;
+  }
 }
