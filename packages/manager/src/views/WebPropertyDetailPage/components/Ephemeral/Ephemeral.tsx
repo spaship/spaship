@@ -144,6 +144,7 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
                       <Tr>
                         <Th textCenter>SPA Name</Th>
                         <Th textCenter>Internal Access URL</Th>
+                        <Th textCenter>Router URL</Th>
                         <Th textCenter>Created By</Th>
                         <Th textCenter>Ref</Th>
                       </Tr>
@@ -154,13 +155,13 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
                           <Td textCenter>{application.identifier}</Td>
                           <Td textCenter>
                             {application.accessUrl?.map((accessUrl: string) => (
-                              <div key={accessUrl}>
+                              <div key={`access-${accessUrl}`}>
                                 {accessUrl === 'NA' ? (
                                   <Spinner isSVG diameter="30px" />
                                 ) : (
                                   <div style={{ textAlign: 'center' }}>
                                     <Tooltip
-                                      className="my-custom-tooltip"
+                                      className="accessURl"
                                       content={
                                         <div>
                                           <a
@@ -187,6 +188,48 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
                                     </Tooltip>{' '}
                                     <ApplicationStatus
                                       link={accessUrl}
+                                      _id={String(application._id)}
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </Td>
+                          <Td textCenter>
+                            {application.routerUrl?.map((routerUrl: string) => (
+                              <div key={`router-${routerUrl}`}>
+                                {routerUrl === 'NA' ? (
+                                  <Spinner isSVG diameter="30px" />
+                                ) : (
+                                  <div style={{ textAlign: 'center' }}>
+                                    <Tooltip
+                                      className="routerURL"
+                                      content={
+                                        <div>
+                                          <a
+                                            className="text-decoration-none"
+                                            href={routerUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                          >
+                                            {routerUrl}
+                                          </a>
+                                        </div>
+                                      }
+                                    >
+                                      <a
+                                        href={routerUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ textDecoration: 'none', marginRight: '8px' }}
+                                      >
+                                        {`${routerUrl.slice(0, URL_LENGTH_LIMIT)} ${
+                                          routerUrl.length > URL_LENGTH_LIMIT ? '...' : ''
+                                        }`}
+                                      </a>
+                                    </Tooltip>{' '}
+                                    <ApplicationStatus
+                                      link={routerUrl}
                                       _id={String(application._id)}
                                     />
                                   </div>
