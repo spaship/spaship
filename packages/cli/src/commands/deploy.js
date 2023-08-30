@@ -42,7 +42,7 @@ class DeployCommand extends Command {
     const buildDir = flags.builddir ? flags.builddir : configBuildDir; // uses command line arg if present
     const ephemeral = flags?.preview || false;
     const actionId = flags?.prid;
-
+    const duration = flags?.duration;
     const image = flags?.image || false;
 
     if (image) {
@@ -162,6 +162,9 @@ class DeployCommand extends Command {
           if (actionId) {
             data.append("actionId", actionId);
           }
+          if(duration){
+            data.append("expiresIn", duration);
+          }
         }
       }
 
@@ -268,6 +271,13 @@ DeployCommand.flags = assign(
       char: "P",
       required: false,
       description: "deploying into temporary preview environment.",
+    }),
+  },
+  {
+    duration: flags.string({
+      char: "d",
+      required: false,
+      description: "duration is to set the time (in hour) for the ephemeral preview environment.",
     }),
   },
   {
