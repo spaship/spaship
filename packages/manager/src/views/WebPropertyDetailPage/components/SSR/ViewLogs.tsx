@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-nested-ternary */
 import { useGetLogsforSpa, useListOfPods } from '@app/services/appLogs';
 import { toPascalCase } from '@app/utils/toPascalConvert';
@@ -38,6 +39,7 @@ function NewlineText(props: string) {
 
 export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit, con }: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isLogsLoading, setIsLogsLoading] = useState<boolean>(true);
   const podIdList = useListOfPods(propertyIdentifier, spaName, env);
   const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
 
@@ -63,11 +65,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
 
   const handleConValueforPod = (conPod: any) => conPod?.data && conPod?.data[0].con;
 
-  const {
-    data: logs,
-    isLoading: isFetchingLogs,
-    refetch
-  } = useGetLogsforSpa(
+  const { data: logs, refetch } = useGetLogsforSpa(
     propertyIdentifier,
     spaName,
     env,
@@ -77,12 +75,15 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
   );
 
   useEffect(() => {
+    setIsLogsLoading(true);
     setSelectedId(idList && idList.reverse()[0]);
   }, [idList, type]);
 
   useEffect(() => {
-    refetch();
-  }, [refetch, selectedId, logs]);
+    refetch().then(() => {
+      setIsLogsLoading(false);
+    });
+  }, [refetch, selectedId]);
 
   const isEmptyStateVisible =
     (!isGit && type === 1) || !idList || idList.length === 0 || idList.includes('No Pods found');
@@ -91,6 +92,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
       <div className="pf-u-mb-md pf-u-mt-md">
         {toPascalCase(type === 0 ? logType.POD : logType.BUILD)} Logs for <b>{spaName}</b>
       </div>
+
       {isEmptyStateVisible ? (
         <EmptyState>
           <EmptyStateIcon icon={CubesIcon} />
@@ -115,10 +117,8 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
                 ? idList && idList.map((item: string) => <SelectOption key={item} value={item} />)
                 : (podList || []).map((item: string) => <SelectOption key={item} value={item} />)}
             </Select>
-            {isFetchingLogs ? (
-              <EmptyState>
-                <Spinner className="pf-u-mt-lg" />
-              </EmptyState>
+            {isLogsLoading ? (
+              <Spinner className="pf-u-mt-lg" />
             ) : logs ? (
               <CodeBlock className="pf-u-mt-md">{NewlineText(logs)}</CodeBlock>
             ) : (
