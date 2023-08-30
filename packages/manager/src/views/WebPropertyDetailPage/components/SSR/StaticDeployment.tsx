@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable no-underscore-dangle */
 import { TableRowSkeleton } from '@app/components';
 import { usePopUp } from '@app/hooks';
@@ -37,7 +38,6 @@ export const StaticDeployment = () => {
   const propertyIdentifier = query.propertyIdentifier as string;
   const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, '');
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
-
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
 
@@ -129,8 +129,8 @@ export const StaticDeployment = () => {
             <TableRowSkeleton rows={3} columns={6} />
           ) : (
             <Tbody>
-              {staticDeploymentData?.map((val) => (
-                <Tr key={val.name}>
+              {staticDeploymentData?.map((val, index: number) => (
+                <Tr key={`tr-${val._id}-${index}`}>
                   <Td textCenter>
                     {' '}
                     {`${val?.name.slice(0, URL_LENGTH_LIMIT)} ${
@@ -148,7 +148,7 @@ export const StaticDeployment = () => {
                     </Label>
                     {val.autoSync && (
                       <Label
-                        key={val.name}
+                        key={`autoSync-${val.name}`}
                         color={val.isContainerized ? 'blue' : 'gold'}
                         isCompact
                         style={{ marginRight: '8px' }}
@@ -164,8 +164,8 @@ export const StaticDeployment = () => {
                   <Td textCenter>{val?.path}</Td>
 
                   <Td textCenter>
-                    {val?.accessUrl?.map((accessUrl: string) => (
-                      <div key={accessUrl}>
+                    {val?.accessUrl?.map((accessUrl: string, indexAccessUrl: number) => (
+                      <div key={`access-${accessUrl}-${indexAccessUrl}`}>
                         {accessUrl === 'NA' ? (
                           <Spinner isSVG diameter="30px" />
                         ) : (
@@ -203,50 +203,52 @@ export const StaticDeployment = () => {
                     ))}
                   </Td>
                   <Td textCenter>
-                    {val?.routerUrl?.map((routerUrl: string | undefined) => (
-                      <div key={routerUrl ?? 'NA'}>
-                        {routerUrl === 'NA' ? (
-                          <Spinner isSVG diameter="30px" />
-                        ) : (
-                          <div style={{ textAlign: 'center' }}>
-                            {routerUrl ? (
-                              <Tooltip
-                                className="my-custom-tooltip"
-                                content={
-                                  <div>
-                                    <a
-                                      className="text-decoration-none"
-                                      href={routerUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
-                                      {routerUrl}
-                                    </a>
-                                  </div>
-                                }
-                              >
-                                <a
-                                  href={routerUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  style={{ textDecoration: 'none', marginRight: '8px' }}
+                    {val?.routerUrl?.map(
+                      (routerUrl: string | undefined, indexRouterUrl: number) => (
+                        <div key={`router-${routerUrl}-${indexRouterUrl}` ?? 'NA'}>
+                          {routerUrl === 'NA' ? (
+                            <Spinner isSVG diameter="30px" />
+                          ) : (
+                            <div style={{ textAlign: 'center' }}>
+                              {routerUrl ? (
+                                <Tooltip
+                                  className="my-custom-tooltip"
+                                  content={
+                                    <div>
+                                      <a
+                                        className="text-decoration-none"
+                                        href={routerUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                      >
+                                        {routerUrl}
+                                      </a>
+                                    </div>
+                                  }
                                 >
-                                  {`${routerUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                                    routerUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                                  }`}
-                                </a>
-                              </Tooltip>
-                            ) : (
-                              'NA'
-                            )}
-                            <ApplicationStatus
-                              link={routerUrl ?? 'NA'}
-                              _id={String(val._id + (routerUrl ?? 'NA'))}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                                  <a
+                                    href={routerUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ textDecoration: 'none', marginRight: '8px' }}
+                                  >
+                                    {`${routerUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                      routerUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                    }`}
+                                  </a>
+                                </Tooltip>
+                              ) : (
+                                'NA'
+                              )}
+                              <ApplicationStatus
+                                link={routerUrl ?? 'NA'}
+                                _id={String(val._id + (routerUrl ?? 'NA'))}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )
+                    )}
                   </Td>
 
                   <Td textCenter style={{ justifyContent: 'flex-end', display: 'grid' }}>

@@ -24,6 +24,7 @@ export type TPreviewSPA = {
   nextRef: string;
   namespace: string;
   accessUrl: string[];
+  routerUrl: string[];
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
