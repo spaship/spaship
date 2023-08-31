@@ -63,8 +63,8 @@ export const SideBar = () => {
                 />
               </a>
             </Link>
-            <Link href="/coming-soon">
-              <a className="text-decoration-none">
+            <Link href="https://forms.gle/h2Zsq8CvSjYcDD8u7">
+              <a className="text-decoration-none" target="_blank" rel="noreferrer">
                 <SidebarNavItem
                   title="Feedback"
                   icon={<CommentAltIcon size="sm" />}
