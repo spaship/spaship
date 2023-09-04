@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import * as crypto from 'crypto';
 import jwt_decode from 'jwt-decode';
-import { AUTH_DETAILS, AUTH_LISTING, GLOBAL_PREFIX } from 'src/configuration';
+import { AUTH_DETAILS, AUTH_LISTING, GIT_AUTH, GLOBAL_PREFIX } from 'src/configuration';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 
@@ -22,7 +22,6 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
    * Token Format : Bearer {JWT} / Bearer {APIKey}
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // @internal TODO : auth to be implemented for the Puzzle Application
     // @internal no auth for hourSavedAnalyticsBaseURL, added in the login screen
     if (context.getArgs()[0].url.startsWith(AUTH_LISTING.hourSavedAnalyticsBaseURL)) return true;
     let bearerToken: string;
@@ -41,6 +40,7 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
       const url = context.getArgs()[0].url;
       if (url.startsWith(AUTH_LISTING.deploymentBaseURL)) return this.validateDeploymentRequest(propertyIdentifier, env, bearerToken, context);
       if (url.startsWith(AUTH_LISTING.eventsBaseURL)) return this.validateEventRequest(propertyIdentifier, bearerToken);
+      if (url.startsWith(AUTH_LISTING.gitDeploymentBaseURL)) return this.validateGitRequest(bearerToken);
       if (context.getArgs()[0].method === 'GET') return this.validateGetRequest(bearerToken);
     }
     const secret: string = this.getSecretKey();
@@ -101,6 +101,13 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
       }
       this.exceptionsService.UnauthorizedException({ message: 'Invalid API Key.' });
     }
+    return false;
+  }
+
+  // @internal Validate Request for the Git Broker
+  private async validateGitRequest(bearerToken: string) {
+    if (bearerToken === GIT_AUTH.secret) return true;
+    this.exceptionsService.UnauthorizedException({ message: 'Invalid Credentials.' });
     return false;
   }
 
