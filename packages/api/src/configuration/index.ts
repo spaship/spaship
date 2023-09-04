@@ -30,6 +30,10 @@ function getDatabaseConfiguration() {
   return `mongodb://${spashipMongoUrl}`;
 }
 
+export const GIT_AUTH = {
+  secret: process.env.SPASHIP_GIT__SECRET
+};
+
 export const DATA_BASE_CONFIGURATION = {
   mongoConnectionString: getDatabaseConfiguration()
 };
