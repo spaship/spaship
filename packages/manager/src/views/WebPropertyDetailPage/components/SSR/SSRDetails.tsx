@@ -34,14 +34,7 @@ import {
   Title,
   Tooltip
 } from '@patternfly/react-core';
-import {
-  CubesIcon,
-  GithubIcon,
-  InfoCircleIcon,
-  PencilAltIcon,
-  PlusCircleIcon,
-  UndoIcon
-} from '@patternfly/react-icons';
+import { CubesIcon, GithubIcon, InfoCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import Link from 'next/link';
@@ -243,7 +236,7 @@ export const SSRDetails = () => {
           </Tab>
           <Tab
             eventKey={1}
-            style={{ paddingBottom: '4px' }}
+            style={{ paddingBottom: '4px', color: '#D2d2d2' }}
             title={<TabTitleText>Build Logs</TabTitleText>}
           >
             {activeTabKey === 1 && (
@@ -293,30 +286,16 @@ export const SSRDetails = () => {
     </EmptyState>
   ) : (
     <>
-      <TableComposable aria-label="spa-property-list" variant="compact">
+      <TableComposable aria-label="spa-property-list" variant="compact" isStriped>
         <Thead noWrap>
           <Tr>
-            <Th textCenter width={15}>
-              SPA Name
-            </Th>
-            <Th textCenter width={15}>
-              Environments
-            </Th>
-            <Th textCenter width={15}>
-              Ref
-            </Th>
-            <Th textCenter width={15}>
-              Path
-            </Th>
-            <Th textCenter width={15}>
-              HealthCheck Path
-            </Th>
-            <Th textCenter width={15}>
-              Internal Access URL
-            </Th>
-            <Th textCenter style={{ justifyContent: 'space-evenly', display: 'grid' }}>
-              Actions
-            </Th>
+            <Th width={15}>SPA Name</Th>
+            <Th width={15}>Environments</Th>
+            <Th width={15}>Ref</Th>
+            <Th width={15}>Path</Th>
+            <Th width={15}>HealthCheck Path</Th>
+            <Th width={15}>Internal Access URL</Th>
+            <Th style={{ justifyContent: 'space-evenly', display: 'grid' }}>Actions</Th>
           </Tr>
         </Thead>
         {(spaProperties.isLoading && webProperties.isLoading) ||
@@ -326,12 +305,12 @@ export const SSRDetails = () => {
           <Tbody>
             {paginatedData?.map((val) => (
               <Tr key={val.name}>
-                <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
+                <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
                   {`${val?.name.slice(0, URL_LENGTH_LIMIT)} ${
                     val?.name.length > URL_LENGTH_LIMIT ? '...' : ''
                   }`}
                 </Td>
-                <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
+                <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
                   <Label
                     key={val.env}
                     icon={val.isGit && <GithubIcon />}
@@ -342,34 +321,27 @@ export const SSRDetails = () => {
                     {val.env}
                   </Label>
                 </Td>
-                <Td
-                  textCenter
-                  style={{ maxWidth: '15ch', wordWrap: 'break-word' }}
-                >{`${val?.ref.slice(0, URL_LENGTH_LIMIT)} ${
-                  val?.ref.length > URL_LENGTH_LIMIT ? '...' : ''
-                }`}</Td>
-                <Td
-                  textCenter
-                  style={{ maxWidth: '15ch', wordWrap: 'break-word' }}
-                >{`${val?.path.slice(0, URL_LENGTH_LIMIT)} ${
-                  val?.path.length > URL_LENGTH_LIMIT ? '...' : ''
-                }`}</Td>
-                <Td textCenter style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
+                <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>{`${val?.ref.slice(
+                  0,
+                  URL_LENGTH_LIMIT
+                )} ${val?.ref.length > URL_LENGTH_LIMIT ? '...' : ''}`}</Td>
+                <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>{`${val?.path.slice(
+                  0,
+                  URL_LENGTH_LIMIT
+                )} ${val?.path.length > URL_LENGTH_LIMIT ? '...' : ''}`}</Td>
+                <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
                   {`${val?.healthCheckPath.slice(0, URL_LENGTH_LIMIT)} ${
                     val?.healthCheckPath.length > URL_LENGTH_LIMIT ? '...' : ''
                   }`}
                 </Td>
-                <Td
-                  textCenter
-                  style={{ maxWidth: '20ch', wordWrap: 'break-word', padding: '24px 8px' }}
-                >
-                  <Td textCenter>
+                <Td style={{ maxWidth: '20ch', wordWrap: 'break-word', padding: '24px 8px' }}>
+                  <Td>
                     {val?.accessUrl?.map((accessUrl: string) => (
                       <div key={accessUrl}>
                         {accessUrl === 'NA' ? (
                           <Spinner isSVG diameter="30px" />
                         ) : (
-                          <div style={{ textAlign: 'center' }}>
+                          <div>
                             <Tooltip
                               className="my-custom-tooltip"
                               content={
@@ -403,13 +375,13 @@ export const SSRDetails = () => {
                     ))}
                   </Td>
                 </Td>
-                <Td textCenter>
+                <Td>
                   <Split hasGutter>
                     <SplitItem isFilled>
                       <Button
                         variant="primary"
                         isSmall
-                        icon={<PencilAltIcon />}
+                        // icon={<PencilAltIcon />}
                         onClick={() => {
                           handlePopUpOpen('reconfigureSsrApplication');
                           setConfigureData(val);
@@ -422,7 +394,7 @@ export const SSRDetails = () => {
                       <Button
                         variant="secondary"
                         isSmall
-                        icon={<UndoIcon />}
+                        // icon={<UndoIcon />}
                         onClick={() => {
                           handlePopUpOpen('redeploySsrApplication');
                           setRedeployData(val);
