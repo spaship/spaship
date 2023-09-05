@@ -17,8 +17,10 @@ import {
   Radio,
   Split,
   SplitItem,
-  TextInput
+  TextInput,
+  Tooltip
 } from '@patternfly/react-core';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -254,7 +256,18 @@ export const AddWebPropertyPage = (): JSX.Element => {
                 name="cmdb"
                 render={({ fieldState: { error }, field }) => (
                   <FormGroup
-                    label="CMDB Code"
+                    label={
+                      <>
+                        CMDB Code
+                        <Tooltip
+                          content={<div>Please provide the CMDB code for your application.</div>}
+                        >
+                          <span>
+                            &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
+                          </span>
+                        </Tooltip>
+                      </>
+                    }
                     isRequired
                     fieldId="property-cmdb"
                     validated={error ? 'error' : 'default'}

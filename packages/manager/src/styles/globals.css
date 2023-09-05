@@ -71,7 +71,7 @@ body {
 }
 
 .pf-c-nav__link {
-  --pf-c-nav__link--hover--Color: var(--spaship-global--Color--primary-blue);
+  --pf-c-nav__link--hover--Color: #fff;
   --pf-c-nav__link--hover--after--BorderLeftWidth: 2px;
   --pf-c-nav__link--hover--after--BorderColor: var(--spaship-global--Color--primary-blue);
   --pf-c-nav__link--m-current--after--BorderColor: var(--spaship-global--Color--primary-blue);
@@ -251,4 +251,11 @@ body {
 }
 .select-log-ids > .pf-c-select__toggle::before {
   border-color: #333;
+}
+.pf-c-nav__section-title {
+  padding: 8px;
+}
+.pf-c-nav__link {
+  padding-left: 8px;
+  padding-right: 8px;
 }
