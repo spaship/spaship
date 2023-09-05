@@ -50,7 +50,7 @@ import { ViewLogs } from './ViewLogs';
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 25;
 
-export const SSRDetails = () => {
+export const ContainerizedDeployment = () => {
   const { query } = useRouter();
   const propertyIdentifier = query.propertyIdentifier as string;
   const createSsrSpaProperty = useAddSsrSpaProperty();
