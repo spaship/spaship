@@ -217,12 +217,15 @@ export const SSRDetails = () => {
   };
 
   const panelContent = (
-    <DrawerPanelContent isResizable>
+    <DrawerPanelContent
+      isResizable
+      style={{ borderBottom: '1px solid #333', backgroundColor: '#212427' }}
+    >
       <DrawerHead>
-        <Tabs activeKey={activeTabKey} onSelect={handleTabClick}>
+        <Tabs activeKey={activeTabKey} onSelect={handleTabClick} className="select-tab-ids">
           <Tab
             eventKey={0}
-            style={{ paddingBottom: '0px' }}
+            style={{ paddingBottom: '0px', color: '#D2d2d2' }}
             title={<TabTitleText style={{ paddingBottom: '10px' }}>Deployment Logs</TabTitleText>}
           >
             {activeTabKey === 0 && (
@@ -464,7 +467,9 @@ export const SSRDetails = () => {
 
       <Drawer position="bottom" onExpand={onExpand} isExpanded={isExpanded}>
         <DrawerContent panelContent={panelContent}>
-          <DrawerContentBody style={{ overflowX: 'hidden' }}>{drawerContent}</DrawerContentBody>
+          <DrawerContentBody style={{ overflowX: 'hidden', padding: '0px' }}>
+            {drawerContent}
+          </DrawerContentBody>
         </DrawerContent>
       </Drawer>
 

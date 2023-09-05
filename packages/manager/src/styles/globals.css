@@ -245,3 +245,15 @@ body {
 .pf-c-tabs__link {
   display: inline !important;
 }
+.select-tab-ids > ul > li.pf-c-tabs__item.pf-m-current {
+  --pf-c-tabs__link--Color: var(--pf-c-tabs__item--m-current__link--Color);
+  --pf-c-tabs__link--after--BorderColor: #c9190b;
+  --pf-c-tabs__link--after--BorderWidth: #c9190b;
+}
+.select-log-ids > .pf-c-select__toggle {
+  color: rgb(255, 255, 255);
+  background-color: #333333;
+}
+.select-log-ids > .pf-c-select__toggle::before {
+  border-color: #333;
+}

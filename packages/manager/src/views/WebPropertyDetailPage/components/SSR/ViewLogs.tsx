@@ -88,7 +88,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
   const isEmptyStateVisible =
     (!isGit && type === 1) || !idList || idList.length === 0 || idList.includes('No Pods found');
   return (
-    <div>
+    <div style={{ color: '#fff', backgroundColor: '#212427' }}>
       <div className="pf-u-mb-md pf-u-mt-md">
         {toPascalCase(type === 0 ? logType.POD : logType.BUILD)} Logs for <b>{spaName}</b>
       </div>
@@ -105,7 +105,8 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
         idList && (
           <>
             <Select
-              className="custom-select"
+              style={{ color: '#fff', backgroundColor: '#212427' }}
+              className="select-log-ids"
               variant="single"
               aria-label="Select Input"
               onToggle={handleToggle}
@@ -114,13 +115,34 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
               isOpen={isOpen}
             >
               {type === 1
-                ? idList && idList.map((item: string) => <SelectOption key={item} value={item} />)
-                : (podList || []).map((item: string) => <SelectOption key={item} value={item} />)}
+                ? idList &&
+                  idList.map((item: string) => (
+                    <SelectOption
+                      style={{ color: '#fff', backgroundColor: '#212427' }}
+                      key={item}
+                      value={item}
+                    />
+                  ))
+                : (podList || []).map((item: string) => (
+                    <SelectOption
+                      style={{ color: '#fff', backgroundColor: '#212427' }}
+                      key={item}
+                      value={item}
+                    />
+                  ))}
             </Select>
             {isLogsLoading ? (
-              <Spinner className="pf-u-mt-lg" />
+              <EmptyState>
+                {' '}
+                <Spinner className="pf-u-mt-lg" />
+              </EmptyState>
             ) : logs ? (
-              <CodeBlock className="pf-u-mt-md">{NewlineText(logs)}</CodeBlock>
+              <CodeBlock
+                className="pf-u-mt-md"
+                style={{ color: '#fff', backgroundColor: '#333333' }}
+              >
+                {NewlineText(logs)}
+              </CodeBlock>
             ) : (
               <EmptyState>
                 <EmptyStateIcon icon={CubesIcon} />
