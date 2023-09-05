@@ -77,6 +77,8 @@ body {
   --pf-c-nav__link--m-current--after--BorderColor: var(--spaship-global--Color--primary-blue);
   --pf-c-nav__link--m-current--Color: var(--spaship-global--Color--primary-blue);
   transition: all 250ms linear;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 .pf-c-form__label-text {
@@ -255,7 +257,7 @@ body {
 .pf-c-nav__section-title {
   padding: 8px;
 }
-.pf-c-nav__link {
-  padding-left: 8px;
-  padding-right: 8px;
+
+.pf-c-page__main-body {
+  padding-top: 0px !important;
 }

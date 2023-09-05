@@ -1,8 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/jsx-props-no-spreading */
-import { Banner, DeleteConfirmationModal, TableRowSkeleton } from '@app/components';
+import { DeleteConfirmationModal, TableRowSkeleton } from '@app/components';
 import { useFormatDate, usePopUp } from '@app/hooks';
-import { pageLinks } from '@app/links';
 import { useCreateAPIKey, useDeleteAPIKey, useGetApiKeys } from '@app/services/apiKeys';
 import { useGetEphemeralListForProperty } from '@app/services/ephemeral';
 import { useAddEnv, useGetEnvList } from '@app/services/persistent';
@@ -310,14 +309,7 @@ export const WebPropertyEnvPage = (): JSX.Element => {
   );
   return (
     <>
-      <Banner
-        title={propertyIdentifier.replace('-', ' ')}
-        backRef={{
-          pathname: pageLinks.webPropertyDetailPage,
-          query: { propertyIdentifier }
-        }}
-      />
-      <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
+      <PageSection isCenterAligned isWidthLimited>
         <Stack hasGutter>
           <StackItem className="pf-u-mb-md">
             <Card>

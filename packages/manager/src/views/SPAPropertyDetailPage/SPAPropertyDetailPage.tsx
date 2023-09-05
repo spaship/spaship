@@ -20,7 +20,7 @@ import { BuildIcon, BundleIcon, CogIcon, PackageIcon } from '@patternfly/react-i
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { Dashboard } from '../WebPropertyDetailPage/components/Dashboard';
-import { SSRDetails } from '../WebPropertyDetailPage/components/SSR/SSRDetails';
+import { ContainerizedDeployment } from '../WebPropertyDetailPage/components/SSR/ContainerizedDeployment';
 import { StaticDeployment } from '../WebPropertyDetailPage/components/SSR/StaticDeployment';
 
 export const SPAPropertyDetailPage = (): JSX.Element => {
@@ -78,7 +78,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             aria-label="SSR SPA Deployment"
           >
             <List className="pf-u-mt-lg">
-              <SSRDetails />
+              <ContainerizedDeployment />
             </List>
           </Tab>
           <Tab
