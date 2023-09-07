@@ -160,10 +160,11 @@ export class ApplicationFactory {
     isContainerized: boolean
   ) {
     const response = [];
+    // @internal TODO : buildAccessUrlForContainerizedDeployement to be removed
     for (const con of deploymentConnection) {
       const accessUrl = isContainerized
-        ? this.generateAccessUrlForContainerizedDeployement(applicationRequest, propertyIdentifier, env, con.baseurl)
-        : this.generateAccessUrlForStaticDeployment(applicationRequest, propertyIdentifier, env, con.baseurl);
+        ? this.buildAccessUrlForContainerizedDeployement(applicationRequest, propertyIdentifier, env, con.baseurl)
+        : this.buildAccessUrlForStaticDeployment(applicationRequest, propertyIdentifier, env, con.baseurl);
       response.push(accessUrl);
     }
     return response;
@@ -172,7 +173,7 @@ export class ApplicationFactory {
   getRouterUrl(deploymentConnection: DeploymentConnection[], applicationRequest: CreateApplicationDto, propertyIdentifier: string, env: string) {
     const response = [];
     for (const con of deploymentConnection) {
-      const routerUrl = this.generateRouteUrl(applicationRequest, propertyIdentifier, env, con.baseurl);
+      const routerUrl = this.buildRouteUrl(applicationRequest, propertyIdentifier, env, con.baseurl);
       response.push(routerUrl);
     }
     return response;
@@ -200,7 +201,7 @@ export class ApplicationFactory {
     return nextRef;
   }
 
-  private generateAccessUrlForStaticDeployment(application: CreateApplicationDto, propertyIdentifier: string, env: string, baseUrl: string): string {
+  private buildAccessUrlForStaticDeployment(application: CreateApplicationDto, propertyIdentifier: string, env: string, baseUrl: string): string {
     const protocol = 'http';
     const { hostname } = new URL(baseUrl);
     const appPrefix = hostname.split('.')[4];
@@ -623,7 +624,7 @@ export class ApplicationFactory {
     return gitUrl;
   }
 
-  private generateAccessUrlForContainerizedDeployement(
+  private buildAccessUrlForContainerizedDeployement(
     application: CreateApplicationDto,
     propertyIdentifier: string,
     env: string,
@@ -826,7 +827,7 @@ export class ApplicationFactory {
     }
   }
 
-  private generateRouteUrl(application: CreateApplicationDto, propertyIdentifier: string, env: string, baseUrl: string): string {
+  private buildRouteUrl(application: CreateApplicationDto, propertyIdentifier: string, env: string, baseUrl: string): string {
     const protocol = 'https';
     const { hostname } = new URL(baseUrl);
     const appPrefix = hostname.split('.')[4];
