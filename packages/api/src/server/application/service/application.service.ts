@@ -181,7 +181,7 @@ export class ApplicationService {
     applicationDetails.name = applicationRequest.name;
     applicationDetails.path = applicationRequest.path;
     applicationDetails.accessUrl = this.applicationFactory.getAccessUrl(deploymentConnection, applicationRequest, propertyIdentifier, env, false);
-    applicationDetails.routerUrl = this.applicationFactory.getRouterUrl(deploymentConnection, applicationRequest, propertyIdentifier, env, false);
+    applicationDetails.routerUrl = this.applicationFactory.getRouterUrl(deploymentConnection, applicationRequest, propertyIdentifier, env);
     applicationDetails.updatedBy = createdBy;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
     await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false }, applicationDetails);
@@ -322,6 +322,7 @@ export class ApplicationService {
       applicationDetails.config = applicationRequest.config || applicationDetails.config;
       applicationDetails.port = applicationRequest.port || applicationDetails.port || CONTAINERIZED_DEPLOYMENT_DETAILS.port;
       applicationDetails.accessUrl = this.applicationFactory.getAccessUrl(deploymentConnection, applicationRequest, propertyIdentifier, env, true);
+      applicationDetails.routerUrl = this.applicationFactory.getRouterUrl(deploymentConnection, applicationRequest, propertyIdentifier, env);
       applicationDetails.updatedBy = applicationRequest.createdBy;
       this.logger.log('ContainerizedApplicationUpdatedDetails', JSON.stringify(applicationDetails));
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: true, isGit: false }, applicationDetails);
@@ -534,6 +535,7 @@ export class ApplicationService {
       applicationDetails.secret = applicationRequest.secret || applicationDetails.secret;
       applicationDetails.port = applicationRequest.port || applicationDetails.port || CONTAINERIZED_DEPLOYMENT_DETAILS.port;
       applicationDetails.accessUrl = this.applicationFactory.getAccessUrl(deploymentConnection, applicationRequest, propertyIdentifier, env, true);
+      applicationDetails.routerUrl = this.applicationFactory.getRouterUrl(deploymentConnection, applicationRequest, propertyIdentifier, env);
       applicationDetails.repoUrl = applicationRequest.repoUrl || applicationDetails.repoUrl;
       applicationDetails.gitRef = applicationRequest.gitRef || applicationDetails.gitRef;
       applicationDetails.contextDir = applicationRequest.contextDir || applicationDetails.contextDir;

@@ -142,7 +142,7 @@ export class ApplicationFactory {
     saveApplication.propertyIdentifier = propertyIdentifier;
     saveApplication.ref = 'NA';
     saveApplication.accessUrl = this.getAccessUrl(deploymentConnection, applicationRequest, propertyIdentifier, env, isContainerized);
-    saveApplication.routerUrl = this.getRouterUrl(deploymentConnection, applicationRequest, propertyIdentifier, env, isContainerized);
+    saveApplication.routerUrl = this.getRouterUrl(deploymentConnection, applicationRequest, propertyIdentifier, env);
     saveApplication.isContainerized = false;
     saveApplication.isGit = false;
     saveApplication.autoSync = false;
@@ -169,19 +169,12 @@ export class ApplicationFactory {
     return response;
   }
 
-  getRouterUrl(
-    deploymentConnection: DeploymentConnection[],
-    applicationRequest: CreateApplicationDto,
-    propertyIdentifier: string,
-    env: string,
-    isContainerized: boolean
-  ) {
+  getRouterUrl(deploymentConnection: DeploymentConnection[], applicationRequest: CreateApplicationDto, propertyIdentifier: string, env: string) {
     const response = [];
-    if (!isContainerized)
-      for (const con of deploymentConnection) {
-        const routerUrl = this.generateRouteUrlForStaticDeployment(applicationRequest, propertyIdentifier, env, con.baseurl);
-        response.push(routerUrl);
-      }
+    for (const con of deploymentConnection) {
+      const routerUrl = this.generateRouteUrl(applicationRequest, propertyIdentifier, env, con.baseurl);
+      response.push(routerUrl);
+    }
     return response;
   }
 
@@ -196,7 +189,7 @@ export class ApplicationFactory {
     applicationResponse.path = application.path;
     applicationResponse.env = application.env;
     applicationResponse.ref = this.getRef(application.nextRef);
-    applicationResponse.accessUrl = application.accessUrl;
+    applicationResponse.accessUrl = application.routerUrl;
     if (applicationExists)
       applicationResponse.warning = `SPA(s) - ${applicationExists} already exist(s) on the context path ${applicationResponse.path}. Overriding existing deployment.`;
     return applicationResponse;
@@ -833,7 +826,7 @@ export class ApplicationFactory {
     }
   }
 
-  private generateRouteUrlForStaticDeployment(application: CreateApplicationDto, propertyIdentifier: string, env: string, baseUrl: string): string {
+  private generateRouteUrl(application: CreateApplicationDto, propertyIdentifier: string, env: string, baseUrl: string): string {
     const protocol = 'https';
     const { hostname } = new URL(baseUrl);
     const appPrefix = hostname.split('.')[4];
