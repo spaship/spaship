@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/jsx-key, no-underscore-dangle, react/require-default-props */
 
 import { useFormatDate } from '@app/hooks';
@@ -47,15 +48,25 @@ const activities = {
       <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
       <span style={{ fontWeight: '600' }}>{props.env} </span> environment within{' '}
-      {message.split(' ')[3]}s{' '}
+      {message.split(' ')[3]}s
       {isGlobal && (
         <Link
           href={{
-            pathname: '/properties/[propertyIdentifier]/[spaProperty]',
-            query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
+            pathname: props.env.includes('ephemeral')
+              ? '/properties/[propertyIdentifier]'
+              : '/properties/[propertyIdentifier]/[spaProperty]',
+            query: {
+              propertyIdentifier,
+              spaProperty: props.applicationIdentifier,
+              initialTab: props.env.includes('ephemeral')
+                ? 1
+                : props.type === 'containerized'
+                ? 0
+                : 1
+            }
           }}
         >
-          view details
+          View Details
         </Link>
       )}
     </Text>

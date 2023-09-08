@@ -48,7 +48,7 @@ export const Banner = ({ children, backRef, title }: Props): JSX.Element => {
   }, [pathname, query]);
 
   return (
-    <PageSection isWidthLimited isCenterAligned className="pf-u-px-xl">
+    <PageSection isWidthLimited isCenterAligned className="pf-u-px-xl pf-u-pt-xl">
       <Stack hasGutter>
         <StackItem>
           <Breadcrumb>

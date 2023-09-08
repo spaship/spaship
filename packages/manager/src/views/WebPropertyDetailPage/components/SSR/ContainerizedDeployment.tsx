@@ -53,12 +53,10 @@ const INTERNAL_ACCESS_URL_LENGTH = 25;
 export const ContainerizedDeployment = () => {
   const { query } = useRouter();
   const propertyIdentifier = query.propertyIdentifier as string;
+  const spaProperty = query.spaProperty as string;
   const createSsrSpaProperty = useAddSsrSpaProperty();
   const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, '');
-  const url = window.location.href;
-  const parts = url.split('/');
-  const applicationName = parts[parts.length - 1];
-  const containerisedDeploymentData = spaProperties?.data?.[applicationName].filter(
+  const containerisedDeploymentData = spaProperties?.data?.[spaProperty].filter(
     (item) => item.isContainerized === true
   );
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
@@ -108,7 +106,7 @@ export const ContainerizedDeployment = () => {
   const [buildIdList, setbuildIdList] = useState<string[]>([]);
   const [buildDetails, setBuildDetails] = useState<string[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
-  const podIdList = useListOfPods(propertyIdentifier, applicationName, envName);
+  const podIdList = useListOfPods(propertyIdentifier, spaProperty, envName);
   const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
 
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
@@ -154,7 +152,7 @@ export const ContainerizedDeployment = () => {
 
   const spaDetailedInitialData = {
     propertyIdentifier,
-    name: applicationName,
+    name: spaProperty,
     path: '',
     ref: '',
     env: '',
@@ -175,7 +173,7 @@ export const ContainerizedDeployment = () => {
     path: '/',
     gitRef: 'main',
     type: 'monolithic',
-    name: applicationName,
+    name: spaProperty,
     env: '',
     repoUrl: '',
     ref: '',
@@ -225,7 +223,7 @@ export const ContainerizedDeployment = () => {
               <ViewLogs
                 key={envName}
                 propertyIdentifier={propertyIdentifier}
-                spaName={applicationName}
+                spaName={spaProperty}
                 env={envName}
                 type={activeTabKey}
                 idList={podList}
@@ -243,7 +241,7 @@ export const ContainerizedDeployment = () => {
               <ViewLogs
                 key={envName}
                 propertyIdentifier={propertyIdentifier}
-                spaName={applicationName}
+                spaName={spaProperty}
                 env={envName}
                 type={activeTabKey}
                 idList={buildIdList}

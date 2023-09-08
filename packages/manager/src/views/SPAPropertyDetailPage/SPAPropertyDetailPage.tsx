@@ -27,14 +27,13 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
   const propertyIdentifier = router.query.propertyIdentifier as string;
   const spaProperty = router.query.spaProperty as string;
-
+  const initialTab = router.query.initialTab as string;
   const deploymentCount = useGetTotalDeploymentsForApps(propertyIdentifier, spaProperty);
   if (deploymentCount.isError === true) {
     toast.error(`Sorry cannot find ${spaProperty}`);
     router.push(`/properties/${propertyIdentifier}`);
   }
-
-  const { handleTabChange, openTab } = useTabs(3);
+  const { handleTabChange, openTab } = useTabs(3, parseInt(initialTab || '0', 10));
 
   return (
     <>

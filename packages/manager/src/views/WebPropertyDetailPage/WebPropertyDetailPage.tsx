@@ -60,12 +60,13 @@ const INTERNAL_ACCESS_URL_LENGTH = 25;
 
 export const WebPropertyDetailPage = (): JSX.Element => {
   const { query } = useRouter();
+  const initialTab = query.initialTab as string;
   const [isRowExpanded, setIsRowExpanded] = useState<Record<string, boolean>>({});
   const [searchTerm, setSearchTerm] = useState('');
   const [filterByEnv, setFilterByEnv] = useState('');
   const propertyIdentifier = (query?.propertyIdentifier as string) || '';
   const formatDate = useFormatDate();
-  const { openTab, handleTabChange } = useTabs(4);
+  const { openTab, handleTabChange } = useTabs(4, parseInt(initialTab || '0', 10));
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
   const [isFilterOpen, setIsFilterOpen] = useToggle();
 
@@ -301,7 +302,11 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                 <Link
                                   href={{
                                     pathname: '/properties/[propertyIdentifier]/[spaProperty]',
-                                    query: { propertyIdentifier, spaProperty: identifier }
+                                    query: {
+                                      propertyIdentifier,
+                                      spaProperty: identifier,
+                                      initialTab: spaProperties.data[identifier]?.[0]?.isGit ? 0 : 1
+                                    }
                                   }}
                                 >
                                   {`${spaProperties.data[identifier]?.[0]?.name.slice(
