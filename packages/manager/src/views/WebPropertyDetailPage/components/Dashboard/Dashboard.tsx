@@ -101,7 +101,7 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
                       style={{
                         display: 'flex',
                         flexDirection: 'row',
-                        gap: '7%',
+                        gap: '6%',
                         marginTop: '24px'
                       }}
                       className="dashboard-card-subheadings"
@@ -203,7 +203,7 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
                       style={{
                         display: 'flex',
                         flexDirection: 'row',
-                        gap: '35px',
+                        gap: '6%',
                         marginTop: '24px'
                       }}
                     >
