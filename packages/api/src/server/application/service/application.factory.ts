@@ -142,7 +142,7 @@ export class ApplicationFactory {
     saveApplication.propertyIdentifier = propertyIdentifier;
     saveApplication.ref = 'NA';
     saveApplication.accessUrl = this.getAccessUrl(deploymentConnection, applicationRequest, propertyIdentifier, env, isContainerized);
-    saveApplication.routerUrl = this.getRouterUrl(deploymentConnection, applicationRequest, propertyIdentifier, env, isContainerized);
+    saveApplication.routerUrl = this.getRouterUrl(deploymentConnection, applicationRequest, propertyIdentifier, env);
     saveApplication.isContainerized = false;
     saveApplication.isGit = false;
     saveApplication.autoSync = false;
@@ -160,28 +160,22 @@ export class ApplicationFactory {
     isContainerized: boolean
   ) {
     const response = [];
+    // @internal TODO : buildAccessUrlForContainerizedDeployement to be removed
     for (const con of deploymentConnection) {
       const accessUrl = isContainerized
-        ? this.generateAccessUrlForContainerizedDeployement(applicationRequest, propertyIdentifier, env, con.baseurl)
-        : this.generateAccessUrlForStaticDeployment(applicationRequest, propertyIdentifier, env, con.baseurl);
+        ? this.buildAccessUrlForContainerizedDeployement(applicationRequest, propertyIdentifier, env, con.baseurl)
+        : this.buildAccessUrlForStaticDeployment(applicationRequest, propertyIdentifier, env, con.baseurl);
       response.push(accessUrl);
     }
     return response;
   }
 
-  getRouterUrl(
-    deploymentConnection: DeploymentConnection[],
-    applicationRequest: CreateApplicationDto,
-    propertyIdentifier: string,
-    env: string,
-    isContainerized: boolean
-  ) {
+  getRouterUrl(deploymentConnection: DeploymentConnection[], applicationRequest: CreateApplicationDto, propertyIdentifier: string, env: string) {
     const response = [];
-    if (!isContainerized)
-      for (const con of deploymentConnection) {
-        const routerUrl = this.generateRouteUrlForStaticDeployment(applicationRequest, propertyIdentifier, env, con.baseurl);
-        response.push(routerUrl);
-      }
+    for (const con of deploymentConnection) {
+      const routerUrl = this.buildRouteUrl(applicationRequest, propertyIdentifier, env, con.baseurl);
+      response.push(routerUrl);
+    }
     return response;
   }
 
@@ -196,7 +190,7 @@ export class ApplicationFactory {
     applicationResponse.path = application.path;
     applicationResponse.env = application.env;
     applicationResponse.ref = this.getRef(application.nextRef);
-    applicationResponse.accessUrl = application.accessUrl;
+    applicationResponse.accessUrl = application.routerUrl;
     if (applicationExists)
       applicationResponse.warning = `SPA(s) - ${applicationExists} already exist(s) on the context path ${applicationResponse.path}. Overriding existing deployment.`;
     return applicationResponse;
@@ -207,7 +201,7 @@ export class ApplicationFactory {
     return nextRef;
   }
 
-  private generateAccessUrlForStaticDeployment(application: CreateApplicationDto, propertyIdentifier: string, env: string, baseUrl: string): string {
+  private buildAccessUrlForStaticDeployment(application: CreateApplicationDto, propertyIdentifier: string, env: string, baseUrl: string): string {
     const protocol = 'http';
     const { hostname } = new URL(baseUrl);
     const appPrefix = hostname.split('.')[4];
@@ -630,7 +624,7 @@ export class ApplicationFactory {
     return gitUrl;
   }
 
-  private generateAccessUrlForContainerizedDeployement(
+  private buildAccessUrlForContainerizedDeployement(
     application: CreateApplicationDto,
     propertyIdentifier: string,
     env: string,
@@ -833,7 +827,7 @@ export class ApplicationFactory {
     }
   }
 
-  private generateRouteUrlForStaticDeployment(application: CreateApplicationDto, propertyIdentifier: string, env: string, baseUrl: string): string {
+  private buildRouteUrl(application: CreateApplicationDto, propertyIdentifier: string, env: string, baseUrl: string): string {
     const protocol = 'https';
     const { hostname } = new URL(baseUrl);
     const appPrefix = hostname.split('.')[4];
