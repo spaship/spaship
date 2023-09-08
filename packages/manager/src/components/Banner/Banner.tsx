@@ -48,8 +48,8 @@ export const Banner = ({ children, backRef, title }: Props): JSX.Element => {
   }, [pathname, query]);
 
   return (
-    <PageSection isWidthLimited isCenterAligned className="pf-u-px-xl pf-u-pt-xl">
-      <Stack hasGutter>
+    <PageSection isWidthLimited isCenterAligned className="pf-u-px-lg pf-u-pt-lg">
+      <Stack>
         <StackItem>
           <Breadcrumb>
             <BreadcrumbItem isActive={asPath === '/properties'}>

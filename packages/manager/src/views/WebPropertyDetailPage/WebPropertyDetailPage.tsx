@@ -126,7 +126,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
           </LevelItem>
         </Level>
       </Banner>
-      <PageSection isCenterAligned isWidthLimited className="pf-u-px-xl">
+      <PageSection isCenterAligned isWidthLimited className="pf-u-px-lg">
         <Tabs
           activeKey={openTab}
           onSelect={(_, tab) => handleTabChange(tab as number)}

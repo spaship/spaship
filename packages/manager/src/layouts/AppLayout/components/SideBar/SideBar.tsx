@@ -55,8 +55,8 @@ export const SideBar = () => {
     <PageSidebar
       nav={
         <Nav onToggle={() => setIsExpanded(!isExpanded)}>
-          <NavGroup title="Account" style={{ margin: '0px', fontSize: '12px' }}>
-            <NavList style={{ padding: '8px!important' }}>
+          <NavGroup title="Account" style={{ margin: '0px', fontSize: '12px !important' }}>
+            <NavList className="pf-u-px-md">
               <Link href="/home">
                 <a className="text-decoration-none">
                   <SidebarNavItem
@@ -72,7 +72,7 @@ export const SideBar = () => {
                   />
                 </a>
               </Link>
-              <Link href="/dashboard" style={{ margin: '0px', fontSize: '12px' }}>
+              <Link href="/dashboard">
                 <a className="text-decoration-none">
                   <SidebarNavItem
                     title="Dashboard"
@@ -89,13 +89,13 @@ export const SideBar = () => {
               </Link>
             </NavList>
           </NavGroup>
-          <NavGroup title="Webproperties" style={{ margin: '0px', fontSize: '12px' }}>
-            <NavList>
+          <NavGroup title="Webproperties">
+            <NavList className="pf-u-px-md">
               <NavExpandable
                 title={
                   window.location.pathname?.includes(selectedProperty)
                     ? selectedProperty
-                    : 'Select Web Property'
+                    : 'Select Property'
                 }
                 groupId="nav-expanded-web-property"
                 isExpanded={isExpanded}
@@ -132,8 +132,8 @@ export const SideBar = () => {
               </Link>
             </NavList>
           </NavGroup>
-          <NavGroup title="Documentation" style={{ margin: '0px', fontSize: '12px' }}>
-            <NavList>
+          <NavGroup title="Documentation">
+            <NavList className="pf-u-px-md">
               <Link href="/documents">
                 <a className="text-decoration-none">
                   <SidebarNavItem
@@ -166,8 +166,8 @@ export const SideBar = () => {
               </Link>
             </NavList>
           </NavGroup>
-          <NavGroup title="Help" style={{ margin: '0px', fontSize: '12px' }}>
-            <NavList>
+          <NavGroup title="Help">
+            <NavList className="pf-u-px-md">
               <Link href="https://docs.google.com/document/d/143ezNXxfujOiTe3VD0cc0ZBYL92F_fSpYCFJUzzDoiQ/edit">
                 <a className="text-decoration-none" target="_blank" rel="noreferrer">
                   <SidebarNavItem

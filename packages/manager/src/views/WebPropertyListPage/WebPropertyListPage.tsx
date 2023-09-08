@@ -82,7 +82,12 @@ export const WebPropertyListPage = (): JSX.Element => {
   return (
     <>
       <Banner title="Web Properties" />
-      <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
+      <PageSection
+        isCenterAligned
+        isWidthLimited
+        className="pf-u-p-xl"
+        style={{ borderTop: '1px solid rgb(210, 210, 210)' }}
+      >
         <Split hasGutter className="pf-u-mb-md">
           <SplitItem className="pf-u-w-33">
             <SearchInput
