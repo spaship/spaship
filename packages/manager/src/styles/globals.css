@@ -46,14 +46,15 @@ body {
 }
 
 .pf-c-nav__link {
-  --pf-c-nav__link--hover--Color: #fff;
-  --pf-c-nav__link--hover--after--BorderLeftWidth: 2px;
-  --pf-c-nav__link--hover--after--BorderColor: #fff;
+  --pf-c-nav__link--hover--BackgroundColor: #06c;
+  --pf-c-nav__link--hover--after--BorderColor: #06c;
+  --pf-c-nav__link--hover--after--BorderRadius: 4px;
   --pf-c-nav__link--m-current--after--BorderColor: var(--spaship-global--Color--primary-blue);
   --pf-c-nav__link--m-current--Color: #fff;
   transition: all 250ms linear;
   padding-left: 8px;
   padding-right: 8px;
+  border-radius: 4px;
 }
 
 .pf-c-form__label-text {

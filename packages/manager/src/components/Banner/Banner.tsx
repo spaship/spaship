@@ -74,7 +74,7 @@ export const Banner = ({ children, backRef, title }: Props): JSX.Element => {
             ))}
           </Breadcrumb>
         </StackItem>
-        <StackItem>
+        <StackItem className="pf-u-mt-sm">
           <Flex
             alignItems={{ default: 'alignItemsCenter' }}
             spaceItems={{ default: 'spaceItemsSm' }}
