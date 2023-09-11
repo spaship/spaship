@@ -1,23 +1,12 @@
 /* eslint-disable no-underscore-dangle */
-import {
-  Button,
-  Level,
-  LevelItem,
-  List,
-  PageSection,
-  Tab,
-  Tabs,
-  TabTitleIcon,
-  TabTitleText
-} from '@patternfly/react-core';
+import { List, PageSection, Tab, Tabs, TabTitleIcon, TabTitleText } from '@patternfly/react-core';
 import { useRouter } from 'next/router';
 
 import { Banner } from '@app/components';
 import { useTabs } from '@app/hooks';
 import { pageLinks } from '@app/links';
 import { useGetTotalDeploymentsForApps } from '@app/services/analytics';
-import { BuildIcon, BundleIcon, CogIcon, PackageIcon } from '@patternfly/react-icons';
-import Link from 'next/link';
+import { BuildIcon, BundleIcon, PackageIcon } from '@patternfly/react-icons';
 import toast from 'react-hot-toast';
 import { Dashboard } from '../WebPropertyDetailPage/components/Dashboard';
 import { ContainerizedDeployment } from '../WebPropertyDetailPage/components/SSR/ContainerizedDeployment';
@@ -45,23 +34,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             propertyIdentifier
           }
         }}
-      >
-        <Level>
-          <LevelItem />
-          <LevelItem>
-            <Link
-              href={{
-                pathname: pageLinks.webPropertySettingPage,
-                query: { propertyIdentifier }
-              }}
-            >
-              <Button variant="link" icon={<CogIcon />}>
-                Settings
-              </Button>
-            </Link>
-          </LevelItem>
-        </Level>
-      </Banner>
+      />
       <PageSection isCenterAligned isWidthLimited className="pf-u-px-lg">
         <Tabs activeKey={openTab} onSelect={(_, tab) => handleTabChange(tab as number)}>
           <Tab

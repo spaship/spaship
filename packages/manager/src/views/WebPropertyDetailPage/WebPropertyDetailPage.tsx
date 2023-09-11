@@ -55,6 +55,8 @@ import { EmptyInfo } from './components/EmptyInfo';
 import { Dashboard } from './components/Dashboard';
 import { AddDeplyoment } from './components/addDeployment';
 
+import { Settings } from '../Settings/Settings';
+
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 25;
 
@@ -518,6 +520,20 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             aria-label="Dashboard"
           >
             <Dashboard type="web-property" />
+          </Tab>
+          <Tab
+            eventKey={3}
+            title={
+              <>
+                <TabTitleIcon>
+                  <CogIcon />
+                </TabTitleIcon>
+                <TabTitleText>Settings</TabTitleText>
+              </>
+            }
+            aria-label="Settings"
+          >
+            <Settings />
           </Tab>
         </Tabs>
       </PageSection>

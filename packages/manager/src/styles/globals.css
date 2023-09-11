@@ -41,31 +41,6 @@ body {
   height: 100% !important;
 }
 
-.pf-c-button {
-  --pf-c-button--m-link--Color: #000 !important;
-}
-
-.pf-m-primary {
-  --pf-c-button--m-primary--BackgroundColor: var(--spaship-global--Color--primary-blue) !important;
-  outline: none;
-}
-
-.pf-m-primary:hover {
-  --pf-c-button--m-primary--BackgroundColor: var(--spaship-global--Color--primary-blue) !important;
-}
-
-.pf-m-primary:focus {
-  --pf-c-button--m-primary--focus--BackgroundColor: var(
-    --spaship-global--Color--primary-blue
-  ) !important;
-}
-
-.pf-m-primary:active {
-  --pf-c-button--m-primary--active--BackgroundColor: var(
-    --spaship-global--Color--primary-blue
-  ) !important;
-}
-
 .pf-c-nav__link::before {
   --pf-c-nav__link--before--BorderBottomWidth: 0;
 }
@@ -264,4 +239,8 @@ body {
 }
 .pf-c-page__main-body {
   padding-top: 0px !important;
+}
+.secondary-button {
+  background-color: #000 !important;
+  color: #fff !important;
 }

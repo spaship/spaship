@@ -64,7 +64,7 @@ const userRole: UserRoleDTO = {
     'APPLICATION_CREATION'
   ]
 };
-export const AddMembers = ({ onClose }: Props): JSX.Element => {
+export const AddMembersForm = ({ onClose }: Props): JSX.Element => {
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [isOpenUser, setIsOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
