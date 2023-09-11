@@ -491,7 +491,7 @@ export const AddMembersForm = ({ onClose }: Props): JSX.Element => {
               </Button>
             </FlexItem>
           </Flex>
-          <div className="--pf-global--spacer--xl" />
+          <div className="--pf-global--spacer--lg" />
           {isShowAdvancedViewEnabledRover && Object.keys(columnNames2).length ? (
             <TableComposable>
               <Thead noWrap>

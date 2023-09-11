@@ -3,10 +3,10 @@ import { PageSection } from '@patternfly/react-core';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 export const SLAPage = (): JSX.Element => (
-  <>
+  <div style={{ backgroundColor: '#15' }}>
     <Banner title="Service Level Agreement for SPAship" />
 
-    <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
+    <PageSection isCenterAligned isWidthLimited className="pf-u-m-lg pf-u-py-lg">
       <TableComposable aria-label="Simple table" variant="compact">
         <Thead noWrap>
           <Tr>
@@ -151,5 +151,5 @@ export const SLAPage = (): JSX.Element => (
         </Tbody>
       </TableComposable>
     </PageSection>
-  </>
+  </div>
 );

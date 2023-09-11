@@ -69,7 +69,7 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
     <div style={{ backgroundColor: '#15' }}>
       <div style={{ display: 'flex', flexDirection: 'row', height: '10%' }}>
         <div style={{ width: '50%' }}>
-          <Card style={{ margin: '24px 24px' }}>
+          <Card className="pf-u-m-lg">
             <TextContent
               style={{
                 paddingBottom: '24px',

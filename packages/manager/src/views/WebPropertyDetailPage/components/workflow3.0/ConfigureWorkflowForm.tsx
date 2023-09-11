@@ -1156,7 +1156,7 @@ export const ConfigureWorkflowForm = ({
                         )}
                       />
                     </SplitItem>
-                    <SplitItem style={{ paddingTop: 'var(--pf-global--spacer--xl)' }}>
+                    <SplitItem style={{ paddingTop: 'var(--pf-global--spacer--lg)' }}>
                       <Controller
                         control={control}
                         name={`secret.${index}.isSecret`}

@@ -131,7 +131,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
   return (
     <>
       <Banner title="Add New Web Property" backRef={pageLinks.webPropertyListPage} />
-      <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
+      <PageSection isCenterAligned isWidthLimited className="pf-u-px-lg">
         <Form onSubmit={handleSubmit(onFormSubmit)} style={{ maxWidth: '720px' }}>
           <Controller
             control={control}
@@ -290,7 +290,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
               />
             </SplitItem>
 
-            <SplitItem className="pf-u-mt-xl">
+            <SplitItem className="pf-u-mt-lg">
               <Radio
                 isChecked={cmdbId}
                 name="Cmdb Id"
@@ -300,7 +300,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
                 required={isCmdbCodeValid}
               />
             </SplitItem>
-            <SplitItem className="pf-u-mt-xl">
+            <SplitItem className="pf-u-mt-lg">
               <Radio
                 isChecked={cmdbName}
                 name="Cmdb Name"

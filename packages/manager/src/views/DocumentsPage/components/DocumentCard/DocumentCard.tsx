@@ -36,7 +36,7 @@ export const DocumentCard = ({
       className={css('pf-u-px-sm rounded-md transition hover:shadow-sm')}
     >
       <CardTitle>
-        <Title headingLevel="h3" size="xl" className="capitalize">
+        <Title headingLevel="h3" size="lg" className="capitalize">
           {isIcon ? <PlayIcon style={{ marginRight: '10px', fontSize: '15px' }} /> : null}
           {title}
         </Title>

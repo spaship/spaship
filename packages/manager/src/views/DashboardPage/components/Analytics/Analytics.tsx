@@ -35,7 +35,7 @@ export const Analytics = ({
   TotalDeploymentData,
   totalTimeSaved
 }: Props) => (
-  <Card style={{ margin: '24px 24px' }}>
+  <Card className="pf-u-m-lg">
     <TextContent
       style={{
         paddingBottom: '24px',

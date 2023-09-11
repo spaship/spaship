@@ -54,7 +54,7 @@ export const WebPropertyListPage = (): JSX.Element => {
             Web Properties
           </Title>
         </Banner>
-        <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
+        <PageSection isCenterAligned isWidthLimited className="pf-u-px-lg">
           <Gallery hasGutter>
             {Array.apply(0, Array(3)).map((x, i) => (
               <GalleryItem key={`web-property-card-${i + 1}`}>
@@ -80,14 +80,9 @@ export const WebPropertyListPage = (): JSX.Element => {
   const isWebPropertiesEmpty = filteredWebProperties?.length === 0;
 
   return (
-    <>
+    <div style={{ backgroundColor: '#15' }}>
       <Banner title="Web Properties" />
-      <PageSection
-        isCenterAligned
-        isWidthLimited
-        className="pf-u-p-xl"
-        style={{ borderTop: '1px solid rgb(210, 210, 210)' }}
-      >
+      <PageSection isCenterAligned isWidthLimited className="pf-u-m-lg pf-u-py-lg">
         <Split hasGutter className="pf-u-mb-md">
           <SplitItem className="pf-u-w-33">
             <SearchInput
@@ -186,6 +181,6 @@ export const WebPropertyListPage = (): JSX.Element => {
           </Gallery>
         )}
       </PageSection>
-    </>
+    </div>
   );
 };
