@@ -33,7 +33,7 @@ import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-tab
 import { AxiosError } from 'axios';
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
-import { CreateEnvForm, FormData as EnvForm } from './CreateEnvForm';
+import { CreateEnvForm, FormData as EnvForm } from './CreateEnvForm/CreateEnvForm';
 import { SyncServiceForm } from './SyncServiceForm';
 
 const URL_LENGTH_LIMIT = 25;

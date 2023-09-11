@@ -33,7 +33,7 @@ import { AxiosError } from 'axios';
 import { useSession } from 'next-auth/react';
 import { SetStateAction, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { FormData as APIKeyForm, CreateAPIKeyForm } from './CreateAPIKeyForm';
+import { FormData as APIKeyForm, CreateAPIKeyForm } from './CreateAPIKeyForm/CreateAPIKeyForm';
 
 type ApiKeysItem = {
   propertyIdentifier: string;
