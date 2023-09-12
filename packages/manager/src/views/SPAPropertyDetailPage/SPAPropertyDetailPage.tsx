@@ -22,7 +22,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
     toast.error(`Sorry cannot find ${spaProperty}`);
     router.push(`/properties/${propertyIdentifier}`);
   }
-  const { handleTabChange, openTab } = useTabs(3, parseInt(initialTab || '0', 10));
+  const { handleTabChange, openTab } = useTabs(3, Number(initialTab || '0'));
 
   return (
     <>

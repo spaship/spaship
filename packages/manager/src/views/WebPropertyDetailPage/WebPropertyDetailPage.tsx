@@ -66,7 +66,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const [filterByEnv, setFilterByEnv] = useState('');
   const propertyIdentifier = (query?.propertyIdentifier as string) || '';
   const formatDate = useFormatDate();
-  const { openTab, handleTabChange } = useTabs(4, parseInt(initialTab || '0', 10));
+  const { openTab, handleTabChange } = useTabs(4, Number(initialTab || '0'));
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
   const [isFilterOpen, setIsFilterOpen] = useToggle();
 

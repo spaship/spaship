@@ -134,7 +134,6 @@ export const ApiKey = ({
     }
   };
 
-  // const pageCount = Math.ceil((apiKeys?.data?.length ?? 0) / ITEMS_PER_PAGE);
   const handlePageChangeForAPI = (event: any, itemsForAPI: SetStateAction<number>) => {
     setPageForAPI(itemsForAPI);
   };

@@ -187,13 +187,6 @@ export const Environment = ({ propertyIdentifier }: { propertyIdentifier: string
                   <div>
                     SPAship sync is a process in which a schedular pulls HTML pages (from a remote
                     location) into a specific directory of an environment periodically,
-                    <a
-                      target="_blank"
-                      href="https://source.redhat.com/groups/public/dxp/exd_digital_experience_platforms_dxp_blog/introducing_sync_service_in_spaship"
-                      rel="noreferrer"
-                    >
-                      Click here to know more!
-                    </a>
                   </div>
                 }
               >

@@ -78,20 +78,25 @@ export const AccessControl = ({ propertyIdentifier }: { propertyIdentifier: stri
     setItemsPerPageForMembers(perPageForMembers);
     setPageForMembers(1);
   };
+
   const handleDeleteMember = async () => {
     if (!memberList?.data) return;
-    const deletePerm = memberList.data
-      .filter((e: MemberListItem) => e.name === deleteMemberName)
-      .map((v: MemberListItem) => {
-        const tempActionsDelete: string[] = [];
-        Object.keys(v)
-          .filter((a) => !['name', 'email', 'role'].includes(a))
-          .forEach((a) => tempActionsDelete.push(a));
-        return { name: v.name, email: v.email, actions: tempActionsDelete };
-      });
+
     const deleteData = {
       propertyIdentifier,
-      permissionDetails: deletePerm
+      permissionDetails: memberList.data.reduce((acc: any[], member: MemberListItem) => {
+        if (member.name === deleteMemberName) {
+          const tempActionsDelete: string[] = Object.keys(member)
+            .filter((key) => !['name', 'email', 'role'].includes(key))
+            .reduce((tempActions: string[], key) => {
+              tempActions.push(key);
+              return tempActions;
+            }, []);
+
+          acc.push({ name: member.name, email: member.email, actions: tempActionsDelete });
+        }
+        return acc;
+      }, [])
     };
 
     try {
