@@ -104,13 +104,12 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
                         gap: '6%',
                         marginTop: '24px'
                       }}
-                      className="dashboard-card-subheadings"
                     >
                       {TotalDeploymentCardFields.map((field) => (
                         <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
                           <Text
                             component={TextVariants.p}
-                            style={{ fontSize: '20px', color: '#151515' }}
+                            style={{ fontSize: '16px', color: '#151515', fontWeight: 500 }}
                           >
                             {TotalDeploymentData.data?.filter(
                               (ele) => ele.env === field.toLocaleLowerCase()
@@ -123,7 +122,7 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
                           <Text
                             component={TextVariants.p}
                             style={{
-                              fontSize: '14px',
+                              fontSize: '11px',
                               fontWeight: 400,
                               color: '#3C3F42'
                             }}
@@ -136,7 +135,7 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <Text
                           component={TextVariants.p}
-                          style={{ fontSize: '20px', color: '#151515' }}
+                          style={{ fontSize: '16px', color: '#151515', fontWeight: 500 }}
                         >
                           {TotalDeploymentData.data
                             ?.filter(
@@ -150,7 +149,7 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
                         <Text
                           component={TextVariants.p}
                           style={{
-                            fontSize: '14px',
+                            fontSize: '11px',
                             fontWeight: 400,
                             color: '#3C3F42'
                           }}
@@ -184,7 +183,7 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
                           <Text
                             component={TextVariants.p}
                             style={{
-                              fontSize: '14px',
+                              fontSize: '12px',
                               paddingLeft: '8px',
                               fontFamily: 'Red Hat Text'
                             }}
@@ -203,13 +202,20 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
                       style={{
                         display: 'flex',
                         flexDirection: 'row',
-                        gap: '6%',
+                        gap: '4%',
                         marginTop: '24px'
                       }}
                     >
                       {DeploymentTimeFrames.map((field, index) => (
                         <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
-                          <Text component={TextVariants.p} className="dashboard-card-subheadings">
+                          <Text
+                            component={TextVariants.p}
+                            style={{
+                              fontSize: '16px',
+                              color: '#151515',
+                              fontWeight: 500
+                            }}
+                          >
                             {averageDeploymentTime[index]
                               ? `${averageDeploymentTime[index]}s`
                               : '0'}
@@ -217,7 +223,7 @@ export const Dashboard = ({ type }: DashboardProps): JSX.Element => {
                           <Text
                             component={TextVariants.p}
                             style={{
-                              fontSize: '14px',
+                              fontSize: '11px',
                               fontWeight: 400,
                               color: '#3C3F42'
                             }}

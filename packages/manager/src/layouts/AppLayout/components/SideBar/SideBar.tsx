@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ReactNode, useState } from 'react';
-
+import { env } from '@app/config/env';
 import { pageLinks } from '@app/links';
 import { useGetWebProperties } from '@app/services/webProperty';
 import { TWebProperty } from '@app/services/webProperty/types';
@@ -50,6 +50,7 @@ export const SideBar = () => {
     setSelectedProperty(propertyTitle);
     setIsExpanded(false); // Collapse the expandable section after selection
   };
+  const feedbackFormUrl = env.PUBLIC_SPASHIP_FEEDBACK_FORM_URL;
 
   return (
     <PageSidebar
@@ -186,7 +187,8 @@ export const SideBar = () => {
                   />
                 </a>
               </Link>
-              <Link href="https://forms.gle/h2Zsq8CvSjYcDD8u7">
+
+              <Link href={feedbackFormUrl}>
                 <a className="text-decoration-none" target="_blank" rel="noreferrer">
                   <SidebarNavItem
                     title="Feedback"
@@ -201,6 +203,7 @@ export const SideBar = () => {
                   />
                 </a>
               </Link>
+              {/* )} */}
             </NavList>
           </NavGroup>
         </Nav>
