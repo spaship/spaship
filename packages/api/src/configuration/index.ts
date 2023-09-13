@@ -52,6 +52,7 @@ export const AUTH_LISTING = {
   eventsBaseURL: '/api/v1/analytics/events',
   propertyBaseURL: '/api/v1/property',
   gitDeploymentBaseURL: '/api/v1/applications/git/deploy',
+  gitEnvListBaseURL: '/api/v1/environment/git',
   hourSavedAnalyticsBaseURL: '/api/v1/analytics/deployment/time-saved'
 };
 
@@ -75,7 +76,7 @@ export const DEPLOYMENT_DETAILS = {
     containerized: 'containerized',
     static: 'static'
   },
-  namespace: process.env.SPASHIP_NAMESPACE || 'spaship-sandbox',
+  namespace: process.env.SPASHIP_NAMESPACE_PREFIX || 'spaship-sandbox',
   severity: getSeverity()
 };
 
