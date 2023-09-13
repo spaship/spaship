@@ -28,5 +28,8 @@ export const env = {
     process.env.SPASHIP_AUTH__KEYCLOAK_REFRESH_TOKEN_URL || '',
 
   // feedback form
-  PUBLIC_SPASHIP_FEEDBACK_FORM_URL: process.env.NEXT_PUBLIC_SPASHIP_FEEDBACK_FORM_URL || ''
+  PUBLIC_SPASHIP_FEEDBACK_FORM_URL: process.env.NEXT_PUBLIC_SPASHIP_FEEDBACK_FORM_URL || '',
+
+  // FAQ's document
+  PUBLIC_SPASHIP_FAQ_URL: process.env.NEXT_PUBLIC_SPASHIP_FAQ_URL || ''
 };
