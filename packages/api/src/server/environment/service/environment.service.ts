@@ -38,6 +38,7 @@ export class EnvironmentService {
       applications = await this.dataServices.application.getByAny({ propertyIdentifier });
     }
     const environments = await this.dataServices.environment.getByAny({ propertyIdentifier, isEph });
+    if (!environments) this.exceptionService.badRequestException({ message: 'No Environment found.' });
     if (!isEph) return environments;
     const ephEnvs = [];
     environments.forEach((environment) => {
@@ -49,6 +50,22 @@ export class EnvironmentService {
       ephEnvs.push({ ...environment, applications: tmpEphApps });
     });
     return ephEnvs;
+  }
+
+  /* @internal
+   * Find the Environments by the Repository URL & Context Directory
+   * If Repository is not registered it will throw an error
+   */
+  async getEnvironmentByRepositoryUrl(repoUrl: string, contextDir: string): Promise<Environment[]> {
+    const applications = await this.dataServices.application.getByAny({ repoUrl, contextDir });
+    if (!applications.length)
+      this.exceptionService.badRequestException({
+        message: `No Property found for this ${repoUrl}, please register your property from the SPAship Manager`
+      });
+    const { propertyIdentifier } = applications[0];
+    const environments = await this.dataServices.environment.getByAny({ propertyIdentifier });
+    if (!environments) this.exceptionService.badRequestException({ message: 'No Environment found.' });
+    return environments;
   }
 
   /* @internal
