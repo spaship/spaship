@@ -17,7 +17,7 @@ export class EnvironmentController {
     return this.environmentService.getAllEnvironments();
   }
 
-  @Get('/:propertyIdentifier')
+  @Get('/property/:propertyIdentifier')
   @ApiOperation({ description: 'Get Environments for the Property.' })
   async getById(@Param('propertyIdentifier') propertyIdentifier: string, @Query('isEph') isEph: string): Promise<Environment[]> {
     return this.environmentService.getEnvironmentByProperty(propertyIdentifier, isEph);
@@ -45,5 +45,11 @@ export class EnvironmentController {
   @ApiOperation({ description: 'Update a New Environment.' })
   async updateEnvironment(@Body() environmentDto: CreateEnvironmentDto): Promise<Environment> {
     return this.environmentService.updateEnvironment(environmentDto);
+  }
+
+  @Get('/git')
+  @ApiOperation({ description: 'Get Environments for the Repository.' })
+  async getByRepoUrl(@Query('repoUrl') repoUrl: string, @Query('contextDir') contextDir: string): Promise<Environment[]> {
+    return this.environmentService.getEnvironmentByRepositoryUrl(repoUrl, contextDir);
   }
 }
