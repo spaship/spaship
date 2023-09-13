@@ -40,7 +40,8 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
       const url = context.getArgs()[0].url;
       if (url.startsWith(AUTH_LISTING.deploymentBaseURL)) return this.validateDeploymentRequest(propertyIdentifier, env, bearerToken, context);
       if (url.startsWith(AUTH_LISTING.eventsBaseURL)) return this.validateEventRequest(propertyIdentifier, bearerToken);
-      if (url.startsWith(AUTH_LISTING.gitDeploymentBaseURL)) return this.validateGitRequest(bearerToken);
+      if (url.startsWith(AUTH_LISTING.gitDeploymentBaseURL) || url.startsWith(AUTH_LISTING.gitEnvListBaseURL))
+        return this.validateGitRequest(bearerToken);
       if (context.getArgs()[0].method === 'GET') return this.validateGetRequest(bearerToken);
     }
     const secret: string = this.getSecretKey();
