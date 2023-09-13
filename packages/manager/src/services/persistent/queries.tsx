@@ -7,7 +7,7 @@ const persistentEnvQueryKeys = {
 };
 
 const fetchPersistentEnvironments = async (propertyIdentifier: string): Promise<TEnv[]> => {
-  const { data } = await orchestratorReq.get(`environment/${propertyIdentifier}`, {
+  const { data } = await orchestratorReq.get(`environment/property/${propertyIdentifier}`, {
     params: {
       isEph: false
     }

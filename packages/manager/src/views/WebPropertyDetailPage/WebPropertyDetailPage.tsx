@@ -1,33 +1,41 @@
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import Router, { useRouter } from 'next/router';
 import {
   Badge,
   Button,
   Label,
-  Level,
-  LevelItem,
+  Modal,
+  ModalVariant,
   PageSection,
   SearchInput,
-  Split,
-  SplitItem,
-  Tab,
-  Tabs,
-  TabTitleIcon,
-  TabTitleText,
   Select,
   SelectOption,
   SelectVariant,
-  Modal,
-  ModalVariant,
   Spinner,
+  Split,
+  SplitItem,
+  Tab,
+  TabTitleIcon,
+  TabTitleText,
+  Tabs,
   Tooltip
 } from '@patternfly/react-core';
+import Link from 'next/link';
+import Router, { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 import { Banner, TableRowSkeleton } from '@app/components';
-import { useGetSPAPropGroupByName, useGetSPAProperties } from '@app/services/spaProperty';
-import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
+import { useDebounce, useFormatDate, usePopUp, useTabs, useToggle } from '@app/hooks';
+import { pageLinks } from '@app/links';
 import { useGetEphemeralListForProperty } from '@app/services/ephemeral';
+import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
+import { useGetSPAPropGroupByName, useGetSPAProperties } from '@app/services/spaProperty';
+import {
+  CogIcon,
+  CubeIcon,
+  GithubIcon,
+  PackageIcon,
+  PlusCircleIcon,
+  TimesCircleIcon
+} from '@patternfly/react-icons';
 import {
   Caption,
   ExpandableRowContent,
@@ -38,34 +46,27 @@ import {
   Thead,
   Tr
 } from '@patternfly/react-table';
-import {
-  CogIcon,
-  CubeIcon,
-  GithubIcon,
-  PackageIcon,
-  PlusCircleIcon,
-  TimesCircleIcon
-} from '@patternfly/react-icons';
-import { useDebounce, useFormatDate, useTabs, useToggle, usePopUp } from '@app/hooks';
-import { pageLinks } from '@app/links';
 
 import toast from 'react-hot-toast';
-import { Ephemeral } from './components/Ephemeral';
-import { EmptyInfo } from './components/EmptyInfo';
 import { Dashboard } from './components/Dashboard';
+import { EmptyInfo } from './components/EmptyInfo';
+import { Ephemeral } from './components/Ephemeral';
 import { AddDeplyoment } from './components/addDeployment';
+
+import { Settings } from '../Settings/Settings';
 
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 25;
 
 export const WebPropertyDetailPage = (): JSX.Element => {
   const { query } = useRouter();
+  const initialTab = query.initialTab as string;
   const [isRowExpanded, setIsRowExpanded] = useState<Record<string, boolean>>({});
   const [searchTerm, setSearchTerm] = useState('');
   const [filterByEnv, setFilterByEnv] = useState('');
   const propertyIdentifier = (query?.propertyIdentifier as string) || '';
   const formatDate = useFormatDate();
-  const { openTab, handleTabChange } = useTabs(4);
+  const { openTab, handleTabChange } = useTabs(4, Number(initialTab || '0'));
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
   const [isFilterOpen, setIsFilterOpen] = useToggle();
 
@@ -108,24 +109,8 @@ export const WebPropertyDetailPage = (): JSX.Element => {
         backRef={{
           pathname: pageLinks.webPropertyListPage
         }}
-      >
-        <Level>
-          <LevelItem />
-          <LevelItem>
-            <Link
-              href={{
-                pathname: pageLinks.webPropertySettingPage,
-                query: { propertyIdentifier }
-              }}
-            >
-              <Button variant="link" icon={<CogIcon />}>
-                Settings
-              </Button>
-            </Link>
-          </LevelItem>
-        </Level>
-      </Banner>
-      <PageSection isCenterAligned isWidthLimited className="pf-u-px-xl">
+      />
+      <PageSection isCenterAligned isWidthLimited className="pf-u-px-lg">
         <Tabs
           activeKey={openTab}
           onSelect={(_, tab) => handleTabChange(tab as number)}
@@ -301,7 +286,11 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                 <Link
                                   href={{
                                     pathname: '/properties/[propertyIdentifier]/[spaProperty]',
-                                    query: { propertyIdentifier, spaProperty: identifier }
+                                    query: {
+                                      propertyIdentifier,
+                                      spaProperty: identifier,
+                                      initialTab: spaProperties.data[identifier]?.[0]?.isGit ? 0 : 1
+                                    }
                                   }}
                                 >
                                   {`${spaProperties.data[identifier]?.[0]?.name.slice(
@@ -513,6 +502,20 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             aria-label="Dashboard"
           >
             <Dashboard type="web-property" />
+          </Tab>
+          <Tab
+            eventKey={3}
+            title={
+              <>
+                <TabTitleIcon>
+                  <CogIcon />
+                </TabTitleIcon>
+                <TabTitleText>Settings</TabTitleText>
+              </>
+            }
+            aria-label="Settings"
+          >
+            <Settings />
           </Tab>
         </Tabs>
       </PageSection>

@@ -1,0 +1,1 @@
+export { DeleteWebProperty } from './DeleteWebProperty';

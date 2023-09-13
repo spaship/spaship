@@ -1,0 +1,1 @@
+export { CmdbDetails } from './CmdbDetails';

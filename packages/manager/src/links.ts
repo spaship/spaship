@@ -1,4 +1,5 @@
 export const pageLinks = {
+  home: '/home',
   webPropertyListPage: '/properties',
   webPropertyDetailPage: '/properties/[propertyIdentifier]',
   newWebPropertyPage: '/properties/new',

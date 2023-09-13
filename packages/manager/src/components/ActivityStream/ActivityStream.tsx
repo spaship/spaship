@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/jsx-key, no-underscore-dangle, react/require-default-props */
 
 import { useFormatDate } from '@app/hooks';
@@ -27,6 +28,7 @@ type Props = {
 type DeploymentKindProps = {
   activity: TWebPropActivityStream;
 };
+
 function extractBuildIdFromMessage(message: string): string | undefined {
   const regex = /\[(.*?)\]/;
   const matches = message.match(regex);
@@ -35,31 +37,58 @@ function extractBuildIdFromMessage(message: string): string | undefined {
   }
   return '';
 }
+
 const activities = {
   APPLICATION_DEPLOYED: ({
     props,
     message,
     propertyIdentifier,
     isGlobal
-  }: TWebPropActivityStream): JSX.Element => (
-    <Text className="activityStream">
-      <span style={{ fontWeight: '600' }}>Deployment complete</span> for property :{' '}
-      <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
-      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment within{' '}
-      {message.split(' ')[3]}s{' '}
-      {isGlobal && (
-        <Link
-          href={{
-            pathname: '/properties/[propertyIdentifier]/[spaProperty]',
-            query: { propertyIdentifier, spaProperty: props.applicationIdentifier }
-          }}
-        >
-          view details
-        </Link>
-      )}
-    </Text>
-  ),
+  }: TWebPropActivityStream): JSX.Element => {
+    const deploymentType = {
+      Static: 'static',
+      Containerized: 'containerized'
+    };
+    const deploymentTypeTab = {
+      Containerized: 0,
+      Static: 1
+    };
+    const initialTab = props.env.includes('ephemeral')
+      ? 1 // setting 1 as eph is 2nd tab in web property page
+      : props.type === deploymentType.Containerized
+      ? deploymentTypeTab.Containerized
+      : deploymentTypeTab.Static;
+
+    const pathname = props.env.includes('ephemeral')
+      ? '/properties/[propertyIdentifier]'
+      : '/properties/[propertyIdentifier]/[spaProperty]';
+
+    const query = {
+      propertyIdentifier,
+      spaProperty: props.applicationIdentifier,
+      initialTab
+    };
+
+    return (
+      <Text className="activityStream">
+        <span style={{ fontWeight: '600' }}>Deployment complete</span> for property :{' '}
+        <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
+        <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+        <span style={{ fontWeight: '600' }}>{props.env} </span> environment within{' '}
+        {message?.split(' ')[3]}s.&nbsp;
+        {isGlobal && (
+          <Link
+            href={{
+              pathname,
+              query
+            }}
+          >
+            view details
+          </Link>
+        )}
+      </Text>
+    );
+  },
 
   APPLICATION_DEPLOYMENT_STARTED: ({
     props,
@@ -70,7 +99,7 @@ const activities = {
       <span style={{ fontWeight: '600' }}>Deployment started</span> for property :{' '}
       <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
       {isGlobal && (
         <Link
           href={{
@@ -92,7 +121,7 @@ const activities = {
       <span style={{ fontWeight: '600' }}>Deployment processing</span> for property :{' '}
       <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
       {isGlobal && (
         <Link
           href={{
@@ -115,7 +144,7 @@ const activities = {
       <span style={{ fontWeight: '600' }}>Deployment Failed</span> for property :{' '}
       <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
       {isGlobal && (
         <Link
           href={{
@@ -139,7 +168,7 @@ const activities = {
       <span style={{ fontWeight: '600' }}>Deployment Timeout</span> for property :{' '}
       <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
       {isGlobal && (
         <Link
           href={{
@@ -165,7 +194,7 @@ const activities = {
         <span style={{ fontWeight: '600' }}> ID : {buildId}</span> for property :{' '}
         <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
         <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-        <span style={{ fontWeight: '600' }}>{props.env} </span> environment{' '}
+        <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
         {isGlobal && (
           <Link
             style={{ textDecoration: 'underline' }}
@@ -194,7 +223,7 @@ const activities = {
         <span style={{ fontWeight: '600' }}>ID : {buildId}</span> for {propertyIdentifier}{' '}
         <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
         <span style={{ fontWeight: '600' }}>{props.env} </span> environment within{' '}
-        {message.split(' ')[3]} s
+        {message?.split(' ')[3]}s.&nbsp;
         {isGlobal && (
           <Link
             href={{
@@ -221,7 +250,7 @@ const activities = {
         <span style={{ fontWeight: '600' }}>ID : {buildId}</span> for property :{' '}
         <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
         <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-        <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+        <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
         {isGlobal && (
           <Link
             href={{
@@ -248,7 +277,7 @@ const activities = {
         <span style={{ fontWeight: '600' }}>ID : {buildId}</span> for property :{' '}
         <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
         <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-        <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+        <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
         {isGlobal && (
           <Link
             href={{
@@ -268,7 +297,8 @@ const activities = {
     isGlobal
   }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
-      <span style={{ fontWeight: '600' }}> Property : {propertyIdentifier} </span> has been created.{' '}
+      <span style={{ fontWeight: '600' }}> Property : {propertyIdentifier} </span> has been
+      created.&nbsp;
       {isGlobal && (
         <Link
           href={{
@@ -320,17 +350,17 @@ const activities = {
   PERMISSION_CREATED: ({ message }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}>
-        {toPascalCase(message.split(' ')[0]).replace('_', ' ')}
+        {toPascalCase(message?.split(' ')[0]).replace('_', ' ')}
       </span>{' '}
-      access has been {message.split(' ')[2]} for {message.split(' ')[4]}
+      access has been {message?.split(' ')[2]} for {message?.split(' ')[4]}
     </Text>
   ),
   PERMISSION_DELETED: ({ message }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}>
-        {toPascalCase(message.split(' ')[0]).replace('_', ' ')}
+        {toPascalCase(message?.split(' ')[0]).replace('_', ' ')}
       </span>{' '}
-      access has been {message.split(' ')[2]} for {message.split(' ')[4]}
+      access has been {message?.split(' ')[2]} for {message?.split(' ')[4]}
     </Text>
   ),
   APPLICATION_CONFIG_UPDATED: ({ props }: TWebPropActivityStream): JSX.Element => (

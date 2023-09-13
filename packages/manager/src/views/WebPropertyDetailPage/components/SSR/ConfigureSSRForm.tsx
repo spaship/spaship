@@ -39,7 +39,7 @@ const schema = yup.object({
     .min(1, 'Port is required')
     .max(99999, 'Port must be less than or equal to 5 digits')
     .test('port', 'Port must be less than or equal to 65536', (value) => {
-      const portNumber = parseInt(value?.toString() || '', 10);
+      const portNumber = Number(value?.toString() || '');
       return portNumber <= 65536;
     })
     .label('Port'),

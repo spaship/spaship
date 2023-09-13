@@ -64,7 +64,7 @@ const userRole: UserRoleDTO = {
     'APPLICATION_CREATION'
   ]
 };
-export const AddMembers = ({ onClose }: Props): JSX.Element => {
+export const AddMembersForm = ({ onClose }: Props): JSX.Element => {
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [isOpenUser, setIsOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
@@ -491,7 +491,7 @@ export const AddMembers = ({ onClose }: Props): JSX.Element => {
               </Button>
             </FlexItem>
           </Flex>
-          <div className="--pf-global--spacer--xl" />
+          <div className="--pf-global--spacer--lg" />
           {isShowAdvancedViewEnabledRover && Object.keys(columnNames2).length ? (
             <TableComposable>
               <Thead noWrap>

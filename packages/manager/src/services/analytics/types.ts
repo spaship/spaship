@@ -41,6 +41,8 @@ export type TSPAMonthlyDeploymentCount = {
 export type Props = {
   applicationIdentifier: string;
   env: string;
+  cluster: string;
+  type: string;
 };
 
 export type TSPADeploymentTime = {

@@ -7,7 +7,7 @@ const ephemeralQueryKeys = {
 };
 
 const fetchEphemeralEnvironments = async (propertyIdentifier: string): Promise<TEphemeralEnv[]> => {
-  const { data } = await orchestratorReq.get(`environment/${propertyIdentifier}`, {
+  const { data } = await orchestratorReq.get(`environment/property/${propertyIdentifier}`, {
     params: {
       isEph: true
     }

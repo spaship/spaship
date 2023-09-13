@@ -11,7 +11,7 @@ import {
   FlexItem
 } from '@patternfly/react-core';
 import Link, { LinkProps } from 'next/link';
-import { ArrowLeftIcon, HomeIcon } from '@patternfly/react-icons';
+import { ArrowLeftIcon } from '@patternfly/react-icons';
 import { useRouter } from 'next/router';
 
 interface Props {
@@ -48,14 +48,33 @@ export const Banner = ({ children, backRef, title }: Props): JSX.Element => {
   }, [pathname, query]);
 
   return (
-    <PageSection
-      isWidthLimited
-      isCenterAligned
-      className="pf-u-px-xl "
-      style={{ borderBottom: '1px solid #d2d2d2' }}
-    >
-      <Stack hasGutter>
+    <PageSection isWidthLimited isCenterAligned className="pf-u-px-lg pf-u-pt-lg">
+      <Stack>
         <StackItem>
+          <Breadcrumb>
+            <BreadcrumbItem isActive={asPath === '/properties'}>
+              {asPath === '/properties' ? (
+                'Home'
+              ) : (
+                <Link href="/properties">
+                  <a>Home</a>
+                </Link>
+              )}
+            </BreadcrumbItem>
+            {crumbs.map(({ href, name }) => (
+              <BreadcrumbItem key={href} isActive={asPath === href} className="capitalize">
+                {asPath === href ? (
+                  name
+                ) : (
+                  <Link href={href}>
+                    <a>{name}</a>
+                  </Link>
+                )}
+              </BreadcrumbItem>
+            ))}
+          </Breadcrumb>
+        </StackItem>
+        <StackItem className="pf-u-mt-sm">
           <Flex
             alignItems={{ default: 'alignItemsCenter' }}
             spaceItems={{ default: 'spaceItemsSm' }}
@@ -80,32 +99,6 @@ export const Banner = ({ children, backRef, title }: Props): JSX.Element => {
             )}
             <FlexItem flex={{ default: 'flex_1' }}>{children}</FlexItem>
           </Flex>
-        </StackItem>
-        <StackItem>
-          <Breadcrumb>
-            <BreadcrumbItem isActive={asPath === '/properties'}>
-              {asPath === '/properties' ? (
-                <HomeIcon color="#030303" />
-              ) : (
-                <Link href="/properties">
-                  <a>
-                    <HomeIcon color="030303" />
-                  </a>
-                </Link>
-              )}
-            </BreadcrumbItem>
-            {crumbs.map(({ href, name }) => (
-              <BreadcrumbItem key={href} isActive={asPath === href} className="capitalize">
-                {asPath === href ? (
-                  name
-                ) : (
-                  <Link href={href}>
-                    <a>{name}</a>
-                  </Link>
-                )}
-              </BreadcrumbItem>
-            ))}
-          </Breadcrumb>
         </StackItem>
       </Stack>
     </PageSection>

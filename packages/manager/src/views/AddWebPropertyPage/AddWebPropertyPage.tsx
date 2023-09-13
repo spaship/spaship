@@ -17,8 +17,10 @@ import {
   Radio,
   Split,
   SplitItem,
-  TextInput
+  TextInput,
+  Tooltip
 } from '@patternfly/react-core';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -129,7 +131,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
   return (
     <>
       <Banner title="Add New Web Property" backRef={pageLinks.webPropertyListPage} />
-      <PageSection isCenterAligned isWidthLimited className="pf-u-px-3xl">
+      <PageSection isCenterAligned isWidthLimited className="pf-u-px-lg">
         <Form onSubmit={handleSubmit(onFormSubmit)} style={{ maxWidth: '720px' }}>
           <Controller
             control={control}
@@ -254,7 +256,18 @@ export const AddWebPropertyPage = (): JSX.Element => {
                 name="cmdb"
                 render={({ fieldState: { error }, field }) => (
                   <FormGroup
-                    label="CMDB Code"
+                    label={
+                      <>
+                        CMDB Code
+                        <Tooltip
+                          content={<div>Please provide the CMDB code for your application.</div>}
+                        >
+                          <span>
+                            &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
+                          </span>
+                        </Tooltip>
+                      </>
+                    }
                     isRequired
                     fieldId="property-cmdb"
                     validated={error ? 'error' : 'default'}
@@ -277,7 +290,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
               />
             </SplitItem>
 
-            <SplitItem className="pf-u-mt-xl">
+            <SplitItem className="pf-u-mt-lg">
               <Radio
                 isChecked={cmdbId}
                 name="Cmdb Id"
@@ -287,7 +300,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
                 required={isCmdbCodeValid}
               />
             </SplitItem>
-            <SplitItem className="pf-u-mt-xl">
+            <SplitItem className="pf-u-mt-lg">
               <Radio
                 isChecked={cmdbName}
                 name="Cmdb Name"

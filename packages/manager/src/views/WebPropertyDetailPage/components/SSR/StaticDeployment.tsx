@@ -36,15 +36,12 @@ export const StaticDeployment = () => {
   const { query } = useRouter();
 
   const propertyIdentifier = query.propertyIdentifier as string;
+  const spaProperty = query.spaProperty as string;
   const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, '');
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
-
-  const url = window.location.href;
-  const parts = url.split('/');
-  const applicationName = parts[parts.length - 1];
-  const staticDeploymentData = spaProperties?.data?.[applicationName].filter(
+  const staticDeploymentData = spaProperties?.data?.[spaProperty].filter(
     (data) => data.isContainerized === false
   );
   const [syncData, setSyncData] = useState<TSpaProperty | undefined>();

@@ -1,40 +1,28 @@
 /* eslint-disable no-underscore-dangle */
-import {
-  Button,
-  Level,
-  LevelItem,
-  List,
-  PageSection,
-  Tab,
-  Tabs,
-  TabTitleIcon,
-  TabTitleText
-} from '@patternfly/react-core';
+import { List, PageSection, Tab, Tabs, TabTitleIcon, TabTitleText } from '@patternfly/react-core';
 import { useRouter } from 'next/router';
 
 import { Banner } from '@app/components';
 import { useTabs } from '@app/hooks';
 import { pageLinks } from '@app/links';
 import { useGetTotalDeploymentsForApps } from '@app/services/analytics';
-import { BuildIcon, BundleIcon, CogIcon, PackageIcon } from '@patternfly/react-icons';
-import Link from 'next/link';
+import { BuildIcon, BundleIcon, PackageIcon } from '@patternfly/react-icons';
 import toast from 'react-hot-toast';
 import { Dashboard } from '../WebPropertyDetailPage/components/Dashboard';
-import { SSRDetails } from '../WebPropertyDetailPage/components/SSR/SSRDetails';
+import { ContainerizedDeployment } from '../WebPropertyDetailPage/components/SSR/ContainerizedDeployment';
 import { StaticDeployment } from '../WebPropertyDetailPage/components/SSR/StaticDeployment';
 
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
   const propertyIdentifier = router.query.propertyIdentifier as string;
   const spaProperty = router.query.spaProperty as string;
-
+  const initialTab = router.query.initialTab as string;
   const deploymentCount = useGetTotalDeploymentsForApps(propertyIdentifier, spaProperty);
   if (deploymentCount.isError === true) {
     toast.error(`Sorry cannot find ${spaProperty}`);
     router.push(`/properties/${propertyIdentifier}`);
   }
-
-  const { handleTabChange, openTab } = useTabs(3);
+  const { handleTabChange, openTab } = useTabs(3, Number(initialTab || '0'));
 
   return (
     <>
@@ -46,24 +34,8 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             propertyIdentifier
           }
         }}
-      >
-        <Level>
-          <LevelItem />
-          <LevelItem>
-            <Link
-              href={{
-                pathname: pageLinks.webPropertySettingPage,
-                query: { propertyIdentifier }
-              }}
-            >
-              <Button variant="link" icon={<CogIcon />}>
-                Settings
-              </Button>
-            </Link>
-          </LevelItem>
-        </Level>
-      </Banner>
-      <PageSection isCenterAligned isWidthLimited className="pf-u-px-xl">
+      />
+      <PageSection isCenterAligned isWidthLimited className="pf-u-px-lg">
         <Tabs activeKey={openTab} onSelect={(_, tab) => handleTabChange(tab as number)}>
           <Tab
             eventKey={0}
@@ -78,7 +50,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             aria-label="SSR SPA Deployment"
           >
             <List className="pf-u-mt-lg">
-              <SSRDetails />
+              <ContainerizedDeployment />
             </List>
           </Tab>
           <Tab

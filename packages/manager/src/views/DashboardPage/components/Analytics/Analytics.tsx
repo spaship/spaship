@@ -35,7 +35,7 @@ export const Analytics = ({
   TotalDeploymentData,
   totalTimeSaved
 }: Props) => (
-  <Card style={{ margin: '24px 24px' }}>
+  <Card className="pf-u-m-lg">
     <TextContent
       style={{
         paddingBottom: '24px',
@@ -70,7 +70,7 @@ export const Analytics = ({
                   style={{
                     display: 'flex',
                     flexDirection: 'row',
-                    gap: '7%',
+                    gap: '6%',
                     marginTop: '24px'
                   }}
                   className="dashboard-card-subheadings"
@@ -79,7 +79,7 @@ export const Analytics = ({
                     <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
                       <Text
                         component={TextVariants.p}
-                        style={{ fontSize: '20px', color: '#151515' }}
+                        style={{ fontSize: '18px', color: '#151515' }}
                       >
                         {TotalDeploymentData.data
                           ?.filter((ele) => ele.env === field.toLocaleLowerCase())
@@ -99,7 +99,7 @@ export const Analytics = ({
                   ))}
 
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <Text component={TextVariants.p} style={{ fontSize: '20px', color: '#151515' }}>
+                    <Text component={TextVariants.p} style={{ fontSize: '18px', color: '#151515' }}>
                       {TotalDeploymentData.data
                         ?.filter(
                           (ele) =>
@@ -155,7 +155,7 @@ export const Analytics = ({
               ''
             )}
 
-            <div style={{ display: 'flex', flexDirection: 'row', gap: '35px', marginTop: '24px' }}>
+            <div style={{ display: 'flex', flexDirection: 'row', gap: '6%', marginTop: '24px' }}>
               {DeploymentTimeFrames.map((field, index) => (
                 <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
                   <Text component={TextVariants.p} className="dashboard-card-subheadings">

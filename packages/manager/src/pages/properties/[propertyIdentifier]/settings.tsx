@@ -1,8 +1,8 @@
 import { NextPageWithLayout } from '@app/types';
 import { getAppLayout } from '@app/layouts/AppLayout';
-import { WebPropertyEnvPage } from '@app/views/WebPropertyEnvPage';
+import { Settings } from '@app/views/Settings';
 
-const WebPropertyEnv: NextPageWithLayout = () => <WebPropertyEnvPage />;
+const WebPropertyEnv: NextPageWithLayout = () => <Settings />;
 
 WebPropertyEnv.getLayout = getAppLayout;
 
