@@ -49,10 +49,7 @@ import { MongoDataServices } from './mongo-data-services.service';
       { name: Permission.name, schema: PermissionSchema },
       { name: Documentation.name, schema: DocumentationSchema }
     ]),
-    MongooseModule.forRoot(DATA_BASE_CONFIGURATION.mongoConnectionString, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    })
+    MongooseModule.forRoot(DATA_BASE_CONFIGURATION.mongoConnectionString)
   ],
   providers: [
     {
