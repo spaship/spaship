@@ -805,7 +805,7 @@ export class ApplicationService {
       envsResponse = await this.dataServices.environment.getByAny({ propertyIdentifier });
       envsResponse = envsResponse.filter((i) => i.cluster !== Cluster.PROD);
       // @internal By Default deploy in Dev (Pre-prod) Environment if no cluster mentioned
-      envsResponse = envsResponse.find((i) => i.env === defaultEnv) ? [envsResponse.find((i) => i.env === 'dev')] : [];
+      envsResponse = envsResponse.find((i) => i.env === defaultEnv) ? [envsResponse.find((i) => i.env === defaultEnv)] : [];
       this.logger.log('DefaultEnv', JSON.stringify(envsResponse));
     }
     if (!envsResponse.length) this.exceptionService.badRequestException({ message: `No Preferred environment found for the deployment` });
