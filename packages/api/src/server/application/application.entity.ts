@@ -45,9 +45,11 @@ export class Application {
 
   buildArgs: object[];
 
-  commitId: string;
+  commitDetails: object[];
 
-  mergeId: string;
+  mergeDetails: object[];
+
+  gitProjectId: string;
 
   buildName: object[];
 

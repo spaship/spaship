@@ -73,10 +73,13 @@ export class Application {
   buildArgs: object[];
 
   @Prop({})
-  commitId: string;
+  commitDetails: object[];
 
   @Prop({})
-  mergeId: string;
+  mergeDetails: object[];
+
+  @Prop({})
+  gitProjectId: string;
 
   @Prop({})
   buildName: object[];
