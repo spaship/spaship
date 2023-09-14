@@ -194,3 +194,8 @@ function generateCMDBCred() {
   const base64EncodedCreds = Buffer.from(`${username}:${password}`);
   return base64EncodedCreds.toString('base64');
 }
+
+export const GIT_BROKER_DETAILS = {
+  baseUrl: process.env.SPASHIP_GIT_BROKER_URL,
+  cred: process.env.SPASHIP_GIT_BROKER_CRED
+};
