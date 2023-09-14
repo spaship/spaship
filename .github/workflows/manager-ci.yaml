@@ -50,6 +50,8 @@ jobs:
           build-args: |
             NEXT_PUBLIC_SPASHIP_API_BASE_URL=${{ secrets.DEV_API_URL }}
             NEXT_PUBLIC_SPASHIP_INTRO_VIDEO_URL=${{ secrets.INTRO_VIDEO }}
+            NEXT_PUBLIC_SPASHIP_FEEDBACK_FORM_URL=${{ secrets.FEEDBACK_FORM_URL }}
+            NEXT_PUBLIC_SPASHIP_FAQ_URL=${{ secrets.FAQ_URL }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:dev-${{env.GITHUB_REF_SLUG}}
       - name: Image digest
@@ -66,6 +68,8 @@ jobs:
           build-args: |
             NEXT_PUBLIC_SPASHIP_API_BASE_URL=${{ secrets.QA_API_URL }}
             NEXT_PUBLIC_SPASHIP_INTRO_VIDEO_URL=${{ secrets.INTRO_VIDEO }}
+            NEXT_PUBLIC_SPASHIP_FEEDBACK_FORM_URL=${{ secrets.FEEDBACK_FORM_URL }}
+            NEXT_PUBLIC_SPASHIP_FAQ_URL=${{ secrets.FAQ_URL }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:qa-${{env.GITHUB_REF_SLUG}}
       - name: Image digest
@@ -82,6 +86,8 @@ jobs:
           build-args: |
             NEXT_PUBLIC_SPASHIP_API_BASE_URL=${{ secrets.STAGE_API_URL }}
             NEXT_PUBLIC_SPASHIP_INTRO_VIDEO_URL=${{ secrets.INTRO_VIDEO }}
+            NEXT_PUBLIC_SPASHIP_FEEDBACK_FORM_URL=${{ secrets.FEEDBACK_FORM_URL }}
+            NEXT_PUBLIC_SPASHIP_FAQ_URL=${{ secrets.FAQ_URL }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:stage-${{env.GITHUB_REF_SLUG}}
       - name: Image digest
@@ -98,6 +104,8 @@ jobs:
           build-args: |
             NEXT_PUBLIC_SPASHIP_API_BASE_URL=${{ secrets.PROD_API_URL }}
             NEXT_PUBLIC_SPASHIP_INTRO_VIDEO_URL=${{ secrets.INTRO_VIDEO }}
+            NEXT_PUBLIC_SPASHIP_FEEDBACK_FORM_URL=${{ secrets.FEEDBACK_FORM_URL }}
+            NEXT_PUBLIC_SPASHIP_FAQ_URL=${{ secrets.FAQ_URL }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:prod-${{env.GITHUB_REF_SLUG}}
       - name: Image digest
