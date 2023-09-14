@@ -5,7 +5,14 @@ import * as FormData from 'form-data';
 import * as fs from 'fs';
 import { Base64 } from 'js-base64';
 import * as path from 'path';
-import { CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, EPHEMERAL_ENV, MESSAGE } from 'src/configuration';
+import {
+  CONTAINERIZED_DEPLOYMENT_DETAILS,
+  DEPLOYMENT_DETAILS,
+  DIRECTORY_CONFIGURATION,
+  EPHEMERAL_ENV,
+  GIT_BROKER_DETAILS,
+  MESSAGE
+} from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import {
   ApplicationConfigDTO,
@@ -17,6 +24,7 @@ import {
   CreateApplicationDto,
   GitApplicationStatusRequest,
   GitApplicationStatusResponse,
+  GitCommentRequest,
   GitDeploymentRequestDTO,
   GitValidateResponse,
   GitValidationRequestDTO
@@ -436,6 +444,16 @@ export class ApplicationFactory {
     return response?.data.data || [];
   }
 
+  // @internal Push the event to the Git Broker
+  async pushEventsInGitBroker(payload: GitCommentRequest) {
+    const headers = { Authorization: GIT_BROKER_DETAILS.cred };
+    try {
+      await this.httpService.axiosRef.post(`${GIT_BROKER_DETAILS.baseUrl}/events/comment`, payload, { headers });
+    } catch (err) {
+      this.logger.error('pushEventsInGitBroker', err);
+    }
+  }
+
   // @internal Create the Application request for the Containerized deployment
   createContainerizedApplicationRequest(
     propertyIdentifier: string,
@@ -486,8 +504,7 @@ export class ApplicationFactory {
     containerizedEnabledGitApplicationRequest.contextDir = applicationRequest.contextDir;
     containerizedEnabledGitApplicationRequest.buildArgs = applicationRequest.buildArgs;
     containerizedEnabledGitApplicationRequest.dockerFileName = applicationRequest.dockerFileName || 'Dockerfile';
-    containerizedEnabledGitApplicationRequest.commitId = applicationRequest.commitId || 'NA';
-    containerizedEnabledGitApplicationRequest.mergeId = applicationRequest.mergeId || 'NA';
+    containerizedEnabledGitApplicationRequest.gitProjectId = 'NA';
     return containerizedEnabledGitApplicationRequest;
   }
 
@@ -666,15 +683,16 @@ export class ApplicationFactory {
   generateApplicationRequestFromGit(checkGitRegistry: Application[], tmp: Environment, gitRequestDTO: GitDeploymentRequestDTO): CreateApplicationDto {
     const applicationRequest = new CreateApplicationDto();
     const existingDeployment = checkGitRegistry.find((i) => i.env === tmp.env);
-    applicationRequest.name = existingDeployment?.name || checkGitRegistry[0].name;
-    applicationRequest.path = existingDeployment?.path || checkGitRegistry[0].path;
-    applicationRequest.ref = existingDeployment?.ref || checkGitRegistry[0].ref;
-    applicationRequest.repoUrl = existingDeployment?.repoUrl || checkGitRegistry[0].repoUrl;
-    applicationRequest.gitRef = existingDeployment?.gitRef || checkGitRegistry[0].gitRef;
-    applicationRequest.contextDir = existingDeployment?.contextDir || checkGitRegistry[0].contextDir;
-    applicationRequest.commitId = gitRequestDTO?.commitId || checkGitRegistry[0].commitId;
-    applicationRequest.mergeId = gitRequestDTO?.mergeId || checkGitRegistry[0].mergeId;
-    applicationRequest.createdBy = existingDeployment?.createdBy || checkGitRegistry[0].createdBy;
+    applicationRequest.name = existingDeployment.name || checkGitRegistry[0].name;
+    applicationRequest.path = existingDeployment.path || checkGitRegistry[0].path;
+    applicationRequest.ref = existingDeployment.ref || checkGitRegistry[0].ref;
+    applicationRequest.repoUrl = existingDeployment.repoUrl || checkGitRegistry[0].repoUrl;
+    applicationRequest.gitRef = gitRequestDTO.gitRef || existingDeployment.gitRef || checkGitRegistry[0].gitRef;
+    applicationRequest.contextDir = existingDeployment.contextDir || checkGitRegistry[0].contextDir;
+    applicationRequest.commitId = gitRequestDTO.commitId;
+    applicationRequest.mergeId = gitRequestDTO.mergeId;
+    applicationRequest.gitProjectId = gitRequestDTO.projectId;
+    applicationRequest.createdBy = existingDeployment.createdBy || checkGitRegistry[0].createdBy;
     this.logger.log('ApplicationRequest', JSON.stringify(applicationRequest));
     return applicationRequest;
   }
@@ -834,5 +852,13 @@ export class ApplicationFactory {
     const domain = hostname.split('.').slice(1).join('.').replace('int', 'ext-waf');
     const generatedRouteURL = `${protocol}://route-${propertyIdentifier}-${env}-${appPrefix}.${domain}${application.path}`;
     return generatedRouteURL;
+  }
+
+  generateGitCommentPayload(commitId: string, gitProjectId: string, commentBody: string) {
+    const gitCommentRequest = new GitCommentRequest();
+    gitCommentRequest.commitId = commitId;
+    gitCommentRequest.projectId = gitProjectId;
+    gitCommentRequest.commentBody = commentBody;
+    return gitCommentRequest;
   }
 }
