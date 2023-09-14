@@ -56,7 +56,7 @@ import { AddDeplyoment } from './components/addDeployment';
 import { Settings } from '../Settings/Settings';
 
 const URL_LENGTH_LIMIT = 100;
-const INTERNAL_ACCESS_URL_LENGTH = 25;
+const URL_LENGTH = 25;
 
 export const WebPropertyDetailPage = (): JSX.Element => {
   const { query } = useRouter();
@@ -342,7 +342,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                         <Th textCenter>Environment Name</Th>
                                         <Th textCenter>Ref</Th>
                                         <Th textCenter>Publish Domain</Th>
-                                        <Th textCenter>Internal Access URL</Th>
+                                        <Th textCenter>Router URL</Th>
                                         <Th textCenter>Updated At</Th>
                                       </Tr>
                                     </Thead>
@@ -354,6 +354,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                           ref,
                                           isContainerized,
                                           accessUrl,
+                                          routerUrl,
                                           updatedAt
                                         }) => (
                                           <Tr key={_id}>
@@ -401,51 +402,95 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                               textCenter
                                               style={{ maxWidth: '20ch', wordWrap: 'break-word' }}
                                             >
-                                              {accessUrl?.map((access_url: string) => (
-                                                <div key={access_url}>
-                                                  {access_url === 'NA' ? (
-                                                    <Spinner isSVG diameter="30px" />
-                                                  ) : (
-                                                    <div style={{ textAlign: 'center' }}>
-                                                      <Tooltip
-                                                        className="my-custom-tooltip"
-                                                        content={
-                                                          <div>
+                                              {routerUrl
+                                                ? routerUrl?.map((router_url: string) => (
+                                                    <div key={router_url}>
+                                                      {router_url === 'NA' ? (
+                                                        <Spinner isSVG diameter="30px" />
+                                                      ) : (
+                                                        <div style={{ textAlign: 'center' }}>
+                                                          <Tooltip
+                                                            className="my-custom-tooltip"
+                                                            content={
+                                                              <div>
+                                                                <a
+                                                                  className="text-decoration-none"
+                                                                  href={router_url}
+                                                                  target="_blank"
+                                                                  rel="noopener noreferrer"
+                                                                >
+                                                                  {router_url}
+                                                                </a>
+                                                              </div>
+                                                            }
+                                                          >
                                                             <a
-                                                              className="text-decoration-none"
+                                                              href={router_url}
+                                                              target="_blank"
+                                                              rel="noopener noreferrer"
+                                                              style={{
+                                                                textDecoration: 'none',
+                                                                marginRight: '8px'
+                                                              }}
+                                                            >
+                                                              {`${router_url.slice(
+                                                                0,
+                                                                URL_LENGTH
+                                                              )} ${
+                                                                router_url.length > URL_LENGTH
+                                                                  ? '...'
+                                                                  : ''
+                                                              }`}
+                                                            </a>
+                                                          </Tooltip>{' '}
+                                                        </div>
+                                                      )}
+                                                    </div>
+                                                  ))
+                                                : accessUrl?.map((access_url: string) => (
+                                                    <div key={access_url}>
+                                                      {access_url === 'NA' ? (
+                                                        <Spinner isSVG diameter="30px" />
+                                                      ) : (
+                                                        <div style={{ textAlign: 'center' }}>
+                                                          <Tooltip
+                                                            className="my-custom-tooltip"
+                                                            content={
+                                                              <div>
+                                                                <a
+                                                                  className="text-decoration-none"
+                                                                  href={access_url}
+                                                                  target="_blank"
+                                                                  rel="noopener noreferrer"
+                                                                >
+                                                                  {access_url}
+                                                                </a>
+                                                              </div>
+                                                            }
+                                                          >
+                                                            <a
                                                               href={access_url}
                                                               target="_blank"
                                                               rel="noopener noreferrer"
+                                                              style={{
+                                                                textDecoration: 'none',
+                                                                marginRight: '8px'
+                                                              }}
                                                             >
-                                                              {access_url}
+                                                              {`${access_url.slice(
+                                                                0,
+                                                                URL_LENGTH
+                                                              )} ${
+                                                                access_url.length > URL_LENGTH
+                                                                  ? '...'
+                                                                  : ''
+                                                              }`}
                                                             </a>
-                                                          </div>
-                                                        }
-                                                      >
-                                                        <a
-                                                          href={access_url}
-                                                          target="_blank"
-                                                          rel="noopener noreferrer"
-                                                          style={{
-                                                            textDecoration: 'none',
-                                                            marginRight: '8px'
-                                                          }}
-                                                        >
-                                                          {`${access_url.slice(
-                                                            0,
-                                                            INTERNAL_ACCESS_URL_LENGTH
-                                                          )} ${
-                                                            access_url.length >
-                                                            INTERNAL_ACCESS_URL_LENGTH
-                                                              ? '...'
-                                                              : ''
-                                                          }`}
-                                                        </a>
-                                                      </Tooltip>{' '}
+                                                          </Tooltip>{' '}
+                                                        </div>
+                                                      )}
                                                     </div>
-                                                  )}
-                                                </div>
-                                              ))}
+                                                  ))}
                                             </Td>
                                             <Td textCenter>
                                               {formatDate(updatedAt, 'MMM DD, YYYY - hh:mm:ss A')}

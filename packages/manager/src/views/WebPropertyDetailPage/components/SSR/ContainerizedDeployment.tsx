@@ -48,7 +48,7 @@ import { ConfigureSSRForm } from './ConfigureSSRForm';
 import { ViewLogs } from './ViewLogs';
 
 const URL_LENGTH_LIMIT = 100;
-const INTERNAL_ACCESS_URL_LENGTH = 25;
+const INTERNAL_ACCESS_URL_LENGTH = 20;
 
 export const ContainerizedDeployment = () => {
   const { query } = useRouter();
@@ -292,8 +292,10 @@ export const ContainerizedDeployment = () => {
             <Th width={15}>Ref</Th>
             <Th width={15}>Path</Th>
             <Th width={15}>HealthCheck Path</Th>
-            <Th width={15}>Internal Access URL</Th>
-            <Th style={{ justifyContent: 'space-evenly', display: 'grid' }}>Actions</Th>
+            <Th width={25}>Router URL</Th>
+            <Th width={20} style={{ justifyContent: 'space-evenly', display: 'grid' }}>
+              Actions
+            </Th>
           </Tr>
         </Thead>
         {(spaProperties.isLoading && webProperties.isLoading) ||
@@ -332,46 +334,89 @@ export const ContainerizedDeployment = () => {
                     val?.healthCheckPath.length > URL_LENGTH_LIMIT ? '...' : ''
                   }`}
                 </Td>
-                <Td style={{ maxWidth: '20ch', wordWrap: 'break-word', padding: '24px 8px' }}>
-                  <Td>
-                    {val?.accessUrl?.map((accessUrl: string) => (
-                      <div key={accessUrl}>
-                        {accessUrl === 'NA' ? (
-                          <Spinner isSVG diameter="30px" />
-                        ) : (
-                          <div>
-                            <Tooltip
-                              className="my-custom-tooltip"
-                              content={
-                                <div>
-                                  <a
-                                    className="text-decoration-none"
-                                    href={accessUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    {accessUrl}
-                                  </a>
-                                </div>
-                              }
-                            >
-                              <a
-                                href={accessUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{ textDecoration: 'none', marginRight: '8px' }}
+
+                <Td style={{ maxWidth: '25ch', wordWrap: 'break-word', padding: '24px 8px' }}>
+                  {val?.routerUrl ? (
+                    <Td>
+                      {val?.routerUrl?.map((routerUrl: string) => (
+                        <div key={routerUrl}>
+                          {routerUrl === 'NA' ? (
+                            <Spinner isSVG diameter="30px" />
+                          ) : (
+                            <div>
+                              <Tooltip
+                                className="my-custom-tooltip"
+                                content={
+                                  <div>
+                                    <a
+                                      className="text-decoration-none"
+                                      href={routerUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      {routerUrl}
+                                    </a>
+                                  </div>
+                                }
                               >
-                                {`${accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                                  accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                                }`}
-                              </a>
-                            </Tooltip>{' '}
-                            <ApplicationStatus link={accessUrl} _id={String(val._id)} />
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </Td>
+                                <a
+                                  href={routerUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ textDecoration: 'none', marginRight: '8px' }}
+                                >
+                                  {`${routerUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                    routerUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                  }`}
+                                </a>
+                              </Tooltip>{' '}
+                              <ApplicationStatus link={routerUrl} _id={String(val._id)} />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </Td>
+                  ) : (
+                    <Td>
+                      {val?.accessUrl?.map((accessUrl: string) => (
+                        <div key={accessUrl}>
+                          {accessUrl === 'NA' ? (
+                            <Spinner isSVG diameter="30px" />
+                          ) : (
+                            <div>
+                              <Tooltip
+                                className="my-custom-tooltip"
+                                content={
+                                  <div>
+                                    <a
+                                      className="text-decoration-none"
+                                      href={accessUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      {accessUrl}
+                                    </a>
+                                  </div>
+                                }
+                              >
+                                <a
+                                  href={accessUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ textDecoration: 'none', marginRight: '8px' }}
+                                >
+                                  {`${accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                    accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                  }`}
+                                </a>
+                              </Tooltip>{' '}
+                              <ApplicationStatus link={accessUrl} _id={String(val._id)} />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </Td>
+                  )}
                 </Td>
                 <Td>
                   <Split hasGutter>

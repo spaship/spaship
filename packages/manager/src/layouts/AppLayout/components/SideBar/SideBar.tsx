@@ -50,8 +50,9 @@ export const SideBar = () => {
     setSelectedProperty(propertyTitle);
     setIsExpanded(false); // Collapse the expandable section after selection
   };
-  const feedbackFormUrl = env.PUBLIC_SPASHIP_FEEDBACK_FORM_URL;
 
+  const feedbackFormUrl = env.PUBLIC_SPASHIP_FEEDBACK_FORM_URL;
+  const faqDocumentUrl = env.PUBLIC_SPASHIP_FAQ_URL;
   return (
     <PageSidebar
       nav={
@@ -169,7 +170,7 @@ export const SideBar = () => {
           </NavGroup>
           <NavGroup title="Help">
             <NavList className="pf-u-px-md">
-              <Link href="https://docs.google.com/document/d/143ezNXxfujOiTe3VD0cc0ZBYL92F_fSpYCFJUzzDoiQ/edit">
+              <Link href={faqDocumentUrl}>
                 <a className="text-decoration-none" target="_blank" rel="noreferrer">
                   <SidebarNavItem
                     title="FAQ's"
@@ -180,10 +181,7 @@ export const SideBar = () => {
                         style={{ verticalAlign: 'bottom' }}
                       />
                     }
-                    isActive={
-                      pathname ===
-                      'https://docs.google.com/document/d/143ezNXxfujOiTe3VD0cc0ZBYL92F_fSpYCFJUzzDoiQ/edit'
-                    }
+                    isActive={pathname === faqDocumentUrl}
                   />
                 </a>
               </Link>
