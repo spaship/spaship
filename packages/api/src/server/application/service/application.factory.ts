@@ -681,6 +681,7 @@ export class ApplicationFactory {
 
   // @internal Generate ApplicationRequest from the GitRequest
   generateApplicationRequestFromGit(checkGitRegistry: Application[], tmp: Environment, gitRequestDTO: GitDeploymentRequestDTO): CreateApplicationDto {
+    if (!checkGitRegistry) this.exceptionService.badRequestException({ message: 'Application is not registered' });
     const applicationRequest = new CreateApplicationDto();
     const existingDeployment = checkGitRegistry.find((i) => i.env === tmp.env);
     applicationRequest.name = existingDeployment.name || checkGitRegistry[0].name;
