@@ -4,7 +4,7 @@ import * as decompress from 'decompress';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
-import { CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, JOB, LOGTYPE } from 'src/configuration';
+import { CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, JOB, LOGTYPE, STATUS } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { AgendaService } from 'src/server/agenda/agenda.service';
@@ -624,12 +624,12 @@ export class ApplicationService {
       this.logger.log('BuildCheck', `Checking Build for ${buildName}`);
       const buildStatus = await this.applicationFactory.buildStatusRequest({ ...statusRequest, objectName: buildName }, baseurl);
       this.logger.log('BuildStatus', `${buildName} : ${buildStatus.data}}`);
-      if (buildStatus?.data === 'COMPLETED') {
+      if (buildStatus?.data === STATUS.BUILD_COMPLETED) {
         this.logger.log('BuildStatus', `Build Successfully Completed for ${buildName} [Workflow 3.0]`);
         buildCheck = true;
         this.startDeploymentInterval(application, statusRequest, baseurl, buildName, commitId);
         await clearInterval(buildInterval);
-      } else if (buildStatus?.data === 'FAILED') {
+      } else if (buildStatus?.data === STATUS.BUILD_FAILED) {
         buildCheck = true;
         this.logger.error('BuildStatus', `Build Failed for ${buildName} [Workflow 3.0]`);
         this.analyticsService.createActivityStream(
@@ -644,10 +644,14 @@ export class ApplicationService {
         );
         await clearInterval(buildInterval);
         if (commitId) {
-          const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(commitId, application.gitProjectId, `Build Failed`);
+          const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
+            commitId,
+            application.gitProjectId,
+            Action.APPLICATION_BUILD_FAILED
+          );
           this.applicationFactory.pushEventsInGitBroker(gitCommentRequest);
         }
-      } else if (buildStatus?.data === 'CHECK_OS_CONSOLE') {
+      } else if (buildStatus?.data === STATUS.BUILD_TERMINATED) {
         buildCheck = true;
         this.logger.error('BuildStatus', `Build Terminated for ${buildName} [Workflow 3.0]`);
         this.analyticsService.createActivityStream(
@@ -662,7 +666,11 @@ export class ApplicationService {
         );
         await clearInterval(buildInterval);
         if (commitId) {
-          const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(commitId, application.gitProjectId, `Build Terminated`);
+          const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
+            commitId,
+            application.gitProjectId,
+            Action.APPLICATION_BUILD_TERMINATED
+          );
           this.applicationFactory.pushEventsInGitBroker(gitCommentRequest);
         }
       }
@@ -681,7 +689,11 @@ export class ApplicationService {
           JSON.stringify(statusRequest)
         );
         if (commitId) {
-          const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(commitId, application.gitProjectId, `Build Timeout`);
+          const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
+            commitId,
+            application.gitProjectId,
+            Action.APPLICATION_BUILD_TIMEOUT
+          );
           this.applicationFactory.pushEventsInGitBroker(gitCommentRequest);
         }
       }
@@ -701,7 +713,7 @@ export class ApplicationService {
     const deploymentInterval = setInterval(async () => {
       const deploymentStatus = await this.applicationFactory.deploymentStatusRequest(statusRequest, baseurl);
       this.logger.log('DeploymentStatus', `${statusRequest.objectName} : ${deploymentStatus.data}`);
-      if (deploymentStatus.status === 'READY') {
+      if (deploymentStatus.status === STATUS.DEPLOYMENT_READY) {
         await clearInterval(deploymentInterval);
         deploymentCheck = true;
         const applicationDetails = (
@@ -738,11 +750,12 @@ export class ApplicationService {
           const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
             commitId,
             application.gitProjectId,
-            `Build & Deployment Successful. Access URL : ${application.routerUrl}.`
+            Action.APPLICATION_DEPLOYED,
+            application.routerUrl
           );
           this.applicationFactory.pushEventsInGitBroker(gitCommentRequest);
         }
-      } else if (deploymentStatus?.status === 'ERR') {
+      } else if (deploymentStatus?.status === STATUS.DEPLOYMENT_FAILED) {
         this.logger.warn('DeploymentFailed', `Deployment Failed [BuildId : ${buildName}]`);
         deploymentCheck = true;
         this.analyticsService.createActivityStream(
@@ -757,7 +770,11 @@ export class ApplicationService {
         );
         await clearInterval(deploymentInterval);
         if (commitId) {
-          const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(commitId, application.gitProjectId, `Deployment Failed`);
+          const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
+            commitId,
+            application.gitProjectId,
+            Action.APPLICATION_DEPLOYMENT_FAILED
+          );
           this.applicationFactory.pushEventsInGitBroker(gitCommentRequest);
         }
       }
@@ -776,7 +793,11 @@ export class ApplicationService {
           JSON.stringify(statusRequest)
         );
         if (commitId) {
-          const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(commitId, application.gitProjectId, `Deployment Timeout`);
+          const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
+            commitId,
+            application.gitProjectId,
+            Action.APPLICATION_DEPLOYMENT_TIMEOUT
+          );
           this.applicationFactory.pushEventsInGitBroker(gitCommentRequest);
         }
       }
