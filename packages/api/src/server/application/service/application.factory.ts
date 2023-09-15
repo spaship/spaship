@@ -850,15 +850,16 @@ export class ApplicationFactory {
     const { hostname } = new URL(baseUrl);
     const appPrefix = hostname.split('.')[4];
     const domain = hostname.split('.').slice(1).join('.').replace('int', 'ext-waf');
-    const generatedRouteURL = `${protocol}://route-${propertyIdentifier}-${env}-${appPrefix}.${domain}${application.path}`;
-    return generatedRouteURL;
+    const routeUrl = `${protocol}://route-${propertyIdentifier}-${env}-${appPrefix}.${domain}${application.path}`;
+    return routeUrl;
   }
 
-  generateGitCommentPayload(commitId: string, gitProjectId: string, commentBody: string) {
+  generateGitCommentPayload(commitId: string, gitProjectId: string, commentBody: string, accessUrl?: string[]) {
     const gitCommentRequest = new GitCommentRequest();
     gitCommentRequest.commitId = commitId;
     gitCommentRequest.projectId = gitProjectId;
     gitCommentRequest.commentBody = commentBody;
+    gitCommentRequest.accessUrl = accessUrl;
     return gitCommentRequest;
   }
 }

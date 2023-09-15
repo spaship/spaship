@@ -376,5 +376,7 @@ export class GitCommentRequest {
 
   commentBody: string;
 
+  accessUrl: string[];
+
   source: string;
 }
