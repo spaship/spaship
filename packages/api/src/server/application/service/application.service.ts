@@ -4,7 +4,7 @@ import * as decompress from 'decompress';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
-import { CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, JOB, LOGTYPE } from 'src/configuration';
+import { CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, JOB, LOGTYPE, STATUS } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { AgendaService } from 'src/server/agenda/agenda.service';
@@ -527,6 +527,7 @@ export class ApplicationService {
         );
         return applicationDetails;
       }
+      const currentTime = new Date();
       applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
       applicationDetails.path = applicationRequest.path;
       applicationDetails.version = this.applicationFactory.incrementVersion(applicationDetails.version);
@@ -541,8 +542,13 @@ export class ApplicationService {
       applicationDetails.contextDir = applicationRequest.contextDir || applicationDetails.contextDir;
       applicationDetails.buildArgs = applicationRequest.buildArgs || applicationDetails.buildArgs;
       applicationDetails.dockerFileName = applicationRequest.dockerFileName || applicationDetails.dockerFileName;
-      applicationDetails.commitId = applicationRequest.commitId || applicationDetails.commitId;
-      applicationDetails.mergeId = applicationRequest.mergeId || applicationDetails.mergeId;
+      applicationDetails.commitDetails = applicationRequest.commitId
+        ? [...applicationDetails.commitDetails, { id: applicationRequest.commitId, createdAt: currentTime }]
+        : applicationDetails.commitDetails;
+      applicationDetails.mergeDetails = applicationRequest.mergeId
+        ? [...applicationDetails.mergeDetails, { id: applicationRequest.mergeId, createdAt: currentTime }]
+        : applicationDetails.mergeDetails;
+      applicationDetails.gitProjectId = applicationRequest.gitProjectId || applicationDetails.gitProjectId;
       applicationDetails.updatedBy = applicationRequest.createdBy;
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: true, isGit: true }, applicationDetails);
     }
@@ -575,7 +581,7 @@ export class ApplicationService {
           { propertyIdentifier, env, identifier, isContainerized: true, isGit: true },
           applicationDetails
         );
-        this.manageBuildAndDeployment(applicationDetails, statusRequest, response.buildName, con.baseurl);
+        this.manageBuildAndDeployment(applicationDetails, statusRequest, response.buildName, con.baseurl, applicationRequest.commitId);
       } else {
         await this.analyticsService.createActivityStream(
           propertyIdentifier,
@@ -595,23 +601,35 @@ export class ApplicationService {
     return applicationDetails;
   }
 
-  private async manageBuildAndDeployment(application: Application, statusRequest: GitApplicationStatusRequest, buildName: string, baseurl: string) {
-    await this.startBuildInterval(application, buildName, statusRequest, baseurl);
+  private async manageBuildAndDeployment(
+    application: Application,
+    statusRequest: GitApplicationStatusRequest,
+    buildName: string,
+    baseurl: string,
+    commitId: string
+  ) {
+    await this.startBuildInterval(application, buildName, statusRequest, baseurl, commitId);
   }
 
   // @internal Check build periodically & update the status
-  async startBuildInterval(application: Application, buildName: string, statusRequest: GitApplicationStatusRequest, baseurl: string) {
+  async startBuildInterval(
+    application: Application,
+    buildName: string,
+    statusRequest: GitApplicationStatusRequest,
+    baseurl: string,
+    commitId: string
+  ) {
     let buildCheck = false;
     const buildInterval = setInterval(async () => {
       this.logger.log('BuildCheck', `Checking Build for ${buildName}`);
       const buildStatus = await this.applicationFactory.buildStatusRequest({ ...statusRequest, objectName: buildName }, baseurl);
       this.logger.log('BuildStatus', `${buildName} : ${buildStatus.data}}`);
-      if (buildStatus?.data === 'COMPLETED') {
+      if (buildStatus?.data === STATUS.BUILD_COMPLETED) {
         this.logger.log('BuildStatus', `Build Successfully Completed for ${buildName} [Workflow 3.0]`);
         buildCheck = true;
-        this.startDeploymentInterval(application, statusRequest, baseurl, buildName);
+        this.startDeploymentInterval(application, statusRequest, baseurl, buildName, commitId);
         await clearInterval(buildInterval);
-      } else if (buildStatus?.data === 'FAILED') {
+      } else if (buildStatus?.data === STATUS.BUILD_FAILED) {
         buildCheck = true;
         this.logger.error('BuildStatus', `Build Failed for ${buildName} [Workflow 3.0]`);
         this.analyticsService.createActivityStream(
@@ -625,7 +643,15 @@ export class ApplicationService {
           JSON.stringify(statusRequest)
         );
         await clearInterval(buildInterval);
-      } else if (buildStatus?.data === 'CHECK_OS_CONSOLE') {
+        if (commitId) {
+          const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
+            commitId,
+            application.gitProjectId,
+            Action.APPLICATION_BUILD_FAILED
+          );
+          this.applicationFactory.pushEventsInGitBroker(gitCommentRequest);
+        }
+      } else if (buildStatus?.data === STATUS.BUILD_TERMINATED) {
         buildCheck = true;
         this.logger.error('BuildStatus', `Build Terminated for ${buildName} [Workflow 3.0]`);
         this.analyticsService.createActivityStream(
@@ -639,6 +665,14 @@ export class ApplicationService {
           JSON.stringify(statusRequest)
         );
         await clearInterval(buildInterval);
+        if (commitId) {
+          const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
+            commitId,
+            application.gitProjectId,
+            Action.APPLICATION_BUILD_TERMINATED
+          );
+          this.applicationFactory.pushEventsInGitBroker(gitCommentRequest);
+        }
       }
     }, this.period);
     setTimeout(async () => {
@@ -654,18 +688,32 @@ export class ApplicationService {
           Source.GIT,
           JSON.stringify(statusRequest)
         );
+        if (commitId) {
+          const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
+            commitId,
+            application.gitProjectId,
+            Action.APPLICATION_BUILD_TIMEOUT
+          );
+          this.applicationFactory.pushEventsInGitBroker(gitCommentRequest);
+        }
       }
       await clearInterval(buildInterval);
     }, this.timeout);
   }
 
   // @internal Check deployment periodically & update the status
-  async startDeploymentInterval(application: Application, statusRequest: GitApplicationStatusRequest, baseurl: string, buildName: string) {
+  async startDeploymentInterval(
+    application: Application,
+    statusRequest: GitApplicationStatusRequest,
+    baseurl: string,
+    buildName: string,
+    commitId: string
+  ) {
     let deploymentCheck = false;
     const deploymentInterval = setInterval(async () => {
       const deploymentStatus = await this.applicationFactory.deploymentStatusRequest(statusRequest, baseurl);
       this.logger.log('DeploymentStatus', `${statusRequest.objectName} : ${deploymentStatus.data}`);
-      if (deploymentStatus.status === 'READY') {
+      if (deploymentStatus.status === STATUS.DEPLOYMENT_READY) {
         await clearInterval(deploymentInterval);
         deploymentCheck = true;
         const applicationDetails = (
@@ -698,7 +746,16 @@ export class ApplicationService {
           envDetails.cluster,
           DEPLOYMENT_DETAILS.type.containerized
         );
-      } else if (deploymentStatus?.status === 'ERR') {
+        if (commitId) {
+          const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
+            commitId,
+            application.gitProjectId,
+            Action.APPLICATION_DEPLOYED,
+            application.routerUrl
+          );
+          this.applicationFactory.pushEventsInGitBroker(gitCommentRequest);
+        }
+      } else if (deploymentStatus?.status === STATUS.DEPLOYMENT_FAILED) {
         this.logger.warn('DeploymentFailed', `Deployment Failed [BuildId : ${buildName}]`);
         deploymentCheck = true;
         this.analyticsService.createActivityStream(
@@ -712,6 +769,14 @@ export class ApplicationService {
           JSON.stringify(statusRequest)
         );
         await clearInterval(deploymentInterval);
+        if (commitId) {
+          const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
+            commitId,
+            application.gitProjectId,
+            Action.APPLICATION_DEPLOYMENT_FAILED
+          );
+          this.applicationFactory.pushEventsInGitBroker(gitCommentRequest);
+        }
       }
     }, this.period);
     setTimeout(async () => {
@@ -727,6 +792,14 @@ export class ApplicationService {
           Source.GIT,
           JSON.stringify(statusRequest)
         );
+        if (commitId) {
+          const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
+            commitId,
+            application.gitProjectId,
+            Action.APPLICATION_DEPLOYMENT_TIMEOUT
+          );
+          this.applicationFactory.pushEventsInGitBroker(gitCommentRequest);
+        }
       }
       await clearInterval(deploymentInterval);
     }, this.timeout);
@@ -737,6 +810,7 @@ export class ApplicationService {
    * Create the Payload and Start the Deployment
    */
   async processGitRequest(gitRequestDTO: GitDeploymentRequestDTO) {
+    const defaultEnv = 'dev';
     gitRequestDTO.repoUrl = this.applicationFactory.getRepoUrl(gitRequestDTO.repoUrl);
     gitRequestDTO.contextDir = this.applicationFactory.getPath(gitRequestDTO.contextDir);
     const checkGitRegistry = await this.dataServices.application.getByAny({ repoUrl: gitRequestDTO.repoUrl, contextDir: gitRequestDTO.contextDir });
@@ -752,7 +826,7 @@ export class ApplicationService {
       envsResponse = await this.dataServices.environment.getByAny({ propertyIdentifier });
       envsResponse = envsResponse.filter((i) => i.cluster !== Cluster.PROD);
       // @internal By Default deploy in Dev (Pre-prod) Environment if no cluster mentioned
-      envsResponse = [envsResponse.find((i) => i.env === 'dev')];
+      envsResponse = envsResponse.find((i) => i.env === defaultEnv) ? [envsResponse.find((i) => i.env === defaultEnv)] : [];
       this.logger.log('DefaultEnv', JSON.stringify(envsResponse));
     }
     if (!envsResponse.length) this.exceptionService.badRequestException({ message: `No Preferred environment found for the deployment` });

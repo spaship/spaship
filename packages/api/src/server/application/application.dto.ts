@@ -94,6 +94,11 @@ export class CreateApplicationDto {
   @ApiProperty()
   @IsOptional()
   @IsString()
+  gitProjectId: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
   contextDir: string;
 
   @ApiProperty()
@@ -269,7 +274,11 @@ export class GitDeploymentRequestDTO extends GitValidationRequestDTO {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
+  projectId: string;
+
+  @ApiProperty()
+  @IsString()
   @IsOptional()
   commitId: string;
 
@@ -358,4 +367,16 @@ export class GitApplicationStatusResponse {
   data: string;
 
   status: string;
+}
+
+export class GitCommentRequest {
+  commitId: string;
+
+  projectId: string;
+
+  status: string;
+
+  accessUrl: string[];
+
+  source: string;
 }

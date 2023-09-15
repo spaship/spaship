@@ -194,3 +194,18 @@ function generateCMDBCred() {
   const base64EncodedCreds = Buffer.from(`${username}:${password}`);
   return base64EncodedCreds.toString('base64');
 }
+
+export const GIT_BROKER_DETAILS = {
+  baseUrl: process.env.SPASHIP_GIT_BROKER_URL,
+  cred: process.env.SPASHIP_GIT_BROKER_CRED
+};
+
+export enum STATUS {
+  BUILD_COMPLETED = 'COMPLETED',
+  BUILD_FAILED = 'FAILED',
+  BUILD_TERMINATED = 'CHECK_OS_CONSOLE',
+  BUILD_TIMEOUT = 'TIMEOUT',
+  DEPLOYMENT_READY = 'READY',
+  DEPLOYMENT_FAILED = 'ERR',
+  DEPLOYMENT_TIMEOUT = 'TIMEOUT'
+}
