@@ -51,7 +51,7 @@
     "@patternfly/react-core": "4.264.0",
     "@patternfly/react-icons": "4.93.6",
     "@patternfly/react-styles": "4.92.6",
-    "@patternfly/react-table": "4.112.39",
+    "@patternfly/react-table": "4.113.4",
     "@tanstack/react-query": "4.24.4",
     "axios": "0.27.2",
     "dayjs": "1.11.7",
