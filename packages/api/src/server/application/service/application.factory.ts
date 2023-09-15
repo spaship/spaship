@@ -855,11 +855,11 @@ export class ApplicationFactory {
     return routeUrl;
   }
 
-  generateGitCommentPayload(commitId: string, gitProjectId: string, commentBody: string, accessUrl?: string[]) {
+  generateGitCommentPayload(commitId: string, gitProjectId: string, status: string, accessUrl?: string[]) {
     const gitCommentRequest = new GitCommentRequest();
     gitCommentRequest.commitId = commitId;
     gitCommentRequest.projectId = gitProjectId;
-    gitCommentRequest.commentBody = commentBody;
+    gitCommentRequest.status = status;
     gitCommentRequest.accessUrl = accessUrl;
     return gitCommentRequest;
   }

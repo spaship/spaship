@@ -374,7 +374,7 @@ export class GitCommentRequest {
 
   projectId: string;
 
-  commentBody: string;
+  status: string;
 
   accessUrl: string[];
 
