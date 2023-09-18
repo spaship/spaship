@@ -10,7 +10,6 @@ import { useAddSsrSpaProperty } from '@app/services/ssr';
 import {
   Button,
   Drawer,
-  DrawerActions,
   DrawerCloseButton,
   DrawerContent,
   DrawerContentBody,
@@ -251,9 +250,9 @@ export const ContainerizedDeployment = () => {
             )}
           </Tab>
         </Tabs>
-        <DrawerActions>
+        <div className="pf-c-drawer__actions-right">
           <DrawerCloseButton onClick={onCloseClick} />
-        </DrawerActions>
+        </div>
       </DrawerHead>
     </DrawerPanelContent>
   );
@@ -284,6 +283,15 @@ export const ContainerizedDeployment = () => {
     </EmptyState>
   ) : (
     <>
+      <Pagination
+        itemCount={containerisedDeploymentData.length || 0}
+        widgetId="bottom-example"
+        perPage={perPage}
+        page={page}
+        variant={PaginationVariant.bottom}
+        onSetPage={onPageSet}
+        onPerPageSelect={onPerPageSelect}
+      />
       <TableComposable aria-label="spa-property-list" variant="compact" isStriped>
         <Thead noWrap>
           <Tr>
@@ -463,15 +471,6 @@ export const ContainerizedDeployment = () => {
           </Tbody>
         )}
       </TableComposable>
-      <Pagination
-        itemCount={containerisedDeploymentData.length || 0}
-        widgetId="bottom-example"
-        perPage={perPage}
-        page={page}
-        variant={PaginationVariant.bottom}
-        onSetPage={onPageSet}
-        onPerPageSelect={onPerPageSelect}
-      />
     </>
   );
   return (
