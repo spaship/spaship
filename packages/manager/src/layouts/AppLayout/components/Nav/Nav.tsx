@@ -1,10 +1,12 @@
-import Router from 'next/router';
 import { signOut, useSession } from 'next-auth/react';
+import Router from 'next/router';
 
+import { deleteOrchestratorAuthorizationHeader } from '@app/config/orchestratorReq';
+import { useToggle } from '@app/hooks';
+import { pageLinks } from '@app/links';
 import {
   Avatar,
   Button,
-  ButtonVariant,
   Flex,
   FlexItem,
   Masthead,
@@ -20,11 +22,7 @@ import {
   ToolbarGroup,
   ToolbarItem
 } from '@patternfly/react-core';
-import { BellIcon } from '@patternfly/react-icons';
-import { env } from '@app/config/env';
-import { useToggle } from '@app/hooks';
-import { pageLinks } from '@app/links';
-import { deleteOrchestratorAuthorizationHeader } from '@app/config/orchestratorReq';
+import Link from 'next/link';
 
 export const Nav = () => {
   const { data: session } = useSession();
@@ -46,7 +44,11 @@ export const Nav = () => {
     <Masthead backgroundColor="dark" style={{ padding: 0 }}>
       <MastheadMain className="logo" style={{ width: '256px' }}>
         <MastheadBrand className="pf-u-ml-lg">
-          <img src="/img/spaship-logo-light.svg" alt="SPASHIP" style={{ height: '32px' }} />
+          <img
+            src="/img/spaship-logo-light.svg"
+            alt="SPASHIP"
+            style={{ height: '32px', cursor: 'default' }}
+          />
         </MastheadBrand>
       </MastheadMain>
       <MastheadContent>
@@ -59,23 +61,11 @@ export const Nav = () => {
               spaceItems={{ default: 'spaceItemsSm' }}
             >
               <ToolbarItem>
-                <Button
-                  component="a"
-                  aria-label="DOC URL"
-                  variant={ButtonVariant.link}
-                  style={{ color: '#fff' }}
-                  href={env.PUBLIC_DOC_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Go to Docs
-                </Button>
+                <Link href="/documents">
+                  <a className="text-decoration-none"> Docs</a>
+                </Link>
               </ToolbarItem>
-              <ToolbarItem>
-                <Button aria-label="Notifications" variant={ButtonVariant.plain}>
-                  <BellIcon size="md" />
-                </Button>
-              </ToolbarItem>
+
               <ToolbarItem>
                 <Popover
                   flipBehavior={['bottom-end']}

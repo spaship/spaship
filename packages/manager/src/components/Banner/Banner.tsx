@@ -56,7 +56,7 @@ export const Banner = ({ children, backRef, title }: Props): JSX.Element => {
               {asPath === '/properties' ? (
                 'Home'
               ) : (
-                <Link href="/properties">
+                <Link href="/home">
                   <a>Home</a>
                 </Link>
               )}

@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -24,6 +25,22 @@ type SNProps = {
   isActive: boolean;
 };
 
+function getIdentifier(identifier: string) {
+  return (
+    encodeURIComponent(identifier)
+      .toLowerCase()
+      /* Replace the encoded hexadecimal code with `-` */
+      .replace(/%[0-9a-zA-Z]{2}/g, '-')
+      /* Replace any special characters with `-` */
+      .replace(/[\ \-\/\:\@\[\]\`\{\~\.]+/g, '-')
+      /* Special characters are replaced by an underscore */
+      .replace(/[\|!@#$%^&*;"<>\(\)\+,]/g, '_')
+      /* Remove any starting or ending `-` */
+      .replace(/^-+|-+$/g, '')
+      /* Removing multiple consecutive `-`s */
+      .replace(/--+/g, '-')
+  );
+}
 const SidebarNavItem = ({ title, icon, isActive }: SNProps) => (
   <NavItem isActive={isActive}>
     <Split hasGutter className="pf-u-p-sm">
@@ -104,7 +121,7 @@ export const SideBar = () => {
               >
                 {filteredWebProperties?.map((property) => (
                   <NavItem key={property.title}>
-                    <Link href={`/properties/${property.title}`} passHref>
+                    <Link href={`/properties/${getIdentifier(property.title)}`} passHref>
                       <a
                         className="pf-c-nav__link pf-m-icon"
                         href="#"
