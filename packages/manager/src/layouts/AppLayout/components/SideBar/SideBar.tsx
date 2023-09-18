@@ -108,14 +108,10 @@ export const SideBar = () => {
               </Link>
             </NavList>
           </NavGroup>
-          <NavGroup title="Webproperties">
+          <NavGroup title="Web Properties">
             <NavList className="pf-u-px-md">
               <NavExpandable
-                title={
-                  window.location.pathname?.includes(selectedProperty)
-                    ? selectedProperty
-                    : 'Select Property'
-                }
+                title={selectedProperty || 'Select Web Property'} // Use the selectedProperty state
                 groupId="nav-expanded-web-property"
                 isExpanded={isExpanded}
               >
@@ -123,7 +119,9 @@ export const SideBar = () => {
                   <NavItem key={property.title}>
                     <Link href={`/properties/${getIdentifier(property.title)}`} passHref>
                       <a
-                        className="pf-c-nav__link pf-m-icon"
+                        className={`pf-c-nav__link pf-m-icon ${
+                          property.title === selectedProperty ? 'active' : ''
+                        }`}
                         href="#"
                         onClick={() => handlePropertyClick(property.title)}
                       >
