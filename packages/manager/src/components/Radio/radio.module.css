@@ -1,25 +1,25 @@
 .radio-container {
-    background-color: var(--spaship-global--Color--solar-orange);
-    padding: 0.2rem !important;
-    border-radius: 50px;
+  background-color: var(--spaship-global--Color--primary-blue);
+  padding: 0.2rem !important;
+  border-radius: 50px;
 }
 
 .radio-selector {
-    padding: 6px 16px;
-    margin: 0 4px;
-    border-radius: 50px;
-    transition: all 100ms linear;
+  padding: 6px 16px;
+  margin: 0 4px;
+  border-radius: 50px;
+  transition: all 100ms linear;
 }
 
 .radio-selector input[type='radio'] {
-    appearance: none;
-    display: none;
+  appearance: none;
+  display: none;
 }
 
 .radio-selector.selected {
-    background-color: white;
+  background-color: white;
 }
 
 .radio-selector .pf-c-radio {
-    display: flex;
+  display: flex;
 }

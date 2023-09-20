@@ -245,3 +245,9 @@ body {
   background-color: #000 !important;
   color: #fff !important;
 }
+.pf-c-drawer__actions-right {
+  top: 0;
+  position: absolute;
+  right: 0;
+  margin: 1rem;
+}

@@ -98,7 +98,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
           <EmptyStateIcon icon={CubesIcon} />
           <Title headingLevel="h4" size="lg">
             No {toPascalCase(type === 0 ? logType.POD : logType.BUILD)} logs found for{' '}
-            <b>spaname</b> spa.
+            <b>{spaName}</b> spa.
           </Title>
         </EmptyState>
       ) : (

@@ -16,7 +16,7 @@ export const HomePage = (): JSX.Element => (
       <StackItem style={{ textAlign: 'center' }}>
         <Title headingLevel="h1" size={TitleSizes['4xl']} style={{ fontSize: '2.4rem' }}>
           develop fast ·{' '}
-          <span style={{ color: 'var(--spaship-global--Color--solar-orange)' }}>deploy faster</span>
+          <span style={{ color: 'var(--spaship-global--Color--primary-blue)' }}>deploy faster</span>
         </Title>
         <Text className="pf-u-mt-sm pf-u-color-400">
           SPAship is a open source platform for deploying, integrating, and managing single-page
