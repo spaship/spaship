@@ -46,7 +46,7 @@ export class ApplicationService {
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService,
     private readonly agendaService: AgendaService
-  ) {}
+  ) { }
 
   getAllApplications(): Promise<Application[]> {
     return this.dataServices.application.getAll();
@@ -847,8 +847,9 @@ export class ApplicationService {
         const applicationRequest = this.applicationFactory.generateApplicationRequestFromGit(checkGitRegistry, tmp, gitRequestDTO);
         await this.saveGitApplication(applicationRequest, tmp.propertyIdentifier, tmp.env);
       }
-    } catch (e) {
-      this.logger.warn('Deployment', e);
+    } catch (error) {
+      this.logger.warn('GitDeployment', error);
+      this.exceptionService.internalServerErrorException(error);
     }
     return { message: `Build & Deployment Process Started Successfully, please check SPAship Manager for more details.` };
   }
