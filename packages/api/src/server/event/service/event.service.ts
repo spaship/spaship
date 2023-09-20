@@ -1,6 +1,6 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import * as EventSource from 'eventsource';
-import { DEPLOYMENT_DETAILS } from 'src/configuration';
+import { CUSTOM_HEADER, DEPLOYMENT_DETAILS } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { Action } from 'src/server/analytics/activity-stream.entity';
@@ -31,7 +31,7 @@ export class EventService implements OnApplicationBootstrap {
       const tmpDataService = this.dataServices;
       const tmpLogger = this.logger;
       const tmpAnalyticsService = this.analyticsService;
-      new EventSource(eventUrl).onmessage = async function consume(eventResponse) {
+      new EventSource(eventUrl, { headers: CUSTOM_HEADER }).onmessage = async function consume(eventResponse) {
         tmpLogger.log('EventSource', eventUrl);
         tmpLogger.log('EventResponse', eventResponse.data);
         const response = JSON.parse(eventResponse.data);
