@@ -209,3 +209,5 @@ export enum STATUS {
   DEPLOYMENT_FAILED = 'ERR',
   DEPLOYMENT_TIMEOUT = 'TIMEOUT'
 }
+
+export const CUSTOM_HEADER = { 'User-Agent': process.env.SPASHIP_HEADER__USER_AGENT };
