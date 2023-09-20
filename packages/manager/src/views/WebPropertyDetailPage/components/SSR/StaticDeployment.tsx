@@ -41,7 +41,7 @@ export const StaticDeployment = () => {
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
-  const staticDeploymentData = spaProperties?.data?.[spaProperty].filter(
+  const staticDeploymentData = spaProperties?.data?.[spaProperty]?.filter(
     (data) => data.isContainerized === false
   );
   const [syncData, setSyncData] = useState<TSpaProperty | undefined>();
