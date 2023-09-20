@@ -55,7 +55,7 @@ export const ContainerizedDeployment = () => {
   const spaProperty = query.spaProperty as string;
   const createSsrSpaProperty = useAddSsrSpaProperty();
   const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, '');
-  const containerisedDeploymentData = spaProperties?.data?.[spaProperty].filter(
+  const containerisedDeploymentData = spaProperties?.data?.[spaProperty]?.filter(
     (item) => item.isContainerized === true
   );
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
