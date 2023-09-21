@@ -498,7 +498,9 @@ export class ApplicationService {
     applicationRequest.repoUrl = this.applicationFactory.getRepoUrl(applicationRequest.repoUrl);
     applicationRequest.contextDir = this.applicationFactory.getPath(applicationRequest.contextDir);
     applicationRequest.path = this.applicationFactory.getPath(applicationRequest.path);
-    if (applicationRequest?.healthCheckPath) applicationRequest.healthCheckPath = this.applicationFactory.getPath(applicationRequest.healthCheckPath);
+    const tmpSecret = applicationRequest.secret;
+    if (applicationRequest.secret) applicationRequest.secret = this.applicationFactory.initializeEmptyValues(applicationRequest.secret);
+    if (applicationRequest.healthCheckPath) applicationRequest.healthCheckPath = this.applicationFactory.getPath(applicationRequest.healthCheckPath);
     let applicationDetails = (
       await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: true, isGit: true })
     )[0];
@@ -529,12 +531,7 @@ export class ApplicationService {
         );
         this.logger.log('ConfigUpdateRequestToOperator', JSON.stringify(containerizedDeploymentRequestForOperator));
         applicationDetails.config = applicationRequest.config;
-        applicationDetails.secret = applicationRequest.secret;
         applicationDetails.updatedBy = applicationRequest.createdBy;
-        await this.dataServices.application.updateOne(
-          { propertyIdentifier, env, identifier, isContainerized: true, isGit: true },
-          applicationDetails
-        );
         for (const con of deploymentConnection) {
           try {
             await this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, con.baseurl);
@@ -543,11 +540,12 @@ export class ApplicationService {
           }
         }
         if (applicationRequest.secret) {
-          const deletedSecretKeys = this.applicationFactory.getDeletedKeys(applicationDetails.config, applicationRequest.config);
+          const deletedSecretKeys = this.applicationFactory.getDeletedKeys(applicationDetails.secret, applicationRequest.secret);
           containerizedDeploymentRequestForOperator.ssrResourceDetails.secretMap = await this.applicationFactory.decodeBase64SecretValues({
             ...applicationRequest.secret
           });
           containerizedDeploymentRequestForOperator.keysToDelete = deletedSecretKeys;
+          applicationDetails.secret = this.applicationFactory.initializeEmptyValues(applicationRequest.secret);
           for (const con of deploymentConnection) {
             try {
               this.applicationFactory.containerizedSecretUpdate(containerizedDeploymentRequestForOperator, con.baseurl);
@@ -556,6 +554,10 @@ export class ApplicationService {
             }
           }
         }
+        await this.dataServices.application.updateOne(
+          { propertyIdentifier, env, identifier, isContainerized: true, isGit: true },
+          applicationDetails
+        );
         await this.analyticsService.createActivityStream(
           propertyIdentifier,
           Action.APPLICATION_CONFIG_UPDATED,
@@ -593,6 +595,7 @@ export class ApplicationService {
       applicationDetails.updatedBy = applicationRequest.createdBy;
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: true, isGit: true }, applicationDetails);
     }
+    if (tmpSecret) applicationDetails.secret = tmpSecret;
     const containerizedGitOperatorRequest = this.applicationFactory.createContainerizedGitOperatorRequest(
       applicationRequest,
       propertyIdentifier,

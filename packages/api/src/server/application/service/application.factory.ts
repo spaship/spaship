@@ -803,8 +803,20 @@ export class ApplicationFactory {
   decodeBase64SecretValues(secret: Object): Object {
     const secretMap = {};
     Object.entries(secret).forEach(([key, value]) => {
-      if (Base64.encode(Base64.decode(value)) === value) secretMap[key] = Base64.decode(value);
-      else secretMap[key] = value;
+      if (value) {
+        if (Base64.encode(Base64.decode(value)) === value) secretMap[key] = Base64.decode(value);
+        else secretMap[key] = value;
+      }
+    });
+    return secretMap;
+  }
+
+  // @internal Initialize Empty values for the secrets as we're not storing anything
+  initializeEmptyValues(secret: Object): Object {
+    if (!secret) this.exceptionService.badRequestException({ message: 'Secret is not defined' });
+    const secretMap = {};
+    Object.entries(secret).forEach(([key]) => {
+      secretMap[key] = '';
     });
     return secretMap;
   }
@@ -886,8 +898,9 @@ export class ApplicationFactory {
 
   getDeletedKeys(previousValue: Object, updatedValues: Object): string[] {
     const deletedKeys = [];
+    const emptyString = '';
     Object.keys(previousValue).forEach((key) => {
-      if (!updatedValues[key]) {
+      if (!updatedValues[key] && updatedValues[key] !== emptyString) {
         deletedKeys.push(key);
       }
     });
