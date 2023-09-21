@@ -458,11 +458,22 @@ export class ApplicationService {
         message: `${configDTO.identifier} application doesn't exist for ${configDTO.propertyIdentifier}.`
       });
     const { property, deploymentConnection } = await this.getDeploymentConnection(configDTO.propertyIdentifier, configDTO.env);
-    const containerizedDeploymentRequestForOperator = this.applicationFactory.createContainerizedOperatorConfigRequest(configDTO, property.namespace);
+    const deletedConfigKeys = this.applicationFactory.getDeletedKeys(applicationDetails.config, configDTO.config);
+    const containerizedDeploymentRequestForOperator = this.applicationFactory.createContainerizedOperatorConfigRequest(
+      configDTO,
+      property.namespace,
+      deletedConfigKeys
+    );
     applicationDetails.config = configDTO.config;
     applicationDetails.updatedBy = configDTO.createdBy;
     await this.dataServices.application.updateOne(search, applicationDetails);
-    this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
+    for (const con of deploymentConnection) {
+      try {
+        this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, con.baseurl);
+      } catch (error) {
+        this.logger.error('ConfigUpdateError', error);
+      }
+    }
     await this.analyticsService.createActivityStream(
       configDTO.propertyIdentifier,
       Action.APPLICATION_CONFIG_UPDATED,
@@ -504,15 +515,18 @@ export class ApplicationService {
       applicationDetails = await this.dataServices.application.create(saveApplication);
     } else {
       if (await this.applicationFactory.compareApplicationConfiguration(applicationDetails, applicationRequest)) {
-        const containerizedDeploymentRequestForOperator = this.applicationFactory.createContainerizedDeploymentRequestForOperator(
+        const deletedConfigKeys = this.applicationFactory.getDeletedKeys(applicationDetails.config, applicationRequest.config);
+        const applicationConfigRequest = this.applicationFactory.transformRequestToApplicationConfig(
           propertyIdentifier,
           identifier,
-          env,
-          applicationDetails,
-          property.cmdbCode,
-          property.namespace
+          applicationDetails.env,
+          applicationRequest.config
         );
-        containerizedDeploymentRequestForOperator.configMap = applicationRequest.config;
+        const containerizedDeploymentRequestForOperator = this.applicationFactory.createContainerizedOperatorConfigRequest(
+          applicationConfigRequest,
+          property.namespace,
+          deletedConfigKeys
+        );
         this.logger.log('ConfigUpdateRequestToOperator', JSON.stringify(containerizedDeploymentRequestForOperator));
         applicationDetails.config = applicationRequest.config;
         applicationDetails.secret = applicationRequest.secret;
@@ -521,12 +535,26 @@ export class ApplicationService {
           { propertyIdentifier, env, identifier, isContainerized: true, isGit: true },
           applicationDetails
         );
-        await this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
+        for (const con of deploymentConnection) {
+          try {
+            await this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, con.baseurl);
+          } catch (error) {
+            this.logger.error('ConfigUpdateError', error);
+          }
+        }
         if (applicationRequest.secret) {
-          containerizedDeploymentRequestForOperator.secretMap = await this.applicationFactory.decodeBase64SecretValues({
+          const deletedSecretKeys = this.applicationFactory.getDeletedKeys(applicationDetails.config, applicationRequest.config);
+          containerizedDeploymentRequestForOperator.ssrResourceDetails.secretMap = await this.applicationFactory.decodeBase64SecretValues({
             ...applicationRequest.secret
           });
-          this.applicationFactory.containerizedSecretUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
+          containerizedDeploymentRequestForOperator.keysToDelete = deletedSecretKeys;
+          for (const con of deploymentConnection) {
+            try {
+              this.applicationFactory.containerizedSecretUpdate(containerizedDeploymentRequestForOperator, con.baseurl);
+            } catch (error) {
+              this.logger.error('SecretUpdateError', error);
+            }
+          }
         }
         await this.analyticsService.createActivityStream(
           propertyIdentifier,

@@ -27,7 +27,8 @@ import {
   GitCommentRequest,
   GitDeploymentRequestDTO,
   GitValidateResponse,
-  GitValidationRequestDTO
+  GitValidationRequestDTO,
+  UpdateConfigOrSecretRequest
 } from 'src/server/application/application.dto';
 import { Application } from 'src/server/application/application.entity';
 import { AuthFactory } from 'src/server/auth/auth.factory';
@@ -398,7 +399,7 @@ export class ApplicationFactory {
   }
 
   // @internal Update the configuration for a Containerized application
-  async containerizedConfigUpdate(request?: ContainerizedDeploymentRequest, deploymentBaseURL?: string) {
+  async containerizedConfigUpdate(request: UpdateConfigOrSecretRequest, deploymentBaseURL: string) {
     const headers = { Authorization: await AuthFactory.getAccessToken() };
     this.logger.log('ContainerizedContainerizedConfigRequest', JSON.stringify(request));
     try {
@@ -413,7 +414,7 @@ export class ApplicationFactory {
   }
 
   // @internal Update the secret for a Containerized application
-  async containerizedSecretUpdate(request?: ContainerizedDeploymentRequest, deploymentBaseURL?: string) {
+  async containerizedSecretUpdate(request: UpdateConfigOrSecretRequest, deploymentBaseURL: string) {
     const headers = { Authorization: await AuthFactory.getAccessToken() };
     try {
       const response = await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/deployment/v1/secret`, request, {
@@ -567,14 +568,31 @@ export class ApplicationFactory {
   }
 
   // @internal It'll create the object request for Containerized Deployment configuration
-  createContainerizedOperatorConfigRequest(configRequest: ApplicationConfigDTO, namespace: string): ContainerizedDeploymentRequest {
+  createContainerizedOperatorConfigRequest(
+    configRequest: ApplicationConfigDTO,
+    namespace: string,
+    deletedKeys: string[]
+  ): UpdateConfigOrSecretRequest {
+    const updateConfigOrSecretRequest = new UpdateConfigOrSecretRequest();
     const containerizedRequest = new ContainerizedDeploymentRequest();
     containerizedRequest.app = configRequest.identifier;
     containerizedRequest.website = configRequest.propertyIdentifier;
     containerizedRequest.nameSpace = namespace;
     containerizedRequest.environment = configRequest.env;
     containerizedRequest.configMap = configRequest.config;
-    return containerizedRequest;
+    updateConfigOrSecretRequest.ssrResourceDetails = containerizedRequest;
+    updateConfigOrSecretRequest.keysToDelete = deletedKeys;
+    return updateConfigOrSecretRequest;
+  }
+
+  // @internal It'll create the object request for Containerized Deployment configuration
+  transformRequestToApplicationConfig(propertyIdentifier: string, identifier: string, env: string, config: Object): ApplicationConfigDTO {
+    const applicationConfigDTO = new ApplicationConfigDTO();
+    applicationConfigDTO.propertyIdentifier = propertyIdentifier;
+    applicationConfigDTO.identifier = identifier;
+    applicationConfigDTO.env = env;
+    applicationConfigDTO.config = config;
+    return applicationConfigDTO;
   }
 
   // @internal Process the Deployment time for the analytics
@@ -864,5 +882,15 @@ export class ApplicationFactory {
     gitCommentRequest.status = status;
     gitCommentRequest.accessUrl = accessUrl;
     return gitCommentRequest;
+  }
+
+  getDeletedKeys(previousValue: Object, updatedValues: Object): string[] {
+    const deletedKeys = [];
+    Object.keys(previousValue).forEach((key) => {
+      if (!updatedValues[key]) {
+        deletedKeys.push(key);
+      }
+    });
+    return deletedKeys;
   }
 }
