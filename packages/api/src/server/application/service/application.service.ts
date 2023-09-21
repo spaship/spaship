@@ -100,6 +100,7 @@ export class ApplicationService {
           'NA',
           applicationRequest.expiresIn
         );
+        await this.checkDeploymentRecord(propertyIdentifier, Cluster.PREPROD);
         await this.dataServices.environment.create(tmpEph);
         this.logger.log('NewEphemeral', JSON.stringify(tmpEph));
         env = tmpEph.env;
@@ -373,6 +374,18 @@ export class ApplicationService {
     }
     this.logger.log('DeploymentConnection', JSON.stringify(deploymentConnection));
     return { property, deploymentConnection };
+  }
+
+  // @internal check if property exists in the cluster or not
+  async checkDeploymentRecord(propertyIdentifier: string, cluster: string) {
+    if (!propertyIdentifier || !cluster) this.exceptionService.badRequestException({ message: `PropertyIdentifier or Cluster not present.` });
+    const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
+    if (!property) this.exceptionService.badRequestException({ message: `No Property Found.` });
+    const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === cluster);
+    if (!deploymentRecord)
+      this.exceptionService.badRequestException({
+        message: `No env found for ${propertyIdentifier} on ${cluster} cluster. Please create a new env on ${cluster} cluster from the SPAship Manager.`
+      });
   }
 
   /* @internal
@@ -835,8 +848,9 @@ export class ApplicationService {
         const applicationRequest = this.applicationFactory.generateApplicationRequestFromGit(checkGitRegistry, tmp, gitRequestDTO);
         await this.saveGitApplication(applicationRequest, tmp.propertyIdentifier, tmp.env);
       }
-    } catch (e) {
-      this.logger.warn('Deployment', e);
+    } catch (error) {
+      this.logger.warn('GitDeployment', error);
+      this.exceptionService.internalServerErrorException(error);
     }
     return { message: `Build & Deployment Process Started Successfully, please check SPAship Manager for more details.` };
   }

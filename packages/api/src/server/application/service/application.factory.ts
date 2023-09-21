@@ -681,19 +681,21 @@ export class ApplicationFactory {
 
   // @internal Generate ApplicationRequest from the GitRequest
   generateApplicationRequestFromGit(checkGitRegistry: Application[], tmp: Environment, gitRequestDTO: GitDeploymentRequestDTO): CreateApplicationDto {
+    if (!gitRequestDTO) this.exceptionService.badRequestException({ message: 'Request body not found' });
     if (!checkGitRegistry) this.exceptionService.badRequestException({ message: 'Application is not registered' });
     const applicationRequest = new CreateApplicationDto();
-    const existingDeployment = checkGitRegistry.find((i) => i.env === tmp.env);
-    applicationRequest.name = existingDeployment.name || checkGitRegistry[0].name;
-    applicationRequest.path = existingDeployment.path || checkGitRegistry[0].path;
-    applicationRequest.ref = existingDeployment.ref || checkGitRegistry[0].ref;
-    applicationRequest.repoUrl = existingDeployment.repoUrl || checkGitRegistry[0].repoUrl;
-    applicationRequest.gitRef = gitRequestDTO.gitRef || existingDeployment.gitRef || checkGitRegistry[0].gitRef;
-    applicationRequest.contextDir = existingDeployment.contextDir || checkGitRegistry[0].contextDir;
+    let deploymentDetails = checkGitRegistry.find((i) => i.env === tmp.env);
+    if (!deploymentDetails) [deploymentDetails] = checkGitRegistry;
+    applicationRequest.name = deploymentDetails.name;
+    applicationRequest.path = deploymentDetails.path;
+    applicationRequest.ref = deploymentDetails.ref;
+    applicationRequest.repoUrl = deploymentDetails.repoUrl;
+    applicationRequest.gitRef = gitRequestDTO.gitRef || deploymentDetails.gitRef;
+    applicationRequest.contextDir = deploymentDetails.contextDir;
     applicationRequest.commitId = gitRequestDTO.commitId;
     applicationRequest.mergeId = gitRequestDTO.mergeId;
     applicationRequest.gitProjectId = gitRequestDTO.projectId;
-    applicationRequest.createdBy = existingDeployment.createdBy || checkGitRegistry[0].createdBy;
+    applicationRequest.createdBy = deploymentDetails.createdBy;
     this.logger.log('ApplicationRequest', JSON.stringify(applicationRequest));
     return applicationRequest;
   }
