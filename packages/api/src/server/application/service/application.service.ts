@@ -378,6 +378,7 @@ export class ApplicationService {
 
   // @internal check if property exists in the cluster or not
   async checkDeploymentRecord(propertyIdentifier: string, cluster: string) {
+    if (!propertyIdentifier || !cluster) this.exceptionService.badRequestException({ message: `PropertyIdentifier or Cluster not present.` });
     const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
     if (!property) this.exceptionService.badRequestException({ message: `No Property Found.` });
     const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === cluster);
