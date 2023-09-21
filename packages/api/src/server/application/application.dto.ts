@@ -198,6 +198,12 @@ export class ContainerizedGitDeploymentRequest {
   reDeployment: boolean;
 }
 
+export class UpdateConfigOrSecretRequest {
+  ssrResourceDetails: ContainerizedDeploymentRequest;
+
+  keysToDelete: string[];
+}
+
 export class ContainerizedGitDeploymentResponse {
   constructedGitFlowMeta: ContainerizedGitDeploymentRequest;
 
