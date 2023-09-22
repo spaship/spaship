@@ -516,7 +516,7 @@ export class ApplicationService {
       this.logger.log('ContainerizedGitApplicationDetails', JSON.stringify(saveApplication));
       applicationDetails = await this.dataServices.application.create(saveApplication);
     } else {
-      if (await this.applicationFactory.compareApplicationConfiguration(applicationDetails, applicationRequest)) {
+      if (await this.applicationFactory.compareApplicationConfiguration(applicationDetails, { ...applicationRequest, secret: tmpSecret })) {
         const deletedConfigKeys = this.applicationFactory.getDeletedKeys(applicationDetails.config, applicationRequest.config);
         const applicationConfigRequest = this.applicationFactory.transformRequestToApplicationConfig(
           propertyIdentifier,
@@ -539,13 +539,13 @@ export class ApplicationService {
             this.logger.error('ConfigUpdateError', error);
           }
         }
-        if (applicationRequest.secret) {
-          const deletedSecretKeys = this.applicationFactory.getDeletedKeys(applicationDetails.secret, applicationRequest.secret);
+        if (tmpSecret) {
+          const deletedSecretKeys = this.applicationFactory.getDeletedKeys(applicationDetails.secret, tmpSecret);
           containerizedDeploymentRequestForOperator.ssrResourceDetails.secretMap = await this.applicationFactory.decodeBase64SecretValues({
-            ...applicationRequest.secret
+            ...tmpSecret
           });
           containerizedDeploymentRequestForOperator.keysToDelete = deletedSecretKeys;
-          applicationDetails.secret = this.applicationFactory.initializeEmptyValues(applicationRequest.secret);
+          applicationDetails.secret = applicationRequest.secret;
           for (const con of deploymentConnection) {
             try {
               this.applicationFactory.containerizedSecretUpdate(containerizedDeploymentRequestForOperator, con.baseurl);
