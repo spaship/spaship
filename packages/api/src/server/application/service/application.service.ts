@@ -384,7 +384,7 @@ export class ApplicationService {
     const deploymentRecord = property.deploymentRecord.find((data) => data.cluster === cluster);
     if (!deploymentRecord)
       this.exceptionService.badRequestException({
-        message: `No env found for ${propertyIdentifier} on ${cluster} cluster. Please create a new env on ${cluster} cluster from the SPAship Manager.`
+        message: `No environment found for the property: ${propertyIdentifier} on ${cluster} cluster. Please create a new environment selecting ${cluster} as the environment type from the SPAship Manager.`
       });
   }
 
