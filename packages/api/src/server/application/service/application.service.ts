@@ -458,11 +458,22 @@ export class ApplicationService {
         message: `${configDTO.identifier} application doesn't exist for ${configDTO.propertyIdentifier}.`
       });
     const { property, deploymentConnection } = await this.getDeploymentConnection(configDTO.propertyIdentifier, configDTO.env);
-    const containerizedDeploymentRequestForOperator = this.applicationFactory.createContainerizedOperatorConfigRequest(configDTO, property.namespace);
+    const deletedConfigKeys = this.applicationFactory.getDeletedKeys(applicationDetails.config, configDTO.config);
+    const containerizedDeploymentRequestForOperator = this.applicationFactory.createContainerizedOperatorConfigRequest(
+      configDTO,
+      property.namespace,
+      deletedConfigKeys
+    );
     applicationDetails.config = configDTO.config;
     applicationDetails.updatedBy = configDTO.createdBy;
     await this.dataServices.application.updateOne(search, applicationDetails);
-    this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
+    for (const con of deploymentConnection) {
+      try {
+        this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, con.baseurl);
+      } catch (error) {
+        this.logger.error('ConfigUpdateError', error);
+      }
+    }
     await this.analyticsService.createActivityStream(
       configDTO.propertyIdentifier,
       Action.APPLICATION_CONFIG_UPDATED,
@@ -487,7 +498,9 @@ export class ApplicationService {
     applicationRequest.repoUrl = this.applicationFactory.getRepoUrl(applicationRequest.repoUrl);
     applicationRequest.contextDir = this.applicationFactory.getPath(applicationRequest.contextDir);
     applicationRequest.path = this.applicationFactory.getPath(applicationRequest.path);
-    if (applicationRequest?.healthCheckPath) applicationRequest.healthCheckPath = this.applicationFactory.getPath(applicationRequest.healthCheckPath);
+    const tmpSecret = applicationRequest.secret;
+    if (applicationRequest.secret) applicationRequest.secret = this.applicationFactory.initializeEmptyValues(applicationRequest.secret);
+    if (applicationRequest.healthCheckPath) applicationRequest.healthCheckPath = this.applicationFactory.getPath(applicationRequest.healthCheckPath);
     let applicationDetails = (
       await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: true, isGit: true })
     )[0];
@@ -503,31 +516,48 @@ export class ApplicationService {
       this.logger.log('ContainerizedGitApplicationDetails', JSON.stringify(saveApplication));
       applicationDetails = await this.dataServices.application.create(saveApplication);
     } else {
-      if (await this.applicationFactory.compareApplicationConfiguration(applicationDetails, applicationRequest)) {
-        const containerizedDeploymentRequestForOperator = this.applicationFactory.createContainerizedDeploymentRequestForOperator(
+      if (await this.applicationFactory.compareApplicationConfiguration(applicationDetails, { ...applicationRequest, secret: tmpSecret })) {
+        const deletedConfigKeys = this.applicationFactory.getDeletedKeys(applicationDetails.config, applicationRequest.config);
+        const applicationConfigRequest = this.applicationFactory.transformRequestToApplicationConfig(
           propertyIdentifier,
           identifier,
-          env,
-          applicationDetails,
-          property.cmdbCode,
-          property.namespace
+          applicationDetails.env,
+          applicationRequest.config
         );
-        containerizedDeploymentRequestForOperator.configMap = applicationRequest.config;
+        const containerizedDeploymentRequestForOperator = this.applicationFactory.createContainerizedOperatorConfigRequest(
+          applicationConfigRequest,
+          property.namespace,
+          deletedConfigKeys
+        );
         this.logger.log('ConfigUpdateRequestToOperator', JSON.stringify(containerizedDeploymentRequestForOperator));
         applicationDetails.config = applicationRequest.config;
-        applicationDetails.secret = applicationRequest.secret;
         applicationDetails.updatedBy = applicationRequest.createdBy;
+        for (const con of deploymentConnection) {
+          try {
+            await this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, con.baseurl);
+          } catch (error) {
+            this.logger.error('ConfigUpdateError', error);
+          }
+        }
+        if (tmpSecret) {
+          const deletedSecretKeys = this.applicationFactory.getDeletedKeys(applicationDetails.secret, tmpSecret);
+          containerizedDeploymentRequestForOperator.ssrResourceDetails.secretMap = await this.applicationFactory.decodeBase64SecretValues({
+            ...tmpSecret
+          });
+          containerizedDeploymentRequestForOperator.keysToDelete = deletedSecretKeys;
+          applicationDetails.secret = applicationRequest.secret;
+          for (const con of deploymentConnection) {
+            try {
+              this.applicationFactory.containerizedSecretUpdate(containerizedDeploymentRequestForOperator, con.baseurl);
+            } catch (error) {
+              this.logger.error('SecretUpdateError', error);
+            }
+          }
+        }
         await this.dataServices.application.updateOne(
           { propertyIdentifier, env, identifier, isContainerized: true, isGit: true },
           applicationDetails
         );
-        await this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
-        if (applicationRequest.secret) {
-          containerizedDeploymentRequestForOperator.secretMap = await this.applicationFactory.decodeBase64SecretValues({
-            ...applicationRequest.secret
-          });
-          this.applicationFactory.containerizedSecretUpdate(containerizedDeploymentRequestForOperator, deploymentConnection.baseurl);
-        }
         await this.analyticsService.createActivityStream(
           propertyIdentifier,
           Action.APPLICATION_CONFIG_UPDATED,
@@ -565,6 +595,7 @@ export class ApplicationService {
       applicationDetails.updatedBy = applicationRequest.createdBy;
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: true, isGit: true }, applicationDetails);
     }
+    if (tmpSecret) applicationDetails.secret = tmpSecret;
     const containerizedGitOperatorRequest = this.applicationFactory.createContainerizedGitOperatorRequest(
       applicationRequest,
       propertyIdentifier,

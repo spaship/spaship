@@ -27,7 +27,8 @@ import {
   GitCommentRequest,
   GitDeploymentRequestDTO,
   GitValidateResponse,
-  GitValidationRequestDTO
+  GitValidationRequestDTO,
+  UpdateConfigOrSecretRequest
 } from 'src/server/application/application.dto';
 import { Application } from 'src/server/application/application.entity';
 import { AuthFactory } from 'src/server/auth/auth.factory';
@@ -398,7 +399,9 @@ export class ApplicationFactory {
   }
 
   // @internal Update the configuration for a Containerized application
-  async containerizedConfigUpdate(request?: ContainerizedDeploymentRequest, deploymentBaseURL?: string) {
+  async containerizedConfigUpdate(request: UpdateConfigOrSecretRequest, deploymentBaseURL: string) {
+    if (!deploymentBaseURL) this.exceptionService.badRequestException({ message: 'Please provide the deploymentBaseUrl' });
+    if (!request) this.exceptionService.badRequestException({ message: 'Please provide the request body' });
     const headers = { Authorization: await AuthFactory.getAccessToken() };
     this.logger.log('ContainerizedContainerizedConfigRequest', JSON.stringify(request));
     try {
@@ -413,7 +416,9 @@ export class ApplicationFactory {
   }
 
   // @internal Update the secret for a Containerized application
-  async containerizedSecretUpdate(request?: ContainerizedDeploymentRequest, deploymentBaseURL?: string) {
+  async containerizedSecretUpdate(request: UpdateConfigOrSecretRequest, deploymentBaseURL: string) {
+    if (!deploymentBaseURL) this.exceptionService.badRequestException({ message: 'Please provide the deploymentBaseUrl' });
+    if (!request) this.exceptionService.badRequestException({ message: 'Please provide the request body' });
     const headers = { Authorization: await AuthFactory.getAccessToken() };
     try {
       const response = await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/deployment/v1/secret`, request, {
@@ -427,7 +432,10 @@ export class ApplicationFactory {
   }
 
   // @internal Get the List of the Pods from the Operator
-  async getListOfPods(deploymentName: string, namespace: string, deploymentBaseURL?: string): Promise<String[]> {
+  async getListOfPods(deploymentName: string, namespace: string, deploymentBaseURL: string): Promise<String[]> {
+    if (!deploymentBaseURL) this.exceptionService.badRequestException({ message: 'Please provide the deploymentBaseUrl' });
+    if (!deploymentName) this.exceptionService.badRequestException({ message: 'Please provide the deploymentName' });
+    if (!namespace) this.exceptionService.badRequestException({ message: 'Please provide the namespace' });
     const headers = { Authorization: await AuthFactory.getAccessToken() };
     let response;
     try {
@@ -567,14 +575,37 @@ export class ApplicationFactory {
   }
 
   // @internal It'll create the object request for Containerized Deployment configuration
-  createContainerizedOperatorConfigRequest(configRequest: ApplicationConfigDTO, namespace: string): ContainerizedDeploymentRequest {
+  createContainerizedOperatorConfigRequest(
+    configRequest: ApplicationConfigDTO,
+    namespace: string,
+    deletedKeys: string[]
+  ): UpdateConfigOrSecretRequest {
+    if (!configRequest) this.exceptionService.badRequestException({ message: 'Please provide the configRequest' });
+    if (!namespace) this.exceptionService.badRequestException({ message: 'Please provide the namespace' });
+    const updateConfigOrSecretRequest = new UpdateConfigOrSecretRequest();
     const containerizedRequest = new ContainerizedDeploymentRequest();
     containerizedRequest.app = configRequest.identifier;
     containerizedRequest.website = configRequest.propertyIdentifier;
     containerizedRequest.nameSpace = namespace;
     containerizedRequest.environment = configRequest.env;
     containerizedRequest.configMap = configRequest.config;
-    return containerizedRequest;
+    updateConfigOrSecretRequest.ssrResourceDetails = containerizedRequest;
+    updateConfigOrSecretRequest.keysToDelete = deletedKeys;
+    return updateConfigOrSecretRequest;
+  }
+
+  // @internal It'll create the object request for Containerized Deployment configuration
+  transformRequestToApplicationConfig(propertyIdentifier: string, identifier: string, env: string, config: Object): ApplicationConfigDTO {
+    if (!propertyIdentifier) this.exceptionService.badRequestException({ message: 'Please provide the propertyIdentifier' });
+    if (!identifier) this.exceptionService.badRequestException({ message: 'Please provide the identifier' });
+    if (!env) this.exceptionService.badRequestException({ message: 'Please provide the env' });
+    if (!config) this.exceptionService.badRequestException({ message: 'Please provide the config' });
+    const applicationConfigDTO = new ApplicationConfigDTO();
+    applicationConfigDTO.propertyIdentifier = propertyIdentifier;
+    applicationConfigDTO.identifier = identifier;
+    applicationConfigDTO.env = env;
+    applicationConfigDTO.config = config;
+    return applicationConfigDTO;
   }
 
   // @internal Process the Deployment time for the analytics
@@ -783,10 +814,23 @@ export class ApplicationFactory {
 
   // @internal Decode Base64 encoded string from the secret values for operator payload
   decodeBase64SecretValues(secret: Object): Object {
+    if (!secret) this.exceptionService.badRequestException({ message: 'Please provide the secret value' });
     const secretMap = {};
     Object.entries(secret).forEach(([key, value]) => {
-      if (Base64.encode(Base64.decode(value)) === value) secretMap[key] = Base64.decode(value);
-      else secretMap[key] = value;
+      if (value) {
+        if (Base64.encode(Base64.decode(value)) === value) secretMap[key] = Base64.decode(value);
+        else secretMap[key] = value;
+      }
+    });
+    return secretMap;
+  }
+
+  // @internal Initialize Empty values for the secrets as we're not storing anything
+  initializeEmptyValues(secret: Object): Object {
+    if (!secret) this.exceptionService.badRequestException({ message: 'Please provide the secret value' });
+    const secretMap = {};
+    Object.entries(secret).forEach(([key]) => {
+      secretMap[key] = '';
     });
     return secretMap;
   }
@@ -864,5 +908,17 @@ export class ApplicationFactory {
     gitCommentRequest.status = status;
     gitCommentRequest.accessUrl = accessUrl;
     return gitCommentRequest;
+  }
+
+  getDeletedKeys(previousValue: Object, updatedValues: Object): string[] {
+    if (!previousValue || !updatedValues) this.exceptionService.badRequestException({ message: 'Please provide the values' });
+    const deletedKeys = [];
+    const emptyString = '';
+    Object.keys(previousValue).forEach((key) => {
+      if (!updatedValues[key] && updatedValues[key] !== emptyString) {
+        deletedKeys.push(key);
+      }
+    });
+    return deletedKeys;
   }
 }
