@@ -25,7 +25,7 @@ type SNProps = {
   isActive: boolean;
 };
 
-function GenereateIdentifier(identifier: string) {
+function genereateIdentifier(identifier: string) {
   return (
     encodeURIComponent(identifier)
       .toLowerCase()
@@ -117,7 +117,7 @@ export const SideBar = () => {
               >
                 {filteredWebProperties?.map((property) => (
                   <NavItem key={property.title}>
-                    <Link href={`/properties/${GenereateIdentifier(property.title)}`} passHref>
+                    <Link href={`/properties/${genereateIdentifier(property.title)}`} passHref>
                       <a
                         className={`pf-c-nav__link pf-m-icon ${
                           property.title === selectedProperty ? 'active' : ''
