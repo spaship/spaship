@@ -37,7 +37,7 @@ export const schema = yup.object({
     .test(
       'valid-value',
       'Invalid value',
-      (value) => ['NA', ''].includes(value) || yup.date().isValidSync(value)
+      (value) => value === 'NA' || value === '' || yup.date().isValidSync(value)
     )
     .test('is-valid-date', 'Date selected is expired', (value) => {
       if (value !== 'NA' && value !== '') {
@@ -71,7 +71,7 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting }
+    formState: { isSubmitting, errors }
   } = useForm<FormData>({
     mode: 'onBlur',
     resolver: yupResolver(schema)
@@ -81,6 +81,7 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
   const handleChange = (checked: boolean) => {
     setisChecked(checked);
   };
+  const hasErrors = Object.keys(errors).length > 0;
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -112,7 +113,7 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
           <Controller
             control={control}
             name="expiresIn"
-            defaultValue={!isChecked ? '' : 'NA'}
+            // defaultValue={!isChecked ? '' : 'NA'}
             render={({ field: { onChange, value, onBlur }, fieldState: { error } }) => (
               <FormGroup
                 label="API Key Expiry"
@@ -199,6 +200,7 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
       <ClipboardCopy hoverTip="Copy" clickTip="Copied" isReadOnly>
         {token}
       </ClipboardCopy>
+
       <ActionGroup>
         {token ? (
           <Button variant="primary" onClick={onClose}>
@@ -210,7 +212,7 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
               variant="primary"
               type="submit"
               isLoading={isSubmitting}
-              isDisabled={isSubmitting}
+              isDisabled={hasErrors} // Disable if submitting or if there are validation errors
             >
               Create
             </Button>

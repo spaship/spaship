@@ -25,7 +25,7 @@ type SNProps = {
   isActive: boolean;
 };
 
-function getIdentifier(identifier: string) {
+function genereateIdentifier(identifier: string) {
   return (
     encodeURIComponent(identifier)
       .toLowerCase()
@@ -52,7 +52,7 @@ const SidebarNavItem = ({ title, icon, isActive }: SNProps) => (
 
 export const SideBar = () => {
   const { pathname } = useRouter();
-  const [selectedProperty, setSelectedProperty] = useState('Select Web Property');
+  const [selectedProperty, setSelectedProperty] = useState('Select My Property');
   const [isExpanded, setIsExpanded] = useState(false);
   const { data: session } = useSession();
   const webProperties = useGetWebProperties();
@@ -111,13 +111,13 @@ export const SideBar = () => {
           <NavGroup title="Web Properties">
             <NavList className="pf-u-px-md">
               <NavExpandable
-                title={selectedProperty || 'Select Web Property'} // Use the selectedProperty state
+                title={selectedProperty || 'Select My Property'} // Use the selectedProperty state
                 groupId="nav-expanded-web-property"
                 isExpanded={isExpanded}
               >
                 {filteredWebProperties?.map((property) => (
                   <NavItem key={property.title}>
-                    <Link href={`/properties/${getIdentifier(property.title)}`} passHref>
+                    <Link href={`/properties/${genereateIdentifier(property.title)}`} passHref>
                       <a
                         className={`pf-c-nav__link pf-m-icon ${
                           property.title === selectedProperty ? 'active' : ''
@@ -133,7 +133,17 @@ export const SideBar = () => {
               </NavExpandable>
 
               <Link href={pageLinks.webPropertyListPage}>
-                <a className="text-decoration-none">
+                <a
+                  className="text-decoration-none"
+                  onClick={() => setSelectedProperty('Select My Property')}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === 'Space') {
+                      setSelectedProperty('Select My Property');
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                >
                   <SidebarNavItem
                     title="All Web Properties"
                     icon={
@@ -154,7 +164,7 @@ export const SideBar = () => {
               <Link href="/documents">
                 <a className="text-decoration-none">
                   <SidebarNavItem
-                    title="User Guides"
+                    title="Documents"
                     icon={
                       <img
                         src="/img/user-guide-icon.svg"

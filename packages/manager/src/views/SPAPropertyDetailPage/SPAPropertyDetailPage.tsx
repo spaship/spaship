@@ -6,8 +6,9 @@ import { Banner } from '@app/components';
 import { useTabs } from '@app/hooks';
 import { pageLinks } from '@app/links';
 import { useGetTotalDeploymentsForApps } from '@app/services/analytics';
-import { BuildIcon, BundleIcon, PackageIcon } from '@patternfly/react-icons';
+import { BuildIcon, BundleIcon, CogIcon, PackageIcon } from '@patternfly/react-icons';
 import toast from 'react-hot-toast';
+import { Settings } from '../Settings';
 import { Dashboard } from '../WebPropertyDetailPage/components/Dashboard';
 import { ContainerizedDeployment } from '../WebPropertyDetailPage/components/SSR/ContainerizedDeployment';
 import { StaticDeployment } from '../WebPropertyDetailPage/components/SSR/StaticDeployment';
@@ -22,7 +23,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
     toast.error(`Sorry cannot find ${spaProperty}`);
     router.push(`/properties/${propertyIdentifier}`);
   }
-  const { handleTabChange, openTab } = useTabs(3, Number(initialTab || '0'));
+  const { handleTabChange, openTab } = useTabs(4, Number(initialTab || '0'));
 
   return (
     <>
@@ -79,9 +80,23 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                 <TabTitleText>Dashboard</TabTitleText>
               </>
             }
-            aria-label="SPA listing"
+            aria-label="SPA-detailed-dahsboard"
           >
             <Dashboard type="spa" />
+          </Tab>
+          <Tab
+            eventKey={3}
+            title={
+              <>
+                <TabTitleIcon>
+                  <CogIcon />
+                </TabTitleIcon>
+                <TabTitleText>Settings</TabTitleText>
+              </>
+            }
+            aria-label="SPA-detailed-Settings"
+          >
+            <Settings />
           </Tab>
         </Tabs>
       </PageSection>
