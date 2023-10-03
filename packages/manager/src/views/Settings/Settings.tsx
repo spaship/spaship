@@ -44,7 +44,7 @@ export const Settings: React.FunctionComponent = () => {
               eventKey={1}
               title={<TabTitleText aria-label="cmdb-details">CMDB Details</TabTitleText>}
             />
-            <Tab eventKey={2} title={<TabTitleText aria-label="api-key">Api Key</TabTitleText>} />
+            <Tab eventKey={2} title={<TabTitleText aria-label="api-key">API Key</TabTitleText>} />
             <Tab
               eventKey={3}
               title={<TabTitleText aria-label="access-control">Access Control</TabTitleText>}

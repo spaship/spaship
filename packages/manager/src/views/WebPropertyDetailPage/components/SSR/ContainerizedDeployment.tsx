@@ -288,7 +288,7 @@ export const ContainerizedDeployment = () => {
         widgetId="bottom-example"
         perPage={perPage}
         page={page}
-        variant={PaginationVariant.bottom}
+        variant={PaginationVariant.top}
         onSetPage={onPageSet}
         onPerPageSelect={onPerPageSelect}
       />
