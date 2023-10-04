@@ -85,45 +85,7 @@ export class ApplicationService {
     if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
     applicationRequest.path = this.applicationFactory.getPath(applicationRequest.path);
     const identifier = this.applicationFactory.getIdentifier(applicationRequest.name);
-    if (this.applicationFactory.isEphemeral(applicationRequest)) {
-      const actionEnabled = !!applicationRequest.actionId;
-      const { actionId } = applicationRequest;
-      const ephemeral = (await this.dataServices.environment.getByAny({ propertyIdentifier, actionEnabled: true, actionId, isActive: true }))[0];
-      if (ephemeral) {
-        env = ephemeral.env;
-        this.logger.log('Ephemeral', JSON.stringify(ephemeral));
-      } else {
-        const tmpEph = this.applicationFactory.createEphemeralPreview(
-          propertyIdentifier,
-          actionEnabled,
-          actionId,
-          'NA',
-          applicationRequest.expiresIn
-        );
-        await this.checkDeploymentRecord(propertyIdentifier, Cluster.PREPROD);
-        await this.dataServices.environment.create(tmpEph);
-        this.logger.log('NewEphemeral', JSON.stringify(tmpEph));
-        env = tmpEph.env;
-        const expiresIn = this.applicationFactory.getExpiresIn(applicationRequest.expiresIn);
-        const scheduledDate = new Date();
-        scheduledDate.setSeconds(scheduledDate.getSeconds() + Number(expiresIn));
-        const agendaResponse = await this.agendaService.agenda.schedule(scheduledDate, JOB.DELETE_EPH_ENV, {
-          propertyIdentifier,
-          env
-        });
-        this.logger.log('Agenda', JSON.stringify(agendaResponse));
-      }
-      await this.analyticsService.createActivityStream(
-        propertyIdentifier,
-        Action.ENV_CREATED,
-        env,
-        'NA',
-        `${env} created for ${propertyIdentifier}.`,
-        createdBy,
-        Source.CLI,
-        JSON.stringify(environment)
-      );
-    }
+    env = await this.createEphemeralEnvironment(applicationRequest, propertyIdentifier, env, createdBy);
     const applicationDetails = (
       await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false })
     )[0];
@@ -187,6 +149,49 @@ export class ApplicationService {
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
     await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false }, applicationDetails);
     return this.applicationFactory.createApplicationResponse(applicationDetails, applicationExists);
+  }
+
+  private async createEphemeralEnvironment(applicationRequest: CreateApplicationDto, propertyIdentifier: string, env: string, createdBy: string) {
+    if (this.applicationFactory.isEphemeral(applicationRequest)) {
+      const actionEnabled = !!applicationRequest.actionId;
+      const { actionId } = applicationRequest;
+      const ephemeral = (await this.dataServices.environment.getByAny({ propertyIdentifier, actionEnabled: true, actionId, isActive: true }))[0];
+      if (ephemeral) {
+        env = ephemeral.env;
+        this.logger.log('Ephemeral', JSON.stringify(ephemeral));
+      } else {
+        const tmpEph = this.applicationFactory.createEphemeralPreview(
+          propertyIdentifier,
+          actionEnabled,
+          actionId,
+          'NA',
+          applicationRequest.expiresIn
+        );
+        await this.checkDeploymentRecord(propertyIdentifier, Cluster.PREPROD);
+        await this.dataServices.environment.create(tmpEph);
+        this.logger.log('NewEphemeral', JSON.stringify(tmpEph));
+        env = tmpEph.env;
+        const expiresIn = this.applicationFactory.getExpiresIn(applicationRequest.expiresIn);
+        const scheduledDate = new Date();
+        scheduledDate.setSeconds(scheduledDate.getSeconds() + Number(expiresIn));
+        const agendaResponse = await this.agendaService.agenda.schedule(scheduledDate, JOB.DELETE_EPH_ENV, {
+          propertyIdentifier,
+          env
+        });
+        this.logger.log('Agenda', JSON.stringify(agendaResponse));
+      }
+      await this.analyticsService.createActivityStream(
+        propertyIdentifier,
+        Action.ENV_CREATED,
+        env,
+        'NA',
+        `${env} created for ${propertyIdentifier}.`,
+        createdBy,
+        Source.CLI,
+        JSON.stringify(applicationRequest)
+      );
+    }
+    return env;
   }
 
   /* @internal
@@ -501,6 +506,7 @@ export class ApplicationService {
     const tmpSecret = applicationRequest.secret;
     if (applicationRequest.secret) applicationRequest.secret = this.applicationFactory.initializeEmptyValues(applicationRequest.secret);
     if (applicationRequest.healthCheckPath) applicationRequest.healthCheckPath = this.applicationFactory.getPath(applicationRequest.healthCheckPath);
+    env = await this.createEphemeralEnvironment(applicationRequest, propertyIdentifier, env, applicationRequest.createdBy);
     let applicationDetails = (
       await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: true, isGit: true })
     )[0];
