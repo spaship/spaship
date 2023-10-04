@@ -79,7 +79,6 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const webPropertiesKeys = Object.keys(webProperties.data || {});
   const countOfSpas = useGetSPAProperties(propertyIdentifier, '');
   const isCountOfSpasListEmpty = Object.keys(countOfSpas).length === 0;
-  console.log('>>>>webProperties', webProperties);
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['createSSRDeployment'] as const);
 
   useEffect(() => {
