@@ -463,7 +463,7 @@ export class ApplicationService {
         message: `${configDTO.identifier} application doesn't exist for ${configDTO.propertyIdentifier}.`
       });
     const { property, deploymentConnection } = await this.getDeploymentConnection(configDTO.propertyIdentifier, configDTO.env);
-    const deletedConfigKeys = this.applicationFactory.getDeletedKeys(applicationDetails.config, configDTO.config);
+    const deletedConfigKeys = this.applicationFactory.getDeletedKeys(applicationDetails.config || {}, configDTO.config || {});
     const containerizedDeploymentRequestForOperator = this.applicationFactory.createContainerizedOperatorConfigRequest(
       configDTO,
       property.namespace,
@@ -523,7 +523,7 @@ export class ApplicationService {
       applicationDetails = await this.dataServices.application.create(saveApplication);
     } else {
       if (await this.applicationFactory.compareApplicationConfiguration(applicationDetails, { ...applicationRequest, secret: tmpSecret })) {
-        const deletedConfigKeys = this.applicationFactory.getDeletedKeys(applicationDetails.config, applicationRequest.config);
+        const deletedConfigKeys = this.applicationFactory.getDeletedKeys(applicationDetails.config || {}, applicationRequest.config || {});
         const applicationConfigRequest = this.applicationFactory.transformRequestToApplicationConfig(
           propertyIdentifier,
           identifier,
@@ -546,7 +546,7 @@ export class ApplicationService {
           }
         }
         if (tmpSecret) {
-          const deletedSecretKeys = this.applicationFactory.getDeletedKeys(applicationDetails.secret, tmpSecret);
+          const deletedSecretKeys = this.applicationFactory.getDeletedKeys(applicationDetails.secret || {}, tmpSecret || {});
           containerizedDeploymentRequestForOperator.ssrResourceDetails.secretMap = await this.applicationFactory.decodeBase64SecretValues({
             ...tmpSecret
           });
@@ -612,6 +612,7 @@ export class ApplicationService {
       applicationDetails
     );
     this.logger.log('ContainerizedGitOperatorRequest', JSON.stringify(containerizedGitOperatorRequest));
+    if (applicationDetails.secret) applicationDetails.secret = this.applicationFactory.initializeEmptyValues(applicationDetails.secret);
     for (const con of deploymentConnection) {
       const response = await this.applicationFactory.containerizedEnabledGitDeploymentRequest(containerizedGitOperatorRequest, con.baseurl);
       if (response) {

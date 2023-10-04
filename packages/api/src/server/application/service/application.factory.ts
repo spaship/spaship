@@ -911,7 +911,7 @@ export class ApplicationFactory {
   }
 
   getDeletedKeys(previousValue: Object, updatedValues: Object): string[] {
-    if (!previousValue || !updatedValues) this.exceptionService.badRequestException({ message: 'Please provide the values' });
+    if (!previousValue || !updatedValues) this.exceptionService.badRequestException({ message: 'Please provide the values for config or secret' });
     const deletedKeys = [];
     const emptyString = '';
     Object.keys(previousValue).forEach((key) => {
