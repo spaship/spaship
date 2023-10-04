@@ -91,7 +91,7 @@ export const Environment = ({ propertyIdentifier }: { propertyIdentifier: string
               variant="primary"
               icon={<SyncAltIcon />}
               isSmall
-              onClick={() => handlePopUpOpen('createEnv')}
+              onClick={() => handlePopUpOpen('updateSync')}
             >
               Update Sync
             </Button>

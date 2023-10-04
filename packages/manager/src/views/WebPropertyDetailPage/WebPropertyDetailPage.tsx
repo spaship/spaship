@@ -79,7 +79,6 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const webPropertiesKeys = Object.keys(webProperties.data || {});
   const countOfSpas = useGetSPAProperties(propertyIdentifier, '');
   const isCountOfSpasListEmpty = Object.keys(countOfSpas).length === 0;
-
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['createSSRDeployment'] as const);
 
   useEffect(() => {
@@ -289,7 +288,10 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                     query: {
                                       propertyIdentifier,
                                       spaProperty: identifier,
-                                      initialTab: spaProperties.data[identifier]?.[0]?.isGit ? 0 : 1
+                                      initialTab: spaProperties.data[identifier]?.[0]
+                                        ?.isContainerized
+                                        ? 0
+                                        : 1
                                     }
                                   }}
                                 >
