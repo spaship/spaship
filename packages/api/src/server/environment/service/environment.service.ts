@@ -120,8 +120,8 @@ export class EnvironmentService {
     const applications = await this.dataServices.application.getByAny({ propertyIdentifier, env });
     this.logger.log('Property', JSON.stringify(property));
     this.logger.log('Applications', JSON.stringify(applications));
-    const operatorPayload = {
-      name: environment.env,
+    let operatorPayload = {
+      name: env,
       websiteName: property.identifier,
       nameSpace: property.namespace,
       cmdbCode: this.environmentFactory.checkAndReturnCMDBCode(property.cmdbCode),
@@ -135,7 +135,18 @@ export class EnvironmentService {
       const response = await this.environmentFactory.deleteRequest(operatorPayload, deploymentConnection.baseurl);
       this.logger.log('OperatorResponse', JSON.stringify(response.data));
     } catch (err) {
-      this.logger.error('AgendaError', err.message);
+      this.logger.error('DeletionErrorForStatic', err.message);
+    }
+    for (let app of applications) {
+      if (app.isContainerized) {
+        try {
+          operatorPayload.name = `${app.identifier}-${env}`;
+          const response = await this.environmentFactory.deleteRequest(operatorPayload, deploymentConnection.baseurl);
+          this.logger.log('OperatorResponse', JSON.stringify(response.data));
+        } catch (err) {
+          this.logger.error('DeletionErrorForContainerized', err.message);
+        }
+      }
     }
     try {
       await this.analyticsService.createActivityStream(
