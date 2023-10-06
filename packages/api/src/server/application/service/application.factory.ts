@@ -852,6 +852,7 @@ export class ApplicationFactory {
    * Zip the distribution folder
    */
   async createApplicationDeletionTemplateAndZip(property: Property, application: Application): Promise<string> {
+    if (!application || !application.path) this.exceptionService.badRequestException({ message: 'Application details not found' });
     const rootspa = 'ROOTSPA';
     if (application.path.charAt(0) === '/' && application.path.length === 1) application.path = rootspa;
     else if (application.path.charAt(0) === '/') application.path = application.path.substr(1);
