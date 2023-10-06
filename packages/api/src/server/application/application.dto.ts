@@ -292,6 +292,11 @@ export class GitDeploymentRequestDTO extends GitValidationRequestDTO {
   @IsString()
   @IsOptional()
   mergeId: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  ephemeral: string;
 }
 
 export class EnableApplicationSyncDTO {

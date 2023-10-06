@@ -726,6 +726,8 @@ export class ApplicationFactory {
     applicationRequest.commitId = gitRequestDTO.commitId;
     applicationRequest.mergeId = gitRequestDTO.mergeId;
     applicationRequest.gitProjectId = gitRequestDTO.projectId;
+    applicationRequest.ephemeral = gitRequestDTO.ephemeral;
+    applicationRequest.actionId = gitRequestDTO.mergeId;
     applicationRequest.createdBy = deploymentDetails.createdBy;
     this.logger.log('ApplicationRequest', JSON.stringify(applicationRequest));
     return applicationRequest;
@@ -850,6 +852,10 @@ export class ApplicationFactory {
    * Zip the distribution folder
    */
   async createApplicationDeletionTemplateAndZip(property: Property, application: Application): Promise<string> {
+    if (!application || !application.path) this.exceptionService.badRequestException({ message: 'Application details not found' });
+    const rootspa = 'ROOTSPA';
+    if (application.path.charAt(0) === '/' && application.path.length === 1) application.path = rootspa;
+    else if (application.path.charAt(0) === '/') application.path = application.path.substr(1);
     const spashipFile = {
       websiteVersion: application.version,
       websiteName: property.identifier,
