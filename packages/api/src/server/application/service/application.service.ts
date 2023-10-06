@@ -632,7 +632,14 @@ export class ApplicationService {
           { propertyIdentifier, env, identifier, isContainerized: true, isGit: true },
           applicationDetails
         );
-        this.manageBuildAndDeployment(applicationDetails, statusRequest, response.buildName, con.baseurl, applicationRequest.commitId);
+        this.manageBuildAndDeployment(
+          applicationDetails,
+          statusRequest,
+          response.buildName,
+          con.baseurl,
+          applicationRequest.commitId,
+          applicationRequest.mergeId
+        );
       } else {
         await this.analyticsService.createActivityStream(
           propertyIdentifier,
@@ -657,9 +664,10 @@ export class ApplicationService {
     statusRequest: GitApplicationStatusRequest,
     buildName: string,
     baseurl: string,
-    commitId: string
+    commitId: string,
+    mergeId: string
   ) {
-    await this.startBuildInterval(application, buildName, statusRequest, baseurl, commitId);
+    await this.startBuildInterval(application, buildName, statusRequest, baseurl, commitId, mergeId);
   }
 
   // @internal Check build periodically & update the status
@@ -668,7 +676,8 @@ export class ApplicationService {
     buildName: string,
     statusRequest: GitApplicationStatusRequest,
     baseurl: string,
-    commitId: string
+    commitId: string,
+    mergeId: string
   ) {
     let buildCheck = false;
     const buildInterval = setInterval(async () => {
@@ -678,7 +687,7 @@ export class ApplicationService {
       if (buildStatus?.data === STATUS.BUILD_COMPLETED) {
         this.logger.log('BuildStatus', `Build Successfully Completed for ${buildName} [Workflow 3.0]`);
         buildCheck = true;
-        this.startDeploymentInterval(application, statusRequest, baseurl, buildName, commitId);
+        this.startDeploymentInterval(application, statusRequest, baseurl, buildName, commitId, mergeId);
         await clearInterval(buildInterval);
       } else if (buildStatus?.data === STATUS.BUILD_FAILED) {
         buildCheck = true;
@@ -697,6 +706,7 @@ export class ApplicationService {
         if (commitId) {
           const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
             commitId,
+            mergeId,
             application.gitProjectId,
             Action.APPLICATION_BUILD_FAILED
           );
@@ -719,6 +729,7 @@ export class ApplicationService {
         if (commitId) {
           const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
             commitId,
+            mergeId,
             application.gitProjectId,
             Action.APPLICATION_BUILD_TERMINATED
           );
@@ -742,6 +753,7 @@ export class ApplicationService {
         if (commitId) {
           const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
             commitId,
+            mergeId,
             application.gitProjectId,
             Action.APPLICATION_BUILD_TIMEOUT
           );
@@ -758,7 +770,8 @@ export class ApplicationService {
     statusRequest: GitApplicationStatusRequest,
     baseurl: string,
     buildName: string,
-    commitId: string
+    commitId: string,
+    mergeId: string
   ) {
     let deploymentCheck = false;
     const deploymentInterval = setInterval(async () => {
@@ -800,6 +813,7 @@ export class ApplicationService {
         if (commitId) {
           const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
             commitId,
+            mergeId,
             application.gitProjectId,
             Action.APPLICATION_DEPLOYED,
             application.routerUrl
@@ -823,6 +837,7 @@ export class ApplicationService {
         if (commitId) {
           const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
             commitId,
+            mergeId,
             application.gitProjectId,
             Action.APPLICATION_DEPLOYMENT_FAILED
           );
@@ -846,6 +861,7 @@ export class ApplicationService {
         if (commitId) {
           const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
             commitId,
+            mergeId,
             application.gitProjectId,
             Action.APPLICATION_DEPLOYMENT_TIMEOUT
           );

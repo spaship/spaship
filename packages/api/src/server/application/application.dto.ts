@@ -383,6 +383,8 @@ export class GitApplicationStatusResponse {
 export class GitCommentRequest {
   commitId: string;
 
+  mergeId: string;
+
   projectId: string;
 
   status: string;

@@ -498,6 +498,7 @@ export class ApplicationFactory {
     deploymentConnection: DeploymentConnection[],
     createdBy: string
   ): Application {
+    const currentTime = new Date();
     const containerizedEnabledGitApplicationRequest = this.createContainerizedApplicationRequest(
       propertyIdentifier,
       applicationRequest,
@@ -511,6 +512,12 @@ export class ApplicationFactory {
     containerizedEnabledGitApplicationRequest.gitRef = applicationRequest.gitRef;
     containerizedEnabledGitApplicationRequest.contextDir = applicationRequest.contextDir;
     containerizedEnabledGitApplicationRequest.buildArgs = applicationRequest.buildArgs;
+    containerizedEnabledGitApplicationRequest.commitDetails = applicationRequest.commitId
+      ? [{ id: applicationRequest.commitId, createdAt: currentTime }]
+      : [];
+    containerizedEnabledGitApplicationRequest.mergeDetails = applicationRequest.mergeId
+      ? [{ id: applicationRequest.mergeId, createdAt: currentTime }]
+      : [];
     containerizedEnabledGitApplicationRequest.dockerFileName = applicationRequest.dockerFileName || 'Dockerfile';
     containerizedEnabledGitApplicationRequest.gitProjectId = 'NA';
     return containerizedEnabledGitApplicationRequest;
@@ -907,9 +914,10 @@ export class ApplicationFactory {
     return routeUrl;
   }
 
-  generateGitCommentPayload(commitId: string, gitProjectId: string, status: string, accessUrl?: string[]) {
+  generateGitCommentPayload(commitId: string, mergeId: string, gitProjectId: string, status: string, accessUrl?: string[]) {
     const gitCommentRequest = new GitCommentRequest();
     gitCommentRequest.commitId = commitId;
+    gitCommentRequest.mergeId = mergeId;
     gitCommentRequest.projectId = gitProjectId;
     gitCommentRequest.status = status;
     gitCommentRequest.accessUrl = accessUrl;
