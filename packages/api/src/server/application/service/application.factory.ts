@@ -726,6 +726,8 @@ export class ApplicationFactory {
     applicationRequest.commitId = gitRequestDTO.commitId;
     applicationRequest.mergeId = gitRequestDTO.mergeId;
     applicationRequest.gitProjectId = gitRequestDTO.projectId;
+    applicationRequest.ephemeral = gitRequestDTO.ephemeral;
+    applicationRequest.actionId = gitRequestDTO.mergeId;
     applicationRequest.createdBy = deploymentDetails.createdBy;
     this.logger.log('ApplicationRequest', JSON.stringify(applicationRequest));
     return applicationRequest;
