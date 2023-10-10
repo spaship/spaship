@@ -2,11 +2,10 @@ import { ReactNode } from 'react';
 
 import { Banner, Flex, FlexItem, Page } from '@patternfly/react-core';
 
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useGetDocumentPage } from '@app/services/documents';
-import { SideBar } from './components/SideBar';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Nav } from './components/Nav';
-import { Footer } from './components/Footer';
+import { SideBar } from './components/SideBar';
 
 interface Props {
   children: ReactNode;

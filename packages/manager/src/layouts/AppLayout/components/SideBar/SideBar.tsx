@@ -5,8 +5,6 @@ import { pageLinks } from '@app/links';
 import { useGetWebProperties } from '@app/services/webProperty';
 import { TWebProperty } from '@app/services/webProperty/types';
 import {
-  Button,
-  ButtonVariant,
   Nav,
   NavExpandable,
   NavGroup,
@@ -14,10 +12,8 @@ import {
   NavList,
   PageSidebar,
   Split,
-  SplitItem,
-  Tooltip
+  SplitItem
 } from '@patternfly/react-core';
-import { BugIcon, GithubIcon, MailBulkIcon, UserIcon } from '@patternfly/react-icons';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
