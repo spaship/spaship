@@ -6,7 +6,6 @@ import { Base64 } from 'js-base64';
 import {
   Alert,
   Button,
-  Checkbox,
   Form,
   FormGroup,
   FormSelect,
@@ -63,7 +62,7 @@ const schema = yup.object({
   secret: yup.array().of(
     yup.object({
       key: yup.string().required().label('Configuration Key'),
-      value: yup.string().required().label('Configuration Value'),
+      value: yup.string().label('Configuration Value'),
       isSecret: yup.boolean().label('isSecret')
     })
   ),
@@ -317,7 +316,9 @@ export const ConfigureWorkflowForm = ({
   useEffect(() => {
     setEnabledStates(secretFields.map((pair) => pair.isSecret));
   }, [secretFields]);
-
+  const [showPasswordPlaceholders, setShowPasswordPlaceholders] = useState(
+    secretFields.map(() => true)
+  );
   const onSubmit = async (data: FormData) => {
     if (step === 5) {
       const toastId = toast.loading('Submitting form...');
@@ -335,7 +336,9 @@ export const ConfigureWorkflowForm = ({
           : {},
         secret: data.secret
           ? data.secret.reduce((acc: Record<string, any>, item) => {
-              acc[item.key] = Base64.encode(item.value);
+              if (item.value !== undefined) {
+                acc[item.key] = Base64.encode(item.value);
+              }
               return acc;
             }, {})
           : {},
@@ -1131,32 +1134,58 @@ export const ConfigureWorkflowForm = ({
                       />
                     </SplitItem>
                     <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">
-                      <Controller
-                        control={control}
-                        name={`secret.${index}.value`}
-                        defaultValue={pair.value}
-                        render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-                          <FormGroup
-                            label="Value"
-                            fieldId={`value-${index}`}
-                            validated={error ? 'error' : 'default'}
-                            helperTextInvalid={error?.message}
-                          >
-                            <TextInput
-                              id={`value-${index}`}
-                              type={enabledStates[index] ? 'password' : 'text'}
-                              placeholder="Secret Value"
-                              value={value}
-                              onChange={(event) => {
-                                onChange(event);
-                              }}
-                              onBlur={onBlur}
-                            />
-                          </FormGroup>
-                        )}
-                      />
+                      <SplitItem key={pair.id} isFilled className="pf-u-mr-md pf-u-mb-lg">
+                        <Controller
+                          control={control}
+                          name={`secret.${index}.value`}
+                          defaultValue={pair.value}
+                          render={({
+                            field: { onChange, onBlur, value },
+                            fieldState: { error }
+                          }) => (
+                            <FormGroup
+                              label="Value"
+                              fieldId={`value-${index}`}
+                              validated={error ? 'error' : 'default'}
+                              helperTextInvalid={error?.message}
+                            >
+                              <TextInput
+                                id={`value-${index}`}
+                                type={enabledStates[index] ? 'password' : 'text'}
+                                placeholder={
+                                  showPasswordPlaceholders[index] ? '*******' : 'Secret Value'
+                                }
+                                value={value}
+                                onChange={(event) => {
+                                  const inputValue = event;
+                                  if (showPasswordPlaceholders[index]) {
+                                    // If the field is displaying '*******', replace it with the user's input.
+                                    const newPlaceholders = [...showPasswordPlaceholders];
+                                    newPlaceholders[index] = false;
+                                    setShowPasswordPlaceholders(newPlaceholders);
+                                    onChange(inputValue);
+                                  } else {
+                                    onChange(inputValue);
+                                  }
+                                }}
+                                onBlur={onBlur}
+                                onFocus={() => {
+                                  // When the input field is focused, clear any previous input and start fresh.
+                                  if (!value) {
+                                    const newPlaceholders = [...showPasswordPlaceholders];
+                                    newPlaceholders[index] = false;
+                                    setShowPasswordPlaceholders(newPlaceholders);
+                                    onChange('');
+                                  }
+                                }}
+                              />
+                            </FormGroup>
+                          )}
+                        />
+                      </SplitItem>
                     </SplitItem>
-                    <SplitItem style={{ paddingTop: 'var(--pf-global--spacer--lg)' }}>
+                    {/* NOTE: Keeping this code commented here, as this may be required later on */}
+                    {/* <SplitItem style={{ paddingTop: 'var(--pf-global--spacer--lg)' }}>
                       <Controller
                         control={control}
                         name={`secret.${index}.isSecret`}
@@ -1175,7 +1204,7 @@ export const ConfigureWorkflowForm = ({
                           />
                         )}
                       />
-                    </SplitItem>
+                    </SplitItem> */}
                     <SplitItem
                       key={`remove-secret-${pair.id}`}
                       style={{
