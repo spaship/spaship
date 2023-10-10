@@ -62,3 +62,54 @@ export class SyncEnvironmentDto {
   @IsNotEmpty()
   createdBy: string;
 }
+
+export class SymlinkDTO {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @Length(MIN.DEFAULT, MAX.PROPERTY, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Matches(VALIDATION.PROPERTY_IDENTIFIER, { message: MESSAGE.INVALID_PROPERTY_IDENTIFIER, always: true })
+  propertyIdentifier: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @Length(MIN.DEFAULT, MAX.ENV, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Matches(VALIDATION.ENV, { message: MESSAGE.INVALID_ENV, always: true })
+  env: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  source: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  target: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  createdBy: string;
+}
+
+export class OperatorSymlinkRequest {
+  environment: OperatorSymlinkEnvironment;
+
+  metadata: OperatorSymlinkMetadata;
+}
+
+export class OperatorSymlinkMetadata {
+  source: string;
+
+  target: string;
+}
+
+export class OperatorSymlinkEnvironment {
+  websiteName: string;
+
+  nameSpace: string;
+
+  name: string;
+}
