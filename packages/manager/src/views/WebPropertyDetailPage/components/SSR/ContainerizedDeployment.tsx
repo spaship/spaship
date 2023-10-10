@@ -49,6 +49,13 @@ import { ViewLogs } from './ViewLogs';
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 20;
 
+const perPageOptions = [
+  { title: '5', value: 5 },
+  { title: '10', value: 10 },
+  { title: '15', value: 15 },
+  { title: '20', value: 20 },
+  { title: '50', value: 50 }
+];
 export const ContainerizedDeployment = () => {
   const { query } = useRouter();
   const propertyIdentifier = query.propertyIdentifier as string;
@@ -62,7 +69,7 @@ export const ContainerizedDeployment = () => {
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(4);
+  const [perPage, setPerPage] = useState(5);
   const [redeployData, setRedeployData] = useState<TDataContainerized>({
     propertyIdentifier: '',
     name: '',
@@ -283,25 +290,51 @@ export const ContainerizedDeployment = () => {
     </EmptyState>
   ) : (
     <>
-      <Pagination
-        itemCount={containerisedDeploymentData.length || 0}
-        widgetId="bottom-example"
-        perPage={perPage}
-        page={page}
-        variant={PaginationVariant.top}
-        onSetPage={onPageSet}
-        onPerPageSelect={onPerPageSelect}
-      />
+      <Split>
+        <SplitItem isFilled>
+          <Button onClick={() => handlePopUpOpen('createSSRDeployment')} icon={<PlusCircleIcon />}>
+            Add New App
+          </Button>
+        </SplitItem>
+        <SplitItem>
+          <Pagination
+            itemCount={containerisedDeploymentData.length || 0}
+            widgetId="bottom-example"
+            perPage={perPage}
+            page={page}
+            perPageOptions={perPageOptions}
+            variant={PaginationVariant.top}
+            onSetPage={onPageSet}
+            onPerPageSelect={onPerPageSelect}
+          />
+        </SplitItem>
+      </Split>
       <TableComposable aria-label="spa-property-list" variant="compact" isStriped>
         <Thead noWrap>
           <Tr>
-            <Th width={15}>SPA Name</Th>
-            <Th width={15}>Environments</Th>
-            <Th width={15}>Ref</Th>
-            <Th width={15}>Path</Th>
-            <Th width={15}>HealthCheck Path</Th>
-            <Th width={25}>Router URL</Th>
-            <Th width={20} style={{ justifyContent: 'space-evenly', display: 'grid' }}>
+            <Th modifier="wrap" width={15}>
+              SPA Name
+            </Th>
+            <Th modifier="wrap" width={15}>
+              Environments
+            </Th>
+            <Th modifier="wrap" width={15}>
+              Ref
+            </Th>
+            <Th modifier="wrap" width={15}>
+              Path
+            </Th>
+            <Th modifier="wrap" width={15}>
+              HealthCheck Path
+            </Th>
+            <Th modifier="wrap" width={25}>
+              Router URL
+            </Th>
+            <Th
+              modifier="wrap"
+              width={20}
+              style={{ justifyContent: 'space-evenly', display: 'grid' }}
+            >
               Actions
             </Th>
           </Tr>
@@ -475,10 +508,6 @@ export const ContainerizedDeployment = () => {
   );
   return (
     <>
-      <Button onClick={() => handlePopUpOpen('createSSRDeployment')} icon={<PlusCircleIcon />}>
-        Add New App
-      </Button>
-
       <Drawer position="bottom" onExpand={onExpand} isExpanded={isExpanded}>
         <DrawerContent panelContent={panelContent}>
           <DrawerContentBody style={{ overflowX: 'hidden', padding: '0px' }}>
