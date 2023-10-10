@@ -75,9 +75,6 @@ export const AppLayout = ({ children }: Props): JSX.Element => {
           flexWrap={{ default: 'nowrap' }}
         >
           <FlexItem grow={{ default: 'grow' }}>{children}</FlexItem>
-          <FlexItem>
-            <Footer />
-          </FlexItem>
         </Flex>
       </Page>
     </>
