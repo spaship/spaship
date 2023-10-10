@@ -11,7 +11,7 @@ import { Environment } from 'src/server/environment/environment.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { Property } from 'src/server/property/property.entity';
 import { zip } from 'zip-a-folder';
-import { CreateEnvironmentDto } from '../environment.dto';
+import { CreateEnvironmentDto, OperatorSymlinkEnvironment, OperatorSymlinkMetadata, OperatorSymlinkRequest, SymlinkDTO } from '../environment.dto';
 
 @Injectable()
 export class EnvironmentFactory {
@@ -83,5 +83,25 @@ export class EnvironmentFactory {
     // @internal if CMDB code is not present we'll send the SPAS-001 as the default CMDB code
     if (cmdbCode === 'NA') return 'SPAS-001';
     return cmdbCode;
+  }
+
+  // @internal Sync the environment with the updated configuration
+  async symlinkRequest(payload: Object, deploymentBaseURL: string): Promise<any> {
+    const headers = { Authorization: await AuthFactory.getAccessToken() };
+    return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/execute/test-exception`, payload, { headers });
+  }
+
+  createOperatorSymlinkPayload(env: string, property: Property, request: SymlinkDTO) {
+    const operatorPayload = new OperatorSymlinkRequest();
+    const environment = new OperatorSymlinkEnvironment();
+    const metadata = new OperatorSymlinkMetadata();
+    environment.websiteName = property.identifier;
+    environment.nameSpace = property.namespace;
+    environment.name = env;
+    operatorPayload.environment = environment;
+    metadata.source = request.source;
+    metadata.target = request.target;
+    operatorPayload.metadata = metadata;
+    return operatorPayload;
   }
 }

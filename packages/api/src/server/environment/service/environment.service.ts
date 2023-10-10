@@ -7,8 +7,8 @@ import { Application } from 'src/server/application/application.entity';
 import { ExceptionsService } from 'src/server/exceptions/exceptions.service';
 import { Source } from 'src/server/property/property.entity';
 import { PropertyService } from 'src/server/property/service/property.service';
-import { CreateEnvironmentDto, SyncEnvironmentDto } from '../environment.dto';
-import { Environment } from '../environment.entity';
+import { CreateEnvironmentDto, SymlinkDTO, SyncEnvironmentDto } from '../environment.dto';
+import { Environment, Symlink } from '../environment.entity';
 import { EnvironmentFactory } from './environment.factory';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class EnvironmentService {
     private readonly logger: LoggerService,
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService
-  ) {}
+  ) { }
 
   getAllEnvironments(): Promise<Environment[]> {
     return this.dataServices.environment.getAll();
@@ -120,7 +120,7 @@ export class EnvironmentService {
     const applications = await this.dataServices.application.getByAny({ propertyIdentifier, env });
     this.logger.log('Property', JSON.stringify(property));
     this.logger.log('Applications', JSON.stringify(applications));
-    let operatorPayload = {
+    const operatorPayload = {
       name: env,
       websiteName: property.identifier,
       nameSpace: property.namespace,
@@ -137,7 +137,7 @@ export class EnvironmentService {
     } catch (err) {
       this.logger.error('DeletionErrorForStatic', err.message);
     }
-    for (let app of applications) {
+    for (const app of applications) {
       if (app.isContainerized) {
         try {
           operatorPayload.name = `${app.identifier}-${env}`;
@@ -244,6 +244,48 @@ export class EnvironmentService {
         createPropertyDto.createdBy,
         Source.MANAGER,
         JSON.stringify(createPropertyDto)
+      );
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err);
+    }
+    return environment;
+  }
+
+  /* @internal
+   * Accept new configuration for the Sync
+   * Update the new sync configuration for the particular environment
+   */
+  async updateSymlink(symlinkDTO: SymlinkDTO): Promise<Environment> {
+    const { propertyIdentifier, env } = symlinkDTO;
+    const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+    this.logger.log('Environment', JSON.stringify(environment));
+    if (!environment) this.exceptionService.badRequestException({ message: 'Environment not found.' });
+    const { property, deploymentConnection } = await this.environmentFactory.applicationService.getDeploymentConnection(propertyIdentifier, env);
+    if (!property || !deploymentConnection) this.exceptionService.badRequestException({ message: 'Property or Deployment Connection not found.' });
+    const operatorPayload = this.environmentFactory.createOperatorSymlinkPayload(env, property, symlinkDTO);
+    this.logger.log('OperatorPayload', JSON.stringify(operatorPayload));
+    for (const con of deploymentConnection) {
+      try {
+        const response = await this.environmentFactory.syncRequest(operatorPayload, con.baseurl, propertyIdentifier, env, property.namespace);
+        this.logger.log('OperatorResponse', JSON.stringify(response.data));
+      } catch (err) {
+        this.exceptionService.internalServerErrorException(err.message);
+      }
+    }
+    if (!environment.symlink) environment.symlink = new Symlink();
+    environment.symlink.source = symlinkDTO.source;
+    environment.symlink.target = symlinkDTO.target;
+    try {
+      await this.dataServices.environment.updateOne({ propertyIdentifier, env }, environment);
+      await this.analyticsService.createActivityStream(
+        propertyIdentifier,
+        Action.ENV_SYNCED,
+        env,
+        'NA',
+        `${env} synced for ${propertyIdentifier}`,
+        symlinkDTO.createdBy,
+        Source.MANAGER,
+        JSON.stringify(symlinkDTO)
       );
     } catch (err) {
       this.exceptionService.internalServerErrorException(err);
