@@ -20,7 +20,7 @@ export class EnvironmentService {
     private readonly logger: LoggerService,
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService
-  ) { }
+  ) {}
 
   getAllEnvironments(): Promise<Environment[]> {
     return this.dataServices.environment.getAll();
@@ -262,11 +262,13 @@ export class EnvironmentService {
     if (!environment) this.exceptionService.badRequestException({ message: 'Environment not found.' });
     const { property, deploymentConnection } = await this.environmentFactory.applicationService.getDeploymentConnection(propertyIdentifier, env);
     if (!property || !deploymentConnection) this.exceptionService.badRequestException({ message: 'Property or Deployment Connection not found.' });
+    symlinkDTO.source = this.environmentFactory.buildFolderPath(symlinkDTO.source);
+    symlinkDTO.target = this.environmentFactory.buildFolderPath(symlinkDTO.target);
     const operatorPayload = this.environmentFactory.createOperatorSymlinkPayload(env, property, symlinkDTO);
     this.logger.log('OperatorPayload', JSON.stringify(operatorPayload));
     for (const con of deploymentConnection) {
       try {
-        const response = await this.environmentFactory.syncRequest(operatorPayload, con.baseurl, propertyIdentifier, env, property.namespace);
+        const response = await this.environmentFactory.symlinkRequest(operatorPayload, con.baseurl);
         this.logger.log('OperatorResponse', JSON.stringify(response.data));
       } catch (err) {
         this.exceptionService.internalServerErrorException(err.message);

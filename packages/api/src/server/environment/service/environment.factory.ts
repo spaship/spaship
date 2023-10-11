@@ -87,11 +87,15 @@ export class EnvironmentFactory {
 
   // @internal Sync the environment with the updated configuration
   async symlinkRequest(payload: Object, deploymentBaseURL: string): Promise<any> {
+    if (!payload) this.exceptionService.badRequestException({ message: 'Please provide payload' });
+    if (!deploymentBaseURL) this.exceptionService.badRequestException({ message: 'Please provide the deployment url' });
     const headers = { Authorization: await AuthFactory.getAccessToken() };
-    return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/execute/test-exception`, payload, { headers });
+    return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/execute/symlink`, payload, { headers });
   }
 
   createOperatorSymlinkPayload(env: string, property: Property, request: SymlinkDTO) {
+    if (!property || !env) this.exceptionService.badRequestException({ message: 'Please provide property details' });
+    if (!request) this.exceptionService.badRequestException({ message: 'Please provide the request body' });
     const operatorPayload = new OperatorSymlinkRequest();
     const environment = new OperatorSymlinkEnvironment();
     const metadata = new OperatorSymlinkMetadata();
@@ -103,5 +107,11 @@ export class EnvironmentFactory {
     metadata.target = request.target;
     operatorPayload.metadata = metadata;
     return operatorPayload;
+  }
+
+  // @internal Build the folder path
+  buildFolderPath(folderPath: string): string {
+    // @internal it will replace the heading & trailing slash frm the folder path
+    return folderPath.replace(/^\/+/g, '').replace(/\/+$/, '');
   }
 }
