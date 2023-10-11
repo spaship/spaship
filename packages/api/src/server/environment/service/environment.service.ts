@@ -252,8 +252,8 @@ export class EnvironmentService {
   }
 
   /* @internal
-   * Accept new configuration for the Sync
-   * Update the new sync configuration for the particular environment
+   * Update the symlink for the specific environment
+   * Multi cluster symlink support is enabled
    */
   async updateSymlink(symlinkDTO: SymlinkDTO): Promise<Environment> {
     const { propertyIdentifier, env } = symlinkDTO;
