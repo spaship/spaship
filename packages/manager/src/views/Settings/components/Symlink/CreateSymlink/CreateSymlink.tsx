@@ -16,25 +16,25 @@ import {
 } from '@patternfly/react-core';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 
-const folderValidation = /^[a-zA-Z0-9-]+$/;
+const folderValidation = /^[_.a-zA-Z0-9/-]+$/;
 const envValidation = /^[a-zA-Z0-9-]+$/;
 export const schema = yup.object({
   // TODO: change this to URL validation, after server supports http protocol append
 
   source: yup
     .string()
-    .label('Source Directory')
+    .label('Source File Path')
     .trim()
     .required()
-    .test('source', 'Source directory entered is incorrect', (value) =>
+    .test('source', 'Source file path entered is incorrect', (value) =>
       folderValidation.test(value?.toString() || '')
     ),
   target: yup
     .string()
-    .label('Target Directory')
+    .label('Target File Path')
     .trim()
     .required()
-    .test('target', 'Target directory entered is incorrect', (value) =>
+    .test('target', 'Target file path entered is incorrect', (value) =>
       folderValidation.test(value?.toString() || '')
     ),
   env: yup
@@ -59,7 +59,7 @@ export const CreateSymlink = ({ onSubmit, onClose, propertyIdentifier }: Props):
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting }
+    formState: { isSubmitting, errors }
   } = useForm<FormData>({
     mode: 'onBlur',
     resolver: yupResolver(schema)
@@ -76,16 +76,16 @@ export const CreateSymlink = ({ onSubmit, onClose, propertyIdentifier }: Props):
             defaultValue=""
             render={({ field, fieldState: { error } }) => (
               <FormGroup
-                label="Source Directory"
+                label="Source File Path"
                 isRequired
                 fieldId="source"
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
-                helperText="Source directory shouldn't contain any space, special-character"
+                helperText="Source file path shouldn't contain any space, special-character"
               >
                 <TextInput
                   isRequired
-                  placeholder="Default Source Directory Name"
+                  placeholder="Default Source File Path Name"
                   type="text"
                   id="source"
                   {...field}
@@ -101,16 +101,16 @@ export const CreateSymlink = ({ onSubmit, onClose, propertyIdentifier }: Props):
             defaultValue=""
             render={({ field, fieldState: { error } }) => (
               <FormGroup
-                label="Target Directory"
+                label="Target File Path"
                 isRequired
                 fieldId="target"
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
-                helperText="Target directory name shouldn't contain any space, special-character"
+                helperText="Target file path name shouldn't contain any space, special-character"
               >
                 <TextInput
                   isRequired
-                  placeholder="Default Target Directory"
+                  placeholder="Default Target File Path"
                   type="text"
                   id="target"
                   {...field}
@@ -149,8 +149,14 @@ export const CreateSymlink = ({ onSubmit, onClose, propertyIdentifier }: Props):
           )}
         />
       </SplitItem>
+
       <ActionGroup>
-        <Button variant="primary" type="submit" isLoading={isSubmitting} isDisabled={isSubmitting}>
+        <Button
+          variant="primary"
+          type="submit"
+          isLoading={isSubmitting}
+          isDisabled={isSubmitting || Object.keys(errors).length !== 0}
+        >
           Create
         </Button>
         <Button variant="link" onClick={onClose}>
