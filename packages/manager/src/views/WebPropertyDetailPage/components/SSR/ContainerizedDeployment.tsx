@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 import { TableRowSkeleton } from '@app/components';
-import { usePopUp } from '@app/hooks';
+import { usePopUp, useToggle } from '@app/hooks';
 import { useListOfPods } from '@app/services/appLogs';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
@@ -23,6 +23,9 @@ import {
   ModalVariant,
   Pagination,
   PaginationVariant,
+  Select,
+  SelectVariant,
+  SelectOption,
   Spinner,
   Split,
   SplitItem,
@@ -33,7 +36,13 @@ import {
   Title,
   Tooltip
 } from '@patternfly/react-core';
-import { CubesIcon, GithubIcon, InfoCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import {
+  CubesIcon,
+  GithubIcon,
+  InfoCircleIcon,
+  PlusCircleIcon,
+  TimesCircleIcon
+} from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import Link from 'next/link';
@@ -56,12 +65,15 @@ const perPageOptions = [
   { title: '20', value: 20 },
   { title: '50', value: 50 }
 ];
+
 export const ContainerizedDeployment = () => {
   const { query } = useRouter();
   const propertyIdentifier = query.propertyIdentifier as string;
   const spaProperty = query.spaProperty as string;
   const createSsrSpaProperty = useAddSsrSpaProperty();
-  const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, '');
+  const [isFilterOpen, setIsFilterOpen] = useToggle();
+  const [filterByEnv, setFilterByEnv] = useState('');
+  const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, filterByEnv);
   const containerisedDeploymentData = spaProperties?.data?.[spaProperty]?.filter(
     (item) => item.isContainerized === true
   );
@@ -88,6 +100,10 @@ export const ContainerizedDeployment = () => {
     config: {},
     port: 3000
   });
+  const webPropertiesKeys = Object.keys(webProperties.data || {});
+  const removeValues = () => {
+    setFilterByEnv('' as string);
+  };
   const [configureData, setConfigureData] = useState<TDataWorkflow | TDataContainerized>({
     propertyIdentifier: '',
     name: '',
@@ -290,25 +306,6 @@ export const ContainerizedDeployment = () => {
     </EmptyState>
   ) : (
     <>
-      <Split>
-        <SplitItem isFilled>
-          <Button onClick={() => handlePopUpOpen('createSSRDeployment')} icon={<PlusCircleIcon />}>
-            Add New App
-          </Button>
-        </SplitItem>
-        <SplitItem>
-          <Pagination
-            itemCount={containerisedDeploymentData.length || 0}
-            widgetId="bottom-example"
-            perPage={perPage}
-            page={page}
-            perPageOptions={perPageOptions}
-            variant={PaginationVariant.top}
-            onSetPage={onPageSet}
-            onPerPageSelect={onPerPageSelect}
-          />
-        </SplitItem>
-      </Split>
       <TableComposable aria-label="spa-property-list" variant="compact" isStriped>
         <Thead noWrap>
           <Tr>
@@ -508,6 +505,78 @@ export const ContainerizedDeployment = () => {
   );
   return (
     <>
+      <Split hasGutter className="pf-u-mb-md">
+        <SplitItem>
+          <Button onClick={() => handlePopUpOpen('createSSRDeployment')} icon={<PlusCircleIcon />}>
+            Add New App
+          </Button>
+        </SplitItem>
+        <SplitItem isFilled>
+          <Select
+            width={300}
+            // style={{ width: '300px!important' }}
+            variant={SelectVariant.single}
+            aria-label="filter Input"
+            value="Select Environment"
+            onToggle={setIsFilterOpen.toggle}
+            onSelect={(e, value) => {
+              if (value === 'Select Environment') {
+                setFilterByEnv('' as string);
+              } else {
+                setFilterByEnv(value as string);
+              }
+
+              setIsFilterOpen.off();
+            }}
+            selections="Select Environment" // To be kept as Select
+            isOpen={isFilterOpen}
+            aria-labelledby="filter"
+          >
+            {webPropertiesKeys.map((envName, index) => (
+              <SelectOption key={`${envName} + ${index + 1}`} value={envName} />
+            ))}
+          </Select>
+        </SplitItem>
+        {containerisedDeploymentData?.length ? (
+          <SplitItem>
+            <Pagination
+              itemCount={containerisedDeploymentData?.length || 0}
+              widgetId="bottom-example"
+              perPage={perPage}
+              page={page}
+              perPageOptions={perPageOptions}
+              variant={PaginationVariant.top}
+              onSetPage={onPageSet}
+              onPerPageSelect={onPerPageSelect}
+            />
+          </SplitItem>
+        ) : (
+          ''
+        )}
+      </Split>
+      {filterByEnv === 'Select Environment' || filterByEnv === '' ? (
+        <p />
+      ) : (
+        <Label onClose={() => console.log('inside', filterByEnv)}>{filterByEnv}</Label>
+        // <div
+        //   style={{
+        //     backgroundColor: '#F1F1F1',
+        //     height: '40px',
+        //     width: '120px',
+        //     borderRadius: '25px',
+        //     display: 'flex',
+        //     flexDirection: 'row'
+        //   }}
+        // >
+        //   <div style={{ marginLeft: '20px', marginRight: '15px', marginTop: '7px' }}>
+        //     {filterByEnv}
+        //   </div>
+        //   <TimesCircleIcon
+        //     style={{ marginTop: '11px', marginLeft: '6px' }}
+        //     onClick={removeValues}
+        //   />
+        // </div>
+      )}
       <Drawer position="bottom" onExpand={onExpand} isExpanded={isExpanded}>
         <DrawerContent panelContent={panelContent}>
           <DrawerContentBody style={{ overflowX: 'hidden', padding: '0px' }}>
