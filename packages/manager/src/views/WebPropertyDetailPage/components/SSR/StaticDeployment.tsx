@@ -27,7 +27,7 @@ import {
   Title,
   Tooltip
 } from '@patternfly/react-core';
-import { CubesIcon, SyncAltIcon, PlusCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
+import { CubesIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { Caption, TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
@@ -117,12 +117,6 @@ export const StaticDeployment = () => {
     setPerPage(newPerPage);
     setPage(newPage);
   };
-
-  const startIdx = (page - 1) * perPage;
-  const endIdx = startIdx + perPage;
-
-  const paginatedData = staticDeploymentData?.slice(startIdx, endIdx);
-
   return (
     <>
       <Split hasGutter className="pf-u-mb-md">
@@ -173,7 +167,7 @@ export const StaticDeployment = () => {
           {filterByEnv === 'Select Environment' || filterByEnv === '' ? (
             <p />
           ) : (
-            <Label onClose={() => removeValues}>{filterByEnv}</Label>
+            <Label onClose={removeValues}>{filterByEnv}</Label>
           )}
         </SplitItem>
         <SplitItem>
