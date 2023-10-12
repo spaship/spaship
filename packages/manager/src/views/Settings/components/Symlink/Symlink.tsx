@@ -88,8 +88,8 @@ export const Symlink = ({ propertyIdentifier }: { propertyIdentifier: string }) 
             <Thead>
               <Tr>
                 <Th>Name</Th>
-                <Th>Source Directory</Th>
-                <Th>Target Directory</Th>
+                <Th>Source File Path</Th>
+                <Th>Target File Path</Th>
               </Tr>
             </Thead>
             <Tbody>
