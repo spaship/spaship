@@ -16,6 +16,8 @@ import {
 } from '@patternfly/react-core';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 
+const folderValidation = /^[a-zA-Z0-9-]+$/;
+const envValidation = /^[a-zA-Z0-9-]+$/;
 export const schema = yup.object({
   // TODO: change this to URL validation, after server supports http protocol append
 
@@ -25,7 +27,7 @@ export const schema = yup.object({
     .trim()
     .required()
     .test('source', 'Source directory entered is incorrect', (value) =>
-      /^[_.a-zA-Z0-9/-]+$/.test(value?.toString() || '')
+      folderValidation.test(value?.toString() || '')
     ),
   target: yup
     .string()
@@ -33,7 +35,7 @@ export const schema = yup.object({
     .trim()
     .required()
     .test('target', 'Target directory entered is incorrect', (value) =>
-      /^[_.a-zA-Z0-9/-]+$/.test(value?.toString() || '')
+      folderValidation.test(value?.toString() || '')
     ),
   env: yup
     .string()
@@ -41,7 +43,7 @@ export const schema = yup.object({
     .trim()
     .noWhitespace()
     .max(15)
-    .matches(/^[a-zA-Z0-9-]+$/, 'Only letters, numbers, and dashes are allowed')
+    .matches(envValidation, 'Only letters, numbers, and dashes are allowed')
     .required()
 });
 
