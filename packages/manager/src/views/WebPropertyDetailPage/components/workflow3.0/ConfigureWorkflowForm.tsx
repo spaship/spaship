@@ -349,7 +349,6 @@ export const ConfigureWorkflowForm = ({
         reDeployment: false
       };
       onClose();
-
       try {
         await createSsrSpaProperty.mutateAsync(newdata);
         onClose();
@@ -1139,10 +1138,7 @@ export const ConfigureWorkflowForm = ({
                           control={control}
                           name={`secret.${index}.value`}
                           defaultValue={pair.value}
-                          render={({
-                            field: { onChange, onBlur, value },
-                            fieldState: { error }
-                          }) => (
+                          render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <FormGroup
                               label="Value"
                               fieldId={`value-${index}`}
@@ -1168,10 +1164,17 @@ export const ConfigureWorkflowForm = ({
                                     onChange(inputValue);
                                   }
                                 }}
-                                onBlur={onBlur}
+                                onBlur={() => {
+                                  // When the input field is blurred, set the password placeholder.
+                                  if (!value) {
+                                    const newPlaceholders = [...showPasswordPlaceholders];
+                                    newPlaceholders[index] = true;
+                                    setShowPasswordPlaceholders(newPlaceholders);
+                                  }
+                                }}
                                 onFocus={() => {
                                   // When the input field is focused, clear any previous input and start fresh.
-                                  if (!value) {
+                                  if (showPasswordPlaceholders[index]) {
                                     const newPlaceholders = [...showPasswordPlaceholders];
                                     newPlaceholders[index] = false;
                                     setShowPasswordPlaceholders(newPlaceholders);
@@ -1878,7 +1881,9 @@ export const ConfigureWorkflowForm = ({
                               <TextInput
                                 id={`value-${index}`}
                                 type="password"
-                                placeholder="Secret Value"
+                                placeholder={
+                                  showPasswordPlaceholders[index] ? '*******' : 'Secret Value'
+                                }
                                 value={value}
                                 onChange={(event) => {
                                   onChange(event);

@@ -22,7 +22,6 @@ import {
   ToolbarGroup,
   ToolbarItem
 } from '@patternfly/react-core';
-import Link from 'next/link';
 
 export const Nav = () => {
   const { data: session } = useSession();
@@ -60,12 +59,6 @@ export const Nav = () => {
               spacer={{ default: 'spacerNone', md: 'spacerMd' }}
               spaceItems={{ default: 'spaceItemsSm' }}
             >
-              <ToolbarItem>
-                <Link href="/documents">
-                  <a className="text-decoration-none"> Docs</a>
-                </Link>
-              </ToolbarItem>
-
               <ToolbarItem>
                 <Popover
                   flipBehavior={['bottom-end']}
