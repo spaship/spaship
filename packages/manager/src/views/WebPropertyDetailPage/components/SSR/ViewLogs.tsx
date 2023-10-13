@@ -43,7 +43,9 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
   const podIdList = useListOfPods(propertyIdentifier, spaName, env);
   const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
 
-  const [selectedId, setSelectedId] = useState<string | undefined>(idList && idList.reverse()[0]);
+  const [selectedId, setSelectedId] = useState<string | undefined>(
+    idList && idList[idList.length - 1]
+  );
   const handleToggle = (isSelectOpen: boolean) => {
     setIsOpen(isSelectOpen);
   };
@@ -76,7 +78,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
 
   useEffect(() => {
     setIsLogsLoading(true);
-    setSelectedId(idList && idList.reverse()[0]);
+    setSelectedId(idList && idList[idList.length - 1]);
   }, [idList, type]);
 
   useEffect(() => {
@@ -87,6 +89,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
 
   const isEmptyStateVisible =
     (!isGit && type === 1) || !idList || idList.length === 0 || idList.includes('No Pods found');
+
   return (
     <div style={{ color: '#fff', backgroundColor: '#212427' }}>
       <div className="pf-u-mb-md pf-u-mt-md">

@@ -251,3 +251,7 @@ body {
   right: 0;
   margin: 1rem;
 }
+.pf-c-dropdown {
+  border: none !important;
+  --pf-c-dropdown__toggle--before--BorderWidth: none;
+}

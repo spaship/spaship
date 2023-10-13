@@ -53,13 +53,9 @@ export const Banner = ({ children, backRef, title }: Props): JSX.Element => {
         <StackItem>
           <Breadcrumb>
             <BreadcrumbItem isActive={asPath === '/properties'}>
-              {asPath === '/properties' ? (
-                'Home'
-              ) : (
-                <Link href="/home">
-                  <a>Home</a>
-                </Link>
-              )}
+              <Link href="/home">
+                <a>Home</a>
+              </Link>
             </BreadcrumbItem>
             {crumbs.map(({ href, name }) => (
               <BreadcrumbItem key={href} isActive={asPath === href} className="capitalize">
