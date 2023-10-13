@@ -121,6 +121,7 @@ export enum MESSAGE {
   INVALID_ACTION_ID = 'Invalid Action Id [Special Characters are not allowed other than forward-slash(/), @ and dot(.)].',
   INVALID_APPLICATION = 'Invalid Application name [Correct format : home, doc].',
   INVALID_REF = 'Invalid Reference [Correct format : 1.2, v1@1.2.3].',
+  INVALID_FOLDER = 'Invalid Folder [Please provide a valid folder path]',
   INVALID_ENV = 'Invalid Environment [Correct format : prod, stage, dev]',
   INVALID_LABEL = 'Invalid Label [Correct format : all-access, prod-key].',
   INVALID_IMAGEURL = 'Invalid Image URL. Please check the image url',
@@ -144,7 +145,8 @@ export const VALIDATION = {
   EXPIRESIN: /^[a-zA-Z0-9]+$/,
   CMDB: /^[a-zA-Z0-9-]+$/,
   IMAGEURL: getImageUrlRegex(),
-  EPH_EXPIRESIN: /^[0-9]+$/
+  EPH_EXPIRESIN: /^[0-9]+$/,
+  FOLDER: /^[_.a-zA-Z0-9/-]+$/
 };
 
 export enum JOB {
