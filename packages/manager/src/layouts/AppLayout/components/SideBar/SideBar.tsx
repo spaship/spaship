@@ -5,8 +5,10 @@ import { pageLinks } from '@app/links';
 import { useGetWebProperties } from '@app/services/webProperty';
 import { TWebProperty } from '@app/services/webProperty/types';
 import {
+  Dropdown,
+  DropdownItem,
+  DropdownToggle,
   Nav,
-  NavExpandable,
   NavGroup,
   NavItem,
   NavList,
@@ -56,20 +58,25 @@ export const SideBar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { data: session } = useSession();
   const webProperties = useGetWebProperties();
-
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const filteredWebProperties = (webProperties?.data as [])
     ?.filter(({ createdBy }: TWebProperty) => createdBy === session?.user?.email)
     .map(({ title }: TWebProperty) => ({
       title: title || '' // Provide a default title if title is undefined
     }));
 
-  const handlePropertyClick = (propertyTitle: string) => {
-    setSelectedProperty(propertyTitle);
-    setIsExpanded(false); // Collapse the expandable section after selection
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleDropdownSelect = (property: string) => (event: any) => {
+    setSelectedProperty(property);
+    setIsDropdownOpen(false);
   };
 
+  const handleDropdownToggle = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
   const feedbackFormUrl = env.PUBLIC_SPASHIP_FEEDBACK_FORM_URL;
   const faqDocumentUrl = env.PUBLIC_SPASHIP_FAQ_URL;
+
   return (
     <PageSidebar
       nav={
@@ -108,29 +115,48 @@ export const SideBar = () => {
               </Link>
             </NavList>
           </NavGroup>
+
           <NavGroup title="Web Properties">
             <NavList className="pf-u-px-md">
-              <NavExpandable
-                title={selectedProperty || 'My Property'} // Use the selectedProperty state
-                groupId="nav-expanded-web-property"
-                isExpanded={isExpanded}
-              >
-                {filteredWebProperties?.map((property) => (
-                  <NavItem key={property.title}>
-                    <Link href={`/properties/${genereateIdentifier(property.title)}`} passHref>
-                      <a
-                        className={`pf-c-nav__link pf-m-icon ${
-                          property.title === selectedProperty ? 'active' : ''
-                        }`}
-                        href="#"
-                        onClick={() => handlePropertyClick(property.title)}
-                      >
-                        {property.title}
-                      </a>
-                    </Link>
-                  </NavItem>
-                ))}
-              </NavExpandable>
+              <NavItem>
+                <Split hasGutter className="pf-u-px-sm">
+                  <SplitItem>
+                    <Dropdown
+                      style={{
+                        color: 'white',
+                        border: 'none !important',
+                        width: '200px!important'
+                      }}
+                      isOpen={isDropdownOpen}
+                      onSelect={() => {}}
+                      toggle={
+                        <DropdownToggle style={{ color: 'white' }} onToggle={handleDropdownToggle}>
+                          <span>Select My Property</span>
+                        </DropdownToggle>
+                      }
+                    >
+                      {filteredWebProperties?.map((property) => (
+                        <Link
+                          key={property.title}
+                          href={`/properties/${genereateIdentifier(property.title)}`}
+                          passHref
+                        >
+                          <DropdownItem
+                            key={property.title}
+                            onClick={handleDropdownSelect(property.title)}
+                            style={{
+                              backgroundColor:
+                                property.title === selectedProperty ? '#D2d2d2' : 'white'
+                            }}
+                          >
+                            {property.title}
+                          </DropdownItem>
+                        </Link>
+                      ))}
+                    </Dropdown>
+                  </SplitItem>
+                </Split>
+              </NavItem>
 
               <Link href={pageLinks.webPropertyListPage}>
                 <a
