@@ -256,6 +256,7 @@ export class EnvironmentService {
    * Multi cluster symlink support is enabled
    */
   async updateSymlink(symlinkDTO: SymlinkDTO): Promise<Environment> {
+    if (!symlinkDTO) this.exceptionService.badRequestException({ message: 'Please provide the value' });
     const { propertyIdentifier, env } = symlinkDTO;
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     this.logger.log('Environment', JSON.stringify(environment));
