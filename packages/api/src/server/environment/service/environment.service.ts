@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { readFileSync } from 'fs';
 import { LoggerService } from 'src/configuration/logger/logger.service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { Action } from 'src/server/analytics/activity-stream.entity';
@@ -298,5 +299,35 @@ export class EnvironmentService {
       this.exceptionService.internalServerErrorException(err);
     }
     return environment;
+  }
+
+  /* @internal
+   * Process the bulk data from a csv file
+   * It'll create the symlinks for all the valid rows
+   */
+  async symlinkFileProcessing(filePath: string, propertyIdentifier: string, env: string): Promise<any> {
+    const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+    this.logger.log('Environment', JSON.stringify(environment));
+    if (!environment) this.exceptionService.badRequestException({ message: 'Environment not found.' });
+    const rawSymlinks = await readFileSync(filePath);
+    const symlinks = rawSymlinks.toString();
+    const rows = symlinks.split('\r\n');
+    const symlink = new SymlinkDTO();
+    symlink.propertyIdentifier = propertyIdentifier;
+    symlink.env = env;
+    this.processSymlinks(rows, symlink);
+    return { message: 'Data Processing has been started successfully.' };
+  }
+
+  private async processSymlinks(rows: string[], symlink: SymlinkDTO) {
+    for (const data of rows.slice(1)) {
+      const row = data.split(',');
+      [symlink.source, symlink.target] = [...row];
+      try {
+        if (symlink.source && symlink.target) await this.updateSymlink(symlink);
+      } catch (e) {
+        this.logger.error('SymlinkProcessError', e);
+      }
+    }
   }
 }
