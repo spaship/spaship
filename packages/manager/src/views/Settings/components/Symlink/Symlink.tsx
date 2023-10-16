@@ -22,7 +22,6 @@ import { AxiosError } from 'axios';
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 import { CreateSymlink, FormData as SymlinkForm } from './CreateSymlink/CreateSymlink';
-import { TextDecoderStream } from 'node:stream/web';
 
 type TSymlink = {
   source: string;
@@ -42,8 +41,6 @@ type EnvItem = {
   updatedAt: string;
   symlink: [];
 };
-
-const URL_LENGTH_LIMIT = 50;
 
 export const Symlink = ({ propertyIdentifier }: { propertyIdentifier: string }) => {
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['createSymlink'] as const);
