@@ -69,7 +69,7 @@ export const CreateSymlink = ({ onSubmit, onClose, propertyIdentifier }: Props):
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Split hasGutter>
-        <SplitItem isFilled>
+        <SplitItem isFilled style={{ width: '100%' }}>
           <Controller
             control={control}
             name="source"
@@ -94,7 +94,7 @@ export const CreateSymlink = ({ onSubmit, onClose, propertyIdentifier }: Props):
             )}
           />
         </SplitItem>
-        <SplitItem isFilled>
+        <SplitItem isFilled style={{ width: '100%' }}>
           <Controller
             control={control}
             name="target"
