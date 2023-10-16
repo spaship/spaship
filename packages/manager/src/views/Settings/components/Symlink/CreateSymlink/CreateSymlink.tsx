@@ -16,27 +16,14 @@ import {
 } from '@patternfly/react-core';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 
-const folderValidation = /^[_.a-zA-Z0-9/-]+$/;
 const envValidation = /^[a-zA-Z0-9-]+$/;
 export const schema = yup.object({
   // TODO: change this to URL validation, after server supports http protocol append
 
-  source: yup
-    .string()
-    .label('Source File Path')
-    .trim()
-    .required()
-    .test('source', 'Source file path entered is incorrect', (value) =>
-      folderValidation.test(value?.toString() || '')
-    ),
-  target: yup
-    .string()
-    .label('Target File Path')
-    .trim()
-    .required()
-    .test('target', 'Target file path entered is incorrect', (value) =>
-      folderValidation.test(value?.toString() || '')
-    ),
+  source: yup.string().label('Source File Path').trim().required(),
+
+  target: yup.string().label('Target File Path').trim().required(),
+
   env: yup
     .string()
     .label('Environment Name')
