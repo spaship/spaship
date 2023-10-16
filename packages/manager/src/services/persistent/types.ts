@@ -1,7 +1,3 @@
-type TSymlink = {
-  source: string;
-  target: string;
-};
 export type TEnv = {
   _id: string;
   propertyIdentifier: string;
@@ -14,7 +10,7 @@ export type TEnv = {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  symlink: TSymlink;
+  symlink: [];
 };
 
 export type TCreateEnvDTO = {

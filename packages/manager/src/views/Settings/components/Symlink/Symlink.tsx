@@ -39,8 +39,9 @@ type EnvItem = {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  symlink: TSymlink;
+  symlink: [];
 };
+
 export const Symlink = ({ propertyIdentifier }: { propertyIdentifier: string }) => {
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['createSymlink'] as const);
   const envList = useGetEnvList(propertyIdentifier);
@@ -69,7 +70,7 @@ export const Symlink = ({ propertyIdentifier }: { propertyIdentifier: string }) 
   };
   return (
     <>
-      <Card isFullHeight isRounded>
+      <Card isFullHeight isRounded style={{ width: '100%' }}>
         <CardHeader>
           <CardTitle>Symlinks</CardTitle>
           <CardActions>
@@ -84,12 +85,16 @@ export const Symlink = ({ propertyIdentifier }: { propertyIdentifier: string }) 
           </CardActions>
         </CardHeader>
         <CardBody>
-          <TableComposable>
-            <Thead>
+          <TableComposable aria-label="Simple table">
+            <Thead noWrap>
               <Tr>
-                <Th>Name</Th>
-                <Th>Source File Path</Th>
-                <Th>Target File Path</Th>
+                <Th style={{ width: 30 }}>Environment</Th>
+                <Th textCenter modifier="wrap" style={{ width: '35%' }}>
+                  Source File Path
+                </Th>
+                <Th textCenter modifier="wrap" style={{ width: '35%' }}>
+                  Target File Path
+                </Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -109,16 +114,20 @@ export const Symlink = ({ propertyIdentifier }: { propertyIdentifier: string }) 
               )}
 
               {envList.isSuccess &&
-                envList.data?.map(
-                  (env: EnvItem) =>
-                    env?.symlink && (
-                      <Tr key={env._id}>
-                        <Td dataLabel={env.env}>{env.env}</Td>
+                envList.data?.map((env: EnvItem) =>
+                  env?.symlink?.map((symlinkItem: TSymlink) => (
+                    <Tr key={env._id}>
+                      <Td>{env.env}</Td>
 
-                        <Td dataLabel={env?.symlink?.source}>{env?.symlink?.source}</Td>
-                        <Td dataLabel={env?.symlink?.target}>{env?.symlink?.target}</Td>
-                      </Tr>
-                    )
+                      <Td dataLabel={symlinkItem.source} style={{ wordBreak: 'break-all' }}>
+                        {symlinkItem.source}
+                      </Td>
+
+                      <Td dataLabel={symlinkItem.target} style={{ wordBreak: 'break-all' }}>
+                        {symlinkItem.target}
+                      </Td>
+                    </Tr>
+                  ))
                 )}
             </Tbody>
           </TableComposable>
