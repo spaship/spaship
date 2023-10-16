@@ -19,7 +19,7 @@ export class Environment {
 
   agendaId: string;
 
-  symlink: Symlink;
+  symlink: Symlink[];
 
   createdBy: string;
 

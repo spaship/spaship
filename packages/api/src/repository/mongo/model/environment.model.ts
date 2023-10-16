@@ -39,7 +39,7 @@ export class Environment {
   createdBy: string;
 
   @Prop({})
-  symlink: Symlink;
+  symlink: Symlink[];
 
   @Prop({ default: 'NA' })
   updatedBy: string;

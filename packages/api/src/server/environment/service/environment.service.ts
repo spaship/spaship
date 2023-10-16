@@ -275,9 +275,13 @@ export class EnvironmentService {
         this.exceptionService.internalServerErrorException(err.message);
       }
     }
-    if (!environment.symlink) environment.symlink = new Symlink();
-    environment.symlink.source = symlinkDTO.source;
-    environment.symlink.target = symlinkDTO.target;
+    const symlink = new Symlink();
+    symlink.source = symlinkDTO.source;
+    symlink.target = symlinkDTO.target;
+    if (environment.symlink && environment.symlink.length) {
+      const existingSymlink = environment.symlink.find((key) => key.source === symlinkDTO.source && key.target === symlinkDTO.target);
+      if (!existingSymlink) environment.symlink = [...environment.symlink, symlink];
+    } else environment.symlink = [symlink];
     try {
       await this.dataServices.environment.updateOne({ propertyIdentifier, env }, environment);
       await this.analyticsService.createActivityStream(
