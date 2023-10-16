@@ -1,6 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { DIRECTORY_CONFIGURATION } from 'src/configuration';
 import { AuthenticationGuard } from '../auth/auth.guard';
+import { ExceptionsService } from '../exceptions/exceptions.service';
 import { CreateEnvironmentDto, SymlinkDTO, SyncEnvironmentDto } from './environment.dto';
 import { Environment } from './environment.entity';
 import { EnvironmentService } from './service/environment.service';
@@ -9,7 +12,7 @@ import { EnvironmentService } from './service/environment.service';
 @ApiTags('Environment')
 @UseGuards(AuthenticationGuard)
 export class EnvironmentController {
-  constructor(private readonly environmentService: EnvironmentService) {}
+  constructor(private readonly environmentService: EnvironmentService, private readonly exceptionService: ExceptionsService) {}
 
   @Get()
   @ApiOperation({ description: 'Get the Environments.' })
@@ -57,5 +60,22 @@ export class EnvironmentController {
   @ApiOperation({ description: 'Get Environments for the Repository.' })
   async getByRepoUrl(@Query('repoUrl') repoUrl: string, @Query('contextDir') contextDir: string): Promise<Environment[]> {
     return this.environmentService.getEnvironmentByRepositoryUrl(repoUrl, contextDir);
+  }
+
+  @Post('/symlink/upload/:propertyIdentifier/:env')
+  @UseInterceptors(
+    FileInterceptor('upload', {
+      dest: DIRECTORY_CONFIGURATION.baseDir,
+      fileFilter: (req, file, cb) => {
+        file.filename = `${Date.now()}-${file.originalname}`;
+        cb(null, true);
+      }
+    })
+  )
+  async createApplication(@UploadedFile() file, @Param() params): Promise<any> {
+    const types = ['csv'];
+    const fileFilter = file?.originalname.split('.');
+    if (!types.includes(fileFilter[fileFilter.length - 1])) this.exceptionService.badRequestException({ message: 'Invalid file type.' });
+    return this.environmentService.symlinkFileProcessing(file.path, params.propertyIdentifier, params.env);
   }
 }
