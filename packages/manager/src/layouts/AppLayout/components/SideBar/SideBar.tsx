@@ -122,6 +122,7 @@ export const SideBar = () => {
                 <Split hasGutter className="pf-u-px-sm">
                   <SplitItem>
                     <Dropdown
+                      id="sidebar_dropdown"
                       style={{
                         color: 'white',
                         border: 'none !important',
@@ -135,24 +136,29 @@ export const SideBar = () => {
                         </DropdownToggle>
                       }
                     >
-                      {filteredWebProperties?.map((property) => (
-                        <Link
-                          key={property.title}
-                          href={`/properties/${genereateIdentifier(property.title)}`}
-                          passHref
-                        >
-                          <DropdownItem
+                      {filteredWebProperties?.length === 0 ? (
+                        <DropdownItem disabled>No properties found</DropdownItem>
+                      ) : (
+                        filteredWebProperties?.map((property) => (
+                          <Link
                             key={property.title}
-                            onClick={handleDropdownSelect(property.title)}
-                            style={{
-                              backgroundColor:
-                                property.title === selectedProperty ? '#D2d2d2' : 'white'
-                            }}
+                            href={`/properties/${genereateIdentifier(property.title)}`}
+                            passHref
                           >
-                            {property.title}
-                          </DropdownItem>
-                        </Link>
-                      ))}
+                            <DropdownItem
+                              className="hover-highlight"
+                              key={property.title}
+                              onClick={handleDropdownSelect(property.title)}
+                              style={{
+                                backgroundColor:
+                                  property.title === selectedProperty ? '#D2d2d2' : 'white'
+                              }}
+                            >
+                              {property.title}
+                            </DropdownItem>
+                          </Link>
+                        ))
+                      )}
                     </Dropdown>
                   </SplitItem>
                 </Split>
