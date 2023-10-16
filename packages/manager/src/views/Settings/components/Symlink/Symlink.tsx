@@ -89,10 +89,10 @@ export const Symlink = ({ propertyIdentifier }: { propertyIdentifier: string }) 
             <Thead noWrap>
               <Tr>
                 <Th style={{ width: 30 }}>Environment</Th>
-                <Th textCenter modifier="wrap" style={{ width: '35%' }}>
+                <Th modifier="wrap" style={{ width: '35%' }}>
                   Source File Path
                 </Th>
-                <Th textCenter modifier="wrap" style={{ width: '35%' }}>
+                <Th modifier="wrap" style={{ width: '35%' }}>
                   Target File Path
                 </Th>
               </Tr>
