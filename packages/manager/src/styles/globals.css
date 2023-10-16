@@ -255,3 +255,10 @@ body {
   border: none !important;
   --pf-c-dropdown__toggle--before--BorderWidth: none;
 }
+#sidebar_dropdown > .pf-c-dropdown__toggle::before {
+  border: none !important;
+  --pf-c-dropdown__toggle--before--BorderWidth: none;
+}
+.hover-highlight:hover {
+  background-color: #d2d2d2 !important;
+}
