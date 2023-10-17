@@ -286,10 +286,10 @@ export class EnvironmentService {
       await this.dataServices.environment.updateOne({ propertyIdentifier, env }, environment);
       await this.analyticsService.createActivityStream(
         propertyIdentifier,
-        Action.ENV_SYNCED,
+        Action.SYMLINK_CREATED,
         env,
         'NA',
-        `${env} synced for ${propertyIdentifier}`,
+        `symlink created for ${env} env of ${propertyIdentifier}`,
         symlinkDTO.createdBy,
         Source.MANAGER,
         JSON.stringify(symlinkDTO)

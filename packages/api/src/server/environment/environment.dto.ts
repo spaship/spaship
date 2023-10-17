@@ -81,14 +81,14 @@ export class SymlinkDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  // @internal TODO : validations to be decided 
+  // @internal TODO : validations to be decided
   // @Matches(VALIDATION.FOLDER, { message: MESSAGE.INVALID_FOLDER, always: true })
   source: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  // @internal TODO : validations to be decided 
+  // @internal TODO : validations to be decided
   // @Matches(VALIDATION.FOLDER, { message: MESSAGE.INVALID_FOLDER, always: true })
   target: string;
 
