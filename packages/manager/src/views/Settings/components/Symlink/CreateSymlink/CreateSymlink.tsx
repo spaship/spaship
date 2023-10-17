@@ -68,7 +68,6 @@ export const CreateSymlink = ({ onSubmit, onClose, propertyIdentifier }: Props):
                 fieldId="source"
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
-                helperText="Source file path shouldn't contain any space, special-character"
               >
                 <TextInput
                   isRequired
@@ -93,7 +92,6 @@ export const CreateSymlink = ({ onSubmit, onClose, propertyIdentifier }: Props):
                 fieldId="target"
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
-                helperText="Target file path name shouldn't contain any space, special-character"
               >
                 <TextInput
                   isRequired
