@@ -369,6 +369,12 @@ const activities = {
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> in{' '}
       <span style={{ fontWeight: '600' }}>{props.env}</span> env.
     </Text>
+  ),
+  SYMLINK_CREATED: ({ props }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}> Symlink created</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+    </Text>
   )
 } as any;
 
