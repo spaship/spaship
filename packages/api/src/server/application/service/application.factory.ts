@@ -834,6 +834,53 @@ export class ApplicationFactory {
     return secretMap;
   }
 
+  // @internal Compare the application and application details changes for Containerized Deployment
+  async compareApplicationConfigurationForContainerizedDeployment(
+    applicationDetails: Application,
+    applicationRequest: CreateApplicationDto
+  ): Promise<Boolean> {
+    if (
+      applicationDetails.ref === applicationRequest.ref &&
+      applicationDetails.path === applicationRequest.path &&
+      applicationDetails.port === applicationRequest.port &&
+      applicationDetails.imageUrl === applicationRequest.imageUrl &&
+      applicationDetails.healthCheckPath === applicationRequest.healthCheckPath
+    ) {
+      this.logger.log(
+        'ApplicationCheckForContainerizedDeployment',
+        `No Changes found in the Existing Application details for ${applicationDetails.identifier}-${applicationDetails.env}`
+      );
+      if (JSON.stringify(applicationDetails.config) !== JSON.stringify(applicationRequest.config)) {
+        this.logger.log(
+          'ConfigurationCheckorContainerizedDeployment',
+          `Changes found in Application Configuration for ${applicationDetails.identifier}-${applicationDetails.env}`
+        );
+        return true;
+      }
+      this.logger.log(
+        'ConfigurationCheck',
+        `No Changes found in Application Configuration for ${applicationDetails.identifier}-${applicationDetails.env}`
+      );
+      return false;
+    }
+    this.logger.log(
+      'ApplicationCheck',
+      `Changes found in the Existing Application details for ${applicationDetails.identifier}-${applicationDetails.env}`
+    );
+    return false;
+  }
+
+  // @internal Config Request Builder for Containerized Deployment
+  configRequestBuilder(propertyIdentifier: string, identifier: string, env: string, applicationRequest: CreateApplicationDto) {
+    const applicationConfigDTO = new ApplicationConfigDTO();
+    applicationConfigDTO.propertyIdentifier = propertyIdentifier;
+    applicationConfigDTO.identifier = identifier;
+    applicationConfigDTO.env = env;
+    applicationConfigDTO.config = applicationRequest.config;
+    applicationConfigDTO.createdBy = applicationRequest.createdBy;
+    return applicationConfigDTO;
+  }
+
   // @internal Initialize Empty values for the secrets as we're not storing anything
   initializeEmptyValues(secret: Object): Object {
     if (!secret) this.exceptionService.badRequestException({ message: 'Please provide the secret value' });
