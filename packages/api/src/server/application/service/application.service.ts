@@ -319,6 +319,21 @@ export class ApplicationService {
       this.logger.log('ContainerizedApplicationDetails', JSON.stringify(saveApplication));
       applicationDetails = await this.dataServices.application.create(saveApplication);
     } else {
+      if (await this.applicationFactory.compareApplicationConfigurationForContainerizedDeployment(applicationDetails, { ...applicationRequest })) {
+        const applicationConfigDTO = this.applicationFactory.configRequestBuilder(propertyIdentifier, identifier, env, applicationRequest);
+        await this.saveConfig(applicationConfigDTO);
+        applicationDetails.config = applicationRequest.config || applicationDetails.config;
+        this.logger.log('ContainerizedApplicationUpdatedDetails', JSON.stringify(applicationDetails));
+        await this.dataServices.application.updateOne(
+          { propertyIdentifier, env, identifier, isContainerized: true, isGit: false },
+          applicationDetails
+        );
+        return this.applicationFactory.createApplicationResponse(applicationDetails, applicationExists);
+      }
+      if (JSON.stringify(applicationRequest.config) !== JSON.stringify(applicationDetails.config)) {
+        const applicationConfigDTO = this.applicationFactory.configRequestBuilder(propertyIdentifier, identifier, env, applicationRequest);
+        await this.saveConfig(applicationConfigDTO);
+      }
       applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
       applicationDetails.name = applicationRequest.name;
       applicationDetails.path = applicationRequest.path;
@@ -331,6 +346,7 @@ export class ApplicationService {
       applicationDetails.routerUrl = this.applicationFactory.getRouterUrl(deploymentConnection, applicationRequest, propertyIdentifier, env);
       applicationDetails.updatedBy = applicationRequest.createdBy;
       this.logger.log('ContainerizedApplicationUpdatedDetails', JSON.stringify(applicationDetails));
+      applicationDetails.config = applicationRequest.config;
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: true, isGit: false }, applicationDetails);
     }
     const containerizedDeploymentRequestForOperator = this.applicationFactory.createContainerizedDeploymentRequestForOperator(

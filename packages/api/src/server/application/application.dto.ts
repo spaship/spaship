@@ -230,12 +230,10 @@ export class ApplicationConfigDTO {
 
   @ApiProperty()
   @IsObject()
-  @IsNotEmpty()
   config: object;
 
   @ApiProperty()
   @IsObject()
-  @IsNotEmpty()
   secret: object;
 
   createdBy: string;
