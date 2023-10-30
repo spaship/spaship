@@ -307,6 +307,7 @@ export class ApplicationService {
       isGit: false
     });
     const applicationExists = this.applicationFactory.getExistingApplicationsByPath(searchedApplicationsByPath, identifier);
+    const applicationConfigDTO = this.applicationFactory.configRequestBuilder(propertyIdentifier, identifier, env, applicationRequest);
     if (!applicationDetails) {
       const saveApplication = await this.applicationFactory.createContainerizedApplicationRequest(
         propertyIdentifier,
@@ -320,7 +321,6 @@ export class ApplicationService {
       applicationDetails = await this.dataServices.application.create(saveApplication);
     } else {
       if (await this.applicationFactory.compareApplicationConfigurationForContainerizedDeployment(applicationDetails, { ...applicationRequest })) {
-        const applicationConfigDTO = this.applicationFactory.configRequestBuilder(propertyIdentifier, identifier, env, applicationRequest);
         await this.saveConfig(applicationConfigDTO);
         applicationDetails.config = applicationRequest.config || applicationDetails.config;
         this.logger.log('ContainerizedApplicationUpdatedDetails', JSON.stringify(applicationDetails));
@@ -330,10 +330,10 @@ export class ApplicationService {
         );
         return this.applicationFactory.createApplicationResponse(applicationDetails, applicationExists);
       }
-      if (JSON.stringify(applicationRequest.config) !== JSON.stringify(applicationDetails.config)) {
-        const applicationConfigDTO = this.applicationFactory.configRequestBuilder(propertyIdentifier, identifier, env, applicationRequest);
-        await this.saveConfig(applicationConfigDTO);
-      }
+      /* @internal TODO : Condition to be added once changes are done from the Operator 
+        if (JSON.stringify(applicationRequest.config) !== JSON.stringify(applicationDetails.config))
+      */
+      await this.saveConfig(applicationConfigDTO);
       applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
       applicationDetails.name = applicationRequest.name;
       applicationDetails.path = applicationRequest.path;
