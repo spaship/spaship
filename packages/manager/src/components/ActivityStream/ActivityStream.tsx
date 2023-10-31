@@ -375,6 +375,22 @@ const activities = {
       <span style={{ fontWeight: '600' }}> Symlink created</span> for{' '}
       <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
     </Text>
+  ),
+  APPLICATION_UNAVAILABLE: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}> Application unavailable</span> for property :{' '}
+      <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
+    </Text>
+  ),
+  APPLICATION_AVAILABLE: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}> Application is live </span> for property :{' '}
+      <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
+    </Text>
   )
 } as any;
 
@@ -443,7 +459,8 @@ export const ActivityStream = ({
                   {activity.action.includes('FAIL') ||
                   activity.action.includes('TERMINATED') ||
                   activity.action.includes('TIMEOUT') ||
-                  activity.action.includes('DELETED') ? (
+                  activity.action.includes('DELETED') ||
+                  activity.action.includes('UNAVAILABLE') ? (
                     <ExclamationCircleIcon
                       style={{
                         width: '20px',
