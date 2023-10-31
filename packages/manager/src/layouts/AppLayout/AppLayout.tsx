@@ -6,6 +6,7 @@ import { useGetDocumentPage } from '@app/services/documents';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Nav } from './components/Nav';
 import { SideBar } from './components/SideBar';
+import { Feedback } from '@app/components';
 
 interface Props {
   children: ReactNode;
@@ -75,6 +76,7 @@ export const AppLayout = ({ children }: Props): JSX.Element => {
         >
           <FlexItem grow={{ default: 'grow' }}>{children}</FlexItem>
         </Flex>
+        <Feedback />
       </Page>
     </>
   );
