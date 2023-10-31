@@ -38,6 +38,8 @@ export class ApplicationService {
 
   private readonly timeout: number = 1200000;
 
+  private readonly applicationTimeout: number = 180000;
+
   constructor(
     private readonly dataServices: IDataServices,
     private readonly logger: LoggerService,
@@ -307,6 +309,7 @@ export class ApplicationService {
       isGit: false
     });
     const applicationExists = this.applicationFactory.getExistingApplicationsByPath(searchedApplicationsByPath, identifier);
+    const applicationConfigDTO = this.applicationFactory.configRequestBuilder(propertyIdentifier, identifier, env, applicationRequest);
     if (!applicationDetails) {
       const saveApplication = await this.applicationFactory.createContainerizedApplicationRequest(
         propertyIdentifier,
@@ -320,7 +323,6 @@ export class ApplicationService {
       applicationDetails = await this.dataServices.application.create(saveApplication);
     } else {
       if (await this.applicationFactory.compareApplicationConfigurationForContainerizedDeployment(applicationDetails, { ...applicationRequest })) {
-        const applicationConfigDTO = this.applicationFactory.configRequestBuilder(propertyIdentifier, identifier, env, applicationRequest);
         await this.saveConfig(applicationConfigDTO);
         applicationDetails.config = applicationRequest.config || applicationDetails.config;
         this.logger.log('ContainerizedApplicationUpdatedDetails', JSON.stringify(applicationDetails));
@@ -330,10 +332,10 @@ export class ApplicationService {
         );
         return this.applicationFactory.createApplicationResponse(applicationDetails, applicationExists);
       }
-      if (JSON.stringify(applicationRequest.config) !== JSON.stringify(applicationDetails.config)) {
-        const applicationConfigDTO = this.applicationFactory.configRequestBuilder(propertyIdentifier, identifier, env, applicationRequest);
-        await this.saveConfig(applicationConfigDTO);
-      }
+      /* @internal TODO : Condition to be added once changes are done from the Operator 
+        if (JSON.stringify(applicationRequest.config) !== JSON.stringify(applicationDetails.config))
+      */
+      await this.saveConfig(applicationConfigDTO);
       applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
       applicationDetails.name = applicationRequest.name;
       applicationDetails.path = applicationRequest.path;
@@ -422,14 +424,20 @@ export class ApplicationService {
     deploymentConnection: DeploymentConnection[],
     createdBy: string
   ) {
+    let applicationDetails;
+    let cluster;
     try {
       for (const con of deploymentConnection) {
         const response = await this.applicationFactory.containerizedDeploymentRequest(containerizedRequest, con.baseurl);
         this.logger.log('ContainerizedDeploymentResponse', JSON.stringify(response));
         if (!response) return;
-        const applicationDetails = (
-          await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: true, isGit: false })
-        )[0];
+        [applicationDetails] = await this.dataServices.application.getByAny({
+          propertyIdentifier,
+          env,
+          identifier,
+          isContainerized: true,
+          isGit: false
+        });
         applicationDetails.ref = applicationDetails.nextRef;
         await this.dataServices.application.updateOne(
           { propertyIdentifier, env, identifier, isContainerized: true, isGit: false },
@@ -440,6 +448,7 @@ export class ApplicationService {
         const consumedTime = Math.abs(diff).toFixed(2).toString();
         this.logger.log('TimeToDeploy', `${consumedTime} seconds`);
         const envDetails = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+        cluster = envDetails.cluster;
         const eventTimeTrace = this.applicationFactory.processDeploymentTime(applicationDetails, consumedTime, envDetails.cluster);
         await this.dataServices.eventTimeTrace.create(eventTimeTrace);
         await this.analyticsService.createActivityStream(
@@ -455,6 +464,7 @@ export class ApplicationService {
           DEPLOYMENT_DETAILS.type.containerized
         );
       }
+      for (const routerUrl of applicationDetails.routerUrl) this.recordDeploymentStatus(propertyIdentifier, env, identifier, cluster, routerUrl);
     } catch (err) {
       this.logger.warn('ContainerizedDeployment', err);
     }
@@ -1112,5 +1122,52 @@ export class ApplicationService {
         JSON.stringify(applicationDetails)
       );
     return applicationDetails;
+  }
+
+  /* @internal
+   * Check & record the application status
+   * if application is not live it will be terminated after the given time
+   */
+  async recordDeploymentStatus(propertyIdentifier: string, env: string, identifier: string, cluster: string, routeUrl: string) {
+    let applicationStatus = false;
+    const applicationStatusInterval = setInterval(async () => {
+      this.logger.log('ApplicationStatus', `Checking the application ${routeUrl}`);
+      try {
+        await this.checkApplicationStatus(routeUrl);
+        await this.analyticsService.createActivityStream(
+          propertyIdentifier,
+          Action.APPLICATION_AVAILABLE,
+          env,
+          identifier,
+          `Application is live`,
+          'Operator',
+          `${Source.OPERATOR}-Containerized`,
+          JSON.stringify(propertyIdentifier),
+          cluster,
+          DEPLOYMENT_DETAILS.type.containerized
+        );
+        applicationStatus = true;
+        await clearInterval(applicationStatusInterval);
+      } catch (err) {
+        this.logger.log('ApplicationStatus', err);
+      }
+    }, this.period);
+    setTimeout(async () => {
+      if (!applicationStatus) {
+        await this.analyticsService.createActivityStream(
+          propertyIdentifier,
+          Action.APPLICATION_UNAVAILABLE,
+          env,
+          identifier,
+          `Application is unavailable, please redeploy with the valid config`,
+          'Operator',
+          `${Source.OPERATOR}-Containerized`,
+          JSON.stringify(propertyIdentifier),
+          cluster,
+          DEPLOYMENT_DETAILS.type.containerized
+        );
+      }
+      await clearInterval(applicationStatusInterval);
+    }, this.applicationTimeout);
   }
 }
