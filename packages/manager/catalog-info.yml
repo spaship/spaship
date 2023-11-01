@@ -9,6 +9,7 @@ metadata:
   annotations:
     github.com/project-slug: 'spaship/spaship'
     servicenow.com/appcode: SPAS-002
+    jira/project-key: SPASHIP
   tags:
     - spaship
     - developers
@@ -19,3 +20,21 @@ spec:
   lifecycle: production
   owner: group:redhat/spaship-devs
   system: devex/spaship
+  contacts:
+    - label: Manager
+      users:
+        - user:redhat/npatil
+    - label: Project Manager
+      users:
+        - user:redhat/shrpande
+    - label: Team
+      group: group:redhat/spaship-devs
+    - label: QEs
+      users:
+        - user:redhat/mmaheshw
+        - user:redhat/stummulw
+    - label: DevOps
+      users:
+        - user:redhat/rcoffman
+        - user:redhat/arbhatta
+        

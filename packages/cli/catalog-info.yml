@@ -1,6 +1,6 @@
 ---
 apiVersion: backstage.io/v1alpha1
-kind: Resource
+kind: Component
 metadata:
   name: spaship-cli
   title: SPAship CLI
@@ -9,13 +9,32 @@ metadata:
   annotations:
     github.com/project-slug: 'spaship/spaship'
     servicenow.com/appcode: SPAS-001
+    jira/project-key: SPASHIP
   tags:
     - nodejs
     - spaship
     - developers
     - xe
-spec:
-  type: database
-  owner: group:redhat/spaship-devs
-  system: devex/spaship
-  lifecycle: production
+  spec:
+    type: library
+    owner: group:redhat/spaship-devs
+    system: devex/spaship
+    lifecycle: production
+    contacts:
+      - label: Manager
+        users:
+          - user:redhat/npatil
+      - label: Project Manager
+        users:
+          - user:redhat/shrpande
+      - label: Team
+        group: group:redhat/spaship-devs
+      - label: QEs
+        users:
+          - user:redhat/mmaheshw
+          - user:redhat/stummulw
+      - label: DevOps
+        users:
+          - user:redhat/rcoffman
+          - user:redhat/arbhatta
+          
