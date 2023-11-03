@@ -595,7 +595,7 @@ export class ApplicationFactory {
     containerizedRequest.website = configRequest.propertyIdentifier;
     containerizedRequest.nameSpace = namespace;
     containerizedRequest.environment = configRequest.env;
-    containerizedRequest.configMap = configRequest.config;
+    containerizedRequest.configMap = configRequest.config || {};
     updateConfigOrSecretRequest.ssrResourceDetails = containerizedRequest;
     updateConfigOrSecretRequest.keysToDelete = deletedKeys;
     return updateConfigOrSecretRequest;
