@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-
+import { ReactNode, useEffect } from 'react';
+// import dynamic from 'next/dynamic';
 import { Banner, Flex, FlexItem, Page } from '@patternfly/react-core';
 
 import { useGetDocumentPage } from '@app/services/documents';
@@ -7,6 +7,7 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Nav } from './components/Nav';
 import { SideBar } from './components/SideBar';
 import { Feedback } from '@app/components';
+// const DynamicComponent = dynamic(() => import('./components/Feedback/Feedback'));
 
 interface Props {
   children: ReactNode;
@@ -23,7 +24,12 @@ export const AppLayout = ({ children }: Props): JSX.Element => {
   const lastSectionData = data?.data?.[lastSection] ?? [];
   const lastElement = lastSectionData[lastSectionData.length - 1] ?? null;
   const isOutage = (lastElement && lastElement.tags?.includes('outage')) || false;
-
+  useEffect(() => {
+    // This code is executed in the browser
+    if (typeof window === 'object') {
+      console.log('width of the window is app', window.innerWidth);
+    }
+  }, []);
   return (
     <>
       {lastElement && !isOutage && (
@@ -77,6 +83,7 @@ export const AppLayout = ({ children }: Props): JSX.Element => {
           <FlexItem grow={{ default: 'grow' }}>{children}</FlexItem>
         </Flex>
         <Feedback />
+        {/* <DynamicComponent /> */}
       </Page>
     </>
   );
