@@ -323,6 +323,7 @@ export class ApplicationService {
       applicationDetails = await this.dataServices.application.create(saveApplication);
     } else {
       if (await this.applicationFactory.compareApplicationConfigurationForContainerizedDeployment(applicationDetails, { ...applicationRequest })) {
+        applicationConfigDTO.config = applicationConfigDTO.config || applicationDetails.config;
         await this.saveConfig(applicationConfigDTO);
         applicationDetails.config = applicationRequest.config || applicationDetails.config;
         this.logger.log('ContainerizedApplicationUpdatedDetails', JSON.stringify(applicationDetails));
@@ -335,6 +336,7 @@ export class ApplicationService {
       /* @internal TODO : Condition to be added once changes are done from the Operator 
         if (JSON.stringify(applicationRequest.config) !== JSON.stringify(applicationDetails.config))
       */
+      applicationConfigDTO.config = applicationRequest.config || applicationDetails.config;
       await this.saveConfig(applicationConfigDTO);
       applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
       applicationDetails.name = applicationRequest.name;
@@ -348,7 +350,6 @@ export class ApplicationService {
       applicationDetails.routerUrl = this.applicationFactory.getRouterUrl(deploymentConnection, applicationRequest, propertyIdentifier, env);
       applicationDetails.updatedBy = applicationRequest.createdBy;
       this.logger.log('ContainerizedApplicationUpdatedDetails', JSON.stringify(applicationDetails));
-      applicationDetails.config = applicationRequest.config;
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: true, isGit: false }, applicationDetails);
     }
     const containerizedDeploymentRequestForOperator = this.applicationFactory.createContainerizedDeploymentRequestForOperator(
