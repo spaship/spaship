@@ -111,7 +111,7 @@ export const StaticDeployment = () => {
             <Tr>
               <Th textCenter>SPA Name</Th>
               <Th textCenter>Environments</Th>
-              <Th textCenter>Ref</Th>
+              <Th textCenter>Reference</Th>
               <Th textCenter>Path</Th>
               <Th textCenter>Internal Access URL</Th>
               <Th textCenter>Router URL</Th>

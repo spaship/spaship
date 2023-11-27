@@ -181,12 +181,12 @@ export const SSRForm = ({ onClose, propertyIdentifier }: Props): JSX.Element => 
             name="ref"
             render={({ field, fieldState: { error } }) => (
               <FormGroup
-                label="Ref"
+                label="Reference"
                 fieldId="ref"
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
               >
-                <TextInput placeholder="Ref" type="text" id="ref" {...field} />
+                <TextInput placeholder="Reference" type="text" id="ref" {...field} />
               </FormGroup>
             )}
           />

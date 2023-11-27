@@ -765,12 +765,12 @@ export const Workflow3 = ({
                       render={({ field, fieldState: { error } }) => (
                         <FormGroup
                           style={{ color: '#000' }}
-                          label="Ref"
+                          label="Reference"
                           fieldId="ref"
                           validated={error ? 'error' : 'default'}
                           helperTextInvalid={error?.message}
                         >
-                          <TextInput placeholder="Ref" type="text" id="ref" {...field} />
+                          <TextInput placeholder="Reference" type="text" id="ref" {...field} />
                         </FormGroup>
                       )}
                     />
@@ -1531,12 +1531,18 @@ export const Workflow3 = ({
                       render={({ field, fieldState: { error } }) => (
                         <FormGroup
                           style={{ color: '#000' }}
-                          label="Ref"
+                          label="Reference"
                           fieldId="ref"
                           validated={error ? 'error' : 'default'}
                           helperTextInvalid={error?.message}
                         >
-                          <TextInput placeholder="Ref" type="text" id="ref" {...field} isDisabled />
+                          <TextInput
+                            placeholder="Reference"
+                            type="text"
+                            id="ref"
+                            {...field}
+                            isDisabled
+                          />
                         </FormGroup>
                       )}
                     />
