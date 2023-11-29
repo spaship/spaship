@@ -7,7 +7,7 @@ export const Feedback = () => {
   const createFeedback = useCreateFeedback();
   useEffect(() => {
     const loadOpcFeedback = async () => {
-      const module = await import('@one-platform/opc-feedback/dist/opc-feedback');
+      await import('@one-platform/opc-feedback/dist/opc-feedback');
     };
 
     const feedback = document.querySelector('#opc-feedback');
@@ -16,17 +16,17 @@ export const Feedback = () => {
       loadOpcFeedback();
 
       feedback.addEventListener('opc-feedback:submit', async (event: any) => {
-        event.detail.data.stackInfo.path = window.location.pathname;
-        const username = session?.user?.email.split('@')[0];
+        const eventData = { ...event.detail.data };
+        eventData.stackInfo.path = window.location.pathname;
+        const username = session?.user?.email ? session.user.email.split('@')[0] : '';
         const variables: any = {
           projectId: 'SPAship',
-          summary: event.detail.data.summary,
-          experience: event.detail.data.experience,
-          category: event.detail.data.category,
-          stackInfo: event.detail.data.stackInfo,
-          // userId: session?.user?.email,
+          summary: eventData.detail.data.summary,
+          experience: eventData.detail.data.experience,
+          category: eventData.detail.data.category,
+          stackInfo: eventData.detail.data.stackInfo,
           userId: `user:redhat/${username}`,
-          error: event.detail.data.error
+          error: eventData.detail.data.error
         };
 
         try {
@@ -36,7 +36,7 @@ export const Feedback = () => {
         }
       });
     }
-  }, [session]);
+  }, [createFeedback, session?.user?.email]);
 
   return (
     <div>

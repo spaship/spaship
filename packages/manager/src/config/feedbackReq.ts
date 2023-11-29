@@ -10,6 +10,7 @@ export const feedbackReq = axios.create({
 });
 
 feedbackReq.interceptors.request.use((config: any) => {
-  config.headers.Authorization = env.PUBLIC_FEEDBACK_TOKEN;
-  return config;
+  const modifiedConfig = { ...config };
+  modifiedConfig.headers.Authorization = env.PUBLIC_FEEDBACK_TOKEN;
+  return modifiedConfig;
 });

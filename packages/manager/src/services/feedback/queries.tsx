@@ -1,7 +1,5 @@
 import { feedbackReq } from '@app/config/feedbackReq';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'react-hot-toast';
-import { useRef } from 'react';
+import { useMutation } from '@tanstack/react-query';
 
 const body = (variables: any) => {
   const query = `
@@ -46,7 +44,4 @@ const createFeedback = async (variables: any): Promise<any> => {
   return data.data;
 };
 
-export const useCreateFeedback = () => {
-  const queryClient = useQueryClient();
-  return useMutation(createFeedback, {});
-};
+export const useCreateFeedback = () => useMutation(createFeedback, {});

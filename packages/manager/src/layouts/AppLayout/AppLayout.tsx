@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
 import { Banner, Flex, FlexItem, Page } from '@patternfly/react-core';
 
 import { useGetDocumentPage } from '@app/services/documents';
