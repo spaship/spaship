@@ -38,10 +38,10 @@ const queryClient = new QueryClient({
           signOut({ redirect: false, callbackUrl: pageLinks.loginPage })
             .then((data) => {
               deleteOrchestratorAuthorizationHeader();
-              console.log('data', data.url);
+              console.error('data', data.url);
             })
             .catch((e) => {
-              console.log('Unauthorized request', e);
+              console.error('Unauthorized request', e);
             });
         }
       }
