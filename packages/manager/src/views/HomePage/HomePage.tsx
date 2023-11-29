@@ -9,9 +9,14 @@ import {
   TitleSizes
 } from '@patternfly/react-core';
 import Link from 'next/link';
+import Head from 'next/head';
 
 export const HomePage = (): JSX.Element => (
   <Bullseye>
+    <Head>
+      <title>SPAship Home</title>
+      <meta name="description" content="This is the home page description." />
+    </Head>
     <Stack hasGutter className="x-y-center">
       <StackItem style={{ textAlign: 'center' }}>
         <Title headingLevel="h1" size={TitleSizes['4xl']} style={{ fontSize: '2.4rem' }}>

@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 import {
   Button,
@@ -21,13 +21,14 @@ import {
 } from '@patternfly/react-core';
 import { CubesIcon, PlusIcon } from '@patternfly/react-icons';
 
-import { useGetWebProperties } from '@app/services/webProperty';
-import { useGetDeploymentCounts } from '@app/services/analytics';
 import { Banner } from '@app/components';
 import { useDebounce, useToggle } from '@app/hooks';
 import { pageLinks } from '@app/links';
+import { useGetDeploymentCounts } from '@app/services/analytics';
+import { useGetWebProperties } from '@app/services/webProperty';
 
 import { TWebProperty } from '@app/services/webProperty/types';
+import Head from 'next/head';
 import { WebPropertyCard } from './components/WebPropertyCard';
 import { WebPropertyCardSkeleton } from './components/WebPropertyCardSkeleton';
 
@@ -81,6 +82,10 @@ export const WebPropertyListPage = (): JSX.Element => {
 
   return (
     <div style={{ backgroundColor: '#15' }}>
+      <Head>
+        <title>SPAship Web Properties</title>
+        <meta name="description" content="This is the home page description." />
+      </Head>
       <Banner title="Web Properties" />
       <PageSection isCenterAligned isWidthLimited className="pf-u-m-lg pf-u-py-lg">
         <Split hasGutter className="pf-u-mb-md">

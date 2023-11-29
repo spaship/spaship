@@ -1,6 +1,7 @@
 import { Banner } from '@app/components';
 import { useGetDocumentPage } from '@app/services/documents';
 import { Card, CardTitle, Gallery, GalleryItem, PageSection } from '@patternfly/react-core';
+import Head from 'next/head';
 import { DocumentCard } from './components/DocumentCard';
 
 export const DocumentsPage = (): JSX.Element => {
@@ -8,6 +9,10 @@ export const DocumentsPage = (): JSX.Element => {
   const sections = Object.keys(data?.data || {}).filter((section) => section !== 'banner');
   return (
     <>
+      <Head>
+        <title>SPAship Documentation</title>
+        <meta name="description" content="This is the home page description." />
+      </Head>
       <Banner title="Documents" />
       <div style={{ backgroundColor: '#15' }}>
         <Card className="pf-u-m-lg" isRounded>

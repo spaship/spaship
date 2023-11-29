@@ -1,11 +1,15 @@
 import { Banner } from '@app/components';
 import { PageSection } from '@patternfly/react-core';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import Head from 'next/head';
 
 export const SLAPage = (): JSX.Element => (
   <div style={{ backgroundColor: '#15' }}>
+    <Head>
+      <title> SPAship SLA - Servie Level Agreement</title>
+      <meta name="description" content="This is the home page description." />
+    </Head>
     <Banner title="Service Level Agreement for SPAship" />
-
     <PageSection isCenterAligned isWidthLimited className="pf-u-m-lg pf-u-py-lg">
       <TableComposable aria-label="Simple table" variant="compact">
         <Thead noWrap>

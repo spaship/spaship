@@ -1,13 +1,14 @@
 import {
-  useGetTotalDeployments,
   useGetDeploymentCounts,
+  useGetHalfYearlyDeploymentsTime,
+  useGetMonthlyDeploymentChartWithEphemeral,
   useGetMonthlyDeploymentsTime,
   useGetQuarterlyDeploymentsTime,
-  useGetHalfYearlyDeploymentsTime,
-  useGetYearlyDeploymentsTime,
-  useGetMonthlyDeploymentChartWithEphemeral,
-  useGetTotalTimeSaved
+  useGetTotalDeployments,
+  useGetTotalTimeSaved,
+  useGetYearlyDeploymentsTime
 } from '@app/services/analytics';
+import Head from 'next/head';
 import { ActivityStreamDashboard } from './components/ActivityStreamDashboard';
 import { Analytics } from './components/Analytics';
 import { DashboardChart } from './components/DashboardChart';
@@ -33,6 +34,10 @@ export const DashboardPage = (): JSX.Element => {
 
   return (
     <>
+      <Head>
+        <title>SPAship Dashboard</title>
+        <meta name="description" content="This is the home page description." />
+      </Head>
       <Analytics
         TotalDeployment={TotalDeployment}
         TotalProperty={TotalProperty}
