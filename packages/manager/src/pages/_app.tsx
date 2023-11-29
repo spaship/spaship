@@ -2,22 +2,24 @@
 import '@patternfly/react-core/dist/styles/base.css';
 
 /* eslint-disable react/jsx-props-no-spreading */
-import { useEffect } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Session } from 'next-auth';
+import { SessionProvider, signOut } from 'next-auth/react';
+import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { SessionProvider } from 'next-auth/react';
-import type { AppProps } from 'next/app';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import NProgress from 'nprogress';
+import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import * as yup from 'yup';
-import NProgress from 'nprogress';
 
 import { AuthGuard } from '@app/context/AuthGuard';
 import type { NextPageWithLayout } from '@app/types';
 
-import 'nprogress/nprogress.css';
+import { deleteOrchestratorAuthorizationHeader } from '@app/config/orchestratorReq';
+import { pageLinks } from '@app/links';
 import '@app/styles/globals.css';
+import 'nprogress/nprogress.css';
 
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
@@ -30,7 +32,19 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      retry: 1
+      retry: 1,
+      onError: (error: any) => {
+        if (error?.response.status === 401) {
+          signOut({ redirect: false, callbackUrl: pageLinks.loginPage })
+            .then((data) => {
+              deleteOrchestratorAuthorizationHeader();
+              console.log('data', data.url);
+            })
+            .catch((e) => {
+              console.log('Unauthorized request', e);
+            });
+        }
+      }
     }
   }
 });
