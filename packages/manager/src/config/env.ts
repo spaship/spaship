@@ -27,9 +27,12 @@ export const env = {
   SPASHIP_AUTH_KEYCLOAK_REFRESH_TOKEN_URL:
     process.env.SPASHIP_AUTH__KEYCLOAK_REFRESH_TOKEN_URL || '',
 
-  // feedback form
-  PUBLIC_SPASHIP_FEEDBACK_FORM_URL: process.env.NEXT_PUBLIC_SPASHIP_FEEDBACK_FORM_URL || '',
-
   // FAQ's document
-  PUBLIC_SPASHIP_FAQ_URL: process.env.NEXT_PUBLIC_SPASHIP_FAQ_URL || ''
+  PUBLIC_SPASHIP_FAQ_URL: process.env.NEXT_PUBLIC_SPASHIP_FAQ_URL || '',
+
+  // Feedback Module
+  PUBLIC_FEEDBACK_BASE_URL:
+    process.env.NEXT_PUBLIC_FEEDBACK_BASE_URL || 'https://qa.one.redhat.com/api/graphql',
+  // Feeback Module Token
+  PUBLIC_FEEDBACK_TOKEN: process.env.NEXT_PUBLIC_FEEDBACK_TOKEN || ''
 };
