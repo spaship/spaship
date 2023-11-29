@@ -4,7 +4,6 @@ import { TSPADeploymentCount } from '@app/services/analytics/types';
 import {
   Chart,
   ChartAxis,
-  ChartBar,
   ChartDonut,
   ChartGroup,
   ChartLine,
@@ -36,6 +35,7 @@ import { CubesIcon } from '@patternfly/react-icons';
 import { UseQueryResult } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { MouseEvent, useEffect, useMemo, useState } from 'react';
+import { VictoryChart, VictoryLegend, VictoryGroup, VictoryBar, VictoryTooltip } from 'victory';
 
 type ITotalMonthlyDeploymentData = {
   [key: string]: {
@@ -61,6 +61,21 @@ interface DataItem {
   count: number;
   env: string;
 }
+
+type ColorType = {
+  dev: string;
+  qa: string;
+  prod: string;
+  stage: string;
+};
+
+const colors: ColorType = {
+  dev: '#4cb140',
+  qa: '#06c',
+  prod: '#f4c145',
+  stage: '#5752d1'
+};
+
 const DATE_FORMAT = 'DD MMM';
 export const DashboardChart = ({
   TotalMonthlyDeploymentData,
@@ -179,7 +194,7 @@ export const DashboardChart = ({
         <CardHeader>
           <SplitItem>
             <CardTitle>
-              <Text component={TextVariants.h5}>Deployment</Text>
+              <Text component={TextVariants.h5}>Deployment Stats</Text>
             </CardTitle>
           </SplitItem>
           <SplitItem isFilled />
@@ -215,60 +230,57 @@ export const DashboardChart = ({
               {lineChartLegend.some(
                 ({ name }) => TotalMonthlyDeploymentData?.[name]?.length > 0
               ) ? (
-                <Chart
-                  ariaDesc="Number of deployments per env"
-                  ariaTitle="Number of deployments per env"
-                  containerComponent={
-                    <ChartVoronoiContainer
-                      labels={({ datum }) => `${datum.name}: ${datum.y}`}
-                      constrainToVisibleArea
-                    />
-                  }
-                  domain={{ y: [0, maxCount + (maxCount - minCount) * 0.2] }}
-                  minDomain={{ y: 0 }}
-                  domainPadding={{ x: [50, 25] }}
-                  legendData={lineChartLegend}
-                  legendOrientation="vertical"
-                  legendPosition="right"
-                  height={300}
-                  name="chart1"
+                <VictoryChart
+                  domainPadding={{ x: 50 }}
                   padding={{
                     bottom: 50,
                     left: 50,
-                    right: 150,
+                    right: 100,
                     top: 50
                   }}
-                  width={700}
-                  themeColor={ChartThemeColor.multiUnordered}
+                  width={680}
                 >
-                  <ChartAxis />
-                  <ChartAxis dependentAxis showGrid />
-
-                  <ChartGroup offset={17}>
-                    {lineChartLegend.map(({ name }) => {
-                      const chartData = (TotalMonthlyDeploymentData?.[name] || [])
-                        .sort(
-                          (a, b) =>
-                            new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf()
-                        )
-                        .map(({ count, startDate, endDate }) => {
-                          const xLabel =
-                            previous === '3' || previous === '6'
-                              ? dayjs(startDate).format('MMM')
-                              : `${dayjs(startDate).format(DATE_FORMAT)} - ${dayjs(endDate).format(
-                                  DATE_FORMAT
-                                )}`;
-                          return {
-                            name,
-                            x: xLabel,
-                            y: count
-                          };
-                        });
-
-                      return <ChartBar key={`key-${name}`} barWidth={15} data={chartData} />;
-                    })}
-                  </ChartGroup>
-                </Chart>
+                  <VictoryLegend
+                    x={590}
+                    y={40}
+                    centerTitle
+                    orientation="vertical"
+                    gutter={20}
+                    style={{ title: { fontSize: 10 } }}
+                    data={[
+                      { name: 'dev', symbol: { fill: colors.dev } },
+                      { name: 'qa', symbol: { fill: colors.qa } },
+                      { name: 'prod', symbol: { fill: colors.prod } },
+                      { name: 'stage', symbol: { fill: colors.stage } }
+                    ]}
+                  />
+                  <VictoryGroup offset={15} colorScale={['#4cb140', '#06c', '#B2A3FF', '#5752d1']}>
+                    {Object.keys(TotalMonthlyDeploymentData).map((key) => (
+                      <VictoryBar
+                        key={key}
+                        data={TotalMonthlyDeploymentData[key]}
+                        x={(datum) =>
+                          previous === '3' || previous === '6'
+                            ? dayjs(datum.startDate).format('MMM')
+                            : `${dayjs(datum.startDate).format(DATE_FORMAT)} - ${dayjs(
+                                datum.endDate
+                              ).format(DATE_FORMAT)}`
+                        }
+                        domain={{ y: [0, maxCount + (maxCount - minCount) * 0.2] }}
+                        y="count"
+                        barWidth={15}
+                        style={{ data: { fill: (colors as Record<string, string>)[key] } }}
+                        labels={({ datum }) => `${datum.env} - ${datum.count}`}
+                        labelComponent={
+                          <VictoryTooltip
+                            style={{ fontSize: 12 }}
+                            flyoutStyle={{ stroke: 'black', strokeWidth: 1, fill: 'white' }}
+                          />
+                        }
+                      />
+                    ))}
+                  </VictoryGroup>
+                </VictoryChart>
               ) : (
                 EmptyChart
               )}

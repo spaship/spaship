@@ -154,8 +154,8 @@ export const AccessControl = ({ propertyIdentifier }: { propertyIdentifier: stri
 
           {!memberList.isLoading && (memberList?.data?.length === 0 || memberList.isError) && (
             <div className="pf-u-my-lg">
-              <b>Share web property</b>
-              Give your teammates access to this web projects and start collaborating
+              <b>Share web property</b>&nbsp; Give your teammates access to this web projects and
+              start collaborating
             </div>
           )}
 

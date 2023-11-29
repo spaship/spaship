@@ -5,6 +5,8 @@ import {
   Modal,
   ModalVariant,
   PageSection,
+  Pagination,
+  PaginationVariant,
   SearchInput,
   Select,
   SelectOption,
@@ -37,7 +39,6 @@ import {
   TimesCircleIcon
 } from '@patternfly/react-icons';
 import {
-  Caption,
   ExpandableRowContent,
   TableComposable,
   Tbody,
@@ -57,7 +58,13 @@ import { Settings } from '../Settings/Settings';
 
 const URL_LENGTH_LIMIT = 100;
 const URL_LENGTH = 25;
-
+const perPageOptions = [
+  { title: '5', value: 5 },
+  { title: '10', value: 10 },
+  { title: '15', value: 15 },
+  { title: '20', value: 20 },
+  { title: '50', value: 50 }
+];
 export const WebPropertyDetailPage = (): JSX.Element => {
   const { query } = useRouter();
   const initialTab = query.initialTab as string;
@@ -80,6 +87,8 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const countOfSpas = useGetSPAProperties(propertyIdentifier, '');
   const isCountOfSpasListEmpty = Object.keys(countOfSpas).length === 0;
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['createSSRDeployment'] as const);
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(5);
 
   useEffect(() => {
     if (spaProperties.isError || webProperties.isError) {
@@ -100,6 +109,24 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   const removeValues = () => {
     setFilterByEnv('' as string);
   };
+  const onPageSet = (_: any, pageNumber: number) => {
+    setPage(pageNumber);
+  };
+  const onPerPageSelect = (
+    _event: React.MouseEvent | React.KeyboardEvent | MouseEvent,
+    newPerPage: number,
+    newPage: number
+  ) => {
+    setPerPage(newPerPage);
+    setPage(newPage);
+  };
+
+  const startIdx = (page - 1) * perPage;
+  const endIdx = startIdx + perPage;
+
+  const paginatedData = spaPropertyKeys
+    .filter((el) => el.toLowerCase().includes(debouncedSearchTerm))
+    ?.slice(startIdx, endIdx);
 
   return (
     <>
@@ -143,8 +170,8 @@ export const WebPropertyDetailPage = (): JSX.Element => {
               </>
             ) : (
               <>
-                <div className="pf-u-w-70 pf-u-mb-lg pf-u-mt-md">
-                  <Split hasGutter className="pf-u-mb-md">
+                <div className="pf-u-w-70  pf-u-mt-md">
+                  <Split hasGutter>
                     <SplitItem>
                       <Button
                         onClick={() => handlePopUpOpen('createSSRDeployment')}
@@ -249,9 +276,26 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                 {spaProperties.isSuccess && isSpaPropertyListEmpty ? (
                   <EmptyInfo propertyIdentifier={propertyIdentifier} />
                 ) : (
-                  <TableComposable aria-label="spa-property-list">
-                    <>
-                      <Caption>SPA&apos;s DEPLOYED</Caption>
+                  <>
+                    <Split>
+                      <SplitItem isFilled>
+                        <Pagination
+                          itemCount={
+                            spaPropertyKeys.filter((el) =>
+                              el.toLowerCase().includes(debouncedSearchTerm)
+                            ).length || 0
+                          }
+                          widgetId="bottom-example"
+                          perPage={perPage}
+                          page={page}
+                          perPageOptions={perPageOptions}
+                          variant={PaginationVariant.top}
+                          onSetPage={onPageSet}
+                          onPerPageSelect={onPerPageSelect}
+                        />
+                      </SplitItem>
+                    </Split>
+                    <TableComposable aria-label="spa-property-list">
                       <Thead noWrap>
                         <Tr>
                           <Th />
@@ -260,17 +304,13 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                           <Th>Environments</Th>
                         </Tr>
                       </Thead>
-                    </>
 
-                    {(spaProperties.isLoading && webProperties.isLoading) ||
-                    (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
-                      <TableRowSkeleton rows={3} columns={4} />
-                    ) : (
-                      spaProperties.isSuccess &&
-                      webPropertiesKeys &&
-                      spaPropertyKeys
-                        .filter((el) => el.toLowerCase().includes(debouncedSearchTerm))
-                        .map((identifier, rowIndex) => (
+                      {(spaProperties.isLoading && webProperties.isLoading) ||
+                      (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
+                        <TableRowSkeleton rows={3} columns={4} />
+                      ) : (
+                        spaProperties.isSuccess &&
+                        paginatedData.map((identifier, rowIndex) => (
                           <Tbody isExpanded={Boolean(isRowExpanded?.[identifier])} key={identifier}>
                             <Tr isStriped={Boolean(rowIndex % 2)}>
                               <Td
@@ -507,8 +547,9 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                             </Tr>
                           </Tbody>
                         ))
-                    )}
-                  </TableComposable>
+                      )}
+                    </TableComposable>
+                  </>
                 )}
               </>
             )}

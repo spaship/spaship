@@ -319,7 +319,7 @@ export const ContainerizedDeployment = () => {
               Environments
             </Th>
             <Th modifier="wrap" width={15}>
-              Ref
+              Reference
             </Th>
             <Th modifier="wrap" width={15}>
               Path

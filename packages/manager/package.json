@@ -70,6 +70,7 @@
     "react-intersection-observer": "^9.4.1",
     "simplebar": "^5.3.9",
     "simplebar-react": "^2.4.3",
+    "victory": "^36.6.12",
     "victory-zoom-container": "^36.6.8",
     "yup": "0.32.11"
   },
