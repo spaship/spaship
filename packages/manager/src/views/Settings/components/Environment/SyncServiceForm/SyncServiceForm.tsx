@@ -74,6 +74,7 @@ export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JS
             fieldId="select-env"
             validated={error ? 'error' : 'default'}
             helperTextInvalid={error?.message}
+            isRequired
           >
             <FormSelect
               label="Select Environment"
@@ -102,6 +103,7 @@ export const SyncServiceForm = ({ env, onClose, propertyIdentifier }: Props): JS
             fieldId="sync-config"
             validated={error ? 'error' : 'default'}
             helperTextInvalid={error?.message}
+            isRequired
           >
             <TextArea
               style={{ minHeight: '16rem' }}
