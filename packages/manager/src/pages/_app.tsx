@@ -38,9 +38,11 @@ const queryClient = new QueryClient({
           signOut({ redirect: false, callbackUrl: pageLinks.loginPage })
             .then((data) => {
               deleteOrchestratorAuthorizationHeader();
+              // eslint-disable-next-line no-console
               console.error('data', data.url);
             })
             .catch((e) => {
+              // eslint-disable-next-line no-console
               console.error('Unauthorized request', e);
             });
         }
