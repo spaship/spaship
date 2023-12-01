@@ -16,17 +16,17 @@ export const Feedback = () => {
       loadOpcFeedback();
 
       feedback.addEventListener('opc-feedback:submit', async (event: any) => {
-        const eventData = { ...event.detail.data };
-        eventData.stackInfo.path = window.location.pathname;
-        const username = session?.user?.email ? session.user.email.split('@')[0] : '';
+        const stackInfoData = { ...event.detail.data.stackInfo };
+        stackInfoData.path = window.location.pathname;
+        const username = session?.user?.email ? session?.user?.email.split('@')[0] : '';
         const variables: any = {
           projectId: 'SPAship',
-          summary: eventData.detail.data.summary,
-          experience: eventData.detail.data.experience,
-          category: eventData.detail.data.category,
-          stackInfo: eventData.detail.data.stackInfo,
+          summary: event.detail.data.summary,
+          experience: event.detail.data.experience,
+          category: event.detail.data.category,
+          stackInfo: stackInfoData,
           userId: `user:redhat/${username}`,
-          error: eventData.detail.data.error
+          error: event.detail.data.error
         };
 
         try {
