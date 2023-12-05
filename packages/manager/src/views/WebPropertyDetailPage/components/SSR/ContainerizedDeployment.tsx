@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 import { TableRowSkeleton } from '@app/components';
-import { usePopUp, useToggle } from '@app/hooks';
+import { usePopUp } from '@app/hooks';
 import { useListOfPods } from '@app/services/appLogs';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
@@ -23,9 +23,6 @@ import {
   ModalVariant,
   Pagination,
   PaginationVariant,
-  Select,
-  SelectVariant,
-  SelectOption,
   Spinner,
   Split,
   SplitItem,
@@ -59,15 +56,12 @@ const perPageOptions = [
   { title: '20', value: 20 },
   { title: '50', value: 50 }
 ];
-
 export const ContainerizedDeployment = () => {
   const { query } = useRouter();
   const propertyIdentifier = query.propertyIdentifier as string;
   const spaProperty = query.spaProperty as string;
   const createSsrSpaProperty = useAddSsrSpaProperty();
-  const [isFilterOpen, setIsFilterOpen] = useToggle();
-  const [filterByEnv, setFilterByEnv] = useState('');
-  const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, filterByEnv);
+  const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, '');
   const containerisedDeploymentData = spaProperties?.data?.[spaProperty]?.filter(
     (item) => item.isContainerized === true
   );
@@ -94,10 +88,6 @@ export const ContainerizedDeployment = () => {
     config: {},
     port: 3000
   });
-  const webPropertiesKeys = Object.keys(webProperties.data || {});
-  const removeValues = () => {
-    setFilterByEnv('' as string);
-  };
   const [configureData, setConfigureData] = useState<TDataWorkflow | TDataContainerized>({
     propertyIdentifier: '',
     name: '',
@@ -296,279 +286,228 @@ export const ContainerizedDeployment = () => {
       <Title headingLevel="h4" size="lg">
         No Containerized Deployment exists.
       </Title>
-      <EmptyStateBody>Please create a deployment to view them here</EmptyStateBody>
+      <EmptyStateBody>Please create an deployment to view them here</EmptyStateBody>
     </EmptyState>
   ) : (
-    <TableComposable aria-label="spa-property-list" variant="compact" isStriped>
-      <Thead noWrap>
-        <Tr>
-          <Th modifier="wrap" width={15}>
-            SPA Name
-          </Th>
-          <Th modifier="wrap" width={15}>
-            Environments
-          </Th>
-          <Th modifier="wrap" width={15}>
-            Ref
-          </Th>
-          <Th modifier="wrap" width={15}>
-            Path
-          </Th>
-          <Th modifier="wrap" width={15}>
-            HealthCheck Path
-          </Th>
-          <Th modifier="wrap" width={25}>
-            Router URL
-          </Th>
-          <Th
-            modifier="wrap"
-            width={20}
-            style={{ justifyContent: 'space-evenly', display: 'grid' }}
-          >
-            Actions
-          </Th>
-        </Tr>
-      </Thead>
-      {(spaProperties.isLoading && webProperties.isLoading) ||
-      (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
-        <TableRowSkeleton rows={3} columns={7} />
-      ) : (
-        <Tbody>
-          {paginatedData?.map((val) => (
-            <Tr key={val.name}>
-              <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
-                {`${val?.name.slice(0, URL_LENGTH_LIMIT)} ${
-                  val?.name.length > URL_LENGTH_LIMIT ? '...' : ''
-                }`}
-              </Td>
-              <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
-                <Label
-                  key={val.env}
-                  icon={val.isGit && <GithubIcon />}
-                  color={val.isContainerized || val.isGit ? 'cyan' : 'gold'}
-                  isCompact
-                  style={{ marginRight: '8px' }}
-                >
-                  {val.env}
-                </Label>
-              </Td>
-              <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>{`${val?.ref.slice(
-                0,
-                URL_LENGTH_LIMIT
-              )} ${val?.ref.length > URL_LENGTH_LIMIT ? '...' : ''}`}</Td>
-              <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>{`${val?.path.slice(
-                0,
-                URL_LENGTH_LIMIT
-              )} ${val?.path.length > URL_LENGTH_LIMIT ? '...' : ''}`}</Td>
-              <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
-                {`${val?.healthCheckPath.slice(0, URL_LENGTH_LIMIT)} ${
-                  val?.healthCheckPath.length > URL_LENGTH_LIMIT ? '...' : ''
-                }`}
-              </Td>
-
-              <Td style={{ maxWidth: '25ch', wordWrap: 'break-word', padding: '24px 8px' }}>
-                {val?.routerUrl ? (
-                  <Td>
-                    {val?.routerUrl?.map((routerUrl: string) => (
-                      <div key={routerUrl}>
-                        {routerUrl === 'NA' ? (
-                          <Spinner isSVG diameter="30px" />
-                        ) : (
-                          <div>
-                            <Tooltip
-                              className="my-custom-tooltip"
-                              content={
-                                <div>
-                                  <a
-                                    className="text-decoration-none"
-                                    href={routerUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    {routerUrl}
-                                  </a>
-                                </div>
-                              }
-                            >
-                              <a
-                                href={routerUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{ textDecoration: 'none', marginRight: '8px' }}
-                              >
-                                {`${routerUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                                  routerUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                                }`}
-                              </a>
-                            </Tooltip>{' '}
-                            <ApplicationStatus link={routerUrl} _id={String(val._id)} />
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </Td>
-                ) : (
-                  <Td>
-                    {val?.accessUrl?.map((accessUrl: string) => (
-                      <div key={accessUrl}>
-                        {accessUrl === 'NA' ? (
-                          <Spinner isSVG diameter="30px" />
-                        ) : (
-                          <div>
-                            <Tooltip
-                              className="my-custom-tooltip"
-                              content={
-                                <div>
-                                  <a
-                                    className="text-decoration-none"
-                                    href={accessUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    {accessUrl}
-                                  </a>
-                                </div>
-                              }
-                            >
-                              <a
-                                href={accessUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{ textDecoration: 'none', marginRight: '8px' }}
-                              >
-                                {`${accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                                  accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                                }`}
-                              </a>
-                            </Tooltip>{' '}
-                            <ApplicationStatus link={accessUrl} _id={String(val._id)} />
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </Td>
-                )}
-              </Td>
-              <Td>
-                <Split hasGutter>
-                  <SplitItem isFilled>
-                    <Button
-                      variant="primary"
-                      isSmall
-                      // icon={<PencilAltIcon />}
-                      onClick={() => {
-                        handlePopUpOpen('reconfigureSsrApplication');
-                        setConfigureData(val);
-                      }}
-                    >
-                      Configure
-                    </Button>
-                  </SplitItem>
-                  <SplitItem isFilled>
-                    <Button
-                      variant="secondary"
-                      isSmall
-                      // icon={<UndoIcon />}
-                      onClick={() => {
-                        handlePopUpOpen('redeploySsrApplication');
-                        setRedeployData(val);
-                      }}
-                    >
-                      ReDeploy
-                    </Button>
-                  </SplitItem>
-                  <SplitItem isFilled>
-                    <Button
-                      variant="link"
-                      style={{ color: 'var(--pf-global--link--Color)' }}
-                      aria-expanded={isExpanded}
-                      onClick={(e) => onClick(e, val.name, val.buildName, val)}
-                    >
-                      View Logs
-                    </Button>
-                  </SplitItem>
-                </Split>
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-      )}
-    </TableComposable>
-  );
-  return (
     <>
-      <Split hasGutter className="pf-u-mb-md">
-        <SplitItem>
+      <Split>
+        <SplitItem isFilled>
           <Button onClick={() => handlePopUpOpen('createSSRDeployment')} icon={<PlusCircleIcon />}>
             Add New App
           </Button>
         </SplitItem>
-        <SplitItem isFilled>
-          <Select
-            width={300}
-            // style={{ width: '300px!important' }}
-            variant={SelectVariant.single}
-            aria-label="filter Input"
-            value="Select Environment"
-            onToggle={setIsFilterOpen.toggle}
-            onSelect={(e, value) => {
-              if (value === 'Select Environment') {
-                setFilterByEnv('' as string);
-              } else {
-                setFilterByEnv(value as string);
-              }
-
-              setIsFilterOpen.off();
-            }}
-            selections="Select Environment" // To be kept as Select
-            isOpen={isFilterOpen}
-            aria-labelledby="filter"
-          >
-            {webPropertiesKeys.map((env, index) => (
-              <SelectOption key={`${env} + ${index + 1}`} value={env} />
-            ))}
-          </Select>
+        <SplitItem>
+          <Pagination
+            itemCount={containerisedDeploymentData.length || 0}
+            widgetId="bottom-example"
+            perPage={perPage}
+            page={page}
+            perPageOptions={perPageOptions}
+            variant={PaginationVariant.top}
+            onSetPage={onPageSet}
+            onPerPageSelect={onPerPageSelect}
+          />
         </SplitItem>
-        {containerisedDeploymentData?.length ? (
-          <SplitItem>
-            <Pagination
-              itemCount={containerisedDeploymentData?.length || 0}
-              widgetId="bottom-example"
-              perPage={perPage}
-              page={page}
-              perPageOptions={perPageOptions}
-              variant={PaginationVariant.top}
-              onSetPage={onPageSet}
-              onPerPageSelect={onPerPageSelect}
-            />
-          </SplitItem>
-        ) : (
-          ''
-        )}
       </Split>
-      {filterByEnv === 'Select Environment' || filterByEnv === '' ? (
-        <p />
-      ) : (
-        <Label onClose={removeValues}>{filterByEnv}</Label>
-        // <div
-        //   style={{
-        //     backgroundColor: '#F1F1F1',
-        //     height: '40px',
-        //     width: '120px',
-        //     borderRadius: '25px',
-        //     display: 'flex',
-        //     flexDirection: 'row'
-        //   }}
-        // >
-        //   <div style={{ marginLeft: '20px', marginRight: '15px', marginTop: '7px' }}>
-        //     {filterByEnv}
-        //   </div>
-        //   <TimesCircleIcon
-        //     style={{ marginTop: '11px', marginLeft: '6px' }}
-        //     onClick={removeValues}
-        //   />
-        // </div>
-      )}
+      <TableComposable aria-label="spa-property-list" variant="compact" isStriped>
+        <Thead noWrap>
+          <Tr>
+            <Th modifier="wrap" width={15}>
+              SPA Name
+            </Th>
+            <Th modifier="wrap" width={15}>
+              Environments
+            </Th>
+            <Th modifier="wrap" width={15}>
+              Reference
+            </Th>
+            <Th modifier="wrap" width={15}>
+              Path
+            </Th>
+            <Th modifier="wrap" width={15}>
+              HealthCheck Path
+            </Th>
+            <Th modifier="wrap" width={25}>
+              Router URL
+            </Th>
+            <Th
+              modifier="wrap"
+              width={20}
+              style={{ justifyContent: 'space-evenly', display: 'grid' }}
+            >
+              Actions
+            </Th>
+          </Tr>
+        </Thead>
+        {(spaProperties.isLoading && webProperties.isLoading) ||
+        (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
+          <TableRowSkeleton rows={3} columns={7} />
+        ) : (
+          <Tbody>
+            {paginatedData?.map((val) => (
+              <Tr key={val.name}>
+                <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
+                  {`${val?.name.slice(0, URL_LENGTH_LIMIT)} ${
+                    val?.name.length > URL_LENGTH_LIMIT ? '...' : ''
+                  }`}
+                </Td>
+                <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
+                  <Label
+                    key={val.env}
+                    icon={val.isGit && <GithubIcon />}
+                    color={val.isContainerized || val.isGit ? 'cyan' : 'gold'}
+                    isCompact
+                    style={{ marginRight: '8px' }}
+                  >
+                    {val.env}
+                  </Label>
+                </Td>
+                <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>{`${val?.ref.slice(
+                  0,
+                  URL_LENGTH_LIMIT
+                )} ${val?.ref.length > URL_LENGTH_LIMIT ? '...' : ''}`}</Td>
+                <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>{`${val?.path.slice(
+                  0,
+                  URL_LENGTH_LIMIT
+                )} ${val?.path.length > URL_LENGTH_LIMIT ? '...' : ''}`}</Td>
+                <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
+                  {`${val?.healthCheckPath.slice(0, URL_LENGTH_LIMIT)} ${
+                    val?.healthCheckPath.length > URL_LENGTH_LIMIT ? '...' : ''
+                  }`}
+                </Td>
+
+                <Td style={{ maxWidth: '25ch', wordWrap: 'break-word', padding: '24px 8px' }}>
+                  {val?.routerUrl ? (
+                    <Td>
+                      {val?.routerUrl?.map((routerUrl: string) => (
+                        <div key={routerUrl}>
+                          {routerUrl === 'NA' ? (
+                            <Spinner isSVG diameter="30px" />
+                          ) : (
+                            <div>
+                              <Tooltip
+                                className="my-custom-tooltip"
+                                content={
+                                  <div>
+                                    <a
+                                      className="text-decoration-none"
+                                      href={routerUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      {routerUrl}
+                                    </a>
+                                  </div>
+                                }
+                              >
+                                <a
+                                  href={routerUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ textDecoration: 'none', marginRight: '8px' }}
+                                >
+                                  {`${routerUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                    routerUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                  }`}
+                                </a>
+                              </Tooltip>{' '}
+                              <ApplicationStatus link={routerUrl} _id={String(val._id)} />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </Td>
+                  ) : (
+                    <Td>
+                      {val?.accessUrl?.map((accessUrl: string) => (
+                        <div key={accessUrl}>
+                          {accessUrl === 'NA' ? (
+                            <Spinner isSVG diameter="30px" />
+                          ) : (
+                            <div>
+                              <Tooltip
+                                className="my-custom-tooltip"
+                                content={
+                                  <div>
+                                    <a
+                                      className="text-decoration-none"
+                                      href={accessUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      {accessUrl}
+                                    </a>
+                                  </div>
+                                }
+                              >
+                                <a
+                                  href={accessUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ textDecoration: 'none', marginRight: '8px' }}
+                                >
+                                  {`${accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                    accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                  }`}
+                                </a>
+                              </Tooltip>{' '}
+                              <ApplicationStatus link={accessUrl} _id={String(val._id)} />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </Td>
+                  )}
+                </Td>
+                <Td>
+                  <Split hasGutter>
+                    <SplitItem isFilled>
+                      <Button
+                        variant="primary"
+                        isSmall
+                        // icon={<PencilAltIcon />}
+                        onClick={() => {
+                          handlePopUpOpen('reconfigureSsrApplication');
+                          setConfigureData(val);
+                        }}
+                      >
+                        Configure
+                      </Button>
+                    </SplitItem>
+                    <SplitItem isFilled>
+                      <Button
+                        variant="secondary"
+                        isSmall
+                        // icon={<UndoIcon />}
+                        onClick={() => {
+                          handlePopUpOpen('redeploySsrApplication');
+                          setRedeployData(val);
+                        }}
+                      >
+                        ReDeploy
+                      </Button>
+                    </SplitItem>
+                    <SplitItem isFilled>
+                      <Button
+                        variant="link"
+                        style={{ color: 'var(--pf-global--link--Color)' }}
+                        aria-expanded={isExpanded}
+                        onClick={(e) => onClick(e, val.name, val.buildName, val)}
+                      >
+                        View Logs
+                      </Button>
+                    </SplitItem>
+                  </Split>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        )}
+      </TableComposable>
+    </>
+  );
+  return (
+    <>
       <Drawer position="bottom" onExpand={onExpand} isExpanded={isExpanded}>
         <DrawerContent panelContent={panelContent}>
           <DrawerContentBody style={{ overflowX: 'hidden', padding: '0px' }}>
