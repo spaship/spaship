@@ -455,7 +455,6 @@ export const ContainerizedDeployment = () => {
                     <Button
                       variant="primary"
                       isSmall
-                      // icon={<PencilAltIcon />}
                       onClick={() => {
                         handlePopUpOpen('reconfigureSsrApplication');
                         setConfigureData(val);
@@ -468,7 +467,6 @@ export const ContainerizedDeployment = () => {
                     <Button
                       variant="secondary"
                       isSmall
-                      // icon={<UndoIcon />}
                       onClick={() => {
                         handlePopUpOpen('redeploySsrApplication');
                         setRedeployData(val);
@@ -506,7 +504,6 @@ export const ContainerizedDeployment = () => {
         <SplitItem isFilled>
           <Select
             width={300}
-            // style={{ width: '300px!important' }}
             variant={SelectVariant.single}
             aria-label="filter Input"
             value="Select Environment"
@@ -550,24 +547,6 @@ export const ContainerizedDeployment = () => {
         <p />
       ) : (
         <Label onClose={removeValues}>{filterByEnv}</Label>
-        // <div
-        //   style={{
-        //     backgroundColor: '#F1F1F1',
-        //     height: '40px',
-        //     width: '120px',
-        //     borderRadius: '25px',
-        //     display: 'flex',
-        //     flexDirection: 'row'
-        //   }}
-        // >
-        //   <div style={{ marginLeft: '20px', marginRight: '15px', marginTop: '7px' }}>
-        //     {filterByEnv}
-        //   </div>
-        //   <TimesCircleIcon
-        //     style={{ marginTop: '11px', marginLeft: '6px' }}
-        //     onClick={removeValues}
-        //   />
-        // </div>
       )}
       <Drawer position="bottom" onExpand={onExpand} isExpanded={isExpanded}>
         <DrawerContent panelContent={panelContent}>
@@ -662,9 +641,6 @@ export const ContainerizedDeployment = () => {
               flag="addnew"
             />
           )}
-          {/* <Divider />
-
-      {isWorkflowSubmitted && <DeploymentProgress propertyIdentifier={propertyIdentifier} />}  */}
         </div>
       </Modal>
     </>
