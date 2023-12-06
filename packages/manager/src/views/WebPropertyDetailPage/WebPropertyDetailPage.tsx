@@ -382,7 +382,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
                                     <Thead noWrap>
                                       <Tr>
                                         <Th textCenter>Environment Name</Th>
-                                        <Th textCenter>Ref</Th>
+                                        <Th textCenter>Reference</Th>
                                         <Th textCenter>Publish Domain</Th>
                                         <Th textCenter>Router URL</Th>
                                         <Th textCenter>Updated At</Th>

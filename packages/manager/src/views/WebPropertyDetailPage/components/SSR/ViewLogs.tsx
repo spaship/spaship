@@ -87,16 +87,21 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
     });
   }, [refetch, selectedId]);
 
-  const isEmptyStateVisible =
-    (!isGit && type === 1) || !idList || idList.length === 0 || idList.includes('No Pods found');
-
+  const isEmptyStateVisible = !idList || idList.length === 0 || idList.includes('No Pods found');
+  const buildLogsforNonGitSSRDeployment = !isGit && type === 1;
   return (
     <div style={{ color: '#fff', backgroundColor: '#212427' }}>
       <div className="pf-u-mb-md pf-u-mt-md">
         {toPascalCase(type === 0 ? logType.POD : logType.BUILD)} Logs for <b>{spaName}</b>
       </div>
-
-      {isEmptyStateVisible ? (
+      {buildLogsforNonGitSSRDeployment ? (
+        <EmptyState>
+          <EmptyStateIcon icon={CubesIcon} />
+          <Title headingLevel="h4" size="lg">
+            Build logs are unavailable for SSR deployments
+          </Title>
+        </EmptyState>
+      ) : isEmptyStateVisible ? (
         <EmptyState>
           <EmptyStateIcon icon={CubesIcon} />
           <Title headingLevel="h4" size="lg">

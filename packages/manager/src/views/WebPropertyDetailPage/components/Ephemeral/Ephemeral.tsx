@@ -146,7 +146,7 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
                         <Th textCenter>Internal Access URL</Th>
                         <Th textCenter>Router URL</Th>
                         <Th textCenter>Created By</Th>
-                        <Th textCenter>Ref</Th>
+                        <Th textCenter>Reference</Th>
                       </Tr>
                     </Thead>
                     <Tbody>

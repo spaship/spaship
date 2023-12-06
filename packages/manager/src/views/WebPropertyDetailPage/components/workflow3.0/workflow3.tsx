@@ -250,9 +250,9 @@ export const Workflow3 = ({
         setStep(step + 1);
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error);
     }
-    // }
   };
 
   const handleBack = () => {

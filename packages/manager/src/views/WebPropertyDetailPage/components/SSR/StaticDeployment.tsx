@@ -80,6 +80,7 @@ export const StaticDeployment = () => {
             toast.error('Failed to autosync');
           }
         } else {
+          // eslint-disable-next-line no-console
           console.error('An error occurred:', error);
         }
       }

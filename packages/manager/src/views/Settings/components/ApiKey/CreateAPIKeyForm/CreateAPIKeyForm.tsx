@@ -120,6 +120,7 @@ export const CreateAPIKeyForm = ({ onSubmit, onClose, envs = [], token }: Props)
                 fieldId="property-env-expiry"
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
+                isRequired
               >
                 <DatePicker
                   value={!isChecked ? value : 'NA'}
