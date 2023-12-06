@@ -150,6 +150,24 @@ export class AnalyticsService {
           if (obj.env.includes(AnalyticsService.ephemeral)) obj.env = AnalyticsService.ephemeral;
           response[this.analyticsFactory.getEnv(obj.env)] = [obj];
         }
+    /* @internal
+     * send the date frame where analytical data doesn't exist
+     * to be removed once patternly issue is reosolved from the SPAship maanger
+     * */
+    for (const env of Object.keys(response)) {
+      for (const date of monthlyDateFrame) {
+        const exist = response[env].find((data) => data.startDate === date.startDate);
+        if (!exist) {
+          const tmpData = {
+            env,
+            count: 0,
+            startDate: date.startDate,
+            endDate: date.endDate
+          };
+          response[env].push(tmpData);
+        }
+      }
+    }
     return response;
   }
 
