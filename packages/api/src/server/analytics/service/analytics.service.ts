@@ -154,7 +154,7 @@ export class AnalyticsService {
      * send the date frame where analytical data doesn't exist
      * to be removed once patternly issue is reosolved from the SPAship maanger
      * */
-    for (const env of Object.keys(response)) {
+    for (const env of Object.keys(response))
       for (const date of monthlyDateFrame) {
         const exist = response[env].find((data) => data.startDate === date.startDate);
         if (!exist) {
@@ -167,7 +167,6 @@ export class AnalyticsService {
           response[env].push(tmpData);
         }
       }
-    }
     return response;
   }
 
