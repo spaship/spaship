@@ -55,9 +55,11 @@ export class ApplicationService {
   async getlighthouseReport(propertyIdentifier: string, env: string, identifier: string, buildId: string): Promise<any> {
     const propertyDetails = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
     if (!propertyDetails) this.exceptionService.badRequestException({ message: 'No Property Found.' });
+    this.logger.log("propertyDetails - check", JSON.stringify(propertyDetails));
     if (!propertyDetails.lighthouseDetails)
       this.exceptionService.badRequestException({ message: 'This property is not registered with lighthouse.' });
     let reposne;
+    this.logger.log("propertyDetails", JSON.stringify(propertyDetails));
     if (buildId) {
       try {
         reposne = await this.applicationFactory.getLighthouseReportDetails(propertyDetails.lighthouseDetails['id'], buildId);
@@ -82,13 +84,17 @@ export class ApplicationService {
     const application = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized, isGit }))[0];
     if (!application) this.exceptionService.badRequestException({ message: 'Application not found' });
     const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
+    console.log(property);
+    this.logger.log("propertyDetails - check", JSON.stringify(property));
     if (!property.lighthouseDetails) {
+      this.logger.log("propertyDetails - check", 'checking registerLighthouse');
       // @internal if the property is not registered with the lighthouse then we'll register it with the lighthouse report portal
       const result = await this.propertyService.registerLighthouse(property.identifier);
       property.lighthouseDetails = result.lighthouseDetails;
     }
     try {
       // @internal as both of the deployment will be identical so we'll generate the report for one only
+      this.logger.log("propertyDetails - checkApplicationStatus", application.routerUrl[0]);
       await this.checkApplicationStatus(application.routerUrl[0]);
     } catch (error) {
       this.exceptionService.badRequestException({ message: 'Cannot generate the Lighthouse Report, Application is currently down.' });
