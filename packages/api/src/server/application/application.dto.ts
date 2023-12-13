@@ -391,3 +391,61 @@ export class GitCommentRequest {
 
   source: string;
 }
+
+export class LighthouseRequestDTO {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  propertyIdentifier: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  identifier: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  env: string;
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsNotEmpty()
+  isGit: boolean;
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsNotEmpty()
+  isContainerized: boolean;
+
+  createdBy: string;
+}
+
+export class LighthouseReportResponse {
+  @ApiProperty()
+  lhProjectId: string;
+
+  @ApiProperty()
+  lhBuildId: string;
+
+  @ApiProperty()
+  ciBuildURL: string;
+
+  @ApiProperty()
+  propertyIdentifier: string;
+
+  @ApiProperty()
+  identifier: string;
+
+  @ApiProperty()
+  env: string;
+
+  @ApiProperty()
+  report: string;
+
+  @ApiProperty()
+  createdAt: string;
+
+  @ApiProperty()
+  updatedAt: string;
+}

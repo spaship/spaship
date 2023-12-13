@@ -11,6 +11,7 @@ import {
   DIRECTORY_CONFIGURATION,
   EPHEMERAL_ENV,
   GIT_BROKER_DETAILS,
+  LIGHTHOUSE_DETAILS,
   MESSAGE
 } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/logger.service';
@@ -28,6 +29,7 @@ import {
   GitDeploymentRequestDTO,
   GitValidateResponse,
   GitValidationRequestDTO,
+  LighthouseReportResponse,
   UpdateConfigOrSecretRequest
 } from 'src/server/application/application.dto';
 import { Application } from 'src/server/application/application.entity';
@@ -981,5 +983,80 @@ export class ApplicationFactory {
       }
     });
     return deletedKeys;
+  }
+
+  // @internal Get the List of the Pods from the Operator
+  async generateLighthouseReport(request: FormData): Promise<String[]> {
+    if (!request) this.exceptionService.badRequestException({ message: 'Please provide the request object' });
+    let response;
+    try {
+      response = await this.httpService.axiosRef.post(LIGHTHOUSE_DETAILS.ciUrl, request, {
+        maxBodyLength: Infinity
+      });
+    } catch (err) {
+      this.logger.error('generateLighthouseReport', err);
+      this.exceptionService.badRequestException({ message: `Report Generation Failed.` });
+    }
+    return response?.data || [];
+  }
+
+  // @internal Get the list of the build for an application
+  async getLighthouseReportList(projectId: string, identifier: string): Promise<String[]> {
+    if (!projectId) this.exceptionService.badRequestException({ message: 'Please provide the projectId' });
+    if (!identifier) this.exceptionService.badRequestException({ message: 'Please provide the identifier' });
+    let response;
+    try {
+      response = await this.httpService.axiosRef.get(`${LIGHTHOUSE_DETAILS.hostUrl}/v1/projects/${projectId}/builds?branch=${identifier}`);
+    } catch (err) {
+      this.logger.error('getLighthouseReportList', err);
+      this.exceptionService.badRequestException({ message: `Error in fetching report Failed.` });
+    }
+    return response.data || [];
+  }
+
+  // @internal Get the report details of the build for an application
+  async getLighthouseReportDetails(projectId: string, buildId: string): Promise<String[]> {
+    if (!projectId) this.exceptionService.badRequestException({ message: 'Please provide the projectId' });
+    if (!buildId) this.exceptionService.badRequestException({ message: 'Please provide the buildId' });
+    let response;
+    try {
+      response = await this.httpService.axiosRef.get(`${LIGHTHOUSE_DETAILS.hostUrl}/v1/projects/${projectId}/builds/${buildId}/runs`);
+    } catch (err) {
+      this.logger.error('getLighthouseReportDetails', err);
+      this.exceptionService.badRequestException({ message: `Error in fetching report Failed.` });
+    }
+    return response.data || [];
+  }
+
+  // @internal Create lighthouse request for the pipeline trigger
+  createLighthouseRequest(identifier: string, env: string, url: string, serverToken: string): FormData {
+    const formData: any = new FormData();
+    formData.append('token', LIGHTHOUSE_DETAILS.ciToken);
+    formData.append('ref', 'main');
+    formData.append('variables[LH_HOST]', LIGHTHOUSE_DETAILS.hostUrl);
+    formData.append('variables[URL]', url);
+    formData.append('variables[IDENTIFIER]', `${identifier}_${env}`);
+    formData.append('variables[SERVER_BASE_URL]', LIGHTHOUSE_DETAILS.hostUrl);
+    formData.append('variables[SERVER_TOKEN]', serverToken);
+    return formData;
+  }
+
+  // @internal Build the reponse for the lighthouse
+  buildLighthouseReportResponse(reposne, propertyIdentifier: string, identifier: string, env: string): LighthouseReportResponse[] {
+    const reportDetails = [];
+    for (const report of reposne) {
+      const lhReport = new LighthouseReportResponse();
+      lhReport.lhProjectId = report.projectId;
+      lhReport.lhBuildId = report.buildId || report.id;
+      lhReport.ciBuildURL = report.externalBuildUrl;
+      lhReport.propertyIdentifier = propertyIdentifier;
+      lhReport.identifier = identifier;
+      lhReport.env = env;
+      lhReport.report = report.lhr;
+      lhReport.createdAt = report.createdAt;
+      lhReport.updatedAt = report.updatedAt;
+      reportDetails.push(lhReport);
+    }
+    return reportDetails;
   }
 }

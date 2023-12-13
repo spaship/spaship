@@ -53,6 +53,8 @@ export class Application {
 
   buildName: object[];
 
+  pipelineDetails: object[];
+
   dockerFileName: string;
 
   autoSync: boolean;

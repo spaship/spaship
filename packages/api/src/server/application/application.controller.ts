@@ -11,7 +11,9 @@ import {
   DeleteApplicationSyncDTO,
   EnableApplicationSyncDTO,
   GitDeploymentRequestDTO,
-  GitValidationRequestDTO
+  GitValidationRequestDTO,
+  LighthouseReportResponse,
+  LighthouseRequestDTO
 } from './application.dto';
 import { Application } from './application.entity';
 import { ApplicationFactory } from './service/application.factory';
@@ -151,5 +153,30 @@ export class ApplicationController {
   @ApiOperation({ description: 'Delete the Specific Application.' })
   async deleteApplication(@Body() deleteApplicationSyncDTO: DeleteApplicationSyncDTO): Promise<Application> {
     return this.applicationService.deleteApplication(deleteApplicationSyncDTO);
+  }
+
+  @Get('/lighthouse/:propertyIdentifier/:env/:identifier')
+  @ApiOperation({ description: 'Get the List of the Pods.' })
+  @ApiCreatedResponse({ status: 201, description: 'Lighthouse Report Generated successfully.', type: LighthouseReportResponse })
+  async getLighthouseReports(
+    @Param('propertyIdentifier') propertyIdentifier: string,
+    @Param('env') env: string,
+    @Param('identifier') identifier: string,
+    @Query('buildId') buildId: string
+  ): Promise<any> {
+    return this.applicationService.getlighthouseReport(propertyIdentifier, env, identifier, buildId);
+  }
+
+  @Post('/lighthouse')
+  @ApiOperation({ description: 'Get the List of the Pods.' })
+  async generateLighthouseReport(@Body() lighthouseRequestDTO: LighthouseRequestDTO): Promise<any> {
+    return this.applicationService.generateLighthouseReport(
+      lighthouseRequestDTO.propertyIdentifier,
+      lighthouseRequestDTO.env,
+      lighthouseRequestDTO.identifier,
+      lighthouseRequestDTO.isContainerized,
+      lighthouseRequestDTO.isGit,
+      lighthouseRequestDTO.createdBy
+    );
   }
 }
