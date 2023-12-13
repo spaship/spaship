@@ -93,8 +93,9 @@ export class ApplicationService {
     } catch (error) {
       this.exceptionService.badRequestException({ message: 'Cannot generate the Lighthouse Report, Application is currently down.' });
     }
+    const lhIdentifier = this.applicationFactory.generateLighthouseIdentifier(identifier, env, isContainerized, isGit);
     const lighthouseRequest = this.applicationFactory.createLighthouseRequest(
-      application.identifier,
+      lhIdentifier,
       application.env,
       application.routerUrl[0],
       property.lighthouseDetails['token']

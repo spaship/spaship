@@ -48,7 +48,7 @@ export class ApplicationFactory {
     private readonly logger: LoggerService,
     private readonly httpService: HttpService,
     private readonly exceptionService: ExceptionsService
-  ) {}
+  ) { }
 
   private static readonly hexadecimalCode: RegExp = /%[0-9a-zA-Z]{2}/g;
 
@@ -217,9 +217,8 @@ export class ApplicationFactory {
     const { hostname } = new URL(baseUrl);
     const appPrefix = hostname.split('.')[4];
     const domain = hostname.split('.').slice(1).join('.');
-    const generatedAccessURL = `${protocol}://${appPrefix}.${
-      DEPLOYMENT_DETAILS.namespace
-    }--${propertyIdentifier}.${propertyIdentifier}.${env}.${domain}${this.getGeneratedPath(application.path)}`;
+    const generatedAccessURL = `${protocol}://${appPrefix}.${DEPLOYMENT_DETAILS.namespace
+      }--${propertyIdentifier}.${propertyIdentifier}.${env}.${domain}${this.getGeneratedPath(application.path)}`;
     return generatedAccessURL;
   }
 
@@ -1035,10 +1034,18 @@ export class ApplicationFactory {
     formData.append('ref', 'main');
     formData.append('variables[LH_HOST]', LIGHTHOUSE_DETAILS.hostUrl);
     formData.append('variables[URL]', url);
-    formData.append('variables[IDENTIFIER]', `${identifier}_${env}`);
+    formData.append('variables[IDENTIFIER]', identifier);
     formData.append('variables[SERVER_BASE_URL]', LIGHTHOUSE_DETAILS.hostUrl);
     formData.append('variables[SERVER_TOKEN]', serverToken);
     return formData;
+  }
+
+  generateLighthouseIdentifier(identifier: string, env: string, isContainerized: boolean, isGit: boolean): string {
+    if (!isContainerized && !isGit)
+      return `${identifier}_${env}_static`;
+    else if (isContainerized && isGit)
+      return `${identifier}_${env}_git`;
+    return `${identifier}_${env}_containerized`;
   }
 
   // @internal Build the reponse for the lighthouse
