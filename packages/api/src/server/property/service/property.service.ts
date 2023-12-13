@@ -62,6 +62,7 @@ export class PropertyService {
     response.cmdbCode = propertyResponse.cmdbCode;
     response.severity = propertyResponse.severity;
     response.env = environmentResponse || [];
+    response.lighthouseDetails = propertyResponse.lighthouseDetails || {};
     return response;
   }
 
@@ -88,6 +89,11 @@ export class PropertyService {
     await this.environmentFactory.initializeEnvironment(property, environment);
     await this.permissionService.provideInitialAccess(property.identifier, createPropertyDto.createdBy, createPropertyDto.creatorName);
     await this.analyticsService.createActivityStream(createPropertyDto.identifier, Action.PROPERTY_CREATED);
+    try {
+      await this.registerLighthouse(createPropertyDto.identifier);
+    } catch (e) {
+      this.logger.error('registerLighthouse', 'Skipping the lighthouse registration.');
+    }
     await this.analyticsService.createActivityStream(createPropertyDto.identifier, Action.ENV_CREATED, createPropertyDto.env);
     return this.getPropertyDetails(createPropertyDto.identifier);
   }
@@ -149,5 +155,36 @@ export class PropertyService {
       this.exceptionService.internalServerErrorException(err);
     }
     return this.getPropertyDetails(createPropertyDto.identifier);
+  }
+
+  async registerLighthouse(identifier: string) {
+    const propertyDetails = (await this.dataServices.property.getByAny({ identifier }))[0];
+    if (!propertyDetails) this.exceptionService.badRequestException({ message: 'No Property Found.' });
+    if (propertyDetails.lighthouseDetails)
+      this.exceptionService.badRequestException({ message: 'This property is already registered in the lighthouse.' });
+    let response;
+    try {
+      response = await this.propertyFactory.registerLighthouse({ name: identifier });
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err.message);
+      return;
+    }
+    propertyDetails.lighthouseDetails = response;
+    try {
+      await this.dataServices.property.updateOne({ identifier: propertyDetails.identifier }, propertyDetails);
+      await this.analyticsService.createActivityStream(
+        propertyDetails.identifier,
+        Action.PROPERTY_UPDATED,
+        'NA',
+        'NA',
+        `${propertyDetails.identifier} registered for lighthouse`,
+        propertyDetails.createdBy,
+        Source.MANAGER,
+        JSON.stringify(propertyDetails)
+      );
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err);
+    }
+    return this.getPropertyDetails(propertyDetails.identifier);
   }
 }

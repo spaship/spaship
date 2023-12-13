@@ -213,3 +213,10 @@ export enum STATUS {
 }
 
 export const CUSTOM_HEADER = { 'User-Agent': process.env.SPASHIP_HEADER__USER_AGENT };
+
+
+export const LIGHTHOUSE_DETAILS = {
+  hostUrl: process.env.SPASHIP_LIGHTHOUSE_HOST_URL,
+  ciUrl: process.env.SPASHIP_LIGHTHOUSE_CI_URL,
+  ciToken: process.env.SPASHIP_LIGHTHOUSE_CI_TOKEN
+};

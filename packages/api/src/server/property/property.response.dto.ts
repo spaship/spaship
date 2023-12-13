@@ -24,5 +24,8 @@ export class PropertyResponseDto {
   env: Environment[];
 
   @ApiProperty()
+  lighthouseDetails: object;
+
+  @ApiProperty()
   createdBy: string;
 }

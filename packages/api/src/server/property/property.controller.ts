@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query, UseGuards, Param } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from '../auth/auth.guard';
 import { CreatePropertyDto } from './property.dto';
@@ -28,5 +28,11 @@ export class PropertyController {
   @ApiOperation({ description: 'Update a Property.' })
   async updateProperty(@Body() propertyDto: CreatePropertyDto): Promise<PropertyResponseDto> {
     return this.propertyService.updateProperty(propertyDto);
+  }
+
+  @Post('/:identifier/lighthouse')
+  @ApiOperation({ description: 'Get the Build, Deployment & Pod logs.' })
+  async registerLighthouse(@Param('identifier') identifier: string): Promise<PropertyResponseDto> {
+    return this.propertyService.registerLighthouse(identifier);
   }
 }

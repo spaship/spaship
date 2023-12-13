@@ -23,6 +23,9 @@ export class Property {
   @Prop({})
   deploymentRecord: DeploymentRecord[];
 
+  @Prop({ type: 'object' })
+  lighthouseDetails: object;
+
   @Prop({ required: true })
   createdBy: string;
 

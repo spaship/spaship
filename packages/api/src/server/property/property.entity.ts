@@ -11,6 +11,8 @@ export class Property {
 
   severity: string;
 
+  lighthouseDetails: object;
+
   createdBy: string;
 
   updatedBy: string;
