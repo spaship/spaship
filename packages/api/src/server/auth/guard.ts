@@ -29,7 +29,7 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
       /* eslint-disable prefer-destructuring */
       bearerToken = context.getArgs()[0].headers.authorization.split(' ')[1];
     } catch (err) {
-      this.exceptionsService.UnauthorizedException({ message: 'Authentication token missing.' });
+      this.exceptionsService.badRequestException({ message: 'Authentication token missing.' });
     }
     try {
       // @internal Checking that token is JWT or API Key
@@ -97,7 +97,7 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
         context.getArgs()[0].query.createdBy = response.createdBy;
         const { expirationDate } = response;
         if (expirationDate && expirationDate.getTime() <= new Date().getTime())
-          this.exceptionsService.UnauthorizedException({ message: 'API Key is expired.' });
+          this.exceptionsService.badRequestException({ message: 'API Key is expired.' });
         return true;
       }
       this.exceptionsService.UnauthorizedException({ message: 'Invalid API Key.' });
@@ -120,7 +120,7 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
       if (response) {
         const { expirationDate } = response;
         if (expirationDate && expirationDate.getTime() <= new Date().getTime())
-          this.exceptionsService.UnauthorizedException({ message: 'API Key is expired.' });
+          this.exceptionsService.badRequestException({ message: 'API Key is expired.' });
         return true;
       }
       this.exceptionsService.UnauthorizedException({ message: 'Invalid API Key.' });
@@ -135,7 +135,7 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
     if (response) {
       const { expirationDate } = response;
       if (expirationDate && expirationDate.getTime() <= new Date().getTime())
-        this.exceptionsService.UnauthorizedException({ message: 'API Key is expired.' });
+        this.exceptionsService.badRequestException({ message: 'API Key is expired.' });
       return true;
     }
     this.exceptionsService.UnauthorizedException({ message: 'Invalid API Key.' });

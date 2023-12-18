@@ -1,9 +1,8 @@
-import { Injectable } from '@nestjs/common';
-
-import { LoggerService } from 'src/configuration/logger/service';
 import { HttpService } from '@nestjs/axios';
-import { ExceptionsService } from 'src/server/exceptions/service';
+import { Injectable } from '@nestjs/common';
 import { LIGHTHOUSE_DETAILS } from 'src/configuration';
+import { LoggerService } from 'src/configuration/logger/service';
+import { ExceptionsService } from 'src/server/exceptions/service';
 import { LighthouseResponseDTO } from '../dto';
 
 @Injectable()
@@ -107,7 +106,7 @@ export class LighthouseFactory {
 
   generateLighthouseIdentifier(identifier: string, env: string, isContainerized: boolean, isGit: boolean): string {
     if (!isContainerized && !isGit) return `${identifier}_${env}_static`;
-    else if (isContainerized && isGit) return `${identifier}_${env}_git`;
+    if (isContainerized && isGit) return `${identifier}_${env}_git`;
     return `${identifier}_${env}_containerized`;
   }
 }

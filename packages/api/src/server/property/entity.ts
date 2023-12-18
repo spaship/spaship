@@ -11,7 +11,7 @@ export class Property {
 
   severity: string;
 
-  lighthouseDetails: object;
+  lighthouseDetails: LighthouseDetails;
 
   createdBy: string;
 
@@ -32,4 +32,10 @@ export enum Source {
   OPERATOR = 'OPERATOR',
   GITLAB = 'https://gitlab',
   GITHUB = 'https://github.com'
+}
+
+export class LighthouseDetails {
+  id: string;
+
+  token: string;
 }

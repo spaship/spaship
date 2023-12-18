@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from 'src/server/auth/guard';
-import { LighthouseResponseDTO, LighthouseRequestDTO } from './dto';
+import { LighthouseRequestDTO, LighthouseResponseDTO } from './dto';
 import { LighthouseService } from './service';
 
 @Controller('lighthouse')

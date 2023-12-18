@@ -3,6 +3,7 @@ import { LoggerService } from 'src/configuration/logger/service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { Application } from 'src/server/application/entity';
 import { ExceptionsService } from 'src/server/exceptions/service';
+import { Property } from 'src/server/property/entity';
 import { LighthouseFactory } from './factory';
 
 @Injectable()
@@ -12,9 +13,9 @@ export class LighthouseService {
     private readonly logger: LoggerService,
     private readonly exceptionService: ExceptionsService,
     private readonly lighthouseFactory: LighthouseFactory
-  ) {}
+  ) { }
 
-  async registerLighthouse(identifier: string) {
+  async registerLighthouse(identifier: string): Promise<Property> {
     const propertyDetails = (await this.dataServices.property.getByAny({ identifier }))[0];
     if (!propertyDetails) this.exceptionService.badRequestException({ message: 'No Property Found.' });
     if (propertyDetails.lighthouseDetails)
@@ -24,7 +25,6 @@ export class LighthouseService {
       response = await this.lighthouseFactory.registerLighthouse({ name: identifier });
     } catch (err) {
       this.exceptionService.internalServerErrorException(err.message);
-      return;
     }
     propertyDetails.lighthouseDetails = response;
     try {
@@ -60,7 +60,7 @@ export class LighthouseService {
       lhIdentifier,
       application.env,
       application.routerUrl[0],
-      property.lighthouseDetails['token']
+      property.lighthouseDetails.token
     );
     try {
       const response = await this.lighthouseFactory.generateLighthouseReport(lighthouseRequest);
@@ -82,7 +82,7 @@ export class LighthouseService {
     this.logger.log('propertyDetails', JSON.stringify(propertyDetails));
     if (buildId) {
       try {
-        reposne = await this.lighthouseFactory.getLighthouseReportDetails(propertyDetails.lighthouseDetails['id'], buildId);
+        reposne = await this.lighthouseFactory.getLighthouseReportDetails(propertyDetails.lighthouseDetails.id, buildId);
         return this.lighthouseFactory.buildLighthouseReportResponse(reposne, propertyIdentifier, identifier, env);
       } catch (error) {
         this.logger.error('getlighthouseReportDetails', error);
@@ -90,11 +90,11 @@ export class LighthouseService {
       }
     }
     try {
-      reposne = await this.lighthouseFactory.getLighthouseReportList(propertyDetails.lighthouseDetails['id'], `${identifier}_${env}`);
-      return this.lighthouseFactory.buildLighthouseReportResponse(reposne, propertyIdentifier, identifier, env);
+      reposne = await this.lighthouseFactory.getLighthouseReportList(propertyDetails.lighthouseDetails.id, `${identifier}_${env}`);
     } catch (error) {
       this.logger.error('getlighthouseReportList', error);
       this.exceptionService.internalServerErrorException(error);
     }
+    return this.lighthouseFactory.buildLighthouseReportResponse(reposne, propertyIdentifier, identifier, env);
   }
 }

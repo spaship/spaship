@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { DeploymentRecord } from 'src/server/property/entity';
+import { DeploymentRecord, LighthouseDetails } from 'src/server/property/entity';
 
 export type PropertyDocument = Property & Document;
 
@@ -23,8 +23,8 @@ export class Property {
   @Prop({})
   deploymentRecord: DeploymentRecord[];
 
-  @Prop({ type: 'object' })
-  lighthouseDetails: object;
+  @Prop({})
+  lighthouseDetails: LighthouseDetails;
 
   @Prop({ required: true })
   createdBy: string;
