@@ -33,6 +33,8 @@ import { HealthController } from './server/health/controller';
 import { HealthModule } from './server/health/service/module';
 import { CMDBModule } from './server/sot/cmdb/service/module';
 import { CMDBController } from './server/sot/cmdb/controller';
+import { LighthouseModule } from './server/lighthouse/service/module';
+import { LighthouseController } from './server/lighthouse/controller';
 
 @Module({
   imports: [
@@ -55,7 +57,8 @@ import { CMDBController } from './server/sot/cmdb/controller';
     PermissionModule,
     DocumentationModule,
     HealthModule,
-    CMDBModule
+    CMDBModule,
+    LighthouseModule
   ],
   controllers: [
     ApikeyController,
@@ -71,7 +74,8 @@ import { CMDBController } from './server/sot/cmdb/controller';
     PermissionController,
     DocumentationController,
     HealthController,
-    CMDBController
+    CMDBController,
+    LighthouseController
   ],
   providers: []
 })
