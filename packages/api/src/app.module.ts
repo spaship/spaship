@@ -18,7 +18,7 @@ import { EnvironmentModule } from './server/environment/service/module';
 import { EnvironmentController } from './server/environment/controller';
 import { AgendaModule } from './server/agenda/service/module';
 import { WebhookModule } from './server/webhook/service/module';
-import { WebhookController } from './server/webhook/service/controller';
+import { WebhookController } from './server/webhook/controller';
 import { RoverModule } from './server/sot/rover/service/module';
 import { RoverController } from './server/sot/rover/controller';
 import { AuthActionLookupModule } from './server/auth-action-lookup/service/module';

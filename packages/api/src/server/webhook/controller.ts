@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from 'src/server/auth/guard';
-import { CreateWebhookDto, UpdateWebhookDto } from '../request.dto';
-import { Webhook } from '../entity';
-import { WebhookService } from '.';
+import { CreateWebhookDto, UpdateWebhookDto } from './request.dto';
+import { Webhook } from './entity';
+import { WebhookService } from './service';
 
 @Controller('webhook')
 @ApiTags('Webhook')
