@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Action, Props } from 'src/server/analytics/activity-stream.entity';
+import { Action, Props } from 'src/server/analytics/entity';
 
 export type ActivityStreamDocument = ActivityStream & Document;
 

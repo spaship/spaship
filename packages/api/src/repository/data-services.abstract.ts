@@ -1,16 +1,16 @@
-import { ActivityStream } from 'src/server/analytics/activity-stream.entity';
-import { AuthActionLookup } from 'src/server/auth-action-lookup/auth-actions-lookup.entity';
-import { Documentation } from 'src/server/document/documentation.entity';
-import { Permission } from 'src/server/permission/permission.entity';
-import { Role } from 'src/server/role/role.entity';
-import { Webhook } from 'src/server/webhook/webhook.entity';
-import { Apikey } from '../server/api-key/apikey.entity';
-import { Application } from '../server/application/application.entity';
-import { DeploymentConnection } from '../server/deployment-connection/deployment-connection.entity';
-import { Environment } from '../server/environment/environment.entity';
-import { EventTimeTrace } from '../server/event/event-time-trace.entity';
-import { Event } from '../server/event/event.entity';
-import { Property } from '../server/property/property.entity';
+import { ActivityStream } from 'src/server/analytics/entity';
+import { AuthActionLookup } from 'src/server/auth-action-lookup/entity';
+import { Documentation } from 'src/server/document/entity';
+import { Permission } from 'src/server/permission/entity';
+import { Role } from 'src/server/role/entity';
+import { Webhook } from 'src/server/webhook/entity';
+import { Apikey } from '../server/api-key/entity';
+import { Application } from '../server/application/entity';
+import { DeploymentConnection } from '../server/deployment-connection/entity';
+import { Environment } from '../server/environment/entity';
+import { EventTimeTrace } from '../server/event/time-trace.entity';
+import { Event } from '../server/event/entity';
+import { Property } from '../server/property/entity';
 import { IGenericRepository } from './generic-repository.abstract';
 
 export abstract class IDataServices {

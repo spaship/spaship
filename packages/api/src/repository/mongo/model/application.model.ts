@@ -76,6 +76,9 @@ export class Application {
   commitDetails: object[];
 
   @Prop({})
+  pipelineDetails: object[];
+
+  @Prop({})
   mergeDetails: object[];
 
   @Prop({})

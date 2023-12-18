@@ -4,11 +4,11 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { ALLOWED_ORIGIN, ENV, ENV_TYPE, SPASHIP_VERSION } from './configuration';
-import { LoggingInterceptor } from './configuration/interceptors/logger.interceptor';
-import { ResponseFormat, ResponseInterceptor } from './configuration/interceptors/response.interceptor';
-import { LoggerService } from './configuration/logger/logger.service';
-import { TrimPipe } from './configuration/pipe/trim-pipe.pipe';
-import { AllExceptionFilter } from './server/exceptions/exception.filter';
+import { LoggingInterceptor } from './configuration/interceptors/logger';
+import { ResponseFormat, ResponseInterceptor } from './configuration/interceptors/response';
+import { LoggerService } from './configuration/logger/service';
+import { TrimPipe } from './configuration/pipe/trim';
+import { AllExceptionFilter } from './server/exceptions/filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

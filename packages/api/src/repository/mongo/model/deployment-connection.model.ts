@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Cluster } from 'src/server/environment/environment.entity';
+import { Cluster } from 'src/server/environment/entity';
 
 export type DeploymentConnectionDocument = DeploymentConnection & Document;
 
