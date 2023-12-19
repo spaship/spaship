@@ -36,8 +36,10 @@ export class LighthouseController {
     @Param('propertyIdentifier') propertyIdentifier: string,
     @Param('env') env: string,
     @Param('identifier') identifier: string,
-    @Query('buildId') buildId: string
+    @Query('lhBuildId') lhBuildId: string,
+    @Query('isContainerized ') isContainerized: string,
+    @Query('isGit') isGit: string
   ): Promise<any> {
-    return this.lighthouseService.getlighthouseReport(propertyIdentifier, env, identifier, buildId);
+    return this.lighthouseService.getlighthouseReport(propertyIdentifier, env, identifier, lhBuildId, !!isContainerized, !!isGit);
   }
 }
