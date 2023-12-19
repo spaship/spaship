@@ -55,14 +55,14 @@ export class LighthouseService {
     const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
     try {
       // @internal as both of the deployment will be identical so we'll generate the report for one only
-      this.logger.log('checkApplicationStatus', application.routerUrl[0]);
+      this.logger.log('CheckApplicationStatus', application.routerUrl[0]);
       await this.applicationService.checkApplicationStatus(application.routerUrl[0]);
     } catch (error) {
       this.exceptionService.badRequestException({ message: 'Cannot generate the Lighthouse Report, Application is currently down.' });
     }
     if (!property.lighthouseDetails) {
-      this.logger.log('propertyDetails - check', 'checking registerLighthouse');
-      // @internal if the property is not registered with the lighthouse then we'll register it with the lighthouse report portal
+      this.logger.log('RegisterLighthouse', `${property.identifier} to be registered into lighthouse`);
+      // @internal if the property is not regikstered with the lighthouse then we'll register it with the lighthouse report portal
       const result = await this.registerLighthouse(property.identifier);
       property.lighthouseDetails = result.lighthouseDetails;
     }
