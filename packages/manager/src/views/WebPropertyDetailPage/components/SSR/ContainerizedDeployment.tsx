@@ -298,7 +298,7 @@ export const ContainerizedDeployment = () => {
         </SplitItem>
         <SplitItem>
           <Pagination
-            itemCount={containerisedDeploymentData.length || 0}
+            itemCount={containerisedDeploymentData?.length || 0}
             widgetId="bottom-example"
             perPage={perPage}
             page={page}
