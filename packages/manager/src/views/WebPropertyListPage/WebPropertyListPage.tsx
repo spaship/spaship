@@ -74,7 +74,7 @@ export const WebPropertyListPage = (): JSX.Element => {
       if (filter === MY_PROPERTY_LABEL && createdBy !== session?.user?.email) {
         return false;
       }
-      return title.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
+      return title?.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
     }
   );
 
