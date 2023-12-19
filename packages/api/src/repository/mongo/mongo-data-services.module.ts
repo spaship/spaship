@@ -30,7 +30,7 @@ import {
   Documentation,
   DocumentationSchema
 } from './model';
-import { MongoDataServices } from './mongo-data-services.service';
+import { MongoDataServices } from './mongo-data-service.service';
 
 @Module({
   imports: [
