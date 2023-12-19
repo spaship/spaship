@@ -43,7 +43,7 @@ export class LighthouseFactory {
   }
 
   // @internal Get the List of the Pods from the Operator
-  async generateLighthouseReport(request: FormData): Promise<String[]> {
+  async generateLighthouseReport(request: FormData): Promise<Object> {
     if (!request) this.exceptionService.badRequestException({ message: 'Please provide the request object' });
     let response;
     try {
@@ -54,7 +54,7 @@ export class LighthouseFactory {
       this.logger.error('generateLighthouseReport', err);
       this.exceptionService.badRequestException({ message: `Report Generation Failed.` });
     }
-    return response?.data || [];
+    return response.data ? { projectId: response.data.project_id, pipelineId: response.data.id } : {};
   }
 
   // @internal Get the report details of the build for an application
