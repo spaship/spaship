@@ -501,31 +501,35 @@ export const ContainerizedDeployment = () => {
             Add New App
           </Button>
         </SplitItem>
-        <SplitItem isFilled>
-          <Select
-            width={300}
-            variant={SelectVariant.single}
-            aria-label="filter Input"
-            value="Select Environment"
-            onToggle={setIsFilterOpen.toggle}
-            onSelect={(e, value) => {
-              if (value === 'Select Environment') {
-                setFilterByEnv('' as string);
-              } else {
-                setFilterByEnv(value as string);
-              }
+        {containerisedDeploymentData?.length || filterByEnv !== '' ? (
+          <SplitItem isFilled>
+            <Select
+              width={300}
+              variant={SelectVariant.single}
+              aria-label="filter Input"
+              value="Select Environment"
+              onToggle={setIsFilterOpen.toggle}
+              onSelect={(e, value) => {
+                if (value === 'Select Environment') {
+                  setFilterByEnv('' as string);
+                } else {
+                  setFilterByEnv(value as string);
+                }
 
-              setIsFilterOpen.off();
-            }}
-            selections="Select Environment" // To be kept as Select
-            isOpen={isFilterOpen}
-            aria-labelledby="filter"
-          >
-            {webPropertiesKeys.map((env, index) => (
-              <SelectOption key={`${env} + ${index + 1}`} value={env} />
-            ))}
-          </Select>
-        </SplitItem>
+                setIsFilterOpen.off();
+              }}
+              selections="Select Environment" // To be kept as Select
+              isOpen={isFilterOpen}
+              aria-labelledby="filter"
+            >
+              {webPropertiesKeys.map((env, index) => (
+                <SelectOption key={`${env} + ${index + 1}`} value={env} />
+              ))}
+            </Select>
+          </SplitItem>
+        ) : (
+          ''
+        )}
         {containerisedDeploymentData?.length ? (
           <SplitItem>
             <Pagination
