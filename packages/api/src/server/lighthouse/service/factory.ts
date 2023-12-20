@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { LIGHTHOUSE_DETAILS } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/service';
 import { ExceptionsService } from 'src/server/exceptions/service';
-import { LighthouseResponseDTO } from '../dto';
+import { LighthouseMetrics, LighthouseResponseDTO } from '../dto';
 
 @Injectable()
 export class LighthouseFactory {
@@ -96,12 +96,43 @@ export class LighthouseFactory {
       lhReport.propertyIdentifier = propertyIdentifier;
       lhReport.identifier = identifier;
       lhReport.env = env;
-      lhReport.report = report.lhr;
+      lhReport.metrics = this.buildMetrics(report.lhr);
       lhReport.createdAt = report.createdAt;
       lhReport.updatedAt = report.updatedAt;
       reportDetails.push(lhReport);
     }
     return reportDetails;
+  }
+
+  // @internal Extract the required values from the lighthouse report
+  private buildMetrics(lhr: string) {
+    const metricFilter = [
+      'performance',
+      'accessibility',
+      'best-practices',
+      'seo',
+      'pwa',
+      'first-contentful-paint',
+      'first-meaningful-paint',
+      'largest-contentful-paint',
+      'speed-index',
+      'total-blocking-time',
+      'cumulative-layout-shift'
+    ];
+    const metrics = JSON.parse(lhr);
+    const lhMetrics = new LighthouseMetrics();
+    lhMetrics.performance = metrics.categories[metricFilter[0]].score;
+    lhMetrics.accessibility = metrics.categories[metricFilter[1]].score;
+    lhMetrics.bestPractices = metrics.categories[metricFilter[2]].score;
+    lhMetrics.seo = metrics.categories[metricFilter[3]].score;
+    lhMetrics.pwa = metrics.categories[metricFilter[4]].score;
+    lhMetrics.firstContentfulPaint = metrics.audits[metricFilter[5]].numericValue;
+    lhMetrics.firstMeaningfulPaint = metrics.audits[metricFilter[6]].numericValue;
+    lhMetrics.largestContentfulPaint = metrics.audits[metricFilter[7]].numericValue;
+    lhMetrics.speedIndex = metrics.audits[metricFilter[8]].numericValue;
+    lhMetrics.totalBlockingTime = metrics.audits[metricFilter[9]].numericValue;
+    lhMetrics.cumulativeLayoutShift = metrics.audits[metricFilter[10]].numericValue;
+    return lhMetrics;
   }
 
   generateLighthouseIdentifier(identifier: string, env: string, isContainerized: boolean, isGit: boolean): string {

@@ -30,6 +30,41 @@ export class LighthouseRequestDTO {
   createdBy: string;
 }
 
+export class LighthouseMetrics {
+  @ApiProperty()
+  performance: string;
+
+  @ApiProperty()
+  accessibility: string;
+
+  @ApiProperty()
+  bestPractices: string;
+
+  @ApiProperty()
+  seo: string;
+
+  @ApiProperty()
+  pwa: string;
+
+  @ApiProperty()
+  firstContentfulPaint: string;
+
+  @ApiProperty()
+  firstMeaningfulPaint: string;
+
+  @ApiProperty()
+  largestContentfulPaint: string;
+
+  @ApiProperty()
+  speedIndex: string;
+
+  @ApiProperty()
+  totalBlockingTime: string;
+
+  @ApiProperty()
+  cumulativeLayoutShift: string;
+}
+
 export class LighthouseResponseDTO {
   @ApiProperty()
   lhProjectId: string;
@@ -50,7 +85,7 @@ export class LighthouseResponseDTO {
   env: string;
 
   @ApiProperty()
-  report: string;
+  metrics: LighthouseMetrics;
 
   @ApiProperty()
   createdAt: string;
