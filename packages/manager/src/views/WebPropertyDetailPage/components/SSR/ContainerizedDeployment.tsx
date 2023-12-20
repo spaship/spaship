@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 import { TableRowSkeleton } from '@app/components';
-import { usePopUp } from '@app/hooks';
+import { usePopUp, useToggle } from '@app/hooks';
 import { useListOfPods } from '@app/services/appLogs';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
@@ -23,6 +23,9 @@ import {
   ModalVariant,
   Pagination,
   PaginationVariant,
+  Select,
+  SelectVariant,
+  SelectOption,
   Spinner,
   Split,
   SplitItem,
@@ -59,10 +62,16 @@ const perPageOptions = [
 export const ContainerizedDeployment = () => {
   const { query } = useRouter();
   const propertyIdentifier = query.propertyIdentifier as string;
+  const [isFilterOpen, setIsFilterOpen] = useToggle();
+  const [filterByEnv, setFilterByEnv] = useState('');
+  const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, filterByEnv);
   const spaProperty = query.spaProperty as string;
   const createSsrSpaProperty = useAddSsrSpaProperty();
-  const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, '');
   const containerizedDeploymentData = spaProperties?.data?.[spaProperty]?.filter(
+    (item) => item.isContainerized === true
+  );
+
+  const containerisedDeploymentData = spaProperties?.data?.[spaProperty]?.filter(
     (item) => item.isContainerized === true
   );
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
@@ -106,6 +115,10 @@ export const ContainerizedDeployment = () => {
     config: {},
     port: 3000
   });
+  const webPropertiesKeys = Object.keys(webProperties.data || {});
+  const removeValues = () => {
+    setFilterByEnv('' as string);
+  };
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [envName, setEnvName] = useState('');
   const [isGit, setIsGit] = useState(false);
@@ -290,25 +303,6 @@ export const ContainerizedDeployment = () => {
     </EmptyState>
   ) : (
     <>
-      <Split>
-        <SplitItem isFilled>
-          <Button onClick={() => handlePopUpOpen('createSSRDeployment')} icon={<PlusCircleIcon />}>
-            Add New App
-          </Button>
-        </SplitItem>
-        <SplitItem>
-          <Pagination
-            itemCount={containerizedDeploymentData?.length || 0}
-            widgetId="bottom-example"
-            perPage={perPage}
-            page={page}
-            perPageOptions={perPageOptions}
-            variant={PaginationVariant.top}
-            onSetPage={onPageSet}
-            onPerPageSelect={onPerPageSelect}
-          />
-        </SplitItem>
-      </Split>
       <TableComposable aria-label="spa-property-list" variant="compact" isStriped>
         <Thead noWrap>
           <Tr>
@@ -508,6 +502,63 @@ export const ContainerizedDeployment = () => {
   );
   return (
     <>
+      <Split hasGutter className="pf-u-mb-md">
+        <SplitItem>
+          <Button onClick={() => handlePopUpOpen('createSSRDeployment')} icon={<PlusCircleIcon />}>
+            Add New App
+          </Button>
+        </SplitItem>
+        {containerizedDeploymentData?.length || filterByEnv !== '' ? (
+          <SplitItem isFilled>
+            <Select
+              width={300}
+              variant={SelectVariant.single}
+              aria-label="filter Input"
+              value="Select Environment"
+              onToggle={setIsFilterOpen.toggle}
+              onSelect={(e, value) => {
+                if (value === 'Select Environment') {
+                  setFilterByEnv('' as string);
+                } else {
+                  setFilterByEnv(value as string);
+                }
+
+                setIsFilterOpen.off();
+              }}
+              selections="Select Environment" // To be kept as Select
+              isOpen={isFilterOpen}
+              aria-labelledby="filter"
+            >
+              {webPropertiesKeys.map((env, index) => (
+                <SelectOption key={`${env} + ${index + 1}`} value={env} />
+              ))}
+            </Select>
+          </SplitItem>
+        ) : (
+          ''
+        )}
+        {containerizedDeploymentData?.length ? (
+          <SplitItem>
+            <Pagination
+              itemCount={containerizedDeploymentData?.length || 0}
+              widgetId="bottom-example"
+              perPage={perPage}
+              page={page}
+              perPageOptions={perPageOptions}
+              variant={PaginationVariant.top}
+              onSetPage={onPageSet}
+              onPerPageSelect={onPerPageSelect}
+            />
+          </SplitItem>
+        ) : (
+          ''
+        )}
+      </Split>
+      {filterByEnv === 'Select Environment' || filterByEnv === '' ? (
+        <p />
+      ) : (
+        <Label onClose={removeValues}>{filterByEnv}</Label>
+      )}
       <Drawer position="bottom" onExpand={onExpand} isExpanded={isExpanded}>
         <DrawerContent panelContent={panelContent}>
           <DrawerContentBody style={{ overflowX: 'hidden', padding: '0px' }}>
