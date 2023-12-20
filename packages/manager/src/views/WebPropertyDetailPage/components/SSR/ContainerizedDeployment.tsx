@@ -62,7 +62,7 @@ export const ContainerizedDeployment = () => {
   const spaProperty = query.spaProperty as string;
   const createSsrSpaProperty = useAddSsrSpaProperty();
   const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, '');
-  const containerisedDeploymentData = spaProperties?.data?.[spaProperty]?.filter(
+  const containerizedDeploymentData = spaProperties?.data?.[spaProperty]?.filter(
     (item) => item.isContainerized === true
   );
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
@@ -278,9 +278,9 @@ export const ContainerizedDeployment = () => {
   const startIdx = (page - 1) * perPage;
   const endIdx = startIdx + perPage;
 
-  const paginatedData = containerisedDeploymentData?.slice(startIdx, endIdx);
+  const paginatedData = containerizedDeploymentData?.slice(startIdx, endIdx);
 
-  const drawerContent = !containerisedDeploymentData?.length ? (
+  const drawerContent = !containerizedDeploymentData?.length ? (
     <EmptyState>
       <EmptyStateIcon icon={CubesIcon} />
       <Title headingLevel="h4" size="lg">
@@ -298,7 +298,7 @@ export const ContainerizedDeployment = () => {
         </SplitItem>
         <SplitItem>
           <Pagination
-            itemCount={containerisedDeploymentData.length || 0}
+            itemCount={containerizedDeploymentData?.length || 0}
             widgetId="bottom-example"
             perPage={perPage}
             page={page}

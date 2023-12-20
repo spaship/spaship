@@ -16,7 +16,10 @@ import {
   Label,
   Modal,
   ModalVariant,
+  Pagination,
+  PaginationVariant,
   Spinner,
+  Split,
   SplitItem,
   Title,
   Tooltip
@@ -32,6 +35,13 @@ import { ApplicationStatus } from './ApplicationStatus';
 const URL_LENGTH_LIMIT = 100;
 const INTERNAL_ACCESS_URL_LENGTH = 25;
 
+const perPageOptions = [
+  { title: '5', value: 5 },
+  { title: '10', value: 10 },
+  { title: '15', value: 15 },
+  { title: '20', value: 20 },
+  { title: '50', value: 50 }
+];
 export const StaticDeployment = () => {
   const { query } = useRouter();
 
@@ -47,7 +57,8 @@ export const StaticDeployment = () => {
   const [syncData, setSyncData] = useState<TSpaProperty | undefined>();
   const [isChecked, setIsChecked] = useState<boolean>(syncData?.autoSync || false);
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['autoSync'] as const);
-
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(5);
   const autoSyncData = useApplicationAutoSync();
   const openModel = async (data: any) => {
     handlePopUpOpen('autoSync');
@@ -86,7 +97,22 @@ export const StaticDeployment = () => {
       }
     }
   };
+  const onPageSet = (_: any, pageNumber: number) => {
+    setPage(pageNumber);
+  };
+  const onPerPageSelect = (
+    _event: React.MouseEvent | React.KeyboardEvent | MouseEvent,
+    newPerPage: number,
+    newPage: number
+  ) => {
+    setPerPage(newPerPage);
+    setPage(newPage);
+  };
 
+  const startIdx = (page - 1) * perPage;
+  const endIdx = startIdx + perPage;
+
+  const paginatedData = staticDeploymentData?.slice(startIdx, endIdx);
   return (
     <div>
       <p style={{ justifyContent: 'end', display: 'flex', fontSize: '14px' }}>
@@ -106,166 +132,183 @@ export const StaticDeployment = () => {
           <EmptyStateBody>Please create an deployment to view them here</EmptyStateBody>
         </EmptyState>
       ) : (
-        <TableComposable aria-label="spa-property-list">
-          <Caption>SPA&apos;s DEPLOYED</Caption>
-          <Thead noWrap>
-            <Tr>
-              <Th textCenter>SPA Name</Th>
-              <Th textCenter>Environments</Th>
-              <Th textCenter>Reference</Th>
-              <Th textCenter>Path</Th>
-              <Th textCenter>Internal Access URL</Th>
-              <Th textCenter>Router URL</Th>
-              <Th textCenter style={{ justifyContent: 'space-evenly', display: 'grid' }}>
-                Actions
-              </Th>
-            </Tr>
-          </Thead>
+        <>
+          <Split>
+            <SplitItem isFilled />
+            <SplitItem>
+              <Pagination
+                itemCount={staticDeploymentData?.length || 0}
+                widgetId="bottom-example"
+                perPage={perPage}
+                page={page}
+                perPageOptions={perPageOptions}
+                variant={PaginationVariant.top}
+                onSetPage={onPageSet}
+                onPerPageSelect={onPerPageSelect}
+              />
+            </SplitItem>
+          </Split>
+          <TableComposable aria-label="spa-property-list">
+            <Caption>SPA&apos;s DEPLOYED</Caption>
+            <Thead noWrap>
+              <Tr>
+                <Th textCenter>SPA Name</Th>
+                <Th textCenter>Environments</Th>
+                <Th textCenter>Reference</Th>
+                <Th textCenter>Path</Th>
+                <Th textCenter>Internal Access URL</Th>
+                <Th textCenter>Router URL</Th>
+                <Th textCenter style={{ justifyContent: 'space-evenly', display: 'grid' }}>
+                  Actions
+                </Th>
+              </Tr>
+            </Thead>
 
-          {(spaProperties.isLoading && webProperties.isLoading) ||
-          (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
-            <TableRowSkeleton rows={3} columns={6} />
-          ) : (
-            <Tbody>
-              {staticDeploymentData?.map((val, index: number) => (
-                <Tr key={`tr-${val._id}-${index}`}>
-                  <Td textCenter>
-                    {' '}
-                    {`${val?.name.slice(0, URL_LENGTH_LIMIT)} ${
-                      val?.name.length > URL_LENGTH_LIMIT ? '...' : ''
-                    }`}
-                  </Td>
-                  <Td textCenter>
-                    <Label
-                      key={val.env}
-                      color={val.isContainerized ? 'blue' : 'gold'}
-                      isCompact
-                      style={{ marginRight: '8px' }}
-                    >
-                      {val.env}
-                    </Label>
-                    {val.autoSync && (
+            {(spaProperties.isLoading && webProperties.isLoading) ||
+            (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
+              <TableRowSkeleton rows={3} columns={6} />
+            ) : (
+              <Tbody>
+                {paginatedData?.map((val, index: number) => (
+                  <Tr key={`tr-${val._id}-${index}`}>
+                    <Td textCenter>
+                      {' '}
+                      {`${val?.name.slice(0, URL_LENGTH_LIMIT)} ${
+                        val?.name.length > URL_LENGTH_LIMIT ? '...' : ''
+                      }`}
+                    </Td>
+                    <Td textCenter>
                       <Label
-                        key={`autoSync-${val.name}`}
+                        key={val.env}
                         color={val.isContainerized ? 'blue' : 'gold'}
                         isCompact
                         style={{ marginRight: '8px' }}
                       >
-                        <>
-                          <SyncAltIcon /> &nbsp;Enabled
-                        </>
+                        {val.env}
                       </Label>
-                    )}
-                  </Td>
+                      {val.autoSync && (
+                        <Label
+                          key={`autoSync-${val.name}`}
+                          color={val.isContainerized ? 'blue' : 'gold'}
+                          isCompact
+                          style={{ marginRight: '8px' }}
+                        >
+                          <>
+                            <SyncAltIcon /> &nbsp;Enabled
+                          </>
+                        </Label>
+                      )}
+                    </Td>
 
-                  <Td textCenter>{val?.ref}</Td>
-                  <Td textCenter>{val?.path}</Td>
+                    <Td textCenter>{val?.ref}</Td>
+                    <Td textCenter>{val?.path}</Td>
 
-                  <Td textCenter>
-                    {val?.accessUrl?.map((accessUrl: string, indexAccessUrl: number) => (
-                      <div key={`access-${accessUrl}-${indexAccessUrl}`}>
-                        {accessUrl === 'NA' ? (
-                          <Spinner isSVG diameter="30px" />
-                        ) : (
-                          <div style={{ textAlign: 'center' }}>
-                            <Tooltip
-                              className="my-custom-tooltip"
-                              content={
-                                <div>
-                                  <a
-                                    className="text-decoration-none"
-                                    href={accessUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    {accessUrl}
-                                  </a>
-                                </div>
-                              }
-                            >
-                              <a
-                                href={accessUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{ textDecoration: 'none', marginRight: '8px' }}
-                              >
-                                {`${accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                                  accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                                }`}
-                              </a>
-                            </Tooltip>{' '}
-                            <ApplicationStatus link={accessUrl} _id={String(val._id)} />
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </Td>
-                  <Td textCenter>
-                    {val?.routerUrl?.map(
-                      (routerUrl: string | undefined, indexRouterUrl: number) => (
-                        <div key={`router-${routerUrl}-${indexRouterUrl}` ?? 'NA'}>
-                          {routerUrl === 'NA' ? (
+                    <Td textCenter>
+                      {val?.accessUrl?.map((accessUrl: string, indexAccessUrl: number) => (
+                        <div key={`access-${accessUrl}-${indexAccessUrl}`}>
+                          {accessUrl === 'NA' ? (
                             <Spinner isSVG diameter="30px" />
                           ) : (
                             <div style={{ textAlign: 'center' }}>
-                              {routerUrl ? (
-                                <Tooltip
-                                  className="my-custom-tooltip"
-                                  content={
-                                    <div>
-                                      <a
-                                        className="text-decoration-none"
-                                        href={routerUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                      >
-                                        {routerUrl}
-                                      </a>
-                                    </div>
-                                  }
+                              <Tooltip
+                                className="my-custom-tooltip"
+                                content={
+                                  <div>
+                                    <a
+                                      className="text-decoration-none"
+                                      href={accessUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      {accessUrl}
+                                    </a>
+                                  </div>
+                                }
+                              >
+                                <a
+                                  href={accessUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ textDecoration: 'none', marginRight: '8px' }}
                                 >
-                                  <a
-                                    href={routerUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    style={{ textDecoration: 'none', marginRight: '8px' }}
-                                  >
-                                    {`${routerUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                                      routerUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                                    }`}
-                                  </a>
-                                </Tooltip>
-                              ) : (
-                                'NA'
-                              )}
-                              <ApplicationStatus
-                                link={routerUrl ?? 'NA'}
-                                _id={String(val._id + (routerUrl ?? 'NA'))}
-                              />
+                                  {`${accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                    accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                  }`}
+                                </a>
+                              </Tooltip>{' '}
+                              <ApplicationStatus link={accessUrl} _id={String(val._id)} />
                             </div>
                           )}
                         </div>
-                      )
-                    )}
-                  </Td>
+                      ))}
+                    </Td>
+                    <Td textCenter>
+                      {val?.routerUrl?.map(
+                        (routerUrl: string | undefined, indexRouterUrl: number) => (
+                          <div key={`router-${routerUrl}-${indexRouterUrl}` ?? 'NA'}>
+                            {routerUrl === 'NA' ? (
+                              <Spinner isSVG diameter="30px" />
+                            ) : (
+                              <div style={{ textAlign: 'center' }}>
+                                {routerUrl ? (
+                                  <Tooltip
+                                    className="my-custom-tooltip"
+                                    content={
+                                      <div>
+                                        <a
+                                          className="text-decoration-none"
+                                          href={routerUrl}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                        >
+                                          {routerUrl}
+                                        </a>
+                                      </div>
+                                    }
+                                  >
+                                    <a
+                                      href={routerUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      style={{ textDecoration: 'none', marginRight: '8px' }}
+                                    >
+                                      {`${routerUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                        routerUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                      }`}
+                                    </a>
+                                  </Tooltip>
+                                ) : (
+                                  'NA'
+                                )}
+                                <ApplicationStatus
+                                  link={routerUrl ?? 'NA'}
+                                  _id={String(val._id + (routerUrl ?? 'NA'))}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        )
+                      )}
+                    </Td>
 
-                  <Td textCenter style={{ justifyContent: 'flex-end', display: 'grid' }}>
-                    <SplitItem isFilled>
-                      <Button
-                        variant="primary"
-                        isSmall
-                        icon={<SyncAltIcon />}
-                        onClick={() => openModel(val)}
-                      >
-                        Auto Sync
-                      </Button>
-                    </SplitItem>
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          )}
-        </TableComposable>
+                    <Td textCenter style={{ justifyContent: 'flex-end', display: 'grid' }}>
+                      <SplitItem isFilled>
+                        <Button
+                          variant="primary"
+                          isSmall
+                          icon={<SyncAltIcon />}
+                          onClick={() => openModel(val)}
+                        >
+                          Auto Sync
+                        </Button>
+                      </SplitItem>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            )}
+          </TableComposable>
+        </>
       )}
       <Modal
         title="AutoSync Confirmation"
