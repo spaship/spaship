@@ -41,7 +41,7 @@ export const Feedback = () => {
   return (
     <div>
       <Suspense fallback={<div>Loading...</div>}>
-        <opc-feedback theme="blue" docs="/documents" spa="/feedback" id="opc-feedback" />
+        <opc-feedback theme="blue" docs="/documents" id="opc-feedback" summaryLimit={300} />
       </Suspense>
     </div>
   );
