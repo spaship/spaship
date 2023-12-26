@@ -71,9 +71,6 @@ export const ContainerizedDeployment = () => {
     (item) => item.isContainerized === true
   );
 
-  const containerisedDeploymentData = spaProperties?.data?.[spaProperty]?.filter(
-    (item) => item.isContainerized === true
-  );
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
@@ -302,203 +299,201 @@ export const ContainerizedDeployment = () => {
       <EmptyStateBody>Please create an deployment to view them here</EmptyStateBody>
     </EmptyState>
   ) : (
-    <>
-      <TableComposable aria-label="spa-property-list" variant="compact" isStriped>
-        <Thead noWrap>
-          <Tr>
-            <Th modifier="wrap" width={15}>
-              SPA Name
-            </Th>
-            <Th modifier="wrap" width={15}>
-              Environments
-            </Th>
-            <Th modifier="wrap" width={15}>
-              Reference
-            </Th>
-            <Th modifier="wrap" width={15}>
-              Path
-            </Th>
-            <Th modifier="wrap" width={15}>
-              HealthCheck Path
-            </Th>
-            <Th modifier="wrap" width={25}>
-              Router URL
-            </Th>
-            <Th
-              modifier="wrap"
-              width={20}
-              style={{ justifyContent: 'space-evenly', display: 'grid' }}
-            >
-              Actions
-            </Th>
-          </Tr>
-        </Thead>
-        {(spaProperties.isLoading && webProperties.isLoading) ||
-        (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
-          <TableRowSkeleton rows={3} columns={7} />
-        ) : (
-          <Tbody>
-            {paginatedData?.map((val) => (
-              <Tr key={val.name}>
-                <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
-                  {`${val?.name.slice(0, URL_LENGTH_LIMIT)} ${
-                    val?.name.length > URL_LENGTH_LIMIT ? '...' : ''
-                  }`}
-                </Td>
-                <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
-                  <Label
-                    key={val.env}
-                    icon={val.isGit && <GithubIcon />}
-                    color={val.isContainerized || val.isGit ? 'cyan' : 'gold'}
-                    isCompact
-                    style={{ marginRight: '8px' }}
-                  >
-                    {val.env}
-                  </Label>
-                </Td>
-                <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>{`${val?.ref.slice(
-                  0,
-                  URL_LENGTH_LIMIT
-                )} ${val?.ref.length > URL_LENGTH_LIMIT ? '...' : ''}`}</Td>
-                <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>{`${val?.path.slice(
-                  0,
-                  URL_LENGTH_LIMIT
-                )} ${val?.path.length > URL_LENGTH_LIMIT ? '...' : ''}`}</Td>
-                <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
-                  {`${val?.healthCheckPath.slice(0, URL_LENGTH_LIMIT)} ${
-                    val?.healthCheckPath.length > URL_LENGTH_LIMIT ? '...' : ''
-                  }`}
-                </Td>
+    <TableComposable aria-label="spa-property-list" variant="compact" isStriped>
+      <Thead noWrap>
+        <Tr>
+          <Th modifier="wrap" width={15}>
+            SPA Name
+          </Th>
+          <Th modifier="wrap" width={15}>
+            Environments
+          </Th>
+          <Th modifier="wrap" width={15}>
+            Reference
+          </Th>
+          <Th modifier="wrap" width={15}>
+            Path
+          </Th>
+          <Th modifier="wrap" width={15}>
+            HealthCheck Path
+          </Th>
+          <Th modifier="wrap" width={25}>
+            Router URL
+          </Th>
+          <Th
+            modifier="wrap"
+            width={20}
+            style={{ justifyContent: 'space-evenly', display: 'grid' }}
+          >
+            Actions
+          </Th>
+        </Tr>
+      </Thead>
+      {(spaProperties.isLoading && webProperties.isLoading) ||
+      (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
+        <TableRowSkeleton rows={3} columns={7} />
+      ) : (
+        <Tbody>
+          {paginatedData?.map((val) => (
+            <Tr key={val.name}>
+              <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
+                {`${val?.name.slice(0, URL_LENGTH_LIMIT)} ${
+                  val?.name.length > URL_LENGTH_LIMIT ? '...' : ''
+                }`}
+              </Td>
+              <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
+                <Label
+                  key={val.env}
+                  icon={val.isGit && <GithubIcon />}
+                  color={val.isContainerized || val.isGit ? 'cyan' : 'gold'}
+                  isCompact
+                  style={{ marginRight: '8px' }}
+                >
+                  {val.env}
+                </Label>
+              </Td>
+              <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>{`${val?.ref.slice(
+                0,
+                URL_LENGTH_LIMIT
+              )} ${val?.ref.length > URL_LENGTH_LIMIT ? '...' : ''}`}</Td>
+              <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>{`${val?.path.slice(
+                0,
+                URL_LENGTH_LIMIT
+              )} ${val?.path.length > URL_LENGTH_LIMIT ? '...' : ''}`}</Td>
+              <Td style={{ maxWidth: '15ch', wordWrap: 'break-word' }}>
+                {`${val?.healthCheckPath.slice(0, URL_LENGTH_LIMIT)} ${
+                  val?.healthCheckPath.length > URL_LENGTH_LIMIT ? '...' : ''
+                }`}
+              </Td>
 
-                <Td style={{ maxWidth: '25ch', wordWrap: 'break-word', padding: '24px 8px' }}>
-                  {val?.routerUrl ? (
-                    <Td>
-                      {val?.routerUrl?.map((routerUrl: string) => (
-                        <div key={routerUrl}>
-                          {routerUrl === 'NA' ? (
-                            <Spinner isSVG diameter="30px" />
-                          ) : (
-                            <div>
-                              <Tooltip
-                                className="my-custom-tooltip"
-                                content={
-                                  <div>
-                                    <a
-                                      className="text-decoration-none"
-                                      href={routerUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
-                                      {routerUrl}
-                                    </a>
-                                  </div>
-                                }
+              <Td style={{ maxWidth: '25ch', wordWrap: 'break-word', padding: '24px 8px' }}>
+                {val?.routerUrl ? (
+                  <Td>
+                    {val?.routerUrl?.map((routerUrl: string) => (
+                      <div key={routerUrl}>
+                        {routerUrl === 'NA' ? (
+                          <Spinner isSVG diameter="30px" />
+                        ) : (
+                          <div>
+                            <Tooltip
+                              className="my-custom-tooltip"
+                              content={
+                                <div>
+                                  <a
+                                    className="text-decoration-none"
+                                    href={routerUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    {routerUrl}
+                                  </a>
+                                </div>
+                              }
+                            >
+                              <a
+                                href={routerUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ textDecoration: 'none', marginRight: '8px' }}
                               >
-                                <a
-                                  href={routerUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  style={{ textDecoration: 'none', marginRight: '8px' }}
-                                >
-                                  {`${routerUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                                    routerUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                                  }`}
-                                </a>
-                              </Tooltip>{' '}
-                              <ApplicationStatus link={routerUrl} _id={String(val._id)} />
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </Td>
-                  ) : (
-                    <Td>
-                      {val?.accessUrl?.map((accessUrl: string) => (
-                        <div key={accessUrl}>
-                          {accessUrl === 'NA' ? (
-                            <Spinner isSVG diameter="30px" />
-                          ) : (
-                            <div>
-                              <Tooltip
-                                className="my-custom-tooltip"
-                                content={
-                                  <div>
-                                    <a
-                                      className="text-decoration-none"
-                                      href={accessUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
-                                      {accessUrl}
-                                    </a>
-                                  </div>
-                                }
+                                {`${routerUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                  routerUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                }`}
+                              </a>
+                            </Tooltip>{' '}
+                            <ApplicationStatus link={routerUrl} _id={String(val._id)} />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </Td>
+                ) : (
+                  <Td>
+                    {val?.accessUrl?.map((accessUrl: string) => (
+                      <div key={accessUrl}>
+                        {accessUrl === 'NA' ? (
+                          <Spinner isSVG diameter="30px" />
+                        ) : (
+                          <div>
+                            <Tooltip
+                              className="my-custom-tooltip"
+                              content={
+                                <div>
+                                  <a
+                                    className="text-decoration-none"
+                                    href={accessUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    {accessUrl}
+                                  </a>
+                                </div>
+                              }
+                            >
+                              <a
+                                href={accessUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ textDecoration: 'none', marginRight: '8px' }}
                               >
-                                <a
-                                  href={accessUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  style={{ textDecoration: 'none', marginRight: '8px' }}
-                                >
-                                  {`${accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                                    accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                                  }`}
-                                </a>
-                              </Tooltip>{' '}
-                              <ApplicationStatus link={accessUrl} _id={String(val._id)} />
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </Td>
-                  )}
-                </Td>
-                <Td>
-                  <Split hasGutter>
-                    <SplitItem isFilled>
-                      <Button
-                        variant="primary"
-                        isSmall
-                        // icon={<PencilAltIcon />}
-                        onClick={() => {
-                          handlePopUpOpen('reconfigureSsrApplication');
-                          setConfigureData(val);
-                        }}
-                      >
-                        Configure
-                      </Button>
-                    </SplitItem>
-                    <SplitItem isFilled>
-                      <Button
-                        variant="secondary"
-                        isSmall
-                        // icon={<UndoIcon />}
-                        onClick={() => {
-                          handlePopUpOpen('redeploySsrApplication');
-                          setRedeployData(val);
-                        }}
-                      >
-                        ReDeploy
-                      </Button>
-                    </SplitItem>
-                    <SplitItem isFilled>
-                      <Button
-                        variant="link"
-                        style={{ color: 'var(--pf-global--link--Color)' }}
-                        aria-expanded={isExpanded}
-                        onClick={(e) => onClick(e, val.name, val.buildName, val)}
-                      >
-                        View Logs
-                      </Button>
-                    </SplitItem>
-                  </Split>
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        )}
-      </TableComposable>
-    </>
+                                {`${accessUrl.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                                  accessUrl.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                                }`}
+                              </a>
+                            </Tooltip>{' '}
+                            <ApplicationStatus link={accessUrl} _id={String(val._id)} />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </Td>
+                )}
+              </Td>
+              <Td>
+                <Split hasGutter>
+                  <SplitItem isFilled>
+                    <Button
+                      variant="primary"
+                      isSmall
+                      // icon={<PencilAltIcon />}
+                      onClick={() => {
+                        handlePopUpOpen('reconfigureSsrApplication');
+                        setConfigureData(val);
+                      }}
+                    >
+                      Configure
+                    </Button>
+                  </SplitItem>
+                  <SplitItem isFilled>
+                    <Button
+                      variant="secondary"
+                      isSmall
+                      // icon={<UndoIcon />}
+                      onClick={() => {
+                        handlePopUpOpen('redeploySsrApplication');
+                        setRedeployData(val);
+                      }}
+                    >
+                      ReDeploy
+                    </Button>
+                  </SplitItem>
+                  <SplitItem isFilled>
+                    <Button
+                      variant="link"
+                      style={{ color: 'var(--pf-global--link--Color)' }}
+                      aria-expanded={isExpanded}
+                      onClick={(e) => onClick(e, val.name, val.buildName, val)}
+                    >
+                      View Logs
+                    </Button>
+                  </SplitItem>
+                </Split>
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      )}
+    </TableComposable>
   );
   return (
     <>
