@@ -34,7 +34,7 @@
     "@spaship/common": "^0.14.0",
     "ajv": "^8.6.3",
     "archiver": "^5.0.0",
-    "axios": "^0.27.0",
+    "axios": "^1.6.3",
     "chalk": "^4.1.1",
     "cosmiconfig": "^8.0.0",
     "form-data": "^4.0.0",
