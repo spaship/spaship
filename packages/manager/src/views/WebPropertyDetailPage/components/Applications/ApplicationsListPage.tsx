@@ -24,7 +24,7 @@ import {
   TimesCircleIcon
 } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import { Router, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { EmptyInfo } from '../EmptyInfo';
@@ -40,30 +40,30 @@ const perPageOptions = [
 ];
 
 export const Applications = (): JSX.Element => {
-  const { query } = useRouter();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterByEnv, setFilterByEnv] = useState('');
-  const propertyIdentifier = (query?.propertyIdentifier as string) || '';
-  const debouncedSearchTerm = useDebounce(searchTerm, 200);
-  const [isFilterOpen, setIsFilterOpen] = useToggle();
+  const { query, push } = useRouter();
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [filterByEnv, setFilterByEnv] = useState<string>('');
+  const propertyIdentifier: string = (query?.propertyIdentifier as string) || '';
+  const debouncedSearchTerm: string = useDebounce(searchTerm, 200);
+  const [isFilterOpen, toggleFilterOpen] = useToggle();
   // api calls
   const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, filterByEnv);
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
-  const spaPropertyKeys = Object.keys(spaProperties.data || {});
-  const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
-  const webPropertiesKeys = Object.keys(webProperties.data || {});
-  const countOfSpas = useGetSPAProperties(propertyIdentifier, '');
-  const isCountOfSpasListEmpty = Object.keys(countOfSpas).length === 0;
+  const spaPropertyKeys: string[] = Object.keys(spaProperties?.data || {});
+  const isSpaPropertyListEmpty: boolean = spaPropertyKeys.length === 0;
+  const webPropertiesKeys: string[] = Object.keys(webProperties?.data || {});
+  const countOfSpas: Record<string, any> = useGetSPAProperties(propertyIdentifier, '');
+  const isCountOfSpasListEmpty: boolean = Object.keys(countOfSpas).length === 0;
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['createSSRDeployment'] as const);
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(5);
+  const [page, setPage] = useState<number>(1);
+  const [perPage, setPerPage] = useState<number>(5);
 
   useEffect(() => {
     if (spaProperties.isError || webProperties.isError) {
       toast.error(`Sorry cannot find ${propertyIdentifier}`);
-      Router.push('/properties');
+      push('/properties');
     }
-  }, [spaProperties.isError, webProperties.isError, propertyIdentifier]);
+  }, [spaProperties.isError, webProperties.isError, propertyIdentifier, push]);
 
   const onPageSet = (_: any, pageNumber: number) => {
     setPage(pageNumber);
@@ -118,14 +118,14 @@ export const Applications = (): JSX.Element => {
                   variant={SelectVariant.single}
                   aria-label="filter Input"
                   value="Select environment"
-                  onToggle={setIsFilterOpen.toggle}
+                  onToggle={toggleFilterOpen.toggle}
                   onSelect={(e, value) => {
                     if (value === 'Select environment') {
                       setFilterByEnv('' as string);
                     } else {
                       setFilterByEnv(value as string);
                     }
-                    setIsFilterOpen.off();
+                    toggleFilterOpen.off();
                   }}
                   selections="Select environment" // To be kept as Select
                   isOpen={isFilterOpen}
