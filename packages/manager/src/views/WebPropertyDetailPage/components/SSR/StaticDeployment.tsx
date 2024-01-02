@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-underscore-dangle */
 import { TableRowSkeleton } from '@app/components';
-import { usePopUp } from '@app/hooks';
+import { usePopUp, useToggle } from '@app/hooks';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { TSpaProperty } from '@app/services/spaProperty/types';
@@ -18,6 +18,9 @@ import {
   ModalVariant,
   Pagination,
   PaginationVariant,
+  Select,
+  SelectOption,
+  SelectVariant,
   Spinner,
   Split,
   SplitItem,
@@ -47,7 +50,9 @@ export const StaticDeployment = () => {
 
   const propertyIdentifier = query.propertyIdentifier as string;
   const spaProperty = query.spaProperty as string;
-  const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, '');
+  const [isFilterOpen, setIsFilterOpen] = useToggle();
+  const [filterByEnv, setFilterByEnv] = useState('');
+  const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, filterByEnv);
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const isSpaPropertyListEmpty = spaPropertyKeys.length === 0;
@@ -57,6 +62,11 @@ export const StaticDeployment = () => {
   const [syncData, setSyncData] = useState<TSpaProperty | undefined>();
   const [isChecked, setIsChecked] = useState<boolean>(syncData?.autoSync || false);
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['autoSync'] as const);
+  const webPropertiesKeys = Object.keys(webProperties.data || {});
+
+  const removeValues = () => {
+    setFilterByEnv('' as string);
+  };
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
   const autoSyncData = useApplicationAutoSync();
@@ -114,40 +124,88 @@ export const StaticDeployment = () => {
 
   const paginatedData = staticDeploymentData?.slice(startIdx, endIdx);
   return (
-    <div>
-      <p style={{ justifyContent: 'end', display: 'flex', fontSize: '14px' }}>
-        <Label color="gold" isCompact style={{ marginRight: '8px' }}>
-          <>
-            <SyncAltIcon /> &nbsp; Enabled
-          </>
-        </Label>
-        AutoSync Enabled for application
-      </p>
-      {!staticDeploymentData?.length ? (
-        <EmptyState>
-          <EmptyStateIcon icon={CubesIcon} />
-          <Title headingLevel="h4" size="lg">
-            No Static Deployment exists.
-          </Title>
-          <EmptyStateBody>Please create an deployment to view them here</EmptyStateBody>
-        </EmptyState>
-      ) : (
-        <>
-          <Split>
-            <SplitItem isFilled />
-            <SplitItem>
-              <Pagination
-                itemCount={staticDeploymentData?.length || 0}
-                widgetId="bottom-example"
-                perPage={perPage}
-                page={page}
-                perPageOptions={perPageOptions}
-                variant={PaginationVariant.top}
-                onSetPage={onPageSet}
-                onPerPageSelect={onPerPageSelect}
-              />
-            </SplitItem>
-          </Split>
+    <>
+      <Split hasGutter className="pf-u-mb-md">
+        {staticDeploymentData?.length || filterByEnv !== '' ? (
+          <SplitItem isFilled>
+            <Select
+              width={300}
+              variant={SelectVariant.single}
+              aria-label="filter Input"
+              value="Select Environment"
+              onToggle={setIsFilterOpen.toggle}
+              onSelect={(e, value) => {
+                if (value === 'Select Environment') {
+                  setFilterByEnv('' as string);
+                } else {
+                  setFilterByEnv(value as string);
+                }
+
+                setIsFilterOpen.off();
+              }}
+              selections="Select Environment" // To be kept as Select
+              isOpen={isFilterOpen}
+              aria-labelledby="filter"
+            >
+              {webPropertiesKeys.map((envName, index) => (
+                <SelectOption key={`${envName} + ${index + 1}`} value={envName} />
+              ))}
+            </Select>
+          </SplitItem>
+        ) : (
+          ''
+        )}
+
+        {staticDeploymentData?.length ? (
+          <SplitItem>
+            <Pagination
+              itemCount={staticDeploymentData?.length}
+              widgetId="bottom-example"
+              perPage={perPage}
+              page={page}
+              perPageOptions={perPageOptions}
+              variant={PaginationVariant.top}
+              onSetPage={onPageSet}
+              onPerPageSelect={onPerPageSelect}
+            />
+          </SplitItem>
+        ) : (
+          ''
+        )}
+      </Split>
+      <Split>
+        <SplitItem isFilled>
+          {filterByEnv === 'Select Environment' || filterByEnv === '' ? (
+            <p />
+          ) : (
+            <Label onClose={removeValues}>{filterByEnv}</Label>
+          )}
+        </SplitItem>
+        <SplitItem>
+          {staticDeploymentData?.length ? (
+            <p style={{ justifyContent: 'end', display: 'flex', fontSize: '14px' }}>
+              <Label color="gold" isCompact style={{ marginRight: '8px' }}>
+                <>
+                  <SyncAltIcon /> &nbsp; Enabled
+                </>
+              </Label>
+              AutoSync Enabled for application
+            </p>
+          ) : (
+            ''
+          )}
+        </SplitItem>
+      </Split>
+      <div>
+        {!staticDeploymentData?.length ? (
+          <EmptyState>
+            <EmptyStateIcon icon={CubesIcon} />
+            <Title headingLevel="h4" size="lg">
+              No Static Deployment exists.
+            </Title>
+            <EmptyStateBody>Please create an deployment to view them here</EmptyStateBody>
+          </EmptyState>
+        ) : (
           <TableComposable aria-label="spa-property-list">
             <Caption>SPA&apos;s DEPLOYED</Caption>
             <Thead noWrap>
@@ -308,34 +366,34 @@ export const StaticDeployment = () => {
               </Tbody>
             )}
           </TableComposable>
-        </>
-      )}
-      <Modal
-        title="AutoSync Confirmation"
-        variant={ModalVariant.small}
-        isOpen={popUp.autoSync.isOpen}
-        onClose={() => handlePopUpClose('autoSync')}
-      >
-        <Checkbox
-          label={isChecked ? 'AutoSync Enabled' : 'AutoSync Disabled'}
-          isChecked={isChecked}
-          onChange={(checked: boolean) => {
-            setIsChecked(checked);
-          }}
-          id="controlled-check-1"
-          name="AutoSync"
-        />
+        )}
+        <Modal
+          title="AutoSync Confirmation"
+          variant={ModalVariant.small}
+          isOpen={popUp.autoSync.isOpen}
+          onClose={() => handlePopUpClose('autoSync')}
+        >
+          <Checkbox
+            label={isChecked ? 'AutoSync Enabled' : 'AutoSync Disabled'}
+            isChecked={isChecked}
+            onChange={(checked: boolean) => {
+              setIsChecked(checked);
+            }}
+            id="controlled-check-1"
+            name="AutoSync"
+          />
 
-        <ActionGroup>
-          <Button onClick={() => handleAutoSync()} className="pf-u-mr-md pf-u-mt-md">
-            {' '}
-            Submit
-          </Button>
-          <Button onClick={() => handlePopUpClose('autoSync')} className="pf-u-mt-md">
-            Cancel
-          </Button>
-        </ActionGroup>
-      </Modal>
-    </div>
+          <ActionGroup>
+            <Button onClick={() => handleAutoSync()} className="pf-u-mr-md pf-u-mt-md">
+              {' '}
+              Submit
+            </Button>
+            <Button onClick={() => handlePopUpClose('autoSync')} className="pf-u-mt-md">
+              Cancel
+            </Button>
+          </ActionGroup>
+        </Modal>
+      </div>
+    </>
   );
 };
