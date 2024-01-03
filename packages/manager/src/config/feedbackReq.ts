@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { env } from './env';
 
 export const feedbackReq = axios.create({
@@ -9,8 +9,9 @@ export const feedbackReq = axios.create({
   }
 });
 
-feedbackReq.interceptors.request.use((config: any) => {
-  const modifiedConfig = { ...config };
+feedbackReq.interceptors.request.use((config: AxiosRequestConfig) => {
+  const modifiedConfig: AxiosRequestConfig = { ...config };
+  modifiedConfig.headers = modifiedConfig.headers || {};
   modifiedConfig.headers.Authorization = env.PUBLIC_FEEDBACK_TOKEN;
   return modifiedConfig;
 });

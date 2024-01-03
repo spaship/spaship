@@ -1,7 +1,8 @@
 import { feedbackReq } from '@app/config/feedbackReq';
 import { useMutation } from '@tanstack/react-query';
+import { FeedbackInput, FeedbackResponse } from './types';
 
-const body = (variables: any) => {
+const body = (variables: FeedbackInput) => {
   const query = `
     mutation (
       $projectId: String
@@ -39,7 +40,7 @@ const body = (variables: any) => {
   });
 };
 
-const createFeedback = async (variables: any): Promise<any> => {
+const createFeedback = async (variables: FeedbackInput): Promise<FeedbackResponse> => {
   const { data } = await feedbackReq.post(``, body(variables));
   return data.data;
 };

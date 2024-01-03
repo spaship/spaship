@@ -1,6 +1,7 @@
 import React, { useEffect, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
 import { useCreateFeedback } from '@app/services/feedback';
+import { FeedbackInput } from '@app/services/feedback/types';
 
 export const Feedback = () => {
   const { data: session } = useSession();
@@ -14,12 +15,11 @@ export const Feedback = () => {
 
     if (feedback) {
       loadOpcFeedback();
-
       feedback.addEventListener('opc-feedback:submit', async (event: any) => {
         const stackInfoData = { ...event.detail.data.stackInfo };
         stackInfoData.path = window.location.pathname;
         const username = session?.user?.email ? session?.user?.email.split('@')[0] : '';
-        const variables: any = {
+        const variables: FeedbackInput = {
           projectId: 'SPAship',
           summary: event.detail.data.summary,
           experience: event.detail.data.experience,
