@@ -150,6 +150,9 @@ export const Applications = (): JSX.Element => {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <Label icon={<GithubIcon />}>Containerized deployment (Git)</Label>{' '}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', marginLeft: '16px' }}>
                   <Label icon={<BuildIcon />}>Containerized deployment</Label>{' '}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', marginLeft: '16px' }}>
@@ -184,109 +187,98 @@ export const Applications = (): JSX.Element => {
           {spaProperties.isSuccess && isSpaPropertyListEmpty ? (
             <EmptyInfo propertyIdentifier={propertyIdentifier} />
           ) : (
-            <>
-              {/* <Split>
-                <SplitItem isFilled>
-                  <Pagination
-                    itemCount={
-                      spaPropertyKeys.filter((el) => el.toLowerCase().includes(debouncedSearchTerm))
-                        .length || 0
-                    }
-                    widgetId="bottom-example"
-                    perPage={perPage}
-                    page={page}
-                    perPageOptions={perPageOptions}
-                    variant={PaginationVariant.top}
-                    onSetPage={onPageSet}
-                    onPerPageSelect={onPerPageSelect}
-                  />
-                </SplitItem>
-              </Split> */}
-              <TableComposable>
-                <Thead>
-                  <Tr>
-                    <Th>Application name</Th>
-                    <Th>Environment</Th>
-                    <Th>URL Path</Th>
-                    <Th colSpan={2}>
-                      {' '}
-                      <Pagination
-                        itemCount={
-                          spaPropertyKeys.filter((el) =>
-                            el.toLowerCase().includes(debouncedSearchTerm)
-                          ).length || 0
-                        }
-                        widgetId="bottom-example"
-                        perPage={perPage}
-                        page={page}
-                        perPageOptions={perPageOptions}
-                        variant={PaginationVariant.top}
-                        onSetPage={onPageSet}
-                        onPerPageSelect={onPerPageSelect}
-                      />
-                    </Th>
-                  </Tr>
-                </Thead>
-                {(spaProperties.isLoading && webProperties.isLoading) ||
-                (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
-                  <TableRowSkeleton rows={3} columns={4} />
-                ) : (
-                  spaProperties.isSuccess &&
-                  paginatedData.map((identifier) => (
-                    <Tbody key={identifier}>
-                      <Tr>
-                        <Td dataLabel="nikh">{identifier}</Td>
+            <TableComposable>
+              <Thead>
+                <Tr>
+                  <Th>Application name</Th>
+                  <Th>Environment</Th>
+                  <Th>URL Path</Th>
+                  <Th colSpan={2}>
+                    {' '}
+                    <Pagination
+                      itemCount={
+                        spaPropertyKeys.filter((el) =>
+                          el.toLowerCase().includes(debouncedSearchTerm)
+                        ).length || 0
+                      }
+                      widgetId="bottom-example"
+                      perPage={perPage}
+                      page={page}
+                      perPageOptions={perPageOptions}
+                      variant={PaginationVariant.top}
+                      onSetPage={onPageSet}
+                      onPerPageSelect={onPerPageSelect}
+                    />
+                  </Th>
+                </Tr>
+              </Thead>
+              {(spaProperties.isLoading && webProperties.isLoading) ||
+              (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
+                <TableRowSkeleton rows={3} columns={4} />
+              ) : (
+                spaProperties.isSuccess &&
+                paginatedData.map((identifier) => (
+                  <Tbody key={identifier}>
+                    <Tr>
+                      <Td dataLabel="nikh">{identifier}</Td>
 
-                        <Td style={{ wordWrap: 'break-word' }}>
-                          <Split hasGutter>
-                            {spaProperties.data[identifier].map(
-                              ({ _id, env, isContainerized, isGit }) => (
-                                <SplitItem key={_id} style={{ marginRight: '8px' }}>
-                                  <Label
-                                    icon={isGit && <GithubIcon />}
-                                    color={isContainerized || isGit ? 'cyan' : 'gold'}
-                                    isCompact
-                                  >
-                                    {env}
-                                  </Label>
-                                </SplitItem>
-                              )
-                            )}
-                          </Split>
-                        </Td>
-                        <Td style={{ wordWrap: 'break-word' }}>
-                          {`${spaProperties.data[identifier]?.[0]?.path?.slice(
-                            0,
-                            URL_LENGTH_LIMIT
-                          )} ${
-                            spaProperties.data[identifier]?.[0]?.path?.length > URL_LENGTH_LIMIT
-                              ? '...'
-                              : ''
-                          }`}
-                        </Td>
-                        <Td>
-                          <Split>
-                            <SplitItem isFilled />
-                            <SplitItem>
-                              <Button
-                                variant="link"
-                                icon={<ExternalLinkAltIcon />}
-                                iconPosition="right"
-                              >
-                                Application deatils
-                              </Button>{' '}
-                              <Button variant="secondary" ouiaId="Secondary">
-                                Environment details
-                              </Button>{' '}
-                            </SplitItem>
-                          </Split>
-                        </Td>
-                      </Tr>
-                    </Tbody>
-                  ))
-                )}
-              </TableComposable>
-            </>
+                      <Td style={{ wordWrap: 'break-word' }}>
+                        <Split hasGutter>
+                          {spaProperties.data[identifier].map(
+                            ({ _id, env, isContainerized, isGit }) => (
+                              <SplitItem key={_id} style={{ marginRight: '8px' }}>
+                                <Label
+                                  icon={
+                                    // eslint-disable-next-line no-nested-ternary
+                                    isContainerized && isGit ? (
+                                      <GithubIcon />
+                                    ) : isContainerized && !isGit ? (
+                                      <BuildIcon />
+                                    ) : (
+                                      <BundleIcon />
+                                    )
+                                  }
+                                  color="grey"
+                                >
+                                  {env}
+                                </Label>
+                              </SplitItem>
+                            )
+                          )}
+                        </Split>
+                      </Td>
+                      <Td style={{ wordWrap: 'break-word' }}>
+                        {`${spaProperties.data[identifier]?.[0]?.path?.slice(
+                          0,
+                          URL_LENGTH_LIMIT
+                        )} ${
+                          spaProperties.data[identifier]?.[0]?.path?.length > URL_LENGTH_LIMIT
+                            ? '...'
+                            : ''
+                        }`}
+                      </Td>
+                      <Td>
+                        <Split>
+                          <SplitItem isFilled />
+                          <SplitItem>
+                            <Button
+                              variant="link"
+                              icon={<ExternalLinkAltIcon />}
+                              iconPosition="right"
+                            >
+                              Application deatils
+                            </Button>{' '}
+                            <Button variant="secondary" ouiaId="Secondary">
+                              Environment details
+                            </Button>{' '}
+                          </SplitItem>
+                        </Split>
+                      </Td>
+                    </Tr>
+                  </Tbody>
+                ))
+              )}
+            </TableComposable>
           )}
         </>
       )}
