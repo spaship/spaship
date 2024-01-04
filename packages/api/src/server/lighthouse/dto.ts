@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class LighthouseRequestDTO {
   @ApiProperty()
@@ -26,6 +26,11 @@ export class LighthouseRequestDTO {
   @IsBoolean()
   @IsNotEmpty()
   isContainerized: boolean;
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  autoGenerateLHReport: boolean;
 
   createdBy: string;
 }

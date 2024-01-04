@@ -4,7 +4,6 @@ import { IDataServices } from 'src/repository/data-services.abstract';
 import { Action } from 'src/server/analytics/entity';
 import { AnalyticsService } from 'src/server/analytics/service';
 import { Application } from 'src/server/application/entity';
-import { ApplicationService } from 'src/server/application/service';
 import { ExceptionsService } from 'src/server/exceptions/service';
 import { Property, Source } from 'src/server/property/entity';
 import { LighthouseFactory } from './factory';
@@ -16,7 +15,6 @@ export class LighthouseService {
     private readonly logger: LoggerService,
     private readonly exceptionService: ExceptionsService,
     private readonly lighthouseFactory: LighthouseFactory,
-    private readonly applicationService: ApplicationService,
     private readonly analyticsService: AnalyticsService
   ) {}
 
@@ -40,13 +38,52 @@ export class LighthouseService {
     return propertyDetails;
   }
 
+  async autoGenerateLighthouseReport(
+    propertyIdentifier: string,
+    env: string,
+    identifier: string,
+    isContainerized: boolean,
+    isGit: boolean,
+    autoGenerateLHReport: boolean,
+    createdBy: string
+  ): Promise<Application> {
+    const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
+    if (!property) this.exceptionService.badRequestException({ message: 'No Property Found.' });
+    if (!property.lighthouseDetails) {
+      this.logger.log('RegisterLighthouse', `${property.identifier} to be registered into lighthouse`);
+      // @internal if the property is not registered with the lighthouse then we'll register it with the lighthouse report portal
+      const result = await this.registerLighthouse(property.identifier);
+      property.lighthouseDetails = result.lighthouseDetails;
+    }
+    const application = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized, isGit }))[0];
+    if (!application) this.exceptionService.badRequestException({ message: 'Application not found' });
+    try {
+      application.autoGenerateLHReport = autoGenerateLHReport;
+      await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized, isGit }, application);
+      await this.analyticsService.createActivityStream(
+        propertyIdentifier,
+        autoGenerateLHReport ? Action.LIGHTHOUSE_REPORT_AUTO_GENERATION_ENABLED : Action.LIGHTHOUSE_REPORT_AUTO_GENERATION_DISABLED,
+        env,
+        application.identifier,
+        `Report Generation started for ${application.identifier}.`,
+        createdBy,
+        Source.MANAGER,
+        JSON.stringify(application)
+      );
+    } catch (error) {
+      this.logger.error('LighthouseAutoGenerate', error);
+    }
+    return application;
+  }
+
   async generateLighthouseReport(
     propertyIdentifier: string,
     env: string,
     identifier: string,
     isContainerized: boolean,
     isGit: boolean,
-    createdBy: string
+    createdBy: string,
+    autoTrigger?: boolean
   ): Promise<Application> {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment.' });
@@ -56,13 +93,14 @@ export class LighthouseService {
     try {
       // @internal as both of the deployment will be identical so we'll generate the report for one only
       this.logger.log('CheckApplicationStatus', application.routerUrl[0]);
-      await this.applicationService.checkApplicationStatus(application.routerUrl[0]);
+      await this.lighthouseFactory.checkUrlSource(application.routerUrl[0]);
     } catch (error) {
-      this.exceptionService.badRequestException({ message: 'Cannot generate the Lighthouse Report, Application is currently down.' });
+      if (!autoTrigger)
+        this.exceptionService.badRequestException({ message: 'Cannot generate the Lighthouse Report, Application is currently down.' });
     }
     if (!property.lighthouseDetails) {
       this.logger.log('RegisterLighthouse', `${property.identifier} to be registered into lighthouse`);
-      // @internal if the property is not regikstered with the lighthouse then we'll register it with the lighthouse report portal
+      // @internal if the property is not registered with the lighthouse then we'll register it with the lighthouse report portal
       const result = await this.registerLighthouse(property.identifier);
       property.lighthouseDetails = result.lighthouseDetails;
     }
@@ -98,7 +136,7 @@ export class LighthouseService {
         Source.MANAGER,
         JSON.stringify(lighthouseRequest)
       );
-      this.exceptionService.badRequestException({ message: 'Pipeline trigger Failed.' });
+      if (!autoTrigger) this.exceptionService.badRequestException({ message: 'Pipeline trigger Failed.' });
     }
     return application;
   }

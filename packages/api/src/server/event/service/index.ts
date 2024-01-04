@@ -6,6 +6,7 @@ import { IDataServices } from 'src/repository/data-services.abstract';
 import { Action } from 'src/server/analytics/entity';
 import { AnalyticsService } from 'src/server/analytics/service';
 import { Source } from 'src/server/property/entity';
+import { LighthouseService } from 'src/server/lighthouse/service';
 import { EventTimeTrace } from '../time-trace.entity';
 import { Event } from '../entity';
 
@@ -14,6 +15,7 @@ export class EventService implements OnApplicationBootstrap {
   constructor(
     private readonly dataServices: IDataServices,
     private readonly analyticsService: AnalyticsService,
+    private readonly lighthouseService: LighthouseService,
     private readonly logger: LoggerService
   ) {}
 
@@ -31,6 +33,7 @@ export class EventService implements OnApplicationBootstrap {
       const tmpDataService = this.dataServices;
       const tmpLogger = this.logger;
       const tmpAnalyticsService = this.analyticsService;
+      const tmpLighthouseService = this.lighthouseService;
       new EventSource(eventUrl, { headers: CUSTOM_HEADER }).onmessage = async function consume(eventResponse) {
         tmpLogger.log('EventSource', eventUrl);
         tmpLogger.log('EventResponse', eventResponse.data);
@@ -76,6 +79,20 @@ export class EventService implements OnApplicationBootstrap {
             envDetails.cluster,
             DEPLOYMENT_DETAILS.type.static
           );
+          try {
+            if (latestApplication.autoGenerateLHReport)
+              await tmpLighthouseService.generateLighthouseReport(
+                latestApplication.propertyIdentifier,
+                latestApplication.env,
+                latestApplication.identifier,
+                latestApplication.isContainerized,
+                latestApplication.isGit,
+                latestApplication.createdBy,
+                true
+              );
+          } catch (error) {
+            tmpLogger.error('LighthouseError', error);
+          }
         } else if (event.action === Action.APPLICATION_DEPLOYMENT_FAILED) {
           await tmpAnalyticsService.createActivityStream(
             event.propertyIdentifier,
