@@ -2,6 +2,8 @@ import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { LoggerService } from 'src/configuration/logger/service';
 import { DataServicesModule } from 'src/repository/data-services.module';
+import { LighthouseService } from 'src/server/lighthouse/service';
+import { LighthouseFactory } from 'src/server/lighthouse/service/factory';
 import { AnalyticsFactory } from '../../analytics/service/factory';
 import { AnalyticsService } from '../../analytics/service';
 import { ApplicationFactory } from '../../application/service/factory';
@@ -34,7 +36,9 @@ import { AgendaService } from '.';
     PermissionService,
     PermissionFactory,
     CMDBService,
-    CMDBFactory
+    CMDBFactory,
+    LighthouseService,
+    LighthouseFactory
   ],
   exports: [AgendaService]
 })

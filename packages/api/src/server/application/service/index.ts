@@ -15,6 +15,7 @@ import { DeploymentConnection } from 'src/server/deployment-connection/entity';
 import { Cluster } from 'src/server/environment/entity';
 import { EnvironmentFactory } from 'src/server/environment/service/factory';
 import { ExceptionsService } from 'src/server/exceptions/service';
+import { LighthouseService } from 'src/server/lighthouse/service';
 import { Property, Source } from 'src/server/property/entity';
 import {
   ApplicationConfigDTO,
@@ -47,7 +48,8 @@ export class ApplicationService {
     private readonly environmentFactory: EnvironmentFactory,
     private readonly exceptionService: ExceptionsService,
     private readonly analyticsService: AnalyticsService,
-    private readonly agendaService: AgendaService
+    private readonly agendaService: AgendaService,
+    private readonly lighthouseService: LighthouseService
   ) {}
 
   getAllApplications(): Promise<Application[]> {
@@ -465,7 +467,8 @@ export class ApplicationService {
           DEPLOYMENT_DETAILS.type.containerized
         );
       }
-      for (const routerUrl of applicationDetails.routerUrl) this.recordDeploymentStatus(propertyIdentifier, env, identifier, cluster, routerUrl);
+      for (const routerUrl of applicationDetails.routerUrl)
+        this.recordDeploymentStatus(propertyIdentifier, env, identifier, cluster, routerUrl, applicationDetails);
     } catch (err) {
       this.logger.warn('ContainerizedDeployment', err);
     }
@@ -837,6 +840,20 @@ export class ApplicationService {
           envDetails.cluster,
           DEPLOYMENT_DETAILS.type.containerized
         );
+        try {
+          if (applicationDetails.autoGenerateLHReport)
+            this.lighthouseService.generateLighthouseReport(
+              applicationDetails.propertyIdentifier,
+              applicationDetails.env,
+              applicationDetails.identifier,
+              applicationDetails.isContainerized,
+              applicationDetails.isGit,
+              applicationDetails.createdBy,
+              true
+            );
+        } catch (error) {
+          this.logger.error('LighthouseError', error);
+        }
         if (commitId) {
           const gitCommentRequest = this.applicationFactory.generateGitCommentPayload(
             commitId,
@@ -1129,7 +1146,14 @@ export class ApplicationService {
    * Check & record the application status
    * if application is not live it will be terminated after the given time
    */
-  async recordDeploymentStatus(propertyIdentifier: string, env: string, identifier: string, cluster: string, routeUrl: string) {
+  async recordDeploymentStatus(
+    propertyIdentifier: string,
+    env: string,
+    identifier: string,
+    cluster: string,
+    routeUrl: string,
+    applicationDetails: Application
+  ) {
     let applicationStatus = false;
     const applicationStatusInterval = setInterval(async () => {
       this.logger.log('ApplicationStatus', `Checking the application ${routeUrl}`);
@@ -1149,6 +1173,20 @@ export class ApplicationService {
         );
         applicationStatus = true;
         await clearInterval(applicationStatusInterval);
+        try {
+          if (applicationDetails.autoGenerateLHReport)
+            this.lighthouseService.generateLighthouseReport(
+              applicationDetails.propertyIdentifier,
+              applicationDetails.env,
+              applicationDetails.identifier,
+              applicationDetails.isContainerized,
+              applicationDetails.isGit,
+              applicationDetails.createdBy,
+              true
+            );
+        } catch (error) {
+          this.logger.error('LighthouseError', error);
+        }
       } catch (err) {
         this.logger.log('ApplicationStatus', err);
       }

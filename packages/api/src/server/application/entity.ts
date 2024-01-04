@@ -57,6 +57,8 @@ export class Application {
 
   dockerFileName: string;
 
+  autoGenerateLHReport: boolean;
+
   autoSync: boolean;
 
   createdBy: string;

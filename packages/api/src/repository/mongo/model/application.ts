@@ -93,6 +93,9 @@ export class Application {
   @Prop({ default: false })
   autoSync: boolean;
 
+  @Prop({ default: false })
+  autoGenerateLHReport: boolean;
+
   @Prop({ default: 'NA' })
   createdBy: string;
 
