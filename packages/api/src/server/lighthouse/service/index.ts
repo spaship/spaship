@@ -51,7 +51,7 @@ export class LighthouseService {
     if (!property) this.exceptionService.badRequestException({ message: 'No Property Found.' });
     if (!property.lighthouseDetails) {
       this.logger.log('RegisterLighthouse', `${property.identifier} to be registered into lighthouse`);
-      // @internal if the property is not regikstered with the lighthouse then we'll register it with the lighthouse report portal
+      // @internal if the property is not registered with the lighthouse then we'll register it with the lighthouse report portal
       const result = await this.registerLighthouse(property.identifier);
       property.lighthouseDetails = result.lighthouseDetails;
     }
