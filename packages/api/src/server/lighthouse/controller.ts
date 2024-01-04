@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from 'src/server/auth/guard';
+import { Application } from '../application/entity';
 import { LighthouseRequestDTO, LighthouseResponseDTO } from './dto';
 import { LighthouseService } from './service';
 
@@ -18,13 +19,27 @@ export class LighthouseController {
 
   @Post('/generate')
   @ApiOperation({ description: 'Genrate the Lighthouse Report.' })
-  async generateLighthouseReport(@Body() lighthouseRequestDTO: LighthouseRequestDTO): Promise<any> {
+  async generateLighthouseReport(@Body() lighthouseRequestDTO: LighthouseRequestDTO): Promise<Application> {
     return this.lighthouseService.generateLighthouseReport(
       lighthouseRequestDTO.propertyIdentifier,
       lighthouseRequestDTO.env,
       lighthouseRequestDTO.identifier,
       lighthouseRequestDTO.isContainerized,
       lighthouseRequestDTO.isGit,
+      lighthouseRequestDTO.createdBy
+    );
+  }
+
+  @Post('/auto-generate')
+  @ApiOperation({ description: 'Enable/Disable auto genration of the Lighthouse Report.' })
+  async autoGenerateLighthouseReport(@Body() lighthouseRequestDTO: LighthouseRequestDTO): Promise<Application> {
+    return this.lighthouseService.autoGenerateLighthouseReport(
+      lighthouseRequestDTO.propertyIdentifier,
+      lighthouseRequestDTO.env,
+      lighthouseRequestDTO.identifier,
+      lighthouseRequestDTO.isContainerized,
+      lighthouseRequestDTO.isGit,
+      lighthouseRequestDTO.autoGenerateLHReport,
       lighthouseRequestDTO.createdBy
     );
   }

@@ -96,7 +96,7 @@ export class LighthouseFactory {
       lhReport.propertyIdentifier = propertyIdentifier;
       lhReport.identifier = identifier;
       lhReport.env = env;
-      lhReport.metrics = this.buildMetrics(report.lhr);
+      if (report.lhr) lhReport.metrics = this.buildMetrics(report.lhr);
       lhReport.createdAt = report.createdAt;
       lhReport.updatedAt = report.updatedAt;
       reportDetails.push(lhReport);
@@ -139,5 +139,14 @@ export class LighthouseFactory {
     if (!isContainerized && !isGit) return `${identifier}_${env}_static`;
     if (isContainerized && isGit) return `${identifier}_${env}_git`;
     return `${identifier}_${env}_containerized`;
+  }
+
+  // @internal Check the source for a particular url
+  async checkUrlSource(url: string) {
+    try {
+      await this.httpService.axiosRef.head(url);
+    } catch (error) {
+      this.exceptionService.badRequestException({ message: 'Application not running' });
+    }
   }
 }

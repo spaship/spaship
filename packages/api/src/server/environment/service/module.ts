@@ -13,6 +13,8 @@ import { PropertyFactory } from 'src/server/property/service/factory';
 import { PropertyService } from 'src/server/property/service';
 import { CMDBFactory } from 'src/server/sot/cmdb/service/factory';
 import { CMDBService } from 'src/server/sot/cmdb/service';
+import { LighthouseService } from 'src/server/lighthouse/service';
+import { LighthouseFactory } from 'src/server/lighthouse/service/factory';
 import { DataServicesModule } from '../../../repository/data-services.module';
 import { EnvironmentFactory } from './factory';
 import { EnvironmentService } from '.';
@@ -34,7 +36,9 @@ import { EnvironmentService } from '.';
     PermissionService,
     PermissionFactory,
     CMDBService,
-    CMDBFactory
+    CMDBFactory,
+    LighthouseService,
+    LighthouseFactory
   ],
   exports: [EnvironmentFactory, EnvironmentService]
 })
