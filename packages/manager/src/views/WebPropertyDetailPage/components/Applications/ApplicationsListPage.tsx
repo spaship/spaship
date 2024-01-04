@@ -4,6 +4,13 @@ import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useGetSPAPropGroupByName, useGetSPAProperties } from '@app/services/spaProperty';
 import {
   Button,
+  Drawer,
+  DrawerActions,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerContentBody,
+  DrawerHead,
+  DrawerPanelContent,
   Label,
   Modal,
   ModalVariant,
@@ -25,10 +32,11 @@ import {
 } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { EmptyInfo } from '../EmptyInfo';
 import { AddDeplyoment } from '../addDeployment';
+import { ApplicationDetailsSection } from './ApplicationDetailsSection';
 
 const URL_LENGTH_LIMIT = 100;
 const perPageOptions = [
@@ -56,7 +64,8 @@ export const Applications = (): JSX.Element => {
   const isCountOfSpasListEmpty: boolean = Object.keys(countOfSpas).length === 0;
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['createSSRDeployment'] as const);
   const [page, setPage] = useState<number>(1);
-  const [perPage, setPerPage] = useState<number>(5);
+  const [perPage, setPerPage] = useState<number>(4);
+  const [selectedAppIdentifier, setSelectedAppIdentifier] = useState<string>('');
 
   useEffect(() => {
     if (spaProperties.isError || webProperties.isError) {
@@ -87,7 +96,132 @@ export const Applications = (): JSX.Element => {
   const removeValues = () => {
     setFilterByEnv('' as string);
   };
+  const [isExpanded, setIsExpanded] = React.useState(false);
+  const drawerRef = React.useRef<HTMLDivElement>();
 
+  const onExpand = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    drawerRef.current && drawerRef.current.focus();
+  };
+
+  // ... (existing code)
+
+  const onClick = (identifier: string) => {
+    setSelectedAppIdentifier(identifier);
+    setIsExpanded(true);
+  };
+
+  const onCloseClick = () => {
+    setIsExpanded(false);
+  };
+
+  const panelContent = (
+    <DrawerPanelContent style={{ marginTop: '80px' }}>
+      <DrawerHead>
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
+        <span tabIndex={isExpanded ? 0 : -1}>
+          {spaProperties && spaProperties.data && (
+            <ApplicationDetailsSection
+              selectedAppIdentifier={selectedAppIdentifier}
+              data={spaProperties.data[selectedAppIdentifier]}
+            />
+          )}
+        </span>
+        <DrawerActions>
+          <DrawerCloseButton onClick={onCloseClick} />
+        </DrawerActions>
+      </DrawerHead>
+    </DrawerPanelContent>
+  );
+
+  const drawerContent = (
+    <TableComposable>
+      <Thead>
+        <Tr>
+          <Th>Application name</Th>
+          <Th>Environment</Th>
+          <Th>URL Path</Th>
+          <Th colSpan={2}>
+            {' '}
+            <Pagination
+              itemCount={
+                spaPropertyKeys.filter((el) => el.toLowerCase().includes(debouncedSearchTerm))
+                  .length || 0
+              }
+              widgetId="bottom-example"
+              perPage={perPage}
+              page={page}
+              perPageOptions={perPageOptions}
+              variant={PaginationVariant.top}
+              onSetPage={onPageSet}
+              onPerPageSelect={onPerPageSelect}
+            />
+          </Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        {(spaProperties.isLoading && webProperties.isLoading) ||
+        (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
+          <TableRowSkeleton rows={3} columns={4} />
+        ) : (
+          spaProperties.isSuccess &&
+          paginatedData.map((identifier) => (
+            <Tr key={identifier}>
+              <Td dataLabel="nikh">{identifier}</Td>
+
+              <Td style={{ wordWrap: 'break-word' }}>
+                <Split hasGutter>
+                  {spaProperties?.data[identifier].map(({ _id, env, isContainerized, isGit }) => (
+                    <SplitItem key={_id} style={{ marginRight: '8px' }}>
+                      <Label
+                        icon={
+                          // eslint-disable-next-line no-nested-ternary
+                          isContainerized && isGit ? (
+                            <GithubIcon />
+                          ) : isContainerized && !isGit ? (
+                            <BuildIcon />
+                          ) : (
+                            <BundleIcon />
+                          )
+                        }
+                        color="grey"
+                      >
+                        {env}
+                      </Label>
+                    </SplitItem>
+                  ))}
+                </Split>
+              </Td>
+              <Td style={{ wordWrap: 'break-word' }}>
+                {`${spaProperties?.data[identifier]?.[0]?.path?.slice(0, URL_LENGTH_LIMIT)} ${
+                  spaProperties?.data[identifier]?.[0]?.path?.length > URL_LENGTH_LIMIT ? '...' : ''
+                }`}
+              </Td>
+              <Td>
+                <Split>
+                  <SplitItem isFilled />
+                  <SplitItem>
+                    <Button
+                      variant="link"
+                      icon={<ExternalLinkAltIcon />}
+                      iconPosition="right"
+                      aria-expanded={isExpanded}
+                      onClick={() => onClick(identifier)}
+                    >
+                      Application deatils
+                    </Button>{' '}
+                    <Button variant="secondary" ouiaId="Secondary">
+                      Environment details
+                    </Button>{' '}
+                  </SplitItem>
+                </Split>
+              </Td>
+            </Tr>
+          ))
+        )}
+      </Tbody>
+    </TableComposable>
+  );
   return (
     <div>
       {!spaProperties.isLoading &&
@@ -187,98 +321,11 @@ export const Applications = (): JSX.Element => {
           {spaProperties.isSuccess && isSpaPropertyListEmpty ? (
             <EmptyInfo propertyIdentifier={propertyIdentifier} />
           ) : (
-            <TableComposable>
-              <Thead>
-                <Tr>
-                  <Th>Application name</Th>
-                  <Th>Environment</Th>
-                  <Th>URL Path</Th>
-                  <Th colSpan={2}>
-                    {' '}
-                    <Pagination
-                      itemCount={
-                        spaPropertyKeys.filter((el) =>
-                          el.toLowerCase().includes(debouncedSearchTerm)
-                        ).length || 0
-                      }
-                      widgetId="bottom-example"
-                      perPage={perPage}
-                      page={page}
-                      perPageOptions={perPageOptions}
-                      variant={PaginationVariant.top}
-                      onSetPage={onPageSet}
-                      onPerPageSelect={onPerPageSelect}
-                    />
-                  </Th>
-                </Tr>
-              </Thead>
-              {(spaProperties.isLoading && webProperties.isLoading) ||
-              (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
-                <TableRowSkeleton rows={3} columns={4} />
-              ) : (
-                spaProperties.isSuccess &&
-                paginatedData.map((identifier) => (
-                  <Tbody key={identifier}>
-                    <Tr>
-                      <Td dataLabel="nikh">{identifier}</Td>
-
-                      <Td style={{ wordWrap: 'break-word' }}>
-                        <Split hasGutter>
-                          {spaProperties.data[identifier].map(
-                            ({ _id, env, isContainerized, isGit }) => (
-                              <SplitItem key={_id} style={{ marginRight: '8px' }}>
-                                <Label
-                                  icon={
-                                    // eslint-disable-next-line no-nested-ternary
-                                    isContainerized && isGit ? (
-                                      <GithubIcon />
-                                    ) : isContainerized && !isGit ? (
-                                      <BuildIcon />
-                                    ) : (
-                                      <BundleIcon />
-                                    )
-                                  }
-                                  color="grey"
-                                >
-                                  {env}
-                                </Label>
-                              </SplitItem>
-                            )
-                          )}
-                        </Split>
-                      </Td>
-                      <Td style={{ wordWrap: 'break-word' }}>
-                        {`${spaProperties.data[identifier]?.[0]?.path?.slice(
-                          0,
-                          URL_LENGTH_LIMIT
-                        )} ${
-                          spaProperties.data[identifier]?.[0]?.path?.length > URL_LENGTH_LIMIT
-                            ? '...'
-                            : ''
-                        }`}
-                      </Td>
-                      <Td>
-                        <Split>
-                          <SplitItem isFilled />
-                          <SplitItem>
-                            <Button
-                              variant="link"
-                              icon={<ExternalLinkAltIcon />}
-                              iconPosition="right"
-                            >
-                              Application deatils
-                            </Button>{' '}
-                            <Button variant="secondary" ouiaId="Secondary">
-                              Environment details
-                            </Button>{' '}
-                          </SplitItem>
-                        </Split>
-                      </Td>
-                    </Tr>
-                  </Tbody>
-                ))
-              )}
-            </TableComposable>
+            <Drawer isExpanded={isExpanded} onExpand={onExpand}>
+              <DrawerContent panelContent={panelContent}>
+                <DrawerContentBody>{drawerContent}</DrawerContentBody>
+              </DrawerContent>
+            </Drawer>
           )}
         </>
       )}
