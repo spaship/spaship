@@ -31,6 +31,7 @@ import {
   TimesCircleIcon
 } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -104,8 +105,6 @@ export const Applications = (): JSX.Element => {
     drawerRef.current && drawerRef.current.focus();
   };
 
-  // ... (existing code)
-
   const onClick = (identifier: string) => {
     setSelectedAppIdentifier(identifier);
     setIsExpanded(true);
@@ -122,8 +121,8 @@ export const Applications = (): JSX.Element => {
         <span tabIndex={isExpanded ? 0 : -1}>
           {spaProperties && spaProperties.data && (
             <ApplicationDetailsSection
-              selectedAppIdentifier={selectedAppIdentifier}
               data={spaProperties.data[selectedAppIdentifier]}
+              webProperties={webProperties}
             />
           )}
         </span>
@@ -167,7 +166,22 @@ export const Applications = (): JSX.Element => {
           spaProperties.isSuccess &&
           paginatedData.map((identifier) => (
             <Tr key={identifier}>
-              <Td dataLabel="nikh">{identifier}</Td>
+              <Td>
+                <Link
+                  href={{
+                    pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+                    query: {
+                      propertyIdentifier,
+                      spaProperty: identifier,
+                      initialTab: spaProperties.data[identifier]?.[0]?.isContainerized ? 0 : 1
+                    }
+                  }}
+                >
+                  {`${spaProperties.data[identifier]?.[0]?.name.slice(0, URL_LENGTH_LIMIT)} ${
+                    spaProperties.data[identifier]?.[0]?.name.length > URL_LENGTH_LIMIT ? '...' : ''
+                  }`}
+                </Link>
+              </Td>
 
               <Td style={{ wordWrap: 'break-word' }}>
                 <Split hasGutter>

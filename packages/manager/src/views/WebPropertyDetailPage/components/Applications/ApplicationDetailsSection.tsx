@@ -10,19 +10,17 @@ import './ApplicationDetailsSection.css';
 import { TSpaProperty } from '@app/services/spaProperty/types';
 
 interface Props {
-  selectedAppIdentifier: string;
   data: TSpaProperty[];
+  webProperties: any;
 }
 
 const URL_LENGTH_LIMIT = 25;
-export const ApplicationDetailsSection = ({ selectedAppIdentifier, data }: Props): JSX.Element => {
+export const ApplicationDetailsSection = ({ data, webProperties }: Props): JSX.Element => {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const onToggle = (id: string) => {
     setExpanded((prevExpanded) => (prevExpanded === id ? null : id));
   };
-
-  console.log('ApplicationDetailsSection', selectedAppIdentifier, data);
 
   return (
     <div>
@@ -30,7 +28,7 @@ export const ApplicationDetailsSection = ({ selectedAppIdentifier, data }: Props
       <h3>Environments</h3>
       <br />
       <Accordion asDefinitionList>
-        {data.map(({ _id, env, ref, routerUrl, path, updatedAt }) => (
+        {data.map(({ _id, env, ref, routerUrl, updatedAt }) => (
           <AccordionItem key={_id}>
             <AccordionToggle
               onClick={() => {
@@ -48,8 +46,28 @@ export const ApplicationDetailsSection = ({ selectedAppIdentifier, data }: Props
               <p className="appDetailSectionHeading">Reference</p>
               <p className="appDetailSectionValue">{ref}</p>
               <br />
-              <p className="appDetailSectionHeading">Path</p>
-              <p className="appDetailSectionBlueValue">{path}</p>
+              <p>
+                <p className="appDetailSectionHeading">Publish Domain</p>
+                <p
+                  className="appDetailSectionBlueValue"
+                  style={{ maxWidth: '20ch', wordWrap: 'break-word' }}
+                >
+                  {' '}
+                  <a
+                    href={`https://${webProperties?.data?.[env]?.url}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {`${webProperties?.data?.[env]?.url.slice(0, URL_LENGTH_LIMIT)} ${
+                      webProperties?.data?.[env]?.url &&
+                      webProperties?.data?.[env]?.url.length > URL_LENGTH_LIMIT
+                        ? '...'
+                        : ''
+                    }`}
+                  </a>
+                </p>
+              </p>
+
               <br />
               <p className="appDetailSectionHeading">
                 Router URL{' '}
