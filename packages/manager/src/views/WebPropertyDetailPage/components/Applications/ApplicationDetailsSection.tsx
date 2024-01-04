@@ -58,7 +58,7 @@ export const ApplicationDetailsSection = ({ data, webProperties }: Props): JSX.E
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    {`${webProperties?.data?.[env]?.url.slice(0, URL_LENGTH_LIMIT)} ${
+                    {`${webProperties?.data?.[env]?.url.slice(0, URL_LENGTH_LIMIT) ?? 'NA'} ${
                       webProperties?.data?.[env]?.url &&
                       webProperties?.data?.[env]?.url.length > URL_LENGTH_LIMIT
                         ? '...'
