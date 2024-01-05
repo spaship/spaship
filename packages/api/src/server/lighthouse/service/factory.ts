@@ -135,10 +135,10 @@ export class LighthouseFactory {
     return lhMetrics;
   }
 
-  generateLighthouseIdentifier(identifier: string, env: string, isContainerized: boolean, isGit: boolean): string {
-    if (!isContainerized && !isGit) return `${identifier}_${env}_static`;
-    if (isContainerized && isGit) return `${identifier}_${env}_git`;
-    return `${identifier}_${env}_containerized`;
+  generateLighthouseIdentifier(identifier: string, env: string, isContainerized: boolean, isGit: boolean, version: number): string {
+    if (!isContainerized && !isGit) return `${identifier}_${env}_static_${version}`;
+    if (isContainerized && isGit) return `${identifier}_${env}_git${version}`;
+    return `${identifier}_${env}_containerized_${version}`;
   }
 
   // @internal Check the source for a particular url

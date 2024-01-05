@@ -104,7 +104,7 @@ export class LighthouseService {
       const result = await this.registerLighthouse(property.identifier);
       property.lighthouseDetails = result.lighthouseDetails;
     }
-    const lhIdentifier = this.lighthouseFactory.generateLighthouseIdentifier(identifier, env, isContainerized, isGit);
+    const lhIdentifier = this.lighthouseFactory.generateLighthouseIdentifier(identifier, env, isContainerized, isGit, application.version);
     const lighthouseRequest = this.lighthouseFactory.createLighthouseRequest(
       lhIdentifier,
       application.env,
@@ -113,7 +113,7 @@ export class LighthouseService {
     );
     try {
       const response = await this.lighthouseFactory.generateLighthouseReport(lighthouseRequest);
-      application.pipelineDetails = application.pipelineDetails ? [...application.pipelineDetails, response] : [response];
+      application.pipelineDetails = application.pipelineDetails ? [...application.pipelineDetails, { ...response, lhIdentifier }] : [response];
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized, isGit }, application);
       await this.analyticsService.createActivityStream(
         propertyIdentifier,
@@ -146,10 +146,10 @@ export class LighthouseService {
     env: string,
     identifier: string,
     buildId: string,
+    lhIdentifier: string,
     isContainerized: boolean = false,
     isGit: boolean = false
   ): Promise<any> {
-    const lhIdentifier = this.lighthouseFactory.generateLighthouseIdentifier(identifier, env, isContainerized, isGit);
     const propertyDetails = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
     if (!propertyDetails) this.exceptionService.badRequestException({ message: 'No Property Found.' });
     this.logger.log('propertyDetails - check', JSON.stringify(propertyDetails));
