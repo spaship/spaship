@@ -44,17 +44,18 @@ export class LighthouseController {
     );
   }
 
-  @Get('/:propertyIdentifier/:env/:identifier')
+  @Get('/:propertyIdentifier/:env/:identifier/:lhIdentifier')
   @ApiOperation({ description: 'Get the Lighthouse Report.' })
   @ApiCreatedResponse({ status: 201, description: 'Lighthouse Report Generated successfully.', type: LighthouseResponseDTO })
   async getLighthouseReports(
     @Param('propertyIdentifier') propertyIdentifier: string,
     @Param('env') env: string,
     @Param('identifier') identifier: string,
+    @Param('lhIdentifier') lhIdentifier: string,
     @Query('lhBuildId') lhBuildId: string,
     @Query('isContainerized ') isContainerized: string,
     @Query('isGit') isGit: string
   ): Promise<any> {
-    return this.lighthouseService.getlighthouseReport(propertyIdentifier, env, identifier, lhBuildId, !!isContainerized, !!isGit);
+    return this.lighthouseService.getlighthouseReport(propertyIdentifier, env, identifier, lhBuildId, lhIdentifier, !!isContainerized, !!isGit);
   }
 }

@@ -38,4 +38,6 @@ export class LighthouseDetails {
   id: string;
 
   token: string;
+
+  adminToken: string;
 }
