@@ -203,7 +203,7 @@ export const StaticDeployment = () => {
             <Title headingLevel="h4" size="lg">
               No Static Deployment exists.
             </Title>
-            <EmptyStateBody>Please create an deployment to view them here</EmptyStateBody>
+            <EmptyStateBody>Please create a deployment to view them here</EmptyStateBody>
           </EmptyState>
         ) : (
           <TableComposable aria-label="spa-property-list">
