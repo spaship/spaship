@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { LIGHTHOUSE_DETAILS } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/service';
 import { ExceptionsService } from 'src/server/exceptions/service';
-import { LighthouseMetrics, LighthouseResponseDTO } from '../dto';
+import { LighthouseMetrics, LighthouseResponseDTO, LighthouseServerResponse } from '../dto';
 
 @Injectable()
 export class LighthouseFactory {
@@ -72,7 +72,7 @@ export class LighthouseFactory {
   }
 
   // @internal Get the list of the build for an application
-  async getLighthouseReportList(projectId: string, identifier: string): Promise<String[]> {
+  async getLighthouseReportList(projectId: string, identifier: string): Promise<LighthouseServerResponse[]> {
     if (!projectId) this.exceptionService.badRequestException({ message: 'Please provide the projectId' });
     if (!identifier) this.exceptionService.badRequestException({ message: 'Please provide the identifier' });
     let response;

@@ -6,6 +6,7 @@ import { AnalyticsService } from 'src/server/analytics/service';
 import { Application } from 'src/server/application/entity';
 import { ExceptionsService } from 'src/server/exceptions/service';
 import { Property, Source } from 'src/server/property/entity';
+import { LighthouseResponseDTO } from '../dto';
 import { LighthouseFactory } from './factory';
 
 @Injectable()
@@ -113,7 +114,9 @@ export class LighthouseService {
     );
     try {
       const response = await this.lighthouseFactory.generateLighthouseReport(lighthouseRequest);
-      application.pipelineDetails = application.pipelineDetails ? [...application.pipelineDetails, { ...response, lhIdentifier }] : [response];
+      application.pipelineDetails = application.pipelineDetails
+        ? [...application.pipelineDetails, { ...response, lhIdentifier }]
+        : [{ ...response, lhIdentifier }];
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized, isGit }, application);
       await this.analyticsService.createActivityStream(
         propertyIdentifier,
@@ -147,30 +150,38 @@ export class LighthouseService {
     identifier: string,
     buildId: string,
     lhIdentifier: string,
+    skip: string,
     isContainerized: boolean = false,
     isGit: boolean = false
-  ): Promise<any> {
+  ): Promise<LighthouseResponseDTO[]> {
+    const toBeSkipped = 'buildId';
     const propertyDetails = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
     if (!propertyDetails) this.exceptionService.badRequestException({ message: 'No Property Found.' });
-    this.logger.log('propertyDetails - check', JSON.stringify(propertyDetails));
     if (!propertyDetails.lighthouseDetails)
       this.exceptionService.badRequestException({ message: 'This property is not registered with lighthouse.' });
+    const application = (await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized, isGit }))[0];
+    if (!application) this.exceptionService.badRequestException({ message: 'Application not found' });
     let reposne;
     this.logger.log('propertyDetails', JSON.stringify(propertyDetails));
-    if (buildId) {
+    if (buildId || toBeSkipped === skip) {
+      if (toBeSkipped === skip) {
+        const listReponse = await this.lighthouseFactory.getLighthouseReportList(propertyDetails.lighthouseDetails.id, lhIdentifier);
+        if (listReponse.length > 0) buildId = listReponse[0].id;
+        else this.exceptionService.badRequestException({ message: 'No Build Present for the identifier.' });
+      }
       try {
         reposne = await this.lighthouseFactory.getLighthouseReportDetails(propertyDetails.lighthouseDetails.id, buildId);
         return this.lighthouseFactory.buildLighthouseReportResponse(reposne, propertyIdentifier, identifier, env);
       } catch (error) {
         this.logger.error('getlighthouseReportDetails', error);
-        this.exceptionService.internalServerErrorException(error);
+        this.exceptionService.badRequestException(error);
       }
     }
     try {
       reposne = await this.lighthouseFactory.getLighthouseReportList(propertyDetails.lighthouseDetails.id, lhIdentifier);
     } catch (error) {
       this.logger.error('getlighthouseReportList', error);
-      this.exceptionService.internalServerErrorException(error);
+      this.exceptionService.badRequestException(error);
     }
     return this.lighthouseFactory.buildLighthouseReportResponse(reposne, propertyIdentifier, identifier, env);
   }
