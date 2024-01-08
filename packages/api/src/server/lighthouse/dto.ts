@@ -98,3 +98,17 @@ export class LighthouseResponseDTO {
   @ApiProperty()
   updatedAt: string;
 }
+
+export class LighthouseServerResponse {
+  buildId: string;
+
+  id: string;
+
+  externalBuildUrl: string;
+
+  lhr: string;
+
+  createdAt: string;
+
+  updatedAt: string;
+}
