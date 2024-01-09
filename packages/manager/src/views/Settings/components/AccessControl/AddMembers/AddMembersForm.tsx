@@ -277,6 +277,7 @@ export const AddMembersForm = ({ onClose }: Props): JSX.Element => {
             aria-labelledby={titleId}
             placeholderText="Kindly enter name or email"
             className="pf-u-mb-lg"
+            maxHeight={200}
           >
             {(userListFromRover || []).map((option) => (
               <SelectOption
@@ -302,7 +303,7 @@ export const AddMembersForm = ({ onClose }: Props): JSX.Element => {
             <b>New Members</b>
           </div>
           {isShowAdvancedViewEnabled && Object.keys(columnNames2).length ? (
-            <TableComposable className="pf-u-mb-lg">
+            <TableComposable className="pf-u-mb-lg" style={{ maxHeight: '200' }}>
               <Thead noWrap>
                 <Tr>
                   {Object.values(columnNames2).map((column) => (
@@ -340,7 +341,7 @@ export const AddMembersForm = ({ onClose }: Props): JSX.Element => {
               </Tbody>
             </TableComposable>
           ) : (
-            <div>
+            <div style={{ maxHeight: '35vh', overflowY: 'auto' }}>
               <Accordion asDefinitionList className="pf-u-mb-lg">
                 {newUserDetails.map((v) => (
                   <AccordionItem key={v.email}>
