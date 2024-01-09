@@ -74,7 +74,7 @@ export const SideBar = () => {
   const handleDropdownToggle = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-  const feedbackFormUrl = env.PUBLIC_SPASHIP_FEEDBACK_FORM_URL;
+
   const faqDocumentUrl = env.PUBLIC_SPASHIP_FAQ_URL;
 
   return (
@@ -242,23 +242,6 @@ export const SideBar = () => {
                   />
                 </a>
               </Link>
-
-              <Link href={feedbackFormUrl}>
-                <a className="text-decoration-none" target="_blank" rel="noreferrer">
-                  <SidebarNavItem
-                    title="Feedback"
-                    icon={
-                      <img
-                        src="/img/feedback-icon.svg"
-                        alt="feedback-icon"
-                        style={{ verticalAlign: 'bottom' }}
-                      />
-                    }
-                    isActive={pathname === '/feedback'}
-                  />
-                </a>
-              </Link>
-
               <Link href="mailto:spaship-dev@redhat.com">
                 <a className="text-decoration-none" target="_blank" rel="noreferrer">
                   <SidebarNavItem
