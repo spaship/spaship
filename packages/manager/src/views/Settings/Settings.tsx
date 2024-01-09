@@ -11,8 +11,6 @@ import { Environment } from '@app/views/Settings/components/Environment';
 import { Symlink } from './components/Symlink';
 
 export const Settings: React.FunctionComponent = () => {
-  const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
-
   const handleTabClick = (
     event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
     tabIndex: string | number
@@ -21,7 +19,8 @@ export const Settings: React.FunctionComponent = () => {
   };
   const { query } = useRouter();
   const propertyIdentifier = query.propertyIdentifier as string;
-
+  const initialActiveTabKey = query.activeTabKey ? parseInt(query.activeTabKey as string) : 0;
+  const [activeTabKey, setActiveTabKey] = useState<string | number>(initialActiveTabKey);
   const envList = useGetEnvList(propertyIdentifier);
 
   return (
