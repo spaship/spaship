@@ -58,11 +58,11 @@ export const EmptyInfo = ({ propertyIdentifier }: Props): JSX.Element => (
           <Link
             href={{
               pathname: pageLinks.webPropertySettingPage,
-              query: { propertyIdentifier }
+              query: { propertyIdentifier, activeTabKey: 2 }
             }}
           >
             <a>
-              <Text>(Environment Configuration)</Text>
+              <Text>(API Key Configuration)</Text>
             </a>
           </Link>
         </ListItem>
