@@ -12,6 +12,7 @@ import { Settings } from '../Settings';
 import { Dashboard } from '../WebPropertyDetailPage/components/Dashboard';
 import { ContainerizedDeployment } from '../WebPropertyDetailPage/components/SSR/ContainerizedDeployment';
 import { StaticDeployment } from '../WebPropertyDetailPage/components/SSR/StaticDeployment';
+import { ContainerizedSPADeployment } from './ContainerizedSPADeployment/ContainerizedSPADeployment';
 
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
@@ -51,7 +52,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             aria-label="SSR SPA Deployment"
           >
             <List className="pf-u-mt-lg">
-              <ContainerizedDeployment />
+              <ContainerizedSPADeployment />
             </List>
           </Tab>
           <Tab
