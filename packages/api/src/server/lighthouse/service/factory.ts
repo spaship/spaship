@@ -63,7 +63,9 @@ export class LighthouseFactory {
     if (!buildId) this.exceptionService.badRequestException({ message: 'Please provide the buildId' });
     let response;
     try {
-      response = await this.httpService.axiosRef.get(`${LIGHTHOUSE_DETAILS.hostUrl}/v1/projects/${projectId}/builds/${buildId}/runs`);
+      response = await this.httpService.axiosRef.get(
+        `${LIGHTHOUSE_DETAILS.hostUrl}/v1/projects/${projectId}/builds/${buildId}/runs?representative=true`
+      );
     } catch (err) {
       this.logger.error('getLighthouseReportDetails', err);
       this.exceptionService.badRequestException({ message: `Error in fetching report Failed.` });
