@@ -154,7 +154,7 @@ export class LighthouseService {
     isContainerized: boolean = false,
     isGit: boolean = false
   ): Promise<LighthouseResponseDTO[]> {
-    const toBeSkipped = 'buildId';
+    const toBeSkipped = 'lhBuildId';
     const propertyDetails = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
     if (!propertyDetails) this.exceptionService.badRequestException({ message: 'No Property Found.' });
     if (!propertyDetails.lighthouseDetails)
