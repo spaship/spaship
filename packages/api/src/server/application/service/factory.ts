@@ -776,6 +776,8 @@ export class ApplicationFactory {
       await this.httpService.axiosRef.get(url);
       return true;
     } catch (error) {
+      console.log(error);
+      console.log(error.response);
       if (error.response.status !== 503) return true;
       this.logger.error('Source', error);
     }
