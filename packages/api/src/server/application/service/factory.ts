@@ -773,7 +773,7 @@ export class ApplicationFactory {
   // @internal Check the source for a particular url
   async checkUrlSource(url: string) {
     try {
-      await this.httpService.axiosRef.get(url, { maxRedirects: 0 });
+      await this.httpService.axiosRef.get(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
       return true;
     } catch (error) {
       console.log(error);
