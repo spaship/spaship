@@ -773,7 +773,7 @@ export class ApplicationFactory {
   // @internal Check the source for a particular url
   async checkUrlSource(url: string) {
     try {
-      await this.httpService.axiosRef.head(url);
+      await this.httpService.axiosRef.get(url);
       return true;
     } catch (error) {
       if (error.response.status !== 503) return true;
