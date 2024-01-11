@@ -32,7 +32,7 @@ export const env = {
 
   // FAQ's document
   PUBLIC_SPASHIP_FAQ_URL: process.env.NEXT_PUBLIC_SPASHIP_FAQ_URL || '',
-  PUBLIC_SPASHIP_LIGHTHOUSE_URL:
-    process.env.NEXT_PUBLIC_SPASHIP_LIGHTHOUSE_URL ||
-    'https://lighthouse-ci-one-platform--stage.apps.ext.spoke.preprod.us-east-1.aws.paas.redhat.com/app/projects/spaship-manager/dashboard?branch='
+
+  // Lighthouse report document
+  PUBLIC_SPASHIP_LIGHTHOUSE_URL: process.env.NEXT_PUBLIC_SPASHIP_LIGHTHOUSE_URL || ''
 };

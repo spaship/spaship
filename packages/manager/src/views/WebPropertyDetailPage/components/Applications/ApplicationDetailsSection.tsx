@@ -75,7 +75,7 @@ export const ApplicationDetailsSection = ({ data, webProperties }: Props): JSX.E
               </p>
 
               <p className="appDetailSectionBlueValue">
-                {Array.isArray(routerUrl) ? (
+                {Array.isArray(routerUrl) &&
                   routerUrl.map((url, index) => (
                     <a
                       // eslint-disable-next-line react/no-array-index-key
@@ -95,14 +95,7 @@ export const ApplicationDetailsSection = ({ data, webProperties }: Props): JSX.E
                         }`}
                       </ClipboardCopy>
                     </a>
-                  ))
-                ) : (
-                  <a href={`https://${routerUrl}`} target="_blank" rel="noopener noreferrer">
-                    {`${routerUrl.slice(0, URL_LENGTH_LIMIT)}${
-                      routerUrl.length > URL_LENGTH_LIMIT ? '...' : ''
-                    }`}
-                  </a>
-                )}
+                  ))}
               </p>
               <br />
             </AccordionContent>
