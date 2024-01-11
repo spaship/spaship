@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/no-array-index-key */
 import { usePopUp } from '@app/hooks';
@@ -25,6 +26,9 @@ import {
   DrawerHead,
   DrawerPanelBody,
   DrawerPanelContent,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
   Modal,
   ModalVariant,
   Select,
@@ -33,9 +37,10 @@ import {
   SelectVariant,
   Spinner,
   Switch,
+  Title,
   Tooltip
 } from '@patternfly/react-core';
-import { InfoCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { CubesIcon, InfoCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import Link from 'next/link';
@@ -175,9 +180,6 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
     setIsExpanded(true);
   };
 
-  const onClose = () => {
-    setIsExpanded(false);
-  };
   const onSelect = (
     event: React.MouseEvent | React.ChangeEvent,
     value: string | SelectOptionObject
@@ -204,16 +206,12 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
     }));
   };
 
-  console.log('selectedData', selectedData, selectedData?.identifier);
-
   const panelContent = (
-    <DrawerPanelContent>
+    <DrawerPanelContent isResizable minSize="500px">
       <DrawerHead>
         <div>
+          <p className="spaTitleText">Action Items</p>
           <p className="spaDetailsTitleText">{selectedData?.env}</p>
-          <DrawerActions>
-            <DrawerCloseButton onClick={onClose} />
-          </DrawerActions>
         </div>
       </DrawerHead>
       <DrawerPanelBody>
@@ -317,7 +315,8 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
         <Lighthouse
           webPropertyIdentifier={selectedData?.propertyIdentifier}
           identifier={selectedData?.identifier}
-          env={selectedData?.env}
+          environment={selectedData?.env}
+          data={selectedData}
         />
       </DrawerPanelBody>
     </DrawerPanelContent>
@@ -330,7 +329,6 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
       selectedDataListItemId={selectedDataListItemId}
       onSelectDataListItem={onSelectDataListItem}
     >
-      <h2>Action Items</h2>
       {paginatedData?.map(({ env, ref, path }, index) => {
         const rowId = `data-list-item${index}`;
         return (
@@ -398,13 +396,24 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
         onClick={() => handlePopUpOpen('createSSRDeployment')}
         icon={<PlusCircleIcon />}
       >
-        Add New Appl
+        Add New App
       </Button>
-      <Drawer isStatic isExpanded={isExpanded}>
-        <DrawerContent panelContent={panelContent}>
-          <DrawerContentBody>{drawerContent}</DrawerContentBody>
-        </DrawerContent>
-      </Drawer>
+      {!containerizedDeploymentData?.length ? (
+        <EmptyState>
+          <EmptyStateIcon icon={CubesIcon} />
+          <Title headingLevel="h4" size="lg">
+            No containerized deployment exists.
+          </Title>
+          <EmptyStateBody>Please create an deployment to view them here</EmptyStateBody>
+        </EmptyState>
+      ) : (
+        <Drawer isStatic isExpanded={isExpanded}>
+          <DrawerContent panelContent={panelContent}>
+            <DrawerContentBody>{drawerContent}</DrawerContentBody>
+          </DrawerContent>
+        </Drawer>
+      )}
+
       <Modal
         title="Confirm Redeployment"
         variant={ModalVariant.medium}

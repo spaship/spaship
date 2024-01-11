@@ -13,3 +13,11 @@ export type LighthouseData = {
     lhBuildId: string;
   }[];
 };
+
+export type TLighthouseGenerateDTO = {
+  propertyIdentifier: string;
+  identifier: string;
+  env: string;
+  isGit: boolean;
+  isContainerized: boolean;
+};

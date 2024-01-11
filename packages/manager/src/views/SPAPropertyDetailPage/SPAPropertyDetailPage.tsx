@@ -10,9 +10,8 @@ import { BuildIcon, BundleIcon, CogIcon, PackageIcon } from '@patternfly/react-i
 import toast from 'react-hot-toast';
 import { Settings } from '../Settings';
 import { Dashboard } from '../WebPropertyDetailPage/components/Dashboard';
-import { ContainerizedDeployment } from '../WebPropertyDetailPage/components/SSR/ContainerizedDeployment';
-import { StaticDeployment } from '../WebPropertyDetailPage/components/SSR/StaticDeployment';
 import { ContainerizedSPADeployment } from './ContainerizedSPADeployment/ContainerizedSPADeployment';
+import { StaticSPADeployment } from './StaticSPADeployment.tsx/StaticSPADeployment';
 
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
@@ -68,7 +67,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             aria-label="SSR SPA Deployment"
           >
             <List className="pf-u-mt-lg">
-              <StaticDeployment />
+              <StaticSPADeployment />
             </List>
           </Tab>
           <Tab

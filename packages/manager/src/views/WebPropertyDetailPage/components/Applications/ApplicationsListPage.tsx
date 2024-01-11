@@ -65,7 +65,7 @@ export const Applications = (): JSX.Element => {
   const isCountOfSpasListEmpty: boolean = Object.keys(countOfSpas).length === 0;
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['createSSRDeployment'] as const);
   const [page, setPage] = useState<number>(1);
-  const [perPage, setPerPage] = useState<number>(4);
+  const [perPage, setPerPage] = useState<number>(10);
   const [selectedAppIdentifier, setSelectedAppIdentifier] = useState<string>('');
 
   useEffect(() => {
