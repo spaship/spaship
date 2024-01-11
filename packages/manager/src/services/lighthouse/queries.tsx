@@ -52,7 +52,7 @@ const fetchLhIdentifierList = async (
     });
     const pipelineDetails = data.data && data.data.length > 0 ? data.data[0].pipelineDetails : [];
     // TODO: To be removed after backend revamp
-    // pipeline array will be empty for new spa, for existing sopa if no report is generated then key xpipelineDetails won't be there
+    // pipeline array will be empty for new spa, for existing sopa if no report is generated then key pipelineDetails won't be there
 
     return pipelineDetails || [];
   } catch (error) {
