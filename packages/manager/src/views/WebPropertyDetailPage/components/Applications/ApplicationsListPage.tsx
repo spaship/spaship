@@ -114,6 +114,14 @@ export const Applications = (): JSX.Element => {
     setIsExpanded(false);
   };
 
+  const redirectToSpaDetailsPage = (
+    paramPropertyIdentifier: string,
+    spaProperty: string,
+    initialTab: number
+  ) => {
+    const redirectUrl = `/properties/${paramPropertyIdentifier}/${spaProperty}?initialTab=${initialTab}`;
+    window.location.href = redirectUrl;
+  };
   const panelContent = (
     <DrawerPanelContent style={{ marginTop: '80px' }}>
       <DrawerHead>
@@ -224,9 +232,19 @@ export const Applications = (): JSX.Element => {
                     >
                       Application deatils
                     </Button>{' '}
-                    <Button variant="secondary" ouiaId="Secondary">
+                    <Button
+                      variant="secondary"
+                      ouiaId="Secondary"
+                      onClick={() =>
+                        redirectToSpaDetailsPage(
+                          propertyIdentifier,
+                          identifier,
+                          spaProperties.data[identifier]?.[0]?.isContainerized ? 0 : 1
+                        )
+                      }
+                    >
                       Environment details
-                    </Button>{' '}
+                    </Button>
                   </SplitItem>
                 </Split>
               </Td>
