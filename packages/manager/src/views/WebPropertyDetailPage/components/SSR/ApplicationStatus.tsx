@@ -4,6 +4,7 @@ import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons'
 
 export const ApplicationStatus = ({ link, _id }: { link: string; _id: string }) => {
   const { data } = useGetStatusForAnApplication(link, _id);
+  console.log('data status', _id);
   return (
     <div style={{ display: 'inline' }}>
       {data ? (
