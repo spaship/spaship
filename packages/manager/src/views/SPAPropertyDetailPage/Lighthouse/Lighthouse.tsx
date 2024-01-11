@@ -32,6 +32,7 @@ import toast from 'react-hot-toast';
 import { env } from '@app/config/env';
 import Link from 'next/link';
 import { AxiosError } from 'axios';
+import { InfoAltIcon } from '@patternfly/react-icons';
 
 const GREY = '#F0F0F0';
 const lighthouseUrl = env.PUBLIC_SPASHIP_LIGHTHOUSE_URL;
@@ -133,85 +134,106 @@ export const Lighthouse = ({
             Lighthouse Report
           </Title>
         </CardHeader>
+        <p className="bodyText">
+          Choose a build ID from the dropdown to generate a report for a different build.
+        </p>
+        <br />
 
+        <Select
+          className="pf-u-my-md"
+          variant={SelectVariant.single}
+          isPlain={false}
+          aria-label={`Select Input with descriptions `}
+          onToggle={onToggle}
+          onSelect={onSelect}
+          selections={selected}
+          isOpen={isOpen}
+        >
+          {lhBuildIdList?.data?.map(({ lhIdentifier }: { lhIdentifier: any }) => (
+            <SelectOption key={lhIdentifier} value={lhIdentifier}>
+              {lhIdentifier}
+            </SelectOption>
+          ))}
+        </Select>
         {lhBuildIdList?.data?.length ? (
           <>
-            <Card>
-              <Split className="pf-u-m-md">
-                {metricNames.map((metricName, index) => {
-                  const metricsData = lighthouseData?.data?.metrics;
-                  const percentage =
-                    metricsData && metricsData[metricName] !== undefined
-                      ? metricsData[metricName] * 100
-                      : 0;
-                  const remainingPercentage = 100 - percentage;
-                  const color = getColor(percentage);
-                  return (
-                    <SplitItem key={metricName}>
-                      <Tooltip
-                        content={
-                          <div>
-                            {metricName} : {percentage}%
-                          </div>
+            <Split className="pf-u-m-md">
+              {metricNames.map((metricName, index) => {
+                const metricsData = lighthouseData?.data?.metrics;
+                const percentage =
+                  metricsData && metricsData[metricName] !== undefined
+                    ? metricsData[metricName] * 100
+                    : 0;
+                const remainingPercentage = 100 - percentage;
+                const color = getColor(percentage);
+                return (
+                  <SplitItem key={metricName}>
+                    <Tooltip
+                      content={
+                        <div>
+                          {metricName} : {percentage}%
+                        </div>
+                      }
+                    >
+                      <ChartDonut
+                        ariaDesc={`${metricName} metric`}
+                        ariaTitle={`${metricName}`}
+                        constrainToVisibleArea
+                        data={[
+                          { x: metricName, y: percentage, color },
+                          { x: 'remaining', y: remainingPercentage, color: ChartThemeColor.gray }
+                        ]}
+                        labels={({ datum }) =>
+                          datum.x === metricName
+                            ? `${datum.x}: ${datum.y.toFixed(2)}%`
+                            : `Remaining: ${datum.y.toFixed(2)}%`
                         }
-                      >
-                        <ChartDonut
-                          ariaDesc={`${metricName} metric`}
-                          ariaTitle={`${metricName}`}
-                          constrainToVisibleArea
-                          data={[
-                            { x: metricName, y: percentage, color },
-                            { x: 'remaining', y: remainingPercentage, color: ChartThemeColor.gray }
-                          ]}
-                          labels={({ datum }) =>
-                            datum.x === metricName
-                              ? `${datum.x}: ${datum.y.toFixed(2)}%`
-                              : `Remaining: ${datum.y.toFixed(2)}%`
-                          }
-                          name={`chart${index + 1}`}
-                          subTitle={`${metricName}`}
-                          colorScale={[color, GREY]}
-                          title={percentage.toFixed(2)}
-                          innerRadius={75} // Adjust this value as needed
-                        />
-                      </Tooltip>
-                    </SplitItem>
-                  );
-                })}
-              </Split>
-              <Button variant="link" onClick={() => handlePopUpOpen('generateScore')}>
-                View More
-              </Button>{' '}
-            </Card>
+                        name={`chart${index + 1}`}
+                        subTitle={`${metricName}`}
+                        colorScale={[color, GREY]}
+                        title={percentage.toFixed(2)}
+                        innerRadius={75} // Adjust this value as needed
+                      />
+                    </Tooltip>
+                  </SplitItem>
+                );
+              })}
+            </Split>
+            <Button variant="link" onClick={() => handlePopUpOpen('generateScore')}>
+              View More
+            </Button>{' '}
             <Divider />
             <br />
-            <p className="bodyText">
-              Choose a build ID from the dropdown to generate a report for a different build.
-            </p>
-            <br />
-            <Tooltip content={<div>Select from the dropdown to customize your report.</div>}>
-              <Select
-                variant={SelectVariant.single}
-                isPlain={false}
-                aria-label={`Select Input with descriptions `}
-                onToggle={onToggle}
-                onSelect={onSelect}
-                selections={selected}
-                isOpen={isOpen}
-                width="90%"
-              >
-                {lhBuildIdList?.data?.map(({ lhIdentifier }: { lhIdentifier: any }) => (
-                  <SelectOption key={lhIdentifier} value={lhIdentifier}>
-                    {lhIdentifier}
-                  </SelectOption>
-                ))}
-              </Select>
-            </Tooltip>
             <p className="bodyText" style={{ fontSize: '8px' }}>
               Note: If there are no changes in the SPA, you will not observe any differences in the
               report even after redeploying the SPA.
             </p>
             <br />
+            <p className="bodyText">
+              {' '}
+              Generate a lighthouse report for the latest deployments.{' '}
+              <span>
+                <Tooltip
+                  content={
+                    <div>
+                      {' '}
+                      If there are no changes in the SPA, you will not observe any differences in
+                      the report even after redeploying the SPA.
+                    </div>
+                  }
+                >
+                  <InfoAltIcon />
+                </Tooltip>
+              </span>
+            </p>
+            <Button
+              variant="primary"
+              id="generate-new-score"
+              width="100px"
+              onClick={() => generateReportF()} // Add parentheses to call the function
+            >
+              Generate New Report
+            </Button>
           </>
         ) : (
           <EmptyState>
