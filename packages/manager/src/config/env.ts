@@ -31,5 +31,8 @@ export const env = {
   PUBLIC_SPASHIP_FEEDBACK_FORM_URL: process.env.NEXT_PUBLIC_SPASHIP_FEEDBACK_FORM_URL || '',
 
   // FAQ's document
-  PUBLIC_SPASHIP_FAQ_URL: process.env.NEXT_PUBLIC_SPASHIP_FAQ_URL || ''
+  PUBLIC_SPASHIP_FAQ_URL: process.env.NEXT_PUBLIC_SPASHIP_FAQ_URL || '',
+
+  // Lighthouse report document
+  PUBLIC_SPASHIP_LIGHTHOUSE_URL: process.env.NEXT_PUBLIC_SPASHIP_LIGHTHOUSE_URL || ''
 };
