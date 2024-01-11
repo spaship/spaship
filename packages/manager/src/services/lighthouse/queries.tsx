@@ -23,9 +23,6 @@ const fetchLighthouseReportForGivenBuildId = async (
     }
   );
 
-  console.log('fetchLighthouseReportForGivenBuildId', data.data[0].lhProjectId, buildId, env);
-  // lighthouse_dev_static_2
-
   return data.data[0] || [];
 };
 
@@ -78,7 +75,6 @@ export const generateLighthouseReport = async (
   dto: TLighthouseGenerateDTO
 ): Promise<TCreateApiKeyRes> => {
   const { data } = await orchestratorReq.post('/lighthouse/generate', dto);
-  console.log('data', data);
   return data.data;
 };
 

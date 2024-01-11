@@ -67,7 +67,6 @@ export const Lighthouse = ({
     environment,
     selected
   );
-  console.log('lighhh', lighthouseData?.data, 'sele', selected, 'env', environment);
   const { refetch } = useLighthouseReportForGivenBuildId(
     webPropertyIdentifier,
     identifier,
@@ -126,7 +125,6 @@ export const Lighthouse = ({
       }
     }
   };
-  console.log('data', data);
 
   return (
     <>
