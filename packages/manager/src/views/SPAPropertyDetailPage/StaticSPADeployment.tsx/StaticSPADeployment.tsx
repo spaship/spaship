@@ -149,44 +149,50 @@ export const StaticSPADeployment = (): JSX.Element => {
             </Tr>
           </Thead>
           <Tbody>
-            {selectedData?.accessUrl.map((url: string, i: number) => (
-              <Tr key={url} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
-                {url === 'NA' ? (
-                  <Spinner isSVG diameter="30px" />
-                ) : (
-                  <div>
-                    <Tooltip
-                      className="my-custom-tooltip"
-                      content={
-                        <div>
-                          <a
-                            className="text-decoration-none"
-                            href={url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {url}
-                          </a>
-                        </div>
-                      }
-                    >
-                      <a
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ textDecoration: 'none', marginRight: '8px' }}
+            {selectedData?.accessUrl ? (
+              selectedData?.accessUrl.map((url: string, i: number) => (
+                <Tr key={url} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
+                  {url === 'NA' ? (
+                    <Spinner isSVG diameter="30px" />
+                  ) : (
+                    <div>
+                      <Tooltip
+                        className="my-custom-tooltip"
+                        content={
+                          <div>
+                            <a
+                              className="text-decoration-none"
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {url}
+                            </a>
+                          </div>
+                        }
                       >
-                        {`${url.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                          url.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                        }`}
-                      </a>
-                    </Tooltip>{' '}
-                    <ApplicationStatus link={url} _id={String(selectedData?._id)} />
-                  </div>
-                )}
-                <Td className="bodyText">{selectedData?.updatedAt}</Td>
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ textDecoration: 'none', marginRight: '8px' }}
+                        >
+                          {`${url.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                            url.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                          }`}
+                        </a>
+                      </Tooltip>{' '}
+                      <ApplicationStatus link={url} _id={String(selectedData?._id)} />
+                    </div>
+                  )}
+                  <Td className="bodyText">{selectedData?.updatedAt}</Td>
+                </Tr>
+              ))
+            ) : (
+              <Tr>
+                <Td colSpan={2}>No Access URLs available</Td>
               </Tr>
-            ))}
+            )}
           </Tbody>
         </Table>
         <Table aria-label="Simple table" variant="compact">
@@ -197,44 +203,50 @@ export const StaticSPADeployment = (): JSX.Element => {
             </Tr>
           </Thead>
           <Tbody>
-            {selectedData?.routerUrl.map((url: string, i: number) => (
-              <Tr key={url} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
-                {url === 'NA' ? (
-                  <Spinner isSVG diameter="30px" />
-                ) : (
-                  <div>
-                    <Tooltip
-                      className="my-custom-tooltip"
-                      content={
-                        <div>
-                          <a
-                            className="text-decoration-none"
-                            href={url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {url}
-                          </a>
-                        </div>
-                      }
-                    >
-                      <a
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ textDecoration: 'none', marginRight: '8px' }}
+            {selectedData?.routerUrl ? (
+              selectedData?.routerUrl.map((url: string, i: number) => (
+                <Tr key={url} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
+                  {url === 'NA' ? (
+                    <Spinner isSVG diameter="30px" />
+                  ) : (
+                    <div>
+                      <Tooltip
+                        className="my-custom-tooltip"
+                        content={
+                          <div>
+                            <a
+                              className="text-decoration-none"
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {url}
+                            </a>
+                          </div>
+                        }
                       >
-                        {`${url.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                          url.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
-                        }`}
-                      </a>
-                    </Tooltip>{' '}
-                    <ApplicationStatus link={url} _id={String(selectedData?._id)} />
-                  </div>
-                )}
-                <Td className="bodyText">{selectedData?.updatedAt}</Td>
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ textDecoration: 'none', marginRight: '8px' }}
+                        >
+                          {`${url.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
+                            url.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                          }`}
+                        </a>
+                      </Tooltip>{' '}
+                      <ApplicationStatus link={url} _id={String(selectedData?._id)} />
+                    </div>
+                  )}
+                  <Td className="bodyText">{selectedData?.updatedAt}</Td>
+                </Tr>
+              ))
+            ) : (
+              <Tr>
+                <Td colSpan={2}>No router URLs available</Td>
               </Tr>
-            ))}
+            )}
           </Tbody>
         </Table>
 
