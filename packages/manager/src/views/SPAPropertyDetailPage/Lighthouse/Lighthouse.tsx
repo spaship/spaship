@@ -95,9 +95,9 @@ export const Lighthouse = ({
     if (percentage >= 90) {
       return '#6EC664'; // Green
     } else if (percentage >= 50) {
-      return '#EF9234'; // Orange
+      return '#FFDB53'; // Orange
     }
-    return '#C9190B'; // Red
+    return '#E92100'; // Red
   };
 
   // const generateLighthouseReport = useGenerateLighthouseReport();
