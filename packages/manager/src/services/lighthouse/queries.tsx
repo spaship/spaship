@@ -8,6 +8,8 @@ const lighthouseKeys = {
     ['lighthouse', webPropertyIdentifier, applicationIdentifier, env] as const
 };
 
+// TODO:  change the any to interface later
+
 const fetchLighthouseReportForGivenBuildId = async (
   propertyIdentifier: string,
   identifier: string,

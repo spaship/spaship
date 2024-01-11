@@ -176,7 +176,6 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
     const rowSelectedData = paginatedData && paginatedData[index];
     setSelectedData(rowSelectedData);
     setSelectedDataListItemId(id);
-    // setDrawerPanelBodyContent(index + 1);
     setIsExpanded(true);
   };
 

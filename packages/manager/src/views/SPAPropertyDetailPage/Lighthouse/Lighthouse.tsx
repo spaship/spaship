@@ -91,6 +91,7 @@ export const Lighthouse = ({
 
   const metricNames = ['performance', 'accessibility', 'bestPractices', 'seo', 'pwa'];
 
+  // TODO : add the color code to CSS file later
   const getColor = (percentage: number): string => {
     if (percentage >= 90) {
       return '#6EC664'; // Green
@@ -99,8 +100,6 @@ export const Lighthouse = ({
     }
     return '#E92100'; // Red
   };
-
-  // const generateLighthouseReport = useGenerateLighthouseReport();
 
   const generateReport = useGenerateLighthouseReport();
   const generateReportF = async () => {
@@ -244,7 +243,7 @@ export const Lighthouse = ({
               const metricsData = lighthouseData?.data?.metrics;
               const percentage =
                 metricsData && metricsData[metricName] !== undefined
-                  ? metricsData[metricName] * 100
+                  ? metricsData && metricsData[metricName] * 100
                   : 0;
               const remainingPercentage = 100 - percentage;
               const color = getColor(percentage);

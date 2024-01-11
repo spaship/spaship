@@ -34,7 +34,6 @@ import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-// import './StaticSPADeployment.css';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { TSpaProperty } from '@app/services/spaProperty/types';
 import { useApplicationAutoSync } from '@app/services/sync';
@@ -130,11 +129,9 @@ export const StaticSPADeployment = (): JSX.Element => {
     const rowSelectedData = paginatedData && paginatedData[index];
     setSelectedData(rowSelectedData);
     setSelectedDataListItemId(id);
-    // setDrawerPanelBodyContent(index + 1);
     setIsExpanded(true);
   };
 
-  //   const paginatedData = staticDeploymentData?.slice(startIdx, endIdx);
   const panelContent = (
     <DrawerPanelContent isResizable minSize="500px">
       <DrawerHead>
