@@ -45,7 +45,7 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { ApplicationStatus } from '../../WebPropertyDetailPage/components/SSR/ApplicationStatus';
 import { ConfigureSSRForm } from '../../WebPropertyDetailPage/components/SSR/ConfigureSSRForm';
@@ -399,7 +399,12 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
       })}
     </DataList>
   );
-
+  useEffect(() => {
+    if (!selectedData) {
+      setSelectedData(containerizedDeploymentData?.[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [containerizedDeploymentData]);
   return (
     <div>
       <Button

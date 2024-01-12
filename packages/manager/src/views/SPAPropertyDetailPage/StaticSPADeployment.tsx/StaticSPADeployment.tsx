@@ -32,7 +32,7 @@ import {
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { TSpaProperty } from '@app/services/spaProperty/types';
@@ -314,7 +314,12 @@ export const StaticSPADeployment = (): JSX.Element => {
       })}
     </DataList>
   );
-
+  useEffect(() => {
+    if (!selectedData) {
+      setSelectedData(staticDeploymentData?.[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [staticDeploymentData]);
   return (
     <div>
       {!staticDeploymentData?.length ? (
