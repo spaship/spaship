@@ -62,4 +62,4 @@ const fetchStatusForAnApplication = async (link: string): Promise<boolean> => {
 };
 
 export const useGetStatusForAnApplication = (link: string, _id: string) =>
-  useQuery([`${_id}`], () => fetchStatusForAnApplication(link));
+  useQuery([`${link}_${_id}`], () => fetchStatusForAnApplication(link));

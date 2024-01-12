@@ -41,7 +41,7 @@ import { CubesIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { ApplicationStatus } from '../../WebPropertyDetailPage/components/SSR/ApplicationStatus';
 import { Lighthouse } from '../Lighthouse/Lighthouse';
 
-const INTERNAL_ACCESS_URL_LENGTH = 40;
+const INTERNAL_URL_LENGTH = 40;
 
 export const StaticSPADeployment = (): JSX.Element => {
   const { query } = useRouter();
@@ -177,8 +177,8 @@ export const StaticSPADeployment = (): JSX.Element => {
                           rel="noopener noreferrer"
                           style={{ textDecoration: 'none', marginRight: '8px' }}
                         >
-                          {`${url.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                            url.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                          {`${url.slice(0, INTERNAL_URL_LENGTH)} ${
+                            url.length > INTERNAL_URL_LENGTH ? '...' : ''
                           }`}
                         </a>
                       </Tooltip>{' '}
@@ -231,8 +231,8 @@ export const StaticSPADeployment = (): JSX.Element => {
                           rel="noopener noreferrer"
                           style={{ textDecoration: 'none', marginRight: '8px' }}
                         >
-                          {`${url.slice(0, INTERNAL_ACCESS_URL_LENGTH)} ${
-                            url.length > INTERNAL_ACCESS_URL_LENGTH ? '...' : ''
+                          {`${url.slice(0, INTERNAL_URL_LENGTH)} ${
+                            url.length > INTERNAL_URL_LENGTH ? '...' : ''
                           }`}
                         </a>
                       </Tooltip>{' '}
