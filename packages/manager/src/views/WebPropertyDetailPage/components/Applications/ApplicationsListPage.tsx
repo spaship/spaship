@@ -228,13 +228,6 @@ export const Applications = (): JSX.Element => {
                       icon={<ExternalLinkAltIcon />}
                       iconPosition="right"
                       aria-expanded={isExpanded}
-                      onClick={() => onClick(identifier)}
-                    >
-                      Application deatils
-                    </Button>{' '}
-                    <Button
-                      variant="secondary"
-                      ouiaId="Secondary"
                       onClick={() =>
                         redirectToSpaDetailsPage(
                           propertyIdentifier,
@@ -242,6 +235,13 @@ export const Applications = (): JSX.Element => {
                           spaProperties.data[identifier]?.[0]?.isContainerized ? 0 : 1
                         )
                       }
+                    >
+                      Application deatils
+                    </Button>{' '}
+                    <Button
+                      variant="secondary"
+                      ouiaId="Secondary"
+                      onClick={() => onClick(identifier)}
                     >
                       Environment details
                     </Button>

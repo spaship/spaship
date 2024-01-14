@@ -2,8 +2,10 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/no-array-index-key */
 import { usePopUp } from '@app/hooks';
+import { useListOfPods } from '@app/services/appLogs';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { useAddSsrSpaProperty } from '@app/services/ssr';
+import { ViewLogs } from '@app/views/WebPropertyDetailPage/components/SSR/ViewLogs';
 import { ConfigureWorkflowForm } from '@app/views/WebPropertyDetailPage/components/workflow3.0/ConfigureWorkflowForm';
 import {
   TDataContainerized,
@@ -19,7 +21,6 @@ import {
   DataListItemCells,
   DataListItemRow,
   Drawer,
-  DrawerActions,
   DrawerCloseButton,
   DrawerContent,
   DrawerContentBody,
@@ -37,6 +38,9 @@ import {
   SelectVariant,
   Spinner,
   Switch,
+  Tab,
+  TabTitleText,
+  Tabs,
   Title,
   Tooltip
 } from '@patternfly/react-core';
@@ -45,14 +49,15 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { ApplicationStatus } from '../../WebPropertyDetailPage/components/SSR/ApplicationStatus';
 import { ConfigureSSRForm } from '../../WebPropertyDetailPage/components/SSR/ConfigureSSRForm';
-import './ContainerizedSPADeployment.css';
 import { Lighthouse } from '../Lighthouse/Lighthouse';
+import './ContainerizedSPADeployment.css';
 
 const INTERNAL_ACCESS_URL_LENGTH = 40;
+const SLICE_VAL_LENGTH = 20;
 
 export const ContainerizedSPADeployment = (): JSX.Element => {
   const { query } = useRouter();
@@ -205,6 +210,43 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
     }));
   };
 
+  const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
+  const [envName, setEnvName] = useState('');
+  const [isGit, setIsGit] = useState(false);
+  const [buildIdList, setbuildIdList] = useState<string[]>([]);
+  const [buildDetails, setBuildDetails] = useState<string[]>([]);
+  const [isLogsExpanded, setIsLogsExpanded] = useState(false);
+  const podIdList = useListOfPods(propertyIdentifier, spaProperty, envName);
+  const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
+  const drawerRef = useRef<HTMLDivElement>();
+
+  const onLogsExpand = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    drawerRef.current && drawerRef.current.focus();
+  };
+
+  const onLogsCloseClick = () => {
+    setIsLogsExpanded(false);
+  };
+  const handleTabClick = async (
+    event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
+    tabIndex: string | number
+  ) => {
+    setActiveTabKey(tabIndex);
+  };
+  const onClick = async (
+    e: React.MouseEvent<any> | React.KeyboardEvent,
+    name: string,
+    buildName: string[],
+    rowData: any
+  ) => {
+    const buildNamesOnly: string[] = buildName.map((item: any) => item.name);
+    setBuildDetails(buildName);
+    setbuildIdList(buildNamesOnly);
+    setEnvName(rowData.env);
+    setIsLogsExpanded(true);
+    setIsGit(rowData.isGit);
+  };
   const panelContent = (
     <DrawerPanelContent isResizable minSize="500px">
       <DrawerHead>
@@ -355,10 +397,20 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
                   <>
                     <DataListCell className="spaTitleText" key={`data-list-cell${index}`}>
                       <div>{env}</div>
-                      <p className="bodyText">Ref: {ref}</p>
+                      <p className="bodyText">
+                        Ref:{' '}
+                        {`${ref.slice(0, SLICE_VAL_LENGTH) ?? 'NA'} ${
+                          ref && ref.length > SLICE_VAL_LENGTH ? '...' : ''
+                        }`}
+                      </p>
                     </DataListCell>
                     <DataListCell key={`data-list-cell${index}`}>
-                      <p className="bodyText">Path:{path}</p>
+                      <p className="bodyText">
+                        Path:{' '}
+                        {`${path.slice(0, SLICE_VAL_LENGTH) ?? 'NA'} ${
+                          path && ref.length > SLICE_VAL_LENGTH ? '...' : ''
+                        }`}
+                      </p>
                     </DataListCell>
                     <DataListCell style={{ display: 'contents' }}>
                       <ActionList>
@@ -385,7 +437,19 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
                             isOpen={rowOpenStates[rowId]}
                           >
                             <SelectOption value="Redeploy">Redeploy</SelectOption>
-                            <SelectOption value="View Logs">View Logs</SelectOption>
+                            <SelectOption
+                              value="View Logs"
+                              onClick={(e) =>
+                                onClick(
+                                  e,
+                                  selectedData?.name,
+                                  selectedData?.buildName,
+                                  selectedData
+                                )
+                              }
+                            >
+                              View Logs
+                            </SelectOption>
                           </Select>
                         </ActionListItem>
                       </ActionList>
@@ -405,6 +469,58 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [containerizedDeploymentData]);
+
+  const panelLogsContent = (
+    <DrawerPanelContent
+      isResizable
+      style={{ borderBottom: '1px solid #333', backgroundColor: '#212427' }}
+    >
+      <DrawerHead>
+        <Tabs activeKey={activeTabKey} onSelect={handleTabClick} className="select-tab-ids">
+          <Tab
+            eventKey={0}
+            style={{ paddingBottom: '0px', color: '#D2d2d2' }}
+            title={<TabTitleText style={{ paddingBottom: '10px' }}>Deployment Logs</TabTitleText>}
+          >
+            {activeTabKey === 0 && (
+              <ViewLogs
+                key={envName}
+                propertyIdentifier={propertyIdentifier}
+                spaName={spaProperty}
+                env={envName}
+                type={activeTabKey}
+                idList={podList}
+                isGit={isGit}
+                con={podIdList}
+              />
+            )}
+          </Tab>
+          <Tab
+            eventKey={1}
+            style={{ paddingBottom: '4px', color: '#D2d2d2' }}
+            title={<TabTitleText>Build Logs</TabTitleText>}
+          >
+            {activeTabKey === 1 && (
+              <ViewLogs
+                key={envName}
+                propertyIdentifier={propertyIdentifier}
+                spaName={spaProperty}
+                env={envName}
+                type={activeTabKey}
+                idList={buildIdList}
+                isGit={isGit}
+                con={buildDetails}
+              />
+            )}
+          </Tab>
+        </Tabs>
+        <div className="pf-c-drawer__actions-right">
+          <DrawerCloseButton onClick={onLogsCloseClick} />
+        </div>
+      </DrawerHead>
+    </DrawerPanelContent>
+  );
+
   return (
     <div>
       <Button
@@ -423,9 +539,15 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
           <EmptyStateBody>Please create an deployment to view them here</EmptyStateBody>
         </EmptyState>
       ) : (
-        <Drawer isStatic isExpanded={isExpanded}>
-          <DrawerContent panelContent={panelContent}>
-            <DrawerContentBody>{drawerContent}</DrawerContentBody>
+        <Drawer position="bottom" onExpand={onLogsExpand} isExpanded={isLogsExpanded}>
+          <DrawerContent panelContent={panelLogsContent}>
+            <DrawerContentBody style={{ overflowX: 'hidden', padding: '0px' }}>
+              <Drawer isStatic isExpanded={isExpanded}>
+                <DrawerContent panelContent={panelContent}>
+                  <DrawerContentBody>{drawerContent}</DrawerContentBody>
+                </DrawerContent>
+              </Drawer>
+            </DrawerContentBody>
           </DrawerContent>
         </Drawer>
       )}
