@@ -14,13 +14,17 @@ const fetchLighthouseReportForGivenBuildId = async (
   propertyIdentifier: string,
   identifier: string,
   env: string,
-  selected: string
+  selected: string,
+  isGit?: boolean,
+  isContainerized?: boolean
 ): Promise<any> => {
   const { data } = await orchestratorReq.get(
-    `/lighthouse/${propertyIdentifier}/${env}/lighthouse/${selected}`,
+    `/lighthouse/${propertyIdentifier}/${env}/${identifier}/${selected}`,
     {
       params: {
-        skip: 'lhBuildId'
+        skip: 'lhBuildId',
+        isGit,
+        isContainerized
       }
     }
   );
@@ -32,11 +36,21 @@ export const useLighthouseReportForGivenBuildId = (
   webPropertyIdentifier: string,
   identifier: string,
   env: string,
-  selected: string
+  selected: string,
+  isGit?: boolean,
+  isContainerized?: boolean
 ) =>
   useQuery(
     [lighthouseKeys.list(webPropertyIdentifier, env), selected], // Combine keys for uniqueness
-    () => fetchLighthouseReportForGivenBuildId(webPropertyIdentifier, identifier, env, selected),
+    () =>
+      fetchLighthouseReportForGivenBuildId(
+        webPropertyIdentifier,
+        identifier,
+        env,
+        selected,
+        isGit,
+        isContainerized
+      ),
     {
       enabled: selected !== 'Select build-id', // Disable query for "Select build-id"
       staleTime: Infinity // Prevent automatic refetching

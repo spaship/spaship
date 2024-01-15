@@ -64,13 +64,17 @@ export const Lighthouse = ({
     webPropertyIdentifier,
     identifier,
     environment,
-    selected
+    selected,
+    data?.isGit,
+    data?.isContainerized
   );
   const { refetch } = useLighthouseReportForGivenBuildId(
     webPropertyIdentifier,
     identifier,
     environment,
-    selected
+    selected,
+    data?.isGit,
+    data?.isContainerized
   );
 
   useEffect(() => {
@@ -207,6 +211,7 @@ export const Lighthouse = ({
                     variant="primary"
                     style={{ width: '100px' }}
                     onClick={() => handlePopUpOpen('generateScore')}
+                    isDisabled={!lighthouseData?.data}
                   >
                     View More
                   </Button>{' '}
