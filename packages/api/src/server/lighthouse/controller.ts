@@ -57,6 +57,6 @@ export class LighthouseController {
     @Query('isGit') isGit: string,
     @Query('skip') skip: string
   ): Promise<LighthouseResponseDTO[]> {
-    return this.lighthouseService.getlighthouseReport(propertyIdentifier, env, identifier, lhBuildId, lhIdentifier, skip, !!isContainerized, !!isGit);
+    return this.lighthouseService.getlighthouseReport(propertyIdentifier, env, identifier, lhBuildId, lhIdentifier, skip, isContainerized, isGit);
   }
 }
