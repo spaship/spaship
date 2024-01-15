@@ -42,6 +42,7 @@ import { ApplicationStatus } from '../../WebPropertyDetailPage/components/SSR/Ap
 import { Lighthouse } from '../Lighthouse/Lighthouse';
 
 const INTERNAL_URL_LENGTH = 40;
+const SLICE_VAL_LENGTH = 20;
 
 export const StaticSPADeployment = (): JSX.Element => {
   const { query } = useRouter();
@@ -286,10 +287,20 @@ export const StaticSPADeployment = (): JSX.Element => {
                   <>
                     <DataListCell className="spaTitleText" key={`data-list-cell${index}`}>
                       <div>{env}</div>
-                      <p className="bodyText">Ref: {ref}</p>
+                      <p className="bodyText">
+                        Ref:{' '}
+                        {`${ref.slice(0, SLICE_VAL_LENGTH) ?? 'NA'} ${
+                          ref && ref.length > SLICE_VAL_LENGTH ? '...' : ''
+                        }`}
+                      </p>
                     </DataListCell>
                     <DataListCell key={`data-list-cell${index}`}>
-                      <p className="bodyText">Path:{path}</p>
+                      <p className="bodyText">
+                        Path:{' '}
+                        {`${path.slice(0, SLICE_VAL_LENGTH) ?? 'NA'} ${
+                          path && ref.length > SLICE_VAL_LENGTH ? '...' : ''
+                        }`}
+                      </p>
                     </DataListCell>
                     <DataListCell style={{ display: 'contents' }}>
                       <ActionList>

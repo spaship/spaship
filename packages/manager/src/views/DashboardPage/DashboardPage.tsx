@@ -13,6 +13,21 @@ import { ActivityStreamDashboard } from './components/ActivityStreamDashboard';
 import { Analytics } from './components/Analytics';
 import { DashboardChart } from './components/DashboardChart';
 
+type IDeploymentData = {
+  env: string;
+  count: number;
+  startDate: string;
+  endDate: string;
+};
+export interface TotalMonthlyDeploymentData {
+  qa?: IDeploymentData[];
+  prod?: IDeploymentData[];
+  dev?: IDeploymentData[];
+  stage?: IDeploymentData[];
+  minDeploymentCount?: number;
+  maxDeploymentCount?: number;
+  lastMonthEphemeral?: number;
+}
 export const DashboardPage = (): JSX.Element => {
   const TotalDeploymentData = useGetTotalDeployments();
   const TotalDeployment = TotalDeploymentData.data?.reduce((acc, obj) => acc + obj.count, 0);

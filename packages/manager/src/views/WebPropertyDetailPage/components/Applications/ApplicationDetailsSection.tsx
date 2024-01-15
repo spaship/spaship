@@ -44,7 +44,7 @@ export const ApplicationDetailsSection = ({ data, webProperties }: Props): JSX.E
               isHidden={expanded !== `def-list-toggle${env}`}
             >
               <p className="appDetailSectionHeading">Reference</p>
-              <p className="appDetailSectionValue">{ref}</p>
+              <p className="appDetailSectionValue">{ref || 'NA'}</p>
               <br />
               <p>
                 <p className="appDetailSectionHeading">Publish Domain</p>
@@ -77,24 +77,39 @@ export const ApplicationDetailsSection = ({ data, webProperties }: Props): JSX.E
               <p className="appDetailSectionBlueValue">
                 {Array.isArray(routerUrl) &&
                   routerUrl.map((url, index) => (
-                    <a
+                    <ClipboardCopy
                       // eslint-disable-next-line react/no-array-index-key
-                      key={index}
-                      href={`https://${url}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      key={`appDetailSectionURL_${index}`}
+                      style={{ backgroundColor: 'white' }}
+                      hoverTip="Copy"
+                      clickTip="Copied"
+                      variant="inline-compact"
+                      isReadOnly
+                      onCopy={() => {
+                        const textToCopy = `https://${url}`;
+                        navigator.clipboard.writeText(textToCopy).then(
+                          () => {
+                            // Handle successful copy
+                          },
+                          (err) => {
+                            // eslint-disable-next-line no-console
+                            console.error('Copy failed', err);
+                          }
+                        );
+                      }}
                     >
-                      <ClipboardCopy
-                        style={{ backgroundColor: 'white' }}
-                        hoverTip="Copy"
-                        clickTip="Copied"
-                        variant="inline-compact"
+                      <a
+                        // eslint-disable-next-line react/no-array-index-key
+                        key={index}
+                        href={`https://${url}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
                       >
                         {`${url.slice(0, URL_LENGTH_LIMIT)}${
                           url.length > URL_LENGTH_LIMIT ? '...' : ''
                         }`}
-                      </ClipboardCopy>
-                    </a>
+                      </a>
+                    </ClipboardCopy>
                   ))}
               </p>
               <br />

@@ -1,9 +1,9 @@
 /* eslint-disable react/no-unused-prop-types */
 /* eslint-disable no-else-return */
+import { env } from '@app/config/env';
 import { usePopUp } from '@app/hooks';
 import {
   useGenerateLighthouseReport,
-  // useGenerateLighthouseReport,
   useGetLhIdentifierList,
   useLighthouseReportForGivenBuildId
 } from '@app/services/lighthouse/queries';
@@ -12,7 +12,6 @@ import {
   Button,
   Card,
   CardHeader,
-  Divider,
   EmptyState,
   EmptyStateBody,
   Modal,
@@ -26,13 +25,12 @@ import {
   Title,
   Tooltip
 } from '@patternfly/react-core';
+import { InfoAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Tr } from '@patternfly/react-table';
+import { AxiosError } from 'axios';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { env } from '@app/config/env';
-import Link from 'next/link';
-import { AxiosError } from 'axios';
-import { InfoAltIcon } from '@patternfly/react-icons';
 
 const GREY = '#F0F0F0';
 const lighthouseUrl = env.PUBLIC_SPASHIP_LIGHTHOUSE_URL;
@@ -157,83 +155,103 @@ export const Lighthouse = ({
         </Select>
         {lhBuildIdList?.data?.length ? (
           <>
-            <Split className="pf-u-m-md">
-              {metricNames.map((metricName, index) => {
-                const metricsData = lighthouseData?.data?.metrics;
-                const percentage =
-                  metricsData && metricsData[metricName] !== undefined
-                    ? metricsData[metricName] * 100
-                    : 0;
-                const remainingPercentage = 100 - percentage;
-                const color = getColor(percentage);
-                return (
-                  <SplitItem key={metricName}>
-                    <Tooltip
-                      content={
-                        <div>
-                          {metricName} : {percentage}%
-                        </div>
-                      }
-                    >
-                      <ChartDonut
-                        ariaDesc={`${metricName} metric`}
-                        ariaTitle={`${metricName}`}
-                        constrainToVisibleArea
-                        data={[
-                          { x: metricName, y: percentage, color },
-                          { x: 'remaining', y: remainingPercentage, color: ChartThemeColor.gray }
-                        ]}
-                        labels={({ datum }) =>
-                          datum.x === metricName
-                            ? `${datum.x}: ${datum.y.toFixed(2)}%`
-                            : `Remaining: ${datum.y.toFixed(2)}%`
+            <Card style={{ boxShadow: 'none' }}>
+              <Split className="pf-u-m-md">
+                {metricNames.map((metricName, index) => {
+                  const metricsData = lighthouseData?.data?.metrics;
+                  const percentage =
+                    metricsData && metricsData[metricName] !== undefined
+                      ? metricsData[metricName] * 100
+                      : 0;
+                  const remainingPercentage = 100 - percentage;
+                  const color = getColor(percentage);
+                  return (
+                    <SplitItem key={metricName}>
+                      <Tooltip
+                        content={
+                          <div>
+                            {metricName} : {percentage}%
+                          </div>
                         }
-                        name={`chart${index + 1}`}
-                        subTitle={`${metricName}`}
-                        colorScale={[color, GREY]}
-                        title={percentage.toFixed(2)}
-                        innerRadius={75} // Adjust this value as needed
-                      />
-                    </Tooltip>
-                  </SplitItem>
-                );
-              })}
-            </Split>
-            <Button variant="link" onClick={() => handlePopUpOpen('generateScore')}>
-              View More
-            </Button>{' '}
-            <Divider />
+                      >
+                        <ChartDonut
+                          ariaDesc={`${metricName} metric`}
+                          ariaTitle={`${metricName}`}
+                          constrainToVisibleArea
+                          data={[
+                            { x: metricName, y: percentage, color },
+                            { x: 'remaining', y: remainingPercentage, color: ChartThemeColor.gray }
+                          ]}
+                          labels={({ datum }) =>
+                            datum.x === metricName
+                              ? `${datum.x}: ${datum.y.toFixed(2)}%`
+                              : `Remaining: ${datum.y.toFixed(2)}%`
+                          }
+                          name={`chart${index + 1}`}
+                          subTitle={`${metricName}`}
+                          colorScale={[color, GREY]}
+                          title={percentage.toFixed(2)}
+                          innerRadius={75} // Adjust this value as needed
+                        />
+                      </Tooltip>
+                    </SplitItem>
+                  );
+                })}
+              </Split>
+              <Split className="pf-u-m-md">
+                <SplitItem isFilled />
+                <SplitItem>
+                  {' '}
+                  <Button
+                    variant="primary"
+                    style={{ width: '100px' }}
+                    onClick={() => handlePopUpOpen('generateScore')}
+                  >
+                    View More
+                  </Button>{' '}
+                </SplitItem>
+                <SplitItem isFilled />
+              </Split>
+            </Card>
             <br />
             <p className="bodyText" style={{ fontSize: '8px' }}>
               Note: If there are no changes in the SPA, you will not observe any differences in the
               report even after redeploying the SPA.
             </p>
             <br />
-            <p className="bodyText">
-              {' '}
-              Generate a lighthouse report for the latest deployments.{' '}
-              <span>
-                <Tooltip
-                  content={
-                    <div>
-                      {' '}
-                      If there are no changes in the SPA, you will not observe any differences in
-                      the report even after redeploying the SPA.
-                    </div>
-                  }
+            <Card style={{ boxShadow: 'none' }}>
+              <p className="bodyText">
+                {' '}
+                Generate a lighthouse report for the latest deployments.{' '}
+                <span>
+                  <Tooltip
+                    content={
+                      <div>
+                        {' '}
+                        If there are no changes in the SPA, you will not observe any differences in
+                        the report even after redeploying the SPA.
+                      </div>
+                    }
+                  >
+                    <InfoAltIcon />
+                  </Tooltip>
+                </span>
+              </p>
+            </Card>
+            <Split className="pf-u-m-md">
+              <SplitItem isFilled />
+              <SplitItem>
+                {' '}
+                <Button
+                  variant="primary"
+                  id="generate-new-score"
+                  onClick={() => generateReportF()} // Add parentheses to call the function
                 >
-                  <InfoAltIcon />
-                </Tooltip>
-              </span>
-            </p>
-            <Button
-              variant="primary"
-              id="generate-new-score"
-              width="100px"
-              onClick={() => generateReportF()} // Add parentheses to call the function
-            >
-              Generate New Report
-            </Button>
+                  Generate New Report
+                </Button>
+              </SplitItem>
+              <SplitItem isFilled />
+            </Split>
           </>
         ) : (
           <EmptyState>
@@ -253,13 +271,13 @@ export const Lighthouse = ({
         )}
       </Card>
       <Modal
-        title="Add Members"
+        title="Lighthouse report"
         variant={ModalVariant.medium}
         isOpen={popUp.generateScore.isOpen}
         onClose={() => handlePopUpClose('generateScore')}
       >
         <Card>
-          <CardHeader>Lighthouse Detailed Report</CardHeader>
+          <CardHeader>Lighthouse Score</CardHeader>
           <Split className="pf-u-m-md">
             {metricNames.map((metricName, index) => {
               const metricsData = lighthouseData?.data?.metrics;
@@ -302,7 +320,8 @@ export const Lighthouse = ({
               );
             })}
           </Split>
-          ¯
+          <CardHeader>Other Details</CardHeader>
+
           <Table aria-label="Lighthouse Data Table" variant="compact">
             <Tbody>
               <Tr>
@@ -354,14 +373,19 @@ export const Lighthouse = ({
                 <Td>{lighthouseData?.data?.metrics?.totalBlockingTime}</Td>
               </Tr>
             </Tbody>
-            <Link href={`${lighthouseUrl}${selected}`}>
-              <a className="text-decoration-none" target="_blank" rel="noreferrer">
-                <Button variant="link" style={{ float: 'right' }}>
-                  Full Report
-                </Button>
-              </a>
-            </Link>
           </Table>
+          <Split className="pf-u-m-md">
+            <SplitItem isFilled />
+            <SplitItem>
+              {' '}
+              <Link href={`${lighthouseUrl}${selected}`}>
+                <a className="text-decoration-none" target="_blank" rel="noreferrer">
+                  <Button variant="primary">Full Report</Button>
+                </a>
+              </Link>
+            </SplitItem>
+            <SplitItem isFilled />
+          </Split>
         </Card>
       </Modal>
     </>

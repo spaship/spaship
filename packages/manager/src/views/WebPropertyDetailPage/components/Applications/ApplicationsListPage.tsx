@@ -142,117 +142,119 @@ export const Applications = (): JSX.Element => {
   );
 
   const drawerContent = (
-    <TableComposable>
-      <Thead>
-        <Tr>
-          <Th>Application name</Th>
-          <Th>Environment</Th>
-          <Th>URL Path</Th>
-          <Th colSpan={2}>
-            {' '}
-            <Pagination
-              itemCount={
-                spaPropertyKeys.filter((el) => el.toLowerCase().includes(debouncedSearchTerm))
-                  .length || 0
-              }
-              widgetId="bottom-example"
-              perPage={perPage}
-              page={page}
-              perPageOptions={perPageOptions}
-              variant={PaginationVariant.top}
-              onSetPage={onPageSet}
-              onPerPageSelect={onPerPageSelect}
-            />
-          </Th>
-        </Tr>
-      </Thead>
-      <Tbody>
-        {(spaProperties.isLoading && webProperties.isLoading) ||
-        (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
-          <TableRowSkeleton rows={3} columns={4} />
-        ) : (
-          spaProperties.isSuccess &&
-          paginatedData.map((identifier) => (
-            <Tr key={identifier}>
-              <Td>
-                <Link
-                  href={{
-                    pathname: '/properties/[propertyIdentifier]/[spaProperty]',
-                    query: {
-                      propertyIdentifier,
-                      spaProperty: identifier,
-                      initialTab: spaProperties.data[identifier]?.[0]?.isContainerized ? 0 : 1
-                    }
-                  }}
-                >
-                  {`${spaProperties.data[identifier]?.[0]?.name.slice(0, URL_LENGTH_LIMIT)} ${
-                    spaProperties.data[identifier]?.[0]?.name.length > URL_LENGTH_LIMIT ? '...' : ''
-                  }`}
-                </Link>
-              </Td>
+    <>
+      <Pagination
+        itemCount={
+          spaPropertyKeys.filter((el) => el.toLowerCase().includes(debouncedSearchTerm)).length || 0
+        }
+        widgetId="bottom-example"
+        perPage={perPage}
+        page={page}
+        perPageOptions={perPageOptions}
+        variant={PaginationVariant.top}
+        onSetPage={onPageSet}
+        onPerPageSelect={onPerPageSelect}
+      />
+      <TableComposable>
+        <Thead>
+          <Tr>
+            <Th>Application name</Th>
+            <Th>Environment</Th>
+            <Th>URL Path</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {(spaProperties.isLoading && webProperties.isLoading) ||
+          (spaProperties.isLoading && isSpaPropertyListEmpty) ? (
+            <TableRowSkeleton rows={3} columns={4} />
+          ) : (
+            spaProperties.isSuccess &&
+            paginatedData.map((identifier) => (
+              <Tr key={identifier}>
+                <Td>
+                  <Link
+                    href={{
+                      pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+                      query: {
+                        propertyIdentifier,
+                        spaProperty: identifier,
+                        initialTab: spaProperties.data[identifier]?.[0]?.isContainerized ? 0 : 1
+                      }
+                    }}
+                  >
+                    {`${spaProperties.data[identifier]?.[0]?.name.slice(0, URL_LENGTH_LIMIT)} ${
+                      spaProperties.data[identifier]?.[0]?.name.length > URL_LENGTH_LIMIT
+                        ? '...'
+                        : ''
+                    }`}
+                  </Link>
+                </Td>
 
-              <Td style={{ wordWrap: 'break-word' }}>
-                <Split hasGutter>
-                  {spaProperties?.data[identifier].map(({ _id, env, isContainerized, isGit }) => (
-                    <SplitItem key={_id} style={{ marginRight: '8px' }}>
-                      <Label
-                        icon={
-                          // eslint-disable-next-line no-nested-ternary
-                          isContainerized && isGit ? (
-                            <GithubIcon />
-                          ) : isContainerized && !isGit ? (
-                            <BuildIcon />
-                          ) : (
-                            <BundleIcon />
+                <Td style={{ wordWrap: 'break-word' }}>
+                  <Split hasGutter>
+                    {spaProperties?.data[identifier].map(({ _id, env, isContainerized, isGit }) => (
+                      <SplitItem key={_id} style={{ marginRight: '8px' }}>
+                        <Label
+                          icon={
+                            // eslint-disable-next-line no-nested-ternary
+                            isContainerized && isGit ? (
+                              <GithubIcon />
+                            ) : isContainerized && !isGit ? (
+                              <BuildIcon />
+                            ) : (
+                              <BundleIcon />
+                            )
+                          }
+                          color="grey"
+                        >
+                          {env}
+                        </Label>
+                      </SplitItem>
+                    ))}
+                  </Split>
+                </Td>
+                <Td style={{ wordWrap: 'break-word' }}>
+                  {`${spaProperties?.data[identifier]?.[0]?.path?.slice(0, URL_LENGTH_LIMIT)} ${
+                    spaProperties?.data[identifier]?.[0]?.path?.length > URL_LENGTH_LIMIT
+                      ? '...'
+                      : ''
+                  }`}
+                </Td>
+                <Td>
+                  <Split>
+                    <SplitItem isFilled />
+                    <SplitItem>
+                      <Button
+                        variant="link"
+                        icon={<ExternalLinkAltIcon />}
+                        iconPosition="right"
+                        aria-expanded={isExpanded}
+                        onClick={() =>
+                          redirectToSpaDetailsPage(
+                            propertyIdentifier,
+                            identifier,
+                            spaProperties.data[identifier]?.[0]?.isContainerized ? 0 : 1
                           )
                         }
-                        color="grey"
                       >
-                        {env}
-                      </Label>
+                        Application deatils
+                      </Button>{' '}
+                      <Button
+                        variant="secondary"
+                        ouiaId="Secondary"
+                        onClick={() => onClick(identifier)}
+                      >
+                        Environment details
+                      </Button>
                     </SplitItem>
-                  ))}
-                </Split>
-              </Td>
-              <Td style={{ wordWrap: 'break-word' }}>
-                {`${spaProperties?.data[identifier]?.[0]?.path?.slice(0, URL_LENGTH_LIMIT)} ${
-                  spaProperties?.data[identifier]?.[0]?.path?.length > URL_LENGTH_LIMIT ? '...' : ''
-                }`}
-              </Td>
-              <Td>
-                <Split>
-                  <SplitItem isFilled />
-                  <SplitItem>
-                    <Button
-                      variant="link"
-                      icon={<ExternalLinkAltIcon />}
-                      iconPosition="right"
-                      aria-expanded={isExpanded}
-                      onClick={() => onClick(identifier)}
-                    >
-                      Application deatils
-                    </Button>{' '}
-                    <Button
-                      variant="secondary"
-                      ouiaId="Secondary"
-                      onClick={() =>
-                        redirectToSpaDetailsPage(
-                          propertyIdentifier,
-                          identifier,
-                          spaProperties.data[identifier]?.[0]?.isContainerized ? 0 : 1
-                        )
-                      }
-                    >
-                      Environment details
-                    </Button>
-                  </SplitItem>
-                </Split>
-              </Td>
-            </Tr>
-          ))
-        )}
-      </Tbody>
-    </TableComposable>
+                  </Split>
+                </Td>
+              </Tr>
+            ))
+          )}
+        </Tbody>
+      </TableComposable>
+    </>
   );
   return (
     <div>

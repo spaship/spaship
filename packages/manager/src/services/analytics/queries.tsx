@@ -16,7 +16,21 @@ type IDeploymentData = {
   startDate: string;
   endDate: string;
 };
+type ITransformedInputDataItem = {
+  propertyIdentifier?: string;
+  env: string;
+  count: number;
+  startDate: string;
+  endDate: string;
+};
 
+type TransformedInput = {
+  [key: string]: ITransformedInputDataItem[];
+};
+
+type TransformedOutput = {
+  [key: string]: ITransformedInputDataItem[];
+};
 export const analyticsKeys = {
   deploy: ['deployment-count'] as const,
   deploymentTimeMonthly: ['deployment-time-monthly'] as const,
@@ -164,6 +178,23 @@ const fetchMonthlyDeploymentChartWithEphemeral = async (
   return data.data;
 };
 
+function transformInput(input: TransformedInput): TransformedOutput {
+  const environments = ['dev', 'qa', 'prod', 'stage'];
+  const output: TransformedOutput = {};
+
+  environments.forEach((env) => {
+    output[env] =
+      input[env] ||
+      input.dev.map((devItem) => ({
+        ...devItem,
+        env,
+        count: 0
+      }));
+  });
+
+  return output;
+}
+
 export const useGetMonthlyDeploymentChartWithEphemeral = (
   propertyIdentifier?: string,
   applicationIdentifier?: string,
@@ -180,19 +211,21 @@ export const useGetMonthlyDeploymentChartWithEphemeral = (
       prod?: IDeploymentData[];
       ephemeral?: IDeploymentData[];
     }) => {
+      if (!Object.keys(data).length) {
+        // Return an empty object if data is empty
+        return {};
+      }
+
       const monthlyDelpoymentData: {
-        qa?: any[];
-        stage?: any[];
-        dev?: any[];
-        prod?: any[];
-        lastMonthEphemeral?: number;
-        maxDeploymentCount?: number;
+        qa?: IDeploymentData[];
+        prod?: IDeploymentData[];
+        dev?: IDeploymentData[];
+        stage?: IDeploymentData[];
         minDeploymentCount?: number;
+        maxDeploymentCount?: number;
+        lastMonthEphemeral?: number;
       } = {};
-      monthlyDelpoymentData.qa = data.qa ?? [];
-      monthlyDelpoymentData.stage = data.stage ?? [];
-      monthlyDelpoymentData.dev = data.dev ?? [];
-      monthlyDelpoymentData.prod = data.prod ?? [];
+
       monthlyDelpoymentData.lastMonthEphemeral =
         data.ephemeral?.reduce((acc, obj) => acc + obj.count, 0) ?? 0;
       monthlyDelpoymentData.minDeploymentCount = Math.min(
@@ -207,7 +240,12 @@ export const useGetMonthlyDeploymentChartWithEphemeral = (
         data.dev?.reduce((acc, obj) => Math.max(acc, obj.count), 0) ?? 0,
         data.prod?.reduce((acc, obj) => Math.max(acc, obj.count), 0) ?? 0
       );
-      return monthlyDelpoymentData;
+
+      const result = {
+        ...transformInput(data),
+        ...monthlyDelpoymentData
+      };
+      return result;
     }
   });
 
