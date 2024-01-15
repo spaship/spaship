@@ -222,7 +222,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
 
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [envName, setEnvName] = useState('');
-  const [isGit, setIsGit] = useState(false);
+  const [isLogsGit, setIsLogsGit] = useState(false);
   const [buildIdList, setbuildIdList] = useState<string[]>([]);
   const [buildDetails, setBuildDetails] = useState<string[]>([]);
   const [isLogsExpanded, setIsLogsExpanded] = useState(false);
@@ -255,7 +255,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
     setbuildIdList(buildNamesOnly);
     setEnvName(rowData.env);
     setIsLogsExpanded(true);
-    setIsGit(rowData.isGit);
+    setIsLogsGit(rowData.isLogsGit);
   };
   const panelContent = (
     <DrawerPanelContent isResizable minSize="500px">
@@ -392,7 +392,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
       selectedDataListItemId={selectedDataListItemId}
       onSelectDataListItem={onSelectDataListItem}
     >
-      {paginatedData?.map(({ env, ref, path }, index) => {
+      {paginatedData?.map(({ env, ref, path, isGit }, index) => {
         const rowId = `data-list-item${index}`;
         return (
           <DataListItem
@@ -406,7 +406,15 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
                 dataListCells={[
                   <>
                     <DataListCell className="spaTitleText" key={`data-list-cell${index}`}>
-                      <div>{env}</div>
+                      <Split>
+                        <SplitItem>
+                          <Label>{isGit ? <GithubIcon /> : <BuildIcon />}</Label>{' '}
+                        </SplitItem>
+                        <SplitItem>
+                          <div>&nbsp;{env}</div>
+                        </SplitItem>
+                      </Split>
+
                       <p className="bodyText">
                         Ref:{' '}
                         {`${ref.slice(0, SLICE_VAL_LENGTH) ?? 'NA'} ${
@@ -500,7 +508,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
                 env={envName}
                 type={activeTabKey}
                 idList={podList}
-                isGit={isGit}
+                isGit={isLogsGit}
                 con={podIdList}
               />
             )}
@@ -518,7 +526,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
                 env={envName}
                 type={activeTabKey}
                 idList={buildIdList}
-                isGit={isGit}
+                isGit={isLogsGit}
                 con={buildDetails}
               />
             )}
@@ -598,7 +606,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
         onClose={() => handlePopUpClose('reconfigureSsrApplication')}
         style={{ minHeight: '600px' }}
       >
-        {configureData.isGit ? (
+        {configureData.isLogsGit ? (
           <ConfigureWorkflowForm
             propertyIdentifier={propertyIdentifier}
             onClose={() => handlePopUpClose('reconfigureSsrApplication')}
