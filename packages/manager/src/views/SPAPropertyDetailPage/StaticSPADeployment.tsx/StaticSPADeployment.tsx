@@ -3,6 +3,9 @@
 /* eslint-disable react/no-array-index-key */
 import { usePopUp, useToggle } from '@app/hooks';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
+import { TSpaProperty } from '@app/services/spaProperty/types';
+import { useApplicationAutoSync } from '@app/services/sync';
+import { convertDateFormat } from '@app/utils/convertDateFormat';
 import {
   ActionGroup,
   ActionList,
@@ -29,15 +32,12 @@ import {
   Title,
   Tooltip
 } from '@patternfly/react-core';
+import { CubesIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
-import { TSpaProperty } from '@app/services/spaProperty/types';
-import { useApplicationAutoSync } from '@app/services/sync';
-import { CubesIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { ApplicationStatus } from '../../WebPropertyDetailPage/components/SSR/ApplicationStatus';
 import { Lighthouse } from '../Lighthouse/Lighthouse';
 
@@ -186,7 +186,7 @@ export const StaticSPADeployment = (): JSX.Element => {
                       <ApplicationStatus link={url} _id={String(selectedData?._id)} />
                     </div>
                   )}
-                  <Td className="bodyText">{selectedData?.updatedAt}</Td>
+                  <Td className="bodyText">{convertDateFormat(selectedData?.updatedAt)}</Td>
                 </Tr>
               ))
             ) : (
@@ -240,7 +240,7 @@ export const StaticSPADeployment = (): JSX.Element => {
                       <ApplicationStatus link={url} _id={String(selectedData?._id)} />
                     </div>
                   )}
-                  <Td className="bodyText">{selectedData?.updatedAt}</Td>
+                  <Td className="bodyText">{convertDateFormat(selectedData?.updatedAt)}</Td>
                 </Tr>
               ))
             ) : (

@@ -1,3 +1,5 @@
+import { TSpaProperty } from '@app/services/spaProperty/types';
+import { convertDateFormat } from '@app/utils/convertDateFormat';
 import {
   Accordion,
   AccordionContent,
@@ -5,9 +7,8 @@ import {
   AccordionToggle,
   ClipboardCopy
 } from '@patternfly/react-core';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './ApplicationDetailsSection.css';
-import { TSpaProperty } from '@app/services/spaProperty/types';
 
 interface Props {
   data: TSpaProperty[];
@@ -71,7 +72,9 @@ export const ApplicationDetailsSection = ({ data, webProperties }: Props): JSX.E
               <br />
               <p className="appDetailSectionHeading">
                 Router URL{' '}
-                <span className="appDetailSectionlastUpdate">last update: {updatedAt}</span>
+                <span className="appDetailSectionlastUpdate">
+                  last update: {convertDateFormat(updatedAt)}
+                </span>
               </p>
 
               <p className="appDetailSectionBlueValue">

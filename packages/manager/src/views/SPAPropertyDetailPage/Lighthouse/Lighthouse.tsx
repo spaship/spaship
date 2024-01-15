@@ -102,6 +102,7 @@ export const Lighthouse = ({
 
   const generateReport = useGenerateLighthouseReport();
   const generateReportF = async () => {
+    const toastId = toast.loading('Lighthouse score generation underway... 🚀');
     const generateReportDTO = {
       propertyIdentifier: data.propertyIdentifier,
       identifier: data.identifier,
@@ -114,12 +115,12 @@ export const Lighthouse = ({
       await generateReport.mutateAsync({
         ...generateReportDTO
       });
-      toast.success('Report generated successfully');
+      toast.success('Report generated successfully', { id: toastId });
     } catch (error) {
       if (error instanceof AxiosError && error.response && error.response.status === 400) {
-        toast.error(error.response.data.message);
+        toast.error(error.response.data.message, { id: toastId });
       } else {
-        toast.error('Failed to generate report');
+        toast.error('Failed to generate report', { id: toastId });
       }
     }
   };

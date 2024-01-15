@@ -237,7 +237,7 @@ export const Applications = (): JSX.Element => {
                           )
                         }
                       >
-                        Application deatils
+                        Application details
                       </Button>{' '}
                       <Button
                         variant="secondary"
