@@ -114,14 +114,6 @@ export const Applications = (): JSX.Element => {
     setIsExpanded(false);
   };
 
-  const redirectToSpaDetailsPage = (
-    paramPropertyIdentifier: string,
-    spaProperty: string,
-    initialTab: number
-  ) => {
-    const redirectUrl = `/properties/${paramPropertyIdentifier}/${spaProperty}?initialTab=${initialTab}`;
-    window.location.href = redirectUrl;
-  };
   const panelContent = (
     <DrawerPanelContent style={{ marginTop: '80px' }}>
       <DrawerHead>
@@ -224,21 +216,28 @@ export const Applications = (): JSX.Element => {
                   <Split>
                     <SplitItem isFilled />
                     <SplitItem>
-                      <Button
-                        variant="link"
-                        icon={<ExternalLinkAltIcon />}
-                        iconPosition="right"
-                        aria-expanded={isExpanded}
-                        onClick={() =>
-                          redirectToSpaDetailsPage(
+                      <Link
+                        href={{
+                          pathname: '/properties/[propertyIdentifier]/[spaProperty]',
+                          query: {
                             propertyIdentifier,
-                            identifier,
-                            spaProperties.data[identifier]?.[0]?.isContainerized ? 0 : 1
-                          )
-                        }
+                            spaProperty: identifier,
+                            initialTab: spaProperties.data[identifier]?.[0]?.isContainerized ? 0 : 1
+                          }
+                        }}
                       >
-                        Application deatils
-                      </Button>{' '}
+                        <a>
+                          <Button
+                            variant="link"
+                            icon={<ExternalLinkAltIcon />}
+                            iconPosition="right"
+                            aria-expanded={isExpanded}
+                          >
+                            Application details
+                          </Button>{' '}
+                        </a>
+                      </Link>
+
                       <Button
                         variant="secondary"
                         ouiaId="Secondary"

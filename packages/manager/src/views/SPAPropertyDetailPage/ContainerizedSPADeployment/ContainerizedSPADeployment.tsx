@@ -5,6 +5,7 @@ import { usePopUp } from '@app/hooks';
 import { useListOfPods } from '@app/services/appLogs';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { useAddSsrSpaProperty } from '@app/services/ssr';
+import { convertDateFormat } from '@app/utils/convertDateFormat';
 import { ViewLogs } from '@app/views/WebPropertyDetailPage/components/SSR/ViewLogs';
 import { ConfigureWorkflowForm } from '@app/views/WebPropertyDetailPage/components/workflow3.0/ConfigureWorkflowForm';
 import {
@@ -30,6 +31,7 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
+  Label,
   Modal,
   ModalVariant,
   Select,
@@ -37,6 +39,8 @@ import {
   SelectOptionObject,
   SelectVariant,
   Spinner,
+  Split,
+  SplitItem,
   Switch,
   Tab,
   TabTitleText,
@@ -44,7 +48,13 @@ import {
   Title,
   Tooltip
 } from '@patternfly/react-core';
-import { CubesIcon, InfoCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import {
+  BuildIcon,
+  CubesIcon,
+  GithubIcon,
+  InfoCircleIcon,
+  PlusCircleIcon
+} from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import Link from 'next/link';
@@ -212,7 +222,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
 
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [envName, setEnvName] = useState('');
-  const [isGit, setIsGit] = useState(false);
+  const [isLogsGit, setIsLogsGit] = useState(false);
   const [buildIdList, setbuildIdList] = useState<string[]>([]);
   const [buildDetails, setBuildDetails] = useState<string[]>([]);
   const [isLogsExpanded, setIsLogsExpanded] = useState(false);
@@ -245,7 +255,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
     setbuildIdList(buildNamesOnly);
     setEnvName(rowData.env);
     setIsLogsExpanded(true);
-    setIsGit(rowData.isGit);
+    setIsLogsGit(rowData.isLogsGit);
   };
   const panelContent = (
     <DrawerPanelContent isResizable minSize="500px">
@@ -300,7 +310,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
                       <ApplicationStatus link={url} _id={String(selectedData?._id)} />
                     </div>
                   )}
-                  <Td className="bodyText">{selectedData?.updatedAt}</Td>
+                  <Td className="bodyText">{convertDateFormat(selectedData?.updatedAt)}</Td>
                 </Tr>
               ))
             ) : (
@@ -354,7 +364,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
                       <ApplicationStatus link={url} _id={String(selectedData?._id)} />
                     </div>
                   )}
-                  <Td className="bodyText">{selectedData?.updatedAt}</Td>
+                  <Td className="bodyText">{convertDateFormat(selectedData?.updatedAt)}</Td>
                 </Tr>
               ))
             ) : (
@@ -382,7 +392,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
       selectedDataListItemId={selectedDataListItemId}
       onSelectDataListItem={onSelectDataListItem}
     >
-      {paginatedData?.map(({ env, ref, path }, index) => {
+      {paginatedData?.map(({ env, ref, path, isGit }, index) => {
         const rowId = `data-list-item${index}`;
         return (
           <DataListItem
@@ -396,7 +406,15 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
                 dataListCells={[
                   <>
                     <DataListCell className="spaTitleText" key={`data-list-cell${index}`}>
-                      <div>{env}</div>
+                      <Split>
+                        <SplitItem>
+                          <Label>{isGit ? <GithubIcon /> : <BuildIcon />}</Label>{' '}
+                        </SplitItem>
+                        <SplitItem>
+                          <div>&nbsp;{env}</div>
+                        </SplitItem>
+                      </Split>
+
                       <p className="bodyText">
                         Ref:{' '}
                         {`${ref.slice(0, SLICE_VAL_LENGTH) ?? 'NA'} ${
@@ -490,7 +508,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
                 env={envName}
                 type={activeTabKey}
                 idList={podList}
-                isGit={isGit}
+                isGit={isLogsGit}
                 con={podIdList}
               />
             )}
@@ -508,7 +526,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
                 env={envName}
                 type={activeTabKey}
                 idList={buildIdList}
-                isGit={isGit}
+                isGit={isLogsGit}
                 con={buildDetails}
               />
             )}
@@ -523,13 +541,31 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
 
   return (
     <div>
-      <Button
-        className="pf-u-mb-md"
-        onClick={() => handlePopUpOpen('createSSRDeployment')}
-        icon={<PlusCircleIcon />}
-      >
-        Add New App
-      </Button>
+      <Split className="pf-u-mb-md">
+        <SplitItem>
+          <Button
+            className="pf-u-mb-md"
+            onClick={() => handlePopUpOpen('createSSRDeployment')}
+            icon={<PlusCircleIcon />}
+          >
+            Add New App
+          </Button>
+        </SplitItem>
+        <SplitItem
+          isFilled
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Label icon={<GithubIcon />}>Containerized deployment (Git)</Label>{' '}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', marginLeft: '16px' }}>
+            <Label icon={<BuildIcon />}>Containerized deployment</Label>{' '}
+          </div>
+        </SplitItem>
+      </Split>
       {!containerizedDeploymentData?.length ? (
         <EmptyState>
           <EmptyStateIcon icon={CubesIcon} />
@@ -570,7 +606,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
         onClose={() => handlePopUpClose('reconfigureSsrApplication')}
         style={{ minHeight: '600px' }}
       >
-        {configureData.isGit ? (
+        {configureData.isLogsGit ? (
           <ConfigureWorkflowForm
             propertyIdentifier={propertyIdentifier}
             onClose={() => handlePopUpClose('reconfigureSsrApplication')}
