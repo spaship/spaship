@@ -279,7 +279,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
                       placeholder="Enter cmdb code"
                       type="text"
                       id="property-cmdb"
-                      value={cmdbData.length > 0 ? cmdbData[0]?.code : cmdbCode}
+                      value={cmdbData?.length > 0 ? cmdbData[0]?.code : cmdbCode}
                       onChange={(value) => {
                         setCmdbCode(value);
                         field.onChange(value);
@@ -337,7 +337,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
                       placeholder="Severity of the application"
                       type="text"
                       id="property-sev"
-                      value={cmdbData[0]?.severity || 'NA'}
+                      value={cmdbData && cmdbData[0] ? cmdbData[0].severity || 'NA' : 'NA'}
                       isDisabled
                       onChange={(value) => {
                         setCmdbCode(value);
