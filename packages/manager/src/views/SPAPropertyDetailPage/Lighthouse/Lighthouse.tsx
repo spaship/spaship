@@ -14,6 +14,7 @@ import {
   CardHeader,
   EmptyState,
   EmptyStateBody,
+  EmptyStateIcon,
   Modal,
   ModalVariant,
   Select,
@@ -25,7 +26,7 @@ import {
   Title,
   Tooltip
 } from '@patternfly/react-core';
-import { InfoAltIcon } from '@patternfly/react-icons';
+import { CubesIcon, InfoAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import Link from 'next/link';
@@ -161,63 +162,78 @@ export const Lighthouse = ({
         {lhBuildIdList?.data?.length ? (
           <>
             <Card style={{ boxShadow: 'none' }}>
-              <Split className="pf-u-m-md">
-                {metricNames.map((metricName, index) => {
-                  const metricsData = lighthouseData?.data?.metrics;
-                  const percentage =
-                    metricsData && metricsData[metricName] !== undefined
-                      ? metricsData[metricName] * 100
-                      : 0;
-                  const remainingPercentage = 100 - percentage;
-                  const color = getColor(percentage);
-                  return (
-                    <SplitItem key={metricName}>
-                      <Tooltip
-                        content={
-                          <div>
-                            {metricName} : {percentage}%
-                          </div>
-                        }
+              {lighthouseData?.data ? (
+                <>
+                  <Split className="pf-u-m-md">
+                    {metricNames.map((metricName, index) => {
+                      const metricsData = lighthouseData?.data?.metrics;
+                      const percentage =
+                        metricsData && metricsData[metricName] !== undefined
+                          ? metricsData[metricName] * 100
+                          : 0;
+                      const remainingPercentage = 100 - percentage;
+                      const color = getColor(percentage);
+                      return (
+                        <SplitItem key={metricName}>
+                          <Tooltip
+                            content={
+                              <div>
+                                {metricName} : {percentage}%
+                              </div>
+                            }
+                          >
+                            <ChartDonut
+                              ariaDesc={`${metricName} metric`}
+                              ariaTitle={`${metricName}`}
+                              constrainToVisibleArea
+                              data={[
+                                { x: metricName, y: percentage, color },
+                                {
+                                  x: 'remaining',
+                                  y: remainingPercentage,
+                                  color: ChartThemeColor.gray
+                                }
+                              ]}
+                              labels={({ datum }) =>
+                                datum.x === metricName
+                                  ? `${datum.x}: ${datum.y.toFixed(2)}%`
+                                  : `Remaining: ${datum.y.toFixed(2)}%`
+                              }
+                              name={`chart${index + 1}`}
+                              subTitle={`${metricName}`}
+                              colorScale={[color, GREY]}
+                              title={percentage.toFixed(2)}
+                              innerRadius={75} // Adjust this value as needed
+                            />
+                          </Tooltip>
+                        </SplitItem>
+                      );
+                    })}
+                  </Split>
+                  <Split className="pf-u-m-md">
+                    <SplitItem isFilled />
+                    <SplitItem>
+                      {' '}
+                      <Button
+                        variant="primary"
+                        style={{ width: '100px' }}
+                        onClick={() => handlePopUpOpen('generateScore')}
+                        isDisabled={!lighthouseData?.data}
                       >
-                        <ChartDonut
-                          ariaDesc={`${metricName} metric`}
-                          ariaTitle={`${metricName}`}
-                          constrainToVisibleArea
-                          data={[
-                            { x: metricName, y: percentage, color },
-                            { x: 'remaining', y: remainingPercentage, color: ChartThemeColor.gray }
-                          ]}
-                          labels={({ datum }) =>
-                            datum.x === metricName
-                              ? `${datum.x}: ${datum.y.toFixed(2)}%`
-                              : `Remaining: ${datum.y.toFixed(2)}%`
-                          }
-                          name={`chart${index + 1}`}
-                          subTitle={`${metricName}`}
-                          colorScale={[color, GREY]}
-                          title={percentage.toFixed(2)}
-                          innerRadius={75} // Adjust this value as needed
-                        />
-                      </Tooltip>
+                        View More
+                      </Button>{' '}
                     </SplitItem>
-                  );
-                })}
-              </Split>
-              <Split className="pf-u-m-md">
-                <SplitItem isFilled />
-                <SplitItem>
-                  {' '}
-                  <Button
-                    variant="primary"
-                    style={{ width: '100px' }}
-                    onClick={() => handlePopUpOpen('generateScore')}
-                    isDisabled={!lighthouseData?.data}
-                  >
-                    View More
-                  </Button>{' '}
-                </SplitItem>
-                <SplitItem isFilled />
-              </Split>
+                    <SplitItem isFilled />
+                  </Split>
+                </>
+              ) : (
+                <EmptyState>
+                  <EmptyStateIcon icon={CubesIcon} />
+                  <Title headingLevel="h4" size="lg">
+                    Lighthouse data not available for selected id.
+                  </Title>
+                </EmptyState>
+              )}
             </Card>
             <br />
             <p className="bodyText" style={{ fontSize: '8px' }}>
