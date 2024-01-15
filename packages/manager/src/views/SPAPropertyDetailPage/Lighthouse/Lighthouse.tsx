@@ -9,7 +9,6 @@ import {
 } from '@app/services/lighthouse/queries';
 import { ChartDonut, ChartThemeColor } from '@patternfly/react-charts';
 import {
-  Alert,
   Button,
   Card,
   CardHeader,
