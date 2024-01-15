@@ -235,7 +235,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
     setActiveTabKey(tabIndex);
   };
   const onClick = async (
-    e: React.MouseEvent<any> | React.KeyboardEvent,
+    e: React.MouseEvent<any> | React.KeyboardEvent | React.ChangeEvent<Element>,
     name: string,
     buildName: string[],
     rowData: any

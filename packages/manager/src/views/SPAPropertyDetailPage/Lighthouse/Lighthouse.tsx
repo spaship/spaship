@@ -199,7 +199,7 @@ export const Lighthouse = ({
                 );
               })}
             </Split>
-            <Button variant="link" onClick={() => handlePopUpOpen('generateScore')}>
+            <Button variant="primary" onClick={() => handlePopUpOpen('generateScore')}>
               View More
             </Button>{' '}
             <Divider />

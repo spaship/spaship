@@ -211,17 +211,19 @@ export const useGetMonthlyDeploymentChartWithEphemeral = (
       prod?: IDeploymentData[];
       ephemeral?: IDeploymentData[];
     }) => {
-      console.log('IDeploymentData', data);
-
       if (!Object.keys(data).length) {
         // Return an empty object if data is empty
         return {};
       }
 
       const monthlyDelpoymentData: {
-        lastMonthEphemeral?: number;
-        maxDeploymentCount?: number;
+        qa?: IDeploymentData[];
+        prod?: IDeploymentData[];
+        dev?: IDeploymentData[];
+        stage?: IDeploymentData[];
         minDeploymentCount?: number;
+        maxDeploymentCount?: number;
+        lastMonthEphemeral?: number;
       } = {};
 
       monthlyDelpoymentData.lastMonthEphemeral =
@@ -239,12 +241,11 @@ export const useGetMonthlyDeploymentChartWithEphemeral = (
         data.prod?.reduce((acc, obj) => Math.max(acc, obj.count), 0) ?? 0
       );
 
-      const re1 = {
+      const result = {
         ...transformInput(data),
         ...monthlyDelpoymentData
       };
-
-      return re1;
+      return result;
     }
   });
 
