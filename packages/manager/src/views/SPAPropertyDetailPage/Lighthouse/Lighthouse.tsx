@@ -1,19 +1,17 @@
 /* eslint-disable react/no-unused-prop-types */
 /* eslint-disable no-else-return */
+import { env } from '@app/config/env';
 import { usePopUp } from '@app/hooks';
 import {
   useGenerateLighthouseReport,
-  // useGenerateLighthouseReport,
   useGetLhIdentifierList,
   useLighthouseReportForGivenBuildId
 } from '@app/services/lighthouse/queries';
 import { ChartDonut, ChartThemeColor } from '@patternfly/react-charts';
 import {
-  Alert,
   Button,
   Card,
   CardHeader,
-  Divider,
   EmptyState,
   EmptyStateBody,
   Modal,
@@ -27,13 +25,12 @@ import {
   Title,
   Tooltip
 } from '@patternfly/react-core';
+import { InfoAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Tr } from '@patternfly/react-table';
+import { AxiosError } from 'axios';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { env } from '@app/config/env';
-import Link from 'next/link';
-import { AxiosError } from 'axios';
-import { InfoAltIcon } from '@patternfly/react-icons';
 
 const GREY = '#F0F0F0';
 const lighthouseUrl = env.PUBLIC_SPASHIP_LIGHTHOUSE_URL;
