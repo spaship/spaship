@@ -151,10 +151,12 @@ export class LighthouseService {
     buildId: string,
     lhIdentifier: string,
     skip: string,
-    isContainerized: boolean = false,
-    isGit: boolean = false
+    isContainerizedReq: string,
+    isGitReq: string
   ): Promise<LighthouseResponseDTO[]> {
     const toBeSkipped = 'lhBuildId';
+    const isContainerized = isContainerizedReq === 'true';
+    const isGit = isGitReq === 'true';
     const propertyDetails = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
     if (!propertyDetails) this.exceptionService.badRequestException({ message: 'No Property Found.' });
     if (!propertyDetails.lighthouseDetails)

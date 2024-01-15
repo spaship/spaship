@@ -778,7 +778,6 @@ export class ApplicationFactory {
     } catch (error) {
       if (!error.response) return false;
       if (error.response.status !== 503) return true;
-      this.logger.error('Source', error);
     }
     return false;
   }
