@@ -53,7 +53,7 @@ export class LighthouseController {
     @Param('identifier') identifier: string,
     @Param('lhIdentifier') lhIdentifier: string,
     @Query('lhBuildId') lhBuildId: string,
-    @Query('isContainerized ') isContainerized: string,
+    @Query('isContainerized') isContainerized: string,
     @Query('isGit') isGit: string,
     @Query('skip') skip: string
   ): Promise<LighthouseResponseDTO[]> {
