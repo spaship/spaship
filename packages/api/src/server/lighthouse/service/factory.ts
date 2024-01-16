@@ -139,7 +139,7 @@ export class LighthouseFactory {
 
   generateLighthouseIdentifier(identifier: string, env: string, isContainerized: boolean, isGit: boolean, version: number): string {
     if (!isContainerized && !isGit) return `${identifier}_${env}_static_${version}`;
-    if (isContainerized && isGit) return `${identifier}_${env}_git${version}`;
+    if (isContainerized && isGit) return `${identifier}_${env}_git_${version}`;
     return `${identifier}_${env}_containerized_${version}`;
   }
 
