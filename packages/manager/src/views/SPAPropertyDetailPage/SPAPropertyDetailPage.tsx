@@ -50,9 +50,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             }
             aria-label="SSR SPA Deployment"
           >
-            <List className="pf-u-mt-lg">
-              <ContainerizedSPADeployment />
-            </List>
+            <List className="pf-u-mt-lg">{openTab === 0 && <ContainerizedSPADeployment />}</List>
           </Tab>
           <Tab
             eventKey={1}
@@ -66,9 +64,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             }
             aria-label="SSR SPA Deployment"
           >
-            <List className="pf-u-mt-lg">
-              <StaticSPADeployment />
-            </List>
+            <List className="pf-u-mt-lg">{openTab === 1 && <StaticSPADeployment />}</List>
           </Tab>
           <Tab
             eventKey={2}
@@ -82,7 +78,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             }
             aria-label="SPA-detailed-dahsboard"
           >
-            <Dashboard type="spa" />
+            {openTab === 2 && <Dashboard type="spa" />}
           </Tab>
           <Tab
             eventKey={3}
@@ -96,7 +92,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             }
             aria-label="SPA-detailed-Settings"
           >
-            <Settings />
+            {openTab === 3 && <Settings />}
           </Tab>
         </Tabs>
       </PageSection>
