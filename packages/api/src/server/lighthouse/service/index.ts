@@ -120,7 +120,7 @@ export class LighthouseService {
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized, isGit }, application);
       await this.analyticsService.createActivityStream(
         propertyIdentifier,
-        Action.LIGHTHOUSE_REPORT_GENEARATION_STARTED,
+        Action.LIGHTHOUSE_REPORT_GENERATION_STARTED,
         env,
         application.identifier,
         `Report Generation started for ${application.identifier}.`,
@@ -131,7 +131,7 @@ export class LighthouseService {
     } catch (error) {
       await this.analyticsService.createActivityStream(
         propertyIdentifier,
-        Action.LIGHTHOUSE_REPORT_GENEARATION_FAILED,
+        Action.LIGHTHOUSE_REPORT_GENERATION_FAILED,
         env,
         application.identifier,
         `Report Generation Failed for ${application.identifier}.`,
