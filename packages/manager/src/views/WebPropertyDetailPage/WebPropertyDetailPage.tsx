@@ -50,7 +50,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             }
             aria-label="SPA listing"
           >
-            <Applications />
+            {openTab === 0 && <Applications />}
           </Tab>
 
           <Tab
@@ -70,10 +70,12 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             }
             aria-label="Ephemeral Environment"
           >
-            <Ephemeral
-              isSuccess={ephemeralPreview.isSuccess}
-              ephemeralEnvs={ephemeralPreview.data}
-            />
+            {openTab === 1 && (
+              <Ephemeral
+                isSuccess={ephemeralPreview.isSuccess}
+                ephemeralEnvs={ephemeralPreview.data}
+              />
+            )}
           </Tab>
           <Tab
             eventKey={2}
@@ -91,7 +93,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             }
             aria-label="Dashboard"
           >
-            <Dashboard type="web-property" />
+            {openTab === 2 && <Dashboard type="web-property" />}
           </Tab>
           <Tab
             eventKey={3}
@@ -105,7 +107,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             }
             aria-label="Settings"
           >
-            <Settings />
+            {openTab === 3 && <Settings />}
           </Tab>
         </Tabs>
       </PageSection>
