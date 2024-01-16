@@ -217,5 +217,6 @@ export const CUSTOM_HEADER = { 'User-Agent': process.env.SPASHIP_HEADER__USER_AG
 export const LIGHTHOUSE_DETAILS = {
   hostUrl: process.env.SPASHIP_LIGHTHOUSE_HOST_URL,
   ciUrl: process.env.SPASHIP_LIGHTHOUSE_CI_URL,
-  ciToken: process.env.SPASHIP_LIGHTHOUSE_CI_TOKEN
+  ciToken: process.env.SPASHIP_LIGHTHOUSE_CI_TOKEN,
+  ref: 'master' || process.env.SPASHIP_LIGHTHOUSE_CI_REF
 };
