@@ -391,6 +391,28 @@ const activities = {
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
       <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
     </Text>
+  ),
+  LIGHTHOUSE_REPORT_GENERATION_STARTED: ({
+    props,
+    propertyIdentifier
+  }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Report generation started</span> for property :{' '}
+      <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
+    </Text>
+  ),
+  LIGHTHOUSE_REPORT_GENERATION_FAILED: ({
+    props,
+    propertyIdentifier
+  }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Report generation started</span> for property :{' '}
+      <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
+    </Text>
   )
 } as any;
 
