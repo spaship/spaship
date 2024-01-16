@@ -33,7 +33,7 @@ export class LighthouseFactory {
   createLighthouseRequest(identifier: string, env: string, url: string, serverToken: string): FormData {
     const formData: any = new FormData();
     formData.append('token', LIGHTHOUSE_DETAILS.ciToken);
-    formData.append('ref', 'main');
+    formData.append('ref', LIGHTHOUSE_DETAILS.ref);
     formData.append('variables[LH_HOST]', LIGHTHOUSE_DETAILS.hostUrl);
     formData.append('variables[URL]', url);
     formData.append('variables[IDENTIFIER]', identifier);
