@@ -64,7 +64,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             }
             aria-label="SSR SPA Deployment"
           >
-            <List className="pf-u-mt-lg">{openTab === 0 && <StaticSPADeployment />}</List>
+            <List className="pf-u-mt-lg">{openTab === 1 && <StaticSPADeployment />}</List>
           </Tab>
           <Tab
             eventKey={2}
