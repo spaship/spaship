@@ -606,7 +606,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
         onClose={() => handlePopUpClose('reconfigureSsrApplication')}
         style={{ minHeight: '600px' }}
       >
-        {configureData.isLogsGit ? (
+        {configureData.isGit ? (
           <ConfigureWorkflowForm
             propertyIdentifier={propertyIdentifier}
             onClose={() => handlePopUpClose('reconfigureSsrApplication')}

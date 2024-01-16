@@ -51,7 +51,25 @@ export const Lighthouse = ({
   const onToggle = (isSelectOpen: boolean) => {
     setIsOpen(isSelectOpen);
   };
-  const lhBuildIdList = useGetLhIdentifierList(webPropertyIdentifier, identifier, environment);
+  const lhBuildIdList = useGetLhIdentifierList(
+    webPropertyIdentifier,
+    identifier,
+    environment,
+    data?.isGit,
+    data?.isContainerized
+  );
+  const { refetch: refetch1 } = useGetLhIdentifierList(
+    webPropertyIdentifier,
+    identifier,
+    environment,
+    data?.isGit,
+    data?.isContainerized
+  );
+
+  useEffect(() => {
+    setSelected('Select build-id');
+    refetch1();
+  }, [refetch1, data?.isGit, data?.isContainerized, identifier, environment]);
 
   useEffect(() => {
     if (selected === 'Select build-id') {
@@ -69,6 +87,8 @@ export const Lighthouse = ({
     data?.isGit,
     data?.isContainerized
   );
+  console.log('>>>>>', data?.isGit, data?.isContainerized, lighthouseData?.data);
+
   const { refetch } = useLighthouseReportForGivenBuildId(
     webPropertyIdentifier,
     identifier,
@@ -138,29 +158,29 @@ export const Lighthouse = ({
             Lighthouse Report
           </Title>
         </CardHeader>
-        <p className="bodyText">
-          Choose a build ID from the dropdown to generate a report for a different build.
-        </p>
-        <br />
 
-        <Select
-          className="pf-u-my-md"
-          variant={SelectVariant.single}
-          isPlain={false}
-          aria-label={`Select Input with descriptions `}
-          onToggle={onToggle}
-          onSelect={onSelect}
-          selections={selected}
-          isOpen={isOpen}
-        >
-          {lhBuildIdList?.data?.map(({ lhIdentifier }: { lhIdentifier: any }) => (
-            <SelectOption key={lhIdentifier} value={lhIdentifier}>
-              {lhIdentifier}
-            </SelectOption>
-          ))}
-        </Select>
         {lhBuildIdList?.data?.length ? (
           <>
+            <p className="bodyText">
+              Choose a build ID from the dropdown to generate a report for a different build.
+            </p>
+            <br />
+            <Select
+              className="pf-u-my-md"
+              variant={SelectVariant.single}
+              isPlain={false}
+              aria-label={`Select Input with descriptions `}
+              onToggle={onToggle}
+              onSelect={onSelect}
+              selections={selected}
+              isOpen={isOpen}
+            >
+              {lhBuildIdList?.data?.map(({ lhIdentifier }: { lhIdentifier: any }) => (
+                <SelectOption key={lhIdentifier} value={lhIdentifier}>
+                  {lhIdentifier}
+                </SelectOption>
+              ))}
+            </Select>
             <Card style={{ boxShadow: 'none' }}>
               {lighthouseData?.data ? (
                 <>
@@ -236,11 +256,7 @@ export const Lighthouse = ({
               )}
             </Card>
             <br />
-            <p className="bodyText" style={{ fontSize: '8px' }}>
-              Note: If there are no changes in the SPA, you will not observe any differences in the
-              report even after redeploying the SPA.
-            </p>
-            <br />
+
             <Card style={{ boxShadow: 'none' }}>
               <p className="bodyText">
                 {' '}

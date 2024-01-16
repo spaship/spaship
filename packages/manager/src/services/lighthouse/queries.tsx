@@ -2,6 +2,7 @@ import { orchestratorReq } from '@app/config/orchestratorReq';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { TCreateApiKeyRes } from '../apiKeys/types';
 import { TLighthouseGenerateDTO } from './types';
+import { TSpaProperty } from '../spaProperty/types';
 
 const lighthouseKeys = {
   list: (webPropertyIdentifier: string, applicationIdentifier: string, env: string = '') =>
@@ -60,7 +61,9 @@ export const useLighthouseReportForGivenBuildId = (
 const fetchLhIdentifierList = async (
   propertyIdentifier: string,
   applicationIdentifier: string,
-  env: string
+  env: string,
+  isGit: boolean,
+  isContainerized: boolean
 ) => {
   try {
     const { data } = await orchestratorReq.get(`/applications/property/${propertyIdentifier}`, {
@@ -69,7 +72,14 @@ const fetchLhIdentifierList = async (
         env
       }
     });
-    const pipelineDetails = data.data && data.data.length > 0 ? data.data[0].pipelineDetails : [];
+    const pipelineDetails =
+      data.data && data.data.length > 0
+        ? data.data.filter(
+            (item: TSpaProperty) =>
+              item?.isGit === isGit && item?.isContainerized === isContainerized
+          )[0].pipelineDetails
+        : [];
+
     // TODO: To be removed after backend revamp
     // pipeline array will be empty for new spa, for existing sopa if no report is generated then key pipelineDetails won't be there
 
@@ -85,10 +95,12 @@ const fetchLhIdentifierList = async (
 export const useGetLhIdentifierList = (
   webPropertyIdentifier: string,
   applicationIdentifier: string,
-  env: string
+  env: string,
+  isGit: boolean,
+  isContainerized: boolean
 ) =>
   useQuery(lighthouseKeys.list(webPropertyIdentifier, applicationIdentifier, env), () =>
-    fetchLhIdentifierList(webPropertyIdentifier, applicationIdentifier, env)
+    fetchLhIdentifierList(webPropertyIdentifier, applicationIdentifier, env, isGit, isContainerized)
   );
 
 // POST Operations
