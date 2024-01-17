@@ -96,8 +96,7 @@ export class LighthouseService {
       this.logger.log('CheckApplicationStatus', application.routerUrl[0]);
       await this.lighthouseFactory.checkUrlSource(application.routerUrl[0]);
     } catch (error) {
-      if (!autoTrigger)
-        this.exceptionService.badRequestException({ message: 'Cannot generate the Lighthouse Report, Application is currently down.' });
+      if (!autoTrigger) this.exceptionService.badRequestException({ message: `Cannot generate the Lighthouse Report, ${error.message}.` });
     }
     if (!property.lighthouseDetails) {
       this.logger.log('RegisterLighthouse', `${property.identifier} to be registered into lighthouse`);
