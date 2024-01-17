@@ -51,22 +51,32 @@ class InitCommand extends Command {
           type: "confirm",
         });
       }
+
       responses = await inquirer.prompt(questions);
     }
 
     // smush cli options, questionnaire answers, and anything extra into a data
     // object to pass into the template
     const data = assign({}, responses, cmd.flags);
-    if (data?.name?.trim().length == 0) {
-      throw new Error("Please provide name");
-    } else if (data?.path?.trim().length == 0) {
-      throw new Error("Please provide path");
+    try {
+      if (!data?.name || data?.name?.trim().length == 0) {
+        throw new Error("Please provide name");
+      } else if (!data?.path || data?.path?.trim().length == 0) {
+        throw new Error("Please provide path");
+      }
     }
+    catch (error) {
+      this.error(error.message);
+    }
+
     try {
       if (!existingConfig || data.overwrite) {
         await config.write("spaship.yaml", omit(data, "overwrite"));
+        this.log("Generated spaship.yaml");
       }
-      this.log("Generated spaship.yaml");
+      else {
+        this.warn("Cannot overwrite the spaship.yaml. Please use the --overwrite flag with the command");
+      }
     } catch (error) {
       if (error.code === "EEXIST") {
         let msg = `Docking aborted.  A file named spaship.yaml already exists.`;
@@ -75,10 +85,11 @@ class InitCommand extends Command {
         }
         this.log(msg);
       }
+      else this.error(error.message);
     }
   }
 }
-//}
+
 
 InitCommand.description = `initialize a SPAship config file for your app.
 Without arguments, init will ask you a few questions and generate a spaship.yaml config file.  The answers can also be passed in as CLI options.
@@ -103,7 +114,6 @@ InitCommand.flags = {
   overwrite: flags.boolean({
     description: "overwrite existing spaship.yaml",
   }),
-
   dist: flags.string({
     char: "d",
     description: "the URL path for dist folder",
@@ -113,6 +123,11 @@ InitCommand.flags = {
     description: "the URL path for spaship.yaml file",
   }),
   builddir: flags.string({
+    char: "b",
+    required: false,
+    description: "path of your SPAs artifact. Defaults to 'buildDir' if specified in the spaship.yaml.",
+  }),
+  buildDir: flags.string({
     char: "b",
     required: false,
     description: "path of your SPAs artifact. Defaults to 'buildDir' if specified in the spaship.yaml.",

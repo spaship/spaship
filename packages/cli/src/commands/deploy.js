@@ -31,15 +31,20 @@ class DeployCommand extends Command {
     const { args, flags } = this.parse(DeployCommand);
 
     const config = loadRcFile();
-    const yamlConfig = await common.config.read("spaship.yaml");
+    let yamlConfig;
+    try{
+      yamlConfig= await common.config.read("spaship.yaml");
+    } catch(e) {
+      this.error("Please run spaship init to generate spaship.yaml.");
+    }
     const yamlPath = yamlConfig && yamlConfig.path;
     // We need send `name` and `path` to API
     // so read them from spaship.yaml or other config file
     // it could be store in package.json
     const name = yamlConfig ? yamlConfig.name : config.name;
     let path = flags.path || yamlPath;
-    const configBuildDir = yamlConfig ? yamlConfig.buildDir : config.buildDir; // buildDIr from config
-    const buildDir = flags.builddir ? flags.builddir : configBuildDir; // uses command line arg if present
+    const configBuildDir = yamlConfig ? (yamlConfig.buildDir || yamlConfig.builddir) : (config.buildDir || config.builddir); // buildDIr from config
+    const buildDir = (flags.builddir || flags.buildDir) ? (flags.builddir || flags.buildDir) : configBuildDir; // uses command line arg if present
     const ephemeral = flags?.preview || false;
     const actionId = flags?.prid;
     const duration = flags?.duration;
@@ -162,7 +167,7 @@ class DeployCommand extends Command {
           if (actionId) {
             data.append("actionId", actionId);
           }
-          if(duration){
+          if (duration) {
             data.append("expiresIn", duration);
           }
         }
@@ -262,6 +267,12 @@ DeployCommand.flags = assign(
   {
     builddir: flags.string({
       char: "b",
+      required: false,
+      description: "path of your SPAs artifact. Defaults to 'buildDir' if specified in the spaship.yaml.",
+    }),
+  },
+  {
+    buildDir: flags.string({
       required: false,
       description: "path of your SPAs artifact. Defaults to 'buildDir' if specified in the spaship.yaml.",
     }),
