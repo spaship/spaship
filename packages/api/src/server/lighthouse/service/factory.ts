@@ -148,7 +148,9 @@ export class LighthouseFactory {
     try {
       await this.httpService.axiosRef.head(url);
     } catch (error) {
-      this.exceptionService.badRequestException({ message: 'Application not running' });
+      if (!error.response) return;
+      if (error.response.status === 503) this.exceptionService.badRequestException({ message: 'Application not running or currently down [503]' });
+      if (error.response.status === 404) this.exceptionService.badRequestException({ message: 'Application not available on this path [404]' });
     }
   }
 }
