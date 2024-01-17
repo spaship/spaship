@@ -138,9 +138,15 @@ export class LighthouseFactory {
   }
 
   generateLighthouseIdentifier(identifier: string, env: string, isContainerized: boolean, isGit: boolean, version: number): string {
-    if (!isContainerized && !isGit) return `${identifier}_${env}_static_${version}`;
-    if (isContainerized && isGit) return `${identifier}_${env}_git_${version}`;
-    return `${identifier}_${env}_containerized_${version}`;
+    const lhMaxLength = 40;
+    const identifierMaxLength = 20;
+    if (identifier.length > identifierMaxLength) identifier = identifier.substring(0, identifierMaxLength);
+    let result;
+    if (!isContainerized && !isGit) result = `${identifier}_${env}_static_${version}`;
+    else if (isContainerized && isGit) result = `${identifier}_${env}_git_${version}`;
+    else result = `${identifier}_${env}_con_${version}`;
+    if (result.length > lhMaxLength) result = result.substring(result.length - lhMaxLength);
+    return result;
   }
 
   // @internal Check the source for a particular url
