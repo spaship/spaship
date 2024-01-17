@@ -55,7 +55,7 @@ export const ApplicationDetailsSection = ({ data, webProperties }: Props): JSX.E
                 >
                   {' '}
                   <a
-                    href={`https://${webProperties?.data?.[env]?.url}`}
+                    href={`${webProperties?.data?.[env]?.url}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -89,7 +89,7 @@ export const ApplicationDetailsSection = ({ data, webProperties }: Props): JSX.E
                       variant="inline-compact"
                       isReadOnly
                       onCopy={() => {
-                        const textToCopy = `https://${url}`;
+                        const textToCopy = `${url}`;
                         navigator.clipboard.writeText(textToCopy).then(
                           () => {
                             // Handle successful copy
@@ -104,7 +104,7 @@ export const ApplicationDetailsSection = ({ data, webProperties }: Props): JSX.E
                       <a
                         // eslint-disable-next-line react/no-array-index-key
                         key={index}
-                        href={`https://${url}`}
+                        href={`${url}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
