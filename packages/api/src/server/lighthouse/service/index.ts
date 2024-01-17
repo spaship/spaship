@@ -93,6 +93,7 @@ export class LighthouseService {
     const property = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
     try {
       // @internal as both of the deployment will be identical so we'll generate the report for one only
+      if (!application.routerUrl) this.exceptionService.badRequestException({ message: 'No Router URL present for the application' });
       this.logger.log('CheckApplicationStatus', application.routerUrl[0]);
       await this.lighthouseFactory.checkUrlSource(application.routerUrl[0]);
     } catch (error) {
