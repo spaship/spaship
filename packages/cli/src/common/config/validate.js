@@ -32,6 +32,10 @@ const schema = {
       description: "a directory to package and deploy (can be used instead of uploading a zip file)",
       type: "string",
     },
+    builddir: {
+      description: "a directory to package and deploy (can be used instead of uploading a zip file)",
+      type: "string",
+    },
   },
   required: ["path", "name"],
 };
