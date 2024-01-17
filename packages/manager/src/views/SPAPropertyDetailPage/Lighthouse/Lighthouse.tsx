@@ -87,7 +87,6 @@ export const Lighthouse = ({
     data?.isGit,
     data?.isContainerized
   );
-  console.log('>>>>>', data?.isGit, data?.isContainerized, lighthouseData?.data);
 
   const { refetch } = useLighthouseReportForGivenBuildId(
     webPropertyIdentifier,
@@ -161,8 +160,84 @@ export const Lighthouse = ({
 
         {lhBuildIdList?.data?.length ? (
           <>
-            <p className="bodyText">
-              Choose a build ID from the dropdown to generate a report for a different build.
+            <Card style={{ boxShadow: 'none' }}>
+              {lighthouseData?.data ? (
+                <>
+                  <Split className="pf-u-m-md">
+                    {metricNames.map((metricName, index) => {
+                      const metricsData = lighthouseData?.data?.metrics;
+                      const percentage =
+                        metricsData && metricsData[metricName] !== undefined
+                          ? metricsData[metricName] * 100
+                          : 0;
+                      const remainingPercentage = 100 - percentage;
+                      const color = getColor(percentage);
+                      return (
+                        <SplitItem key={metricName}>
+                          <Tooltip
+                            content={
+                              <div>
+                                {metricName} : {percentage}%
+                              </div>
+                            }
+                          >
+                            <ChartDonut
+                              ariaDesc={`${metricName} metric`}
+                              ariaTitle={`${metricName}`}
+                              constrainToVisibleArea
+                              data={[
+                                { x: metricName, y: percentage, color },
+                                {
+                                  x: 'remaining',
+                                  y: remainingPercentage,
+                                  color: ChartThemeColor.gray
+                                }
+                              ]}
+                              labels={({ datum }) =>
+                                datum.x === metricName
+                                  ? `${datum.x}: ${datum.y.toFixed(2)}%`
+                                  : `Remaining: ${datum.y.toFixed(2)}%`
+                              }
+                              name={`chart${index + 1}`}
+                              subTitle={`${metricName}`}
+                              colorScale={[color, GREY]}
+                              title={percentage.toFixed(2)}
+                              innerRadius={75} // Adjust this value as needed
+                            />
+                          </Tooltip>
+                        </SplitItem>
+                      );
+                    })}
+                  </Split>
+                  <Split className="pf-u-m-md">
+                    <SplitItem isFilled />
+                    <SplitItem>
+                      {' '}
+                      <Button
+                        variant="primary"
+                        style={{ width: '100px' }}
+                        onClick={() => handlePopUpOpen('generateScore')}
+                        isDisabled={!lighthouseData?.data}
+                      >
+                        View More
+                      </Button>{' '}
+                    </SplitItem>
+                    <SplitItem isFilled />
+                  </Split>
+                </>
+              ) : (
+                <EmptyState>
+                  <EmptyStateIcon icon={CubesIcon} />
+                  <Title headingLevel="h4" size="lg">
+                    Lighthouse data not available for selected id.
+                  </Title>
+                </EmptyState>
+              )}
+            </Card>
+            <br />
+            <p className="bodyText" style={{ fontSize: '8px' }}>
+              Note: If there are no changes in the SPA, you will not observe any differences in the
+              report even after redeploying the SPA.
             </p>
             <br />
             <Select
