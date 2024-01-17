@@ -255,7 +255,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
     setbuildIdList(buildNamesOnly);
     setEnvName(rowData.env);
     setIsLogsExpanded(true);
-    setIsLogsGit(rowData.isLogsGit);
+    setIsLogsGit(rowData.isGit);
   };
   const panelContent = (
     <DrawerPanelContent isResizable minSize="500px">
@@ -276,7 +276,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
           <Tbody>
             {selectedData?.accessUrl ? (
               selectedData?.accessUrl.map((url: string, i: number) => (
-                <Tr key={url} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
+                <Tr key={`accessUrl${url}`} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
                   {url === 'NA' ? (
                     <Spinner isSVG diameter="30px" />
                   ) : (
@@ -330,7 +330,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
           <Tbody>
             {selectedData?.routerUrl ? (
               selectedData?.routerUrl.map((url: string, i: number) => (
-                <Tr key={url} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
+                <Tr key={`routerUrl${url}`} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
                   {url === 'NA' ? (
                     <Spinner isSVG diameter="30px" />
                   ) : (

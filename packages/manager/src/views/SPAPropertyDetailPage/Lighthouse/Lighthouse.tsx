@@ -87,7 +87,6 @@ export const Lighthouse = ({
     data?.isGit,
     data?.isContainerized
   );
-  console.log('>>>>>', data?.isGit, data?.isContainerized, lighthouseData?.data);
 
   const { refetch } = useLighthouseReportForGivenBuildId(
     webPropertyIdentifier,
