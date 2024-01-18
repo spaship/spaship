@@ -1,7 +1,7 @@
 {
   "name": "spaship-api",
-  "version": "4.1.1",
-  "description": "",
+  "version": "4.2.0",
+  "description": "SPAship API",
   "author": "Soumyadip Chowdhury",
   "private": true,
   "scripts": {
