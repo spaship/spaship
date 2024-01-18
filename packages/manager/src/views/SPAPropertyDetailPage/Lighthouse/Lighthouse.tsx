@@ -415,7 +415,9 @@ export const Lighthouse = ({
             <SplitItem isFilled />
             <SplitItem>
               {' '}
-              <Link href={`${lighthouseUrl}${selected}`}>
+              <Link
+                href={`${lighthouseUrl}/app/projects/${webPropertyIdentifier}/dashboard?branch=${selected}`}
+              >
                 <a className="text-decoration-none" target="_blank" rel="noreferrer">
                   <Button variant="primary">Full Report</Button>
                 </a>
