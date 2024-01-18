@@ -83,7 +83,7 @@ export const DEPLOYMENT_DETAILS = {
 function getSeverity() {
   const severities = process.env.SPASHIP_SEVERITY;
   if (severities) return severities.split(',');
-  return ['C1', 'C2'];
+  return ['C1', 'C2', 'C3', 'C4', 'C5'];
 }
 
 // @internal this is for validating the minimum length for the Specific requests
