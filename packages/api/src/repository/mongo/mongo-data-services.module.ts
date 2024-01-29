@@ -62,4 +62,4 @@ import { MongoDataServices } from './mongo-data-service.service';
   ],
   exports: [IDataServices]
 })
-export class MongoDataServicesModule { }
+export class MongoDataServicesModule {}
