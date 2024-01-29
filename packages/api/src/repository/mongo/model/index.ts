@@ -11,3 +11,4 @@ export * from './auth-action-lookup';
 export * from './role';
 export * from './permission';
 export * from './documentation';
+export * from './feedback';

@@ -15,6 +15,8 @@ import {
   EventSchema,
   EventTimeTrace,
   EventTimeTraceSchema,
+  Feedback,
+  FeedbackSchema,
   Property,
   PropertySchema,
   ActivityStream,
@@ -47,7 +49,8 @@ import { MongoDataServices } from './mongo-data-service.service';
       { name: AuthActionLookup.name, schema: AuthActionLookupSchema },
       { name: Role.name, schema: RoleSchema },
       { name: Permission.name, schema: PermissionSchema },
-      { name: Documentation.name, schema: DocumentationSchema }
+      { name: Documentation.name, schema: DocumentationSchema },
+      { name: Feedback.name, schema: FeedbackSchema }
     ]),
     MongooseModule.forRoot(DATA_BASE_CONFIGURATION.mongoConnectionString)
   ],
@@ -59,4 +62,4 @@ import { MongoDataServices } from './mongo-data-service.service';
   ],
   exports: [IDataServices]
 })
-export class MongoDataServicesModule {}
+export class MongoDataServicesModule { }
