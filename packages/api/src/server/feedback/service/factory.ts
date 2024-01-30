@@ -9,6 +9,7 @@ export class FeedbackFactory {
     feedback.title = createFeedbackDto.title;
     feedback.description = createFeedbackDto.description;
     feedback.experience = createFeedbackDto.experience;
+    feedback.error = createFeedbackDto.error;
     feedback.createdBy = createFeedbackDto.createdBy;
     feedback.updatedBy = createFeedbackDto.createdBy;
     return feedback;

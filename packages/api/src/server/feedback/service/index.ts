@@ -37,6 +37,7 @@ export class FeedbackService {
       updatefeedback.title = updateFeedbackDto.title;
       updatefeedback.description = updateFeedbackDto.description;
       updatefeedback.experience = updateFeedbackDto.experience;
+      updatefeedback.error = updateFeedbackDto.error;
       await this.dataServices.feedback.updateOne({ _id: updateFeedbackDto.id }, updatefeedback);
       return updatefeedback;
     } catch (e) {

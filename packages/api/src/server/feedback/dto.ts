@@ -18,6 +18,11 @@ export class FeedbackDto {
   @IsString()
   @IsNotEmpty()
   experience: string;
+  
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  error: string;
 
   createdBy: string;
 }

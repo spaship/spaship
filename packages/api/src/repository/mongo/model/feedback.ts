@@ -15,6 +15,9 @@ export class Feedback {
   @Prop({ required: true })
   experience: string;
 
+  @Prop({ required: true })
+  error: string;
+
   @Prop({ default: 'NA' })
   createdBy: string;
 

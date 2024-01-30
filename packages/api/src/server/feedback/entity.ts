@@ -5,6 +5,8 @@ export class Feedback {
 
   experience: string;
 
+  error: string;
+
   createdBy: string;
 
   updatedBy: string;
