@@ -7,7 +7,7 @@ export class FeedbackDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  title: string;
+  category: string;
 
   @ApiProperty()
   @IsString()

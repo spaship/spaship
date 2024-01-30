@@ -6,7 +6,7 @@ import { Feedback } from '../entity';
 export class FeedbackFactory {
   createNewfeedback(createFeedbackDto: FeedbackDto): Feedback {
     const feedback = new Feedback();
-    feedback.title = createFeedbackDto.title;
+    feedback.category = createFeedbackDto.category;
     feedback.description = createFeedbackDto.description;
     feedback.experience = createFeedbackDto.experience;
     feedback.error = createFeedbackDto.error;

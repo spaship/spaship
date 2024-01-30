@@ -34,7 +34,7 @@ export class FeedbackService {
   async updateFeedback(updateFeedbackDto: FeedbackDto) {
     try {
       const updatefeedback = (await this.dataServices.feedback.getByAny({ _id: updateFeedbackDto.id }))[0];
-      updatefeedback.title = updateFeedbackDto.title;
+      updatefeedback.category = updateFeedbackDto.category;
       updatefeedback.description = updateFeedbackDto.description;
       updatefeedback.experience = updateFeedbackDto.experience;
       updatefeedback.error = updateFeedbackDto.error;

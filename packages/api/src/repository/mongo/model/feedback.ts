@@ -7,7 +7,7 @@ export class Feedback {
   _id: string;
 
   @Prop({ required: true })
-  title: string;
+  category: string;
 
   @Prop({ required: true })
   description: string;

@@ -1,5 +1,5 @@
 export class Feedback {
-  title: string;
+  category: string;
 
   description: string;
 
