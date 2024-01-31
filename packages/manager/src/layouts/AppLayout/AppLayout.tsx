@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
-
 import { Banner, Flex, FlexItem, Page } from '@patternfly/react-core';
-
+import { Feedback } from '@app/components/Feedback';
 import { useGetDocumentPage } from '@app/services/documents';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Nav } from './components/Nav';
@@ -75,6 +74,7 @@ export const AppLayout = ({ children }: Props): JSX.Element => {
         >
           <FlexItem grow={{ default: 'grow' }}>{children}</FlexItem>
         </Flex>
+        <Feedback />
       </Page>
     </>
   );
