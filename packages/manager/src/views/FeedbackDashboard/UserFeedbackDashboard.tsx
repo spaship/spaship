@@ -1,6 +1,14 @@
 import { TableRowSkeleton } from '@app/components';
 import { useGetUserFeedback } from '@app/services/feedback';
-import { Card, CardBody, CardTitle, Grid, GridItem, Pagination } from '@patternfly/react-core';
+import {
+  Card,
+  CardBody,
+  CardTitle,
+  Grid,
+  GridItem,
+  Pagination,
+  Title
+} from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import dayjs from 'dayjs';
 import { SetStateAction, useState } from 'react';
@@ -39,11 +47,15 @@ export const UserFeedbackDashboard = (): JSX.Element => {
   return (
     <Grid hasGutter className="pf-u-px-md" style={{ backgroundColor: '#F0F0F0' }}>
       <GridItem span={12}>
-        <Card>
+        <Card className="pf-u-my-md">
           <CardTitle>
-            <p style={{ fontSize: 'xx-large' }}>User Feedback for SPAship</p>
+            <Title headingLevel="h1" size="2xl">
+              User feedback for SPAship{' '}
+            </Title>
           </CardTitle>
+        </Card>
 
+        <Card>
           <CardBody>
             {userFeedback.isLoading && <TableRowSkeleton columns={10} rows={5} />}
             {userFeedback.isSuccess && userFeedback.data ? (

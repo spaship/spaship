@@ -25,22 +25,20 @@ export const Feedback = () => {
           category: event.detail.data.category ?? 'NA',
           error: event.detail.data.error ?? 'NA'
         };
-        createFeedback
-          .mutateAsync({
+        try {
+          await createFeedback.mutateAsync({
             ...feedbackInput
-          })
-          .then(() => {
-            // eslint-disable-next-line no-param-reassign
-            event.detail.submitted = true;
-            toast.success('Feedback submitted successfully');
-          })
-          .catch((error) => {
-            if (error instanceof AxiosError && error.response && error.response.status === 403) {
-              toast.error("You don't have access to perform this action");
-            } else {
-              toast.error('Failed to submit feedback');
-            }
           });
+          event.detail.submitted = true;
+
+          toast.success('Feedback submitted suucessfully');
+        } catch (error) {
+          if (error instanceof AxiosError && error.response && error.response.status === 403) {
+            toast.error("You don't have access to perform this action");
+          } else {
+            toast.error('Failed to submit feedback');
+          }
+        }
       });
     }
   }, [createFeedback]);
