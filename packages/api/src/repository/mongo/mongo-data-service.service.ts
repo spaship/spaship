@@ -2,6 +2,7 @@ import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IDataServices } from 'src/repository/data-services.abstract';
+import { Feedback } from 'src/server/feedback/entity';
 import { MongoGenericRepository } from './mongo-generic-repository';
 import {
   Application,
@@ -31,6 +32,7 @@ import {
   Documentation,
   DocumentationDocument
 } from './model';
+import { FeedbackDocument } from './model/feedback';
 
 @Injectable()
 export class MongoDataServices implements IDataServices, OnApplicationBootstrap {
@@ -60,6 +62,8 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
 
   documentation: MongoGenericRepository<Documentation>;
 
+  feedback: MongoGenericRepository<Feedback>;
+
   constructor(
     @InjectModel(Application.name)
     private ApplicationRepository: Model<ApplicationDocument>,
@@ -86,7 +90,9 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
     @InjectModel(Permission.name)
     private PermissionRepository: Model<PermissionDocument>,
     @InjectModel(Documentation.name)
-    private DocumentationRepository: Model<DocumentationDocument>
+    private DocumentationRepository: Model<DocumentationDocument>,
+    @InjectModel(Feedback.name)
+    private FeedbackRepository: Model<FeedbackDocument>
   ) {}
 
   onApplicationBootstrap() {
@@ -103,5 +109,6 @@ export class MongoDataServices implements IDataServices, OnApplicationBootstrap 
     this.role = new MongoGenericRepository<Role>(this.RoleRepository);
     this.permission = new MongoGenericRepository<Permission>(this.PermissionRepository);
     this.documentation = new MongoGenericRepository<Documentation>(this.DocumentationRepository);
+    this.feedback = new MongoGenericRepository<Feedback>(this.FeedbackRepository);
   }
 }

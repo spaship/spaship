@@ -4,6 +4,7 @@ import { Documentation } from 'src/server/document/entity';
 import { Permission } from 'src/server/permission/entity';
 import { Role } from 'src/server/role/entity';
 import { Webhook } from 'src/server/webhook/entity';
+import { Feedback } from 'src/server/feedback/entity';
 import { Apikey } from '../server/api-key/entity';
 import { Application } from '../server/application/entity';
 import { DeploymentConnection } from '../server/deployment-connection/entity';
@@ -39,4 +40,6 @@ export abstract class IDataServices {
   abstract permission: IGenericRepository<Permission>;
 
   abstract documentation: IGenericRepository<Documentation>;
+
+  abstract feedback: IGenericRepository<Feedback>;
 }

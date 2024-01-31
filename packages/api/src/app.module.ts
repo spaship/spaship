@@ -35,6 +35,8 @@ import { CMDBModule } from './server/sot/cmdb/service/module';
 import { CMDBController } from './server/sot/cmdb/controller';
 import { LighthouseModule } from './server/lighthouse/service/module';
 import { LighthouseController } from './server/lighthouse/controller';
+import { FeedbackController } from './server/feedback/controller';
+import { FeedbackModule } from './server/feedback/service/module';
 
 @Module({
   imports: [
@@ -58,7 +60,8 @@ import { LighthouseController } from './server/lighthouse/controller';
     DocumentationModule,
     HealthModule,
     CMDBModule,
-    LighthouseModule
+    LighthouseModule,
+    FeedbackModule
   ],
   controllers: [
     ApikeyController,
@@ -75,7 +78,8 @@ import { LighthouseController } from './server/lighthouse/controller';
     DocumentationController,
     HealthController,
     CMDBController,
-    LighthouseController
+    LighthouseController,
+    FeedbackController
   ],
   providers: []
 })
