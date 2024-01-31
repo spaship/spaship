@@ -90,7 +90,7 @@ export class EnvironmentFactory {
     if (!payload) this.exceptionService.badRequestException({ message: 'Please provide payload' });
     if (!deploymentBaseURL) this.exceptionService.badRequestException({ message: 'Please provide the deployment url' });
     const headers = { Authorization: await AuthFactory.getAccessToken() };
-    return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/execute/symlink`, payload, { headers });
+    return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/execute/command`, payload, { headers });
   }
 
   createOperatorSymlinkPayload(env: string, property: Property, request: SymlinkDTO) {
