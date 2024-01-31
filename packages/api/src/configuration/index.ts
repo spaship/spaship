@@ -220,3 +220,10 @@ export const LIGHTHOUSE_DETAILS = {
   ciToken: process.env.SPASHIP_LIGHTHOUSE_CI_TOKEN,
   ref: process.env.SPASHIP_LIGHTHOUSE_CI_REF || 'master'
 };
+
+// @internal symlink command to be executed in the operator
+export enum SYMLINK_COMMAND {
+  CHECK_TARGET_EXISTENCE = 'CHECK_TARGET_EXISTENCE',
+  CREATE_SYMLINK = 'CREATE_SYMLINK',
+  DELETE_TARGET = 'DELETE_TARGET'
+}

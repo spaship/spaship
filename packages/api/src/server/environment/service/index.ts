@@ -273,6 +273,7 @@ export class EnvironmentService {
         this.logger.log('OperatorResponse', JSON.stringify(response.data));
       } catch (err) {
         this.exceptionService.internalServerErrorException(err.message);
+        return;
       }
     }
     const symlink = new Symlink();

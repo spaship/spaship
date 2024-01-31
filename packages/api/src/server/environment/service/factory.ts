@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
-import { DIRECTORY_CONFIGURATION } from 'src/configuration';
+import { DIRECTORY_CONFIGURATION, SYMLINK_COMMAND } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/service';
 import { CreateApplicationDto } from 'src/server/application/request.dto';
 import { ApplicationService } from 'src/server/application/service';
@@ -106,6 +106,7 @@ export class EnvironmentFactory {
     metadata.source = request.source;
     metadata.target = request.target;
     operatorPayload.metadata = metadata;
+    operatorPayload.commanedType = SYMLINK_COMMAND.CREATE_SYMLINK;
     return operatorPayload;
   }
 
