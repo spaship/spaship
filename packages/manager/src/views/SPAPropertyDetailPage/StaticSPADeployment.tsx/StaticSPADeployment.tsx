@@ -332,7 +332,7 @@ export const StaticSPADeployment = (): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [staticDeploymentData]);
   return (
-    <div>
+    <div id="static-spa-deployment-page">
       {!staticDeploymentData?.length ? (
         <EmptyState>
           <EmptyStateIcon icon={CubesIcon} />
