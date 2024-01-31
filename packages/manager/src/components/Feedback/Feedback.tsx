@@ -20,6 +20,7 @@ export const Feedback = () => {
         // If 'submitted' is true, it means the feedback has already been submitted,
         // and there's no need to perform the submission again.
         if (event.detail.submitted) {
+          // If already submitted, do nothing
           return;
         }
         const variables: TFeedbackInput = {
