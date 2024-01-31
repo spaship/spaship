@@ -1,12 +1,12 @@
 import { orchestratorReq } from '@app/config/orchestratorReq';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { FeedbackInput, TCreateFeedbackRes, TFeedbackResponse } from './types';
+import { TFeedbackInput, TCreateFeedbackRes, TFeedbackResponse } from './types';
 
 const feedbackKeys = {
   feedback: ['feedback'] as const
 };
 
-export const createFeedback = async (dto: FeedbackInput): Promise<TCreateFeedbackRes> => {
+export const createFeedback = async (dto: TFeedbackInput): Promise<TCreateFeedbackRes> => {
   const { data } = await orchestratorReq.post('/feedback/', dto);
   return data.data;
 };

@@ -16,8 +16,10 @@ export const Feedback = () => {
       loadOpcFeedback();
 
       feedback.addEventListener('opc-feedback:submit', async (event: any) => {
+        // NOTE: To prevent multiple API calls, a flag 'submitted' is used.
+        // If 'submitted' is true, it means the feedback has already been submitted,
+        // and there's no need to perform the submission again.
         if (event.detail.submitted) {
-          // If already submitted, do nothing
           return;
         }
         const variables: TFeedbackInput = {
@@ -33,7 +35,7 @@ export const Feedback = () => {
             ...variables
           });
 
-          toast.success('Feedback submitted suucessfully');
+          toast.success('Feedback submitted successfully');
         } catch (error) {
           if (error instanceof AxiosError && error.response && error.response.status === 403) {
             toast.error("You don't have access to perform this action");
