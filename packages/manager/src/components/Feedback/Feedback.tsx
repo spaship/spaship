@@ -1,8 +1,8 @@
-import React, { useEffect, Suspense } from 'react';
-import { TFeedbackInput } from '@app/services/feedback/types';
 import { useCreateFeedback } from '@app/services/feedback/queries';
-import { toast } from 'react-hot-toast';
+import { TFeedbackInput } from '@app/services/feedback/types';
 import { AxiosError } from 'axios';
+import { Suspense, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 
 export const Feedback = () => {
   const createFeedback = useCreateFeedback();
@@ -17,19 +17,21 @@ export const Feedback = () => {
 
       feedback.addEventListener('opc-feedback:submit', async (event: any) => {
         if (event.detail.submitted) {
+          // If already submitted, do nothing
           return;
         }
-        const feedbackInput: TFeedbackInput = {
+        const variables: TFeedbackInput = {
           description: event.detail.data.summary ?? 'NA',
           experience: event.detail.data.experience ?? 'NA',
           category: event.detail.data.category ?? 'NA',
           error: event.detail.data.error ?? 'NA'
         };
         try {
-          await createFeedback.mutateAsync({
-            ...feedbackInput
-          });
+          //  eslint-disable-next-line no-param-reassign
           event.detail.submitted = true;
+          await createFeedback.mutateAsync({
+            ...variables
+          });
 
           toast.success('Feedback submitted suucessfully');
         } catch (error) {
