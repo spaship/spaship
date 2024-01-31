@@ -103,7 +103,7 @@ export class OperatorSymlinkRequest {
 
   metadata: OperatorSymlinkMetadata;
 
-  commanedType: string;
+  commandType: string;
 }
 
 export class OperatorSymlinkMetadata {

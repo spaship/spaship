@@ -106,7 +106,7 @@ export class EnvironmentFactory {
     metadata.source = request.source;
     metadata.target = request.target;
     operatorPayload.metadata = metadata;
-    operatorPayload.commanedType = SYMLINK_COMMAND.CREATE_SYMLINK;
+    operatorPayload.commandType = SYMLINK_COMMAND.CREATE_SYMLINK;
     return operatorPayload;
   }
 
