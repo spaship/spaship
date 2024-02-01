@@ -272,7 +272,7 @@ export class EnvironmentService {
         const response = await this.environmentFactory.symlinkRequest(operatorPayload, con.baseurl);
         this.logger.log('OperatorResponse', JSON.stringify(response.data));
         // TODO : to be removed & error code to be fixed from the operator
-        if(response.data.message.toString().includes("rm: cannot remove")){
+        if(response.data.toString().includes("rm: cannot remove")){
           this.exceptionService.badRequestException({ message: 'Symlink creation failed. Target directory already present, Plaese check the distribution.' });
         }
       } catch (err) {
