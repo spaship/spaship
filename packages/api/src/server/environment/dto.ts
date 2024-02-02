@@ -102,6 +102,8 @@ export class OperatorSymlinkRequest {
   environment: OperatorSymlinkEnvironment;
 
   metadata: OperatorSymlinkMetadata;
+
+  commandType: string;
 }
 
 export class OperatorSymlinkMetadata {
