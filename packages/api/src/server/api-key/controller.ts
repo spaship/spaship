@@ -11,6 +11,12 @@ import { ApikeyService } from './service';
 export class ApikeyController {
   constructor(private readonly apiKeyService: ApikeyService) {}
 
+  @Get('/validate')
+  @ApiOperation({ description: 'This is validate the APIKey.' })
+  async validateApiKey() {
+    return this.apiKeyService.validateApiKey();
+  }
+
   @Get(':propertyIdentifier')
   @ApiOperation({ description: 'Get the API Keys for property.' })
   async getApiKeyByProperty(@Param('propertyIdentifier') propertyIdentifier: string) {
