@@ -28,7 +28,7 @@
     "preversion": "oclif-dev readme && git add README.md"
   },
   "dependencies": {
-    "@oclif/command": "^1.8.16",
+    "@oclif/command": "^1.8.36",
     "@oclif/config": "^1.13.3",
     "@oclif/plugin-help": "^3.3.1",
     "@spaship/common": "^0.14.0",
