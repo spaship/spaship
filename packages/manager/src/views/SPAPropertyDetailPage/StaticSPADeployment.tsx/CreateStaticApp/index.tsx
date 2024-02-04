@@ -1,0 +1,1 @@
+export { CreateStaticApp } from './CreateStaticApp';
