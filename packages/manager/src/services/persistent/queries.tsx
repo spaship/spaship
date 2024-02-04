@@ -1,6 +1,6 @@
 import { orchestratorReq } from '@app/config/orchestratorReq';
 import { useMutation, useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query';
-import { TCreateEnvDTO, TEnv, TCreateSymlinkDTO, TCreateStaticAppOutput } from './types';
+import { TCreateEnvDTO, TCreateStaticAppOutput, TCreateSymlinkDTO, TEnv } from './types';
 
 const persistentEnvQueryKeys = {
   list: (webPropertyIdentifier: string) => ['persistent-env', webPropertyIdentifier] as const
@@ -100,12 +100,12 @@ export const useAddSymlink = (propertyIdentifier?: string) => {
   });
 };
 
-const formDataToObject = (formData: FormData): Record<string, string> => {
-  return Array.from(formData.entries()).reduce((object, [key, value]) => {
+const formDataToObject = (formData: FormData): Record<string, string> =>
+  Array.from(formData.entries()).reduce((object, [key, value]) => {
+    /* eslint-disable no-param-reassign */
     object[key] = value as string;
     return object;
   }, {} as Record<string, string>);
-};
 
 const createStaticApp = async (dto: FormData): Promise<TCreateStaticAppOutput> => {
   const data1 = formDataToObject(dto);
@@ -116,7 +116,7 @@ const createStaticApp = async (dto: FormData): Promise<TCreateStaticAppOutput> =
   return data.data;
 };
 
-export const useCreateStaticApp = (propertyIdentifier?: string, env?: string) => {
+export const useCreateStaticApp = (propertyIdentifier?: string) => {
   const queryClient = useQueryClient();
   return useMutation(createStaticApp, {
     onSuccess: () => {
