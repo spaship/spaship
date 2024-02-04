@@ -44,7 +44,7 @@ import {
   Title,
   Tooltip
 } from '@patternfly/react-core';
-import { CubesIcon, SyncAltIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
@@ -525,6 +525,13 @@ export const StaticSPADeployment = (): JSX.Element => {
   );
   return (
     <div id="static-spa-deployment-page">
+      <Button
+        className="pf-u-mb-md"
+        onClick={() => handlePopUpOpen('createStaticApp')}
+        icon={<PlusCircleIcon />}
+      >
+        Add New App
+      </Button>
       {!staticDeploymentData?.length ? (
         <EmptyState>
           <EmptyStateIcon icon={CubesIcon} />

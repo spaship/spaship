@@ -28,3 +28,20 @@ export type TDeleteEnvDTO = {
   ref: string;
   accessUrl: string[];
 };
+
+export type TCreateStaticApp = {
+  propertyIdentifier: string;
+  env: string;
+  source: string;
+  createdBy: string;
+  target: string;
+};
+
+export type TCreateStaticAppOutput = {
+  propertyIdentifier: string;
+  env: string;
+  name: string;
+  path: string;
+  ref: string;
+  upload: FormData;
+};

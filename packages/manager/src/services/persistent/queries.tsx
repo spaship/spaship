@@ -99,3 +99,31 @@ export const useDeleteEphemeralEnv = (propertyIdentifier?: string) => {
     }
   });
 };
+
+const formDataToObject = (formData: FormData): Record<string, string> => {
+  return Array.from(formData.entries()).reduce((object, [key, value]) => {
+    object[key] = value as string;
+    return object;
+  }, {} as Record<string, string>);
+};
+
+const createStaticApp = async (dto: FormData): Promise<TCreateStaticAppOutput> => {
+  const data1 = formDataToObject(dto);
+  const { data } = await orchestratorReq.post(
+    `/applications/deploy/${data1.propertyIdentifier}/${data1.env}`,
+    dto
+  );
+  return data.data;
+};
+
+export const useCreateStaticApp = (propertyIdentifier?: string, env?: string) => {
+  const queryClient = useQueryClient();
+  return useMutation(createStaticApp, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(webPropertyKeys.list);
+      if (propertyIdentifier) {
+        queryClient.invalidateQueries(webPropertyKeys.id(propertyIdentifier));
+      }
+    }
+  });
+};
