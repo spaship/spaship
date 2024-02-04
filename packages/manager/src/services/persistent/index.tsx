@@ -3,5 +3,6 @@ export {
   useGetEnvList,
   useGetWebPropertyGroupedByEnv,
   useAddSymlink,
-  useAddEnv
+  useAddEnv,
+  useCreateStaticApp
 } from './queries';
