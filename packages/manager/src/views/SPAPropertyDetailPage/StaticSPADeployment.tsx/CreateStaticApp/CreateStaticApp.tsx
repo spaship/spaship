@@ -12,7 +12,6 @@ import {
   TextInput
 } from '@patternfly/react-core';
 import { AxiosError } from 'axios';
-import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import * as yup from 'yup';
@@ -54,8 +53,6 @@ export const CreateStaticApp = ({ onClose, propertyIdentifier }: Props): JSX.Ele
   const createStaticSpa = useCreateStaticApp();
 
   const onSubmit = async (data: any) => {
-    console.log('data', data);
-
     try {
       const formData = new FormData();
       formData.append('propertyIdentifier', propertyIdentifier);
@@ -65,7 +62,6 @@ export const CreateStaticApp = ({ onClose, propertyIdentifier }: Props): JSX.Ele
       formData.append('ref', data.ref);
 
       if (data.upload && data.upload[0]) {
-        console.log('Selected file:', data.upload[0]);
         formData.append('upload', data.upload[0], data.upload[0].name);
       }
       await createStaticSpa.mutateAsync(formData);
@@ -87,8 +83,7 @@ export const CreateStaticApp = ({ onClose, propertyIdentifier }: Props): JSX.Ele
   };
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    console.log('files', files);
+    const { files } = e.target;
     setValue('upload', files);
   };
 
