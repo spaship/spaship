@@ -230,6 +230,7 @@ export enum SYMLINK_COMMAND {
 
 export const AUTH_STATUS = {
   disable: getAuthStatus(),
+  defaultUser: process.env.SPASHIP_AUTH_DEFAULT_USER
  };
  
  function getAuthStatus() {

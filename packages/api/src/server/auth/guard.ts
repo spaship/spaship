@@ -23,7 +23,10 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // @internal authentication is disabled
-    if(AUTH_STATUS.disable) return true;
+    if(AUTH_STATUS.disable){
+      context.getArgs()[0].body.createdBy = AUTH_STATUS.defaultUser;
+      return true;
+    } 
     // @internal no auth for hourSavedAnalyticsBaseURL, added in the login screen
     if (context.getArgs()[0].url.startsWith(AUTH_LISTING.hourSavedAnalyticsBaseURL)) return true;
     let bearerToken: string;
