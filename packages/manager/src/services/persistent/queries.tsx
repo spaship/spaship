@@ -108,9 +108,9 @@ const formDataToObject = (formData: FormData): Record<string, string> =>
   }, {} as Record<string, string>);
 
 const createStaticApp = async (dto: FormData): Promise<TCreateStaticAppOutput> => {
-  const data1 = formDataToObject(dto);
+  const formDataObject = formDataToObject(dto);
   const { data } = await orchestratorReq.post(
-    `/applications/deploy/${data1.propertyIdentifier}/${data1.env}`,
+    `/applications/deploy/${formDataObject.propertyIdentifier}/${formDataObject.env}`,
     dto
   );
   return data.data;
