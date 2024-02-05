@@ -234,7 +234,7 @@ export const AUTH_STATUS = {
  };
  
  function getAuthStatus() {
-   const authStatus = process.env.SPASHIP_AUTH_STATUS;
+   const authStatus = process.env.SPASHIP_AUTH_STATUS_DISABLE;
    if(authStatus === 'true') return true;
    return false;
  }
