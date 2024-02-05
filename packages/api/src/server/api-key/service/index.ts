@@ -78,4 +78,8 @@ export class ApikeyService {
       this.dataServices.apikey.delete({ propertyIdentifier: deleteApikeyDto.propertyIdentifier, shortKey: deleteApikeyDto.shortKey })
     );
   }
+
+  validateApiKey() {
+    return  { message : "Api Key is valid."}
+  }
 }
