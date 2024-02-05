@@ -12,7 +12,7 @@ export class ApikeyController {
   constructor(private readonly apiKeyService: ApikeyService) {}
 
   @Get('/validate')
-  @ApiOperation({ description: 'This is validate the APIKey.' })
+  @ApiOperation({ description: 'This is to validate the APIKey.' })
   async validateApiKey() {
     return this.apiKeyService.validateApiKey();
   }
