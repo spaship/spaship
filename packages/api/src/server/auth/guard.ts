@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import * as crypto from 'crypto';
 import jwt_decode from 'jwt-decode';
-import { AUTH_DETAILS, AUTH_LISTING, GIT_AUTH, GLOBAL_PREFIX } from 'src/configuration';
+import { AUTH_DETAILS, AUTH_LISTING, AUTH_STATUS, GIT_AUTH, GLOBAL_PREFIX } from 'src/configuration';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { ExceptionsService } from 'src/server/exceptions/service';
 
@@ -22,6 +22,8 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
    * Token Format : Bearer {JWT} / Bearer {APIKey}
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // @internal authentication is disabled
+    if(AUTH_STATUS.disable) return true;
     // @internal no auth for hourSavedAnalyticsBaseURL, added in the login screen
     if (context.getArgs()[0].url.startsWith(AUTH_LISTING.hourSavedAnalyticsBaseURL)) return true;
     let bearerToken: string;

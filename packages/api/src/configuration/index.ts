@@ -227,3 +227,13 @@ export enum SYMLINK_COMMAND {
   CREATE_SYMLINK = 'CREATE_SYMLINK',
   DELETE_TARGET = 'DELETE_TARGET'
 }
+
+export const AUTH_STATUS = {
+  disable: getAuthStatus(),
+ };
+ 
+ function getAuthStatus() {
+   const authStatus = process.env.SPASHIP_AUTH_STATUS;
+   if(authStatus === 'true') return true;
+   return false;
+ }
