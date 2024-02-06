@@ -91,7 +91,8 @@ export class EnvironmentService {
     this.logger.log('Property', JSON.stringify(property));
     const environment = this.environmentFactory.createNewEnvironment(createEnvironmentDto);
     Promise.all([this.dataServices.environment.create(environment)]);
-    await this.environmentFactory.initializeEnvironment(property, environment);
+    // @internal TODO : removing the auto initialization, to be discussed on it further
+    // await this.environmentFactory.initializeEnvironment(property, environment);
     await this.analyticsService.createActivityStream(
       createEnvironmentDto.propertyIdentifier,
       Action.ENV_CREATED,
