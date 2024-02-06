@@ -34,5 +34,8 @@ export const env = {
   PUBLIC_SPASHIP_FAQ_URL: process.env.NEXT_PUBLIC_SPASHIP_FAQ_URL || '',
 
   // Lighthouse report document
-  PUBLIC_SPASHIP_LIGHTHOUSE_URL: process.env.NEXT_PUBLIC_SPASHIP_LIGHTHOUSE_URL || ''
+  PUBLIC_SPASHIP_LIGHTHOUSE_URL: process.env.NEXT_PUBLIC_SPASHIP_LIGHTHOUSE_URL || '',
+
+  // gitbroker url
+  PUBLIC_SPASHIP_GIT_BROKER_URL: process.env.NEXT_PUBLIC_SPASHIP_GIT_BROKER_URL || ''
 };
