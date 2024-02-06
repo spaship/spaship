@@ -53,6 +53,7 @@ jobs:
             NEXT_PUBLIC_SPASHIP_FEEDBACK_FORM_URL=${{ secrets.FEEDBACK_FORM_URL }}
             NEXT_PUBLIC_SPASHIP_FAQ_URL=${{ secrets.FAQ_URL }}
             NEXT_PUBLIC_SPASHIP_LIGHTHOUSE_URL=${{ secrets.LIGHTHOUSE_PREPROD_URL }}
+            NEXT_PUBLIC_SPASHIP_GIT_BROKER_URL=${{ secrets.DEV_GIT_BROKER_URL }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:dev-${{env.GITHUB_REF_SLUG}}
       - name: Image digest
@@ -72,6 +73,7 @@ jobs:
             NEXT_PUBLIC_SPASHIP_FEEDBACK_FORM_URL=${{ secrets.FEEDBACK_FORM_URL }}
             NEXT_PUBLIC_SPASHIP_FAQ_URL=${{ secrets.FAQ_URL }}
             NEXT_PUBLIC_SPASHIP_LIGHTHOUSE_URL=${{ secrets.LIGHTHOUSE_PREPROD_URL }}
+            NEXT_PUBLIC_SPASHIP_GIT_BROKER_URL=${{ secrets.QA_GIT_BROKER_URL }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:qa-${{env.GITHUB_REF_SLUG}}
       - name: Image digest
@@ -91,6 +93,7 @@ jobs:
             NEXT_PUBLIC_SPASHIP_FEEDBACK_FORM_URL=${{ secrets.FEEDBACK_FORM_URL }}
             NEXT_PUBLIC_SPASHIP_FAQ_URL=${{ secrets.FAQ_URL }}
             NEXT_PUBLIC_SPASHIP_LIGHTHOUSE_URL=${{ secrets.LIGHTHOUSE_PREPROD_URL }}
+            NEXT_PUBLIC_SPASHIP_GIT_BROKER_URL=${{ secrets.STAGE_GIT_BROKER_URL }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:stage-${{env.GITHUB_REF_SLUG}}
       - name: Image digest
@@ -110,6 +113,7 @@ jobs:
             NEXT_PUBLIC_SPASHIP_FEEDBACK_FORM_URL=${{ secrets.FEEDBACK_FORM_URL }}
             NEXT_PUBLIC_SPASHIP_FAQ_URL=${{ secrets.FAQ_URL }}
             NEXT_PUBLIC_SPASHIP_LIGHTHOUSE_URL=${{ secrets.LIGHTHOUSE_PROD_URL }}
+            NEXT_PUBLIC_SPASHIP_GIT_BROKER_URL=${{ secrets.PROD_GIT_BROKER_URL }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:prod-${{env.GITHUB_REF_SLUG}}
       - name: Image digest
