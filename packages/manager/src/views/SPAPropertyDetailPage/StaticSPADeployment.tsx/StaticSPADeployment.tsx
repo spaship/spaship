@@ -32,7 +32,7 @@ import {
   Title,
   Tooltip
 } from '@patternfly/react-core';
-import { CubesIcon, PlusCircleIcon, SyncAltIcon } from '@patternfly/react-icons';
+import { CubesIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
@@ -40,7 +40,6 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { ApplicationStatus } from '../../WebPropertyDetailPage/components/SSR/ApplicationStatus';
 import { Lighthouse } from '../Lighthouse/Lighthouse';
-import { CreateStaticApp } from './CreateStaticApp';
 
 const INTERNAL_URL_LENGTH = 40;
 const SLICE_VAL_LENGTH = 20;
@@ -62,10 +61,7 @@ export const StaticSPADeployment = (): JSX.Element => {
   const [selectedData, setSelectedData] = useState<any>(staticDeploymentData?.[0]);
   const [syncData, setSyncData] = useState<TSpaProperty | undefined>();
   const [isChecked, setIsChecked] = useState<boolean>(syncData?.autoSync || false);
-  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
-    'autoSync',
-    'createStaticApp'
-  ] as const);
+  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['autoSync'] as const);
   const [selectedDataListItemId, setSelectedDataListItemId] = useState<string>('dataListItem1');
 
   const removeValues = () => {
@@ -337,13 +333,6 @@ export const StaticSPADeployment = (): JSX.Element => {
   }, [staticDeploymentData]);
   return (
     <div id="static-spa-deployment-page">
-      <Button
-        className="pf-u-mb-md"
-        onClick={() => handlePopUpOpen('createStaticApp')}
-        icon={<PlusCircleIcon />}
-      >
-        Add New App
-      </Button>
       {!staticDeploymentData?.length ? (
         <EmptyState>
           <EmptyStateIcon icon={CubesIcon} />
@@ -385,19 +374,6 @@ export const StaticSPADeployment = (): JSX.Element => {
             Cancel
           </Button>
         </ActionGroup>
-      </Modal>
-
-      <Modal
-        title="Create new app"
-        variant={ModalVariant.large}
-        isOpen={popUp.createStaticApp.isOpen}
-        onClose={() => handlePopUpClose('createStaticApp')}
-        style={{ minHeight: '600px' }}
-      >
-        <CreateStaticApp
-          propertyIdentifier={propertyIdentifier}
-          onClose={() => handlePopUpClose('createStaticApp')}
-        />
       </Modal>
     </div>
   );

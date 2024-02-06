@@ -9,6 +9,7 @@ import { CmdbDetails } from '@app/views/Settings/components/CmdbDetails';
 import { DeleteWebProperty } from '@app/views/Settings/components/DeleteWebProperty/DeleteWebProperty';
 import { Environment } from '@app/views/Settings/components/Environment';
 import { Symlink } from './components/Symlink';
+import { GitBrokerWebhook } from './components/GitBrokerWebhook';
 
 export const Settings: React.FunctionComponent = () => {
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
@@ -53,6 +54,10 @@ export const Settings: React.FunctionComponent = () => {
             <Tab eventKey={4} title={<TabTitleText aria-label="symlink">Symlink</TabTitleText>} />
             <Tab
               eventKey={5}
+              title={<TabTitleText aria-label="webhook">Git-Broker</TabTitleText>}
+            />
+            <Tab
+              eventKey={6}
               title={<TabTitleText aria-label="danger-zone">Danger Zone</TabTitleText>}
             />
           </Tabs>
@@ -65,7 +70,8 @@ export const Settings: React.FunctionComponent = () => {
           )}
           {activeTabKey === 3 && <AccessControl propertyIdentifier={propertyIdentifier} />}
           {activeTabKey === 4 && <Symlink propertyIdentifier={propertyIdentifier} />}
-          {activeTabKey === 5 && <DeleteWebProperty propertyIdentifier={propertyIdentifier} />}
+          {activeTabKey === 5 && <GitBrokerWebhook />}
+          {activeTabKey === 6 && <DeleteWebProperty propertyIdentifier={propertyIdentifier} />}
         </GridItem>
       </Grid>
     </div>
