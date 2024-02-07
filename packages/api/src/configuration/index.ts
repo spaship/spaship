@@ -31,7 +31,7 @@ function getDatabaseConfiguration() {
 }
 
 export const GIT_AUTH = {
-  secret: process.env.SPASHIP_GIT__SECRET
+  secret: process.env.SPASHIP_GIT_DEPLOYMENT_SECRET
 };
 
 export const DATA_BASE_CONFIGURATION = {
