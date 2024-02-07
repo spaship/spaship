@@ -23,11 +23,24 @@ export const Feedback = () => {
           return;
         }
         const variables: TFeedbackInput = {
-          description: event.detail.data.summary ?? 'NA',
-          experience: event.detail.data.experience ?? 'NA',
-          category: event.detail.data.category ?? 'NA',
-          error: event.detail.data.error ?? 'NA'
+          description:
+            event.detail.data.summary === '' || event.detail.data.summary === null
+              ? 'NA'
+              : event.detail.data.summary,
+          experience:
+            event.detail.data.experience === '' || event.detail.data.experience === null
+              ? 'NA'
+              : event.detail.data.experience,
+          category:
+            event.detail.data.category === '' || event.detail.data.category === null
+              ? 'NA'
+              : event.detail.data.category,
+          error:
+            event.detail.data.error === '' || event.detail.data.error === null
+              ? 'NA'
+              : event.detail.data.error
         };
+
         try {
           //  eslint-disable-next-line no-param-reassign
           event.detail.submitted = true;
@@ -56,6 +69,7 @@ export const Feedback = () => {
           id="opc-feedback"
           summaryLimit={300}
           style={{ zIndex: 1000 }}
+          app={JSON.stringify({ name: 'SPAship', url: '/' })}
         />
       </Suspense>
     </div>

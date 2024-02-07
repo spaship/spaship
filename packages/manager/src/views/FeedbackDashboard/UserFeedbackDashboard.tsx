@@ -73,24 +73,24 @@ export const UserFeedbackDashboard = (): JSX.Element => {
                 <Table aria-label="Simple table" borders>
                   <Thead>
                     <Tr>
-                      <Th textCenter modifier="wrap">
+                      <Th textCenter modifier="wrap" width={10}>
                         {columnNames.category}
                       </Th>
-                      <Th textCenter modifier="wrap">
+                      <Th textCenter modifier="wrap" width={15}>
                         {columnNames.error}
                       </Th>
-                      <Th textCenter modifier="wrap">
+                      <Th textCenter modifier="wrap" width={25}>
                         {columnNames.description}
                       </Th>
 
-                      <Th textCenter modifier="wrap">
+                      <Th textCenter modifier="wrap" width={15}>
                         {columnNames.experience}
                       </Th>
 
-                      <Th textCenter modifier="wrap">
+                      <Th textCenter modifier="wrap" width={20}>
                         {columnNames.createdBy}
                       </Th>
-                      <Th textCenter modifier="wrap">
+                      <Th textCenter modifier="wrap" width={15}>
                         {columnNames.createdAt}
                       </Th>
                     </Tr>
