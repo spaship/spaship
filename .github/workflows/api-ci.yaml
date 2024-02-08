@@ -10,10 +10,12 @@ on:
       - '*'
   workflow_dispatch:
     inputs:
-      version:
-        description: Bump Version
-        default: v1.0.0
-        required: true
+      tagsuffix:
+        description: Tag suffix for the image
+        required: false
+      ugroup:
+        description: Docker User Group[keep it set to the default if you are unsure]
+        required: false
 jobs:
   push_to_registry:
     name: Push Docker image to Registries
@@ -35,6 +37,24 @@ jobs:
           username: ${{ secrets.CI_QUAY_USERNAME }}
           password: ${{ secrets.CI_QUAY_TOKEN }}
 
+      - name: Set tag suffix
+        id: set_tag_suffix
+        run: |
+          if [[ -z "${{ github.event.inputs.tagsuffix }}" ]]; then
+            echo "TAG_SUFFIX=" >> $GITHUB_ENV
+          else
+            echo "TAG_SUFFIX=-${{ github.event.inputs.tagsuffix }}" >> $GITHUB_ENV
+          fi
+
+      - name: Set docker user group
+        id: set_docker_user_group
+        run: |
+          if [[ -z "${{ github.event.inputs.ugroup }}" ]]; then
+            echo "USERGROUP=1002590000" >> $GITHUB_ENV
+          else
+            echo "USERGROUP=${{ github.event.inputs.ugroup }}" >> $GITHUB_ENV
+          fi
+
       - name: Build and push into repository
         id: docker_build
         uses: docker/build-push-action@v2
@@ -42,7 +62,9 @@ jobs:
           context: ./packages/api
           file: ./packages/api/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
+          build-args: |
+            USERGROUP=${{ env.USERGROUP }}
           tags: |
-            quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{env.GITHUB_REF_SLUG}}
+            quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{env.GITHUB_REF_SLUG}}${{ env.TAG_SUFFIX }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
