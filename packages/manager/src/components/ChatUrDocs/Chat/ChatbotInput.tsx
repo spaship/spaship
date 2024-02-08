@@ -15,13 +15,13 @@ const ChatbotInput: React.FC<ChatbotInputProps> = ({ onSendMessage }) => {
   };
 
   return (
-    <Split>
-      <SplitItem className="pf-u-m-mx" style={{ width: '250px' }}>
+    <Split hasGutter>
+      <SplitItem style={{ width: '300px' }}>
         <TextInput
           type="text"
           value={inputValue}
           onChange={(value) => setInputValue(value)}
-          placeholder="Type your message..."
+          placeholder="Type your query here..."
         />
       </SplitItem>
       <SplitItem>
