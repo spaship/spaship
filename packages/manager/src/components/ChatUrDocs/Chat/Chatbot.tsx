@@ -3,6 +3,9 @@ import { Card, CardBody } from '@patternfly/react-core';
 import ChatbotMessage from './ChatbotMessage';
 import ChatbotInput from './ChatbotInput';
 import '../ChatUrDocs.css';
+import MarkdownRenderer from './MarkdownRenderer';
+import { marked } from 'marked';
+
 interface ChatMessage {
   content: string;
   isUserMessage: boolean;
@@ -22,9 +25,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
 
   const sendInitialMessage = () => {
     const initialMessage =
-      'Hi! 😊 I’m ' +
-      botName +
-      ', I’m here to help you with any questions or issues.';
+      'Hi! 😊 I’m ' + botName + ', I’m here to help you with any questions or issues.';
     // Display the initial message in the chat
     appendMessage(initialMessage, false);
   };
@@ -61,10 +62,9 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
   };
 
   const handleBotResponse = (botResponse: string) => {
-    // Display bot's response in the chat
-    appendMessage(botResponse, false);
+    const botResponseHtml = marked(botResponse);
+    appendMessage(<div dangerouslySetInnerHTML={{ __html: botResponseHtml }} />, false);
   };
-
   return (
     <Card>
       <div>
@@ -82,7 +82,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
           </div>
         </CardBody>
       </div>
-      <div>
+      <div className="pf-u-m-md">
         <ChatbotInput onSendMessage={handleSendMessage} />
       </div>
     </Card>
