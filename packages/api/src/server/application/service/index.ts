@@ -28,6 +28,8 @@ import {
   GitDeploymentRequestDTO
 } from '../request.dto';
 import { ApplicationFactory } from './factory';
+import { exec } from  'child_process';
+import * as util  from  'util';
 
 @Injectable()
 export class ApplicationService {
@@ -224,7 +226,15 @@ export class ApplicationService {
     const { baseDir } = DIRECTORY_CONFIGURATION;
     const tmpDir = `${baseDir}/${identifier.split('.')[0]}-${Date.now()}-extracted`;
     await fs.mkdirSync(`${tmpDir}`, { recursive: true });
-    await decompress(path.resolve(applicationPath), path.resolve(tmpDir));
+    const unzipCommand = `7z x ${path.resolve(applicationPath)} -o${tmpDir}`;
+    console.log(unzipCommand);
+    const execPromise = await util.promisify(exec);
+    try{
+      await execPromise(unzipCommand);
+    }catch(error){
+      this.exceptionService.internalServerErrorException(error);
+      return;
+    }
     const zipPath = await this.applicationFactory.createTemplateAndZip(
       appPath,
       `${version}`,
