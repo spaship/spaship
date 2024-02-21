@@ -31,7 +31,7 @@ export const LoginPage = (): JSX.Element => {
     }
   }, [status]);
   const params = new URLSearchParams(returnUri);
-  const redirectUrl = params.get('redirectUri'); // is the number 123
+  const redirectUrl = params.get('redirectUri'); 
 
   const onLogin = () => {
     setIsLoggingIn.on();
