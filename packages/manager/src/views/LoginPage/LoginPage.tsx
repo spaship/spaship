@@ -1,5 +1,5 @@
 import { signIn, useSession } from 'next-auth/react';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 import { env } from '@app/config/env';
@@ -23,16 +23,21 @@ import { Nav } from './components/Nav';
 export const LoginPage = (): JSX.Element => {
   const [isLoggingIn, setIsLoggingIn] = useToggle();
   const { status } = useSession();
+  const returnUri = window.location.search;
 
   useEffect(() => {
     if (status === 'authenticated') {
       Router.push(pageLinks.webPropertyListPage);
     }
   }, [status]);
+  const params = new URLSearchParams(returnUri);
+  const redirectUrl = params.get('redirectUri'); // is the number 123
 
   const onLogin = () => {
     setIsLoggingIn.on();
-    signIn('keycloak', { callbackUrl: pageLinks.webPropertyListPage }).catch(() => {
+    signIn('keycloak', {
+      callbackUrl: redirectUrl ? (redirectUrl as string) : pageLinks.webPropertyListPage
+    }).catch(() => {
       setIsLoggingIn.off();
     });
   };
