@@ -23,16 +23,21 @@ import { Nav } from './components/Nav';
 export const LoginPage = (): JSX.Element => {
   const [isLoggingIn, setIsLoggingIn] = useToggle();
   const { status } = useSession();
+  const returnUri = window.location.search;
 
   useEffect(() => {
     if (status === 'authenticated') {
       Router.push(pageLinks.webPropertyListPage);
     }
   }, [status]);
+  const params = new URLSearchParams(returnUri);
+  const redirectUrl = params.get('redirectUri'); 
 
   const onLogin = () => {
     setIsLoggingIn.on();
-    signIn('keycloak', { callbackUrl: pageLinks.webPropertyListPage }).catch(() => {
+    signIn('keycloak', {
+      callbackUrl: redirectUrl ? (redirectUrl as string) : pageLinks.webPropertyListPage
+    }).catch(() => {
       setIsLoggingIn.off();
     });
   };

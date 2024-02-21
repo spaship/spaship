@@ -14,8 +14,11 @@ export const AuthGuard = ({ children }: Props) => {
   const { data: session, status } = useSession({
     required: true,
     onUnauthenticated: () => {
+      const currentUrl = router.asPath;
       // Redirect to the login page if the user is not authenticated or if the JWT has expired.
-      router.push(pageLinks.loginPage);
+      router.push(pageLinks.loginPage, {
+        query: `redirectUri=${currentUrl}`
+      });
     }
   });
 
