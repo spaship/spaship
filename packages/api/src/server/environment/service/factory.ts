@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
-import { DIRECTORY_CONFIGURATION, SYMLINK_COMMAND } from 'src/configuration';
+import { DIRECTORY_CONFIGURATION, SYMLINK } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/service';
 import { CreateApplicationDto } from 'src/server/application/request.dto';
 import { ApplicationService } from 'src/server/application/service';
@@ -60,7 +60,13 @@ export class EnvironmentFactory {
     const zipPath = path.join(tmpDir, `../SPAship${Date.now()}.zip`);
     await zip(tmpDir, zipPath);
     try {
-      await this.applicationService.deployApplication(initializeEnvironment, zipPath, propertyRequest.identifier, environmentRequest.env);
+      await this.applicationService.deployApplication(
+        initializeEnvironment,
+        fileOriginalName,
+        zipPath,
+        propertyRequest.identifier,
+        environmentRequest.env
+      );
     } catch (err) {
       this.exceptionService.internalServerErrorException(err);
     }
@@ -106,7 +112,7 @@ export class EnvironmentFactory {
     metadata.source = request.source;
     metadata.target = request.target;
     operatorPayload.metadata = metadata;
-    operatorPayload.commandType = SYMLINK_COMMAND.CREATE_SYMLINK;
+    operatorPayload.commandType = SYMLINK.CREATE;
     return operatorPayload;
   }
 
