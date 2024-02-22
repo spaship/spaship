@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { diskStorage } from 'multer';
 import { DIRECTORY_CONFIGURATION } from '../../configuration';
 import { AuthenticationGuard } from '../auth/guard';
 import { ExceptionsService } from '../exceptions/service';
@@ -45,6 +46,12 @@ export class ApplicationController {
   @UseInterceptors(
     FileInterceptor('upload', {
       dest: DIRECTORY_CONFIGURATION.baseDir,
+      storage: diskStorage({
+        destination: DIRECTORY_CONFIGURATION.baseDir,
+        filename: (req, file, callback) => {
+          callback(null, `${Date.now()}-${file.originalname}`);
+        }
+      }),
       fileFilter: (req, file, cb) => {
         file.filename = `${Date.now()}-${file.originalname}`;
         cb(null, true);
@@ -79,7 +86,14 @@ export class ApplicationController {
     const fileFilter = file?.originalname.split('.');
     if (!types.includes(fileFilter[fileFilter.length - 1])) this.exceptionService.badRequestException({ message: 'Invalid file type.' });
     this.applicationFactory.validateEphemeralRequestForDuration(applicationDto);
-    const application = this.applicationService.saveApplication(applicationDto, file.path, params.propertyIdentifier, params.env, queries.createdBy);
+    const application = this.applicationService.saveApplication(
+      applicationDto,
+      file.originalname,
+      file.path,
+      params.propertyIdentifier,
+      params.env,
+      queries.createdBy
+    );
     return application;
   }
 

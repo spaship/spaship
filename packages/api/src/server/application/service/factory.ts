@@ -39,6 +39,8 @@ import { ExceptionsService } from 'src/server/exceptions/service';
 import { Property, Source } from 'src/server/property/entity';
 import { v4 as uuidv4 } from 'uuid';
 import { zip } from 'zip-a-folder';
+import { exec } from 'child_process';
+import * as util from 'util';
 
 @Injectable()
 export class ApplicationFactory {
@@ -90,25 +92,28 @@ export class ApplicationFactory {
     };
     this.logger.log('SpashipFile', JSON.stringify(spashipFile));
     let zipPath;
+    let zipCommand;
     try {
       if (await fileExists(path.join(tmpDir, 'dist'))) {
         await fs.writeFileSync(path.join(tmpDir, 'dist/.spaship'), JSON.stringify(spashipFile, null, '\t'));
         zipPath = path.join(tmpDir, `../SPAship${Date.now()}.zip`);
-        await zip(path.join(tmpDir, 'dist'), zipPath);
+        zipCommand = `7z a ${zipPath} ${path.join(tmpDir, 'dist')}/.`;
       } else if (await fileExists(path.join(tmpDir, 'build'))) {
         await fs.writeFileSync(path.join(tmpDir, 'build/.spaship'), JSON.stringify(spashipFile, null, '\t'));
         zipPath = path.join(tmpDir, `../SPAship${Date.now()}.zip`);
-        await zip(path.join(tmpDir, 'build'), zipPath);
+        zipCommand = `7z a ${zipPath} ${path.join(tmpDir, 'build')}/.`;
       } else if (await fileExists(path.join(tmpDir, 'package'))) {
         // @internal npm pack support added
         await fs.writeFileSync(path.join(tmpDir, 'package/.spaship'), JSON.stringify(spashipFile, null, '\t'));
         zipPath = path.join(tmpDir, `../SPAship${Date.now()}.zip`);
-        await zip(path.join(tmpDir, 'package'), zipPath);
+        zipCommand = `7z a ${zipPath} ${path.join(tmpDir, 'package')}/.`;
       } else {
         await fs.writeFileSync(path.join(tmpDir, '.spaship'), JSON.stringify(spashipFile, null, '\t'));
         zipPath = path.join(tmpDir, `../SPAship${Date.now()}.zip`);
-        await zip(tmpDir, zipPath);
+        zipCommand = `7z a ${zipPath} ${tmpDir}/.`;
       }
+      const execPromise = await util.promisify(exec);
+      await execPromise(zipCommand);
       this.logger.log('ZipPath', zipPath);
     } catch (err) {
       this.exceptionService.internalServerErrorException(err);

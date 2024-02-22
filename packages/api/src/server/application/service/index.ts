@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { isURL } from 'class-validator';
-import * as decompress from 'decompress';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -17,6 +16,8 @@ import { EnvironmentFactory } from 'src/server/environment/service/factory';
 import { ExceptionsService } from 'src/server/exceptions/service';
 import { LighthouseService } from 'src/server/lighthouse/service';
 import { Property, Source } from 'src/server/property/entity';
+import { exec } from 'child_process';
+import * as util from 'util';
 import {
   ApplicationConfigDTO,
   ApplicationResponse,
@@ -80,6 +81,7 @@ export class ApplicationService {
    */
   async saveApplication(
     applicationRequest: CreateApplicationDto,
+    fileOrginalName: string,
     applicationPath: string,
     propertyIdentifier: string,
     env: string,
@@ -96,6 +98,7 @@ export class ApplicationService {
     try {
       await this.deployApplication(
         applicationRequest,
+        fileOrginalName,
         applicationPath,
         propertyIdentifier,
         env,
@@ -206,6 +209,7 @@ export class ApplicationService {
    */
   async deployApplication(
     applicationRequest: CreateApplicationDto,
+    fileOrginalName: string,
     applicationPath: string,
     propertyIdentifier: string,
     env: string,
@@ -222,9 +226,29 @@ export class ApplicationService {
     const appPath = applicationRequest.path;
     this.logger.log('ApplicationRequest', JSON.stringify(applicationRequest));
     const { baseDir } = DIRECTORY_CONFIGURATION;
-    const tmpDir = `${baseDir}/${identifier.split('.')[0]}-${Date.now()}-extracted`;
+    let tmpDir = `${baseDir}/${identifier.split('.')[0]}-${Date.now()}-extracted`;
     await fs.mkdirSync(`${tmpDir}`, { recursive: true });
-    await decompress(path.resolve(applicationPath), path.resolve(tmpDir));
+    const unzipCommand = `7z x ${path.resolve(applicationPath)} -o${tmpDir}`;
+    const execPromise = await util.promisify(exec);
+    try {
+      await execPromise(unzipCommand);
+      /* @internal
+       * It will extract if the uploaded archive has any .tar file inside
+       * As of now it will only work on the single level of extraction
+       */
+      if (fileOrginalName.endsWith('tar.gz')) {
+        const nestedOutputDirectory = `${baseDir}/${identifier.split('.')[0]}-${Date.now()}-extracted`;
+        const nestedUnzipCommand = `7z x ${path.resolve(tmpDir)}/*.tar -o${nestedOutputDirectory}`;
+        try {
+          await execPromise(nestedUnzipCommand);
+        } catch (error) {
+          return this.exceptionService.internalServerErrorException(error);
+        }
+        tmpDir = nestedOutputDirectory;
+      }
+    } catch (error) {
+      return this.exceptionService.internalServerErrorException(error);
+    }
     const zipPath = await this.applicationFactory.createTemplateAndZip(
       appPath,
       `${version}`,

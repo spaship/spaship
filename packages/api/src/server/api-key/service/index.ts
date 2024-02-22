@@ -80,6 +80,6 @@ export class ApikeyService {
   }
 
   validateApiKey() {
-    return  { message : "Api Key is valid."}
+    return { message: 'Api Key is valid.' };
   }
 }

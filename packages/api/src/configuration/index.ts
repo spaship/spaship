@@ -222,8 +222,8 @@ export const LIGHTHOUSE_DETAILS = {
 };
 
 // @internal symlink command to be executed in the operator
-export enum SYMLINK_COMMAND {
+export enum SYMLINK {
   CHECK_TARGET_EXISTENCE = 'CHECK_TARGET_EXISTENCE',
-  CREATE_SYMLINK = 'CREATE_SYMLINK',
+  CREATE = 'CREATE_SYMLINK',
   DELETE_TARGET = 'DELETE_TARGET'
 }

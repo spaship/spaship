@@ -1,6 +1,7 @@
 FROM node:18-alpine3.16
 
 ARG USERGROUP
+RUN apk add --no-cache p7zip
 RUN echo "USERGROUP: $USERGROUP"
 RUN addgroup allusers && adduser -S -G allusers $USERGROUP
 RUN mkdir /.npm
