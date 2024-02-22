@@ -39,8 +39,8 @@ import { ExceptionsService } from 'src/server/exceptions/service';
 import { Property, Source } from 'src/server/property/entity';
 import { v4 as uuidv4 } from 'uuid';
 import { zip } from 'zip-a-folder';
-import { exec } from  'child_process';
-import * as util from  'util';
+import { exec } from 'child_process';
+import * as util from 'util';
 
 @Injectable()
 export class ApplicationFactory {
@@ -91,7 +91,8 @@ export class ApplicationFactory {
       environments: [{ name: env, updateRestriction: false, exclude: false, ns: namespace }]
     };
     this.logger.log('SpashipFile', JSON.stringify(spashipFile));
-    let zipPath, zipCommand;
+    let zipPath;
+    let zipCommand;
     try {
       if (await fileExists(path.join(tmpDir, 'dist'))) {
         await fs.writeFileSync(path.join(tmpDir, 'dist/.spaship'), JSON.stringify(spashipFile, null, '\t'));
