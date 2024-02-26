@@ -1035,7 +1035,8 @@ export class ApplicationService {
     lines: string,
     type: string,
     id: string,
-    cluster: string
+    cluster: string,
+    deploymentType: string
   ): Promise<String> {
     let response;
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
@@ -1054,6 +1055,8 @@ export class ApplicationService {
     if (type === LOGTYPE.POD) {
       if (!id) this.exceptionService.badRequestException({ message: 'Please provide the id for the pod logs.' });
       logRequest.objectName = id;
+      if (deploymentType === DEPLOYMENT_DETAILS.type.static)
+        return this.applicationFactory.httpPodLogRequest(logRequest, deploymentConnection.baseurl);
       return this.applicationFactory.podLogRequest(logRequest, deploymentConnection.baseurl);
     }
     return this.applicationFactory.deploymentLogRequest(logRequest, deploymentConnection.baseurl);

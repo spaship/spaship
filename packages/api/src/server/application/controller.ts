@@ -134,9 +134,10 @@ export class ApplicationController {
     @Query('lines') lines: string,
     @Query('type') type: string,
     @Query('id') id: string,
-    @Query('cluster') cluster: string
+    @Query('cluster') cluster: string,
+    @Query('deploymentType') deploymentType: string
   ): Promise<String> {
-    return this.applicationService.getLogs(propertyIdentifier, env, identifier, lines, type, id, cluster);
+    return this.applicationService.getLogs(propertyIdentifier, env, identifier, lines, type, id, cluster, deploymentType);
   }
 
   @Get('/status')

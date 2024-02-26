@@ -373,6 +373,22 @@ export class ApplicationFactory {
     return response?.data;
   }
 
+  // @internal Get the Static Deployment Pod Logs from the Operator
+  async httpPodLogRequest(logRequest: GitApplicationStatusRequest, deploymentBaseURL?: string): Promise<String> {
+    const headers = { Authorization: await AuthFactory.getAccessToken() };
+    let response;
+    try {
+      response = await this.httpService.axiosRef.post(`${deploymentBaseURL}/api/gf/v1/http-pod-log`, logRequest, {
+        maxBodyLength: Infinity,
+        headers
+      });
+    } catch (err) {
+      this.logger.error('DeploymentHTTPLogRequestForOperator', err);
+      this.exceptionService.badRequestException({ message: `No Pod log found for ${logRequest.objectName}.` });
+    }
+    return response?.data;
+  }
+
   // @internal Get the Build Status from the Operator
   async buildStatusRequest(logRequest: GitApplicationStatusRequest, deploymentBaseURL?: string): Promise<GitApplicationStatusResponse> {
     const headers = { Authorization: await AuthFactory.getAccessToken() };
