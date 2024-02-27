@@ -16,8 +16,9 @@ const ChatbotInput: React.FC<ChatbotInputProps> = ({ onSendMessage }) => {
 
   return (
     <Split hasGutter>
-      <SplitItem style={{ width: '300px' }}>
+      <SplitItem style={{ width: '450px' }}>
         <TextInput
+          style={{ borderRadius: '20px', border: '1px solid #6A6E73 ', backgroundColor: '#F0F0F0' }}
           type="text"
           value={inputValue}
           onChange={(value) => setInputValue(value)}
@@ -26,7 +27,9 @@ const ChatbotInput: React.FC<ChatbotInputProps> = ({ onSendMessage }) => {
       </SplitItem>
       <SplitItem>
         {' '}
-        <Button onClick={handleMessageSend}>Send</Button>
+        <Button style={{ borderRadius: '15px' }} onClick={handleMessageSend}>
+          Send
+        </Button>
       </SplitItem>
     </Split>
   );
