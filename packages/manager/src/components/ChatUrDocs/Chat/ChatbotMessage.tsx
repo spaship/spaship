@@ -11,7 +11,7 @@ const ChatbotMessage: React.FC<ChatbotMessageProps> = ({ message, isUserMessage 
   return (
     <div key={message} className={`message ${isUserMessage ? 'user-message' : 'bot-message'}`}>
       <div className={` ${isUserMessage ? 'user-message-container' : 'bot-message-container'}`}>
-        <div className="message-content">{message}</div>
+        <div className="message-content" dangerouslySetInnerHTML={{ __html: message }} />
       </div>
     </div>
   );
