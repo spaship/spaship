@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardBody } from '@patternfly/react-core';
+import { Alert, Card, CardBody, Split } from '@patternfly/react-core';
 import ChatbotMessage from './ChatbotMessage';
 import ChatbotInput from './ChatbotInput';
 import '../ChatUrDocs.css';
+import '../Chat/ChatTyping.css';
 import MarkdownRenderer from './MarkdownRenderer';
 import { marked } from 'marked';
 
@@ -17,6 +18,7 @@ interface ChatbotProps {
 
 const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [isBotTyping, setIsBotTyping] = useState(false); // State to manage typing indicator
 
   useEffect(() => {
     // Send initial message when component mounts
@@ -38,13 +40,14 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
   const handleSendMessage = async (userMessage: string) => {
     // Display the user's message in the chat
     appendMessage(userMessage, true);
-
+    // Show typing indicator
+    setIsBotTyping(true);
     // Send the user's question to the backend
     sendUserQuestion(userMessage);
   };
 
   const sendUserQuestion = async (userQuestion: string) => {
-    const API_ENDPOINT = 'https://chaturdocs-api.usersys.redhat.com/chaturdocs/rest/search';
+    const API_ENDPOINT = 'http://127.0.0.1:8000/chaturdocs/rest/search';
     try {
       const response = await fetch(API_ENDPOINT, {
         method: 'POST',
@@ -54,21 +57,31 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
         body: JSON.stringify({ query: userQuestion })
       });
       const responseData = await response.json();
+
       handleBotResponse(responseData.answer);
     } catch (error) {
       console.error('Error fetching bot response:', error);
       // Handle error
     }
   };
+  const handleBotResponse = async (botResponse: string) => {
+    const botResponseHtml = await marked(botResponse);
+    console.log('>>>>', botResponse, 'botResponseHtml', botResponseHtml);
 
-  const handleBotResponse = (botResponse: string) => {
-    const botResponseHtml = marked(botResponse);
-    appendMessage(<div dangerouslySetInnerHTML={{ __html: botResponseHtml }} />, false);
+    // Hide typing indicator
+    setIsBotTyping(false);
+    botResponse === ''
+      ? appendMessage(
+          "Oops! Unfortunately, I wasn't able to find the answer to your question. Kindly contact the team directly for further assistance. Is there anything else I can help you with?",
+          false
+        )
+      : appendMessage(botResponseHtml, false);
   };
+
   return (
     <Card>
       <div>
-        <CardBody style={{ width: 400, maxHeight: 600, overflowY: 'auto' }}>
+        <CardBody style={{ maxHeight: 450, overflowY: 'auto' }}>
           <div className="chat">
             <div className="chat-messages">
               {chatMessages.map((message, index) => (
@@ -78,6 +91,16 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
                   isUserMessage={message.isUserMessage}
                 />
               ))}
+
+              {isBotTyping && (
+                <div className="chat-bubble">
+                  <div className="typing">
+                    <div className="dot"></div>
+                    <div className="dot"></div>
+                    <div className="dot"></div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </CardBody>
