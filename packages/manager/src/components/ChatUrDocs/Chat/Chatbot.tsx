@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Alert, Card, CardBody, Split } from '@patternfly/react-core';
 import ChatbotMessage from './ChatbotMessage';
 import ChatbotInput from './ChatbotInput';
@@ -19,11 +19,22 @@ interface ChatbotProps {
 const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isBotTyping, setIsBotTyping] = useState(false); // State to manage typing indicator
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Send initial message when component mounts
     sendInitialMessage();
   }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatMessages]); // Scroll whenever chat messages change
+
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   const sendInitialMessage = () => {
     const initialMessage =
@@ -91,7 +102,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
                   isUserMessage={message.isUserMessage}
                 />
               ))}
-
+              <div ref={messagesEndRef} />
               {isBotTyping && (
                 <div className="chat-bubble">
                   <div className="typing">
