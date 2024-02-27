@@ -249,7 +249,7 @@ export const SideBar = () => {
                         style={{ padding: 0, color: '#fff' }}
                         onClick={() => handlePopUpOpen('addMembers')}
                       >
-                        ChatUrDocs
+                       Ask me 
                       </Button>
                     </SplitItem>
                   </Split>

@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core';
 import Link from 'next/link';
 import Head from 'next/head';
-import Chatbot from '@app/components/ChatUrDocs/Chat/Chatbot';
+
 
 export const HomePage = (): JSX.Element => (
   <Bullseye>
@@ -36,8 +36,7 @@ export const HomePage = (): JSX.Element => (
           </a>
         </Link>
       </StackItem>
-      <br />
-      <Chatbot botName={'spa'} />
+     
     </Stack>
   </Bullseye>
 );
