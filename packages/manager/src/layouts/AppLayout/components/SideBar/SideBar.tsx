@@ -352,14 +352,15 @@ export const SideBar = () => {
               early stages of development and is considered pre-alpha. We are providing this for the
               purpose of gathering{' '}
               <span
-                onClick={handleFeedbackClick}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    handleFeedbackClick();
+                onClick={() => {
+                  const feedbackElement: any = document.querySelector('opc-feedback');
+                  if (feedbackElement) {
+                    feedbackElement._setModalState(false, true, false, false);
+                    handlePopUpClose('chatbotPanel');
+                  } else {
+                    console.error('Feedback element not found.');
                   }
                 }}
-                tabIndex={0} // Added tabIndex for accessibility
-                role="button" // Added role attribute
                 style={{ cursor: 'pointer', color: 'blue' }}
               >
                 feedback
