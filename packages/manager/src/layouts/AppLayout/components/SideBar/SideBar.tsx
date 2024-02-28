@@ -249,7 +249,7 @@ export const SideBar = () => {
                         style={{ padding: 0, color: '#fff' }}
                         onClick={() => handlePopUpOpen('addMembers')}
                       >
-                       Ask me 
+                        Ask me
                       </Button>
                     </SplitItem>
                   </Split>
@@ -341,7 +341,22 @@ export const SideBar = () => {
             <p>
               <InfoCircleIcon /> &nbsp; Disclaimer: Please note that this is a pilot version in the
               early stages of development and is considered pre-alpha. We are providing this for the
-              purpose of gathering feedback.
+              purpose of gathering{' '}
+              <span
+                onClick={() => {
+                  const feedbackElement: any = document.querySelector('opc-feedback');
+                  if (feedbackElement) {
+                    feedbackElement._setModalState(false, true, false, false);
+                    handlePopUpClose('addMembers');
+                  } else {
+                    console.error('Feedback element not found.');
+                  }
+                }}
+                style={{ cursor: 'pointer', color: 'blue' }}
+              >
+                feedback
+              </span>
+              .
             </p>
             <br />
             <Chatbot botName={'chatur'} />
