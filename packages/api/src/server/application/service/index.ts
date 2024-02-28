@@ -324,9 +324,21 @@ export class ApplicationService {
     const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
     applicationRequest.path = this.applicationFactory.getPath(applicationRequest.path);
     if (applicationRequest?.healthCheckPath) applicationRequest.healthCheckPath = this.applicationFactory.getPath(applicationRequest.healthCheckPath);
+    const reqEnv = env;
+    env = await this.createEphemeralEnvironment(applicationRequest, propertyIdentifier, env, applicationRequest.createdBy);
     let applicationDetails = (
       await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: true, isGit: false })
     )[0];
+    if (reqEnv !== env && !applicationDetails) {
+      const tmpApplicationDetails = (
+        await this.dataServices.application.getByAny({ propertyIdentifier, reqEnv, identifier, isContainerized: true, isGit: false })
+      )[0];
+      if (tmpApplicationDetails) {
+        applicationRequest.healthCheckPath = tmpApplicationDetails.healthCheckPath;
+        applicationRequest.config = tmpApplicationDetails.config;
+        applicationRequest.secret = tmpApplicationDetails.secret;
+      }
+    }
     const searchedApplicationsByPath = await this.dataServices.application.getByAny({
       propertyIdentifier,
       env,
