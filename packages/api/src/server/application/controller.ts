@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Query, UploadedFile, UseGua
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
-import { DIRECTORY_CONFIGURATION } from '../../configuration';
+import { DIRECTORY_CONFIGURATION, VALIDATION } from '../../configuration';
 import { AuthenticationGuard } from '../auth/guard';
 import { ExceptionsService } from '../exceptions/service';
 import {
@@ -49,11 +49,11 @@ export class ApplicationController {
       storage: diskStorage({
         destination: DIRECTORY_CONFIGURATION.baseDir,
         filename: (req, file, callback) => {
-          callback(null, `${Date.now()}-${file.originalname.replace(/[^.\w]+/g, '_')}`);
+          callback(null, `${Date.now()}-${file.originalname.replace(VALIDATION.FILE, '_')}`);
         }
       }),
       fileFilter: (req, file, cb) => {
-        file.filename = `${Date.now()}-${file.originalname.replace(/[^.\w]+/g, '_')}`;
+        file.filename = `${Date.now()}-${file.originalname.replace(VALIDATION.FILE, '_')}`;
         cb(null, true);
       }
     })

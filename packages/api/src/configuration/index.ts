@@ -146,7 +146,8 @@ export const VALIDATION = {
   CMDB: /^[a-zA-Z0-9-]+$/,
   IMAGEURL: getImageUrlRegex(),
   EPH_EXPIRESIN: /^[0-9]+$/,
-  FOLDER: /^[_.a-zA-Z0-9/-]+$/
+  FOLDER: /^[_.a-zA-Z0-9/-]+$/,
+  FILE: /[^.\w]+/g
 };
 
 export enum JOB {
