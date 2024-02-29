@@ -49,11 +49,11 @@ export class ApplicationController {
       storage: diskStorage({
         destination: DIRECTORY_CONFIGURATION.baseDir,
         filename: (req, file, callback) => {
-          callback(null, `${Date.now()}-${file.originalname}`);
+          callback(null, `${Date.now()}-${file.originalname.replace(/[^.\w]+/g, '_')}`);
         }
       }),
       fileFilter: (req, file, cb) => {
-        file.filename = `${Date.now()}-${file.originalname}`;
+        file.filename = `${Date.now()}-${file.originalname.replace(/[^.\w]+/g, '_')}`;
         cb(null, true);
       }
     })
