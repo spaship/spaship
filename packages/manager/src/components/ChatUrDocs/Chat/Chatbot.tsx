@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Alert, Card, CardBody, Split } from '@patternfly/react-core';
 import ChatbotMessage from './ChatbotMessage';
 import ChatbotInput from './ChatbotInput';
-import '../ChatUrDocs.css';
-import '../Chat/ChatTyping.css';
-import MarkdownRenderer from './MarkdownRenderer';
+import axios from 'axios'; // Import Axios
 import { marked } from 'marked';
+import { env } from '@app/config/env';
+import '../Chat/ChatTyping.css';
 
 interface ChatMessage {
   content: string;
@@ -37,9 +37,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
   };
 
   const sendInitialMessage = () => {
-    const initialMessage =
-      'Hi! 😊 I’m ' + botName + ', I’m here to help you with any questions or issues.';
-    // Display the initial message in the chat
+    const initialMessage = `Hi! 😊 I’m ${botName}, I’m here to help you with any questions or issues.`;
     appendMessage(initialMessage, false);
   };
 
@@ -58,29 +56,30 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
   };
 
   const sendUserQuestion = async (userQuestion: string) => {
-    const API_ENDPOINT = 'http://127.0.0.1:8000/chaturdocs/rest/search';
+    const API_ENDPOINT = env.PUBLIC_CHATURDOCS_URL;
     try {
-      const response = await fetch(API_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ query: userQuestion })
-      });
-      const responseData = await response.json();
+      const response = await axios.post(
+        API_ENDPOINT,
+        { query: userQuestion },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
 
-      handleBotResponse(responseData.answer);
+      handleBotResponse(response.data.answer);
     } catch (error) {
       console.error('Error fetching bot response:', error);
       // Handle error
     }
   };
+
   const handleBotResponse = async (botResponse: string) => {
     const botResponseHtml = await marked(botResponse);
-    console.log('>>>>', botResponse, 'botResponseHtml', botResponseHtml);
 
     // Hide typing indicator
-    setIsBotTyping(false);
+    setIsBotTyping(true);
     botResponse === ''
       ? appendMessage(
           "Oops! Unfortunately, I wasn't able to find the answer to your question. Kindly contact the team directly for further assistance. Is there anything else I can help you with?",
