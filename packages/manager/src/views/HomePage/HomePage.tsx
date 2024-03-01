@@ -11,7 +11,6 @@ import {
 import Link from 'next/link';
 import Head from 'next/head';
 
-
 export const HomePage = (): JSX.Element => (
   <Bullseye>
     <Head>
@@ -36,7 +35,6 @@ export const HomePage = (): JSX.Element => (
           </a>
         </Link>
       </StackItem>
-     
     </Stack>
   </Bullseye>
 );
