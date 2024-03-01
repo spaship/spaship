@@ -361,6 +361,8 @@ export const SideBar = () => {
                     console.error('Feedback element not found.');
                   }
                 }}
+                tabIndex={0} // Added tabIndex for accessibility
+                role="button" // Added role attribute
                 style={{ cursor: 'pointer', color: 'blue' }}
               >
                 feedback

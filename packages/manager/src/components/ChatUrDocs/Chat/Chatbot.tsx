@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Alert, Card, CardBody, Split } from '@patternfly/react-core';
-import ChatbotMessage from './ChatbotMessage';
-import ChatbotInput from './ChatbotInput';
+import { env } from '@app/config/env';
+import { Card, CardBody } from '@patternfly/react-core';
 import axios from 'axios'; // Import Axios
 import { marked } from 'marked';
-import { env } from '@app/config/env';
-import '../Chat/ChatTyping.css';
+import React, { useEffect, useRef, useState } from 'react';
+import './ChatTyping.css';
+import ChatbotInput from './ChatbotInput';
+import ChatbotMessage from './ChatbotMessage';
 
 interface ChatMessage {
   content: string;
@@ -21,24 +21,10 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
   const [isBotTyping, setIsBotTyping] = useState(false); // State to manage typing indicator
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // Send initial message when component mounts
-    sendInitialMessage();
-  }, []);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [chatMessages]); // Scroll whenever chat messages change
-
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  };
-
-  const sendInitialMessage = () => {
-    const initialMessage = `Hi! 😊 I’m ${botName}, I’m here to help you with any questions or issues.`;
-    appendMessage(initialMessage, false);
   };
 
   const appendMessage = (message: string, isUserMessage: boolean) => {
@@ -46,13 +32,30 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
     setChatMessages((prevMessages) => [...prevMessages, { content: message, isUserMessage }]);
   };
 
-  const handleSendMessage = async (userMessage: string) => {
-    // Display the user's message in the chat
-    appendMessage(userMessage, true);
-    // Show typing indicator
-    setIsBotTyping(true);
-    // Send the user's question to the backend
-    sendUserQuestion(userMessage);
+  const sendInitialMessage = () => {
+    const initialMessage = `Hi! 😊 I’m ${botName}, I’m here to help you with any questions or issues.`;
+    appendMessage(initialMessage, false);
+  };
+
+  useEffect(() => {
+    // Send initial message when component mounts
+    sendInitialMessage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Ignore missing dependency warning
+
+  const handleBotResponse = async (botResponse: string) => {
+    const botResponseHtml = await marked(botResponse);
+
+    // Hide typing indicator
+    setIsBotTyping(false);
+    if (botResponse === '') {
+      appendMessage(
+        "Oops! Unfortunately, I wasn't able to find the answer to your question. Kindly contact the team directly for further assistance. Is there anything else I can help you with?",
+        false
+      );
+    } else {
+      appendMessage(botResponseHtml, false);
+    }
   };
 
   const sendUserQuestion = async (userQuestion: string) => {
@@ -70,23 +73,25 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
 
       handleBotResponse(response.data.answer);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error fetching bot response:', error);
       // Handle error
     }
   };
 
-  const handleBotResponse = async (botResponse: string) => {
-    const botResponseHtml = await marked(botResponse);
-
-    // Hide typing indicator
-    setIsBotTyping(false);
-    botResponse === ''
-      ? appendMessage(
-          "Oops! Unfortunately, I wasn't able to find the answer to your question. Kindly contact the team directly for further assistance. Is there anything else I can help you with?",
-          false
-        )
-      : appendMessage(botResponseHtml, false);
+  const handleSendMessage = async (userMessage: string) => {
+    // Display the user's message in the chat
+    appendMessage(userMessage, true);
+    // Show typing indicator
+    setIsBotTyping(true);
+    // Send the user's question to the backend
+    sendUserQuestion(userMessage);
   };
+
+  useEffect(() => {
+    scrollToBottom();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chatMessages]); // Ignore missing dependency warning
 
   return (
     <Card>
@@ -96,6 +101,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
             <div className="chat-messages">
               {chatMessages.map((message, index) => (
                 <ChatbotMessage
+                  // eslint-disable-next-line react/no-array-index-key
                   key={index}
                   message={message.content}
                   isUserMessage={message.isUserMessage}
@@ -105,9 +111,9 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
               {isBotTyping && (
                 <div className="chat-bubble">
                   <div className="typing">
-                    <div className="dot"></div>
-                    <div className="dot"></div>
-                    <div className="dot"></div>
+                    <div className="dot" />
+                    <div className="dot" />
+                    <div className="dot" />
                   </div>
                 </div>
               )}
