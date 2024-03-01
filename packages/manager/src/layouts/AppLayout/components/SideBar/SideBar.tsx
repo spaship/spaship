@@ -81,7 +81,17 @@ export const SideBar = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
   const faqDocumentUrl = env.PUBLIC_SPASHIP_FAQ_URL;
-  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['addMembers'] as const);
+  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['chatbotPanel'] as const);
+
+  const handleFeedbackClick = () => {
+    const feedbackElement: any = document.querySelector('opc-feedback');
+    if (feedbackElement) {
+      feedbackElement.setModalState(false, true, false, false);
+      handlePopUpClose('chatbotPanel');
+    } else {
+      console.error('Feedback element not found.');
+    }
+  };
   return (
     <PageSidebar
       nav={
@@ -247,7 +257,7 @@ export const SideBar = () => {
                         className="text-decoration-none"
                         variant="link"
                         style={{ padding: 0, color: '#fff' }}
-                        onClick={() => handlePopUpOpen('addMembers')}
+                        onClick={() => handlePopUpOpen('chatbotPanel')}
                       >
                         Ask me
                       </Button>
@@ -332,10 +342,9 @@ export const SideBar = () => {
           </Nav>
 
           <Modal
-            // title="Add Members"
             variant={ModalVariant.small}
-            isOpen={popUp.addMembers.isOpen}
-            onClose={() => handlePopUpClose('addMembers')}
+            isOpen={popUp.chatbotPanel.isOpen}
+            onClose={() => handlePopUpClose('chatbotPanel')}
             height={600}
           >
             <p>
@@ -343,15 +352,27 @@ export const SideBar = () => {
               early stages of development and is considered pre-alpha. We are providing this for the
               purpose of gathering{' '}
               <span
-                onClick={() => {
-                  const feedbackElement: any = document.querySelector('opc-feedback');
-                  if (feedbackElement) {
-                    feedbackElement._setModalState(false, true, false, false);
-                    handlePopUpClose('addMembers');
-                  } else {
-                    console.error('Feedback element not found.');
+                // onClick={() => {
+                //   const feedbackElement: any = document.querySelector('opc-feedback');
+                //   if (feedbackElement) {
+                //     feedbackElement._setModalState(false, true, false, false);
+                //     handlePopUpClose('chatbotPanel');
+                //   } else {
+                //     console.error('Feedback element not found.');
+                //   }
+                // }}
+                // style={{ cursor: 'pointer', color: 'blue' }}
+                // role="button" // Added role attribute
+                // tabIndex={0} // Added tabIndex for accessibility
+
+                onClick={handleFeedbackClick}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    handleFeedbackClick();
                   }
                 }}
+                tabIndex={0} // Added tabIndex for accessibility
+                role="button" // Added role attribute
                 style={{ cursor: 'pointer', color: 'blue' }}
               >
                 feedback
@@ -359,7 +380,7 @@ export const SideBar = () => {
               .
             </p>
             <br />
-            <Chatbot botName={'chatur'} />
+            <Chatbot botName="chatur" />
           </Modal>
         </>
       }

@@ -1,7 +1,7 @@
-// ChatbotInput.tsx
 import React, { useState } from 'react';
 import { Button, Split, SplitItem, TextInput } from '@patternfly/react-core';
 import '../ChatUrDocs.css';
+
 interface ChatbotInputProps {
   onSendMessage: (message: string) => void;
 }
