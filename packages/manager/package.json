@@ -58,6 +58,7 @@
     "dayjs": "1.11.7",
     "highcharts": "^11.1.0",
     "js-base64": "^3.7.5",
+    "marked": "^12.0.0",
     "next": "12.3.4",
     "next-auth": "4.19.2",
     "next-global-css": "1.3.1",
