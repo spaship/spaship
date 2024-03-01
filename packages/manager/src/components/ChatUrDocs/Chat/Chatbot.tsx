@@ -79,7 +79,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
     const botResponseHtml = await marked(botResponse);
 
     // Hide typing indicator
-    setIsBotTyping(true);
+    setIsBotTyping(false);
     botResponse === ''
       ? appendMessage(
           "Oops! Unfortunately, I wasn't able to find the answer to your question. Kindly contact the team directly for further assistance. Is there anything else I can help you with?",
