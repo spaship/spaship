@@ -61,9 +61,43 @@ export class Application {
 
   autoSync: boolean;
 
+  symlink: Symlink[];
+
+  autoSymlinkCreation: boolean;
+
   createdBy: string;
 
   updatedBy: string;
 
   updatedAt: Date;
+}
+
+export class Symlink {
+  source: string;
+
+  target: string;
+
+  status: string;
+}
+
+export class OperatorSymlinkRequest {
+  environment: OperatorSymlinkEnvironment;
+
+  metadata: OperatorSymlinkMetadata;
+
+  commandType: string;
+}
+
+export class OperatorSymlinkMetadata {
+  source: string;
+
+  target: string;
+}
+
+export class OperatorSymlinkEnvironment {
+  websiteName: string;
+
+  nameSpace: string;
+
+  name: string;
 }

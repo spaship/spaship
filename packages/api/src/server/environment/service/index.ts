@@ -7,8 +7,8 @@ import { Application } from 'src/server/application/entity';
 import { ExceptionsService } from 'src/server/exceptions/service';
 import { Source } from 'src/server/property/entity';
 import { PropertyService } from 'src/server/property/service';
-import { CreateEnvironmentDto, SymlinkDTO, SyncEnvironmentDto } from '../dto';
-import { Environment, Symlink } from '../entity';
+import { CreateEnvironmentDto, SyncEnvironmentDto } from '../dto';
+import { Environment } from '../entity';
 import { EnvironmentFactory } from './factory';
 
 @Injectable()
@@ -245,61 +245,6 @@ export class EnvironmentService {
         createPropertyDto.createdBy,
         Source.MANAGER,
         JSON.stringify(createPropertyDto)
-      );
-    } catch (err) {
-      this.exceptionService.internalServerErrorException(err);
-    }
-    return environment;
-  }
-
-  /* @internal
-   * Update the symlink for the specific environment
-   * Multi cluster symlink support is enabled
-   */
-  async updateSymlink(symlinkDTO: SymlinkDTO): Promise<Environment> {
-    if (!symlinkDTO) this.exceptionService.badRequestException({ message: 'Please provide the value' });
-    const { propertyIdentifier, env } = symlinkDTO;
-    const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
-    this.logger.log('Environment', JSON.stringify(environment));
-    if (!environment) this.exceptionService.badRequestException({ message: 'Environment not found.' });
-    const { property, deploymentConnection } = await this.environmentFactory.applicationService.getDeploymentConnection(propertyIdentifier, env);
-    if (!property || !deploymentConnection) this.exceptionService.badRequestException({ message: 'Property or Deployment Connection not found.' });
-    symlinkDTO.source = this.environmentFactory.buildFolderPath(symlinkDTO.source);
-    symlinkDTO.target = this.environmentFactory.buildFolderPath(symlinkDTO.target);
-    const operatorPayload = this.environmentFactory.createOperatorSymlinkPayload(env, property, symlinkDTO);
-    this.logger.log('OperatorPayload', JSON.stringify(operatorPayload));
-    for (const con of deploymentConnection) {
-      try {
-        const response = await this.environmentFactory.symlinkRequest(operatorPayload, con.baseurl);
-        this.logger.log('OperatorResponse', JSON.stringify(response.data));
-        // @internal TODO : to be removed & error code to be fixed from the operator
-        if (response.data.toString().includes('rm: cannot remove')) {
-          this.exceptionService.badRequestException({
-            message: 'Symlink creation failed. Target directory already present, Plaese check the distribution.'
-          });
-        }
-      } catch (err) {
-        this.exceptionService.badRequestException(err.message);
-      }
-    }
-    const symlink = new Symlink();
-    symlink.source = symlinkDTO.source;
-    symlink.target = symlinkDTO.target;
-    if (environment.symlink && environment.symlink.length) {
-      const existingSymlink = environment.symlink.find((key) => key.source === symlinkDTO.source && key.target === symlinkDTO.target);
-      if (!existingSymlink) environment.symlink = [...environment.symlink, symlink];
-    } else environment.symlink = [symlink];
-    try {
-      await this.dataServices.environment.updateOne({ propertyIdentifier, env }, environment);
-      await this.analyticsService.createActivityStream(
-        propertyIdentifier,
-        Action.SYMLINK_CREATED,
-        env,
-        'NA',
-        `symlink created for ${env} env of ${propertyIdentifier}`,
-        symlinkDTO.createdBy,
-        Source.MANAGER,
-        JSON.stringify(symlinkDTO)
       );
     } catch (err) {
       this.exceptionService.internalServerErrorException(err);
