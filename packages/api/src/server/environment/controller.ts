@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from '../auth/guard';
-import { CreateEnvironmentDto, SymlinkDTO, SyncEnvironmentDto } from './dto';
+import { CreateEnvironmentDto, SyncEnvironmentDto } from './dto';
 import { Environment } from './entity';
 import { EnvironmentService } from './service';
 
@@ -33,12 +33,6 @@ export class EnvironmentController {
   @ApiOperation({ description: 'Sync Environment.' })
   async syncEnvironment(@Body() syncEnvironmentDto: SyncEnvironmentDto): Promise<Environment> {
     return this.environmentService.syncEnvironment(syncEnvironmentDto);
-  }
-
-  @Post('/symlink')
-  @ApiOperation({ description: 'Symlink Environment.' })
-  async symlinkEnvironment(@Body() symlinkDTO: SymlinkDTO): Promise<Environment> {
-    return this.environmentService.updateSymlink(symlinkDTO);
   }
 
   @Delete('/:propertyIdentifier/:env')

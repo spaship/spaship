@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Cluster, Symlink } from 'src/server/environment/entity';
+import { Cluster } from 'src/server/environment/entity';
 
 export type EnvironmentDocument = Environment & Document;
 
@@ -37,9 +37,6 @@ export class Environment {
 
   @Prop({ required: true })
   createdBy: string;
-
-  @Prop({})
-  symlink: Symlink[];
 
   @Prop({ default: 'NA' })
   updatedBy: string;
