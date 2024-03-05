@@ -11,7 +11,8 @@ import {
   DIRECTORY_CONFIGURATION,
   EPHEMERAL_ENV,
   GIT_BROKER_DETAILS,
-  MESSAGE
+  MESSAGE,
+  SYMLINK
 } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/service';
 import {
@@ -28,9 +29,10 @@ import {
   GitDeploymentRequestDTO,
   GitValidateResponse,
   GitValidationRequestDTO,
+  SymlinkDTO,
   UpdateConfigOrSecretRequest
 } from 'src/server/application/request.dto';
-import { Application } from 'src/server/application/entity';
+import { Application, OperatorSymlinkEnvironment, OperatorSymlinkMetadata, OperatorSymlinkRequest, Symlink } from 'src/server/application/entity';
 import { AuthFactory } from 'src/server/auth/service/factory';
 import { DeploymentConnection } from 'src/server/deployment-connection/entity';
 import { Cluster, Environment } from 'src/server/environment/entity';
@@ -41,6 +43,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { zip } from 'zip-a-folder';
 import { exec } from 'child_process';
 import * as util from 'util';
+import { Action } from 'src/server/analytics/entity';
 
 @Injectable()
 export class ApplicationFactory {
@@ -1003,5 +1006,58 @@ export class ApplicationFactory {
       }
     });
     return deletedKeys;
+  }
+
+  async extractSymlink(dir: string, applicationPath: string): Promise<Symlink[]> {
+    const symLinkCommand = `ls -l ${dir} | grep "^l" | awk '{print $9, $11}'`;
+    const execPromise = await util.promisify(exec);
+    let result = [];
+    try {
+      const data = await execPromise(symLinkCommand);
+      if (!data.stdout) return result;
+      const lines = data.stdout.trim().split('\n');
+      result = lines.map((line) => {
+        const [target, source] = line.trim().split(' ');
+        return {
+          source: this.buildFolderPath(`${applicationPath}/${this.buildFolderPath(source)}`),
+          target: this.buildFolderPath(`${applicationPath}/${this.buildFolderPath(target)}`),
+          status: Action.SYMLINK_CREATION_SCHEDULED
+        };
+      });
+    } catch (err) {
+      this.logger.error('ExtractSymlinkError', err);
+    }
+    return result;
+  }
+
+  // @internal Sync the environment with the updated configuration
+  async symlinkRequest(payload: Object, deploymentBaseURL: string): Promise<any> {
+    if (!payload) this.exceptionService.badRequestException({ message: 'Please provide payload' });
+    if (!deploymentBaseURL) this.exceptionService.badRequestException({ message: 'Please provide the deployment url' });
+    const headers = { Authorization: await AuthFactory.getAccessToken() };
+    return this.httpService.axiosRef.post(`${deploymentBaseURL}/api/execute/command`, payload, { timeout: 60000, headers });
+  }
+
+  createOperatorSymlinkPayload(env: string, property: Property, request: SymlinkDTO) {
+    if (!property || !env) this.exceptionService.badRequestException({ message: 'Please provide property details' });
+    if (!request) this.exceptionService.badRequestException({ message: 'Please provide the request body' });
+    const operatorPayload = new OperatorSymlinkRequest();
+    const environment = new OperatorSymlinkEnvironment();
+    const metadata = new OperatorSymlinkMetadata();
+    environment.websiteName = property.identifier;
+    environment.nameSpace = property.namespace;
+    environment.name = env;
+    operatorPayload.environment = environment;
+    metadata.source = request.source;
+    metadata.target = request.target;
+    operatorPayload.metadata = metadata;
+    operatorPayload.commandType = SYMLINK.CREATE;
+    return operatorPayload;
+  }
+
+  // @internal Build the folder path
+  buildFolderPath(folderPath: string): string {
+    // @internal it will replace the heading & trailing slash frm the folder path
+    return folderPath.replace(/^\/+/g, '').replace(/\/+$/, '');
   }
 }

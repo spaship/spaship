@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Symlink } from 'src/server/application/entity';
 
 export type ApplicationDocument = Application & Document;
 
@@ -92,6 +93,12 @@ export class Application {
 
   @Prop({ default: false })
   autoSync: boolean;
+
+  @Prop({})
+  symlink: Symlink[];
+
+  @Prop({})
+  autoSymlinkCreation: boolean;
 
   @Prop({ default: false })
   autoGenerateLHReport: boolean;

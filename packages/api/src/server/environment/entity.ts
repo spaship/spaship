@@ -19,21 +19,12 @@ export class Environment {
 
   agendaId: string;
 
-  symlink: Symlink[];
-
   createdBy: string;
 
   updatedBy: string;
 
   isActive: boolean;
 }
-
-export class Symlink {
-  source: string;
-
-  target: string;
-}
-
 export enum Cluster {
   PROD = 'prod',
   PREPROD = 'preprod'
