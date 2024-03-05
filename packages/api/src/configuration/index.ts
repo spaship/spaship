@@ -151,7 +151,8 @@ export const VALIDATION = {
 };
 
 export enum JOB {
-  DELETE_EPH_ENV = 'DELETE_EPH_ENV'
+  DELETE_EPH_ENV = 'DELETE_EPH_ENV',
+  CREATE_SYMLINK = 'CREATE_SYMLINK'
 }
 
 export enum LOGTYPE {
