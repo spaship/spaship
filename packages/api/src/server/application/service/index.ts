@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { exec } from 'child_process';
 import { isURL } from 'class-validator';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
@@ -9,14 +10,13 @@ import { IDataServices } from 'src/repository/data-services.abstract';
 import { AgendaService } from 'src/server/agenda/service';
 import { Action } from 'src/server/analytics/entity';
 import { AnalyticsService } from 'src/server/analytics/service';
-import { Application } from 'src/server/application/entity';
+import { Application, Symlink } from 'src/server/application/entity';
 import { DeploymentConnection } from 'src/server/deployment-connection/entity';
 import { Cluster } from 'src/server/environment/entity';
 import { EnvironmentFactory } from 'src/server/environment/service/factory';
 import { ExceptionsService } from 'src/server/exceptions/service';
 import { LighthouseService } from 'src/server/lighthouse/service';
 import { Property, Source } from 'src/server/property/entity';
-import { exec } from 'child_process';
 import * as util from 'util';
 import {
   ApplicationConfigDTO,
@@ -26,7 +26,8 @@ import {
   DeleteApplicationSyncDTO,
   EnableApplicationSyncDTO,
   GitApplicationStatusRequest,
-  GitDeploymentRequestDTO
+  GitDeploymentRequestDTO,
+  SymlinkDTO
 } from '../request.dto';
 import { ApplicationFactory } from './factory';
 
@@ -92,11 +93,12 @@ export class ApplicationService {
     applicationRequest.path = this.applicationFactory.getPath(applicationRequest.path);
     const identifier = this.applicationFactory.getIdentifier(applicationRequest.name);
     env = await this.createEphemeralEnvironment(applicationRequest, propertyIdentifier, env, createdBy);
-    const applicationDetails = (
+    let applicationDetails = (
       await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false })
     )[0];
+    let folderPath;
     try {
-      await this.deployApplication(
+      folderPath = await this.deployApplication(
         applicationRequest,
         fileOrginalName,
         applicationPath,
@@ -144,7 +146,6 @@ export class ApplicationService {
       );
       this.logger.log('NewApplicationDetails', JSON.stringify(saveApplication));
       this.dataServices.application.create(saveApplication);
-      return this.applicationFactory.createApplicationResponse(saveApplication, applicationExists);
     }
     applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
     applicationDetails.version = this.applicationFactory.incrementVersion(applicationDetails.version);
@@ -155,7 +156,59 @@ export class ApplicationService {
     applicationDetails.updatedBy = createdBy;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
     await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false }, applicationDetails);
+
+    processSymlink(this.applicationFactory, this.dataServices, this.agendaService, this.logger);
     return this.applicationFactory.createApplicationResponse(applicationDetails, applicationExists);
+
+    async function processSymlink(
+      applicationFactory: ApplicationFactory,
+      dataServices: IDataServices,
+      agendaService: AgendaService,
+      logger: LoggerService
+    ) {
+      if (applicationDetails.autoSymlinkCreation) {
+        try {
+          const symlink = await applicationFactory.extractSymlink(folderPath, applicationDetails.path);
+          logger.log('Symlinks', JSON.stringify(symlink));
+          if (symlink.length) {
+            [applicationDetails] = await dataServices.application.getByAny({
+              propertyIdentifier,
+              env,
+              identifier,
+              isContainerized: false,
+              isGit: false
+            });
+            if (!applicationDetails.symlink) applicationDetails.symlink = [...symlink];
+            else {
+              for (const item of symlink) {
+                const symlinkToUpdate = applicationDetails.symlink.find((key) => key.source === item.source && key.target === item.target);
+                if (!symlinkToUpdate) applicationDetails.symlink = [...applicationDetails.symlink, item];
+                else {
+                  symlinkToUpdate.status = Action.SYMLINK_CREATION_SCHEDULED;
+                }
+              }
+            }
+            const scheduledDate = new Date();
+            const symlinkDuration = 120;
+            scheduledDate.setSeconds(scheduledDate.getSeconds() + symlinkDuration);
+            const agendaResponse = await agendaService.agenda.schedule(scheduledDate, JOB.CREATE_SYMLINK, {
+              propertyIdentifier,
+              env,
+              identifier,
+              symlink,
+              createdBy
+            });
+            logger.log('Agenda', JSON.stringify(agendaResponse));
+            await dataServices.application.updateOne(
+              { propertyIdentifier, env, identifier, isContainerized: false, isGit: false },
+              applicationDetails
+            );
+          }
+        } catch (err) {
+          logger.error('AutoSymlinkCreationError', err);
+        }
+      }
+    }
   }
 
   private async createEphemeralEnvironment(applicationRequest: CreateApplicationDto, propertyIdentifier: string, env: string, createdBy: string) {
@@ -277,7 +330,7 @@ export class ApplicationService {
     } catch (err) {
       this.exceptionService.internalServerErrorException(err);
     }
-    return applicationRequest;
+    return tmpDir;
   }
 
   // @internal it will trigger the sync for the specific application
@@ -1084,11 +1137,13 @@ export class ApplicationService {
   }
 
   // @internal Get the list of the pods
-  async getListOfPods(propertyIdentifier: string, env: string, identifier: string): Promise<String[]> {
+  async getListOfPods(propertyIdentifier: string, env: string, identifier: string, deploymentType: string): Promise<String[]> {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
     const { property, deploymentConnection } = await this.getDeploymentConnection(propertyIdentifier, env);
-    const deploymentName = `${propertyIdentifier}-${identifier}-${env}`;
+    let deploymentName;
+    if (deploymentType === DEPLOYMENT_DETAILS.type.static) deploymentName = `${propertyIdentifier}-${env}`;
+    else deploymentName = `${propertyIdentifier}-${identifier}-${env}`;
     const response = [];
     for (const con of deploymentConnection) {
       try {
@@ -1247,5 +1302,98 @@ export class ApplicationService {
       }
       await clearInterval(applicationStatusInterval);
     }, this.applicationTimeout);
+  }
+
+  /* @internal
+   * Update the symlink for the specific environment
+   * Multi cluster symlink support is enabled
+   */
+  async saveSymlink(symlinkDTO: SymlinkDTO): Promise<Application> {
+    if (!symlinkDTO) this.exceptionService.badRequestException({ message: 'Please provide the value' });
+    if (!symlinkDTO.source || !symlinkDTO.target) this.exceptionService.badRequestException({ message: 'Please provide the Source & Trarget value' });
+    const { propertyIdentifier, env, identifier } = symlinkDTO;
+    const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+    this.logger.log('Environment', JSON.stringify(environment));
+    if (!environment) this.exceptionService.badRequestException({ message: 'Environment not found.' });
+    const application = (
+      await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false })
+    )[0];
+    if (!application) this.exceptionService.badRequestException({ message: 'Application not found.' });
+    const { property, deploymentConnection } = await this.environmentFactory.applicationService.getDeploymentConnection(propertyIdentifier, env);
+    if (!property || !deploymentConnection) this.exceptionService.badRequestException({ message: 'Property or Deployment Connection not found.' });
+    symlinkDTO.source = this.applicationFactory.buildFolderPath(symlinkDTO.source);
+    symlinkDTO.target = this.applicationFactory.buildFolderPath(symlinkDTO.target);
+    const operatorPayload = this.applicationFactory.createOperatorSymlinkPayload(env, property, symlinkDTO);
+    this.logger.log('OperatorPayload', JSON.stringify(operatorPayload));
+    const symlink = new Symlink();
+    symlink.source = symlinkDTO.source;
+    symlink.target = symlinkDTO.target;
+    symlink.status = Action.SYMLINK_CREATED;
+    for (const con of deploymentConnection) {
+      try {
+        const response = await this.applicationFactory.symlinkRequest(operatorPayload, con.baseurl);
+        this.logger.log('OperatorResponse', JSON.stringify(response.data));
+        // @internal TODO : to be removed & error code to be fixed from the operator
+        if (response.data.toString().includes('rm: cannot remove')) {
+          this.exceptionService.badRequestException({
+            message: 'Symlink creation failed. Target directory already present, Plaese check the distribution.'
+          });
+        }
+      } catch (err) {
+        symlink.status = Action.SYMLINK_CREATION_FAILED;
+        await updateSymlinkStatus(this.dataServices, this.analyticsService, this.exceptionService);
+        this.exceptionService.badRequestException(err.message);
+      }
+    }
+    await updateSymlinkStatus(this.dataServices, this.analyticsService, this.exceptionService);
+    return application;
+
+    async function updateSymlinkStatus(dataServices, analyticsService, exceptionService) {
+      if (application.symlink && application.symlink.length) {
+        const existingSymlink = application.symlink.find((key) => key.source === symlinkDTO.source && key.target === symlinkDTO.target);
+        if (!existingSymlink) application.symlink = [...application.symlink, symlink];
+        else {
+          existingSymlink.status = symlink.status;
+        }
+      } else application.symlink = [symlink];
+      try {
+        await dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false }, application);
+        await analyticsService.createActivityStream(
+          propertyIdentifier,
+          Action.SYMLINK_CREATED,
+          env,
+          'NA',
+          `symlink created for ${env} env of ${propertyIdentifier}`,
+          symlinkDTO.createdBy,
+          Source.MANAGER,
+          JSON.stringify(symlinkDTO)
+        );
+      } catch (err) {
+        exceptionService.internalServerErrorException(err);
+      }
+    }
+  }
+
+  /* @internal
+   * Enable auto symlink creation for the Applications
+   * It will enable auto symlink for the Static Applications
+   */
+  async autoSymlinkCreation(symlinkDTO: SymlinkDTO): Promise<Application> {
+    const search = {
+      identifier: symlinkDTO.identifier,
+      propertyIdentifier: symlinkDTO.propertyIdentifier,
+      env: symlinkDTO.env,
+      isContainerized: false,
+      isGit: false
+    };
+    const applicationDetails = (await this.dataServices.application.getByAny(search))[0];
+    if (!applicationDetails)
+      this.exceptionService.badRequestException({
+        message: `${applicationDetails.identifier} application doesn't exist for ${applicationDetails.propertyIdentifier}.`
+      });
+    applicationDetails.autoSymlinkCreation = symlinkDTO.autoSymlinkCreation;
+    applicationDetails.updatedBy = symlinkDTO.createdBy;
+    await this.dataServices.application.updateOne(search, applicationDetails);
+    return applicationDetails;
   }
 }

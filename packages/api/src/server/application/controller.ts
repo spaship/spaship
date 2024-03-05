@@ -12,7 +12,8 @@ import {
   DeleteApplicationSyncDTO,
   EnableApplicationSyncDTO,
   GitDeploymentRequestDTO,
-  GitValidationRequestDTO
+  GitValidationRequestDTO,
+  SymlinkDTO
 } from './request.dto';
 import { Application } from './entity';
 import { ApplicationFactory } from './service/factory';
@@ -151,9 +152,10 @@ export class ApplicationController {
   async getListOfPods(
     @Param('propertyIdentifier') propertyIdentifier: string,
     @Param('env') env: string,
-    @Param('identifier') identifier: string
+    @Param('identifier') identifier: string,
+    @Query('deploymentType') deploymentType: string
   ): Promise<String[]> {
-    return this.applicationService.getListOfPods(propertyIdentifier, env, identifier);
+    return this.applicationService.getListOfPods(propertyIdentifier, env, identifier, deploymentType);
   }
 
   @Post('/sync')
@@ -166,5 +168,17 @@ export class ApplicationController {
   @ApiOperation({ description: 'Delete the Specific Application.' })
   async deleteApplication(@Body() deleteApplicationSyncDTO: DeleteApplicationSyncDTO): Promise<Application> {
     return this.applicationService.deleteApplication(deleteApplicationSyncDTO);
+  }
+
+  @Post('/symlink')
+  @ApiOperation({ description: 'Symlink Environment.' })
+  async saveSymlink(@Body() symlinkDTO: SymlinkDTO): Promise<any> {
+    return this.applicationService.saveSymlink(symlinkDTO);
+  }
+
+  @Post('/auto-symlink')
+  @ApiOperation({ description: 'Symlink Environment.' })
+  async autoSymlinkCreation(@Body() symlinkDTO: SymlinkDTO): Promise<any> {
+    return this.applicationService.autoSymlinkCreation(symlinkDTO);
   }
 }
