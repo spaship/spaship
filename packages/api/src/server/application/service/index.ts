@@ -156,7 +156,6 @@ export class ApplicationService {
     applicationDetails.updatedBy = createdBy;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
     await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false }, applicationDetails);
-
     processSymlink(this.applicationFactory, this.dataServices, this.agendaService, this.logger);
     return this.applicationFactory.createApplicationResponse(applicationDetails, applicationExists);
 
@@ -1360,10 +1359,12 @@ export class ApplicationService {
         await dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false }, application);
         await analyticsService.createActivityStream(
           propertyIdentifier,
-          Action.SYMLINK_CREATED,
+          symlink.status === Action.SYMLINK_CREATED ? Action.SYMLINK_CREATED : Action.SYMLINK_CREATION_FAILED,
           env,
           'NA',
-          `symlink created for ${env} env of ${propertyIdentifier}`,
+          symlink.status === Action.SYMLINK_CREATED
+            ? `symlink created for ${env} env of ${propertyIdentifier}`
+            : `symlink creation failed for ${env} env of ${propertyIdentifier}`,
           symlinkDTO.createdBy,
           Source.MANAGER,
           JSON.stringify(symlinkDTO)
