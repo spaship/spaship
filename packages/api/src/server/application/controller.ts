@@ -171,9 +171,15 @@ export class ApplicationController {
   }
 
   @Post('/symlink')
-  @ApiOperation({ description: 'Symlink Environment.' })
+  @ApiOperation({ description: 'Symlink Environment Creation or Updation.' })
   async saveSymlink(@Body() symlinkDTO: SymlinkDTO): Promise<any> {
     return this.applicationService.saveSymlink(symlinkDTO);
+  }
+
+  @Delete('/symlink')
+  @ApiOperation({ description: 'Symlink Environment Deletion.' })
+  async deleteSymlink(@Body() symlinkDTO: SymlinkDTO): Promise<any> {
+    return this.applicationService.deleteSymlink(symlinkDTO);
   }
 
   @Post('/auto-symlink')
