@@ -146,6 +146,7 @@ export class ApplicationService {
       );
       this.logger.log('NewApplicationDetails', JSON.stringify(saveApplication));
       this.dataServices.application.create(saveApplication);
+      return this.applicationFactory.createApplicationResponse(saveApplication, applicationExists);
     }
     applicationDetails.nextRef = this.applicationFactory.getNextRef(applicationRequest.ref) || 'NA';
     applicationDetails.version = this.applicationFactory.incrementVersion(applicationDetails.version);
