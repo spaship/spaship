@@ -1404,7 +1404,7 @@ export class ApplicationService {
         const response = await this.applicationFactory.symlinkRequest(operatorPayload, con.baseurl);
         this.logger.log('OperatorResponse', JSON.stringify(response.data));
       } catch (err) {
-        // @internal TODO : exception to be thorwn once the invalid folde/file (unknown type) deletion added in the operator
+        // @internal TODO : exception to be thorwn once the invalid folder/file (unknown type) deletion added in the operator
         this.logger.error('SymlinkDeletion', err);
       }
     }
