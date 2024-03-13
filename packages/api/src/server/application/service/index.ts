@@ -4,7 +4,7 @@ import { isURL } from 'class-validator';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
-import { CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, JOB, LOGTYPE, STATUS } from 'src/configuration';
+import { CONTAINERIZED_DEPLOYMENT_DETAILS, DEPLOYMENT_DETAILS, DIRECTORY_CONFIGURATION, JOB, LOGTYPE, STATUS, SYMLINK } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { AgendaService } from 'src/server/agenda/service';
@@ -1373,6 +1373,57 @@ export class ApplicationService {
         exceptionService.internalServerErrorException(err);
       }
     }
+  }
+
+  /* @internal
+   * Update the symlink for the specific environment
+   * Multi cluster symlink support is enabled
+   */
+  async deleteSymlink(symlinkDTO: SymlinkDTO): Promise<Application> {
+    if (!symlinkDTO) this.exceptionService.badRequestException({ message: 'Please provide the value' });
+    if (!symlinkDTO.source || !symlinkDTO.target) this.exceptionService.badRequestException({ message: 'Please provide the Source & Trarget value' });
+    const { propertyIdentifier, env, identifier } = symlinkDTO;
+    const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+    this.logger.log('Environment', JSON.stringify(environment));
+    if (!environment) this.exceptionService.badRequestException({ message: 'Environment not found.' });
+    const application = (
+      await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false })
+    )[0];
+    if (!application) this.exceptionService.badRequestException({ message: 'Application not found.' });
+    const { property, deploymentConnection } = await this.environmentFactory.applicationService.getDeploymentConnection(propertyIdentifier, env);
+    if (!property || !deploymentConnection) this.exceptionService.badRequestException({ message: 'Property or Deployment Connection not found.' });
+    const existingSymlink = application.symlink.find((key) => key.source === symlinkDTO.source && key.target === symlinkDTO.target);
+    if (!existingSymlink) this.exceptionService.badRequestException({ message: 'Symlink not present for this application.' });
+    application.symlink = application.symlink.filter((key) => key.source !== symlinkDTO.source || key.target !== symlinkDTO.target);
+    symlinkDTO.source = null;
+    const operatorPayload = this.applicationFactory.createOperatorSymlinkPayload(env, property, symlinkDTO);
+    this.logger.log('OperatorPayload', JSON.stringify(operatorPayload));
+    operatorPayload.commandType = SYMLINK.DELETE_TARGET;
+    for (const con of deploymentConnection) {
+      try {
+        const response = await this.applicationFactory.symlinkRequest(operatorPayload, con.baseurl);
+        this.logger.log('OperatorResponse', JSON.stringify(response.data));
+      } catch (err) {
+        // @internal TODO : exception to be thorwn once the invalid folde/file (unknown type) deletion added in the operator
+        this.logger.error('SymlinkDeletion', err);
+      }
+    }
+    try {
+      await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false }, application);
+      await this.analyticsService.createActivityStream(
+        propertyIdentifier,
+        Action.SYMLINK_DELETED,
+        env,
+        'NA',
+        `symlink deleted`,
+        symlinkDTO.createdBy,
+        Source.MANAGER,
+        JSON.stringify(symlinkDTO)
+      );
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err);
+    }
+    return application;
   }
 
   /* @internal
