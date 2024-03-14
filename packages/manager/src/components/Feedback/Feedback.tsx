@@ -44,8 +44,6 @@ export const Feedback = () => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
-
-          await response.json();
           toast.success('Feedback submitted successfully');
         } catch (error) {
           if (error instanceof Error && error.message.includes('403')) {
