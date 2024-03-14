@@ -1,9 +1,11 @@
 /* eslint no-param-reassign: "error" */
 
+import { useSession } from 'next-auth/react';
 import { Suspense, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 
 export const Feedback = () => {
+  const { data: session } = useSession();
   useEffect(() => {
     const loadOpcFeedback = async () => {
       await import('@one-platform/opc-feedback/dist/opc-feedback');
@@ -20,6 +22,8 @@ export const Feedback = () => {
         if (event.detail.submitted) {
           return;
         }
+        const email = session?.user?.email || ''; // Get the email from session data, default to empty string if not available
+        const username = email?.split('@')[0];
 
         const { data } = event.detail;
         const variables = {
@@ -28,7 +32,7 @@ export const Feedback = () => {
           projectId: 'component:devex/spaship-manager',
           url: data.stackInfo?.path || 'NA',
           userAgent: data.stackInfo?.stack || 'NA',
-          createdBy: 'user:redhat/nmore',
+          createdBy: `user:redhat/${username}`,
           feedbackType: data.category || 'NA',
           tag: data.category === 'BUG' ? data.error || 'NA' : data.experience || 'NA'
         };
