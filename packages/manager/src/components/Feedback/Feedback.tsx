@@ -6,6 +6,8 @@ import { toast } from 'react-hot-toast';
 
 export const Feedback = () => {
   const { data: session } = useSession();
+  const email = session?.user?.email || ''; // Get the email from session data, default to empty string if not available
+  const username = email?.split('@')[0];
   useEffect(() => {
     const loadOpcFeedback = async () => {
       await import('@one-platform/opc-feedback/dist/opc-feedback');
@@ -22,8 +24,6 @@ export const Feedback = () => {
         if (event.detail.submitted) {
           return;
         }
-        const email = session?.user?.email || ''; // Get the email from session data, default to empty string if not available
-        const username = email?.split('@')[0];
 
         const { data } = event.detail;
         const variables = {
@@ -58,7 +58,7 @@ export const Feedback = () => {
         }
       });
     }
-  }, []);
+  }, [username]);
 
   return (
     <div>
