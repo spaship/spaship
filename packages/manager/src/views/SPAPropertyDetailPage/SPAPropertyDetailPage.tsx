@@ -80,6 +80,9 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
           >
             {openTab === 2 && <Dashboard type="spa" />}
           </Tab>
+
+          {/*
+          Note: The button for the SPA detailed settings tab has been hidden to prevent user confusion, as it was mistakenly interpreted as specific settings for SPAs only. This adjustment aims to improve clarity and avoid misleading user expectations regarding the page's functionality.
           <Tab
             eventKey={3}
             title={
@@ -89,11 +92,11 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                 </TabTitleIcon>
                 <TabTitleText>Settings</TabTitleText>
               </>
-            }
+        
             aria-label="SPA-detailed-Settings"
           >
             {openTab === 3 && <Settings />}
-          </Tab>
+          </Tab> */}
         </Tabs>
       </PageSection>
     </>

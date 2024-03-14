@@ -1,16 +1,23 @@
-import { useCreateFeedback } from '@app/services/feedback/queries';
-import { TFeedbackInput } from '@app/services/feedback/types';
-import { AxiosError } from 'axios';
 import { Suspense, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 
-export const Feedback = () => {
-  const createFeedback = useCreateFeedback();
+interface FeedbackData {
+  summary: string;
+  experience: string;
+  category: string;
+  error: string;
+  stackInfo: {
+    path: string | null;
+    stack: string | null;
+  };
+}
 
+export const Feedback = () => {
   useEffect(() => {
     const loadOpcFeedback = async () => {
       await import('@one-platform/opc-feedback/dist/opc-feedback');
     };
+
     const feedback = document.querySelector('#opc-feedback');
     if (feedback) {
       loadOpcFeedback();
@@ -22,35 +29,38 @@ export const Feedback = () => {
         if (event.detail.submitted) {
           return;
         }
-        const variables: TFeedbackInput = {
-          description:
-            event.detail.data.summary === '' || event.detail.data.summary === null
-              ? 'NA'
-              : event.detail.data.summary,
-          experience:
-            event.detail.data.experience === '' || event.detail.data.experience === null
-              ? 'NA'
-              : event.detail.data.experience,
-          category:
-            event.detail.data.category === '' || event.detail.data.category === null
-              ? 'NA'
-              : event.detail.data.category,
-          error:
-            event.detail.data.error === '' || event.detail.data.error === null
-              ? 'NA'
-              : event.detail.data.error
+
+        const data: FeedbackData = event.detail.data;
+        const variables = {
+          summary: data.summary || 'NA',
+          description: data.summary || 'NA',
+          projectId: 'component:devex/spaship-manager',
+          url: data.stackInfo?.path || 'NA',
+          userAgent: data.stackInfo?.stack || 'NA',
+          createdBy: 'user:redhat/nmore',
+          feedbackType: data.category || 'NA',
+          tag: data.category === 'BUG' ? data.error || 'NA' : data.experience || 'NA'
         };
 
+        event.detail.submitted = true;
+
         try {
-          //  eslint-disable-next-line no-param-reassign
-          event.detail.submitted = true;
-          await createFeedback.mutateAsync({
-            ...variables
+          const response = await fetch('/api/feedback', {
+            method: 'POST',
+            body: JSON.stringify(variables)
           });
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+
+          const responseData = await response.json();
+          console.log('Server response:', responseData);
 
           toast.success('Feedback submitted successfully');
         } catch (error) {
-          if (error instanceof AxiosError && error.response && error.response.status === 403) {
+          console.log(error);
+          if (error instanceof Error && error.message.includes('403')) {
             toast.error("You don't have access to perform this action");
           } else {
             toast.error('Failed to submit feedback');
@@ -58,7 +68,7 @@ export const Feedback = () => {
         }
       });
     }
-  }, [createFeedback]);
+  }, []);
 
   return (
     <div>
