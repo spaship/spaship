@@ -1,14 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 import { List, PageSection, Tab, Tabs, TabTitleIcon, TabTitleText } from '@patternfly/react-core';
 import { useRouter } from 'next/router';
-
 import { Banner } from '@app/components';
 import { useTabs } from '@app/hooks';
 import { pageLinks } from '@app/links';
 import { useGetTotalDeploymentsForApps } from '@app/services/analytics';
-import { BuildIcon, BundleIcon, CogIcon, PackageIcon } from '@patternfly/react-icons';
+import { BuildIcon, BundleIcon, PackageIcon } from '@patternfly/react-icons';
 import toast from 'react-hot-toast';
-import { Settings } from '../Settings';
 import { Dashboard } from '../WebPropertyDetailPage/components/Dashboard';
 import { ContainerizedSPADeployment } from './ContainerizedSPADeployment/ContainerizedSPADeployment';
 import { StaticSPADeployment } from './StaticSPADeployment.tsx/StaticSPADeployment';
@@ -92,7 +90,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                 </TabTitleIcon>
                 <TabTitleText>Settings</TabTitleText>
               </>
-        
+         
             aria-label="SPA-detailed-Settings"
           >
             {openTab === 3 && <Settings />}

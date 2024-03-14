@@ -1,16 +1,7 @@
+/* eslint no-param-reassign: "error" */
+
 import { Suspense, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-
-interface FeedbackData {
-  summary: string;
-  experience: string;
-  category: string;
-  error: string;
-  stackInfo: {
-    path: string | null;
-    stack: string | null;
-  };
-}
 
 export const Feedback = () => {
   useEffect(() => {
@@ -30,7 +21,7 @@ export const Feedback = () => {
           return;
         }
 
-        const data: FeedbackData = event.detail.data;
+        const { data } = event.detail;
         const variables = {
           summary: data.summary || 'NA',
           description: data.summary || 'NA',
@@ -54,12 +45,9 @@ export const Feedback = () => {
             throw new Error('Network response was not ok');
           }
 
-          const responseData = await response.json();
-          console.log('Server response:', responseData);
-
+          await response.json();
           toast.success('Feedback submitted successfully');
         } catch (error) {
-          console.log(error);
           if (error instanceof Error && error.message.includes('403')) {
             toast.error("You don't have access to perform this action");
           } else {
