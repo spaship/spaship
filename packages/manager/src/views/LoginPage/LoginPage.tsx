@@ -1,6 +1,6 @@
 import { signIn, useSession } from 'next-auth/react';
 import Router from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { env } from '@app/config/env';
 import { useToggle } from '@app/hooks';
@@ -23,7 +23,12 @@ import { Nav } from './components/Nav';
 export const LoginPage = (): JSX.Element => {
   const [isLoggingIn, setIsLoggingIn] = useToggle();
   const { status } = useSession();
-  const returnUri = window.location.search;
+  const [returnUri, setReturnUri] = useState('');
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setReturnUri(window.location.search);
+    }
+  }, []);
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -31,7 +36,7 @@ export const LoginPage = (): JSX.Element => {
     }
   }, [status]);
   const params = new URLSearchParams(returnUri);
-  const redirectUrl = params.get('redirectUri'); 
+  const redirectUrl = params.get('redirectUri');
 
   const onLogin = () => {
     setIsLoggingIn.on();
