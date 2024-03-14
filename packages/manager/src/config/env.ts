@@ -42,6 +42,7 @@ export const env = {
 
   // gitbroker url
   PUBLIC_SPASHIP_GIT_BROKER_URL: process.env.NEXT_PUBLIC_SPASHIP_GIT_BROKER_URL || '',
-  // ChaturDocs link
+
+  // ChaturDocs url
   PUBLIC_CHATURDOCS_URL: process.env.NEXT_PUBLIC_CHATURDOCS_URL || ''
 };

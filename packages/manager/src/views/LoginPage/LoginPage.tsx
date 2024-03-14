@@ -24,7 +24,6 @@ export const LoginPage = (): JSX.Element => {
   const [isLoggingIn, setIsLoggingIn] = useToggle();
   const { status } = useSession();
   const [returnUri, setReturnUri] = useState('');
-  // const returnUri = window.location.search;
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setReturnUri(window.location.search);
