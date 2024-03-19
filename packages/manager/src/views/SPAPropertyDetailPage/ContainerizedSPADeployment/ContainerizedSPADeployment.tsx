@@ -510,6 +510,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
                 idList={podList}
                 isGit={isLogsGit}
                 con={podIdList}
+                isStatic={false}
               />
             )}
           </Tab>
@@ -528,6 +529,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
                 idList={buildIdList}
                 isGit={isLogsGit}
                 con={buildDetails}
+                isStatic={false}
               />
             )}
           </Tab>

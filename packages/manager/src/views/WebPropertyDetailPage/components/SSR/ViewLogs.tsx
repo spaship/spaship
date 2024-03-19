@@ -23,6 +23,7 @@ type Props = {
   idList: string[];
   isGit: boolean;
   con: any;
+  isStatic: boolean;
 };
 
 const logType = {
@@ -37,10 +38,21 @@ function NewlineText(props: string) {
   return newText;
 }
 
-export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit, con }: Props) => {
+export const ViewLogs = ({
+  propertyIdentifier,
+  spaName,
+  env,
+  type,
+  idList,
+  isGit,
+  con,
+  isStatic
+}: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isLogsLoading, setIsLogsLoading] = useState<boolean>(true);
-  const podIdList = useListOfPods(propertyIdentifier, spaName, env);
+
+  const podIdList = useListOfPods(propertyIdentifier, spaName, env, isStatic);
+
   const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
 
   const [selectedId, setSelectedId] = useState<string | undefined>(
@@ -89,6 +101,7 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
 
   const isEmptyStateVisible = !idList || idList.length === 0 || idList.includes('No Pods found');
   const buildLogsforNonGitSSRDeployment = !isGit && type === 1;
+  console.log('id:ist', idList, podIdList, podList);
   return (
     <div style={{ color: '#fff', backgroundColor: '#212427' }}>
       <div className="pf-u-mb-md pf-u-mt-md">

@@ -64,14 +64,40 @@ export const useGetLogsforSpa = (
 const fetchListOfPods = async (
   propertyIdentifier: string,
   spaName: string,
-  env: string
+  env: string,
+  isStatic?: boolean
 ): Promise<any> => {
-  const { data } = await orchestratorReq.get(
-    `/applications/pods/${propertyIdentifier}/${env}/${spaName}`
-  );
+  let url = `/applications/pods/${propertyIdentifier}/${env}/${spaName}`;
 
+  if (isStatic) {
+    // If isStatic is true, include deploymentType in the URL
+    const deploymentType = 'static';
+    url += `/?deploymentType=${deploymentType}`;
+  }
+
+  const { data } = await orchestratorReq.get(url);
+  console.log('>>>>>>', data);
   return data?.data || [];
 };
 
-export const useListOfPods = (propertyIdentifier: string, spaName: string, env: string) =>
-  useQuery(logKeys.getPodList, () => fetchListOfPods(propertyIdentifier, spaName, env));
+// const fetchListOfPods = async (
+//   propertyIdentifier: string,
+//   spaName: string,
+//   env: string,
+//   isStatic?: boolean
+//   // deploymentType?: string
+// ): Promise<any> => {
+//   const { data } = await orchestratorReq.get(
+//     `/applications/pods/${propertyIdentifier}/${env}/${spaName}/?deploymentType=${deploymentType}`
+//   );
+
+//   return data?.data || [];
+// };
+
+export const useListOfPods = (
+  propertyIdentifier: string,
+  spaName: string,
+  env: string,
+  isStatic?: boolean
+) =>
+  useQuery(logKeys.getPodList, () => fetchListOfPods(propertyIdentifier, spaName, env, isStatic));
