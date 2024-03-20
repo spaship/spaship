@@ -76,7 +76,6 @@ export const StaticSPADeployment = (): JSX.Element => {
   const [isLogsGit, setIsLogsGit] = useState(false);
   const podIdList = useListOfPods(propertyIdentifier, spaProperty, envName);
   const podList = extractPodIdsForStatic(podIdList?.data, true, propertyIdentifier, envName) || {};
-  console.log(podList);
 
   const drawerRef = useRef<HTMLDivElement>();
 
