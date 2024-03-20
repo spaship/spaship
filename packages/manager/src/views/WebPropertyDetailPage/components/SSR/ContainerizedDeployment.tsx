@@ -245,6 +245,7 @@ export const ContainerizedDeployment = () => {
                 idList={podList}
                 isGit={isGit}
                 con={podIdList}
+                isStatic={false}
               />
             )}
           </Tab>
@@ -263,6 +264,7 @@ export const ContainerizedDeployment = () => {
                 idList={buildIdList}
                 isGit={isGit}
                 con={buildDetails}
+                isStatic={false}
               />
             )}
           </Tab>

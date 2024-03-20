@@ -2,10 +2,13 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/no-array-index-key */
 import { usePopUp, useToggle } from '@app/hooks';
+import { useListOfPods } from '@app/services/appLogs';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { TSpaProperty } from '@app/services/spaProperty/types';
 import { useApplicationAutoSync } from '@app/services/sync';
 import { convertDateFormat } from '@app/utils/convertDateFormat';
+import { extractPodIdsForStatic } from '@app/utils/extractPodIds';
+import { ViewLogs } from '@app/views/WebPropertyDetailPage/components/SSR/ViewLogs';
 import {
   ActionGroup,
   ActionList,
@@ -18,6 +21,7 @@ import {
   DataListItemCells,
   DataListItemRow,
   Drawer,
+  DrawerCloseButton,
   DrawerContent,
   DrawerContentBody,
   DrawerHead,
@@ -29,6 +33,9 @@ import {
   Modal,
   ModalVariant,
   Spinner,
+  Tab,
+  TabTitleText,
+  Tabs,
   Title,
   Tooltip
 } from '@patternfly/react-core';
@@ -36,7 +43,7 @@ import { CubesIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { ApplicationStatus } from '../../WebPropertyDetailPage/components/SSR/ApplicationStatus';
 import { Lighthouse } from '../Lighthouse/Lighthouse';
@@ -63,6 +70,40 @@ export const StaticSPADeployment = (): JSX.Element => {
   const [isChecked, setIsChecked] = useState<boolean>(syncData?.autoSync || false);
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['autoSync'] as const);
   const [selectedDataListItemId, setSelectedDataListItemId] = useState<string>('dataListItem1');
+  const [isLogsExpanded, setIsLogsExpanded] = useState(false);
+  const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
+  const [envName, setEnvName] = useState('');
+  const [isLogsGit, setIsLogsGit] = useState(false);
+  const podIdList = useListOfPods(propertyIdentifier, spaProperty, envName);
+  const podList = extractPodIdsForStatic(podIdList?.data, true, propertyIdentifier, envName) || {};
+  console.log(podList);
+
+  const drawerRef = useRef<HTMLDivElement>();
+
+  const onLogsExpand = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    drawerRef.current && drawerRef.current.focus();
+  };
+
+  const onLogsCloseClick = () => {
+    setIsLogsExpanded(false);
+  };
+  const handleTabClick = async (
+    event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
+    tabIndex: string | number
+  ) => {
+    setActiveTabKey(tabIndex);
+  };
+  const onClick = async (
+    e: React.MouseEvent<any> | React.KeyboardEvent | React.ChangeEvent<Element>,
+    name: string,
+    buildName: string[],
+    rowData: any
+  ) => {
+    setEnvName(rowData.env);
+    setIsLogsExpanded(true);
+    setIsLogsGit(rowData.isGit);
+  };
 
   const removeValues = () => {
     setFilterByEnv('' as string);
@@ -314,6 +355,17 @@ export const StaticSPADeployment = (): JSX.Element => {
                             Auto Sync
                           </Button>
                         </ActionListItem>
+                        <ActionListItem>
+                          <Button
+                            variant="primary"
+                            isSmall
+                            onClick={(e) =>
+                              onClick(e, selectedData?.name, selectedData?.buildName, selectedData)
+                            }
+                          >
+                            View Logs
+                          </Button>
+                        </ActionListItem>
                       </ActionList>
                     </DataListCell>
                   </>
@@ -331,6 +383,40 @@ export const StaticSPADeployment = (): JSX.Element => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [staticDeploymentData]);
+
+  const panelLogsContent = (
+    <DrawerPanelContent
+      isResizable
+      style={{ borderBottom: '1px solid #333', backgroundColor: '#212427' }}
+    >
+      <DrawerHead>
+        <Tabs activeKey={activeTabKey} onSelect={handleTabClick} className="select-tab-ids">
+          <Tab
+            eventKey={0}
+            style={{ paddingBottom: '0px', color: '#D2d2d2' }}
+            title={<TabTitleText style={{ paddingBottom: '10px' }}>Deployment Logs</TabTitleText>}
+          >
+            {activeTabKey === 0 && (
+              <ViewLogs
+                key={envName}
+                propertyIdentifier={propertyIdentifier}
+                spaName={spaProperty}
+                env={envName}
+                type={activeTabKey}
+                idList={podList}
+                isGit={isLogsGit}
+                con={podIdList}
+                isStatic
+              />
+            )}
+          </Tab>
+        </Tabs>
+        <div className="pf-c-drawer__actions-right">
+          <DrawerCloseButton onClick={onLogsCloseClick} />
+        </div>
+      </DrawerHead>
+    </DrawerPanelContent>
+  );
   return (
     <div id="static-spa-deployment-page">
       {!staticDeploymentData?.length ? (
@@ -342,9 +428,15 @@ export const StaticSPADeployment = (): JSX.Element => {
           <EmptyStateBody>Please create an deployment to view them here</EmptyStateBody>
         </EmptyState>
       ) : (
-        <Drawer isStatic isExpanded={isExpanded}>
-          <DrawerContent panelContent={panelContent}>
-            <DrawerContentBody>{drawerContent}</DrawerContentBody>
+        <Drawer position="bottom" onExpand={onLogsExpand} isExpanded={isLogsExpanded}>
+          <DrawerContent panelContent={panelLogsContent}>
+            <DrawerContentBody style={{ overflowX: 'hidden', padding: '0px' }}>
+              <Drawer isStatic isExpanded={isExpanded}>
+                <DrawerContent panelContent={panelContent}>
+                  <DrawerContentBody>{drawerContent}</DrawerContentBody>
+                </DrawerContent>
+              </Drawer>
+            </DrawerContentBody>
           </DrawerContent>
         </Drawer>
       )}

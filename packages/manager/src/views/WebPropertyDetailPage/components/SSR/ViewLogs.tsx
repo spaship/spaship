@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-nested-ternary */
 import { useGetLogsforSpa, useListOfPods } from '@app/services/appLogs';
+import { extractPodIdsForStatic } from '@app/utils/extractPodIds';
 import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
   CodeBlock,
@@ -9,8 +10,8 @@ import {
   Select,
   SelectOption,
   SelectOptionObject,
-  Title,
-  Spinner
+  Spinner,
+  Title
 } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useEffect, useState } from 'react';
@@ -23,6 +24,7 @@ type Props = {
   idList: string[];
   isGit: boolean;
   con: any;
+  isStatic: boolean;
 };
 
 const logType = {
@@ -37,11 +39,22 @@ function NewlineText(props: string) {
   return newText;
 }
 
-export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit, con }: Props) => {
+export const ViewLogs = ({
+  propertyIdentifier,
+  spaName,
+  env,
+  type,
+  idList,
+  isGit,
+  con,
+  isStatic
+}: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isLogsLoading, setIsLogsLoading] = useState<boolean>(true);
-  const podIdList = useListOfPods(propertyIdentifier, spaName, env);
-  const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
+
+  const podIdList = useListOfPods(propertyIdentifier, spaName, env, isStatic);
+
+  const podList = extractPodIdsForStatic(podIdList?.data, isStatic, propertyIdentifier, env) || {};
 
   const [selectedId, setSelectedId] = useState<string | undefined>(
     idList && idList[idList.length - 1]
@@ -73,7 +86,8 @@ export const ViewLogs = ({ propertyIdentifier, spaName, env, type, idList, isGit
     env,
     type === 0 ? logType.POD : logType.BUILD,
     selectedId,
-    type === 0 ? handleConValueforPod(con) : handleConValueforBuild(con)
+    type === 0 ? handleConValueforPod(con) : handleConValueforBuild(con),
+    isStatic
   );
 
   useEffect(() => {

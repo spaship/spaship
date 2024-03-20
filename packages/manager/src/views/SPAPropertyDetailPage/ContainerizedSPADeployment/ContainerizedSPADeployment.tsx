@@ -6,6 +6,7 @@ import { useListOfPods } from '@app/services/appLogs';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { useAddSsrSpaProperty } from '@app/services/ssr';
 import { convertDateFormat } from '@app/utils/convertDateFormat';
+import { extractPodIds } from '@app/utils/extractPodIds';
 import { ViewLogs } from '@app/views/WebPropertyDetailPage/components/SSR/ViewLogs';
 import { ConfigureWorkflowForm } from '@app/views/WebPropertyDetailPage/components/workflow3.0/ConfigureWorkflowForm';
 import {
@@ -227,7 +228,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
   const [buildDetails, setBuildDetails] = useState<string[]>([]);
   const [isLogsExpanded, setIsLogsExpanded] = useState(false);
   const podIdList = useListOfPods(propertyIdentifier, spaProperty, envName);
-  const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
+  const podList = extractPodIds(podIdList?.data, false) || {};
   const drawerRef = useRef<HTMLDivElement>();
 
   const onLogsExpand = () => {
@@ -510,6 +511,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
                 idList={podList}
                 isGit={isLogsGit}
                 con={podIdList}
+                isStatic={false}
               />
             )}
           </Tab>
@@ -528,6 +530,7 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
                 idList={buildIdList}
                 isGit={isLogsGit}
                 con={buildDetails}
+                isStatic={false}
               />
             )}
           </Tab>
