@@ -6,6 +6,7 @@ import { useListOfPods } from '@app/services/appLogs';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { useAddSsrSpaProperty } from '@app/services/ssr';
 import { convertDateFormat } from '@app/utils/convertDateFormat';
+import { extractPodIds } from '@app/utils/extractPodIds';
 import { ViewLogs } from '@app/views/WebPropertyDetailPage/components/SSR/ViewLogs';
 import { ConfigureWorkflowForm } from '@app/views/WebPropertyDetailPage/components/workflow3.0/ConfigureWorkflowForm';
 import {
@@ -65,7 +66,6 @@ import { ApplicationStatus } from '../../WebPropertyDetailPage/components/SSR/Ap
 import { ConfigureSSRForm } from '../../WebPropertyDetailPage/components/SSR/ConfigureSSRForm';
 import { Lighthouse } from '../Lighthouse/Lighthouse';
 import './ContainerizedSPADeployment.css';
-import { extractPodIds } from '@app/utils/extractPodIds';
 
 const INTERNAL_ACCESS_URL_LENGTH = 40;
 const SLICE_VAL_LENGTH = 20;

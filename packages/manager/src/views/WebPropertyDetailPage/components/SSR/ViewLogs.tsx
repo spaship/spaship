@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-nested-ternary */
 import { useGetLogsforSpa, useListOfPods } from '@app/services/appLogs';
+import { extractPodIds } from '@app/utils/extractPodIds';
 import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
   CodeBlock,
@@ -9,12 +10,11 @@ import {
   Select,
   SelectOption,
   SelectOptionObject,
-  Title,
-  Spinner
+  Spinner,
+  Title
 } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useEffect, useState } from 'react';
-import { extractPodIds } from '@app/utils/extractPodIds';
 
 type Props = {
   spaName: string;
@@ -104,7 +104,6 @@ export const ViewLogs = ({
 
   const isEmptyStateVisible = !idList || idList.length === 0 || idList.includes('No Pods found');
   const buildLogsforNonGitSSRDeployment = !isGit && type === 1;
-  console.log('id:ist', idList, podIdList, podList, extractPodIds(podIdList?.data, true));
   return (
     <div style={{ color: '#fff', backgroundColor: '#212427' }}>
       <div className="pf-u-mb-md pf-u-mt-md">

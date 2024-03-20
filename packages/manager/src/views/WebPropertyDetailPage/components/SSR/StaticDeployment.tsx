@@ -357,7 +357,7 @@ export const StaticDeployment = () => {
                           icon={<SyncAltIcon />}
                           onClick={() => openModel(val)}
                         >
-                          Auto Sync1
+                          Auto Sync
                         </Button>
                       </SplitItem>
                     </Td>

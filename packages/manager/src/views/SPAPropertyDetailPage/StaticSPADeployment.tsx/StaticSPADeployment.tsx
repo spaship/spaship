@@ -2,10 +2,13 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/no-array-index-key */
 import { usePopUp, useToggle } from '@app/hooks';
+import { useListOfPods } from '@app/services/appLogs';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { TSpaProperty } from '@app/services/spaProperty/types';
 import { useApplicationAutoSync } from '@app/services/sync';
 import { convertDateFormat } from '@app/utils/convertDateFormat';
+import { extractPodIds } from '@app/utils/extractPodIds';
+import { ViewLogs } from '@app/views/WebPropertyDetailPage/components/SSR/ViewLogs';
 import {
   ActionGroup,
   ActionList,
@@ -44,9 +47,6 @@ import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { ApplicationStatus } from '../../WebPropertyDetailPage/components/SSR/ApplicationStatus';
 import { Lighthouse } from '../Lighthouse/Lighthouse';
-import { useListOfPods } from '@app/services/appLogs';
-import { ViewLogs } from '@app/views/WebPropertyDetailPage/components/SSR/ViewLogs';
-import { extractPodIds } from '@app/utils/extractPodIds';
 
 const INTERNAL_URL_LENGTH = 40;
 const SLICE_VAL_LENGTH = 20;
@@ -78,7 +78,6 @@ export const StaticSPADeployment = (): JSX.Element => {
   const podIdList = useListOfPods(propertyIdentifier, spaProperty, envName);
   // const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
   const podList = extractPodIds(podIdList?.data, true) || {};
-  console.log('podList', podList, paginatedData, paginatedData);
 
   const drawerRef = useRef<HTMLDivElement>();
 
@@ -354,7 +353,7 @@ export const StaticSPADeployment = (): JSX.Element => {
                             icon={<SyncAltIcon />}
                             onClick={() => openModel(selectedData)}
                           >
-                            Auto Sync1
+                            Auto Sync
                           </Button>
                         </ActionListItem>
                         <ActionListItem>
@@ -408,7 +407,7 @@ export const StaticSPADeployment = (): JSX.Element => {
                 idList={podList}
                 isGit={isLogsGit}
                 con={podIdList}
-                isStatic={true}
+                isStatic
               />
             )}
           </Tab>

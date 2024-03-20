@@ -16,7 +16,7 @@ export const fetchLogsforSpa = async (
   isStatic?: boolean
 ): Promise<any> => {
   try {
-    let url = `/applications/log/${propertyIdentifier}/${env}/${applicationIdentifier}/`;
+    const url = `/applications/log/${propertyIdentifier}/${env}/${applicationIdentifier}/`;
 
     const params: Record<string, any> = {
       type,
@@ -38,7 +38,6 @@ export const fetchLogsforSpa = async (
     return '';
   }
 };
-
 
 export const useGetLogsforSpa = (
   webPropertyIdentifier: string,
