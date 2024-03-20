@@ -97,7 +97,6 @@ const fetchListOfPods = async (
   return data?.data || [];
 };
 
-
 export const useListOfPods = (
   propertyIdentifier: string,
   spaName: string,

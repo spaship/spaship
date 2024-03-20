@@ -10,7 +10,8 @@ export const extractPodIds = (jsonData: any, isStatic: boolean) => {
   });
   return podIds;
 };
-// Extract pod IDs for static pods 
+
+// Extract pod IDs for static pods
 export const extractPodIdsForStatic = (
   jsonData: any,
   isStatic: boolean,
