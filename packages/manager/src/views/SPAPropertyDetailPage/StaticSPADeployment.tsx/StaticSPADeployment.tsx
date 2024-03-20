@@ -7,7 +7,7 @@ import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { TSpaProperty } from '@app/services/spaProperty/types';
 import { useApplicationAutoSync } from '@app/services/sync';
 import { convertDateFormat } from '@app/utils/convertDateFormat';
-import { extractPodIds } from '@app/utils/extractPodIds';
+import { extractPodIdsForStatic } from '@app/utils/extractPodIds';
 import { ViewLogs } from '@app/views/WebPropertyDetailPage/components/SSR/ViewLogs';
 import {
   ActionGroup,
@@ -77,7 +77,8 @@ export const StaticSPADeployment = (): JSX.Element => {
   const [isLogsGit, setIsLogsGit] = useState(false);
   const podIdList = useListOfPods(propertyIdentifier, spaProperty, envName);
   // const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
-  const podList = extractPodIds(podIdList?.data, true) || {};
+  const podList = extractPodIdsForStatic(podIdList?.data, true, propertyIdentifier, envName) || {};
+  console.log(podList);
 
   const drawerRef = useRef<HTMLDivElement>();
 

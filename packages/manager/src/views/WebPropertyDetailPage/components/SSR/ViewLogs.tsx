@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-nested-ternary */
 import { useGetLogsforSpa, useListOfPods } from '@app/services/appLogs';
-import { extractPodIds } from '@app/utils/extractPodIds';
+import { extractPodIdsForStatic } from '@app/utils/extractPodIds';
 import { toPascalCase } from '@app/utils/toPascalConvert';
 import {
   CodeBlock,
@@ -55,7 +55,7 @@ export const ViewLogs = ({
   const podIdList = useListOfPods(propertyIdentifier, spaName, env, isStatic);
 
   // const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
-  const podList = extractPodIds(podIdList?.data, isStatic) || {};
+  const podList = extractPodIdsForStatic(podIdList?.data, isStatic, propertyIdentifier, env) || {};
 
   const [selectedId, setSelectedId] = useState<string | undefined>(
     idList && idList[idList.length - 1]
