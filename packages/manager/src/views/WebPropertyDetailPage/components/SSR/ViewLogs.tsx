@@ -14,6 +14,7 @@ import {
 } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useEffect, useState } from 'react';
+import { extractPodIds } from '@app/utils/extractPodIds';
 
 type Props = {
   spaName: string;
@@ -53,7 +54,8 @@ export const ViewLogs = ({
 
   const podIdList = useListOfPods(propertyIdentifier, spaName, env, isStatic);
 
-  const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
+  // const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
+  const podList = extractPodIds(podIdList?.data, isStatic) || {};
 
   const [selectedId, setSelectedId] = useState<string | undefined>(
     idList && idList[idList.length - 1]
@@ -85,7 +87,8 @@ export const ViewLogs = ({
     env,
     type === 0 ? logType.POD : logType.BUILD,
     selectedId,
-    type === 0 ? handleConValueforPod(con) : handleConValueforBuild(con)
+    type === 0 ? handleConValueforPod(con) : handleConValueforBuild(con),
+    isStatic
   );
 
   useEffect(() => {
@@ -101,7 +104,7 @@ export const ViewLogs = ({
 
   const isEmptyStateVisible = !idList || idList.length === 0 || idList.includes('No Pods found');
   const buildLogsforNonGitSSRDeployment = !isGit && type === 1;
-  console.log('id:ist', idList, podIdList, podList);
+  console.log('id:ist', idList, podIdList, podList, extractPodIds(podIdList?.data, true));
   return (
     <div style={{ color: '#fff', backgroundColor: '#212427' }}>
       <div className="pf-u-mb-md pf-u-mt-md">

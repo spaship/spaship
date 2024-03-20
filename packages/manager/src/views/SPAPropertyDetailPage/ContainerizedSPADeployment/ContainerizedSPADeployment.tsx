@@ -65,6 +65,7 @@ import { ApplicationStatus } from '../../WebPropertyDetailPage/components/SSR/Ap
 import { ConfigureSSRForm } from '../../WebPropertyDetailPage/components/SSR/ConfigureSSRForm';
 import { Lighthouse } from '../Lighthouse/Lighthouse';
 import './ContainerizedSPADeployment.css';
+import { extractPodIds } from '@app/utils/extractPodIds';
 
 const INTERNAL_ACCESS_URL_LENGTH = 40;
 const SLICE_VAL_LENGTH = 20;
@@ -227,7 +228,8 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
   const [buildDetails, setBuildDetails] = useState<string[]>([]);
   const [isLogsExpanded, setIsLogsExpanded] = useState(false);
   const podIdList = useListOfPods(propertyIdentifier, spaProperty, envName);
-  const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
+  // const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
+  const podList = extractPodIds(podIdList?.data, false) || {};
   const drawerRef = useRef<HTMLDivElement>();
 
   const onLogsExpand = () => {

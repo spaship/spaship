@@ -46,6 +46,7 @@ import { ApplicationStatus } from '../../WebPropertyDetailPage/components/SSR/Ap
 import { Lighthouse } from '../Lighthouse/Lighthouse';
 import { useListOfPods } from '@app/services/appLogs';
 import { ViewLogs } from '@app/views/WebPropertyDetailPage/components/SSR/ViewLogs';
+import { extractPodIds } from '@app/utils/extractPodIds';
 
 const INTERNAL_URL_LENGTH = 40;
 const SLICE_VAL_LENGTH = 20;
@@ -74,10 +75,10 @@ export const StaticSPADeployment = (): JSX.Element => {
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [envName, setEnvName] = useState('');
   const [isLogsGit, setIsLogsGit] = useState(false);
-  const podIdList = useListOfPods(propertyIdentifier, spaProperty, envName, 'static');
-  console.log('podIdList', podIdList?.data);
-  const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
-  console.log('podList', podList);
+  const podIdList = useListOfPods(propertyIdentifier, spaProperty, envName);
+  // const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
+  const podList = extractPodIds(podIdList?.data, true) || {};
+  console.log('podList', podList, paginatedData, paginatedData);
 
   const drawerRef = useRef<HTMLDivElement>();
 

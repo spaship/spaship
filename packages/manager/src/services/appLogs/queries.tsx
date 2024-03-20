@@ -5,32 +5,40 @@ const logKeys = {
   logs: ['logs'] as const,
   getPodList: ['getPodList'] as const
 };
+
 export const fetchLogsforSpa = async (
   propertyIdentifier: string,
   applicationIdentifier: string,
   env: string,
   type?: string | number,
   id?: string,
-  con?: string
+  con?: string,
+  isStatic?: boolean
 ): Promise<any> => {
   try {
-    const { data } = await orchestratorReq.get(
-      `/applications/log/${propertyIdentifier}/${env}/${applicationIdentifier}/`,
-      {
-        params: {
-          type,
-          id,
-          con,
-          lines: 2000
-        }
-      }
-    );
+    let url = `/applications/log/${propertyIdentifier}/${env}/${applicationIdentifier}/`;
 
+    const params: Record<string, any> = {
+      type,
+      id,
+      con,
+      lines: 2000
+    };
+
+    if (isStatic) {
+      // If isStatic is true, include deploymentType in the params
+      params.deploymentType = 'static';
+    }
+
+    const { data } = await orchestratorReq.get(url, {
+      params
+    });
     return data?.data || [];
   } catch (e) {
     return '';
   }
 };
+
 
 export const useGetLogsforSpa = (
   webPropertyIdentifier: string,
@@ -38,19 +46,29 @@ export const useGetLogsforSpa = (
   env: string,
   type?: string | number,
   id?: string,
-  con?: string
+  con?: string,
+  isStatic?: boolean
 ) => {
   const refetchInterval = 5000;
   const queryClient = useQueryClient();
 
   return useQuery(
     logKeys.logs,
-    () => fetchLogsforSpa(webPropertyIdentifier, applicationIdentifier, env, type, id, con),
+    () =>
+      fetchLogsforSpa(webPropertyIdentifier, applicationIdentifier, env, type, id, con, isStatic),
     {
       refetchInterval,
       initialData: () => {
         queryClient.prefetchQuery(logKeys.logs, () =>
-          fetchLogsforSpa(webPropertyIdentifier, applicationIdentifier, env, type, id, con)
+          fetchLogsforSpa(
+            webPropertyIdentifier,
+            applicationIdentifier,
+            env,
+            type,
+            id,
+            con,
+            isStatic
+          )
         );
       },
       enabled: id !== undefined,
@@ -76,7 +94,7 @@ const fetchListOfPods = async (
   }
 
   const { data } = await orchestratorReq.get(url);
-  console.log('>>>>>>', data);
+
   return data?.data || [];
 };
 
