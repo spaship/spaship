@@ -97,19 +97,6 @@ const fetchListOfPods = async (
   return data?.data || [];
 };
 
-// const fetchListOfPods = async (
-//   propertyIdentifier: string,
-//   spaName: string,
-//   env: string,
-//   isStatic?: boolean
-//   // deploymentType?: string
-// ): Promise<any> => {
-//   const { data } = await orchestratorReq.get(
-//     `/applications/pods/${propertyIdentifier}/${env}/${spaName}/?deploymentType=${deploymentType}`
-//   );
-
-//   return data?.data || [];
-// };
 
 export const useListOfPods = (
   propertyIdentifier: string,

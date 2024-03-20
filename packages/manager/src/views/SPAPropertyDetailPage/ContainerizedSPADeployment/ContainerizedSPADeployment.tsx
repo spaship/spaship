@@ -228,7 +228,6 @@ export const ContainerizedSPADeployment = (): JSX.Element => {
   const [buildDetails, setBuildDetails] = useState<string[]>([]);
   const [isLogsExpanded, setIsLogsExpanded] = useState(false);
   const podIdList = useListOfPods(propertyIdentifier, spaProperty, envName);
-  // const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
   const podList = extractPodIds(podIdList?.data, false) || {};
   const drawerRef = useRef<HTMLDivElement>();
 

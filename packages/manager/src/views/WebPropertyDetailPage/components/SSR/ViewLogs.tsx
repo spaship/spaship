@@ -54,7 +54,6 @@ export const ViewLogs = ({
 
   const podIdList = useListOfPods(propertyIdentifier, spaName, env, isStatic);
 
-  // const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
   const podList = extractPodIdsForStatic(podIdList?.data, isStatic, propertyIdentifier, env) || {};
 
   const [selectedId, setSelectedId] = useState<string | undefined>(

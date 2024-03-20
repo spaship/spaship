@@ -71,12 +71,10 @@ export const StaticSPADeployment = (): JSX.Element => {
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['autoSync'] as const);
   const [selectedDataListItemId, setSelectedDataListItemId] = useState<string>('dataListItem1');
   const [isLogsExpanded, setIsLogsExpanded] = useState(false);
-  // LOGS
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [envName, setEnvName] = useState('');
   const [isLogsGit, setIsLogsGit] = useState(false);
   const podIdList = useListOfPods(propertyIdentifier, spaProperty, envName);
-  // const { pods: podList } = (podIdList?.data && podIdList?.data[0]) || {};
   const podList = extractPodIdsForStatic(podIdList?.data, true, propertyIdentifier, envName) || {};
   console.log(podList);
 
@@ -430,11 +428,6 @@ export const StaticSPADeployment = (): JSX.Element => {
           <EmptyStateBody>Please create an deployment to view them here</EmptyStateBody>
         </EmptyState>
       ) : (
-        // <Drawer isStatic isExpanded={isExpanded}>
-        //   <DrawerContent panelContent={panelContent}>
-        //     <DrawerContentBody>{drawerContent}</DrawerContentBody>
-        //   </DrawerContent>
-        // </Drawer>
         <Drawer position="bottom" onExpand={onLogsExpand} isExpanded={isLogsExpanded}>
           <DrawerContent panelContent={panelLogsContent}>
             <DrawerContentBody style={{ overflowX: 'hidden', padding: '0px' }}>
