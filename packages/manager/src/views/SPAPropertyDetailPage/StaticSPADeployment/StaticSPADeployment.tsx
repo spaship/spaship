@@ -366,6 +366,36 @@ export const StaticSPADeployment = (): JSX.Element => {
           refetch={refetch}
         />
 
+        {selectedData?.symlink?.length !== 0 && (
+          <>
+            <p className="spaTitleText">Symlink</p>
+            <Table aria-label="Symlink-Static-Table" className="pf-u-mt-md">
+              <Thead noWrap>
+                <Tr>
+                  <Th modifier="wrap" style={{ width: '50%' }}>
+                    Source File Path
+                  </Th>
+                  <Th modifier="wrap" style={{ width: '50%' }}>
+                    Target File Path
+                  </Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {selectedData?.symlink?.map((symlinkItem: TSymlink, i: number) => (
+                  <Tr key={i} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
+                    <Td dataLabel={symlinkItem.source} style={{ wordBreak: 'break-all' }}>
+                      {symlinkItem.source}
+                    </Td>
+
+                    <Td dataLabel={symlinkItem.target} style={{ wordBreak: 'break-all' }}>
+                      {symlinkItem.target}
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </>
+        )}
         <Lighthouse
           webPropertyIdentifier={selectedData?.propertyIdentifier}
           identifier={selectedData?.identifier}
