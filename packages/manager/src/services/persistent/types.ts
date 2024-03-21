@@ -21,9 +21,10 @@ export type TCreateEnvDTO = {
   cluster: string;
 };
 export type TCreateSymlinkDTO = {
-  propertyIdentifier: string;
+  propertyIdentifier: string | undefined;
   env: string;
   source: string;
   createdBy: string;
   target: string;
+  identifier: string | undefined;
 };

@@ -83,7 +83,7 @@ export const useAddEnv = (propertyIdentifier?: string) => {
 };
 
 const createSymlink = async (dto: TCreateSymlinkDTO): Promise<TEnv> => {
-  const { data } = await orchestratorReq.post('environment/symlink', dto);
+  const { data } = await orchestratorReq.post('/applications/symlink', dto);
   return data.data;
 };
 

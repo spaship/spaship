@@ -19,11 +19,10 @@ import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 const envValidation = /^[a-zA-Z0-9-]+$/;
 export const schema = yup.object({
   // TODO: change this to URL validation, after server supports http protocol append
-
+  propertyIdentifier: yup.string().label('Web property').trim(),
+  identifier: yup.string().label('Application Name').trim(),
   source: yup.string().label('Source File Path').trim().required(),
-
   target: yup.string().label('Target File Path').trim().required(),
-
   env: yup
     .string()
     .label('Environment Name')
@@ -40,9 +39,15 @@ type Props = {
   onSubmit: (data: FormData) => void;
   onClose: () => void;
   propertyIdentifier: string;
+  applicationIdentifier: string;
 };
 
-export const CreateSymlink = ({ onSubmit, onClose, propertyIdentifier }: Props): JSX.Element => {
+export const CreateSymlink = ({
+  onSubmit,
+  onClose,
+  propertyIdentifier,
+  applicationIdentifier
+}: Props): JSX.Element => {
   const {
     control,
     handleSubmit,
@@ -55,6 +60,60 @@ export const CreateSymlink = ({ onSubmit, onClose, propertyIdentifier }: Props):
   const webPropertiesKeys = Object.keys(webProperties.data || {});
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
+      <Split hasGutter>
+        <SplitItem isFilled style={{ width: '100%' }}>
+          <Controller
+            control={control}
+            name="propertyIdentifier"
+            defaultValue={propertyIdentifier}
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label="Web property"
+                isRequired
+                fieldId="propertyIdentifier"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
+                <TextInput
+                  isRequired
+                  placeholder="Add web-property name"
+                  type="text"
+                  id="propertyIdentifier"
+                  {...field}
+                  isDisabled
+                  value={propertyIdentifier}
+                />
+              </FormGroup>
+            )}
+          />
+        </SplitItem>
+        <SplitItem isFilled style={{ width: '100%' }}>
+          <Controller
+            control={control}
+            name="identifier"
+            defaultValue={applicationIdentifier}
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label="Application Name"
+                isRequired
+                fieldId="identifier"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
+                <TextInput
+                  isRequired
+                  placeholder="Add application name"
+                  type="text"
+                  id="identifier"
+                  {...field}
+                  isDisabled
+                  value={applicationIdentifier}
+                />
+              </FormGroup>
+            )}
+          />
+        </SplitItem>
+      </Split>
       <Split hasGutter>
         <SplitItem isFilled style={{ width: '100%' }}>
           <Controller

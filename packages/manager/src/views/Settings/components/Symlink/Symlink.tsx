@@ -1,23 +1,19 @@
 /* eslint-disable no-underscore-dangle */
-import { TableRowSkeleton } from '@app/components';
 import { usePopUp } from '@app/hooks';
 import { useAddSymlink, useGetEnvList } from '@app/services/persistent';
 import {
   Button,
-  Card,
-  CardActions,
-  CardBody,
-  CardHeader,
-  CardTitle,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
   Modal,
   ModalVariant,
+  Split,
+  SplitItem,
   Title
 } from '@patternfly/react-core';
 import { CubesIcon, PlusIcon } from '@patternfly/react-icons';
-import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
@@ -27,22 +23,14 @@ type TSymlink = {
   source: string;
   target: string;
 };
-type EnvItem = {
-  _id: string;
-  propertyIdentifier: string;
-  url: string;
-  cluster: string;
-  isEph: boolean;
-  env: string;
-  sync?: string;
-  createdBy: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-  symlink: [];
-};
 
-export const Symlink = ({ propertyIdentifier }: { propertyIdentifier: string }) => {
+export const Symlink = ({
+  propertyIdentifier,
+  selectedData
+}: {
+  propertyIdentifier: string;
+  selectedData: any;
+}) => {
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['createSymlink'] as const);
   const envList = useGetEnvList(propertyIdentifier);
   const createSymlink = useAddSymlink(propertyIdentifier);
@@ -50,11 +38,10 @@ export const Symlink = ({ propertyIdentifier }: { propertyIdentifier: string }) 
   const { data: session } = useSession();
   const handleCreateSymlink = async (data: SymlinkForm) => {
     if (!propertyTitle) return;
+
     try {
       await createSymlink.mutateAsync({
         ...data,
-        env: data.env.toLowerCase(),
-        propertyIdentifier,
         createdBy: session?.user?.email || ''
       });
       toast.success('Symlink created successfully');
@@ -70,69 +57,61 @@ export const Symlink = ({ propertyIdentifier }: { propertyIdentifier: string }) 
   };
   return (
     <>
-      <Card isFullHeight isRounded style={{ width: '100%' }}>
-        <CardHeader>
-          <CardTitle>Symlinks</CardTitle>
-          <CardActions>
+      <div style={{ width: '100%' }}>
+        <Split>
+          <SplitItem isFilled>
+            <p className="spaTitleText">Symlink</p>
+          </SplitItem>
+          <SplitItem>
             <Button
-              className="secondary-button"
+              // className="secondary-button"
               icon={<PlusIcon />}
               isSmall
+              variant="link"
               onClick={() => handlePopUpOpen('createSymlink')}
             >
               Create new symlink
             </Button>
-          </CardActions>
-        </CardHeader>
-        <CardBody>
-          <TableComposable aria-label="Simple table">
-            <Thead noWrap>
-              <Tr>
-                <Th style={{ width: 30 }}>Environment</Th>
-                <Th modifier="wrap" style={{ width: '35%' }}>
-                  Source File Path
-                </Th>
-                <Th modifier="wrap" style={{ width: '35%' }}>
-                  Target File Path
-                </Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {envList.isLoading && <TableRowSkeleton columns={4} rows={3} />}
-              {envList.isSuccess && envList.data?.length === 0 && (
+          </SplitItem>
+        </Split>
+        <div>
+          {selectedData?.symlink?.length !== 0 ? (
+            <Table aria-label="Symlink-Static-Table" className="pf-u-mt-md">
+              <Thead noWrap>
                 <Tr>
-                  <Td colSpan={6}>
-                    <EmptyState>
-                      <EmptyStateIcon icon={CubesIcon} />
-                      <Title headingLevel="h4" size="lg">
-                        Symlinks not found
-                      </Title>
-                      <EmptyStateBody>Please create a symlink</EmptyStateBody>
-                    </EmptyState>
-                  </Td>
+                  <Th modifier="wrap" style={{ width: '50%' }}>
+                    Source File Path
+                  </Th>
+                  <Th modifier="wrap" style={{ width: '50%' }}>
+                    Target File Path
+                  </Th>
                 </Tr>
-              )}
+              </Thead>
+              <Tbody>
+                {selectedData?.symlink?.map((symlinkItem: TSymlink, i: number) => (
+                  <Tr key={selectedData?._id} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
+                    <Td dataLabel={symlinkItem?.source} style={{ wordBreak: 'break-all' }}>
+                      {symlinkItem.source}
+                    </Td>
 
-              {envList.isSuccess &&
-                envList.data?.map((env: EnvItem) =>
-                  env?.symlink?.map((symlinkItem: TSymlink) => (
-                    <Tr key={env._id}>
-                      <Td>{env.env}</Td>
-
-                      <Td dataLabel={symlinkItem.source} style={{ wordBreak: 'break-all' }}>
-                        {symlinkItem.source}
-                      </Td>
-
-                      <Td dataLabel={symlinkItem.target} style={{ wordBreak: 'break-all' }}>
-                        {symlinkItem.target}
-                      </Td>
-                    </Tr>
-                  ))
-                )}
-            </Tbody>
-          </TableComposable>
-        </CardBody>
-      </Card>
+                    <Td dataLabel={symlinkItem?.target} style={{ wordBreak: 'break-all' }}>
+                      {symlinkItem.target}
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          ) : (
+            <EmptyState>
+              <EmptyStateIcon icon={CubesIcon} />
+              <Title headingLevel="h4" size="lg">
+                Symlinks not found
+              </Title>
+              <EmptyStateBody>Please create a symlink</EmptyStateBody>
+            </EmptyState>
+          )}
+        </div>
+      </div>
       <Modal
         title="Create Symlink"
         variant={ModalVariant.medium}
@@ -142,7 +121,8 @@ export const Symlink = ({ propertyIdentifier }: { propertyIdentifier: string }) 
         <CreateSymlink
           onClose={() => handlePopUpClose('createSymlink')}
           onSubmit={handleCreateSymlink}
-          propertyIdentifier={propertyIdentifier}
+          propertyIdentifier={propertyIdentifier || ''}
+          applicationIdentifier={selectedData?.identifier || ''}
         />
       </Modal>
     </>
