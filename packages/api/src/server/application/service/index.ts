@@ -289,15 +289,15 @@ export class ApplicationService {
        * It will extract if the uploaded archive has any .tar file inside
        * As of now it will only work on the single level of extraction
        */
-      if (fileOrginalName.endsWith('tar.gz')) {
+      if (fileOrginalName.endsWith('tar.gz') || fileOrginalName.endsWith('tgz')) {
         const nestedOutputDirectory = `${baseDir}/${identifier.split('.')[0]}-${Date.now()}-extracted`;
         const nestedUnzipCommand = `7z x ${path.resolve(tmpDir)}/*.tar -o${nestedOutputDirectory}`;
         try {
           await execPromise(nestedUnzipCommand);
+          tmpDir = nestedOutputDirectory;
         } catch (error) {
           return this.exceptionService.internalServerErrorException(error);
         }
-        tmpDir = nestedOutputDirectory;
       }
     } catch (error) {
       return this.exceptionService.internalServerErrorException(error);
