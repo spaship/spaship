@@ -370,12 +370,7 @@ const activities = {
       <span style={{ fontWeight: '600' }}>{props.env}</span> env.
     </Text>
   ),
-  SYMLINK_CREATED: ({ props }: TWebPropActivityStream): JSX.Element => (
-    <Text className="activityStream">
-      <span style={{ fontWeight: '600' }}> Symlink created</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
-    </Text>
-  ),
+
   APPLICATION_UNAVAILABLE: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}> Application unavailable</span> for property :{' '}
@@ -408,8 +403,39 @@ const activities = {
     propertyIdentifier
   }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
-      <span style={{ fontWeight: '600' }}>Report generation started</span> for property :{' '}
+      <span style={{ fontWeight: '600' }}>Report generation failed</span> for property :{' '}
       <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
+    </Text>
+  ),
+  SYMLINK_CREATED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Symlink created successfully for</span> spa :{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
+    </Text>
+  ),
+  SYMLINK_CREATION_FAILED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Symlink creation failed for</span> spa :{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
+    </Text>
+  ),
+  SYMLINK_CREATION_SCHEDULED: ({
+    props,
+    propertyIdentifier
+  }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Symlink creation is scheduled for</span> spa :{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
+    </Text>
+  ),
+  SYMLINK_DELETED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Symlink deleted successfully for</span> spa :{' '}
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
       <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
     </Text>
