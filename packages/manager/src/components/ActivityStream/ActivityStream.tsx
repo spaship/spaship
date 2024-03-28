@@ -409,31 +409,28 @@ const activities = {
       <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
     </Text>
   ),
-  SYMLINK_CREATED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
+  SYMLINK_CREATED: ({ props }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}>Symlink created successfully for</span> spa :{' '}
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
       <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
     </Text>
   ),
-  SYMLINK_CREATION_FAILED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
+  SYMLINK_CREATION_FAILED: ({ props }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}>Symlink creation failed for</span> spa :{' '}
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
       <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
     </Text>
   ),
-  SYMLINK_CREATION_SCHEDULED: ({
-    props,
-    propertyIdentifier
-  }: TWebPropActivityStream): JSX.Element => (
+  SYMLINK_CREATION_SCHEDULED: ({ props }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}>Symlink creation is scheduled for</span> spa :{' '}
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
       <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
     </Text>
   ),
-  SYMLINK_DELETED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
+  SYMLINK_DELETED: ({ props }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}>Symlink deleted successfully for</span> spa :{' '}
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
