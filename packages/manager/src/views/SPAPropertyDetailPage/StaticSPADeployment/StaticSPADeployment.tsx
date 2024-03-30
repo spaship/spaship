@@ -15,9 +15,6 @@ import {
   ActionList,
   ActionListItem,
   Button,
-  CardActions,
-  CardHeader,
-  CardTitle,
   Checkbox,
   DataList,
   DataListCell,
@@ -41,15 +38,13 @@ import {
   SelectOptionObject,
   SelectVariant,
   Spinner,
-  Split,
-  SplitItem,
   Tab,
   TabTitleText,
   Tabs,
   Title,
   Tooltip
 } from '@patternfly/react-core';
-import { CubesIcon, PlusIcon, SyncAltIcon } from '@patternfly/react-icons';
+import { CubesIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
