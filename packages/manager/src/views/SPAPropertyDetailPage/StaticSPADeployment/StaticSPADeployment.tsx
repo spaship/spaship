@@ -1,22 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/no-array-index-key */
-import { usePopUp, useToggle } from '@app/hooks';
+import { usePopUp } from '@app/hooks';
 import { useListOfPods } from '@app/services/appLogs';
 import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
 import { TSpaProperty } from '@app/services/spaProperty/types';
 import { useApplicationAutoSync } from '@app/services/sync';
 import { convertDateFormat } from '@app/utils/convertDateFormat';
 import { extractPodIdsForStatic } from '@app/utils/extractPodIds';
+import { Symlink } from '@app/views/Settings/components/Symlink';
 import { ViewLogs } from '@app/views/WebPropertyDetailPage/components/SSR/ViewLogs';
 import {
   ActionGroup,
   ActionList,
   ActionListItem,
   Button,
-  CardActions,
-  CardHeader,
-  CardTitle,
   Checkbox,
   DataList,
   DataListCell,
@@ -40,21 +38,18 @@ import {
   SelectOptionObject,
   SelectVariant,
   Spinner,
-  Split,
-  SplitItem,
   Tab,
   TabTitleText,
   Tabs,
   Title,
   Tooltip
 } from '@patternfly/react-core';
-import { CubesIcon, PlusIcon, SyncAltIcon } from '@patternfly/react-icons';
+import { CubesIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Symlink } from '@app/views/Settings/components/Symlink';
 import { ApplicationStatus } from '../../WebPropertyDetailPage/components/SSR/ApplicationStatus';
 import { Lighthouse } from '../Lighthouse/Lighthouse';
 
@@ -73,7 +68,9 @@ export const StaticSPADeployment = (): JSX.Element => {
   const spaProperty = query.spaProperty as string;
 
   const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, '');
-  const [selected, setSelected] = useState<string>('More Actions');
+  // const [selected, setSelected] = useState<string>('More Actions');
+  const [selected, setSelected] = useState<{ [key: string]: string }>({});
+
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const staticDeploymentData = spaProperties?.data?.[spaProperty]?.filter(
     (data) => data.isContainerized === false
@@ -177,23 +174,20 @@ export const StaticSPADeployment = (): JSX.Element => {
       [rowId]: isSelectOpen
     }));
   };
+
   const onSelect = (
     event: React.MouseEvent | React.ChangeEvent,
-    value: string | SelectOptionObject
+    value: string | SelectOptionObject,
+    rowId: string
   ) => {
-    setSelected(value as string);
     setIsOpen(false);
-    console.log('VAL', value);
-    // if (value === 'Redeploy') {
-    //   // handlePopUpOpen('redeploySsrApplication');
-    //   // setRedeployData(selectedData); // Assuming selectedData contains the required data
-    // } else if (value === 'Configure') {
-    //   handlePopUpOpen('reconfigureSsrApplication');
-    //   setConfigureData(selectedData); // Assuming selectedData contains the required data
-    // }
-
-    setIsOpen(false);
+    const selectedValue = value as string;
+    setSelected((prevSelected) => ({
+      ...prevSelected,
+      [rowId]: selectedValue
+    }));
   };
+
   const panelContent = (
     <DrawerPanelContent isResizable minSize="500px">
       <DrawerHead>
@@ -384,8 +378,8 @@ export const StaticSPADeployment = (): JSX.Element => {
                             isPlain
                             aria-label={`Select Input with descriptions ${index}`}
                             onToggle={(isSelectOpen) => onToggle(rowId, isSelectOpen)}
-                            onSelect={onSelect}
-                            selections={selected}
+                            onSelect={(e, value) => onSelect(e, value, rowId)} // Pass rowId here
+                            selections={selected[rowId] || 'More Actions'} // Use selected value for this row
                             isOpen={rowOpenStates[rowId]}
                           >
                             <SelectOption
