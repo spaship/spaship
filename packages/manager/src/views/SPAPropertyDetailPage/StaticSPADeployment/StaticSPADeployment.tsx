@@ -35,6 +35,10 @@ import {
   EmptyStateIcon,
   Modal,
   ModalVariant,
+  Select,
+  SelectOption,
+  SelectOptionObject,
+  SelectVariant,
   Spinner,
   Split,
   SplitItem,
@@ -67,9 +71,9 @@ export const StaticSPADeployment = (): JSX.Element => {
 
   const propertyIdentifier = query.propertyIdentifier as string;
   const spaProperty = query.spaProperty as string;
-  const [isFilterOpen, setIsFilterOpen] = useToggle();
-  const [filterByEnv, setFilterByEnv] = useState('');
-  const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, filterByEnv);
+
+  const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, '');
+  const [selected, setSelected] = useState<string>('More Actions');
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const staticDeploymentData = spaProperties?.data?.[spaProperty]?.filter(
     (data) => data.isContainerized === false
@@ -79,7 +83,10 @@ export const StaticSPADeployment = (): JSX.Element => {
   const [selectedData, setSelectedData] = useState<any>(staticDeploymentData?.[0]);
   const [syncData, setSyncData] = useState<TSpaProperty | undefined>();
   const [isChecked, setIsChecked] = useState<boolean>(syncData?.autoSync || false);
-  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['autoSync'] as const);
+  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
+    'autoSync',
+    'autoEnableSymlink'
+  ] as const);
   const [selectedDataListItemId, setSelectedDataListItemId] = useState<string>('dataListItem1');
   const [isLogsExpanded, setIsLogsExpanded] = useState(false);
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
@@ -115,14 +122,9 @@ export const StaticSPADeployment = (): JSX.Element => {
     setIsLogsGit(rowData.isGit);
   };
 
-  const removeValues = () => {
-    setFilterByEnv('' as string);
-  };
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(5);
   const autoSyncData = useApplicationAutoSync();
-  const openModel = async (data: any) => {
-    handlePopUpOpen('autoSync');
+  const openModel = async (data: any, value: 'autoSync' | 'autoEnableSymlink') => {
+    handlePopUpOpen(value);
     setSyncData(data);
   };
 
@@ -158,24 +160,7 @@ export const StaticSPADeployment = (): JSX.Element => {
       }
     }
   };
-  const onPageSet = (_: any, pageNumber: number) => {
-    setPage(pageNumber);
-  };
-  const onPerPageSelect = (
-    _event: React.MouseEvent | React.KeyboardEvent | MouseEvent,
-    newPerPage: number,
-    newPage: number
-  ) => {
-    setPerPage(newPerPage);
-    setPage(newPage);
-  };
-
-  const startIdx = (page - 1) * perPage;
-  const endIdx = startIdx + perPage;
-  const onClose = () => {
-    setIsExpanded(false);
-  };
-
+  const [isOpen, setIsOpen] = useState(false);
   const onSelectDataListItem = (id: string) => {
     const index = parseInt(id.charAt(id.length - 1), 10);
     const rowSelectedData = paginatedData && paginatedData[index];
@@ -184,6 +169,31 @@ export const StaticSPADeployment = (): JSX.Element => {
     setIsExpanded(true);
   };
 
+  const [rowOpenStates, setRowOpenStates] = useState<{ [key: string]: boolean }>({});
+
+  const onToggle = (rowId: string, isSelectOpen: boolean) => {
+    setRowOpenStates((prevStates) => ({
+      ...prevStates,
+      [rowId]: isSelectOpen
+    }));
+  };
+  const onSelect = (
+    event: React.MouseEvent | React.ChangeEvent,
+    value: string | SelectOptionObject
+  ) => {
+    setSelected(value as string);
+    setIsOpen(false);
+    console.log('VAL', value);
+    // if (value === 'Redeploy') {
+    //   // handlePopUpOpen('redeploySsrApplication');
+    //   // setRedeployData(selectedData); // Assuming selectedData contains the required data
+    // } else if (value === 'Configure') {
+    //   handlePopUpOpen('reconfigureSsrApplication');
+    //   setConfigureData(selectedData); // Assuming selectedData contains the required data
+    // }
+
+    setIsOpen(false);
+  };
   const panelContent = (
     <DrawerPanelContent isResizable minSize="500px">
       <DrawerHead>
@@ -356,27 +366,49 @@ export const StaticSPADeployment = (): JSX.Element => {
                       </p>
                     </DataListCell>
                     <DataListCell style={{ display: 'contents' }}>
-                      <ActionList>
+                      <ActionList key={`data-list-item-${index}`}>
                         <ActionListItem>
                           <Button
                             variant="primary"
                             isSmall
                             icon={<SyncAltIcon />}
-                            onClick={() => openModel(selectedData)}
+                            onClick={() => openModel(selectedData, 'autoSync')}
                           >
                             Auto Sync
                           </Button>
                         </ActionListItem>
                         <ActionListItem>
-                          <Button
-                            variant="primary"
-                            isSmall
-                            onClick={(e) =>
-                              onClick(e, selectedData?.name, selectedData?.buildName, selectedData)
-                            }
+                          <Select
+                            key={`action-item-viewLogs-${index}`}
+                            variant={SelectVariant.single}
+                            isPlain
+                            aria-label={`Select Input with descriptions ${index}`}
+                            onToggle={(isSelectOpen) => onToggle(rowId, isSelectOpen)}
+                            onSelect={onSelect}
+                            selections={selected}
+                            isOpen={rowOpenStates[rowId]}
                           >
-                            View Logs
-                          </Button>
+                            <SelectOption
+                              value="View Logs"
+                              onClick={(e) =>
+                                onClick(
+                                  e,
+                                  selectedData?.name,
+                                  selectedData?.buildName,
+                                  selectedData
+                                )
+                              }
+                            >
+                              View Logs
+                            </SelectOption>
+                            <SelectOption
+                              key={`action-item-autoSymlink-${index}`}
+                              value="AutoEnable symlink"
+                              onClick={() => openModel(selectedData, 'autoEnableSymlink')}
+                            >
+                              AutoEnable symlink
+                            </SelectOption>
+                          </Select>
                         </ActionListItem>
                       </ActionList>
                     </DataListCell>
@@ -475,6 +507,33 @@ export const StaticSPADeployment = (): JSX.Element => {
             Submit
           </Button>
           <Button onClick={() => handlePopUpClose('autoSync')} className="pf-u-mt-md">
+            Cancel
+          </Button>
+        </ActionGroup>
+      </Modal>
+
+      <Modal
+        title="AutoEnable symlink Confirmation"
+        variant={ModalVariant.small}
+        isOpen={popUp.autoEnableSymlink.isOpen}
+        onClose={() => handlePopUpClose('autoEnableSymlink')}
+      >
+        <Checkbox
+          label={isChecked ? 'AutoEnable symlink Enabled' : 'AutoEnable symlink Disabled'}
+          isChecked={isChecked}
+          onChange={(checked: boolean) => {
+            setIsChecked(checked);
+          }}
+          id="controlled-check-1"
+          name="autoEnableSymlink"
+        />
+
+        <ActionGroup>
+          <Button onClick={() => console.log('Modal of aes')} className="pf-u-mr-md pf-u-mt-md">
+            {' '}
+            Submit
+          </Button>
+          <Button onClick={() => handlePopUpClose('autoEnableSymlink')} className="pf-u-mt-md">
             Cancel
           </Button>
         </ActionGroup>
