@@ -68,7 +68,6 @@ export const StaticSPADeployment = (): JSX.Element => {
   const spaProperty = query.spaProperty as string;
 
   const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, '');
-  // const [selected, setSelected] = useState<string>('More Actions');
   const [selected, setSelected] = useState<{ [key: string]: string }>({});
 
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
@@ -84,13 +83,14 @@ export const StaticSPADeployment = (): JSX.Element => {
     'autoSync',
     'autoEnableSymlink'
   ] as const);
-  const [selectedDataListItemId, setSelectedDataListItemId] = useState<string>('dataListItem1');
+  const [selectedDataListItemId, setSelectedDataListItemId] = useState<string>('data-list-item0');
   const [isLogsExpanded, setIsLogsExpanded] = useState(false);
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [envName, setEnvName] = useState('');
   const [isLogsGit, setIsLogsGit] = useState(false);
   const podIdList = useListOfPods(propertyIdentifier, spaProperty, envName);
   const podList = extractPodIdsForStatic(podIdList?.data, true, propertyIdentifier, envName) || {};
+  const [isSymlinkAutoEnabled, setIsSymlinkAutoEnabled] = useState<{ [key: string]: boolean }>({});
 
   const drawerRef = useRef<HTMLDivElement>();
 
@@ -108,21 +108,23 @@ export const StaticSPADeployment = (): JSX.Element => {
   ) => {
     setActiveTabKey(tabIndex);
   };
-  const onClick = async (
+  const onClickLogs = async (
     e: React.MouseEvent<any> | React.KeyboardEvent | React.ChangeEvent<Element>,
-    name: string,
-    buildName: string[],
-    rowData: any
+    env: string,
+    isContainerized: boolean
+    // rowData: any
   ) => {
-    setEnvName(rowData.env);
+    setEnvName(env);
     setIsLogsExpanded(true);
-    setIsLogsGit(rowData.isGit);
+    setIsLogsGit(isContainerized);
   };
 
   const autoSyncData = useApplicationAutoSync();
-  const openModel = async (data: any, value: 'autoSync' | 'autoEnableSymlink') => {
+
+  const openModel = async (data: any, value: 'autoSync' | 'autoEnableSymlink', rowId: string) => {
     handlePopUpOpen(value);
     setSyncData(data);
+    setSelectedDataListItemId(rowId);
   };
 
   const handleAutoSync = async () => {
@@ -158,8 +160,10 @@ export const StaticSPADeployment = (): JSX.Element => {
     }
   };
   const [isOpen, setIsOpen] = useState(false);
+
   const onSelectDataListItem = (id: string) => {
     const index = parseInt(id.charAt(id.length - 1), 10);
+    // const index = parseInt(id.replace('data-list-item', ''), 10) - 1; // Get the index from the id
     const rowSelectedData = paginatedData && paginatedData[index];
     setSelectedData(rowSelectedData);
     setSelectedDataListItemId(id);
@@ -187,6 +191,12 @@ export const StaticSPADeployment = (): JSX.Element => {
       [rowId]: selectedValue
     }));
   };
+  const toggleSymlinkAutoEnabled = (rowId: string) => {
+    setIsSymlinkAutoEnabled((prevStates) => ({
+      ...prevStates,
+      [rowId]: !prevStates[rowId] // Toggle the value for the specified rowId
+    }));
+  };
 
   const panelContent = (
     <DrawerPanelContent isResizable minSize="500px">
@@ -207,7 +217,7 @@ export const StaticSPADeployment = (): JSX.Element => {
           <Tbody>
             {selectedData?.accessUrl ? (
               selectedData?.accessUrl.map((url: string, i: number) => (
-                <Tr key={url} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
+                <Tr key={`access-${i}`} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
                   {url === 'NA' ? (
                     <Spinner isSVG diameter="30px" />
                   ) : (
@@ -261,7 +271,7 @@ export const StaticSPADeployment = (): JSX.Element => {
           <Tbody>
             {selectedData?.routerUrl ? (
               selectedData?.routerUrl.map((url: string, i: number) => (
-                <Tr key={url} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
+                <Tr key={`router-${i}`} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
                   {url === 'NA' ? (
                     <Spinner isSVG diameter="30px" />
                   ) : (
@@ -323,14 +333,10 @@ export const StaticSPADeployment = (): JSX.Element => {
       style={{ margin: '0px' }}
       aria-label="drawerContent"
       selectedDataListItemId={selectedDataListItemId}
-      onSelectDataListItem={onSelectDataListItem}
+      onSelectDataListItem={(id) => onSelectDataListItem(id)}
     >
-      {paginatedData?.map(({ env, ref, path }, index) => {
+      {paginatedData?.map(({ env, ref, path, isContainerized }, index) => {
         const rowId = `data-list-item${index}`;
-        function setConfigureData(arg0: TSpaProperty) {
-          throw new Error('Function not implemented.');
-        }
-
         return (
           <DataListItem
             key={`data-list-item-${index}`} // Ensure a unique key
@@ -342,7 +348,7 @@ export const StaticSPADeployment = (): JSX.Element => {
               <DataListItemCells
                 dataListCells={[
                   <>
-                    <DataListCell className="spaTitleText" key={`data-list-cell${index}`}>
+                    <DataListCell className="spaTitleText" key={`data-list-cell${index}-ref`}>
                       <div>{env}</div>
                       <p className="bodyText">
                         Ref:{' '}
@@ -351,7 +357,7 @@ export const StaticSPADeployment = (): JSX.Element => {
                         }`}
                       </p>
                     </DataListCell>
-                    <DataListCell key={`data-list-cell${index}`}>
+                    <DataListCell key={`data-list-cell${index}-path`}>
                       <p className="bodyText">
                         Path:{' '}
                         {`${path.slice(0, SLICE_VAL_LENGTH) ?? 'NA'} ${
@@ -360,13 +366,13 @@ export const StaticSPADeployment = (): JSX.Element => {
                       </p>
                     </DataListCell>
                     <DataListCell style={{ display: 'contents' }}>
-                      <ActionList key={`data-list-item-${index}`}>
+                      <ActionList key={`action-item${index}`}>
                         <ActionListItem>
                           <Button
                             variant="primary"
                             isSmall
                             icon={<SyncAltIcon />}
-                            onClick={() => openModel(selectedData, 'autoSync')}
+                            onClick={() => openModel(selectedData, 'autoSync', rowId)}
                           >
                             Auto Sync
                           </Button>
@@ -384,21 +390,15 @@ export const StaticSPADeployment = (): JSX.Element => {
                           >
                             <SelectOption
                               value="View Logs"
-                              onClick={(e) =>
-                                onClick(
-                                  e,
-                                  selectedData?.name,
-                                  selectedData?.buildName,
-                                  selectedData
-                                )
-                              }
+                              onClick={(e) => onClickLogs(e, env, isContainerized)}
                             >
                               View Logs
                             </SelectOption>
                             <SelectOption
                               key={`action-item-autoSymlink-${index}`}
                               value="AutoEnable symlink"
-                              onClick={() => openModel(selectedData, 'autoEnableSymlink')}
+                              onClick={() => openModel(selectedData, 'autoEnableSymlink', rowId)}
+                              // onClick={() =>  // Toggle isSymlinkAutoEnabled for this row
                             >
                               AutoEnable symlink
                             </SelectOption>
@@ -505,7 +505,6 @@ export const StaticSPADeployment = (): JSX.Element => {
           </Button>
         </ActionGroup>
       </Modal>
-
       <Modal
         title="AutoEnable symlink Confirmation"
         variant={ModalVariant.small}
@@ -513,18 +512,28 @@ export const StaticSPADeployment = (): JSX.Element => {
         onClose={() => handlePopUpClose('autoEnableSymlink')}
       >
         <Checkbox
-          label={isChecked ? 'AutoEnable symlink Enabled' : 'AutoEnable symlink Disabled'}
-          isChecked={isChecked}
-          onChange={(checked: boolean) => {
-            setIsChecked(checked);
-          }}
+          label={
+            isSymlinkAutoEnabled[selectedDataListItemId]
+              ? 'AutoEnable symlink Enabled'
+              : 'AutoEnable symlink Disabled'
+          }
+          isChecked={isSymlinkAutoEnabled[selectedDataListItemId]}
+          onChange={() => toggleSymlinkAutoEnabled(selectedDataListItemId)}
           id="controlled-check-1"
           name="autoEnableSymlink"
         />
-
         <ActionGroup>
-          <Button onClick={() => console.log('Modal of aes')} className="pf-u-mr-md pf-u-mt-md">
-            {' '}
+          <Button
+            onClick={() =>
+              console.log(
+                'mmmm',
+                selectedDataListItemId,
+                isSymlinkAutoEnabled,
+                isSymlinkAutoEnabled[selectedDataListItemId]
+              )
+            }
+            className="pf-u-mr-md pf-u-mt-md"
+          >
             Submit
           </Button>
           <Button onClick={() => handlePopUpClose('autoEnableSymlink')} className="pf-u-mt-md">
