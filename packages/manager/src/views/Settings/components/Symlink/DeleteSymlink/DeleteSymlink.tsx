@@ -44,7 +44,7 @@ type Props = {
   data: any;
 };
 
-export const EditSymlink = ({
+export const DeleteSymlink = ({
   onSubmit,
   onClose,
   propertyIdentifier,
@@ -62,7 +62,7 @@ export const EditSymlink = ({
   });
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const webPropertiesKeys = Object.keys(webProperties.data || {});
-  console.log(data);
+
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Split hasGutter>
@@ -139,6 +139,7 @@ export const EditSymlink = ({
                   type="text"
                   id="source"
                   {...field}
+                  isDisabled
                 />
               </FormGroup>
             )}
@@ -163,6 +164,7 @@ export const EditSymlink = ({
                   type="text"
                   id="target"
                   {...field}
+                  isDisabled
                 />
               </FormGroup>
             )}
@@ -189,6 +191,7 @@ export const EditSymlink = ({
                   onChange(event);
                 }}
                 value={value}
+                isDisabled
               >
                 <FormSelectOption key={1} label="Please select an environment" isDisabled />
                 {webPropertiesKeys.map((envName) => (
@@ -202,12 +205,12 @@ export const EditSymlink = ({
 
       <ActionGroup>
         <Button
-          variant="primary"
+          variant="danger"
           type="submit"
           isLoading={isSubmitting}
           isDisabled={isSubmitting || Object.keys(errors).length !== 0}
         >
-          Create
+          Delete
         </Button>
         <Button variant="link" onClick={onClose}>
           Cancel

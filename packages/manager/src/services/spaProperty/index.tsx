@@ -1,5 +1,8 @@
 export {
   useGetSPAProperties,
   useGetSPAPropGroupByName,
-  useGetStatusForAnApplication
+  useGetStatusForAnApplication,
+  useAddSymlink,
+  useDeleteSymlink,
+  useAutoEnableSymlink
 } from './queries';

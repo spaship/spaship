@@ -3,7 +3,7 @@
 /* eslint-disable react/no-array-index-key */
 import { usePopUp } from '@app/hooks';
 import { useListOfPods } from '@app/services/appLogs';
-import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
+import { useGetSPAPropGroupByName, useAutoEnableSymlink } from '@app/services/spaProperty';
 import { TSpaProperty } from '@app/services/spaProperty/types';
 import { useApplicationAutoSync } from '@app/services/sync';
 import { convertDateFormat } from '@app/utils/convertDateFormat';
@@ -50,6 +50,7 @@ import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useSession } from 'next-auth/react';
 import { ApplicationStatus } from '../../WebPropertyDetailPage/components/SSR/ApplicationStatus';
 import { Lighthouse } from '../Lighthouse/Lighthouse';
 
@@ -93,7 +94,7 @@ export const StaticSPADeployment = (): JSX.Element => {
   const [isSymlinkAutoEnabled, setIsSymlinkAutoEnabled] = useState<{ [key: string]: boolean }>({});
 
   const drawerRef = useRef<HTMLDivElement>();
-
+  const { data: session } = useSession();
   const onLogsExpand = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     drawerRef.current && drawerRef.current.focus();
@@ -124,6 +125,7 @@ export const StaticSPADeployment = (): JSX.Element => {
   const openModel = async (data: any, value: 'autoSync' | 'autoEnableSymlink', rowId: string) => {
     handlePopUpOpen(value);
     setSyncData(data);
+    setSelectedData(data);
     setSelectedDataListItemId(rowId);
   };
 
@@ -151,6 +153,39 @@ export const StaticSPADeployment = (): JSX.Element => {
             handlePopUpClose('autoSync');
           } else {
             toast.error('Failed to autosync');
+          }
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('An error occurred:', error);
+        }
+      }
+    }
+  };
+  const autoEnableSymlinkData = useAutoEnableSymlink();
+  const handleAutoEnableSymlink = async (symlinkFlag: boolean) => {
+    if (selectedData) {
+      try {
+        await autoEnableSymlinkData.mutateAsync({
+          propertyIdentifier: selectedData?.propertyIdentifier,
+          env: selectedData?.env,
+          createdBy: session?.user?.email || '',
+          identifier: selectedData?.identifier,
+          autoSymlinkCreation: symlinkFlag
+        });
+
+        handlePopUpClose('autoEnableSymlink');
+        if (symlinkFlag) {
+          toast.success('Auto Symlink has been enabled successfully.');
+        } else {
+          toast.success('Auto Symlink has been disabled successfully.');
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (error.response && error.response.status === 403) {
+            toast.error("You don't have access to perform this action");
+            handlePopUpClose('autoEnableSymlink');
+          } else {
+            toast.error('Failed to autoenable symlink');
           }
         } else {
           // eslint-disable-next-line no-console
@@ -397,7 +432,9 @@ export const StaticSPADeployment = (): JSX.Element => {
                             <SelectOption
                               key={`action-item-autoSymlink-${index}`}
                               value="AutoEnable symlink"
-                              onClick={() => openModel(selectedData, 'autoEnableSymlink', rowId)}
+                              onClick={() =>
+                                openModel(paginatedData[index], 'autoEnableSymlink', rowId)
+                              }
                               // onClick={() =>  // Toggle isSymlinkAutoEnabled for this row
                             >
                               AutoEnable symlink
@@ -524,14 +561,7 @@ export const StaticSPADeployment = (): JSX.Element => {
         />
         <ActionGroup>
           <Button
-            onClick={() =>
-              console.log(
-                'mmmm',
-                selectedDataListItemId,
-                isSymlinkAutoEnabled,
-                isSymlinkAutoEnabled[selectedDataListItemId]
-              )
-            }
+            onClick={() => handleAutoEnableSymlink(isSymlinkAutoEnabled[selectedDataListItemId])}
             className="pf-u-mr-md pf-u-mt-md"
           >
             Submit

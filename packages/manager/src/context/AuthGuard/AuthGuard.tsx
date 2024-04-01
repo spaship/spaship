@@ -15,7 +15,6 @@ export const AuthGuard = ({ children }: Props) => {
     required: true,
     onUnauthenticated: () => {
       const currentUrl = router.asPath;
-      console.log('currentpath', currentUrl);
       router.push({
         pathname: pageLinks.loginPage,
         query: { redirectUri: currentUrl }

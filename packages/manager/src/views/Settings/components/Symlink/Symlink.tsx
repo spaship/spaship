@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { usePopUp } from '@app/hooks';
-import { useAddSymlink, useGetEnvList } from '@app/services/persistent';
+import { useGetEnvList } from '@app/services/persistent';
 import {
   Button,
   EmptyState,
@@ -12,14 +12,15 @@ import {
   SplitItem,
   Title
 } from '@patternfly/react-core';
-import { CubesIcon, EditAltIcon, PlusIcon } from '@patternfly/react-icons';
+import { CubesIcon, TrashIcon, PlusIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { CreateSymlink, FormData as SymlinkForm } from './CreateSymlink/CreateSymlink';
-import { EditSymlink } from './EditSymlink/EditSymlink';
+import { DeleteSymlink } from './DeleteSymlink/DeleteSymlink';
+import { useAddSymlink, useDeleteSymlink } from '@app/services/spaProperty';
 
 type TSymlink = {
   source: string;
@@ -38,12 +39,12 @@ export const Symlink = ({
 
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
     'createSymlink',
-    'editSymlink'
+    'deleteSymlink'
   ] as const);
   const envList = useGetEnvList(propertyIdentifier);
 
   const createSymlink = useAddSymlink(propertyIdentifier);
-  // const editSymlink = '' to be defined after soumu
+  const deleteSymlink = useDeleteSymlink(propertyIdentifier);
   const propertyTitle = envList?.data?.[0]?.propertyIdentifier;
   const { data: session } = useSession();
   const handleCreateSymlink = async (data: SymlinkForm) => {
@@ -66,28 +67,27 @@ export const Symlink = ({
     }
   };
   const handleEditButton = (data: any, env: string) => {
-    handlePopUpOpen('editSymlink');
+    handlePopUpOpen('deleteSymlink');
     setEnvName(env);
     setEditSymlinkData(data);
   };
   const handleEditSymlink = async (data: SymlinkForm) => {
     if (!propertyTitle) return;
-    console.log('edit symlink', data);
-    // try {
-    //   await editSymlink.mutateAsync({
-    //     ...data,
-    //     createdBy: session?.user?.email || ''
-    //   });
-    //   toast.success('Symlink edit successfully');
-    //   handlePopUpClose('editSymlink');
-    // } catch (error) {
-    //   if (error instanceof AxiosError && error.response && error.response.status === 403) {
-    //     toast.error("You don't have access to perform this action");
-    //     handlePopUpClose('editSymlink');
-    //   } else {
-    //     toast.error('Failed to ecit symlink');
-    //   }
-    // }
+    try {
+      await deleteSymlink.mutateAsync({
+        ...data,
+        createdBy: session?.user?.email || ''
+      });
+      toast.success('Symlink deleted successfully');
+      handlePopUpClose('deleteSymlink');
+    } catch (error) {
+      if (error instanceof AxiosError && error.response && error.response.status === 403) {
+        toast.error("You don't have access to perform this action");
+        handlePopUpClose('deleteSymlink');
+      } else {
+        toast.error('Failed to delete the symlink');
+      }
+    }
   };
   return (
     <>
@@ -136,7 +136,7 @@ export const Symlink = ({
                       variant="link"
                       onClick={() => handleEditButton(symlinkItem, selectedData?.env)}
                     >
-                      <EditAltIcon />
+                      <TrashIcon />
                     </Button>
                   </Tr>
                 ))}
@@ -167,15 +167,15 @@ export const Symlink = ({
         />
       </Modal>
       <Modal
-        title="EditSymlink"
+        title="Are you sure you want to delete this symlink?"
         variant={ModalVariant.medium}
-        isOpen={popUp.editSymlink.isOpen}
-        onClose={() => handlePopUpClose('editSymlink')}
+        isOpen={popUp.deleteSymlink.isOpen}
+        onClose={() => handlePopUpClose('deleteSymlink')}
       >
-        <EditSymlink
+        <DeleteSymlink
           data={editSymlinkData}
           env={envName}
-          onClose={() => handlePopUpClose('editSymlink')}
+          onClose={() => handlePopUpClose('deleteSymlink')}
           onSubmit={handleEditSymlink}
           propertyIdentifier={propertyIdentifier || ''}
           applicationIdentifier={selectedData?.identifier || ''}

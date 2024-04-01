@@ -1,6 +1,6 @@
 import { orchestratorReq } from '@app/config/orchestratorReq';
 import { useMutation, useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query';
-import { TCreateEnvDTO, TCreateSymlinkDTO, TEnv } from './types';
+import { TCreateEnvDTO, TEnv } from './types';
 
 const persistentEnvQueryKeys = {
   list: (webPropertyIdentifier: string) => ['persistent-env', webPropertyIdentifier] as const
@@ -73,24 +73,6 @@ export const useAddEnv = (propertyIdentifier?: string) => {
   const queryClient = useQueryClient();
 
   return useMutation(createEnv, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(webPropertyKeys.list);
-      if (propertyIdentifier) {
-        queryClient.invalidateQueries(webPropertyKeys.id(propertyIdentifier));
-      }
-    }
-  });
-};
-
-const createSymlink = async (dto: TCreateSymlinkDTO): Promise<TEnv> => {
-  const { data } = await orchestratorReq.post('/applications/symlink', dto);
-  return data.data;
-};
-
-export const useAddSymlink = (propertyIdentifier?: string) => {
-  const queryClient = useQueryClient();
-
-  return useMutation(createSymlink, {
     onSuccess: () => {
       queryClient.invalidateQueries(webPropertyKeys.list);
       if (propertyIdentifier) {
