@@ -174,7 +174,8 @@ export const Symlink = ({
                   }
 
                   return (
-                    <Tr key={`symlinkdata_${i}`} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
+            
+            <Tr key={`symlinkdata_${i}`} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
                       <Td dataLabel={symlinkItem?.source} style={{ wordBreak: 'break-all' }}>
                         <span>{statusIcon}</span>&nbsp;{symlinkItem.source}
                       </Td>
