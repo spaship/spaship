@@ -157,10 +157,11 @@ export class ApplicationService {
     applicationDetails.updatedBy = createdBy;
     this.logger.log('UpdatedApplicationDetails', JSON.stringify(applicationDetails));
     await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false }, applicationDetails);
-    processSymlink(this.applicationFactory, this.dataServices, this.agendaService, this.logger);
+    processSymlink(this.analyticsService, this.applicationFactory, this.dataServices, this.agendaService, this.logger);
     return this.applicationFactory.createApplicationResponse(applicationDetails, applicationExists);
 
     async function processSymlink(
+      analyticsService: AnalyticsService,
       applicationFactory: ApplicationFactory,
       dataServices: IDataServices,
       agendaService: AgendaService,
@@ -198,6 +199,16 @@ export class ApplicationService {
               symlink,
               createdBy
             });
+            await analyticsService.createActivityStream(
+              propertyIdentifier,
+              Action.SYMLINK_CREATION_SCHEDULED,
+              env,
+              identifier,
+              `Auto Symlink Creation Scheduled`,
+              createdBy,
+              Source.CLI,
+              JSON.stringify(symlink)
+            );
             logger.log('Agenda', JSON.stringify(agendaResponse));
             await dataServices.application.updateOne(
               { propertyIdentifier, env, identifier, isContainerized: false, isGit: false },
@@ -1362,7 +1373,7 @@ export class ApplicationService {
           propertyIdentifier,
           symlink.status === Action.SYMLINK_CREATED ? Action.SYMLINK_CREATED : Action.SYMLINK_CREATION_FAILED,
           env,
-          'NA',
+          identifier,
           symlink.status === Action.SYMLINK_CREATED
             ? `symlink created for ${env} env of ${propertyIdentifier}`
             : `symlink creation failed for ${env} env of ${propertyIdentifier}`,
