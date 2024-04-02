@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/no-array-index-key */
-import { usePopUp, useToggle } from '@app/hooks';
+import { usePopUp } from '@app/hooks';
 import { useListOfPods } from '@app/services/appLogs';
-import { useGetSPAPropGroupByName } from '@app/services/spaProperty';
+import { useGetSPAPropGroupByName, useAutoEnableSymlink } from '@app/services/spaProperty';
 import { TSpaProperty } from '@app/services/spaProperty/types';
 import { useApplicationAutoSync } from '@app/services/sync';
 import { convertDateFormat } from '@app/utils/convertDateFormat';
 import { extractPodIdsForStatic } from '@app/utils/extractPodIds';
+import { Symlink } from '@app/views/Settings/components/Symlink';
 import { ViewLogs } from '@app/views/WebPropertyDetailPage/components/SSR/ViewLogs';
 import {
   ActionGroup,
@@ -32,6 +33,10 @@ import {
   EmptyStateIcon,
   Modal,
   ModalVariant,
+  Select,
+  SelectOption,
+  SelectOptionObject,
+  SelectVariant,
   Spinner,
   Tab,
   TabTitleText,
@@ -45,44 +50,62 @@ import { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useSession } from 'next-auth/react';
 import { ApplicationStatus } from '../../WebPropertyDetailPage/components/SSR/ApplicationStatus';
 import { Lighthouse } from '../Lighthouse/Lighthouse';
 
 const INTERNAL_URL_LENGTH = 40;
 const SLICE_VAL_LENGTH = 20;
 
+type TSymlink = {
+  source: string;
+  target: string;
+};
+
 export const StaticSPADeployment = (): JSX.Element => {
   const { query } = useRouter();
 
   const propertyIdentifier = query.propertyIdentifier as string;
   const spaProperty = query.spaProperty as string;
-  const [isFilterOpen, setIsFilterOpen] = useToggle();
-  const [filterByEnv, setFilterByEnv] = useState('');
-  const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, filterByEnv);
+
+  const spaProperties = useGetSPAPropGroupByName(propertyIdentifier, '');
+  const [selected, setSelected] = useState<{ [key: string]: string }>({});
+
   const spaPropertyKeys = Object.keys(spaProperties.data || {});
   const staticDeploymentData = spaProperties?.data?.[spaProperty]?.filter(
     (data) => data.isContainerized === false
   );
+  const { refetch } = useGetSPAPropGroupByName(propertyIdentifier, '');
+
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const paginatedData = staticDeploymentData;
   const [selectedData, setSelectedData] = useState<any>(staticDeploymentData?.[0]);
   const [syncData, setSyncData] = useState<TSpaProperty | undefined>();
   const [isChecked, setIsChecked] = useState<boolean>(syncData?.autoSync || false);
-  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['autoSync'] as const);
-  const [selectedDataListItemId, setSelectedDataListItemId] = useState<string>('dataListItem1');
+  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
+    'autoSync',
+    'autoEnableSymlink'
+  ] as const);
+  const [selectedDataListItemId, setSelectedDataListItemId] = useState<string>('data-list-item0');
   const [isLogsExpanded, setIsLogsExpanded] = useState(false);
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
   const [envName, setEnvName] = useState('');
   const [isLogsGit, setIsLogsGit] = useState(false);
   const podIdList = useListOfPods(propertyIdentifier, spaProperty, envName);
   const podList = extractPodIdsForStatic(podIdList?.data, true, propertyIdentifier, envName) || {};
-
+  const [isSymlinkAutoEnabled, setIsSymlinkAutoEnabled] = useState<{ [key: string]: boolean }>({});
   const drawerRef = useRef<HTMLDivElement>();
-
+  const { data: session } = useSession();
   const onLogsExpand = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     drawerRef.current && drawerRef.current.focus();
   };
+  useEffect(() => {
+    refetch();
+    const index: any = selectedDataListItemId.replace('data-list-item', '');
+    setSelectedData(staticDeploymentData?.[index]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refetch, staticDeploymentData]);
 
   const onLogsCloseClick = () => {
     setIsLogsExpanded(false);
@@ -93,26 +116,23 @@ export const StaticSPADeployment = (): JSX.Element => {
   ) => {
     setActiveTabKey(tabIndex);
   };
-  const onClick = async (
+  const onClickLogs = async (
     e: React.MouseEvent<any> | React.KeyboardEvent | React.ChangeEvent<Element>,
-    name: string,
-    buildName: string[],
-    rowData: any
+    env: string,
+    isContainerized: boolean
   ) => {
-    setEnvName(rowData.env);
+    setEnvName(env);
     setIsLogsExpanded(true);
-    setIsLogsGit(rowData.isGit);
+    setIsLogsGit(isContainerized);
   };
 
-  const removeValues = () => {
-    setFilterByEnv('' as string);
-  };
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(5);
   const autoSyncData = useApplicationAutoSync();
-  const openModel = async (data: any) => {
-    handlePopUpOpen('autoSync');
+
+  const openModel = async (data: any, value: 'autoSync' | 'autoEnableSymlink', rowId: string) => {
+    handlePopUpOpen(value);
     setSyncData(data);
+    setSelectedData(data);
+    setSelectedDataListItemId(rowId);
   };
 
   const handleAutoSync = async () => {
@@ -147,23 +167,44 @@ export const StaticSPADeployment = (): JSX.Element => {
       }
     }
   };
-  const onPageSet = (_: any, pageNumber: number) => {
-    setPage(pageNumber);
-  };
-  const onPerPageSelect = (
-    _event: React.MouseEvent | React.KeyboardEvent | MouseEvent,
-    newPerPage: number,
-    newPage: number
-  ) => {
-    setPerPage(newPerPage);
-    setPage(newPage);
-  };
+  const autoEnableSymlinkData = useAutoEnableSymlink();
+  const handleAutoEnableSymlink = async (symlinkFlag: boolean) => {
+    if (selectedData) {
+      try {
+        await autoEnableSymlinkData
+          .mutateAsync({
+            propertyIdentifier: selectedData?.propertyIdentifier,
+            env: selectedData?.env,
+            createdBy: session?.user?.email || '',
+            identifier: selectedData?.identifier,
+            autoSymlinkCreation: symlinkFlag
+          })
+          .then(() => {
+            refetch();
+          });
 
-  const startIdx = (page - 1) * perPage;
-  const endIdx = startIdx + perPage;
-  const onClose = () => {
-    setIsExpanded(false);
+        handlePopUpClose('autoEnableSymlink');
+        if (symlinkFlag) {
+          toast.success('Auto Symlink has been enabled successfully.');
+        } else {
+          toast.success('Auto Symlink has been disabled successfully.');
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (error.response && error.response.status === 403) {
+            toast.error("You don't have access to perform this action");
+            handlePopUpClose('autoEnableSymlink');
+          } else {
+            toast.error('Failed to autoenable symlink');
+          }
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('An error occurred:', error);
+        }
+      }
+    }
   };
+  const [isOpen, setIsOpen] = useState(false);
 
   const onSelectDataListItem = (id: string) => {
     const index = parseInt(id.charAt(id.length - 1), 10);
@@ -171,6 +212,34 @@ export const StaticSPADeployment = (): JSX.Element => {
     setSelectedData(rowSelectedData);
     setSelectedDataListItemId(id);
     setIsExpanded(true);
+  };
+
+  const [rowOpenStates, setRowOpenStates] = useState<{ [key: string]: boolean }>({});
+
+  const onToggle = (rowId: string, isSelectOpen: boolean) => {
+    setRowOpenStates((prevStates) => ({
+      ...prevStates,
+      [rowId]: isSelectOpen
+    }));
+  };
+
+  const onSelect = (
+    event: React.MouseEvent | React.ChangeEvent,
+    value: string | SelectOptionObject,
+    rowId: string
+  ) => {
+    setIsOpen(false);
+    const selectedValue = value as string;
+    setSelected((prevSelected) => ({
+      ...prevSelected,
+      [rowId]: selectedValue
+    }));
+  };
+  const toggleSymlinkAutoEnabled = (rowId: string) => {
+    setIsSymlinkAutoEnabled((prevStates) => ({
+      ...prevStates,
+      [rowId]: !prevStates[rowId] // Toggle the value for the specified rowId
+    }));
   };
 
   const panelContent = (
@@ -192,7 +261,7 @@ export const StaticSPADeployment = (): JSX.Element => {
           <Tbody>
             {selectedData?.accessUrl ? (
               selectedData?.accessUrl.map((url: string, i: number) => (
-                <Tr key={url} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
+                <Tr key={`access-${i}`} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
                   {url === 'NA' ? (
                     <Spinner isSVG diameter="30px" />
                   ) : (
@@ -246,7 +315,7 @@ export const StaticSPADeployment = (): JSX.Element => {
           <Tbody>
             {selectedData?.routerUrl ? (
               selectedData?.routerUrl.map((url: string, i: number) => (
-                <Tr key={url} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
+                <Tr key={`router-${i}`} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
                   {url === 'NA' ? (
                     <Spinner isSVG diameter="30px" />
                   ) : (
@@ -290,6 +359,12 @@ export const StaticSPADeployment = (): JSX.Element => {
             )}
           </Tbody>
         </Table>
+        <br />
+        <Symlink
+          propertyIdentifier={propertyIdentifier}
+          selectedData={selectedData}
+          refetch={refetch}
+        />
 
         <Lighthouse
           webPropertyIdentifier={selectedData?.propertyIdentifier}
@@ -306,14 +381,10 @@ export const StaticSPADeployment = (): JSX.Element => {
       style={{ margin: '0px' }}
       aria-label="drawerContent"
       selectedDataListItemId={selectedDataListItemId}
-      onSelectDataListItem={onSelectDataListItem}
+      onSelectDataListItem={(id) => onSelectDataListItem(id)}
     >
-      {paginatedData?.map(({ env, ref, path }, index) => {
+      {paginatedData?.map(({ env, ref, path, isContainerized }, index) => {
         const rowId = `data-list-item${index}`;
-        function setConfigureData(arg0: TSpaProperty) {
-          throw new Error('Function not implemented.');
-        }
-
         return (
           <DataListItem
             key={`data-list-item-${index}`} // Ensure a unique key
@@ -325,7 +396,7 @@ export const StaticSPADeployment = (): JSX.Element => {
               <DataListItemCells
                 dataListCells={[
                   <>
-                    <DataListCell className="spaTitleText" key={`data-list-cell${index}`}>
+                    <DataListCell className="spaTitleText" key={`data-list-cell${index}-ref`}>
                       <div>{env}</div>
                       <p className="bodyText">
                         Ref:{' '}
@@ -334,7 +405,7 @@ export const StaticSPADeployment = (): JSX.Element => {
                         }`}
                       </p>
                     </DataListCell>
-                    <DataListCell key={`data-list-cell${index}`}>
+                    <DataListCell key={`data-list-cell${index}-path`}>
                       <p className="bodyText">
                         Path:{' '}
                         {`${path.slice(0, SLICE_VAL_LENGTH) ?? 'NA'} ${
@@ -343,27 +414,44 @@ export const StaticSPADeployment = (): JSX.Element => {
                       </p>
                     </DataListCell>
                     <DataListCell style={{ display: 'contents' }}>
-                      <ActionList>
+                      <ActionList key={`action-item${index}`}>
                         <ActionListItem>
                           <Button
                             variant="primary"
                             isSmall
                             icon={<SyncAltIcon />}
-                            onClick={() => openModel(selectedData)}
+                            onClick={() => openModel(selectedData, 'autoSync', rowId)}
                           >
                             Auto Sync
                           </Button>
                         </ActionListItem>
                         <ActionListItem>
-                          <Button
-                            variant="primary"
-                            isSmall
-                            onClick={(e) =>
-                              onClick(e, selectedData?.name, selectedData?.buildName, selectedData)
-                            }
+                          <Select
+                            key={`action-item-viewLogs-${index}`}
+                            variant={SelectVariant.single}
+                            isPlain
+                            aria-label={`Select Input with descriptions ${index}`}
+                            onToggle={(isSelectOpen) => onToggle(rowId, isSelectOpen)}
+                            onSelect={(e, value) => onSelect(e, value, rowId)} // Pass rowId here
+                            selections={selected[rowId] || 'More Actions'} // Use selected value for this row
+                            isOpen={rowOpenStates[rowId]}
                           >
-                            View Logs
-                          </Button>
+                            <SelectOption
+                              value="View Logs"
+                              onClick={(e) => onClickLogs(e, env, isContainerized)}
+                            >
+                              View Logs
+                            </SelectOption>
+                            <SelectOption
+                              key={`action-item-autoSymlink-${index}`}
+                              value="AutoEnable symlink"
+                              onClick={() =>
+                                openModel(paginatedData[index], 'autoEnableSymlink', rowId)
+                              }
+                            >
+                              AutoEnable symlink
+                            </SelectOption>
+                          </Select>
                         </ActionListItem>
                       </ActionList>
                     </DataListCell>
@@ -462,6 +550,35 @@ export const StaticSPADeployment = (): JSX.Element => {
             Submit
           </Button>
           <Button onClick={() => handlePopUpClose('autoSync')} className="pf-u-mt-md">
+            Cancel
+          </Button>
+        </ActionGroup>
+      </Modal>
+      <Modal
+        title="AutoEnable symlink Confirmation"
+        variant={ModalVariant.small}
+        isOpen={popUp.autoEnableSymlink.isOpen}
+        onClose={() => handlePopUpClose('autoEnableSymlink')}
+      >
+        <Checkbox
+          label={
+            isSymlinkAutoEnabled[selectedDataListItemId]
+              ? 'AutoEnable symlink Enabled'
+              : 'AutoEnable symlink Disabled'
+          }
+          isChecked={isSymlinkAutoEnabled[selectedDataListItemId]}
+          onChange={() => toggleSymlinkAutoEnabled(selectedDataListItemId)}
+          id="controlled-check-1"
+          name="autoEnableSymlink"
+        />
+        <ActionGroup>
+          <Button
+            onClick={() => handleAutoEnableSymlink(isSymlinkAutoEnabled[selectedDataListItemId])}
+            className="pf-u-mr-md pf-u-mt-md"
+          >
+            Submit
+          </Button>
+          <Button onClick={() => handlePopUpClose('autoEnableSymlink')} className="pf-u-mt-md">
             Cancel
           </Button>
         </ActionGroup>

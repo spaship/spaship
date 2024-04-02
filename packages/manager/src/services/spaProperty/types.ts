@@ -21,3 +21,18 @@ export type TSpaProperty = {
   port: number;
   buildName: string[];
 };
+export type TSymlinkDTO = {
+  propertyIdentifier: string | undefined;
+  env: string;
+  source: string;
+  createdBy: string;
+  target: string;
+  identifier: string | undefined;
+};
+export type TAutoEnableSymlinkDTO = {
+  propertyIdentifier: string | undefined;
+  env: string;
+  createdBy: string;
+  identifier: string | undefined;
+  autoSymlinkCreation: boolean;
+};

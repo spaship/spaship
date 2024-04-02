@@ -40,13 +40,17 @@ type Props = {
   onClose: () => void;
   propertyIdentifier: string;
   applicationIdentifier: string;
+  env: string;
+  data: any;
 };
 
-export const CreateSymlink = ({
+export const DeleteSymlink = ({
   onSubmit,
   onClose,
   propertyIdentifier,
-  applicationIdentifier
+  applicationIdentifier,
+  env,
+  data
 }: Props): JSX.Element => {
   const {
     control,
@@ -58,6 +62,7 @@ export const CreateSymlink = ({
   });
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
   const webPropertiesKeys = Object.keys(webProperties.data || {});
+
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Split hasGutter>
@@ -119,7 +124,7 @@ export const CreateSymlink = ({
           <Controller
             control={control}
             name="source"
-            defaultValue=""
+            defaultValue={data?.source}
             render={({ field, fieldState: { error } }) => (
               <FormGroup
                 label="Source File Path"
@@ -134,6 +139,7 @@ export const CreateSymlink = ({
                   type="text"
                   id="source"
                   {...field}
+                  isDisabled
                 />
               </FormGroup>
             )}
@@ -143,7 +149,7 @@ export const CreateSymlink = ({
           <Controller
             control={control}
             name="target"
-            defaultValue=""
+            defaultValue={data?.target}
             render={({ field, fieldState: { error } }) => (
               <FormGroup
                 label="Target File Path"
@@ -158,6 +164,7 @@ export const CreateSymlink = ({
                   type="text"
                   id="target"
                   {...field}
+                  isDisabled
                 />
               </FormGroup>
             )}
@@ -168,6 +175,7 @@ export const CreateSymlink = ({
         <Controller
           control={control}
           name="env"
+          defaultValue={env}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <FormGroup
               label="Select Environment"
@@ -183,6 +191,7 @@ export const CreateSymlink = ({
                   onChange(event);
                 }}
                 value={value}
+                isDisabled
               >
                 <FormSelectOption key={1} label="Please select an environment" isDisabled />
                 {webPropertiesKeys.map((envName) => (
@@ -196,12 +205,12 @@ export const CreateSymlink = ({
 
       <ActionGroup>
         <Button
-          variant="primary"
+          variant="danger"
           type="submit"
           isLoading={isSubmitting}
           isDisabled={isSubmitting || Object.keys(errors).length !== 0}
         >
-          Create
+          Delete
         </Button>
         <Button variant="link" onClick={onClose}>
           Cancel

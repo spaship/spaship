@@ -1,9 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { orchestratorReq } from '@app/config/orchestratorReq';
-import { TSpaProperty } from './types';
+import { TAutoEnableSymlinkDTO, TSpaProperty, TSymlinkDTO } from './types';
+import { TEnv } from '../persistent/types';
 
-const spaPropertyKeys = {
+export const spaPropertyKeys = {
   list: (webPropertyIdentifier: string, env: string = '') =>
     ['spa-properties', webPropertyIdentifier, env] as const
 };
@@ -63,3 +64,26 @@ const fetchStatusForAnApplication = async (link: string): Promise<boolean> => {
 
 export const useGetStatusForAnApplication = (link: string, _id: string) =>
   useQuery([`${link}_${_id}`], () => fetchStatusForAnApplication(link));
+
+const createSymlink = async (dto: TSymlinkDTO): Promise<TEnv> => {
+  const { data } = await orchestratorReq.post('/applications/symlink', dto);
+  return data.data;
+};
+
+export const useAddSymlink = () => useMutation(createSymlink);
+
+const deleteSymlink = async (dto: TSymlinkDTO): Promise<TEnv> => {
+  const { data } = await orchestratorReq.delete(`/applications/symlink`, {
+    data: dto
+  });
+  return data.data;
+};
+
+export const useDeleteSymlink = () => useMutation(deleteSymlink);
+
+const autoEnableSymlink = async (dto: TAutoEnableSymlinkDTO): Promise<TEnv> => {
+  const { data } = await orchestratorReq.post('applications/auto-symlink', dto);
+  return data.data;
+};
+
+export const useAutoEnableSymlink = () => useMutation(autoEnableSymlink);

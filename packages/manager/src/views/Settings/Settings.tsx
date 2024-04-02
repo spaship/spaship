@@ -8,7 +8,6 @@ import { ApiKey } from '@app/views/Settings/components/ApiKey/ApiKey';
 import { CmdbDetails } from '@app/views/Settings/components/CmdbDetails';
 import { DeleteWebProperty } from '@app/views/Settings/components/DeleteWebProperty/DeleteWebProperty';
 import { Environment } from '@app/views/Settings/components/Environment';
-import { Symlink } from './components/Symlink';
 import { GitBrokerWebhook } from './components/GitBrokerWebhook';
 
 export const Settings: React.FunctionComponent = () => {
@@ -69,9 +68,8 @@ export const Settings: React.FunctionComponent = () => {
             <ApiKey propertyIdentifier={propertyIdentifier} envList={envList} />
           )}
           {activeTabKey === 3 && <AccessControl propertyIdentifier={propertyIdentifier} />}
-          {activeTabKey === 4 && <Symlink propertyIdentifier={propertyIdentifier} />}
-          {activeTabKey === 5 && <GitBrokerWebhook />}
-          {activeTabKey === 6 && <DeleteWebProperty propertyIdentifier={propertyIdentifier} />}
+          {activeTabKey === 4 && <GitBrokerWebhook />}
+          {activeTabKey === 5 && <DeleteWebProperty propertyIdentifier={propertyIdentifier} />}
         </GridItem>
       </Grid>
     </div>

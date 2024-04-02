@@ -1,7 +1,3 @@
-import { signIn, useSession } from 'next-auth/react';
-import Router from 'next/router';
-import { useEffect, useState } from 'react';
-
 import { env } from '@app/config/env';
 import { useToggle } from '@app/hooks';
 import { pageLinks } from '@app/links';
@@ -18,37 +14,33 @@ import {
   Title,
   TitleSizes
 } from '@patternfly/react-core';
+import { signIn, useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { Nav } from './components/Nav';
 
 export const LoginPage = (): JSX.Element => {
-  const [isLoggingIn, setIsLoggingIn] = useToggle();
+  const router = useRouter();
   const { status } = useSession();
-  const [returnUri, setReturnUri] = useState('');
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setReturnUri(window.location.search);
-    }
-  }, []);
+  const [isLoggingIn, setIsLoggingIn] = useToggle();
+  const totalTimeSaved = useGetTotalTimeSavedForLogin();
 
   useEffect(() => {
     if (status === 'authenticated') {
-      Router.push(pageLinks.webPropertyListPage);
+      router.push(pageLinks.webPropertyListPage);
     }
-  }, [status]);
-  const params = new URLSearchParams(returnUri);
-  const redirectUrl = params.get('redirectUri');
+  }, [status, router]);
+
+  const redirectUrl = router.query.redirectUri as string | undefined;
 
   const onLogin = () => {
     setIsLoggingIn.on();
     signIn('keycloak', {
-      callbackUrl: redirectUrl ? (redirectUrl as string) : pageLinks.webPropertyListPage
+      callbackUrl: redirectUrl ?? pageLinks.webPropertyListPage
     }).catch(() => {
       setIsLoggingIn.off();
     });
   };
-
-  const totalTimeSaved = useGetTotalTimeSavedForLogin();
-
   return (
     <Page header={<Nav />}>
       <PageSection>

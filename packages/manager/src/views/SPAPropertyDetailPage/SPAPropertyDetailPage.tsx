@@ -9,7 +9,7 @@ import { BuildIcon, BundleIcon, PackageIcon } from '@patternfly/react-icons';
 import toast from 'react-hot-toast';
 import { Dashboard } from '../WebPropertyDetailPage/components/Dashboard';
 import { ContainerizedSPADeployment } from './ContainerizedSPADeployment/ContainerizedSPADeployment';
-import { StaticSPADeployment } from './StaticSPADeployment.tsx/StaticSPADeployment';
+import { StaticSPADeployment } from './StaticSPADeployment/StaticSPADeployment';
 
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
