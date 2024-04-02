@@ -120,7 +120,6 @@ export const StaticSPADeployment = (): JSX.Element => {
     e: React.MouseEvent<any> | React.KeyboardEvent | React.ChangeEvent<Element>,
     env: string,
     isContainerized: boolean
-    // rowData: any
   ) => {
     setEnvName(env);
     setIsLogsExpanded(true);
@@ -209,7 +208,6 @@ export const StaticSPADeployment = (): JSX.Element => {
 
   const onSelectDataListItem = (id: string) => {
     const index = parseInt(id.charAt(id.length - 1), 10);
-    // const index = parseInt(id.replace('data-list-item', ''), 10) - 1; // Get the index from the id
     const rowSelectedData = paginatedData && paginatedData[index];
     setSelectedData(rowSelectedData);
     setSelectedDataListItemId(id);
@@ -450,7 +448,6 @@ export const StaticSPADeployment = (): JSX.Element => {
                               onClick={() =>
                                 openModel(paginatedData[index], 'autoEnableSymlink', rowId)
                               }
-                              // onClick={() =>  // Toggle isSymlinkAutoEnabled for this row
                             >
                               AutoEnable symlink
                             </SelectOption>
