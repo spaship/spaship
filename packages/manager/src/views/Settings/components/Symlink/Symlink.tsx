@@ -1,4 +1,5 @@
 /* eslint-disable no-underscore-dangle */
+/* eslint-disable react/no-array-index-key */
 import { usePopUp } from '@app/hooks';
 import { useGetEnvList } from '@app/services/persistent';
 import {
@@ -142,33 +143,33 @@ export const Symlink = ({
                 </Tr>
               </Thead>
               <Tbody>
-                {selectedData?.symlink?.map((symlinkItem: TSymlink, i: number) => (
-                  <Tr key={selectedData?._id} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
-                    <Td dataLabel={symlinkItem?.source} style={{ wordBreak: 'break-all' }}>
-                      <span>
-                        {' '}
-                        {symlinkItem?.status === 'SYMLINK_CREATED' ? (
-                          <CheckCircleIcon color="green" />
-                        ) : symlinkItem?.status === 'SYMLINK_CREATION_FAILED' ? (
-                          <ExclamationCircleIcon color="red" />
-                        ) : (
-                          <ClockIcon />
-                        )}
-                      </span>{' '}
-                      &nbsp;
-                      {symlinkItem.source}
-                    </Td>
-                    <Td dataLabel={symlinkItem?.target} style={{ wordBreak: 'break-all' }}>
-                      {symlinkItem.target}
-                    </Td>
-                    <Button
-                      variant="link"
-                      onClick={() => handleEditButton(symlinkItem, selectedData?.env)}
-                    >
-                      <TrashIcon />
-                    </Button>
-                  </Tr>
-                ))}
+                {selectedData?.symlink?.map((symlinkItem: TSymlink, i: number) => {
+                  let statusIcon;
+                  if (symlinkItem?.status === 'SYMLINK_CREATED') {
+                    statusIcon = <CheckCircleIcon color="green" />;
+                  } else if (symlinkItem?.status === 'SYMLINK_CREATION_FAILED') {
+                    statusIcon = <ExclamationCircleIcon color="red" />;
+                  } else {
+                    statusIcon = <ClockIcon />;
+                  }
+
+                  return (
+                    <Tr key={`symlinkdata_${i}`} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
+                      <Td dataLabel={symlinkItem?.source} style={{ wordBreak: 'break-all' }}>
+                        <span>{statusIcon}</span>&nbsp;{symlinkItem.source}
+                      </Td>
+                      <Td dataLabel={symlinkItem?.target} style={{ wordBreak: 'break-all' }}>
+                        {symlinkItem.target}
+                      </Td>
+                      <Button
+                        variant="link"
+                        onClick={() => handleEditButton(symlinkItem, selectedData?.env)}
+                      >
+                        <TrashIcon />
+                      </Button>
+                    </Tr>
+                  );
+                })}
               </Tbody>
             </Table>
           ) : (
