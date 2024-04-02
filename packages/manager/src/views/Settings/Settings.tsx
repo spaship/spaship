@@ -50,13 +50,12 @@ export const Settings: React.FunctionComponent = () => {
               eventKey={3}
               title={<TabTitleText aria-label="access-control">Access Control</TabTitleText>}
             />
-            <Tab eventKey={4} title={<TabTitleText aria-label="symlink">Symlink</TabTitleText>} />
             <Tab
-              eventKey={5}
+              eventKey={4}
               title={<TabTitleText aria-label="webhook">Git-Broker</TabTitleText>}
             />
             <Tab
-              eventKey={6}
+              eventKey={5}
               title={<TabTitleText aria-label="danger-zone">Danger Zone</TabTitleText>}
             />
           </Tabs>
