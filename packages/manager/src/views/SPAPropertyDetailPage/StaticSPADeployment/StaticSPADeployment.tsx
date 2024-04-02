@@ -208,7 +208,6 @@ export const StaticSPADeployment = (): JSX.Element => {
 
   const onSelectDataListItem = (id: string) => {
     const index = parseInt(id.charAt(id.length - 1), 10);
-    // const index = parseInt(id.replace('data-list-item', ''), 10) - 1; // Get the index from the id
     const rowSelectedData = paginatedData && paginatedData[index];
     setSelectedData(rowSelectedData);
     setSelectedDataListItemId(id);
