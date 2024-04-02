@@ -12,29 +12,39 @@ import {
   SplitItem,
   Title
 } from '@patternfly/react-core';
-import { CubesIcon, TrashIcon, PlusIcon } from '@patternfly/react-icons';
+import {
+  CubesIcon,
+  TrashIcon,
+  PlusIcon,
+  CheckCircleIcon,
+  ClockIcon,
+  ExclamationCircleIcon
+} from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import { useAddSymlink, useDeleteSymlink } from '@app/services/spaProperty';
 import { CreateSymlink, FormData as SymlinkForm } from './CreateSymlink/CreateSymlink';
 import { DeleteSymlink } from './DeleteSymlink/DeleteSymlink';
-import { useAddSymlink, useDeleteSymlink } from '@app/services/spaProperty';
 
 type TSymlink = {
   source: string;
   target: string;
+  status: string;
 };
 
 export const Symlink = ({
   propertyIdentifier,
-  selectedData
+  selectedData,
+  refetch
 }: {
   propertyIdentifier: string;
   selectedData: any;
+  refetch: any;
 }) => {
-  const [editSymlinkData, setEditSymlinkData] = useState<any>([]);
+  const [deleteSymlinkData, setDeleteSymlinkData] = useState<any>([]);
   const [envName, setEnvName] = useState<any>([]);
 
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
@@ -43,18 +53,22 @@ export const Symlink = ({
   ] as const);
   const envList = useGetEnvList(propertyIdentifier);
 
-  const createSymlink = useAddSymlink(propertyIdentifier);
-  const deleteSymlink = useDeleteSymlink(propertyIdentifier);
+  const createSymlink = useAddSymlink();
+  const deleteSymlink = useDeleteSymlink();
   const propertyTitle = envList?.data?.[0]?.propertyIdentifier;
   const { data: session } = useSession();
   const handleCreateSymlink = async (data: SymlinkForm) => {
     if (!propertyTitle) return;
 
     try {
-      await createSymlink.mutateAsync({
-        ...data,
-        createdBy: session?.user?.email || ''
-      });
+      await createSymlink
+        .mutateAsync({
+          ...data,
+          createdBy: session?.user?.email || ''
+        })
+        .then(() => {
+          refetch();
+        });
       toast.success('Symlink created successfully');
       handlePopUpClose('createSymlink');
     } catch (error) {
@@ -69,16 +83,21 @@ export const Symlink = ({
   const handleEditButton = (data: any, env: string) => {
     handlePopUpOpen('deleteSymlink');
     setEnvName(env);
-    setEditSymlinkData(data);
+    setDeleteSymlinkData(data);
   };
-  const handleEditSymlink = async (data: SymlinkForm) => {
+  const handleDeleteSymlink = async (data: SymlinkForm) => {
     if (!propertyTitle) return;
     try {
-      await deleteSymlink.mutateAsync({
-        ...data,
-        createdBy: session?.user?.email || ''
-      });
+      await deleteSymlink
+        .mutateAsync({
+          ...data,
+          createdBy: session?.user?.email || ''
+        })
+        .then(() => {
+          refetch();
+        });
       toast.success('Symlink deleted successfully');
+
       handlePopUpClose('deleteSymlink');
     } catch (error) {
       if (error instanceof AxiosError && error.response && error.response.status === 403) {
@@ -126,9 +145,19 @@ export const Symlink = ({
                 {selectedData?.symlink?.map((symlinkItem: TSymlink, i: number) => (
                   <Tr key={selectedData?._id} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
                     <Td dataLabel={symlinkItem?.source} style={{ wordBreak: 'break-all' }}>
+                      <span>
+                        {' '}
+                        {symlinkItem?.status === 'SYMLINK_CREATED' ? (
+                          <CheckCircleIcon color="green" />
+                        ) : symlinkItem?.status === 'SYMLINK_CREATION_FAILED' ? (
+                          <ExclamationCircleIcon color="red" />
+                        ) : (
+                          <ClockIcon />
+                        )}
+                      </span>{' '}
+                      &nbsp;
                       {symlinkItem.source}
                     </Td>
-
                     <Td dataLabel={symlinkItem?.target} style={{ wordBreak: 'break-all' }}>
                       {symlinkItem.target}
                     </Td>
@@ -173,10 +202,10 @@ export const Symlink = ({
         onClose={() => handlePopUpClose('deleteSymlink')}
       >
         <DeleteSymlink
-          data={editSymlinkData}
+          data={deleteSymlinkData}
           env={envName}
           onClose={() => handlePopUpClose('deleteSymlink')}
-          onSubmit={handleEditSymlink}
+          onSubmit={handleDeleteSymlink}
           propertyIdentifier={propertyIdentifier || ''}
           applicationIdentifier={selectedData?.identifier || ''}
         />

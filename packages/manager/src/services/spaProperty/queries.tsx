@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { orchestratorReq } from '@app/config/orchestratorReq';
 import { TAutoEnableSymlinkDTO, TSpaProperty, TSymlinkDTO } from './types';
@@ -70,17 +70,7 @@ const createSymlink = async (dto: TSymlinkDTO): Promise<TEnv> => {
   return data.data;
 };
 
-export const useAddSymlink = (propertyIdentifier: string) => {
-  const queryClient = useQueryClient();
-
-  return useMutation(createSymlink, {
-    onSuccess: () => {
-      if (propertyIdentifier) {
-        queryClient.invalidateQueries(spaPropertyKeys.list(propertyIdentifier));
-      }
-    }
-  });
-};
+export const useAddSymlink = () => useMutation(createSymlink);
 
 const deleteSymlink = async (dto: TSymlinkDTO): Promise<TEnv> => {
   const { data } = await orchestratorReq.delete(`/applications/symlink`, {
@@ -89,17 +79,7 @@ const deleteSymlink = async (dto: TSymlinkDTO): Promise<TEnv> => {
   return data.data;
 };
 
-export const useDeleteSymlink = (identifier: string) => {
-  const queryClient = useQueryClient();
-
-  return useMutation(deleteSymlink, {
-    onSuccess: () => {
-      if (identifier) {
-        queryClient.invalidateQueries(spaPropertyKeys.list(identifier)); // Invalidate specific identifier query
-      }
-    }
-  });
-};
+export const useDeleteSymlink = () => useMutation(deleteSymlink);
 
 const autoEnableSymlink = async (dto: TAutoEnableSymlinkDTO): Promise<TEnv> => {
   const { data } = await orchestratorReq.post('applications/auto-symlink', dto);

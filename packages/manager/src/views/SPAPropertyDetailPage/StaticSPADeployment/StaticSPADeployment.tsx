@@ -75,6 +75,8 @@ export const StaticSPADeployment = (): JSX.Element => {
   const staticDeploymentData = spaProperties?.data?.[spaProperty]?.filter(
     (data) => data.isContainerized === false
   );
+  const { refetch } = useGetSPAPropGroupByName(propertyIdentifier, '');
+
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const paginatedData = staticDeploymentData;
   const [selectedData, setSelectedData] = useState<any>(staticDeploymentData?.[0]);
@@ -92,13 +94,18 @@ export const StaticSPADeployment = (): JSX.Element => {
   const podIdList = useListOfPods(propertyIdentifier, spaProperty, envName);
   const podList = extractPodIdsForStatic(podIdList?.data, true, propertyIdentifier, envName) || {};
   const [isSymlinkAutoEnabled, setIsSymlinkAutoEnabled] = useState<{ [key: string]: boolean }>({});
-
   const drawerRef = useRef<HTMLDivElement>();
   const { data: session } = useSession();
   const onLogsExpand = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     drawerRef.current && drawerRef.current.focus();
   };
+  useEffect(() => {
+    refetch();
+    const index: any = selectedDataListItemId.replace('data-list-item', '');
+    setSelectedData(staticDeploymentData?.[index]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refetch, staticDeploymentData]);
 
   const onLogsCloseClick = () => {
     setIsLogsExpanded(false);
@@ -165,13 +172,17 @@ export const StaticSPADeployment = (): JSX.Element => {
   const handleAutoEnableSymlink = async (symlinkFlag: boolean) => {
     if (selectedData) {
       try {
-        await autoEnableSymlinkData.mutateAsync({
-          propertyIdentifier: selectedData?.propertyIdentifier,
-          env: selectedData?.env,
-          createdBy: session?.user?.email || '',
-          identifier: selectedData?.identifier,
-          autoSymlinkCreation: symlinkFlag
-        });
+        await autoEnableSymlinkData
+          .mutateAsync({
+            propertyIdentifier: selectedData?.propertyIdentifier,
+            env: selectedData?.env,
+            createdBy: session?.user?.email || '',
+            identifier: selectedData?.identifier,
+            autoSymlinkCreation: symlinkFlag
+          })
+          .then(() => {
+            refetch();
+          });
 
         handlePopUpClose('autoEnableSymlink');
         if (symlinkFlag) {
@@ -351,7 +362,11 @@ export const StaticSPADeployment = (): JSX.Element => {
           </Tbody>
         </Table>
         <br />
-        <Symlink propertyIdentifier={propertyIdentifier} selectedData={selectedData} />
+        <Symlink
+          propertyIdentifier={propertyIdentifier}
+          selectedData={selectedData}
+          refetch={refetch}
+        />
 
         <Lighthouse
           webPropertyIdentifier={selectedData?.propertyIdentifier}

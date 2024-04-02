@@ -30,7 +30,7 @@ export const Feedback = () => {
           summary: data.summary || 'NA',
           description: data.summary || 'NA',
           projectId: 'component:devex/spaship-manager',
-          url: data.stackInfo?.path || 'NA',
+          url: window.location.href || 'NA',
           userAgent: data.stackInfo?.stack || 'NA',
           createdBy: `user:redhat/${username}`,
           feedbackType: data.category || 'NA',
@@ -38,7 +38,6 @@ export const Feedback = () => {
         };
 
         event.detail.submitted = true;
-
         try {
           const response = await fetch('/api/feedback', {
             method: 'POST',
