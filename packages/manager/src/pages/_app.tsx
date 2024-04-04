@@ -31,22 +31,7 @@ type AppPropsWithLayout = AppProps & {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-      onError: (error: any) => {
-        if (error?.response.status === 401) {
-          signOut({ redirect: false, callbackUrl: pageLinks.loginPage })
-            .then((data) => {
-              deleteOrchestratorAuthorizationHeader();
-              // eslint-disable-next-line no-console
-              console.error('data', data.url);
-            })
-            .catch((e) => {
-              // eslint-disable-next-line no-console
-              console.error('Unauthorized request', e);
-            });
-        }
-      }
+      refetchOnWindowFocus: false
     }
   }
 });
