@@ -228,11 +228,16 @@ export const StaticSPADeployment = (): JSX.Element => {
     value: string | SelectOptionObject,
     rowId: string
   ) => {
-    setIsOpen(false);
+
     const selectedValue = value as string;
     setSelected((prevSelected) => ({
       ...prevSelected,
       [rowId]: selectedValue
+    }));
+    // Manually close the dropdown by updating rowOpenStates
+    setRowOpenStates((prevStates) => ({
+      ...prevStates,
+      [rowId]: false
     }));
   };
   const toggleSymlinkAutoEnabled = (rowId: string) => {
