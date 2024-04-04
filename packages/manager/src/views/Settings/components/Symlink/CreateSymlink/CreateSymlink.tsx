@@ -12,9 +12,12 @@ import {
   FormSelectOption,
   Split,
   SplitItem,
-  TextInput
+  TextInput,
+  Tooltip
 } from '@patternfly/react-core';
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
+
+import { InfoCircleIcon } from '@patternfly/react-icons';
 
 const envValidation = /^[a-zA-Z0-9-]+$/;
 export const schema = yup.object({
@@ -40,13 +43,17 @@ type Props = {
   onClose: () => void;
   propertyIdentifier: string;
   applicationIdentifier: string;
+  spaPath: string;
+  env: string;
 };
 
 export const CreateSymlink = ({
   onSubmit,
   onClose,
   propertyIdentifier,
-  applicationIdentifier
+  applicationIdentifier,
+  spaPath,
+  env
 }: Props): JSX.Element => {
   const {
     control,
@@ -119,10 +126,21 @@ export const CreateSymlink = ({
           <Controller
             control={control}
             name="source"
-            defaultValue=""
+            defaultValue={spaPath}
             render={({ field, fieldState: { error } }) => (
               <FormGroup
-                label="Source File Path"
+                label={
+                  <>
+                    Source File Path
+                    <Tooltip
+                      content={<div>Symlink source path sould be relative to SPA path.</div>}
+                    >
+                      <span>
+                        &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
+                      </span>
+                    </Tooltip>
+                  </>
+                }
                 isRequired
                 fieldId="source"
                 validated={error ? 'error' : 'default'}
@@ -143,10 +161,21 @@ export const CreateSymlink = ({
           <Controller
             control={control}
             name="target"
-            defaultValue=""
+            defaultValue={spaPath}
             render={({ field, fieldState: { error } }) => (
               <FormGroup
-                label="Target File Path"
+                label={
+                  <>
+                    Target File Path
+                    <Tooltip
+                      content={<div>Symlink target path sould be relative to SPA path.</div>}
+                    >
+                      <span>
+                        &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
+                      </span>
+                    </Tooltip>
+                  </>
+                }
                 isRequired
                 fieldId="target"
                 validated={error ? 'error' : 'default'}
@@ -168,6 +197,7 @@ export const CreateSymlink = ({
         <Controller
           control={control}
           name="env"
+          defaultValue={env}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <FormGroup
               label="Select Environment"
