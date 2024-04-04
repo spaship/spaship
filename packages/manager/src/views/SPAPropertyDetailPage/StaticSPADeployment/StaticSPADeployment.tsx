@@ -133,6 +133,7 @@ export const StaticSPADeployment = (): JSX.Element => {
     setSyncData(data);
     setSelectedData(data);
     setSelectedDataListItemId(rowId);
+    setIsLogsExpanded(false);
   };
 
   const handleAutoSync = async () => {
@@ -228,8 +229,13 @@ export const StaticSPADeployment = (): JSX.Element => {
     value: string | SelectOptionObject,
     rowId: string
   ) => {
-
     const selectedValue = value as string;
+    console.log('Value ---> ', value);
+    if (value === 'View Logs') {
+      setIsLogsExpanded(true); // Expand logs if View Logs is selected
+    } else {
+      setIsLogsExpanded(false); // Collapse logs for other selections
+    }
     setSelected((prevSelected) => ({
       ...prevSelected,
       [rowId]: selectedValue
@@ -420,7 +426,7 @@ export const StaticSPADeployment = (): JSX.Element => {
                     </DataListCell>
                     <DataListCell style={{ display: 'contents' }}>
                       <ActionList key={`action-item${index}`}>
-                        <ActionListItem>
+                        <ActionListItem style={{ minWidth: '150px' }}>
                           <Button
                             variant="primary"
                             isSmall
@@ -430,7 +436,7 @@ export const StaticSPADeployment = (): JSX.Element => {
                             Auto Sync
                           </Button>
                         </ActionListItem>
-                        <ActionListItem>
+                        <ActionListItem style={{ minWidth: '150px' }}>
                           <Select
                             key={`action-item-viewLogs-${index}`}
                             variant={SelectVariant.single}
