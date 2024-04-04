@@ -11,7 +11,8 @@ import {
   ModalVariant,
   Split,
   SplitItem,
-  Title
+  Title,
+  Tooltip
 } from '@patternfly/react-core';
 import {
   CubesIcon,
@@ -46,7 +47,8 @@ export const Symlink = ({
   refetch: any;
 }) => {
   const [deleteSymlinkData, setDeleteSymlinkData] = useState<any>([]);
-  const [envName, setEnvName] = useState<any>([]);
+  const [envName, setEnvName] = useState<string>('');
+  const [spaPath, setSpaPath] = useState<string>('');
 
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
     'createSymlink',
@@ -58,6 +60,11 @@ export const Symlink = ({
   const deleteSymlink = useDeleteSymlink();
   const propertyTitle = envList?.data?.[0]?.propertyIdentifier;
   const { data: session } = useSession();
+  const handleCreateData = (path: string, env: string) => {
+    setSpaPath(path);
+    setEnvName(env);
+    handlePopUpOpen('createSymlink');
+  };
   const handleCreateSymlink = async (data: SymlinkForm) => {
     if (!propertyTitle) return;
 
@@ -70,6 +77,7 @@ export const Symlink = ({
         .then(() => {
           refetch();
         });
+
       toast.success('Symlink created successfully');
       handlePopUpClose('createSymlink');
     } catch (error) {
@@ -122,7 +130,7 @@ export const Symlink = ({
               icon={<PlusIcon />}
               isSmall
               variant="link"
-              onClick={() => handlePopUpOpen('createSymlink')}
+              onClick={() => handleCreateData(selectedData?.path, selectedData?.env)}
             >
               Create new symlink
             </Button>
@@ -146,11 +154,23 @@ export const Symlink = ({
                 {selectedData?.symlink?.map((symlinkItem: TSymlink, i: number) => {
                   let statusIcon;
                   if (symlinkItem?.status === 'SYMLINK_CREATED') {
-                    statusIcon = <CheckCircleIcon color="green" />;
+                    statusIcon = (
+                      <Tooltip content={<div>Symlink creation successful</div>}>
+                        <CheckCircleIcon color="green" />
+                      </Tooltip>
+                    );
                   } else if (symlinkItem?.status === 'SYMLINK_CREATION_FAILED') {
-                    statusIcon = <ExclamationCircleIcon color="red" />;
+                    statusIcon = (
+                      <Tooltip content={<div>Symlink creation failed</div>}>
+                        <ExclamationCircleIcon color="red" />
+                      </Tooltip>
+                    );
                   } else {
-                    statusIcon = <ClockIcon />;
+                    statusIcon = (
+                      <Tooltip content={<div>Symlink creation scheduled</div>}>
+                        <ClockIcon />
+                      </Tooltip>
+                    );
                   }
 
                   return (
@@ -190,6 +210,8 @@ export const Symlink = ({
         onClose={() => handlePopUpClose('createSymlink')}
       >
         <CreateSymlink
+          env={envName}
+          spaPath={spaPath}
           onClose={() => handlePopUpClose('createSymlink')}
           onSubmit={handleCreateSymlink}
           propertyIdentifier={propertyIdentifier || ''}
