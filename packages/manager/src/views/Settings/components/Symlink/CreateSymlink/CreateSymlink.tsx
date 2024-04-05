@@ -126,7 +126,7 @@ export const CreateSymlink = ({
           <Controller
             control={control}
             name="source"
-            defaultValue={spaPath}
+            defaultValue={spaPath + '/'}
             render={({ field, fieldState: { error } }) => (
               <FormGroup
                 label={
@@ -161,7 +161,7 @@ export const CreateSymlink = ({
           <Controller
             control={control}
             name="target"
-            defaultValue={spaPath}
+            defaultValue={spaPath + '/'}
             render={({ field, fieldState: { error } }) => (
               <FormGroup
                 label={

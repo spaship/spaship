@@ -133,6 +133,11 @@ export const StaticSPADeployment = (): JSX.Element => {
     setSyncData(data);
     setSelectedData(data);
     setSelectedDataListItemId(rowId);
+    setIsLogsExpanded(false);
+    setIsSymlinkAutoEnabled((prevStates) => ({
+      ...prevStates,
+      [rowId]: data?.autoSymlinkCreation // Toggle the value for the specified rowId
+    }));
   };
 
   const handleAutoSync = async () => {
@@ -182,7 +187,6 @@ export const StaticSPADeployment = (): JSX.Element => {
           .then(() => {
             refetch();
           });
-
         handlePopUpClose('autoEnableSymlink');
         if (symlinkFlag) {
           toast.success('Auto Symlink has been enabled successfully.');
@@ -228,11 +232,20 @@ export const StaticSPADeployment = (): JSX.Element => {
     value: string | SelectOptionObject,
     rowId: string
   ) => {
-    setIsOpen(false);
     const selectedValue = value as string;
+    if (value === 'View Logs') {
+      setIsLogsExpanded(true); // Expand logs if View Logs is selected
+    } else {
+      setIsLogsExpanded(false); // Collapse logs for other selections
+    }
     setSelected((prevSelected) => ({
       ...prevSelected,
       [rowId]: selectedValue
+    }));
+    // Manually close the dropdown by updating rowOpenStates
+    setRowOpenStates((prevStates) => ({
+      ...prevStates,
+      [rowId]: false
     }));
   };
   const toggleSymlinkAutoEnabled = (rowId: string) => {
@@ -415,7 +428,7 @@ export const StaticSPADeployment = (): JSX.Element => {
                     </DataListCell>
                     <DataListCell style={{ display: 'contents' }}>
                       <ActionList key={`action-item${index}`}>
-                        <ActionListItem>
+                        <ActionListItem style={{ minWidth: '150px' }}>
                           <Button
                             variant="primary"
                             isSmall
@@ -425,7 +438,7 @@ export const StaticSPADeployment = (): JSX.Element => {
                             Auto Sync
                           </Button>
                         </ActionListItem>
-                        <ActionListItem>
+                        <ActionListItem style={{ minWidth: '150px' }}>
                           <Select
                             key={`action-item-viewLogs-${index}`}
                             variant={SelectVariant.single}
