@@ -1019,8 +1019,8 @@ export class ApplicationFactory {
       result = lines.map((line) => {
         const [target, source] = line.trim().split(' ');
         return {
-          source: this.buildFolderPath(`${applicationPath}/${this.buildFolderPath(source)}`),
-          target: this.buildFolderPath(`${applicationPath}/${this.buildFolderPath(target)}`),
+          source: this.buildFolderPath(this.generateSymlinkPath(applicationPath, source)),
+          target: this.buildFolderPath(this.generateSymlinkPath(applicationPath, target)),
           status: Action.SYMLINK_CREATION_SCHEDULED
         };
       });
@@ -1028,6 +1028,11 @@ export class ApplicationFactory {
       this.logger.error('ExtractSymlinkError', err);
     }
     return result;
+  }
+
+  private generateSymlinkPath(applicationPath: string, source: string): string {
+    if(applicationPath === '/' ) return `ROOTSPA/${this.buildFolderPath(source)}`;
+    return `${applicationPath}/${this.buildFolderPath(source)}`;
   }
 
   // @internal Sync the environment with the updated configuration
