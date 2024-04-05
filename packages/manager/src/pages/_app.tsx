@@ -4,7 +4,7 @@ import '@patternfly/react-core/dist/styles/base.css';
 /* eslint-disable react/jsx-props-no-spreading */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Session } from 'next-auth';
-import { SessionProvider, signOut } from 'next-auth/react';
+import { SessionProvider } from 'next-auth/react';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -16,8 +16,6 @@ import * as yup from 'yup';
 import { AuthGuard } from '@app/context/AuthGuard';
 import type { NextPageWithLayout } from '@app/types';
 
-import { deleteOrchestratorAuthorizationHeader } from '@app/config/orchestratorReq';
-import { pageLinks } from '@app/links';
 import '@app/styles/globals.css';
 import 'nprogress/nprogress.css';
 
