@@ -134,6 +134,10 @@ export const StaticSPADeployment = (): JSX.Element => {
     setSelectedData(data);
     setSelectedDataListItemId(rowId);
     setIsLogsExpanded(false);
+    setIsSymlinkAutoEnabled((prevStates) => ({
+      ...prevStates,
+      [rowId]: data?.autoSymlinkCreation // Toggle the value for the specified rowId
+    }));
   };
 
   const handleAutoSync = async () => {
@@ -183,7 +187,6 @@ export const StaticSPADeployment = (): JSX.Element => {
           .then(() => {
             refetch();
           });
-
         handlePopUpClose('autoEnableSymlink');
         if (symlinkFlag) {
           toast.success('Auto Symlink has been enabled successfully.');
@@ -230,7 +233,6 @@ export const StaticSPADeployment = (): JSX.Element => {
     rowId: string
   ) => {
     const selectedValue = value as string;
-    console.log('Value ---> ', value);
     if (value === 'View Logs') {
       setIsLogsExpanded(true); // Expand logs if View Logs is selected
     } else {
