@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
+import { exec } from 'child_process';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import { Base64 } from 'js-base64';
@@ -15,6 +16,8 @@ import {
   SYMLINK
 } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/service';
+import { Action } from 'src/server/analytics/entity';
+import { Application, OperatorSymlinkEnvironment, OperatorSymlinkMetadata, OperatorSymlinkRequest, Symlink } from 'src/server/application/entity';
 import {
   ApplicationConfigDTO,
   ApplicationResponse,
@@ -32,18 +35,15 @@ import {
   SymlinkDTO,
   UpdateConfigOrSecretRequest
 } from 'src/server/application/request.dto';
-import { Application, OperatorSymlinkEnvironment, OperatorSymlinkMetadata, OperatorSymlinkRequest, Symlink } from 'src/server/application/entity';
 import { AuthFactory } from 'src/server/auth/service/factory';
 import { DeploymentConnection } from 'src/server/deployment-connection/entity';
 import { Cluster, Environment } from 'src/server/environment/entity';
 import { EventTimeTrace } from 'src/server/event/time-trace.entity';
 import { ExceptionsService } from 'src/server/exceptions/service';
 import { Property, Source } from 'src/server/property/entity';
+import * as util from 'util';
 import { v4 as uuidv4 } from 'uuid';
 import { zip } from 'zip-a-folder';
-import { exec } from 'child_process';
-import * as util from 'util';
-import { Action } from 'src/server/analytics/entity';
 
 @Injectable()
 export class ApplicationFactory {
@@ -1009,30 +1009,59 @@ export class ApplicationFactory {
   }
 
   async extractSymlink(dir: string, applicationPath: string): Promise<Symlink[]> {
-    const symLinkCommand = `ls -l ${dir} | grep "^l" | awk '{print $9, $11}'`;
+    const symLinkCommand = `find ${dir} -type l -exec ls -l {} + | grep "^l" | awk '{print $9, $11}'`;
     const execPromise = await util.promisify(exec);
     let result = [];
     try {
       const data = await execPromise(symLinkCommand);
       if (!data.stdout) return result;
       const lines = data.stdout.trim().split('\n');
-      result = lines.map((line) => {
-        const [target, source] = line.trim().split(' ');
-        return {
-          source: this.buildFolderPath(this.generateSymlinkPath(applicationPath, source)),
-          target: this.buildFolderPath(this.generateSymlinkPath(applicationPath, target)),
-          status: Action.SYMLINK_CREATION_SCHEDULED
-        };
-      });
+      result = lines
+        .map((line) => {
+          const [target, source] = line.trim().split(' ');
+          // @internal currenlty we're not providing the support to navigate through the directories
+          if (source.includes('..') || source.includes('./')) return null;
+          return {
+            source: this.buildFolderPath(this.generateSymlinkSourcePath(applicationPath, source, target, dir)),
+            target: this.buildFolderPath(this.generateSymlinkTargetPath(applicationPath, target, dir)),
+            status: Action.SYMLINK_CREATION_SCHEDULED
+          };
+        })
+        .filter(Boolean);
     } catch (err) {
       this.logger.error('ExtractSymlinkError', err);
     }
     return result;
   }
 
-  private generateSymlinkPath(applicationPath: string, source: string): string {
-    if(applicationPath === '/' ) return `ROOTSPA/${this.buildFolderPath(source)}`;
+  private generateSymlinkSourcePath(applicationPath: string, source: string, target: string, dir: string): string {
+    const extracdTargetPath = this.removeBasePath(dir, target);
+    if (extracdTargetPath.includes('/')) {
+      const basePath = this.removeLastDirectory(extracdTargetPath);
+      source = `${basePath}/${source}`;
+    }
+
+    if (applicationPath === '/') return `ROOTSPA/${this.buildFolderPath(source)}`;
     return `${applicationPath}/${this.buildFolderPath(source)}`;
+  }
+
+  private generateSymlinkTargetPath(applicationPath: string, target: string, dir: string): string {
+    const extractedPath = this.removeBasePath(dir, target);
+    if (applicationPath === '/') return `ROOTSPA/${this.buildFolderPath(extractedPath)}`;
+    return `${applicationPath}/${this.buildFolderPath(extractedPath)}`;
+  }
+
+  private removeBasePath(dir: string, inputPath: string) {
+    const relativePath = path.relative(dir, inputPath);
+    return relativePath.startsWith('..') ? inputPath : relativePath;
+  }
+
+  private removeLastDirectory(inputPath) {
+    const lastIndex = inputPath.lastIndexOf('/');
+    if (lastIndex === -1) {
+      return inputPath;
+    }
+    return inputPath.substring(0, lastIndex);
   }
 
   // @internal Sync the environment with the updated configuration
