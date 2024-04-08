@@ -126,7 +126,7 @@ export const CreateSymlink = ({
           <Controller
             control={control}
             name="source"
-            defaultValue={`${spaPath}/`}
+            defaultValue=""
             render={({ field, fieldState: { error } }) => (
               <FormGroup
                 label={
@@ -148,7 +148,7 @@ export const CreateSymlink = ({
               >
                 <TextInput
                   isRequired
-                  placeholder="Default Source File Path Name"
+                  placeholder={`Kindly enter the source path as: ${spaPath}/pathForSymlink`}
                   type="text"
                   id="source"
                   {...field}
@@ -161,7 +161,7 @@ export const CreateSymlink = ({
           <Controller
             control={control}
             name="target"
-            defaultValue={`${spaPath}/`}
+            defaultValue=""
             render={({ field, fieldState: { error } }) => (
               <FormGroup
                 label={
@@ -183,7 +183,7 @@ export const CreateSymlink = ({
               >
                 <TextInput
                   isRequired
-                  placeholder="Default Target File Path"
+                  placeholder={`Kindly enter the target path as: ${spaPath}/pathForSymlink`}
                   type="text"
                   id="target"
                   {...field}

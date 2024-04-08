@@ -208,8 +208,6 @@ export const StaticSPADeployment = (): JSX.Element => {
       }
     }
   };
-  const [isOpen, setIsOpen] = useState(false);
-
   const onSelectDataListItem = (id: string) => {
     const index = parseInt(id.charAt(id.length - 1), 10);
     const rowSelectedData = paginatedData && paginatedData[index];
