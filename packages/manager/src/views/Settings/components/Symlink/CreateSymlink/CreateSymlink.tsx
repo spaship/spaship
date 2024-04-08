@@ -126,15 +126,13 @@ export const CreateSymlink = ({
           <Controller
             control={control}
             name="source"
-            defaultValue={`${spaPath}/`}
+            defaultValue=""
             render={({ field, fieldState: { error } }) => (
               <FormGroup
                 label={
                   <>
                     Source File Path
-                    <Tooltip
-                      content={<div>Symlink source path sould be relative to SPA path.</div>}
-                    >
+                    <Tooltip content="Symlink source path should be /{spa-path}/{source-path}">
                       <span>
                         &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
                       </span>
@@ -148,7 +146,7 @@ export const CreateSymlink = ({
               >
                 <TextInput
                   isRequired
-                  placeholder="Default Source File Path Name"
+                  placeholder={`eg: ${spaPath}/{source-path}`}
                   type="text"
                   id="source"
                   {...field}
@@ -161,15 +159,13 @@ export const CreateSymlink = ({
           <Controller
             control={control}
             name="target"
-            defaultValue={`${spaPath}/`}
+            defaultValue=""
             render={({ field, fieldState: { error } }) => (
               <FormGroup
                 label={
                   <>
                     Target File Path
-                    <Tooltip
-                      content={<div>Symlink target path sould be relative to SPA path.</div>}
-                    >
+                    <Tooltip content="Symlink target path should be /{spa-path}/{target-path}">
                       <span>
                         &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
                       </span>
@@ -183,7 +179,7 @@ export const CreateSymlink = ({
               >
                 <TextInput
                   isRequired
-                  placeholder="Default Target File Path"
+                  placeholder={`eg: ${spaPath}/{target-path}`}
                   type="text"
                   id="target"
                   {...field}
