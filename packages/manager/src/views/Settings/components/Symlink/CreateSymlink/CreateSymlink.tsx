@@ -132,9 +132,7 @@ export const CreateSymlink = ({
                 label={
                   <>
                     Source File Path
-                    <Tooltip
-                      content={<div>Symlink source path sould be relative to SPA path.</div>}
-                    >
+                    <Tooltip content="Symlink source path should be /{spa-path}/{source-path}">
                       <span>
                         &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
                       </span>
@@ -148,7 +146,7 @@ export const CreateSymlink = ({
               >
                 <TextInput
                   isRequired
-                  placeholder={`Kindly enter the source path as: ${spaPath}/pathForSymlink`}
+                  placeholder={`eg: ${spaPath}/{source-path}`}
                   type="text"
                   id="source"
                   {...field}
@@ -167,9 +165,7 @@ export const CreateSymlink = ({
                 label={
                   <>
                     Target File Path
-                    <Tooltip
-                      content={<div>Symlink target path sould be relative to SPA path.</div>}
-                    >
+                    <Tooltip content="Symlink target path should be /{spa-path}/{target-path}">
                       <span>
                         &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
                       </span>
@@ -183,7 +179,7 @@ export const CreateSymlink = ({
               >
                 <TextInput
                   isRequired
-                  placeholder={`Kindly enter the target path as: ${spaPath}/pathForSymlink`}
+                  placeholder={`eg: ${spaPath}/{target-path}`}
                   type="text"
                   id="target"
                   {...field}
