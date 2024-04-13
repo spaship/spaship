@@ -13,6 +13,11 @@ const ChatbotInput: React.FC<ChatbotInputProps> = ({ onSendMessage }) => {
     onSendMessage(inputValue);
     setInputValue('');
   };
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleMessageSend();
+    }
+  };
 
   return (
     <Split hasGutter>
@@ -23,6 +28,7 @@ const ChatbotInput: React.FC<ChatbotInputProps> = ({ onSendMessage }) => {
           value={inputValue}
           onChange={(value) => setInputValue(value)}
           placeholder="Type your query here..."
+          onKeyPress={handleKeyPress}
         />
       </SplitItem>
       <SplitItem>

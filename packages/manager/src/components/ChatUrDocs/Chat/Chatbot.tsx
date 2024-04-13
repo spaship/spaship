@@ -50,7 +50,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
     setIsBotTyping(false);
     if (botResponse === '') {
       appendMessage(
-        "Oops! Unfortunately, I wasn't able to find the answer to your question. Kindly contact the team directly for further assistance. Is there anything else I can help you with?",
+        "Oops! Unfortunately, I wasn't able to find the answer to your question. Kindly contact SPAship team at spaship-dev@redhat.com for further assistance. Is there anything else I can help you with?",
         false
       );
     } else {
@@ -59,7 +59,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
   };
 
   const sendUserQuestion = async (userQuestion: string) => {
-    const API_ENDPOINT = env.PUBLIC_CHATURDOCS_URL;
+    const API_ENDPOINT = 'http://localhost:8000/rag';
     try {
       const response = await axios.post(
         API_ENDPOINT,

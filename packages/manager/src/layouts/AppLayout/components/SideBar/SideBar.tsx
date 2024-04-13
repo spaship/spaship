@@ -380,7 +380,7 @@ export const SideBar = () => {
               .
             </p>
             <br />
-            <Chatbot botName="chatur" />
+            <Chatbot botName="DocBot" />
           </Modal>
         </>
       }
