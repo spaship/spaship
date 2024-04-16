@@ -25,13 +25,7 @@ export const AppLayout = ({ children }: Props): JSX.Element => {
   return (
     <>
       {lastElement && !isOutage && (
-        <Banner
-          style={{
-            backgroundColor: 'white'
-          }}
-          isSticky
-          variant="info"
-        >
+        <Banner variant="info" isSticky>
           <Flex
             justifyContent={{ default: 'justifyContentCenter' }}
             alignItems={{ default: 'alignItemsCenter' }}
@@ -49,11 +43,6 @@ export const AppLayout = ({ children }: Props): JSX.Element => {
       )}
       {lastElement && isOutage && (
         <Banner
-          style={{
-            backgroundColor: '#F44336',
-            color: '#FFFFFF',
-            fontWeight: 'bolder'
-          }}
           isSticky
           variant="info"
         >
