@@ -43,11 +43,6 @@ export const AppLayout = ({ children }: Props): JSX.Element => {
       )}
       {lastElement && isOutage && (
         <Banner
-          // style={{
-          //   backgroundColor: '#F44336',
-          //   color: '#FFFFFF',
-          //   fontWeight: 'bolder'
-          // }}
           isSticky
           variant="info"
         >
