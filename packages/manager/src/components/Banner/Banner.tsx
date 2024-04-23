@@ -46,9 +46,9 @@ export const Banner = ({ children, backRef, title }: Props): JSX.Element => {
         return crumb;
       });
   }, [pathname, query]);
-
+  const isHomePath = asPath === '/home';
   return (
-    <PageSection isWidthLimited isCenterAligned className="pf-u-px-lg pf-u-pt-lg">
+    <PageSection isWidthLimited isCenterAligned className=" pf-u-pt-lg">
       <Stack>
         <StackItem>
           <Breadcrumb>
@@ -57,17 +57,20 @@ export const Banner = ({ children, backRef, title }: Props): JSX.Element => {
                 <a>Home</a>
               </Link>
             </BreadcrumbItem>
-            {crumbs.map(({ href, name }) => (
-              <BreadcrumbItem key={href} isActive={asPath === href} className="capitalize">
-                {asPath === href ? (
-                  name
-                ) : (
-                  <Link href={href}>
-                    <a>{name}</a>
-                  </Link>
-                )}
-              </BreadcrumbItem>
-            ))}
+            {crumbs.map(
+              ({ href, name }) =>
+                name !== 'home' && (
+                  <BreadcrumbItem key={href} isActive={asPath === href} className="capitalize">
+                    {asPath === href ? (
+                      name
+                    ) : (
+                      <Link href={href}>
+                        <a>{name}</a>
+                      </Link>
+                    )}
+                  </BreadcrumbItem>
+                )
+            )}
           </Breadcrumb>
         </StackItem>
         <StackItem className="pf-u-mt-sm">
@@ -89,7 +92,7 @@ export const Banner = ({ children, backRef, title }: Props): JSX.Element => {
             {title && (
               <FlexItem>
                 <Title headingLevel="h1" size="2xl" className="capitalize">
-                  {title}
+                  {isHomePath ? `Welcome ${title}` : title}
                 </Title>
               </FlexItem>
             )}

@@ -262,3 +262,22 @@ body {
 .hover-highlight:hover {
   background-color: #d2d2d2 !important;
 }
+
+.text-xxl {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: '#000';
+  font-family: 'RedHatText';
+}
+.text-xl {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: '#000';
+  font-family: 'RedHatText';
+}
+.text-l {
+  font-size: 1rem;
+  font-weight: 400;
+  color: '#000';
+  font-family: 'RedHatText';
+}
