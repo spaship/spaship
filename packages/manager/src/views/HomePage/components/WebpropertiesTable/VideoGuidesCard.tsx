@@ -1,3 +1,4 @@
+import { env } from '@app/config/env';
 import { pageLinks } from '@app/links';
 import { Card, CardBody, CardHeader, Grid, GridItem, SplitItem } from '@patternfly/react-core';
 
@@ -5,15 +6,15 @@ export const VideoGuidesCard = (): JSX.Element => {
   const videos = [
     {
       title: 'SPAship Manager and CLI Guide',
-      link: 'https://drive.google.com/file/d/150OyktZdmqMXKwNS1mDkqIo7ZvgyCCGp/view'
+      link: env.PUBLIC_SPASHIP_MANAGER_CLI_GUIDE
     },
     {
       title: 'Containerized deployments complete workflow',
-      link: 'https://drive.google.com/file/d/1g-obdU_RT1kQOgDKM150s_eVyiYUElKa/view?usp=sharing'
+      link: env.PUBLIC_CONTAINERIZED_DEPLOYMENTS_WORKFLOW_VIDEO
     },
     {
       title: 'SPAship CLI Instruction',
-      link: 'https://drive.google.com/file/d/1G4B8AKu_8M6fVEMd8WtXHgLhf__Xl2mt/view?usp=sharing'
+      link: env.PUBLIC_SPASHIP_CLI_INSTRUCTIONS
     }
   ];
 

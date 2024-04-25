@@ -1,14 +1,15 @@
+import { env } from '@app/config/env';
 import { pageLinks } from '@app/links';
 import { Card, CardBody, CardHeader, SplitItem } from '@patternfly/react-core';
 
 const tutorialsData = [
   {
     title: 'SPAship Manager & CLI Guide',
-    link: 'https://drive.google.com/file/d/150OyktZdmqMXKwNS1mDkqIo7ZvgyCCGp/view'
+    link: env.PUBLIC_SPASHIP_MANAGER_CLI_GUIDE
   },
   {
     title: 'On-Boarding to SPAship Cloud Native Version',
-    link: 'https://source.redhat.com/groups/public/spaship/blog_article/onboarding_to_spaship_cloud_native_version'
+    link: env.PUBLIC_ONBOARDING_TO_CLOUD_LINK
   }
 ];
 
