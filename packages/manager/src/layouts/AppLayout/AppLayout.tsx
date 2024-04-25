@@ -42,10 +42,7 @@ export const AppLayout = ({ children }: Props): JSX.Element => {
         </Banner>
       )}
       {lastElement && isOutage && (
-        <Banner
-          isSticky
-          variant="info"
-        >
+        <Banner isSticky variant="info">
           <Flex
             justifyContent={{ default: 'justifyContentCenter' }}
             alignItems={{ default: 'alignItemsCenter' }}

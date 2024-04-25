@@ -1,0 +1,70 @@
+.video-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background-color: #f2f2f2;
+}
+
+.video-card {
+  border-radius: '10px';
+}
+.play-button {
+  width: 30px;
+  height: 30px;
+}
+.video-panel-link {
+  font-family: Red Hat Display;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+}
+
+/*Deployment stats Card*/
+
+.card-header {
+  font-family: Red Hat Display;
+  font-size: 20px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.large-text {
+  font-family: Red Hat Display;
+  font-size: 24px;
+  font-weight: 500;
+  text-align: left;
+  color: #0066cc;
+}
+
+.average-time {
+  font-family: Red Hat Text;
+  font-size: 16px;
+  font-weight: 400;
+  text-align: left;
+}
+
+.item-text {
+  font-family: Red Hat Text;
+  font-size: 20px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.sub-text {
+  font-family: Red Hat Text;
+  font-size: 14px;
+  font-weight: 400;
+  text-align: left;
+  color: #3c3f42;
+}
+
+/* Realease notes */
+.release-note-font {
+  font-family: Red Hat Text;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  text-align: left;
+}
