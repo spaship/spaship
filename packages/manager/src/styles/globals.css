@@ -281,3 +281,7 @@ body {
   color: '#000';
   font-family: 'RedHatText';
 }
+.text-bold {
+  font-weight: 700;
+  font-family: 'RedHatText';
+}

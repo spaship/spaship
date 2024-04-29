@@ -20,3 +20,11 @@ export type TCreateEnvDTO = {
   createdBy: string;
   cluster: string;
 };
+
+export type TDeleteEnvDTO = {
+  name: string;
+  path: string;
+  env: string;
+  ref: string;
+  accessUrl: string[];
+};

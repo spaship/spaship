@@ -1,6 +1,6 @@
 import { orchestratorReq } from '@app/config/orchestratorReq';
 import { useMutation, useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query';
-import { TCreateEnvDTO, TEnv } from './types';
+import { TCreateEnvDTO, TDeleteEnvDTO, TEnv } from './types';
 
 const persistentEnvQueryKeys = {
   list: (webPropertyIdentifier: string) => ['persistent-env', webPropertyIdentifier] as const
@@ -73,6 +73,25 @@ export const useAddEnv = (propertyIdentifier?: string) => {
   const queryClient = useQueryClient();
 
   return useMutation(createEnv, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(webPropertyKeys.list);
+      if (propertyIdentifier) {
+        queryClient.invalidateQueries(webPropertyKeys.id(propertyIdentifier));
+      }
+    }
+  });
+};
+
+// POST OPERATIONS
+const deleteEphemeralEnv = async (dto: string): Promise<TDeleteEnvDTO> => {
+  const { data } = await orchestratorReq.delete(`/environment/spaship-manager/${dto}`);
+  return data.data;
+};
+
+export const useDeleteEphemeralEnv = (propertyIdentifier?: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation(deleteEphemeralEnv, {
     onSuccess: () => {
       queryClient.invalidateQueries(webPropertyKeys.list);
       if (propertyIdentifier) {
