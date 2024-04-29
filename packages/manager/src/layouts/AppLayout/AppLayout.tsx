@@ -23,7 +23,7 @@ export const AppLayout = ({ children }: Props): JSX.Element => {
   const isOutage = (lastElement && lastElement.tags?.includes('outage')) || false;
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
       {lastElement && !isOutage && (
         <Banner variant="info" isSticky>
           <Flex
