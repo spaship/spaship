@@ -23,7 +23,7 @@ export const AppLayout = ({ children }: Props): JSX.Element => {
   const isOutage = (lastElement && lastElement.tags?.includes('outage')) || false;
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
       {lastElement && !isOutage && (
         <Banner variant="info" isSticky>
           <Flex
@@ -51,7 +51,7 @@ export const AppLayout = ({ children }: Props): JSX.Element => {
           </Flex>
         </Banner>
       )}
-      <Page sidebar={<SideBar />} header={<Nav />}>
+      <Page sidebar={<SideBar />} header={<Nav />} style={{ flex: 1 }}>
         <Flex
           direction={{ default: 'column' }}
           spaceItems={{ default: 'spaceItemsNone' }}
@@ -62,7 +62,7 @@ export const AppLayout = ({ children }: Props): JSX.Element => {
         </Flex>
         <Feedback />
       </Page>
-    </>
+    </div>
   );
 };
 
