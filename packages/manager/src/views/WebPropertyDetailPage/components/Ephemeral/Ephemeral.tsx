@@ -103,7 +103,6 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
             <Th textCenter>Created At</Th>
             <Th textCenter>Action ID</Th>
             <Th textCenter>Time left</Th>
-            {/* <Th textCenter /> */}
             <Th textCenter>Actions</Th>
           </Tr>
         </Thead>

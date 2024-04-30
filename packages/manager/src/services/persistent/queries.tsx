@@ -83,8 +83,8 @@ export const useAddEnv = (propertyIdentifier?: string) => {
 };
 
 // POST OPERATIONS
-const deleteEphemeralEnv = async (dto: string): Promise<TDeleteEnvDTO> => {
-  const { data } = await orchestratorReq.delete(`/environment/spaship-manager/${dto}`);
+const deleteEphemeralEnv = async (envName: string): Promise<TDeleteEnvDTO> => {
+  const { data } = await orchestratorReq.delete(`/environment/spaship-manager/${envName}`);
   return data.data;
 };
 
