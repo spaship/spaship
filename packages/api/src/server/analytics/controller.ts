@@ -5,6 +5,7 @@ import { ActivityStream } from './entity';
 import { DeploymentCount } from './deployment-count-response.dto';
 import { DeploymentTime } from './deployment-time-response.dto';
 import { AnalyticsService } from './service';
+import { UserAnalytics } from './user-analytics-response.dto';
 
 @Controller('analytics')
 @ApiTags('Analytics')
@@ -93,5 +94,12 @@ export class AnalyticsController {
   @ApiOperation({ description: 'Get the Average time for the Deployments saved by SPAship.' })
   async getAverageDeploymentTimeSaved(@Query('averageDeploymentTimeInSecs') averageDeploymentTimeInSecs: string): Promise<any> {
     return this.analyticsService.getDeploymentTimeSaved(averageDeploymentTimeInSecs);
+  }
+
+  @Get('/user/:email')
+  @ApiOperation({ description: 'Get the analytics based on the user' })
+  @ApiCreatedResponse({ status: 201, description: 'User personalised analytics.', type: Array<UserAnalytics> })
+  async homePage(@Param('email') email: string): Promise<UserAnalytics[]> {
+    return this.analyticsService.getUserPropertyDetails(email);
   }
 }

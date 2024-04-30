@@ -6,9 +6,10 @@ import { ANALYTICS } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/service';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { ExceptionsService } from 'src/server/exceptions/service';
-import { ActivityStream, Props } from '../entity';
 import { DeploymentCount } from '../deployment-count-response.dto';
 import { AverageDeploymentDetails, DeploymentTime } from '../deployment-time-response.dto';
+import { ActivityStream, Props } from '../entity';
+import { UserAnalytics } from '../user-analytics-response.dto';
 import { AnalyticsFactory } from './factory';
 
 @Injectable()
@@ -306,5 +307,26 @@ export class AnalyticsService {
     }
     if (!response.length && !overallCostSaved) this.exceptionService.badRequestException({ message: 'No Analytics Present.' });
     return { monthlyAnalytics: response, overallCostSaved: parseFloat(overallCostSaved.toFixed(2)) };
+  }
+
+  async getUserPropertyDetails(email: string): Promise<UserAnalytics[]> {
+    const query = await this.analyticsFactory.buildPropertyDetailsQuery(email);
+    const response = await this.dataServices.permission.aggregate(query);
+    if (!response || response.length === 0) this.exceptionService.badRequestException({ message: `No Property/Applicatioon data found for ${email}.` });
+    const userAnalytics: UserAnalytics[] = [];
+    for (const data of response) {
+      const analytics = new UserAnalytics();
+      analytics.propertyIdentifier = data.propertyIdentifier;
+      const applicationListQuery = await this.analyticsFactory.buildApplicationListByPropertyQuery(data.propertyIdentifier);
+      const [deploymentCount, applicationDetails] = await Promise.all([
+        this.getDeploymentCount(data.propertyIdentifier),
+        this.dataServices.application.aggregate(applicationListQuery)
+      ]);
+      analytics.deploymentCount = deploymentCount[0] ? deploymentCount[0].count : 0;
+      analytics.identifiers = applicationDetails[0] ? applicationDetails[0].identifiers : [];
+      analytics.applicationCount = applicationDetails[0] ? applicationDetails[0].identifiers.length : 0;
+      userAnalytics.push(analytics);
+    }
+    return userAnalytics;
   }
 }
