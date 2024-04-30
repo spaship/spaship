@@ -216,4 +216,26 @@ export class AnalyticsFactory {
     }
     return tmpWebhook;
   }
+
+  async buildPropertyDetailsQuery(email: string): Promise<Object[]> {
+    const matchRequest = { email };
+    const groupRequest = { _id: { propertyIdentifier: '$propertyIdentifier' }, count: { $sum: 1 } };
+    const projectRequest = { _id: 0, propertyIdentifier: '$_id.propertyIdentifier', count: '$count' };
+    return this.buildAggregationQuery(matchRequest, groupRequest, projectRequest);
+  }
+
+  async buildApplicationListByPropertyQuery(propertyIdentifier: string): Promise<Object[]> {
+    const matchRequest = { propertyIdentifier };
+    const groupRequest = { _id: { identifier: '$identifier' } };
+    const projectRequest = { _id: 0, identifier: '$_id.identifier' };
+    const groupRequest1 = { _id: null, identifiers: { $push: '$identifier' } };
+    const projectRequest1 = { _id: 0, identifiers: 1 };
+    return [
+      { $match: matchRequest },
+      { $group: groupRequest },
+      { $project: projectRequest },
+      { $group: groupRequest1 },
+      { $project: projectRequest1 }
+    ];
+  }
 }
