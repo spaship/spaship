@@ -44,7 +44,7 @@ export const env = {
   PUBLIC_SPASHIP_GIT_BROKER_URL: process.env.NEXT_PUBLIC_SPASHIP_GIT_BROKER_URL || '',
 
   // ChaturDocs url
-  PUBLIC_CHATURDOCS_URL: process.env.NEXT_PUBLIC_CHATURDOCS_URL || '',
+  SPASHIP_CHATURDOCS_URL: process.env.SPASHIP_CHATURDOCS_URL || '',
 
   // Documentation and video links
   PUBLIC_SPASHIP_MANAGER_CLI_GUIDE: process.env.NEXT_PUBLIC_SPASHIP_MANAGER_CLI_GUIDE || '',
