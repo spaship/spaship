@@ -15,7 +15,8 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "@app/*": ["./src/*"]
+      "@app/*": ["./src/*"],
+      "@jsonPath": ["package.json"]
     },
     "baseUrl": ".",
     "typeRoots": ["./node_modules/@types/"]
