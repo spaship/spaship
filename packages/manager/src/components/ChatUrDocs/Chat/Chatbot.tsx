@@ -1,6 +1,4 @@
-import { env } from '@app/config/env';
 import { Card, CardBody } from '@patternfly/react-core';
-import axios from 'axios'; // Import Axios
 import { marked } from 'marked';
 import React, { useEffect, useRef, useState } from 'react';
 import './ChatTyping.css';
@@ -59,23 +57,26 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
   };
 
   const sendUserQuestion = async (userQuestion: string) => {
-    const API_ENDPOINT = 'http://localhost:8000/rag';
     try {
-      const response = await axios.post(
-        API_ENDPOINT,
-        { query: userQuestion },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+      const response = await fetch('/api/chaturdocs', {
+        method: 'POST',
+        body: JSON.stringify({ query: userQuestion }),
+        headers: {
+          'Content-Type': 'application/json'
         }
-      );
+      });
 
-      handleBotResponse(response.data.answer);
+      // Convert response to JSON
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      handleBotResponse(responseData.data);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error fetching bot response:', error);
-      // Handle error
     }
   };
 
