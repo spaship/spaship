@@ -46,7 +46,7 @@ export const Banner = ({ children, backRef, title }: Props): JSX.Element => {
         return crumb;
       });
   }, [pathname, query]);
-  const isHomePath = asPath === '/home';
+  const isHomePath = asPath === '/' || asPath === '/home';
   return (
     <PageSection isWidthLimited isCenterAligned className=" pf-u-pt-lg">
       <Stack>
