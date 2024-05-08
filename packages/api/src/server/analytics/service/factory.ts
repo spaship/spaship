@@ -217,11 +217,17 @@ export class AnalyticsFactory {
     return tmpWebhook;
   }
 
-  async buildPropertyDetailsQuery(email: string): Promise<Object[]> {
+  async buildPropertyAnalyticsQuery(email: string): Promise<Object[]> {
     const matchRequest = { email };
     const groupRequest = { _id: { propertyIdentifier: '$propertyIdentifier' }, count: { $sum: 1 } };
     const projectRequest = { _id: 0, propertyIdentifier: '$_id.propertyIdentifier', count: '$count' };
     return this.buildAggregationQuery(matchRequest, groupRequest, projectRequest);
+  }
+
+  async buildPropertyDetailsQuery(proeprties: string[]): Promise<Object[]> {
+    const matchRequest = { identifier: { $in: proeprties } };
+    const projectRequest = { _id: 0, propertyIdentifier: '$identifier', createdBy: 1 };
+    return [{ $match: matchRequest }, { $project: projectRequest }];
   }
 
   async buildApplicationListByPropertyQuery(propertyIdentifier: string): Promise<Object[]> {
