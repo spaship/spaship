@@ -1,11 +1,11 @@
+import { env } from '@app/config/env';
 import { Card, CardBody } from '@patternfly/react-core';
+import axios from 'axios';
 import { marked } from 'marked';
 import React, { useEffect, useRef, useState } from 'react';
 import './ChatTyping.css';
 import ChatbotInput from './ChatbotInput';
 import ChatbotMessage from './ChatbotMessage';
-import axios from 'axios';
-import { env } from '@app/config/env';
 
 interface ChatMessage {
   content: string;
