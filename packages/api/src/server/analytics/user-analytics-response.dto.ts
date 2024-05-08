@@ -12,4 +12,7 @@ export class UserAnalytics {
 
   @ApiProperty()
   deploymentCount: number;
+
+  @ApiProperty()
+  createdBy: string;
 }

@@ -310,14 +310,20 @@ export class AnalyticsService {
   }
 
   async getUserPropertyDetails(email: string): Promise<UserAnalytics[]> {
-    const query = await this.analyticsFactory.buildPropertyDetailsQuery(email);
+    const query = await this.analyticsFactory.buildPropertyAnalyticsQuery(email);
     const response = await this.dataServices.permission.aggregate(query);
-    if (!response || response.length === 0) this.exceptionService.badRequestException({ message: `No Property/Applicatioon data found for ${email}.` });
+    if (!response || response.length === 0)
+      this.exceptionService.badRequestException({ message: `No Property/Application data found for ${email}.` });
     const userAnalytics: UserAnalytics[] = [];
+    const propertyIdentifiers = response.map((key) => key.propertyIdentifier);
+    const propertyQuery = await this.analyticsFactory.buildPropertyDetailsQuery(propertyIdentifiers);
+    const propertyDetails = await this.dataServices.property.aggregate(propertyQuery);
     for (const data of response) {
       const analytics = new UserAnalytics();
-      analytics.propertyIdentifier = data.propertyIdentifier;
       const applicationListQuery = await this.analyticsFactory.buildApplicationListByPropertyQuery(data.propertyIdentifier);
+      const property = propertyDetails.find((key) => key.propertyIdentifier === data.propertyIdentifier);
+      analytics.createdBy = property.createdBy;
+      analytics.propertyIdentifier = data.propertyIdentifier;
       const [deploymentCount, applicationDetails] = await Promise.all([
         this.getDeploymentCount(data.propertyIdentifier),
         this.dataServices.application.aggregate(applicationListQuery)
