@@ -4,6 +4,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import './ChatTyping.css';
 import ChatbotInput from './ChatbotInput';
 import ChatbotMessage from './ChatbotMessage';
+import axios from 'axios';
+import { env } from '@app/config/env';
 
 interface ChatMessage {
   content: string;
@@ -57,28 +59,47 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
   };
 
   const sendUserQuestion = async (userQuestion: string) => {
+    const API_ENDPOINT = env.PUBLIC_CHATURDOCS_URL;
     try {
-      const response = await fetch('/api/chaturdocs', {
-        method: 'POST',
-        body: JSON.stringify({ query: userQuestion }),
-        headers: {
-          'Content-Type': 'application/json'
+      const response = await axios.post(
+        API_ENDPOINT,
+        { query: userQuestion },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      });
+      );
 
-      // Convert response to JSON
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      handleBotResponse(responseData.data);
+      handleBotResponse(response.data.answer);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error fetching bot response:', error);
+      // Handle error
     }
   };
+  // const sendUserQuestion = async (userQuestion: string) => {
+  //   try {
+  //     const response = await fetch('/api/chaturdocs', {
+  //       method: 'POST',
+  //       body: JSON.stringify({ query: userQuestion }),
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       }
+  //     });
+
+  //     // Convert response to JSON
+  //     const responseData = await response.json();
+
+  //     if (!response.ok) {
+  //       throw new Error('Network response was not ok');
+  //     }
+
+  //     handleBotResponse(responseData.data);
+  //   } catch (error) {
+  //     // eslint-disable-next-line no-console
+  //     console.error('Error fetching bot response:', error);
+  //   }
+  // };
 
   const handleSendMessage = async (userMessage: string) => {
     // Display the user's message in the chat
