@@ -387,7 +387,7 @@ const fetchUserWebProperties = async (email: string): Promise<TUserWebProperties
   const { data } = await orchestratorReq.get(`/analytics/user/${email}`);
   return data.data;
 };
-export const userGetUserWebProperties = (email: string) =>
+export const useGetUserWebProperties = (email: string) =>
   useQuery(analyticsKeys.userAnalytics as QueryKey, () => fetchUserWebProperties(email));
 
-// export const userGetUserWebProperties = (email: string) => fetchUserWebProperties(email);
+// export const useGetUserWebProperties = (email: string) => fetchUserWebProperties(email);

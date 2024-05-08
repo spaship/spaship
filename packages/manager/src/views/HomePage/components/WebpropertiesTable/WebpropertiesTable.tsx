@@ -1,7 +1,5 @@
 import { useDebounce } from '@app/hooks';
-import { userGetUserWebProperties } from '@app/services/analytics';
-import { useGetWebProperties } from '@app/services/webProperty';
-import { TWebProperty } from '@app/services/webProperty/types';
+import { useGetUserWebProperties } from '@app/services/analytics';
 import {
   Button,
   Card,
@@ -25,10 +23,11 @@ type TpropertyItem = {
   deploymentCount: string;
   identifiers: string;
   propertyIdentifier: string;
+  createdBy: string;
 };
 export const WebpropertiesTable = (): JSX.Element => {
   const { data: session } = useSession();
-  const userWebProperties = userGetUserWebProperties(session?.user?.email || '');
+  const userWebProperties = useGetUserWebProperties(session?.user?.email || '');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const debouncedSearchTerm: string = useDebounce(searchTerm, 200);
 
@@ -76,7 +75,7 @@ export const WebpropertiesTable = (): JSX.Element => {
               <Thead>
                 <Tr>
                   <Th>Name</Th>
-                  {/* <Th modifier="wrap">Owner</Th> */}
+                  <Th modifier="wrap">Created By</Th>
                   <Th modifier="wrap">Hosted Application</Th>
                   <Th modifier="wrap">Total Deployment</Th>
                 </Tr>
@@ -86,7 +85,7 @@ export const WebpropertiesTable = (): JSX.Element => {
                   // eslint-disable-next-line react/no-array-index-key
                   <Tr key={rowIndex}>
                     <Td>{item.propertyIdentifier}</Td>
-                    {/* <Td>{item.createdBy}</Td> */}
+                    <Td>{item.createdBy}</Td>
                     <Td>{item.applicationCount}</Td>
                     <Td>{item.deploymentCount}</Td>
                   </Tr>

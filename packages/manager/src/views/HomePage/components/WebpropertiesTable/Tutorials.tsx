@@ -1,3 +1,5 @@
+/* eslint-disable react/no-array-index-key */
+
 import { env } from '@app/config/env';
 import { pageLinks } from '@app/links';
 import { Card, CardBody, CardHeader, SplitItem } from '@patternfly/react-core';
@@ -26,8 +28,7 @@ export const Tutorials = (): JSX.Element => (
     <CardBody>
       <ul>
         {tutorialsData.map((tutorial, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <ul>
+          <ul key={index}>
             <li key={index}>
               <a href={tutorial.link} target="_blank" rel="noreferrer">
                 {tutorial.title}

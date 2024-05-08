@@ -83,14 +83,13 @@ export const useAddEnv = (propertyIdentifier?: string) => {
 };
 
 // POST OPERATIONS
-const deleteEphemeralEnv = async (envName: string): Promise<TDeleteEnvDTO> => {
-  const { data } = await orchestratorReq.delete(`/environment/spaship-manager/${envName}`);
+const deleteEphemeralEnv = async (deleteData: string[]): Promise<TDeleteEnvDTO> => {
+  const { data } = await orchestratorReq.delete(`/environment/${deleteData[1]}/${deleteData[0]}`);
   return data.data;
 };
 
 export const useDeleteEphemeralEnv = (propertyIdentifier?: string) => {
   const queryClient = useQueryClient();
-
   return useMutation(deleteEphemeralEnv, {
     onSuccess: () => {
       queryClient.invalidateQueries(webPropertyKeys.list);

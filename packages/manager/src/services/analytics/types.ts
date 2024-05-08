@@ -76,4 +76,5 @@ export type TUserWebProperties = {
   deploymentCount: string;
   identifiers: string;
   propertyIdentifier: string;
+  createdBy: string;
 };

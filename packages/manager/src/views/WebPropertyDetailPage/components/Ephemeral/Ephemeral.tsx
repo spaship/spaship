@@ -82,7 +82,7 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
   const deleteEphemeralEnv = useDeleteEphemeralEnv();
   const handleDeleteEphemeralEnv = () => {
     deleteEphemeralEnv
-      .mutateAsync(popUp.deleteEphemeralEnv.data as string)
+      .mutateAsync(popUp.deleteEphemeralEnv.data as string[])
       .then(() => {
         toast.success('Successfully deleted ephemeral environment');
         handlePopUpClose('deleteEphemeralEnv');
@@ -125,6 +125,7 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
             </Tr>
           </Tbody>
         )}
+
         {isSuccess &&
           !isEnvEmpty &&
           ephemeralEnvs?.map((environment, rowIndex) => (
@@ -163,7 +164,12 @@ export const Ephemeral = ({ isSuccess, ephemeralEnvs }: Props): JSX.Element => {
                     variant="secondary"
                     isDanger
                     icon={<TrashIcon />}
-                    onClick={() => handlePopUpOpen('deleteEphemeralEnv', environment.env)}
+                    onClick={() =>
+                      handlePopUpOpen('deleteEphemeralEnv', [
+                        environment.env,
+                        environment.propertyIdentifier
+                      ])
+                    }
                   >
                     Delete
                   </Button>
