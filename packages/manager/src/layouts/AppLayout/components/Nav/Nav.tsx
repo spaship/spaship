@@ -20,12 +20,18 @@ import {
   Toolbar,
   ToolbarContent,
   ToolbarGroup,
-  ToolbarItem
+  ToolbarItem,
+  Tooltip
 } from '@patternfly/react-core';
+import { WhatsNew } from '@app/views/LoginPage/components/ReleaseBanner/WhatsNew';
+import { useState } from 'react';
+import { BellIcon } from '@patternfly/react-icons';
 
 export const Nav = () => {
   const { data: session } = useSession();
   const [isSigningOut, setIsSigningOut] = useToggle();
+
+  const [broadCastFlag, setBroadCastFlag] = useState(false);
 
   const onSignOut = () => {
     setIsSigningOut.on();
@@ -60,6 +66,13 @@ export const Nav = () => {
               spaceItems={{ default: 'spaceItemsSm' }}
             >
               <ToolbarItem>
+                <Tooltip content="Release Notes">
+                  <BellIcon
+                    onClick={() => setBroadCastFlag(!broadCastFlag)}
+                    style={{ marginRight: '20px', cursor: 'pointer' }}
+                  />
+                </Tooltip>
+
                 <Popover
                   flipBehavior={['bottom-end']}
                   hasAutoWidth
@@ -106,6 +119,14 @@ export const Nav = () => {
             </ToolbarGroup>
           </ToolbarContent>
         </Toolbar>
+        {broadCastFlag && (
+          <WhatsNew
+            broadCastFlag={broadCastFlag}
+            confirm={() => {
+              setBroadCastFlag(!broadCastFlag);
+            }}
+          />
+        )}
       </MastheadContent>
     </Masthead>
   );

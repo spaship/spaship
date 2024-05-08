@@ -1,7 +1,7 @@
 {
   "name": "@spaship/manager",
   "description": "The SPAship UI.",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "private": true,
   "contributors": [
     {
@@ -36,6 +36,11 @@
     {
       "name": "Michael Clayton",
       "email": "mclayton@redhat.com"
+    },
+    {
+      "name": "Shamsuddin",
+      "email": "shamsu602@gmail.com",
+      "url": "https://shamsu602.wixsite.com/shamsuddin"
     }
   ],
   "scripts": {
