@@ -46,7 +46,7 @@ export const Banner = ({ children, backRef, title }: Props): JSX.Element => {
         return crumb;
       });
   }, [pathname, query]);
-  const isHomePath = asPath === '/home';
+  const isHomePath = asPath === '/' || asPath === '/home';
   return (
     <PageSection isWidthLimited isCenterAligned className=" pf-u-pt-lg">
       <Stack>
@@ -62,10 +62,10 @@ export const Banner = ({ children, backRef, title }: Props): JSX.Element => {
                 name !== 'home' && (
                   <BreadcrumbItem key={href} isActive={asPath === href} className="capitalize">
                     {asPath === href ? (
-                      name
+                      (name as string).replace(/-/g, ' ')
                     ) : (
                       <Link href={href}>
-                        <a>{name}</a>
+                        <a>{name as string}</a>
                       </Link>
                     )}
                   </BreadcrumbItem>

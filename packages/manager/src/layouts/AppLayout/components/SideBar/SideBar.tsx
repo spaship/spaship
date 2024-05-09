@@ -285,7 +285,11 @@ export const SideBar = () => {
                   <SidebarNavItem
                     title="Github"
                     icon={
-                      <img src="/img/github.svg" alt="github" style={{ verticalAlign: 'bottom' }} />
+                      <img
+                        src="/img/github.svg"
+                        alt="github-logo"
+                        style={{ verticalAlign: 'bottom' }}
+                      />
                     }
                     isActive={pathname === env.PUBLIC_GITHUB_URL}
                   />

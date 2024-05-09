@@ -27,7 +27,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
   return (
     <>
       <Banner
-        title={propertyIdentifier.replace('-', ' ')}
+        title={propertyIdentifier.replace(/-/g, ' ')}
         backRef={{
           pathname: pageLinks.webPropertyListPage
         }}

@@ -1,5 +1,5 @@
 import { orchestratorReq } from '@app/config/orchestratorReq';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { QueryKey, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import {
   TDeploymentCount,
   TSPADeploymentCount,
@@ -7,7 +7,8 @@ import {
   TSPAMonthlyDeploymentChart,
   TSPAMonthlyDeploymentCount,
   TWebPropActivityStream,
-  TTotalTimeSaved
+  TTotalTimeSaved,
+  TUserWebProperties
 } from './types';
 
 type IDeploymentData = {
@@ -45,7 +46,8 @@ export const analyticsKeys = {
     [...analyticsKeys.propertyActivityStream(propertyId), spaID] as const,
   spaMonthyDeploymentChart: (propertyId: string, spaID?: string) =>
     [...analyticsKeys.propertyActivityStream(propertyId), spaID, 'monthly-chart'] as const,
-  timeSaved: ['time-saved'] as const
+  timeSaved: ['time-saved'] as const,
+  userAnalytics: ['user-analytics'] as const
 };
 
 const fetchDeploymentCounts = async (): Promise<TDeploymentCount[]> => {
@@ -380,3 +382,12 @@ const fetchTotalTimeSavedForLogin = async (): Promise<TTotalTimeSaved> => {
 };
 export const useGetTotalTimeSavedForLogin = () =>
   useQuery(analyticsKeys.timeSaved, fetchTotalTimeSavedForLogin);
+
+const fetchUserWebProperties = async (email: string): Promise<TUserWebProperties[]> => {
+  const { data } = await orchestratorReq.get(`/analytics/user/${email}`);
+  return data.data;
+};
+export const useGetUserWebProperties = (email: string) =>
+  useQuery(analyticsKeys.userAnalytics as QueryKey, () => fetchUserWebProperties(email));
+
+// export const useGetUserWebProperties = (email: string) => fetchUserWebProperties(email);

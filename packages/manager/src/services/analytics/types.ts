@@ -71,3 +71,10 @@ export type TSPAMonthlyDeploymentChart = {
   dev?: { name: 'string'; x: number; y: number }[];
   uatprod?: { name: 'string'; x: number; y: number }[];
 };
+export type TUserWebProperties = {
+  applicationCount: string;
+  deploymentCount: string;
+  identifiers: string;
+  propertyIdentifier: string;
+  createdBy: string;
+};
