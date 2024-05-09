@@ -318,10 +318,15 @@ export class AnalyticsService {
     const propertyIdentifiers = response.map((key) => key.propertyIdentifier);
     const propertyQuery = await this.analyticsFactory.buildPropertyDetailsQuery(propertyIdentifiers);
     const propertyDetails = await this.dataServices.property.aggregate(propertyQuery);
+    this.logger.log("propertyDetails", propertyDetails);
+    this.logger.log("response", response);
+
+
     for (const data of response) {
       const analytics = new UserAnalytics();
       const applicationListQuery = await this.analyticsFactory.buildApplicationListByPropertyQuery(data.propertyIdentifier);
       const property = propertyDetails.find((key) => key.propertyIdentifier === data.propertyIdentifier);
+      this.logger.log("property", property);
       analytics.propertyIdentifier = data.propertyIdentifier;
       analytics.createdBy = (property) ? property.createdBy : 'NA';
       const [deploymentCount, applicationDetails] = await Promise.all([
