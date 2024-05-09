@@ -31,8 +31,11 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
     // Update the state to include the new message
     setChatMessages((prevMessages) => [...prevMessages, { content: message, isUserMessage }]);
   };
+  const disclaimer =
+    '<b><i>Note: You are about to utilize a tool that utilizes Artificial Intelligence (AI) to process inputs and provide responses. Please do not include any personal information, customer or partner confidential information in your chat interaction with the AI. By proceeding to use the tool, you acknowledge: that the tool and any information provided are only intended for internal use and that information obtained should only be shared with those with a legitimate business purpose.</i></b>';
 
   const sendInitialMessage = () => {
+    appendMessage(disclaimer, false);
     const initialMessage = `Hi! 😊 I’m ${botName}, I’m here to help you with any questions or issues.`;
     appendMessage(initialMessage, false);
   };
