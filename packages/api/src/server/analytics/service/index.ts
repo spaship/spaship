@@ -322,8 +322,8 @@ export class AnalyticsService {
       const analytics = new UserAnalytics();
       const applicationListQuery = await this.analyticsFactory.buildApplicationListByPropertyQuery(data.propertyIdentifier);
       const property = propertyDetails.find((key) => key.propertyIdentifier === data.propertyIdentifier);
-      analytics.createdBy = property.createdBy;
       analytics.propertyIdentifier = data.propertyIdentifier;
+      analytics.createdBy = (property) ? property.createdBy : 'NA';
       const [deploymentCount, applicationDetails] = await Promise.all([
         this.getDeploymentCount(data.propertyIdentifier),
         this.dataServices.application.aggregate(applicationListQuery)
