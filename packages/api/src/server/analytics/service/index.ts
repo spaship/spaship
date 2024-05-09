@@ -311,27 +311,41 @@ export class AnalyticsService {
 
   async getUserPropertyDetails(email: string): Promise<UserAnalytics[]> {
     const query = await this.analyticsFactory.buildPropertyAnalyticsQuery(email);
-    const response = await this.dataServices.permission.aggregate(query);
+    let response;
+    try {
+      response = await this.dataServices.permission.aggregate(query);
+    } catch (err) {
+      this.exceptionService.internalServerErrorException({ message: `Issue while aggregating permission data.` });
+    }
     if (!response || response.length === 0)
       this.exceptionService.badRequestException({ message: `No Property/Application data found for ${email}.` });
     const userAnalytics: UserAnalytics[] = [];
     const propertyIdentifiers = response.map((key) => key.propertyIdentifier);
     const propertyQuery = await this.analyticsFactory.buildPropertyDetailsQuery(propertyIdentifiers);
-    const propertyDetails = await this.dataServices.property.aggregate(propertyQuery);
+    let propertyDetails;
+    try {
+      propertyDetails = await this.dataServices.property.aggregate(propertyQuery);
+    } catch (err) {
+      this.exceptionService.internalServerErrorException({ message: `Issue while aggregating property data.` });
+    }
     for (const data of response) {
-      const analytics = new UserAnalytics();
-      const applicationListQuery = await this.analyticsFactory.buildApplicationListByPropertyQuery(data.propertyIdentifier);
-      const property = propertyDetails.find((key) => key.propertyIdentifier === data.propertyIdentifier);
-      analytics.createdBy = property.createdBy;
-      analytics.propertyIdentifier = data.propertyIdentifier;
-      const [deploymentCount, applicationDetails] = await Promise.all([
-        this.getDeploymentCount(data.propertyIdentifier),
-        this.dataServices.application.aggregate(applicationListQuery)
-      ]);
-      analytics.deploymentCount = deploymentCount[0] ? deploymentCount[0].count : 0;
-      analytics.identifiers = applicationDetails[0] ? applicationDetails[0].identifiers : [];
-      analytics.applicationCount = applicationDetails[0] ? applicationDetails[0].identifiers.length : 0;
-      userAnalytics.push(analytics);
+      try {
+        const analytics = new UserAnalytics();
+        const applicationListQuery = await this.analyticsFactory.buildApplicationListByPropertyQuery(data.propertyIdentifier);
+        const property = propertyDetails.find((key) => key.propertyIdentifier === data.propertyIdentifier);
+        analytics.propertyIdentifier = data.propertyIdentifier;
+        analytics.createdBy = property ? property.createdBy : 'NA';
+        const [deploymentCount, applicationDetails] = await Promise.all([
+          this.getDeploymentCount(data.propertyIdentifier),
+          this.dataServices.application.aggregate(applicationListQuery)
+        ]);
+        analytics.deploymentCount = deploymentCount[0] ? deploymentCount[0].count : 0;
+        analytics.identifiers = applicationDetails[0] ? applicationDetails[0].identifiers : [];
+        analytics.applicationCount = applicationDetails[0] ? applicationDetails[0].identifiers.length : 0;
+        userAnalytics.push(analytics);
+      } catch (error) {
+        this.logger.warn('UserAnalytics', error);
+      }
     }
     return userAnalytics;
   }
