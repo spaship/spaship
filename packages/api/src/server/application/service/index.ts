@@ -142,7 +142,8 @@ export class ApplicationService {
         env,
         deploymentConnection,
         false,
-        createdBy
+        createdBy,
+        property.cmdbCode
       );
       this.logger.log('NewApplicationDetails', JSON.stringify(saveApplication));
       this.dataServices.application.create(saveApplication);

@@ -147,7 +147,8 @@ export class ApplicationFactory {
     env: string,
     deploymentConnection: DeploymentConnection[],
     isContainerized: boolean,
-    createdBy: string
+    createdBy: string,
+    cmdbCode?: string
   ): Application {
     const saveApplication = new Application();
     saveApplication.propertyIdentifier = propertyIdentifier;
@@ -166,6 +167,7 @@ export class ApplicationFactory {
     saveApplication.createdBy = createdBy;
     saveApplication.updatedBy = createdBy;
     saveApplication.version = 1;
+    saveApplication.cmdbCode = cmdbCode;
     return saveApplication;
   }
 

@@ -104,6 +104,9 @@ export class Application {
   autoGenerateLHReport: boolean;
 
   @Prop({ default: 'NA' })
+  cmdbCode: string;
+
+  @Prop({ default: 'NA' })
   createdBy: string;
 
   @Prop({ default: 'NA' })
