@@ -5,8 +5,12 @@ const { flatpath } = require("@spaship/common");
 const { log } = require("@spaship/common/lib/logging/pino");
 const config = require("./config");
 const { difference } = require("lodash");
+const { pathMappingsData, loadPathMappings } = require('./pathmapping');
+
+const apiRoutes = require('./api');
 
 let topLevelDirsCache = [];
+
 
 log.debug(config.get(), "router configuration");
 
@@ -20,6 +24,7 @@ async function updateDirCache() {
   // update cache
   topLevelDirsCache = freshDirs;
 
+
   // Sort them by name length from longest to shortest, for most specific match wins matching policy
   topLevelDirsCache.sort((a, b) => b.length - a.length);
 
@@ -28,8 +33,20 @@ async function updateDirCache() {
   }
 }
 
+
+
 const customRouter = function (req) {
   let url = req.url.replace(/\/+/g, "/"); // Avoid duplicate slash issue
+
+  for (let mapping of pathMappingsData.pathMappings) {
+    if (mapping.incoming_path === url) {
+      url = mapping.mapped_with;
+      req.url = url; // Update the request URL
+      break;
+    }
+  }
+
+
   let routeUrl; // This is the final path that the router will route the request to
   let regExMatch; // Regular expression match object for finding SPA paths in the url
   let spaPath; // The unflattened path to the spaship hosted path
@@ -37,20 +54,17 @@ const customRouter = function (req) {
   let routeHost; // hostname that the router will proxy to
   let matchFound = false; // Is this incoming request found to be hosted by spaship or not
   let targetUrl; // Final full URL that will be routed to
-
   log.debug({ router: { step: "matching", incUrl: url } }, "matching incoming path against spaship directory list");
-
   // See if this URL is hosted by SPAship at a specific non-root sub-path e.g. /foo
   for (let flatDir of topLevelDirsCache) {
     spaPath = flatpath.toUrl(flatDir);
+    log.debug({"goes in: ": flatDir,"comes out ":spaPath},"")
     if (spaPath === "/") continue; // Ignore root path spa here we will check that later
-
     let regEx = new RegExp("^" + spaPath + "([/\\?].*)?$");
     regExMatch = url.match(regEx);
     if (regExMatch) {
       // match found!
       matchedFlatDir = "/" + flatDir;
-
       let extraStuff = "";
       if (regExMatch[1]) {
         extraStuff = regExMatch[1]; // $1 of the RegExp
@@ -101,8 +115,12 @@ const customRouter = function (req) {
     );
   }
 
-  targetUrl = routeHost + req.url;
-  log.info({ router: { incUrl: url, targetUrl } }, `Routing to targetUrl`);
+  if (!routeHost) {
+    log.debug({},"routeHost is undefined or empty")
+  } else {
+    targetUrl = routeHost + req.url;
+  }
+  log.debug({ router: { incUrl: url, targetUrl, "reqUrl": req.url,"routeHost":routeHost} }, `Routing to targetUrl`);
 
   return routeHost;
 };
@@ -153,11 +171,33 @@ const pathProxy = (req, res, next) => {
   return createProxyMiddleware(options)(req, res, next);
 };
 
+
+function isInternalRequest(req, res, next) {
+  const allowedHostsConfig = config.get("allowed_hosts");
+  if (!allowedHostsConfig) {
+    log.info('No allowed hosts configured, restricting all requests to /spaship-proxy/api/v1');
+    res.status(403).send('Forbidden');
+    return;
+  }
+  const allowedHosts = allowedHostsConfig.split(',');
+  const host = req.headers.host;
+  log.info({ forwardedHosts: allowedHosts, requestHost: host }, 'Checking request host against allowed hosts');
+
+  if (allowedHosts.some(allowedHost => host.includes(allowedHost))) {
+    next();
+  } else {
+    res.status(403).send('Forbidden');
+  }
+}
+
 let intervalId;
 let server;
 
 async function start() {
   log.debug(`starting router`);
+
+  // Load the path mappings
+  await loadPathMappings();
 
   // Load the flat directory names into memory and keep them refreshed
   await updateDirCache();
@@ -166,6 +206,7 @@ async function start() {
 
   // Start proxy server on port
   let app = express();
+  app.use('/spaship-proxy/api/v1',isInternalRequest,apiRoutes);
   app.use(pathProxy);
   server = app.listen(config.get("port"));
 }
@@ -185,7 +226,9 @@ function stop() {
   });
 }
 
-module.exports = { start, stop };
+
+
+module.exports = { start, stop};
 
 // if this module is the entry-point, go ahead and launch the router
 if (require.main === module) {

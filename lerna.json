@@ -1,6 +1,7 @@
 {
   "packages": [
-    "packages/*"
+    "packages/common",
+    "packages/router"
   ],
   "useNx": true,
   "version": "independent"

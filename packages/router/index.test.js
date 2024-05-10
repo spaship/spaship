@@ -9,20 +9,23 @@ describe("router", () => {
   beforeEach(() => {
     vol.reset();
     vol.fromJSON({
-      "/var/www/spaship/foo/spaship.yaml": "name: Foo\npath: /foo\nref: v1.0.1\nsingle: true\ndeploykey: sehvgqrnyre",
-      "/var/www/spaship/foo/index.html": "I AM FOO",
-      "/var/www/spaship/ROOTSPA/spaship.yaml":
+      "/var/www/html/spaship/foo/spaship.yaml": "name: Foo\npath: /foo\nref: v1.0.1\nsingle: true\ndeploykey: sehvgqrnyre",
+      "/var/www/html/spaship/foo/index.html": "I AM FOO",
+      "/var/www/html/spaship/ROOTSPA/spaship.yaml":
         "name: Root Spa\npath: /\nref: v1.0.1\nsingle: true\ndeploykey: dc34ldv3sd",
-      "/var/www/spaship/ROOTSPA/index.html": "I AM ROOTSPA",
+      "/var/www/html/spaship/ROOTSPA/index.html": "I AM ROOTSPA",
+      "/var/www/html/foo/bar/index.html": "hitting foo_bar route",
+      "/var/www/html/ROOTSPA/index.html": "hi root spa",
     });
   });
 
   // Testing basic HTTP responses for these URL and message combos.  Doesn't test for any particular response, just that
   // it responds.  Should add a bunch of these.
   [
-    { msg: "should respond to requests", url: "http://localhost:8086/foo/" },
+    { msg: "should respond to requests", url: "http://localhost:8086/spaship/foo/" },
     { msg: "should respond to requests with duplicate slash", url: "http://localhost:8086//foo/" },
-    { msg: "should respond to root path spa request", url: "http://localhost:8086/" },
+    { msg: "should respond to root path spa request", url: "http://localhost:8086/ROOTSPA" },
+    { msg: "should respond to root path spa request", url: "http://localhost:8086/foo_bar" },
   ].forEach((target) => {
     test(target.msg, async () => {
       await pathProxy.start();
