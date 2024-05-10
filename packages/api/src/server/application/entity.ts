@@ -65,6 +65,8 @@ export class Application {
 
   autoSymlinkCreation: boolean;
 
+  cmdbCode: string;
+
   createdBy: string;
 
   updatedBy: string;
