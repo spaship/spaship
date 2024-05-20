@@ -23,7 +23,7 @@ export const AppLayout = ({ children }: Props): JSX.Element => {
   const isOutage = (lastElement && lastElement.tags?.includes('outage')) || false;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div style={{ maxHeight: '100dvh' }}>
       {lastElement && !isOutage && (
         <Banner variant="info" isSticky>
           <Flex
@@ -55,10 +55,12 @@ export const AppLayout = ({ children }: Props): JSX.Element => {
         <Flex
           direction={{ default: 'column' }}
           spaceItems={{ default: 'spaceItemsNone' }}
-          style={{ height: '100%' }}
+          style={{ height: '100dvh' }}
           flexWrap={{ default: 'nowrap' }}
         >
-          <FlexItem grow={{ default: 'grow' }}>{children}</FlexItem>
+          <FlexItem grow={{ default: 'grow' }} style={{ flexDirection: 'column', display: 'flex' }}>
+            {children}
+          </FlexItem>
         </Flex>
         <Feedback />
       </Page>
