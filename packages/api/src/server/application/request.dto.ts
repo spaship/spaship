@@ -403,8 +403,6 @@ export class SymlinkDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Length(MIN.DEFAULT, MAX.PROPERTY, { message: MESSAGE.INVALID_LENGTH, always: true })
-  @Matches(VALIDATION.PROPERTY_IDENTIFIER, { message: MESSAGE.INVALID_PROPERTY_IDENTIFIER, always: true })
   identifier: string;
 
   @ApiProperty()
