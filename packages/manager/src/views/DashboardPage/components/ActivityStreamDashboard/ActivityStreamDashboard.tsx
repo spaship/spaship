@@ -13,7 +13,7 @@ export const ActivityStreamDashboard = () => (
       height: '730px',
       overflow: 'hidden'
     }}
-    className={css('pf-u-px-lg rounded-md transition hover:shadow-sm')}
+    className={css('pf-u-px-lg transition hover:shadow-sm')}
   >
     <CardTitle style={{ borderBottom: '1px solid #D2D2D2' }}>
       <Text component={TextVariants.h5}>Activity Stream</Text>
