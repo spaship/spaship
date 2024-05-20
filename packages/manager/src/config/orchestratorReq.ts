@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/dot-notation */
+/* eslint-disable no-param-reassign */
 import axios from 'axios';
-import { env } from './env';
-import url from 'url';
 import { getSession } from 'next-auth/react';
+import url from 'url';
+import { env } from './env';
 
 async function refreshAccessToken(token: any) {
   try {
@@ -67,7 +69,6 @@ export const deleteOrchestratorAuthorizationHeader = orchReq.removeToken;
 orchestratorReq.interceptors.response.use(
   async (response) => response,
   async (error) => {
-    console.log('error 401', error);
     if (error.response && error.response.status === 401) {
       const session = await getSession();
       if (session && session.accessToken) {
