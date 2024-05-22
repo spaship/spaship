@@ -44,7 +44,7 @@ export type TCmdbValidation = {
 
 interface Props {
   propertyIdentifier: string;
-  applicationIdentifier: string;
+  applicationIdentifier: string | undefined;
   handlePopUpClose: (x: string) => void;
 }
 

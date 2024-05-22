@@ -112,3 +112,6 @@ export const CmdbDetails = ({
     </>
   );
 };
+CmdbDetails.defaultProps = {
+  applicationIdentifier: undefined
+};
