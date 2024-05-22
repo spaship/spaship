@@ -1,14 +1,15 @@
 /* eslint-disable no-underscore-dangle */
-import { List, PageSection, Tab, Tabs, TabTitleIcon, TabTitleText } from '@patternfly/react-core';
-import { useRouter } from 'next/router';
 import { Banner } from '@app/components';
 import { useTabs } from '@app/hooks';
 import { pageLinks } from '@app/links';
 import { useGetTotalDeploymentsForApps } from '@app/services/analytics';
-import { BuildIcon, BundleIcon, PackageIcon } from '@patternfly/react-icons';
+import { List, PageSection, Tab, Tabs, TabTitleIcon, TabTitleText } from '@patternfly/react-core';
+import { BuildIcon, BundleIcon, CogIcon, PackageIcon } from '@patternfly/react-icons';
+import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { Dashboard } from '../WebPropertyDetailPage/components/Dashboard';
 import { ContainerizedSPADeployment } from './ContainerizedSPADeployment/ContainerizedSPADeployment';
+import { SPASettingsPage } from './SPASettingsPage/SPASettingsPage';
 import { StaticSPADeployment } from './StaticSPADeployment/StaticSPADeployment';
 
 export const SPAPropertyDetailPage = (): JSX.Element => {
@@ -78,9 +79,6 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
           >
             {openTab === 2 && <Dashboard type="spa" />}
           </Tab>
-
-          {/*
-          Note: The button for the SPA detailed settings tab has been hidden to prevent user confusion, as it was mistakenly interpreted as specific settings for SPAs only. This adjustment aims to improve clarity and avoid misleading user expectations regarding the page's functionality.
           <Tab
             eventKey={3}
             title={
@@ -90,11 +88,11 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
                 </TabTitleIcon>
                 <TabTitleText>Settings</TabTitleText>
               </>
-         
+            }
             aria-label="SPA-detailed-Settings"
           >
-            {openTab === 3 && <Settings />}
-          </Tab> */}
+            {openTab === 3 && <SPASettingsPage />}
+          </Tab>
         </Tabs>
       </PageSection>
     </>

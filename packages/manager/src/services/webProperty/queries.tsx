@@ -52,3 +52,18 @@ export const fetchCmdbCodeById = async (code?: string): Promise<TCmdbValidation[
 };
 
 export const useGetCmdbCodeById = (code?: string) => fetchCmdbCodeById(code);
+
+export const fetchEditCmdbDetailsForProperty = async (dto: any): Promise<TCmdbValidation[]> => {
+  const { data } = await orchestratorReq.post('/sot/cmdb/property', dto);
+  return data.data;
+};
+
+export const useGetEditCmdbDetailsForProperty = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(fetchEditCmdbDetailsForProperty, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(webPropertyKeys.list);
+    }
+  });
+};

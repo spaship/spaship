@@ -84,7 +84,11 @@ export const WebpropertiesTable = (): JSX.Element => {
                 {filteredData?.map((item: TpropertyItem, rowIndex: number) => (
                   // eslint-disable-next-line react/no-array-index-key
                   <Tr key={rowIndex}>
-                    <Td>{item.propertyIdentifier}</Td>
+                    <Td>
+                      <a href={`/properties/${item.propertyIdentifier}`}>
+                        {item.propertyIdentifier}
+                      </a>
+                    </Td>
                     <Td>{item.createdBy}</Td>
                     <Td>{item.applicationCount}</Td>
                     <Td>{item.deploymentCount}</Td>
