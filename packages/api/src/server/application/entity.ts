@@ -67,6 +67,8 @@ export class Application {
 
   cmdbCode: string;
 
+  severity: string;
+
   createdBy: string;
 
   updatedBy: string;

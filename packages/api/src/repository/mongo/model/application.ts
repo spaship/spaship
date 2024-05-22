@@ -107,6 +107,9 @@ export class Application {
   cmdbCode: string;
 
   @Prop({ default: 'NA' })
+  severity: string;
+
+  @Prop({ default: 'NA' })
   createdBy: string;
 
   @Prop({ default: 'NA' })
