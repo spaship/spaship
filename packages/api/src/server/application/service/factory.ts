@@ -149,7 +149,7 @@ export class ApplicationFactory {
     isContainerized: boolean,
     createdBy: string,
     cmdbCode?: string,
-    sevirity?: string
+    severity?: string
   ): Application {
     const saveApplication = new Application();
     saveApplication.propertyIdentifier = propertyIdentifier;
@@ -169,7 +169,7 @@ export class ApplicationFactory {
     saveApplication.updatedBy = createdBy;
     saveApplication.version = 1;
     saveApplication.cmdbCode = cmdbCode;
-    saveApplication.severity = sevirity;
+    saveApplication.severity = severity;
     return saveApplication;
   }
 
