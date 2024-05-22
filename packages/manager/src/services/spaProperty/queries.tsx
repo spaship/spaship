@@ -1,8 +1,9 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { orchestratorReq } from '@app/config/orchestratorReq';
 import { TAutoEnableSymlinkDTO, TSpaProperty, TSymlinkDTO } from './types';
 import { TEnv } from '../persistent/types';
+import { TCmdbValidation } from '../webProperty/types';
 
 export const spaPropertyKeys = {
   list: (webPropertyIdentifier: string, env: string = '') =>
@@ -87,3 +88,20 @@ const autoEnableSymlink = async (dto: TAutoEnableSymlinkDTO): Promise<TEnv> => {
 };
 
 export const useAutoEnableSymlink = () => useMutation(autoEnableSymlink);
+
+export const fetchEditCmdbDetailsForApplication = async (dto: any): Promise<TCmdbValidation[]> => {
+  const { data } = await orchestratorReq.post('/sot/cmdb/applications', dto);
+  return data.data;
+};
+
+export const useGetEditCmdbDetailsForApplication = (webPropertyIdentifier: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation(fetchEditCmdbDetailsForApplication, {
+    onSuccess: () => {
+      if (webPropertyIdentifier) {
+        queryClient.invalidateQueries(spaPropertyKeys.list(webPropertyIdentifier, ''));
+      }
+    }
+  });
+};
