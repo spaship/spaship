@@ -49,6 +49,7 @@ export class CMDBService {
     if (!applicationDetails) this.exceptionService.badRequestException({ message: 'Application not found.' });
     for (const application of applicationDetails) {
       application.cmdbCode = cmdbRequest.cmdbCode;
+      application.severity = cmdbRequest.severity;
       await this.dataServices.application.updateOne(
         {
           propertyIdentifier,
@@ -87,6 +88,7 @@ export class CMDBService {
     if (!propertyDetails) this.exceptionService.badRequestException({ message: 'Property not found.' });
     const previousCMDB = propertyDetails.cmdbCode;
     propertyDetails.cmdbCode = cmdbRequest.cmdbCode;
+    propertyDetails.severity = cmdbRequest.severity;
     await this.dataServices.property.updateOne({ identifier: propertyIdentifier }, propertyDetails);
     try {
       await this.analyticsService.createActivityStream(

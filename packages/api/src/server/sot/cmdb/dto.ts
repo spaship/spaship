@@ -42,6 +42,14 @@ export class CMDBDTO {
   cmdbCode: string;
 
   @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  @Length(MIN.DEFAULT, MAX.DEFAULT, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Matches(VALIDATION.PROPERTY_TITLE, { message: MESSAGE.INVALID_SEVERITY, always: true })
+  severity: string;
+
+  @ApiProperty()
   @IsBoolean()
   @IsOptional()
   autoCMDBUpdate: boolean;
