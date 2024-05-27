@@ -47,16 +47,6 @@ export const CmdbDetails = ({
     <>
       <Card isFullHeight isRounded>
         <CardHeader>
-          <Tooltip
-            content={
-              // !applicationIdentifier && (
-              <span className="pf-u-my-lg" style={{ fontSize: '12px' }}>
-                <br />*<b>Note:</b> Please update the CMDB code at the SPA level settings for the
-                specified SPA.
-              </span>
-              // )
-            }
-          />
           <CardTitle>
             CMDB Details &nbsp;
             {!applicationIdentifier && (
