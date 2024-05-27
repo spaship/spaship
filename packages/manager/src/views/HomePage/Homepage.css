@@ -14,7 +14,6 @@
   height: 30px;
 }
 .video-panel-link {
-  font-family: Red Hat Display;
   font-size: 16px;
   font-weight: 400;
   line-height: 22px;
@@ -24,14 +23,12 @@
 /*Deployment stats Card*/
 
 .card-header {
-  font-family: Red Hat Display;
   font-size: 20px;
   font-weight: 500;
   text-align: left;
 }
 
 .large-text {
-  font-family: Red Hat Display;
   font-size: 24px;
   font-weight: 500;
   text-align: left;
@@ -39,21 +36,19 @@
 }
 
 .average-time {
-  font-family: Red Hat Text;
   font-size: 16px;
   font-weight: 400;
   text-align: left;
 }
 
 .item-text {
-  font-family: Red Hat Text;
   font-size: 20px;
   font-weight: 500;
   text-align: left;
 }
 
 .sub-text {
-  font-family: Red Hat Text;
+  /* font-family: Red Hat Text; */
   font-size: 14px;
   font-weight: 400;
   text-align: left;
@@ -62,7 +57,7 @@
 
 /* Realease notes */
 .release-note-font {
-  font-family: Red Hat Text;
+  /* font-family: Red Hat Text; */
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;

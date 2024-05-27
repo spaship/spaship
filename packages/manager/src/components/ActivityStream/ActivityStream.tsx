@@ -436,7 +436,27 @@ const activities = {
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
       <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
     </Text>
-  )
+  ),
+
+  CMDB_UPDATED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => {
+    const { applicationIdentifier, env } = props;
+    const isApplicationLevel = applicationIdentifier !== 'NA';
+    console.log(propertyIdentifier, props);
+    return (
+      <Text className="activityStream">
+        <span style={{ fontWeight: '600' }}>CMDB code updated successfully for</span>&nbsp;
+        {isApplicationLevel ? (
+          <>
+            spa: <span style={{ fontWeight: '600' }}>{applicationIdentifier}</span>
+          </>
+        ) : (
+          <>
+            property: <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span>.
+          </>
+        )}
+      </Text>
+    );
+  }
 } as any;
 
 const DeploymentKind = ({ activity }: DeploymentKindProps) => {
