@@ -134,6 +134,7 @@ export class ApplicationService {
       Source.CLI,
       JSON.stringify(applicationRequest)
     );
+    const existingSPA = (await this.dataServices.application.getByAny({ propertyIdentifier, identifier }))[0];
     if (!applicationDetails) {
       const saveApplication = await this.applicationFactory.createApplicationRequest(
         propertyIdentifier,
@@ -143,8 +144,8 @@ export class ApplicationService {
         deploymentConnection,
         false,
         createdBy,
-        property.cmdbCode,
-        property.severity
+        existingSPA && existingSPA.cmdbCode ? existingSPA.cmdbCode : property.cmdbCode,
+        existingSPA && existingSPA.severity ? existingSPA.severity : property.severity
       );
       this.logger.log('NewApplicationDetails', JSON.stringify(saveApplication));
       this.dataServices.application.create(saveApplication);
