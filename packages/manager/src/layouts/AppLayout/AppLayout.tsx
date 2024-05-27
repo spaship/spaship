@@ -24,33 +24,7 @@ export const AppLayout = ({ children }: Props): JSX.Element => {
 
   return (
     <div style={{ maxHeight: '100dvh' }}>
-      {lastElement && !isOutage && (
-        <Banner variant="info" isSticky>
-          <Flex
-            justifyContent={{ default: 'justifyContentCenter' }}
-            alignItems={{ default: 'alignItemsCenter' }}
-          >
-            <a target="_blank" href={lastElement.link} rel="noreferrer">
-              <ExternalLinkAltIcon
-                style={{
-                  marginRight: '0.5rem'
-                }}
-              />
-              {lastElement.title}
-            </a>
-          </Flex>
-        </Banner>
-      )}
-      {lastElement && isOutage && (
-        <Banner isSticky variant="info">
-          <Flex
-            justifyContent={{ default: 'justifyContentCenter' }}
-            alignItems={{ default: 'alignItemsCenter' }}
-          >
-            {lastElement.title}
-          </Flex>
-        </Banner>
-      )}
+     
       <Page sidebar={<SideBar />} header={<Nav />} style={{ flex: 1 }}>
         <Flex
           direction={{ default: 'column' }}
