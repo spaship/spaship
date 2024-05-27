@@ -497,7 +497,9 @@ export class ApplicationFactory {
     identifier: string,
     env: string,
     deploymentConnection: DeploymentConnection[],
-    createdBy: string
+    createdBy: string,
+    cmdbCode: string,
+    severity: string
   ): Application {
     const containerizedApplicationRequest = this.createApplicationRequest(
       propertyIdentifier,
@@ -514,6 +516,8 @@ export class ApplicationFactory {
     containerizedApplicationRequest.config = applicationRequest.config;
     containerizedApplicationRequest.secret = applicationRequest.secret;
     containerizedApplicationRequest.port = applicationRequest.port || CONTAINERIZED_DEPLOYMENT_DETAILS.port;
+    containerizedApplicationRequest.cmdbCode = cmdbCode;
+    containerizedApplicationRequest.severity = severity;
     return containerizedApplicationRequest;
   }
 
@@ -524,7 +528,9 @@ export class ApplicationFactory {
     identifier: string,
     env: string,
     deploymentConnection: DeploymentConnection[],
-    createdBy: string
+    createdBy: string,
+    cmdbCode: string,
+    severity: string
   ): Application {
     const currentTime = new Date();
     const containerizedEnabledGitApplicationRequest = this.createContainerizedApplicationRequest(
@@ -533,7 +539,9 @@ export class ApplicationFactory {
       identifier,
       env,
       deploymentConnection,
-      createdBy
+      createdBy,
+      cmdbCode,
+      severity
     );
     containerizedEnabledGitApplicationRequest.isGit = true;
     containerizedEnabledGitApplicationRequest.repoUrl = applicationRequest.repoUrl;

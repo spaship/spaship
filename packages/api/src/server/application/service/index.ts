@@ -421,7 +421,9 @@ export class ApplicationService {
         identifier,
         env,
         deploymentConnection,
-        applicationRequest.createdBy
+        applicationRequest.createdBy,
+        property.cmdbCode,
+        property.severity
       );
       this.logger.log('ContainerizedApplicationDetails', JSON.stringify(saveApplication));
       applicationDetails = await this.dataServices.application.create(saveApplication);
@@ -649,7 +651,9 @@ export class ApplicationService {
         identifier,
         env,
         deploymentConnection,
-        applicationRequest.createdBy
+        applicationRequest.createdBy,
+        property.cmdbCode,
+        property.severity
       );
       this.logger.log('ContainerizedGitApplicationDetails', JSON.stringify(saveApplication));
       applicationDetails = await this.dataServices.application.create(saveApplication);
