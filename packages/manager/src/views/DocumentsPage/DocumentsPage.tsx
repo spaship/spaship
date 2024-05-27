@@ -6,7 +6,10 @@ import { DocumentCard } from './components/DocumentCard';
 
 export const DocumentsPage = (): JSX.Element => {
   const data = useGetDocumentPage();
-  const sections = Object.keys(data?.data || {}).filter((section) => section !== 'banner');
+  const sections = Object.keys(data?.data || {}).filter(
+    (section) => section !== 'banner' && section !== 'release'
+  );
+
   return (
     <>
       <Head>
