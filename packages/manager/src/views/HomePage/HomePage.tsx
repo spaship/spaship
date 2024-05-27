@@ -1,5 +1,4 @@
 import { Banner } from '@app/components';
-import { useGetDocumentPage } from '@app/services/documents';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
@@ -19,7 +18,6 @@ export const HomePage = (): JSX.Element => {
     localStorage.setItem('appVersion', appCurrentVersion);
   };
 
-  const documentList = useGetDocumentPage();
   const name = useSession()?.data?.user?.name ?? 'Spaship User';
   return (
     <>
@@ -34,7 +32,7 @@ export const HomePage = (): JSX.Element => {
         </GridItem>
 
         <GridItem span={5}>
-          <ReleaseNotesCard documentList={documentList.data} />
+          <ReleaseNotesCard />
 
           <DeploymentStatsCard />
           <VideoGuidesCard />
