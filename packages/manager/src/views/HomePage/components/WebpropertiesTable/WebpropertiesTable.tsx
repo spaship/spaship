@@ -1,7 +1,6 @@
-import { useDebounce, usePopUp } from '@app/hooks';
+import { useDebounce } from '@app/hooks';
 import { pageLinks } from '@app/links';
 import { useGetUserWebProperties } from '@app/services/analytics';
-import { AddDeplyoment } from '@app/views/WebPropertyDetailPage/components/addDeployment';
 import {
   Button,
   Card,
@@ -10,8 +9,6 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
-  Modal,
-  ModalVariant,
   Pagination,
   SearchInput,
   Spinner,
@@ -42,7 +39,6 @@ export const WebpropertiesTable = (): JSX.Element => {
   const userWebProperties = useGetUserWebProperties(session?.user?.email || '');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const debouncedSearchTerm: string = useDebounce(searchTerm, 200);
-  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['createSSRDeployment'] as const);
   const filteredData = userWebProperties?.data?.filter((el: TpropertyItem) =>
     el.propertyIdentifier.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
   );
@@ -59,98 +55,82 @@ export const WebpropertiesTable = (): JSX.Element => {
     setItemsPerPage(perPage);
     setPage(1);
   };
-  console.log('>>>apgin', paginatedData, filteredData);
   return (
-    <>
-      <Card className="pf-u-m-md " style={{ height: '97%' }}>
-        <CardHeader>
-          <SplitItem isFilled>
-            <p className="text-xl"> My web properties</p>
-          </SplitItem>
-          <SplitItem className="pf-u-mx-md">
-            <SearchInput
-              placeholder="Filter by name"
-              value={searchTerm}
-              onChange={(value) => setSearchTerm(value?.toLowerCase())}
-              onClear={() => setSearchTerm('')}
-            />
-          </SplitItem>
-          <SplitItem>
-            <Link passHref href={pageLinks.newWebPropertyPage}>
-              <Button variant="primary">Add a web property</Button>
-            </Link>
-            {/* <Button onClick={() => handlePopUpOpen('createSSRDeployment')}>Add application</Button> */}
-          </SplitItem>
-        </CardHeader>
-        <CardBody>
-          {userWebProperties?.isLoading && (
-            <EmptyState>
-              <EmptyStateBody>
-                <Spinner />
-              </EmptyStateBody>
-            </EmptyState>
-          )}
-          {userWebProperties?.data?.length === 0 ? (
-            <EmptyState>
-              <EmptyStateIcon icon={CubesIcon} />
-              <EmptyStateBody>
-                <Text className="text-xl">No web properties found.</Text>
-                To get started add web property.
-              </EmptyStateBody>
-            </EmptyState>
-          ) : (
-            userWebProperties?.isSuccess && (
-              <Table aria-label="Sortable table" ouiaId="SortableTable" isStriped>
-                <Thead>
-                  <Tr>
-                    <Th>Name</Th>
-                    <Th modifier="wrap">Created By</Th>
-                    <Th modifier="wrap">Hosted Application</Th>
-                    <Th modifier="wrap">Total Deployment</Th>
+    <Card className="pf-u-m-md " style={{ height: '97%' }}>
+      <CardHeader>
+        <SplitItem isFilled>
+          <p className="text-xl"> My web properties</p>
+        </SplitItem>
+        <SplitItem className="pf-u-mx-md">
+          <SearchInput
+            placeholder="Filter by name"
+            value={searchTerm}
+            onChange={(value) => setSearchTerm(value?.toLowerCase())}
+            onClear={() => setSearchTerm('')}
+          />
+        </SplitItem>
+        <SplitItem>
+          <Link passHref href={pageLinks.newWebPropertyPage}>
+            <Button variant="primary">Add a web property</Button>
+          </Link>
+        </SplitItem>
+      </CardHeader>
+      <CardBody>
+        {userWebProperties?.isLoading && (
+          <EmptyState>
+            <EmptyStateBody>
+              <Spinner />
+            </EmptyStateBody>
+          </EmptyState>
+        )}
+        {userWebProperties?.data?.length === 0 ? (
+          <EmptyState>
+            <EmptyStateIcon icon={CubesIcon} />
+            <EmptyStateBody>
+              <Text className="text-xl">No web properties found.</Text>
+              To get started add web property.
+            </EmptyStateBody>
+          </EmptyState>
+        ) : (
+          userWebProperties?.isSuccess && (
+            <Table aria-label="Sortable table" ouiaId="SortableTable" isStriped>
+              <Thead>
+                <Tr>
+                  <Th>Name</Th>
+                  <Th modifier="wrap">Created By</Th>
+                  <Th modifier="wrap">Hosted Application</Th>
+                  <Th modifier="wrap">Total Deployment</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {paginatedData?.map((item: TpropertyItem, rowIndex: number) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <Tr key={rowIndex}>
+                    <Td>
+                      <a href={`/properties/${item.propertyIdentifier}`}>
+                        {item.propertyIdentifier}
+                      </a>
+                    </Td>
+                    <Td>{item.createdBy}</Td>
+                    <Td>{item.applicationCount}</Td>
+                    <Td>{item.deploymentCount}</Td>
                   </Tr>
-                </Thead>
-                <Tbody>
-                  {paginatedData?.map((item: TpropertyItem, rowIndex: number) => (
-                    // eslint-disable-next-line react/no-array-index-key
-                    <Tr key={rowIndex}>
-                      <Td>
-                        <a href={`/properties/${item.propertyIdentifier}`}>
-                          {item.propertyIdentifier}
-                        </a>
-                      </Td>
-                      <Td>{item.createdBy}</Td>
-                      <Td>{item.applicationCount}</Td>
-                      <Td>{item.deploymentCount}</Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            )
-          )}
-        </CardBody>
-        <Pagination
-          itemCount={paginatedData?.length || 0}
-          perPage={itemsPerPage}
-          page={page}
-          onSetPage={handlePageChange}
-          variant="bottom"
-          onPerPageSelect={handlePerPageSelect}
-          perPageOptions={perPageOptions}
-          dropDirection="up"
-        />
-      </Card>
-      <Modal
-        title="Create Containerized Deployment"
-        variant={ModalVariant.large}
-        isOpen={popUp.createSSRDeployment.isOpen}
-        onClose={() => handlePopUpClose('createSSRDeployment')}
-        style={{ minHeight: '600px' }}
-      >
-        <AddDeplyoment
-          propertyIdentifier={''}
-          onClose={() => handlePopUpClose('createSSRDeployment')}
-        />
-      </Modal>
-    </>
+                ))}
+              </Tbody>
+            </Table>
+          )
+        )}
+      </CardBody>
+      <Pagination
+        itemCount={paginatedData?.length || 0}
+        perPage={itemsPerPage}
+        page={page}
+        onSetPage={handlePageChange}
+        variant="bottom"
+        onPerPageSelect={handlePerPageSelect}
+        perPageOptions={perPageOptions}
+        dropDirection="up"
+      />
+    </Card>
   );
 };
