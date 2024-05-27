@@ -13,9 +13,10 @@ import {
   EmptyStateIcon,
   Modal,
   ModalVariant,
-  Title
+  Title,
+  Tooltip
 } from '@patternfly/react-core';
-import { CubesIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { CubesIcon, InfoAltIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Tr } from '@patternfly/react-table';
 import { EditCmdbDetails } from './EditCmdbDetails/EditCmdbDetails';
 
@@ -46,7 +47,21 @@ export const CmdbDetails = ({
     <>
       <Card isFullHeight isRounded>
         <CardHeader>
-          <CardTitle>CMDB Details</CardTitle>
+          <CardTitle>
+            CMDB Details &nbsp;
+            {!applicationIdentifier && (
+              <Tooltip
+                content={
+                  <span>
+                    <br />*<b>Note:</b> Please update the CMDB code at the SPA level settings for
+                    the specified SPA.
+                  </span>
+                }
+              >
+                <InfoAltIcon style={{ color: '#06C' }} />
+              </Tooltip>
+            )}
+          </CardTitle>
         </CardHeader>
         <CardBody>
           <TableComposable>
@@ -75,11 +90,13 @@ export const CmdbDetails = ({
                 </Td>
 
                 <Td>
-                  <Button
-                    icon={<PencilAltIcon />}
-                    variant="link"
-                    onClick={() => handlePopUpOpen('editCmdbCode')}
-                  />
+                  {applicationIdentifier && (
+                    <Button
+                      icon={<PencilAltIcon />}
+                      variant="link"
+                      onClick={() => handlePopUpOpen('editCmdbCode')}
+                    />
+                  )}
                 </Td>
               </Tr>
               <Tr>

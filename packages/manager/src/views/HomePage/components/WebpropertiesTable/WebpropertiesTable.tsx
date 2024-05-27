@@ -1,4 +1,5 @@
 import { useDebounce } from '@app/hooks';
+import { pageLinks } from '@app/links';
 import { useGetUserWebProperties } from '@app/services/analytics';
 import {
   Button,
@@ -8,6 +9,7 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
+  Pagination,
   SearchInput,
   Spinner,
   SplitItem,
@@ -16,7 +18,8 @@ import {
 import { CubesIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
+import Link from 'next/link';
+import { SetStateAction, useState } from 'react';
 
 type TpropertyItem = {
   applicationCount: string;
@@ -25,16 +28,33 @@ type TpropertyItem = {
   propertyIdentifier: string;
   createdBy: string;
 };
+const perPageOptions = [
+  { title: '5', value: 5 },
+  { title: '10', value: 10 },
+  { title: '20', value: 20 },
+  { title: '50', value: 50 }
+];
 export const WebpropertiesTable = (): JSX.Element => {
   const { data: session } = useSession();
   const userWebProperties = useGetUserWebProperties(session?.user?.email || '');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const debouncedSearchTerm: string = useDebounce(searchTerm, 200);
-
   const filteredData = userWebProperties?.data?.filter((el: TpropertyItem) =>
     el.propertyIdentifier.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
   );
+  const [page, setPage] = useState(1); // the current page
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const start = (page - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
 
+  const paginatedData = filteredData?.slice(start, end);
+  const handlePageChange = (event: any, pageNumber: SetStateAction<number>) => {
+    setPage(pageNumber);
+  };
+  const handlePerPageSelect = (_: any, perPage: SetStateAction<number>) => {
+    setItemsPerPage(perPage);
+    setPage(1);
+  };
   return (
     <Card className="pf-u-m-md " style={{ height: '97%' }}>
       <CardHeader>
@@ -50,7 +70,9 @@ export const WebpropertiesTable = (): JSX.Element => {
           />
         </SplitItem>
         <SplitItem>
-          <Button variant="primary">Add Web Property</Button>
+          <Link passHref href={pageLinks.newWebPropertyPage}>
+            <Button variant="primary">Add a web property</Button>
+          </Link>
         </SplitItem>
       </CardHeader>
       <CardBody>
@@ -81,7 +103,7 @@ export const WebpropertiesTable = (): JSX.Element => {
                 </Tr>
               </Thead>
               <Tbody>
-                {filteredData?.map((item: TpropertyItem, rowIndex: number) => (
+                {paginatedData?.map((item: TpropertyItem, rowIndex: number) => (
                   // eslint-disable-next-line react/no-array-index-key
                   <Tr key={rowIndex}>
                     <Td>
@@ -99,6 +121,16 @@ export const WebpropertiesTable = (): JSX.Element => {
           )
         )}
       </CardBody>
+      <Pagination
+        itemCount={paginatedData?.length || 0}
+        perPage={itemsPerPage}
+        page={page}
+        onSetPage={handlePageChange}
+        variant="bottom"
+        onPerPageSelect={handlePerPageSelect}
+        perPageOptions={perPageOptions}
+        dropDirection="up"
+      />
     </Card>
   );
 };
