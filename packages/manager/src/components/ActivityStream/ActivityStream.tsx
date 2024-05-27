@@ -441,7 +441,6 @@ const activities = {
   CMDB_UPDATED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => {
     const { applicationIdentifier, env } = props;
     const isApplicationLevel = applicationIdentifier !== 'NA';
-    console.log(propertyIdentifier, props);
     return (
       <Text className="activityStream">
         <span style={{ fontWeight: '600' }}>CMDB code updated successfully for</span>&nbsp;
