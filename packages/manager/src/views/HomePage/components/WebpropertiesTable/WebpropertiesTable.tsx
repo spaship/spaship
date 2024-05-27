@@ -1,7 +1,6 @@
 import { useDebounce } from '@app/hooks';
 import { pageLinks } from '@app/links';
 import { useGetUserWebProperties } from '@app/services/analytics';
-import { AddDeplyoment } from '@app/views/WebPropertyDetailPage/components/addDeployment';
 import {
   Button,
   Card,
