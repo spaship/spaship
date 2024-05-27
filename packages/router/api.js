@@ -9,7 +9,8 @@ const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const openApiDocumentation = YAML.load('./openapi.yaml');
 
-
+router.use(express.json());
+router.use(express.urlencoded({ extended: true })); // for parsing URL-encoded data from the request body
 
 router.get('/pathMappings', (req, res) => {
     if (pathMappingsData.pathMappings.length === 0) {
@@ -34,7 +35,7 @@ router.get('/pathMappings/reload', async(req, res) => {
 
 router.post('/pathMappings', (req, res) => {
     const { incoming_path, mapped_with } = req.body;
-    const index = pathMappings.findIndex(mapping => mapping.incoming_path === incoming_path);
+    const index = pathMappingsData.pathMappings.findIndex(mapping => mapping.incoming_path === incoming_path);
     if (index !== -1) {
         // Modify existing entry
         pathMappingsData.pathMappings[index].mapped_with = mapped_with;

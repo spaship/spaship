@@ -83,10 +83,26 @@ To create a virtual path for these special directories, you need to map the inco
 
 ```json
 {
-  "incoming_path": "welcome",
-  "mapped_with": "hello/world"
+  "incoming_path": "/welcome",
+  "mapped_with": "/hello/world"
 }
 ```
+
+### Configuring Regular Directories with Virtual Path Configuration
+
+To create a virtual path for regular directories, you need to map the incoming path to the actual path. For example, if you have a directory named "hello" and you want to access it via a virtual path named "greet", you would need to add the following mapping:
+
+```json
+{
+  "incoming_path": "/greet",
+  "mapped_with": "/hello"
+}
+```
+<br>
+<br>
+
+> **Note**: The `mapped_with` path should be the actual path of the directory on the server. Remember to include a leading slash to the paths.
+
 ### Security Configuration
 
 For security purposes, it's important to configure the `allowed_hosts` environment variable. This variable should contain a list of comma-separated hostnames that are allowed to access the `/spaship-proxy/api/v1` path.
