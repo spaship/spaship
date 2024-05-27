@@ -439,7 +439,7 @@ const activities = {
   ),
 
   CMDB_UPDATED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => {
-    const { applicationIdentifier, env } = props;
+    const { applicationIdentifier } = props;
     const isApplicationLevel = applicationIdentifier !== 'NA';
     return (
       <Text className="activityStream">

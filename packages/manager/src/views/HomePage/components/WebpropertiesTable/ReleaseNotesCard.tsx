@@ -2,7 +2,7 @@ import { useGetDocumentPage } from '@app/services/documents';
 import { Card, CardBody, CardHeader, Split, SplitItem } from '@patternfly/react-core';
 import { InfoAltIcon } from '@patternfly/react-icons';
 
-export const ReleaseNotesCard = ({ documentList }: any): JSX.Element => {
+export const ReleaseNotesCard = (): JSX.Element => {
   const { data: docsData } = useGetDocumentPage();
   const releaseNote = docsData?.release?.[0];
 
