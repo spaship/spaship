@@ -414,6 +414,7 @@ export class ApplicationService {
     });
     const applicationExists = this.applicationFactory.getExistingApplicationsByPath(searchedApplicationsByPath, identifier);
     const applicationConfigDTO = this.applicationFactory.configRequestBuilder(propertyIdentifier, identifier, env, applicationRequest);
+    const existingSPA = (await this.dataServices.application.getByAny({ propertyIdentifier, identifier }))[0];
     if (!applicationDetails) {
       const saveApplication = await this.applicationFactory.createContainerizedApplicationRequest(
         propertyIdentifier,
@@ -422,8 +423,8 @@ export class ApplicationService {
         env,
         deploymentConnection,
         applicationRequest.createdBy,
-        property.cmdbCode,
-        property.severity
+        existingSPA && existingSPA.cmdbCode ? existingSPA.cmdbCode : property.cmdbCode,
+        existingSPA && existingSPA.severity ? existingSPA.severity : property.severity
       );
       this.logger.log('ContainerizedApplicationDetails', JSON.stringify(saveApplication));
       applicationDetails = await this.dataServices.application.create(saveApplication);
@@ -644,6 +645,7 @@ export class ApplicationService {
     let applicationDetails = (
       await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: true, isGit: true })
     )[0];
+    const existingSPA = (await this.dataServices.application.getByAny({ propertyIdentifier, identifier }))[0];
     if (!applicationDetails) {
       const saveApplication = await this.applicationFactory.createContainerizedGitApplicationRequest(
         propertyIdentifier,
@@ -652,8 +654,8 @@ export class ApplicationService {
         env,
         deploymentConnection,
         applicationRequest.createdBy,
-        property.cmdbCode,
-        property.severity
+        existingSPA && existingSPA.cmdbCode ? existingSPA.cmdbCode : property.cmdbCode,
+        existingSPA && existingSPA.severity ? existingSPA.severity : property.severity
       );
       this.logger.log('ContainerizedGitApplicationDetails', JSON.stringify(saveApplication));
       applicationDetails = await this.dataServices.application.create(saveApplication);
