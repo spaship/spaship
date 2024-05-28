@@ -75,7 +75,7 @@ export const WebpropertiesTable = (): JSX.Element => {
           </Link>
         </SplitItem>
       </CardHeader>
-      <CardBody>
+      <CardBody className="table-container">
         {userWebProperties?.isLoading && (
           <EmptyState>
             <EmptyStateBody>

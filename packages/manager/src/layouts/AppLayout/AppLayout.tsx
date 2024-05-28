@@ -25,7 +25,9 @@ export const AppLayout = ({ children }: Props): JSX.Element => (
           {children}
         </FlexItem>
       </Flex>
-      <Feedback />
+      <div style={{ padding: '30px' }}>
+        <Feedback />
+      </div>
     </Page>
   </div>
 );
