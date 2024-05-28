@@ -12,7 +12,7 @@ const openApiDocumentation = YAML.load('./openapi.yaml');
 router.use(express.json());
 router.use(express.urlencoded({ extended: true })); // for parsing URL-encoded data from the request body
 
-router.get('/pathMappings', (req, res) => {
+router.get('/path-mapping', (req, res) => {
     if (pathMappingsData.pathMappings.length === 0) {
         res.json({ message: 'No mapping found' });
     } else {
@@ -22,7 +22,7 @@ router.get('/pathMappings', (req, res) => {
 
 
 
-router.get('/pathMappings/reload', async(req, res) => {
+router.get('/path-mapping/reload', async(req, res) => {
     await loadPathMappings();
     if (pathMappingsData.pathMappings.length === 0) {
         res.json({ message: 'No mapping found' });
@@ -33,21 +33,21 @@ router.get('/pathMappings/reload', async(req, res) => {
 
 
 
-router.post('/pathMappings', (req, res) => {
-    const { incoming_path, mapped_with } = req.body;
-    const index = pathMappingsData.pathMappings.findIndex(mapping => mapping.incoming_path === incoming_path);
+router.post('/path-mapping', (req, res) => {
+    const { virtualPath, mappedTo } = req.body;
+    const index = pathMappingsData.pathMappings.findIndex(mapping => mapping.virtualPath === virtualPath);
     if (index !== -1) {
         // Modify existing entry
-        pathMappingsData.pathMappings[index].mapped_with = mapped_with;
+        pathMappingsData.pathMappings[index].mappedTo = mappedTo;
     } else {
         // Add new entry
-        pathMappingsData.pathMappings.push({ incoming_path, mapped_with });
+        pathMappingsData.pathMappings.push({ virtualPath, mappedTo });
     }
     res.json(pathMappingsData.pathMappings);
 });
 
 
-router.put('/pathMappings', async (req, res) => {
+router.put('/path-mapping', async (req, res) => {
     const filePath = path.join(config.get("webroot"), '.routemapping');
     try {
         await fsp.writeFile(filePath, JSON.stringify(pathMappingsData.pathMappings), 'utf8');
@@ -58,19 +58,21 @@ router.put('/pathMappings', async (req, res) => {
 });
 
 
-router.delete('/pathMappings/:incoming_path', (req, res) => {
-    const { incoming_path } = req.params;
-    const index = pathMappingsData.pathMappings.findIndex(mapping => mapping.incoming_path === incoming_path);
+router.delete('/path-mapping/:virtualPath', (req, res) => {
+    const { virtualPath } = req.params;
+    const index = pathMappingsData.pathMappings.findIndex(mapping => mapping.virtualPath === virtualPath);
     if (index !== -1) {
         // Remove the entry
         pathMappingsData.pathMappings.splice(index, 1);
-        res.json({ message: `Entry with incoming_path ${incoming_path} successfully deleted` });
+        res.json({ message: `Entry with virtualPath ${virtualPath} successfully deleted` });
     } else {
-        res.status(404).json({ message: `Entry with incoming_path ${incoming_path} not found` });
+        res.status(404).json({ message: `Entry with virtualPath ${virtualPath} not found` });
     }
 });
 
-router.use('/docs', swaggerUi.serve);
-router.get('/docs', swaggerUi.setup(openApiDocumentation));
+if(config.get("show_docs")) {
+    router.use('/docs', swaggerUi.serve);
+    router.get('/docs', swaggerUi.setup(openApiDocumentation));
+}
 
 module.exports = router;

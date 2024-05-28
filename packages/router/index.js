@@ -39,8 +39,8 @@ const customRouter = function (req) {
   let url = req.url.replace(/\/+/g, "/"); // Avoid duplicate slash issue
 
   for (let mapping of pathMappingsData.pathMappings) {
-    if (mapping.incoming_path === url) {
-      url = mapping.mapped_with;
+    if (mapping.virtualPath === url) {
+      url = mapping.mappedTo;
       req.url = url; // Update the request URL
       break;
     }

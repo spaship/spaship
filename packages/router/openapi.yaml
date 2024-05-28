@@ -3,7 +3,7 @@ info:
   title: Router API
   version: 1.0.0
 paths:
-  /spaship-proxy/api/v1/pathMappings:
+  /spaship-proxy/api/v1/path-mapping:
     get:
       summary: List all path mappings
       responses:
@@ -46,7 +46,7 @@ paths:
                 properties:
                   message:
                     type: string
-  /spaship-proxy/api/v1/pathMappings/reload:
+  /spaship-proxy/api/v1/path-mapping/reload:
     get:
       summary: Reload from .routemapping file
       responses:
@@ -58,11 +58,11 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PathMapping'
-  /spaship-proxy/api/v1/pathMappings/{incoming_path}:
+  /spaship-proxy/api/v1/path-mapping/{virtualPath}:
     delete:
       summary: Delete a specific path mapping
       parameters:
-        - name: incoming_path
+        - name: virtualPath
           in: path
           required: true
           schema:
@@ -91,7 +91,7 @@ components:
     PathMapping:
       type: object
       properties:
-        incoming_path:
+        virtualPath:
           type: string
-        mapped_with:
+        mappedTo:
           type: string

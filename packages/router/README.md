@@ -83,8 +83,8 @@ To create a virtual path for these special directories, you need to map the inco
 
 ```json
 {
-  "incoming_path": "/welcome",
-  "mapped_with": "/hello/world"
+  "virtualPath": "/welcome",
+  "mappedTo": "/hello/world"
 }
 ```
 
@@ -94,14 +94,14 @@ To create a virtual path for regular directories, you need to map the incoming p
 
 ```json
 {
-  "incoming_path": "/greet",
-  "mapped_with": "/hello"
+  "virtualPath": "/greet",
+  "mappedTo": "/hello"
 }
 ```
 <br>
 <br>
 
-> **Note**: The `mapped_with` path should be the actual path of the directory on the server. Remember to include a leading slash to the paths.
+> **Note**: The `mappedTo` path should be the actual path of the directory on the server. Remember to include a leading slash to the paths.
 
 ### Security Configuration
 
@@ -113,3 +113,14 @@ To set the `allowed_hosts` environment variable, you can use the following comma
 
 ```bash
 export SPASHIP_ALLOWED_HOSTS="hostname1,hostname2"
+```
+
+#### Document Visibility Configuration
+
+For controlling the visibility of the API documentation, you can configure the `show_docs` environment variable. By default, it is set to `true` which means the documentation will be visible. If you want to hide the documentation, you can set this environment variable to `false`.
+
+To set the `show_docs` environment variable, you can use the following command:
+
+```bash
+export SPASHIP_SHOW_DOCS=false
+```
