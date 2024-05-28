@@ -1,9 +1,21 @@
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
-import { getSession } from 'next-auth/react';
+import { getSession, signIn } from 'next-auth/react'; // signIn is used to refresh session in next-auth
 import url from 'url';
 import { env } from './env';
+
+// Mutex to prevent multiple simultaneous refresh attempts
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
+
+function subscribeTokenRefresh(cb: (token: string) => void) {
+  refreshSubscribers.push(cb);
+}
+
+function onRefreshed(token: string) {
+  refreshSubscribers.map((cb) => cb(token));
+}
 
 async function refreshAccessToken(token: any) {
   try {
@@ -69,18 +81,43 @@ export const deleteOrchestratorAuthorizationHeader = orchReq.removeToken;
 orchestratorReq.interceptors.response.use(
   async (response) => response,
   async (error) => {
+    const originalRequest = error.config;
     if (error.response && error.response.status === 401) {
-      const session = await getSession();
-      if (session && session.accessToken) {
-        const newToken = await refreshAccessToken(session.accessToken);
-        // Update the session with the new token
-        session.accessToken = newToken.accessToken;
+      if (!isRefreshing) {
+        isRefreshing = true;
+        const session = await getSession();
+        if (session && session.accessToken) {
+          const newToken = await refreshAccessToken(session.accessToken);
+          if (newToken.accessToken) {
+            // Update the session with the new token
+            await signIn('credentials', {
+              // signIn refreshes the session with the new token
+              accessToken: newToken.accessToken,
+              refreshToken: newToken.refreshToken
+            });
 
-        // Retry the original request with the new token
-        setOrchestratorAuthorizationHeader(newToken.accessToken);
-        error.config.headers['Authorization'] = `Bearer ${newToken.accessToken}`;
-        return axios(error.config);
+            // Apply the new token to all pending subscribers
+            onRefreshed(newToken.accessToken);
+
+            // Set the new token for subsequent requests
+            setOrchestratorAuthorizationHeader(newToken.accessToken);
+            isRefreshing = false;
+            refreshSubscribers = [];
+          } else {
+            isRefreshing = false;
+            refreshSubscribers = [];
+            return Promise.reject(error);
+          }
+        }
       }
+
+      // Wait for the new token and retry the original request
+      return new Promise((resolve) => {
+        subscribeTokenRefresh((token: string) => {
+          originalRequest.headers['Authorization'] = `Bearer ${token}`;
+          resolve(axios(originalRequest));
+        });
+      });
     }
     return Promise.reject(error);
   }
