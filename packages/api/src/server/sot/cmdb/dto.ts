@@ -30,8 +30,6 @@ export class CMDBDTO {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  @Length(MIN.DEFAULT, MAX.PROPERTY, { message: MESSAGE.INVALID_LENGTH, always: true })
-  @Matches(VALIDATION.PROPERTY_IDENTIFIER, { message: MESSAGE.INVALID_PROPERTY_IDENTIFIER, always: true })
   applicationIdentifier: string;
 
   @ApiProperty()
@@ -46,7 +44,6 @@ export class CMDBDTO {
   @IsNotEmpty()
   @IsOptional()
   @Length(MIN.DEFAULT, MAX.DEFAULT, { message: MESSAGE.INVALID_LENGTH, always: true })
-  @Matches(VALIDATION.PROPERTY_TITLE, { message: MESSAGE.INVALID_SEVERITY, always: true })
   severity: string;
 
   @ApiProperty()
