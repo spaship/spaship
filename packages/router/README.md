@@ -61,3 +61,66 @@ If your setup any proxy before SPAship router, Router have to know the incoming 
    ```
    export SPASHIP_FORWARDED_HOST=www.example.com
    ```
+## Virtual Path Configuration
+
+### Introduction
+
+A new feature has been added to the router that allows users to configure virtual paths. These are paths that do not exist in the Apache server but can be mapped to existing paths. The operations related to this configuration are accessible from the path `/spaship-proxy/api/v1`, and the API specification is available at `/spaship-proxy/api/v1/docs`.
+
+There are two levels of operation for this feature:
+
+1. **In-memory**: These are temporary changes. You can add a new path, modify an existing path, or delete an existing path using the `POST` and `DELETE` APIs. However, these changes will be discarded once the application restarts.
+
+2. **Configuration**: These are permanent changes. All permanent configurations are written inside the `.routemapping` file. To make your in-memory changes permanent, you will need to call the `PUT` method. This will overwrite the values in the `.routemapping` file with the current values of the in-memory variable.
+
+Please refer to the `openapi.yaml` file for more details on how to use these APIs.
+
+### Configuring Flatpath Directories with Virtual Path Configuration
+
+Directories with underscores are accessible differently. For example, a directory named `hello_world` on the server would be accessible at the `hello/world` path.
+
+To create a virtual path for these special directories, you need to map the incoming path to the actual path. For example, if you want to configure a new virtual path called "welcome" for a flat directory "hello_world" (which is accessed via the "hello/world" path), you would need to add the following mapping:
+
+```json
+{
+  "virtualPath": "/welcome",
+  "mappedTo": "/hello/world"
+}
+```
+
+### Configuring Regular Directories with Virtual Path Configuration
+
+To create a virtual path for regular directories, you need to map the incoming path to the actual path. For example, if you have a directory named "hello" and you want to access it via a virtual path named "greet", you would need to add the following mapping:
+
+```json
+{
+  "virtualPath": "/greet",
+  "mappedTo": "/hello"
+}
+```
+<br>
+<br>
+
+> **Note**: The `mappedTo` path should be the actual path of the directory on the server. Remember to include a leading slash to the paths.
+
+### Security Configuration
+
+For security purposes, it's important to configure the `allowed_hosts` environment variable. This variable should contain a list of comma-separated hostnames that are allowed to access the `/spaship-proxy/api/v1` path.
+
+The application checks all incoming requests to `/spaship-proxy/api/v1` by comparing the `req.headers.host` value with the values in `allowed_hosts`. If a match is found, the request is allowed to proceed. If no match is found, the application responds with a 403 error, indicating that the request is forbidden.
+
+To set the `allowed_hosts` environment variable, you can use the following command:
+
+```bash
+export SPASHIP_ALLOWED_HOSTS="hostname1,hostname2"
+```
+
+#### Document Visibility Configuration
+
+For controlling the visibility of the API documentation, you can configure the `show_docs` environment variable. By default, it is set to `true` which means the documentation will be visible. If you want to hide the documentation, you can set this environment variable to `false`.
+
+To set the `show_docs` environment variable, you can use the following command:
+
+```bash
+export SPASHIP_SHOW_DOCS=false
+```

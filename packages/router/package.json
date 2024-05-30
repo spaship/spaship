@@ -1,10 +1,10 @@
 {
   "name": "@spaship/router",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "description": "SPAship path proxy. Proxies paths to the right SPA location or pass to different origin.",
   "main": "index.js",
   "scripts": {
-    "test": "SPASHIP_LOG_LEVEL=debug SPASHIP_LOG_FORMAT=pretty ../../node_modules/.bin/jest --restoreMocks --passWithNoTests",
+    "test": "SPASHIP_LOG_LEVEL=debug SPASHIP_LOG_FORMAT=pretty npx jest --restoreMocks --passWithNoTests",
     "start": "[ -f ../../.env ] && source ../../.env; node $NODE_DEBUG_OPTION --max-http-header-size=16384 index.js"
   },
   "repository": {
@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/spaship/spaship/tree/master/packages/router#readme",
   "dependencies": {
-    "@spaship/common": "^1.3.0",
+    "@spaship/common": "file:../common",
     "express": "^4.17.1",
     "http-proxy-middleware": "^2.0.0",
     "lodash": "^4.17.15",
@@ -36,6 +36,9 @@
   },
   "devDependencies": {
     "axios": "0.27.2",
-    "memfs": "3.4.13"
+    "memfs": "3.4.13",
+    "supertest": "^7.0.0",
+    "swagger-ui-express": "^5.0.0",
+    "yamljs": "^0.3.0"
   }
 }

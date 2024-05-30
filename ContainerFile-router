@@ -1,0 +1,30 @@
+FROM node:22-alpine as build
+WORKDIR /usr/src/spaship
+
+COPY lerna.json ./
+COPY package.json ./
+COPY packages ./packages
+
+RUN cd packages/common && \
+    npm install && \
+    npm link && \
+    cd ../router && \
+    npm link @spaship/common && \
+    rm -rf /root/.npm
+
+
+WORKDIR /usr/src/spaship/packages/router
+
+
+FROM node:22-alpine
+
+WORKDIR /usr/src/spaship/packages
+
+COPY --from=build /usr/src/spaship/packages/common ./common
+COPY --from=build /usr/src/spaship/packages/router ./router
+
+WORKDIR /usr/src/spaship/packages/router
+
+EXPOSE 8765
+
+CMD [ "npm", "start" ]

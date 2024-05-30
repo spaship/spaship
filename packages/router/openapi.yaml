@@ -1,0 +1,97 @@
+openapi: 3.0.0
+info:
+  title: Router API
+  version: 1.0.0
+paths:
+  /spaship-proxy/api/v1/path-mapping:
+    get:
+      summary: List all path mappings
+      responses:
+        '200':
+          description: An array of path mappings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PathMapping'
+    post:
+      summary: Modify or add a new path mapping (changes are in-memory only)
+      description: Use the PUT operation to make changes permanent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PathMapping'
+      responses:
+        '200':
+          description: An array of path mappings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PathMapping'
+    put:
+      summary: Overwrite .routemapping file with in-memory route configuration
+      description: This operation does not require any body. It copies the values from the in-memory route configuration and makes permanent changes in the routing configuration file, overwriting all existing values.
+      responses:
+        '200':
+          description: Success message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /spaship-proxy/api/v1/path-mapping/reload:
+    get:
+      summary: Reload from .routemapping file
+      responses:
+        '200':
+          description: An array of path mappings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PathMapping'
+  /spaship-proxy/api/v1/path-mapping/{virtualPath}:
+    delete:
+      summary: Delete a specific path mapping
+      parameters:
+        - name: virtualPath
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Not found message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+components:
+  schemas:
+    PathMapping:
+      type: object
+      properties:
+        virtualPath:
+          type: string
+        mappedTo:
+          type: string

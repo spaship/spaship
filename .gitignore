@@ -420,3 +420,4 @@ packages/operator/spa-deployment-operator/values-w2-pp.yaml
 packages/operator/spa-deployment-operator/values-w2-pr.yaml
 packages/operator/spa-deployment-operator/values-gray-cc-pp.yaml
 packages/operator/spa-deployment-operator/list.txt
+packages/router/.localscript
