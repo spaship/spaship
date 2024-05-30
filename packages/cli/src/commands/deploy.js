@@ -31,9 +31,14 @@ class DeployCommand extends Command {
     const { args, flags } = this.parse(DeployCommand);
 
     const config = loadRcFile();
+    const file = flags?.file;
     let yamlConfig;
     try{
-      yamlConfig= await common.config.read("spaship.yaml");
+      if(file){
+        yamlConfig= await common.config.read(file);
+      }else{
+        yamlConfig= await common.config.read("spaship.yaml");
+      }
     } catch(e) {
       this.error("Please run spaship init to generate spaship.yaml.");
     }
@@ -129,7 +134,9 @@ class DeployCommand extends Command {
           } catch {
             this.error(`Unable to access ${buildDirPath}, please check the buildDir value.`);
           }
-          const rawSpashipYml = await common.config.readRaw("spaship.yaml");
+          let rawSpashipYml;
+          if(file) rawSpashipYml= await common.config.readRaw(file);
+          else  rawSpashipYml= await common.config.readRaw("spaship.yaml");     
           this.log("Creating a zip archive...");
           try {
             args.archive = await zipDirectory(buildDirPath, rawSpashipYml);
@@ -301,6 +308,12 @@ DeployCommand.flags = assign(
     image: flags.string({
       required: false,
       description: "image (url) for the containerized deployment [SSR].",
+    }),
+  },
+  {
+    file: flags.string({
+      required: false,
+      description: "spaship.yaml file link.",
     }),
   },
   commonFlags.apikey,
