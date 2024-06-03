@@ -438,3 +438,44 @@ export class SymlinkDTO {
   @IsOptional()
   autoSymlinkCreation: boolean;
 }
+
+export class VirtualPathDTO {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @Length(MIN.DEFAULT, MAX.PROPERTY, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Matches(VALIDATION.PROPERTY_IDENTIFIER, { message: MESSAGE.INVALID_PROPERTY_IDENTIFIER, always: true })
+  propertyIdentifier: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  identifier: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @Length(MIN.DEFAULT, MAX.ENV, { message: MESSAGE.INVALID_LENGTH, always: true })
+  @Matches(VALIDATION.ENV, { message: MESSAGE.INVALID_ENV, always: true })
+  env: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @Matches(VALIDATION.PATH, { message: MESSAGE.INVALID_PATH, always: true })
+  basePath: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @Matches(VALIDATION.PATH, { message: MESSAGE.INVALID_PATH, always: true })
+  virtualPath: string;
+
+  createdBy: string;
+}
+
+export class SaveVirtualPathRequest {
+  incoming_path: string;
+
+  mapped_with: string;
+}

@@ -10,7 +10,7 @@ import { IDataServices } from 'src/repository/data-services.abstract';
 import { AgendaService } from 'src/server/agenda/service';
 import { Action } from 'src/server/analytics/entity';
 import { AnalyticsService } from 'src/server/analytics/service';
-import { Application, Symlink } from 'src/server/application/entity';
+import { Application, Symlink, VirtualPath } from 'src/server/application/entity';
 import { DeploymentConnection } from 'src/server/deployment-connection/entity';
 import { Cluster } from 'src/server/environment/entity';
 import { EnvironmentFactory } from 'src/server/environment/service/factory';
@@ -27,7 +27,9 @@ import {
   EnableApplicationSyncDTO,
   GitApplicationStatusRequest,
   GitDeploymentRequestDTO,
-  SymlinkDTO
+  SaveVirtualPathRequest,
+  SymlinkDTO,
+  VirtualPathDTO
 } from '../request.dto';
 import { ApplicationFactory } from './factory';
 
@@ -1468,5 +1470,140 @@ export class ApplicationService {
     applicationDetails.updatedBy = symlinkDTO.createdBy;
     await this.dataServices.application.updateOne(search, applicationDetails);
     return applicationDetails;
+  }
+
+  /* @internal
+   * Create Virutal path for a specific application
+   * It will call three apis to save, write in configuration and reload config
+   */
+  async createVirtualPath(request: VirtualPathDTO): Promise<any> {
+    const { propertyIdentifier, env, identifier } = request;
+    const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+    this.logger.log('Environment', JSON.stringify(environment));
+    if (!environment) this.exceptionService.badRequestException({ message: 'Environment not found.' });
+    const application = (
+      await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false })
+    )[0];
+    if (!application) this.exceptionService.badRequestException({ message: 'Application not found.' });
+    const { property, deploymentConnection } = await this.environmentFactory.applicationService.getDeploymentConnection(propertyIdentifier, env);
+    if (!property || !deploymentConnection) this.exceptionService.badRequestException({ message: 'Property or Deployment Connection not found.' });
+    const data = new VirtualPath();
+    data.basePath = this.applicationFactory.getPath(request.basePath);
+    data.virtualPath = this.applicationFactory.getPath(request.virtualPath);
+    if (!application.virtualPaths) application.virtualPaths = [data];
+    else {
+      const existinVirtualPath = application.virtualPaths.find((key) => request.basePath === key.basePath && request.virtualPath === key.virtualPath);
+      if (!existinVirtualPath) application.virtualPaths = [...application.virtualPaths, data];
+    }
+    try {
+      const mappingRequest = new SaveVirtualPathRequest();
+      mappingRequest.incoming_path = request.virtualPath;
+      mappingRequest.mapped_with = request.basePath;
+      for (const router of application.routerUrl) {
+        const { hostname } = new URL(router);
+        const localMemoryUpdateResponse = await this.applicationFactory.savePathMappingToLocalMemory(mappingRequest, hostname);
+        this.logger.log('localMemoryUpdateResponse', JSON.stringify(localMemoryUpdateResponse.data));
+        const configMemoreyUpdateResponse = await this.applicationFactory.savePathMappingOnConfig(hostname);
+        this.logger.log('configMemoreyUpdateResponse', JSON.stringify(configMemoreyUpdateResponse.data));
+        const reloadResponse = await this.applicationFactory.reloadPathMappings(hostname);
+        this.logger.log('reloadResponse', JSON.stringify(reloadResponse.data));
+      }
+    } catch (error) {
+      this.logger.error('CreateVirtualPath', error);
+      await this.analyticsService.createActivityStream(
+        propertyIdentifier,
+        Action.VIRTUAL_PATH_CREATION_FAILED,
+        application.env,
+        identifier,
+        `virtual path - ${request.virtualPath} creation failed for ${identifier}.`,
+        request.createdBy,
+        Source.MANAGER,
+        JSON.stringify(request)
+      );
+      this.exceptionService.internalServerErrorException({
+        message: 'Error in creating the virutal path, please contact with the SPAship team or try again later.'
+      });
+    }
+    try {
+      await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false }, application);
+      await this.analyticsService.createActivityStream(
+        propertyIdentifier,
+        Action.VIRTUAL_PATH_CREATED,
+        application.env,
+        identifier,
+        `virtual path - ${request.virtualPath} created for ${identifier}.`,
+        request.createdBy,
+        Source.MANAGER,
+        JSON.stringify(request)
+      );
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err);
+    }
+    return application;
+  }
+
+  /* @internal
+   * Delete Virutal path for a specific application
+   * It will call three apis to delete, write in configuration and reload config
+   */
+  async deleteVirtualPath(request: VirtualPathDTO): Promise<any> {
+    const { propertyIdentifier, env, identifier } = request;
+    const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
+    this.logger.log('Environment', JSON.stringify(environment));
+    if (!environment) this.exceptionService.badRequestException({ message: 'Environment not found.' });
+    const application = (
+      await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false })
+    )[0];
+    if (!application) this.exceptionService.badRequestException({ message: 'Application not found.' });
+    const { property, deploymentConnection } = await this.environmentFactory.applicationService.getDeploymentConnection(propertyIdentifier, env);
+    if (!property || !deploymentConnection) this.exceptionService.badRequestException({ message: 'Property or Deployment Connection not found.' });
+    const data = new VirtualPath();
+    data.basePath = this.applicationFactory.getPath(request.basePath);
+    data.virtualPath = this.applicationFactory.getPath(request.virtualPath);
+    const pathIndex = application.virtualPaths.findIndex((key) => data.basePath === key.basePath && data.virtualPath === key.virtualPath);
+    if (pathIndex === -1) this.exceptionService.badRequestException({ message: 'Virtual path not found.' });
+    else application.virtualPaths.splice(pathIndex, 1);
+    try {
+      for (const router of application.routerUrl) {
+        const { hostname } = new URL(router);
+        const deletedPath = await this.applicationFactory.deletePathMappings(data.virtualPath, hostname);
+        this.logger.log('deletedPath', JSON.stringify(deletedPath.data));
+        const configMemoreyUpdateResponse = await this.applicationFactory.savePathMappingOnConfig(hostname);
+        this.logger.log('configMemoreyUpdateResponse', JSON.stringify(configMemoreyUpdateResponse.data));
+        const reloadResponse = await this.applicationFactory.reloadPathMappings(hostname);
+        this.logger.log('reloadResponse', JSON.stringify(reloadResponse.data));
+      }
+    } catch (error) {
+      this.logger.error('DeleteVirtualPath', error);
+      await this.analyticsService.createActivityStream(
+        propertyIdentifier,
+        Action.VIRTUAL_PATH_DELETION_FAILED,
+        application.env,
+        identifier,
+        `virtual path - ${request.virtualPath} deletetion failed for ${identifier}.`,
+        request.createdBy,
+        Source.MANAGER,
+        JSON.stringify(request)
+      );
+      this.exceptionService.internalServerErrorException({
+        message: 'Error in creating the virutal path, please contact with the SPAship team or try again later.'
+      });
+    }
+    try {
+      await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false }, application);
+      await this.analyticsService.createActivityStream(
+        propertyIdentifier,
+        Action.VIRTUAL_PATH_DELETED,
+        application.env,
+        identifier,
+        `virtual path - ${request.virtualPath} deleted for ${identifier}.`,
+        request.createdBy,
+        Source.MANAGER,
+        JSON.stringify(request)
+      );
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err);
+    }
+    return application;
   }
 }

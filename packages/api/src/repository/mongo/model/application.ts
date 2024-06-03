@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Symlink } from 'src/server/application/entity';
+import { Symlink, VirtualPath } from 'src/server/application/entity';
 
 export type ApplicationDocument = Application & Document;
 
@@ -21,6 +21,9 @@ export class Application {
 
   @Prop({ required: true })
   path: string;
+
+  @Prop({})
+  virtualPaths: VirtualPath[];
 
   @Prop({})
   ref: string;

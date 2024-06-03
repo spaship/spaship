@@ -32,6 +32,7 @@ import {
   GitDeploymentRequestDTO,
   GitValidateResponse,
   GitValidationRequestDTO,
+  SaveVirtualPathRequest,
   SymlinkDTO,
   UpdateConfigOrSecretRequest
 } from 'src/server/application/request.dto';
@@ -1105,5 +1106,30 @@ export class ApplicationFactory {
   buildFolderPath(folderPath: string): string {
     // @internal it will replace the heading & trailing slash frm the folder path
     return folderPath.replace(/^\/+/g, '').replace(/\/+$/, '');
+  }
+
+  // @internal Upload the distribution folder to the pod
+  async savePathMappingToLocalMemory(data: SaveVirtualPathRequest, routerUrl: string): Promise<AxiosResponse<any, any>> {
+    return this.httpService.axiosRef.post(`https://${routerUrl}/spaship-proxy/api/v1/pathMappings`, data);
+  }
+
+  // @internal Retrieve path mappings from the pod
+  async getPathMappings(routerUrl: string): Promise<AxiosResponse<any, any>> {
+    return this.httpService.axiosRef.get(`https://${routerUrl}/spaship-proxy/api/v1/pathMappings`);
+  }
+
+  // @internal Reload the path mappings from the pod
+  async reloadPathMappings(routerUrl: string): Promise<AxiosResponse<any, any>> {
+    return this.httpService.axiosRef.get(`https://${routerUrl}/spaship-proxy/api/v1/pathMappings/reload`);
+  }
+
+  // @internal Update the path mappings on the pod
+  async savePathMappingOnConfig(routerUrl: string): Promise<AxiosResponse<any, any>> {
+    return this.httpService.axiosRef.put(`https://${routerUrl}/spaship-proxy/api/v1/pathMappings`);
+  }
+
+  // @internal Delete the path mappings from the pod
+  async deletePathMappings(virtualPath: string, routerUrl: string): Promise<AxiosResponse<any, any>> {
+    return this.httpService.axiosRef.delete(`https://${routerUrl}/spaship-proxy/api/v1/pathMappings${virtualPath}`);
   }
 }
