@@ -5,6 +5,7 @@ import { diskStorage } from 'multer';
 import { DIRECTORY_CONFIGURATION, VALIDATION } from '../../configuration';
 import { AuthenticationGuard } from '../auth/guard';
 import { ExceptionsService } from '../exceptions/service';
+import { Application } from './entity';
 import {
   ApplicationConfigDTO,
   ApplicationResponse,
@@ -13,11 +14,11 @@ import {
   EnableApplicationSyncDTO,
   GitDeploymentRequestDTO,
   GitValidationRequestDTO,
-  SymlinkDTO
+  SymlinkDTO,
+  VirtualPathDTO
 } from './request.dto';
-import { Application } from './entity';
-import { ApplicationFactory } from './service/factory';
 import { ApplicationService } from './service';
+import { ApplicationFactory } from './service/factory';
 
 @Controller('applications')
 @ApiTags('Application')
@@ -180,6 +181,18 @@ export class ApplicationController {
   @ApiOperation({ description: 'Symlink Environment Deletion.' })
   async deleteSymlink(@Body() symlinkDTO: SymlinkDTO): Promise<any> {
     return this.applicationService.deleteSymlink(symlinkDTO);
+  }
+
+  @Post('/virtualPath')
+  @ApiOperation({ description: 'Create virtual path.' })
+  async createVirtualPath(@Body() virtualPath: VirtualPathDTO): Promise<any> {
+    return this.applicationService.createVirtualPath(virtualPath);
+  }
+
+  @Delete('/virtualPath')
+  @ApiOperation({ description: 'Delete virtual path.' })
+  async deleteVirtualPath(@Body() virtualPath: VirtualPathDTO): Promise<any> {
+    return this.applicationService.deleteVirtualPath(virtualPath);
   }
 
   @Post('/auto-symlink')
