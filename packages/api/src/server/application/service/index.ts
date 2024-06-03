@@ -1542,6 +1542,10 @@ export class ApplicationService {
     return application;
   }
 
+  /* @internal
+   * Delete Virutal path for a specific application
+   * It will call three apis to delete, write in configuration and reload config
+   */
   async deleteVirtualPath(request: VirtualPathDTO): Promise<any> {
     const { propertyIdentifier, env, identifier } = request;
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
