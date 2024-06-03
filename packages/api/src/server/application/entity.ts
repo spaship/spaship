@@ -63,6 +63,8 @@ export class Application {
 
   symlink: Symlink[];
 
+  virtualPaths: VirtualPath[];
+
   autoSymlinkCreation: boolean;
 
   cmdbCode: string;
@@ -104,4 +106,12 @@ export class OperatorSymlinkEnvironment {
   nameSpace: string;
 
   name: string;
+}
+
+export class VirtualPath {
+  basePath: string;
+
+  virtualPath: string;
+
+  createdAt: string;
 }
