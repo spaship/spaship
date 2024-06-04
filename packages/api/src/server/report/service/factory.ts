@@ -68,27 +68,23 @@ export class ReportFactory {
           appDetails.createdAt = application.createdAt;
           appDetails.updatedAt = application.updatedAt;
           if (exclude !== podlist && application.isContainerized) {
-            const podList = await this.applicationService.getListOfPods(
+            let podList = await this.applicationService.getListOfPods(
               property.identifier,
               envDetails.identifier,
               application.identifier,
               DEPLOYMENT_DETAILS.type.containerized
             );
-            appDetails.podlist = podList;
+            podList = podList.filter((item) => typeof item !== 'string');
+            envDetails.podlist = envDetails.podlist ? [...envDetails.podlist, ...podList] : [...podList];
           }
           applications.push(appDetails);
         }
         envDetails.applications = applications;
         if (exclude !== podlist) {
-          const podList = await this.applicationService.getListOfPods(
-            property.identifier,
-            envDetails.identifier,
-            'NA',
-            DEPLOYMENT_DETAILS.type.static
-          );
-          envDetails.podlist = podList;
+          let podList = await this.applicationService.getListOfPods(property.identifier, envDetails.identifier, 'NA', DEPLOYMENT_DETAILS.type.static);
+          podList = podList.filter((item) => typeof item !== 'string');
+          envDetails.podlist = envDetails.podlist ? [...envDetails.podlist, ...podList] : [...podList];
         }
-
         environments.push(envDetails);
       }
       reportDetails.environments = environments;
