@@ -18,7 +18,10 @@ export class ReportDetails {
   environments: EnvironmentDetails[];
 
   @ApiProperty()
-  createdBy: string;
+  createdBy: Date;
+
+  @ApiProperty()
+  updatedBy: Date;
 
   @ApiProperty()
   createdAt: Date;
@@ -42,6 +45,18 @@ export class EnvironmentDetails {
 
   @ApiProperty()
   podlist: String[];
+
+  @ApiProperty()
+  createdBy: Date;
+
+  @ApiProperty()
+  updatedBy: Date;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
 }
 
 export class ApplicationDetails {
@@ -67,14 +82,14 @@ export class ApplicationDetails {
   podlist: String[];
 
   @ApiProperty()
-  createdBy: string;
+  createdBy: Date;
+
+  @ApiProperty()
+  updatedBy: Date;
 
   @ApiProperty()
   createdAt: Date;
 
   @ApiProperty()
   updatedAt: Date;
-
-  @ApiProperty()
-  updatedBy: Date;
 }
