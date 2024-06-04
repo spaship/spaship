@@ -85,8 +85,16 @@ export class ReportFactory {
           podList = podList.filter((item) => typeof item !== 'string');
           envDetails.podlist = envDetails.podlist ? [...envDetails.podlist, ...podList] : [...podList];
         }
+        envDetails.createdBy = env.createdBy;
+        envDetails.updatedBy = env.updatedBy;
+        envDetails.createdAt = env.createdAt;
+        envDetails.updatedAt = env.updatedAt;
         environments.push(envDetails);
       }
+      reportDetails.createdBy = property.createdBy;
+      reportDetails.updatedBy = property.updatedBy;
+      reportDetails.createdAt = property.createdAt;
+      reportDetails.updatedAt = property.updatedAt;
       reportDetails.environments = environments;
       response.push(reportDetails);
     }
