@@ -102,4 +102,16 @@ export class AnalyticsController {
   async homePage(@Param('email') email: string): Promise<UserAnalytics[]> {
     return this.analyticsService.getUserPropertyDetails(email);
   }
+
+  @Get('/v2/activity-stream')
+  @ApiOperation({ description: 'Get the Activity Stream.' })
+  async getActivityStreamV2(
+    @Query('propertyIdentifier') propertyIdentifier: string,
+    @Query('applicationIdentifier') applicationIdentifier: string,
+    @Query('actions') actions: string,
+    @Query('skip') skip: number,
+    @Query('limit') limit: number
+  ): Promise<ActivityStream[]> {
+    return this.analyticsService.getActivityStreamV2(propertyIdentifier, applicationIdentifier, actions, skip, limit);
+  }
 }
