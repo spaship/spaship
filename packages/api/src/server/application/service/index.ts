@@ -1563,6 +1563,8 @@ export class ApplicationService {
     const pathIndex = application.virtualPaths.findIndex((key) => data.basePath === key.basePath && data.virtualPath === key.virtualPath);
     if (pathIndex === -1) this.exceptionService.badRequestException({ message: 'Virtual path not found.' });
     else application.virtualPaths.splice(pathIndex, 1);
+    // @internal TODO : to be removed, once this is resolved from the router
+    data.virtualPath = this.applicationFactory.getVirtualPathForDeletion(request.virtualPath);
     try {
       for (const router of application.routerUrl) {
         const { hostname } = new URL(router);

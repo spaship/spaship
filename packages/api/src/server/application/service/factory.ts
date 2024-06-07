@@ -290,6 +290,12 @@ export class ApplicationFactory {
     return `/${appPath}`;
   }
 
+  // @internal Generate Virtual Path For Deletion
+  getVirtualPathForDeletion(requestPath: string): string {
+    const virtualpath = `/${requestPath.replace(/^\/+/g, '').replace(/\/+$/, '')}`;
+    return virtualpath.split('/').map(encodeURIComponent).join('%2F');
+  }
+
   // @internal Generate the repository url
   getRepoUrl(repoUrl: string): string {
     // @internal it will replace the heading & trailing slash frm the repoUrl
@@ -1130,6 +1136,6 @@ export class ApplicationFactory {
 
   // @internal Delete the path mappings from the pod
   async deletePathMappings(virtualPath: string, routerUrl: string): Promise<AxiosResponse<any, any>> {
-    return this.httpService.axiosRef.delete(`https://${routerUrl}/spaship-proxy/api/v1/pathMappings${virtualPath}`);
+    return this.httpService.axiosRef.delete(`https://${routerUrl}/spaship-proxy/api/v1/pathMappings/${virtualPath}`);
   }
 }
