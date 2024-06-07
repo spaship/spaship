@@ -80,6 +80,7 @@ export class AnalyticsService {
     return savedAnalytics;
   }
 
+  // @internal to be deprecated and it'll point to the getActivityStreamV2(...)
   async getActivityStream(
     propertyIdentifier: string,
     applicationIdentifier: string,
@@ -348,5 +349,32 @@ export class AnalyticsService {
       }
     }
     return userAnalytics;
+  }
+
+  /* @internal
+    Updated API for the history and activity stream
+    Activity Stream function to be deprecated and to be replaced with the the getHistory API
+    It uses the mongo aggregate query
+  */
+  async getActivityStreamV2(
+    propertyIdentifier: string,
+    applicationIdentifier: string,
+    actions: string,
+    skip: number = AnalyticsService.defaultSkip,
+    limit: number = AnalyticsService.defaultLimit
+  ): Promise<ActivityStream[]> {
+    limit = Number(limit);
+    skip = Number(skip);
+    if (Number.isNaN(limit) || limit <= 0) {
+      limit = AnalyticsService.defaultLimit;
+    }
+    if (Number.isNaN(skip) || skip <= 0) {
+      skip = AnalyticsService.defaultSkip;
+    }
+    const actionsRequest = actions ? actions.split(',') : ['APPLICATION_DEPLOYMENT_STARTED'];
+    const query = await this.analyticsFactory.getActivityStreamV2(propertyIdentifier, applicationIdentifier, actionsRequest, skip, limit);
+    const response = await this.dataServices.activityStream.aggregate(query);
+    if (!response) this.exceptionService.badRequestException({ message: 'No Activity Stream Present.' });
+    return response;
   }
 }

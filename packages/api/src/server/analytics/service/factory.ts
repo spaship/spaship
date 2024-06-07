@@ -244,4 +244,16 @@ export class AnalyticsFactory {
       { $project: projectRequest1 }
     ];
   }
+
+  async getActivityStreamV2(
+    propertyIdentifier: string,
+    applicationIdentifier: string,
+    actions: string[],
+    skip: number,
+    limit: number
+  ): Promise<Object[]> {
+    const matchQuery = { propertyIdentifier, 'props.applicationIdentifier': applicationIdentifier, action: { $in: actions } };
+    Object.keys(matchQuery).forEach((key) => matchQuery[key] === undefined && delete matchQuery[key]);
+    return [{ $match: matchQuery }, { $skip: skip }, { $limit: limit }];
+  }
 }

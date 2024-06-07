@@ -103,7 +103,7 @@ export class AnalyticsController {
     return this.analyticsService.getUserPropertyDetails(email);
   }
 
-  @Get('/v2/activity-stream')
+  @Get('/history')
   @ApiOperation({ description: 'Get the Activity Stream.' })
   async getActivityStreamV2(
     @Query('propertyIdentifier') propertyIdentifier: string,
