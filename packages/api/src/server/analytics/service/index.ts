@@ -365,12 +365,8 @@ export class AnalyticsService {
   ): Promise<ActivityStream[]> {
     limit = Number(limit);
     skip = Number(skip);
-    if (Number.isNaN(limit) || limit <= 0) {
-      limit = AnalyticsService.defaultLimit;
-    }
-    if (Number.isNaN(skip) || skip <= 0) {
-      skip = AnalyticsService.defaultSkip;
-    }
+    if (Number.isNaN(limit) || limit <= 0) limit = AnalyticsService.defaultLimit;
+    if (Number.isNaN(skip) || skip <= 0) skip = AnalyticsService.defaultSkip;
     const actionsRequest = actions ? actions.split(',') : ['APPLICATION_DEPLOYMENT_STARTED'];
     const query = await this.analyticsFactory.getActivityStreamV2(propertyIdentifier, applicationIdentifier, actionsRequest, skip, limit);
     const response = await this.dataServices.activityStream.aggregate(query);
