@@ -1,10 +1,12 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthenticationGuard } from 'src/server/auth/guard';
 import { ReportService } from './service';
 import { ReportDetails } from './response.dto';
 
 @Controller('report')
 @ApiTags('Report')
+@UseGuards(AuthenticationGuard)
 export class ReportController {
   constructor(private readonly reportService: ReportService) {}
 
