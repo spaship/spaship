@@ -3,11 +3,11 @@ name: SPAship Manager Build and Push to Quay
 on:
   push:
     branches:
-      - '*'
+      - "*"
     tags:
-      - '*'
+      - "*"
     paths:
-      - '/packages/manager/**'
+      - "/packages/manager/**"
   workflow_dispatch:
     inputs:
       env:
@@ -58,11 +58,12 @@ jobs:
             NEXT_PUBLIC_ONBOARDING_TO_CLOUD_LINK=${{ secrets.ONBOARDING_TO_CLOUD_LINK }}
             NEXT_PUBLIC_CONTAINERIZED_DEPLOYMENTS_WORKFLOW_VIDEO=${{ secrets.CONTAINERIZED_DEPLOYMENTS_WORKFLOW_VIDEO }}
             NEXT_PUBLIC_SPASHIP_CLI_INSTRUCTIONS=${{ secrets.CLI_INSTRUCTIONS }}
+            NEXT_PUBLIC_SPASHIP_DOCBOT_FEEDBACK=${{ env.DOCSBOT_FEEDBACK_URL }}
+            NEXT_PUBLIC_SPASHIP_QUERY_STREAM_URL=${{ env.DOCSBOT_STREAM_URL }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:dev-${{env.GITHUB_REF_SLUG}}
       - name: Image digest
         run: echo ${{ steps.docker_build_dev.outputs.digest }}
-
 
       - name: Qa Build and push into repository
         if: github.event.inputs.env == 'Qa'
@@ -82,11 +83,12 @@ jobs:
             NEXT_PUBLIC_ONBOARDING_TO_CLOUD_LINK=${{ secrets.ONBOARDING_TO_CLOUD_LINK }}
             NEXT_PUBLIC_CONTAINERIZED_DEPLOYMENTS_WORKFLOW_VIDEO=${{ secrets.CONTAINERIZED_DEPLOYMENTS_WORKFLOW_VIDEO }}
             NEXT_PUBLIC_SPASHIP_CLI_INSTRUCTIONS=${{ secrets.CLI_INSTRUCTIONS }}
+            NEXT_PUBLIC_SPASHIP_DOCBOT_FEEDBACK=${{ env.DOCSBOT_FEEDBACK_URL }}
+            NEXT_PUBLIC_SPASHIP_QUERY_STREAM_URL=${{ env.DOCSBOT_STREAM_URL }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:qa-${{env.GITHUB_REF_SLUG}}
       - name: Image digest
         run: echo ${{ steps.docker_build_qa.outputs.digest }}
-
 
       - name: Stage Build and push into repository
         if: github.event.inputs.env == 'Stage'
@@ -106,11 +108,12 @@ jobs:
             NEXT_PUBLIC_ONBOARDING_TO_CLOUD_LINK=${{ secrets.ONBOARDING_TO_CLOUD_LINK }}
             NEXT_PUBLIC_CONTAINERIZED_DEPLOYMENTS_WORKFLOW_VIDEO=${{ secrets.CONTAINERIZED_DEPLOYMENTS_WORKFLOW_VIDEO }}
             NEXT_PUBLIC_SPASHIP_CLI_INSTRUCTIONS=${{ secrets.CLI_INSTRUCTIONS }}
+            NEXT_PUBLIC_SPASHIP_DOCBOT_FEEDBACK=${{ env.DOCSBOT_FEEDBACK_URL }}
+            NEXT_PUBLIC_SPASHIP_QUERY_STREAM_URL=${{ env.DOCSBOT_STREAM_URL }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:stage-${{env.GITHUB_REF_SLUG}}
       - name: Image digest
         run: echo ${{ steps.docker_build_stage.outputs.digest }}
-
 
       - name: Prod Build and push into repository
         if: github.event.inputs.env == 'Prod'
@@ -130,6 +133,8 @@ jobs:
             NEXT_PUBLIC_ONBOARDING_TO_CLOUD_LINK=${{ secrets.ONBOARDING_TO_CLOUD_LINK }}
             NEXT_PUBLIC_CONTAINERIZED_DEPLOYMENTS_WORKFLOW_VIDEO=${{ secrets.CONTAINERIZED_DEPLOYMENTS_WORKFLOW_VIDEO }}
             NEXT_PUBLIC_SPASHIP_CLI_INSTRUCTIONS=${{ secrets.CLI_INSTRUCTIONS }}
+            NEXT_PUBLIC_SPASHIP_DOCBOT_FEEDBACK=${{ env.DOCSBOT_FEEDBACK_URL }}
+            NEXT_PUBLIC_SPASHIP_QUERY_STREAM_URL=${{ env.DOCSBOT_STREAM_URL }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:prod-${{env.GITHUB_REF_SLUG}}
       - name: Image digest

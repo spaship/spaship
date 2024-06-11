@@ -31,6 +31,7 @@ async function refreshAccessToken(token: any) {
       refreshTokenExpired: Date.now() + (data.refresh_expires_in - 15) * 1000
     };
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(error);
     return {
       ...token,
