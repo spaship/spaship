@@ -101,7 +101,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
 
   useEffect(() => {
     const eventSource = new EventSource(
-      `${env.PUBLIC_SPASHIP_QUERYSTREAMURL}?query=${userQuestion}`
+      `${env.PUBLIC_SPASHIP_QUERY_STREAM_URL}?query=${userQuestion}`
     );
     eventSource.onopen = () => {
       // eslint-disable-next-line no-console
