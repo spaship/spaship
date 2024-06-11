@@ -1,5 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events, no-underscore-dangle */
 /* eslint-disable no-useless-escape */
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import Chatbot from '@app/components/ChatUrDocs/Chat/Chatbot';
 import { env } from '@app/config/env';
 import { usePopUp } from '@app/hooks';
@@ -83,15 +83,6 @@ export const SideBar = () => {
   const faqDocumentUrl = env.PUBLIC_SPASHIP_FAQ_URL;
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['chatbotPanel'] as const);
 
-  const handleFeedbackClick = () => {
-    const feedbackElement: any = document.querySelector('opc-feedback');
-    if (feedbackElement) {
-      feedbackElement.setModalState(false, true, false, false);
-      handlePopUpClose('chatbotPanel');
-    } else {
-      console.error('Feedback element not found.');
-    }
-  };
   return (
     <PageSidebar
       nav={
@@ -358,6 +349,7 @@ export const SideBar = () => {
                     feedbackElement._setModalState(false, true, false, false);
                     handlePopUpClose('chatbotPanel');
                   } else {
+                    // eslint-disable-next-line no-console
                     console.error('Feedback element not found.');
                   }
                 }}

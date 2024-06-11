@@ -1,3 +1,7 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { env } from '@app/config/env';
 import { Card, CardBody } from '@patternfly/react-core';
 import axios from 'axios';
@@ -29,10 +33,10 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
     }
   };
 
-  const appendMessage = (message: string, isUserMessage: boolean, userQuestion?: string) => {
+  const appendMessage = (message: string, isUserMessage: boolean, question?: string) => {
     setChatMessages((prevMessages) => [
       ...prevMessages,
-      { content: message, isUserMessage, userQuestion }
+      { content: message, isUserMessage, question }
     ]);
   };
 
@@ -46,24 +50,76 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
       appendMessage(initialMessage, false);
     }
   };
+  const handleFeedback = async (message: string, feedback: number, question?: string) => {
+    try {
+      await axios.post(
+        env.PUBLIC_SPASHIP_DOCBOT_FEEDBACK,
+        { message, feedback, UserQuestion: question },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+    } catch (error) {
+      console.error('Error sending feedback:', error);
+    }
+  };
+  const logFeedback = (message: string, feedback: number, question?: string) => {
+    handleFeedback(message, feedback, question);
+  };
 
   useEffect(() => {
     sendInitialMessage();
   }, []);
+  const appendMessageToLastBotMessage = (message: string) => {
+    setChatMessages((prevMessages) => {
+      const lastMessageIndex = prevMessages.length - 1;
+      if (lastMessageIndex >= 0 && !prevMessages[lastMessageIndex].isUserMessage) {
+        const updatedMessage = `${prevMessages[lastMessageIndex].content} ${message}`;
+        prevMessages[lastMessageIndex].content = updatedMessage;
+        return [...prevMessages];
+      }
+      return [...prevMessages, { content: message, isUserMessage: false }];
+    });
+  };
+  const handleBotResponse = async (botResponse: string, question: string) => {
+    setIsBotTyping(false);
+    setIsInputDisabled(false);
+    appendMessageToLastBotMessage(botResponse);
+    setUserQuestion(question);
+    scrollToBottom();
+    // Log question and answer with default feedback value
+  };
+
+  const handleSendMessage = async (userMessage: string) => {
+    appendMessage(userMessage, true);
+    setIsBotTyping(true);
+    setUserQuestion(userMessage);
+    setIsInputDisabled(true);
+  };
 
   useEffect(() => {
-    const eventSource = new EventSource('http://localhost:3000/events');
+    const eventSource = new EventSource(
+      `${env.PUBLIC_SPASHIP_QUERYSTREAMURL}?query=${userQuestion}`
+    );
     eventSource.onopen = () => {
+      // eslint-disable-next-line no-console
       console.log('Connection established.');
     };
-
+    let fullMessage = '';
     eventSource.onmessage = (event) => {
-      const botResponse = event.data;
-      handleBotResponse(botResponse, userQuestion);
+      const { text } = JSON.parse(event.data);
+      handleBotResponse(text, userQuestion);
+      fullMessage += text;
     };
 
-    eventSource.onerror = () => {
-      console.error('Error connecting to event stream.');
+    eventSource.onerror = (error) => {
+      if (chatMessages.length > 2) {
+        logFeedback(fullMessage, 0, userQuestion);
+      }
+      // eslint-disable-next-line no-console
+      console.error('Streaming completed', error);
       eventSource.close();
     };
 
@@ -71,69 +127,6 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
       eventSource.close();
     };
   }, [userQuestion]);
-
-  const handleBotResponse = async (botResponse: string, userQuestion: string) => {
-    setIsBotTyping(false);
-    setIsInputDisabled(false);
-    if (botResponse === '') {
-      appendMessage(
-        "Oops! Unfortunately, I wasn't able to find the answer to your question. Kindly contact SPAship team at spaship-dev@redhat.com for further assistance. Is there anything else I can help you with?",
-        false,
-        userQuestion
-      );
-    } else {
-      appendMessageToLastBotMessage(botResponse);
-    }
-    scrollToBottom();
-    // Log question and answer with default feedback value
-    logFeedback(botResponse, 0, userQuestion);
-  };
-
-  const appendMessageToLastBotMessage = (message: string) => {
-    setChatMessages((prevMessages) => {
-      const lastMessageIndex = prevMessages.length - 1;
-      if (lastMessageIndex >= 0 && !prevMessages[lastMessageIndex].isUserMessage) {
-        const updatedMessage = prevMessages[lastMessageIndex].content + ' ' + message;
-        prevMessages[lastMessageIndex].content = updatedMessage;
-        return [...prevMessages];
-      } else {
-        return [...prevMessages, { content: message, isUserMessage: false }];
-      }
-    });
-  };
-
-  const sendUserQuestion = async (userQuestion: string) => {
-    setIsInputDisabled(true);
-    setUserQuestion(userQuestion);
-  };
-
-  const handleSendMessage = async (userMessage: string) => {
-    appendMessage(userMessage, true);
-    setIsBotTyping(true);
-    sendUserQuestion(userMessage);
-  };
-
-  const handleFeedback = async (message: string, feedback: number, userQuestion?: string) => {
-    try {
-      await axios.post(
-        'http://127.0.0.1:8000/feedback',
-        { message, feedback, userQuestion },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      console.log('Feedback sent successfully.');
-    } catch (error) {
-      console.error('Error sending feedback:', error);
-    }
-  };
-
-  const logFeedback = (message: string, feedback: number, userQuestion?: string) => {
-    handleFeedback(message, feedback, userQuestion);
-  };
-
   return (
     <Card>
       <div>
@@ -142,11 +135,11 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
             <div className="chat-messages">
               {chatMessages.map((message, index) => (
                 <ChatbotMessage
-                  key={index}
+                  key={`message-${index}`}
                   message={message.content}
                   isUserMessage={message.isUserMessage}
                   onFeedback={handleFeedback}
-                  userQuestion={message.userQuestion}
+                  userQuestion={userQuestion}
                   isInitialMessage={index === 0 || index === 1} // Determine initial messages
                 />
               ))}

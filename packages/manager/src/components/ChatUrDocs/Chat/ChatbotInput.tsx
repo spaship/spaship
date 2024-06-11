@@ -4,8 +4,8 @@ import '../ChatUrDocs.css';
 
 interface ChatbotInputProps {
   onSendMessage: (message: string) => void;
-  disabled?: boolean; // New disabled prop
-  placeholder?: string;
+  disabled: boolean; // New disabled prop
+  placeholder: string;
 }
 
 const ChatbotInput: React.FC<ChatbotInputProps> = ({ onSendMessage, disabled, placeholder }) => {

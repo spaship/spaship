@@ -12,6 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
     res.send({ data: response.data.answer });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Error fetching data:', error);
     res.status(500).json({ error: 'Failed to fetch data' });
   }

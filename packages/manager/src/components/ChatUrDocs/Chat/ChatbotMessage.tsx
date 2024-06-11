@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../ChatUrDocs.css';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { toast } from 'react-hot-toast';
@@ -7,7 +7,7 @@ interface ChatbotMessageProps {
   message: string;
   isUserMessage: boolean;
   onFeedback: (message: string, feedback: number, userQuestion?: string) => void;
-  userQuestion?: string;
+  userQuestion: string;
   isInitialMessage: boolean;
 }
 
@@ -19,7 +19,6 @@ const ChatbotMessage: React.FC<ChatbotMessageProps> = ({
   isInitialMessage
 }) => {
   const [feedback, setFeedback] = useState<number | null>(0);
-
   const handleFeedback = (feedbackValue: number) => {
     toast.success('Feedback submitted successfully');
     setFeedback(feedbackValue);
