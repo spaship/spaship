@@ -10,6 +10,7 @@ import ChatbotMessage from './ChatbotMessage';
 interface ChatMessage {
   content: string;
   isUserMessage: boolean;
+  userQuestion?: string; // Add this property
 }
 
 interface ChatbotProps {
@@ -18,8 +19,9 @@ interface ChatbotProps {
 
 const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const [isBotTyping, setIsBotTyping] = useState(false); // State to manage typing indicator
+  const [isBotTyping, setIsBotTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [UserQuestion, setLastUserMessage] = useState<string>('');
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -27,10 +29,13 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
     }
   };
 
-  const appendMessage = (message: string, isUserMessage: boolean) => {
-    // Update the state to include the new message
-    setChatMessages((prevMessages) => [...prevMessages, { content: message, isUserMessage }]);
+  const appendMessage = (message: string, isUserMessage: boolean, userQuestion?: string) => {
+    setChatMessages((prevMessages) => [
+      ...prevMessages,
+      { content: message, isUserMessage, userQuestion }
+    ]);
   };
+
   const disclaimer =
     '<b><i>Note: You are about to utilize a tool that utilizes Artificial Intelligence (AI) to process inputs and provide responses. Please do not include any personal information, customer or partner confidential information in your chat interaction with the AI. By proceeding to use the tool, you acknowledge: that the tool and any information provided are only intended for internal use and that information obtained should only be shared with those with a legitimate business purpose.</i></b>';
 
@@ -41,24 +46,24 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
   };
 
   useEffect(() => {
-    // Send initial message when component mounts
     sendInitialMessage();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Ignore missing dependency warning
+  }, []);
 
-  const handleBotResponse = async (botResponse: string) => {
+  const handleBotResponse = async (botResponse: string, userQuestion: string) => {
     const botResponseHtml = await marked(botResponse);
 
-    // Hide typing indicator
     setIsBotTyping(false);
     if (botResponse === '') {
       appendMessage(
         "Oops! Unfortunately, I wasn't able to find the answer to your question. Kindly contact SPAship team at spaship-dev@redhat.com for further assistance. Is there anything else I can help you with?",
-        false
+        false,
+        userQuestion
       );
     } else {
-      appendMessage(botResponseHtml, false);
+      appendMessage(botResponseHtml, false, userQuestion);
     }
+    // Log question and answer with default feedback value
+    logFeedback(botResponseHtml, 0, userQuestion);
   };
 
   const sendUserQuestion = async (userQuestion: string) => {
@@ -74,49 +79,47 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
         }
       );
 
-      handleBotResponse(response.data.answer);
+      handleBotResponse(response.data.answer, userQuestion);
     } catch (error) {
       console.error('Error fetching bot response:', error);
-      // Handle error
     }
   };
-  // const sendUserQuestion = async (userQuestion: string) => {
-  //   try {
-  //     const response = await fetch('/api/chaturdocs', {
-  //       method: 'POST',
-  //       body: JSON.stringify({ query: userQuestion }),
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       }
-  //     });
-
-  //     // Convert response to JSON
-  //     const responseData = await response.json();
-
-  //     if (!response.ok) {
-  //       throw new Error('Network response was not ok');
-  //     }
-
-  //     handleBotResponse(responseData.data);
-  //   } catch (error) {
-  //     // eslint-disable-next-line no-console
-  //     console.error('Error fetching bot response:', error);
-  //   }
-  // };
 
   const handleSendMessage = async (userMessage: string) => {
-    // Display the user's message in the chat
     appendMessage(userMessage, true);
-    // Show typing indicator
+    setLastUserMessage(userMessage); // Store the user message
     setIsBotTyping(true);
-    // Send the user's question to the backend
     sendUserQuestion(userMessage);
+  };
+
+  const handleFeedback = async (message: string, feedback: number, userQuestion?: string) => {
+    // const API_FEEDBACK_ENDPOINT = env.PUBLIC_FEEDBACK_URL;
+    try {
+      await axios
+        .post(
+          'http://127.0.0.1:8000/feedback', // Corrected endpoint
+          { message, feedback, userQuestion },
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+        .then((response) => {
+          console.log('Request was successful:', response.data);
+        });
+    } catch (error) {
+      console.error('Error sending feedback:', error);
+    }
+  };
+
+  const logFeedback = (message: string, feedback: number, userQuestion?: string) => {
+    handleFeedback(message, feedback, userQuestion);
   };
 
   useEffect(() => {
     scrollToBottom();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chatMessages]); // Ignore missing dependency warning
+  }, [chatMessages]);
 
   return (
     <Card>
@@ -126,10 +129,12 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
             <div className="chat-messages">
               {chatMessages.map((message, index) => (
                 <ChatbotMessage
-                  // eslint-disable-next-line react/no-array-index-key
                   key={index}
                   message={message.content}
                   isUserMessage={message.isUserMessage}
+                  onFeedback={handleFeedback}
+                  userQuestion={message.userQuestion}
+                  isInitialMessage={index === 0 || index === 1} // Determine initial messages
                 />
               ))}
               <div ref={messagesEndRef} />

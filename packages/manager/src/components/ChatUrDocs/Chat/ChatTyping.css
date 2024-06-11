@@ -1,5 +1,5 @@
 .chat-bubble {
-  background-color: #deedfe;
+  background-color: #f0f0f0;
   padding: 16px 28px;
   -webkit-border-radius: 20px;
   -webkit-border-bottom-left-radius: 2px;
@@ -51,4 +51,12 @@
     transform: translateY(0px);
     background-color: #b5c0d9;
   }
+}
+.thumbsup {
+  background-color: transparent;
+  border: none;
+}
+.thumbsdown {
+  background-color: transparent;
+  border: none;
 }
