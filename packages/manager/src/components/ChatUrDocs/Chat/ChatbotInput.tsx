@@ -4,15 +4,19 @@ import '../ChatUrDocs.css';
 
 interface ChatbotInputProps {
   onSendMessage: (message: string) => void;
+  disabled?: boolean; // New disabled prop
+  placeholder?: string;
 }
 
-const ChatbotInput: React.FC<ChatbotInputProps> = ({ onSendMessage }) => {
+const ChatbotInput: React.FC<ChatbotInputProps> = ({ onSendMessage, disabled, placeholder }) => {
+  // Set default value for disabled prop
   const [inputValue, setInputValue] = useState('');
 
   const handleMessageSend = () => {
     onSendMessage(inputValue);
     setInputValue('');
   };
+
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       handleMessageSend();
@@ -27,13 +31,18 @@ const ChatbotInput: React.FC<ChatbotInputProps> = ({ onSendMessage }) => {
           type="text"
           value={inputValue}
           onChange={(value) => setInputValue(value)}
-          placeholder="Type your query here..."
+          placeholder={placeholder}
           onKeyPress={handleKeyPress}
+          isDisabled={disabled} // Apply disabled prop to the input field
         />
       </SplitItem>
       <SplitItem>
         {' '}
-        <Button style={{ borderRadius: '15px' }} onClick={handleMessageSend}>
+        <Button
+          style={{ borderRadius: '15px' }}
+          onClick={handleMessageSend}
+          disabled={disabled} // Apply disabled prop to the button
+        >
           Send
         </Button>
       </SplitItem>
