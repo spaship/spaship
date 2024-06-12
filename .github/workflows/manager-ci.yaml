@@ -135,7 +135,6 @@ jobs:
             NEXT_PUBLIC_SPASHIP_CLI_INSTRUCTIONS=${{ secrets.CLI_INSTRUCTIONS }}
             NEXT_PUBLIC_SPASHIP_DOCBOT_FEEDBACK=${{ secrets.DOCSBOT_FEEDBACK_URL }}
             NEXT_PUBLIC_SPASHIP_QUERY_STREAM_URL=${{ secrets.DOCSBOT_STREAM_URL }}
-            EXTRA_CERTS=${{ secrets.EXTRA_CERTS }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:prod-${{env.GITHUB_REF_SLUG}}
       - name: Image digest
