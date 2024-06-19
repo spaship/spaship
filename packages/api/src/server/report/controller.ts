@@ -13,7 +13,7 @@ export class ReportController {
   @Get('')
   @ApiOperation({ description: 'SPAship overall report' })
   @ApiCreatedResponse({ status: 200, description: 'Report for SPAship properties.', type: ReportDetails })
-  async getReport(@Query('exclude') exclude: string): Promise<ReportDetails[]> {
-    return this.reportService.getReport(exclude);
+  async getReport(@Query('exclude') exclude: string, @Query('skip') skip: number, @Query('limit') limit: number): Promise<ReportDetails[]> {
+    return this.reportService.getReport(exclude, skip, limit);
   }
 }

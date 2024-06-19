@@ -14,8 +14,16 @@ export class ReportService {
     readonly reportFactory: ReportFactory
   ) {}
 
-  async getReport(exclude: string): Promise<ReportDetails[]> {
-    const properties = await this.propertyService.getAllProperties();
+  private static readonly defaultSkip: number = 0;
+
+  private static readonly defaultLimit: number = 100;
+
+  async getReport(exclude: string, skip: number = ReportService.defaultSkip, limit: number = ReportService.defaultLimit): Promise<ReportDetails[]> {
+    limit = Number(limit);
+    skip = Number(skip);
+    if (Number.isNaN(limit) || limit <= 0) limit = ReportService.defaultLimit;
+    if (Number.isNaN(skip) || skip <= 0) skip = ReportService.defaultSkip;
+    const properties = await this.propertyService.getAllProperties(skip, limit);
     const query = await this.reportFactory.getReportQuerty();
     const data = await this.dataServices.application.aggregate(query);
     const processedReport = this.reportFactory.processReport(properties, data, exclude);
