@@ -25,12 +25,16 @@ export class PropertyService {
     private readonly cmdbService: CMDBService
   ) {}
 
+  private static readonly defaultSkip: number = 0;
+
+  private static readonly defaultLimit: number = 1000;
+
   /* @internal
    * Get all the Property Details from the SPAship
    * It'll group the environments with the particular Property
    */
-  async getAllProperties(): Promise<PropertyResponseDto[]> {
-    const propertyDetails = await this.dataServices.property.getAll();
+  async getAllProperties(skip: number = PropertyService.defaultSkip, limit: number = PropertyService.defaultLimit): Promise<PropertyResponseDto[]> {
+    const propertyDetails = await this.dataServices.property.getByOptions({}, { identifier: 1 }, skip, limit);
     if (!propertyDetails) this.exceptionService.badRequestException({ message: 'No Property found.' });
     const environmentDetails = await this.dataServices.environment.getAll();
     const response: PropertyResponseDto[] = [];
