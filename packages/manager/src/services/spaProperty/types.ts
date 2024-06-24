@@ -36,3 +36,11 @@ export type TAutoEnableSymlinkDTO = {
   identifier: string | undefined;
   autoSymlinkCreation: boolean;
 };
+
+export type TVirtualPath = {
+  propertyIdentifier: string | undefined;
+  env: string;
+  basePath: string;
+  identifier: string | undefined;
+  virtualPath: string;
+};

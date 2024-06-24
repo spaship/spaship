@@ -5,6 +5,7 @@ import { usePopUp } from '@app/hooks';
 import { useGetEnvList } from '@app/services/persistent';
 import {
   Button,
+  Card,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
@@ -29,8 +30,8 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useAddSymlink, useDeleteSymlink } from '@app/services/spaProperty';
-import { CreateSymlink, FormData as SymlinkForm } from './CreateSymlink/CreateSymlink';
-import { DeleteSymlink } from './DeleteSymlink/DeleteSymlink';
+import { CreateSymlink, FormData as SymlinkForm } from './components/CreateSymlink/CreateSymlink';
+import { DeleteSymlink } from './components/DeleteSymlink/DeleteSymlink';
 
 type TSymlink = {
   source: string;
@@ -119,7 +120,7 @@ export const Symlink = ({
     }
   };
   return (
-    <>
+    <Card className="pf-u-p-md">
       <div style={{ width: '100%' }}>
         <Split>
           <SplitItem isFilled>
@@ -133,7 +134,7 @@ export const Symlink = ({
               variant="link"
               onClick={() => handleCreateData(selectedData?.path, selectedData?.env)}
             >
-              Create new symlink
+              Create a new symlink
             </Button>
           </SplitItem>
         </Split>
@@ -226,6 +227,6 @@ export const Symlink = ({
           applicationIdentifier={selectedData?.identifier || ''}
         />
       </Modal>
-    </>
+    </Card>
   );
 };

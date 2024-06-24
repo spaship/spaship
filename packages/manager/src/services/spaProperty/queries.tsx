@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { orchestratorReq } from '@app/config/orchestratorReq';
-import { TAutoEnableSymlinkDTO, TSpaProperty, TSymlinkDTO } from './types';
+import { TAutoEnableSymlinkDTO, TSpaProperty, TSymlinkDTO, TVirtualPath } from './types';
 import { TEnv } from '../persistent/types';
 import { TCmdbValidation } from '../webProperty/types';
 
@@ -105,3 +105,19 @@ export const useGetEditCmdbDetailsForApplication = (webPropertyIdentifier: strin
     }
   });
 };
+
+const addVirtualPath = async (dto: TVirtualPath): Promise<TEnv> => {
+  const { data } = await orchestratorReq.post('applications/virtualPath', dto);
+  return data.data;
+};
+
+export const useAddVirtualPath = () => useMutation(addVirtualPath);
+
+const deleteVirtualPath = async (dto: TVirtualPath): Promise<TEnv> => {
+  const { data } = await orchestratorReq.delete(`applications/virtualPath`, {
+    data: dto
+  });
+  return data.data;
+};
+
+export const useDeleteVirtualPath = () => useMutation(deleteVirtualPath);
