@@ -1,6 +1,5 @@
 /* eslint-disable no-nested-ternary */
-/* eslint-disable react/jsx-key, no-underscore-dangle, react/require-default-props */
-
+/* eslint-disable no-underscore-dangle */
 import { useFormatDate } from '@app/hooks';
 import { useGetWebPropActivityStream } from '@app/services/analytics';
 import { TWebPropActivityStream } from '@app/services/analytics/types';
@@ -24,7 +23,6 @@ type Props = {
   applicationIdentifier?: string;
   action?: string;
   isGlobal?: boolean;
-  createdBy?: string;
 };
 type DeploymentKindProps = {
   activity: TWebPropActivityStream;
@@ -510,11 +508,10 @@ export const ActivityStream = ({
           page.map((activity: TWebPropActivityStream) => {
             const modifiedActivity = { ...activity, isGlobal };
             return (
-              <Grid hasGutter className="pf-u-mb-sm">
+              <Grid key={activity._id} hasGutter className="pf-u-mb-sm">
                 <GridItem span={2}>
                   <div>
                     <p
-                      // className="pf-u-md-sm"
                       style={{
                         color: '#151515',
                         fontFamily: 'Red Hat Display',
@@ -594,6 +591,5 @@ ActivityStream.defaultProps = {
   propertyIdentifier: '',
   applicationIdentifier: '',
   action: '',
-
   isGlobal: false
 };

@@ -377,6 +377,7 @@ export const StaticSPADeployment = (): JSX.Element => {
           identifier={selectedData?.identifier}
           environment={selectedData?.env}
           refetch={refetch}
+          data={selectedData}
         />
         <Symlink
           propertyIdentifier={propertyIdentifier}

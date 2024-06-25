@@ -1,44 +1,54 @@
 import { usePopUp } from '@app/hooks';
-import { CreateSymlink } from '@app/views/Settings/components/Symlink/components/CreateSymlink';
+import { useAddVirtualPath } from '@app/services/spaProperty';
+
 import {
+  Button,
+  Card,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  Modal,
+  ModalVariant,
   Split,
   SplitItem,
-  Button,
-  EmptyState,
-  EmptyStateIcon,
-  Title,
-  EmptyStateBody,
-  Card,
-  Modal,
-  ModalVariant
+  Title
 } from '@patternfly/react-core';
-import { PlusIcon, CubesIcon } from '@patternfly/react-icons';
-import { CreateVirtualPath } from './components/CreateVirtualPath';
-import { useAddVirtualPath } from '@app/services/spaProperty';
+import { CubesIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { AxiosError } from 'axios';
-import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
+import { CreateVirtualPath } from './components/CreateVirtualPath';
+import { DeleteVirtualPath } from './components/DeleteVirtualPath';
 
-type Props = { propertyIdentifier: string; identifier: string; environment: string; refetch: any };
+type Props = {
+  propertyIdentifier: string;
+  identifier: string;
+  environment: string;
+  refetch: any;
+  data: any;
+};
 
 export const VirtualPath = ({
   propertyIdentifier,
   identifier,
   environment,
-  refetch
+  refetch,
+  data
 }: Props): JSX.Element => {
-  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['createVirtualPath'] as const);
+  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
+    'createVirtualPath',
+    'deleteVirtualPath'
+  ] as const);
 
   const createVirtualPath = useAddVirtualPath();
-  const { data: session } = useSession();
-  const handleVirtualPath = async (data: any) => {
-    console.log('in handle vp', data, identifier);
+
+  const handleVirtualPath = async (addData: any) => {
     if (!propertyIdentifier) return;
 
     try {
       await createVirtualPath
         .mutateAsync({
-          ...data
+          ...addData
         })
         .then(() => {
           refetch();
@@ -75,13 +85,48 @@ export const VirtualPath = ({
           </SplitItem>
         </Split>
         <div>
-          <EmptyState>
-            <EmptyStateIcon icon={CubesIcon} />
-            <Title headingLevel="h4" size="lg">
-              No virtual path found
-            </Title>
-            <EmptyStateBody>Please create a virtual path</EmptyStateBody>
-          </EmptyState>
+          {data?.virtualPath?.length !== 0 ? (
+            <Table aria-label="VirtualPath-Static-Table" className="pf-u-mt-md">
+              <Thead noWrap>
+                <Tr>
+                  <Th modifier="wrap" style={{ width: '50%' }}>
+                    Base Path
+                  </Th>
+                  <Th modifier="wrap" style={{ width: '50%' }}>
+                    Virtual Path
+                  </Th>
+                  <Th>Action</Th>
+                </Tr>
+              </Thead>
+
+              <Tbody>
+                {data?.virtualPaths?.map((virtualpathItem: any) => (
+                  <Tr key={virtualpathItem.basePath} className={virtualpathItem.basePath}>
+                    <Td dataLabel={virtualpathItem?.basePath} style={{ wordBreak: 'break-all' }}>
+                      {virtualpathItem.basePath}
+                    </Td>
+                    <Td dataLabel={virtualpathItem?.virtualPath} style={{ wordBreak: 'break-all' }}>
+                      {virtualpathItem.virtualPath}
+                    </Td>
+                    <Button
+                      variant="link"
+                      onClick={() => handlePopUpOpen('deleteVirtualPath', virtualpathItem)}
+                    >
+                      <TrashIcon />
+                    </Button>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          ) : (
+            <EmptyState>
+              <EmptyStateIcon icon={CubesIcon} />
+              <Title headingLevel="h4" size="lg">
+                No virtual path found
+              </Title>
+              <EmptyStateBody>Please create a virtual path</EmptyStateBody>
+            </EmptyState>
+          )}
         </div>
       </div>
       <Modal
@@ -96,6 +141,21 @@ export const VirtualPath = ({
           onSubmit={handleVirtualPath}
           propertyIdentifier={propertyIdentifier || ''}
           identifier={identifier}
+        />
+      </Modal>
+      <Modal
+        title="Delete Virtual Path"
+        variant={ModalVariant.medium}
+        isOpen={popUp.deleteVirtualPath.isOpen}
+        onClose={() => handlePopUpClose('deleteVirtualPath')}
+      >
+        <DeleteVirtualPath
+          env={environment}
+          onClose={() => handlePopUpClose('deleteVirtualPath')}
+          refetch={refetch()}
+          propertyIdentifier={propertyIdentifier || ''}
+          identifier={identifier}
+          data={popUp.deleteVirtualPath?.data}
         />
       </Modal>
     </Card>

@@ -1,66 +1,8 @@
-// /* eslint-disable react/jsx-props-no-spreading */
-// import { Controller, useForm } from 'react-hook-form';
-// import { yupResolver } from '@hookform/resolvers/yup';
-// import * as yup from 'yup';
-
-// import {
-//   ActionGroup,
-//   Button,
-//   Form,
-//   FormGroup,
-//   FormSelect,
-//   FormSelectOption,
-//   Split,
-//   SplitItem,
-//   TextInput,
-//   Tooltip
-// } from '@patternfly/react-core';
-// import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
-
-// import { InfoCircleIcon } from '@patternfly/react-icons';
-
-// const envValidation = /^[a-zA-Z0-9-]+$/;
-// export const schema = yup.object({
-//   // TODO: change this to URL validation, after server supports http protocol append
-//   propertyIdentifier: yup.string().label('Web property').trim(),
-//   identifier: yup.string().label('Application Name').trim(),
-//   virtualPath: yup.string().label('Source File Path').trim().required(),
-//   basePath: yup.string().label('Target File Path').trim().required(),
-//   env: yup
-//     .string()
-//     .label('Environment Name')
-//     .trim()
-//     .noWhitespace()
-//     .max(15)
-//     .matches(envValidation, 'Only letters, numbers, and dashes are allowed')
-//     .required()
-// });
-
-// export interface FormData extends yup.InferType<typeof schema> {}
-
-// type Props = {
-//   onSubmit: (data: FormData) => void;
-//   onClose: () => void;
-//   propertyIdentifier: string;
-//   identifier: string;
-//   env: string;
-// };
-
-// export const CreateVirtualPath = ({
-//   onSubmit,
-//   onClose,
-//   propertyIdentifier,
-//   identifier,
-//   env
-// }: Props): JSX.Element => {
-//   return <div>nikhita</div>;
-// };
-
-/* eslint-disable react/jsx-props-no-spreading */
-import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
+import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import {
   ActionGroup,
   Button,
@@ -73,17 +15,44 @@ import {
   TextInput,
   Tooltip
 } from '@patternfly/react-core';
-import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 
 import { InfoCircleIcon } from '@patternfly/react-icons';
 
 const envValidation = /^[a-zA-Z0-9-]+$/;
+
 export const schema = yup.object({
-  // TODO: change this to URL validation, after server supports http protocol append
   propertyIdentifier: yup.string().label('Web property').trim(),
   identifier: yup.string().label('Application Name').trim(),
-  virtualPath: yup.string().label('Source File Path').trim().required(),
-  basePath: yup.string().label('Target File Path').trim().required(),
+  virtualPath: yup
+    .string()
+    .label('Source File Path')
+    .trim()
+    .required()
+    .test(
+      'no-leading-or-trailing-slashes',
+      'Source File Path should not start or end with a slash',
+      (value) => {
+        if (value) {
+          return !/^\/+|\/+$/.test(value);
+        }
+        return true;
+      }
+    ),
+  basePath: yup
+    .string()
+    .label('Target File Path')
+    .trim()
+    .required()
+    .test(
+      'no-leading-or-trailing-slashes',
+      'Target File Path should not start or end with a slash',
+      (value) => {
+        if (value) {
+          return !/^\/+|\/+$/.test(value);
+        }
+        return true;
+      }
+    ),
   env: yup
     .string()
     .label('Environment Name')
@@ -109,7 +78,6 @@ export const CreateVirtualPath = ({
   onClose,
   propertyIdentifier,
   identifier,
-
   env
 }: Props): JSX.Element => {
   const {
@@ -146,9 +114,10 @@ export const CreateVirtualPath = ({
                   placeholder="Add web-property name"
                   type="text"
                   id="propertyIdentifier"
-                  {...field}
                   isDisabled
-                  value={propertyIdentifier}
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
                 />
               </FormGroup>
             )}
@@ -172,9 +141,10 @@ export const CreateVirtualPath = ({
                   placeholder="Add application name"
                   type="text"
                   id="identifier"
-                  {...field}
                   isDisabled
-                  value={identifier}
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
                 />
               </FormGroup>
             )}
@@ -209,7 +179,9 @@ export const CreateVirtualPath = ({
                   placeholder={virtualPath}
                   type="text"
                   id="virtualPath"
-                  {...field}
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
                 />
               </FormGroup>
             )}
@@ -237,7 +209,15 @@ export const CreateVirtualPath = ({
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
               >
-                <TextInput isRequired placeholder={basePath} type="text" id="basePath" {...field} />
+                <TextInput
+                  isRequired
+                  placeholder={basePath}
+                  type="text"
+                  id="basePath"
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                />
               </FormGroup>
             )}
           />
@@ -259,12 +239,10 @@ export const CreateVirtualPath = ({
               <FormSelect
                 label="Select Environment"
                 aria-label="FormSelect Input"
-                onChange={(event) => {
-                  onChange(event);
-                }}
+                onChange={onChange}
                 value={value}
               >
-                <FormSelectOption key={1} label="Please select an environment" isDisabled />
+                <FormSelectOption key="default" label="Please select an environment" isDisabled />
                 {webPropertiesKeys.map((envName) => (
                   <FormSelectOption key={envName} value={envName} label={envName} />
                 ))}
