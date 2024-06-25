@@ -1568,6 +1568,7 @@ export class ApplicationService {
     try {
       for (const router of application.routerUrl) {
         const { hostname } = new URL(router);
+        this.logger.log('routerDelete', JSON.stringify(data));
         const deletedPath = await this.applicationFactory.deletePathMappings(data.virtualPath, hostname);
         this.logger.log('deletedPath', JSON.stringify(deletedPath.data));
         const configMemoreyUpdateResponse = await this.applicationFactory.savePathMappingOnConfig(hostname);
