@@ -454,7 +454,51 @@ const activities = {
       <span style={{ fontWeight: '600' }}>{props.env} </span> environment by {createdBy}.
     </Text>
   ),
+  VIRTUAL_PATH_CREATION_FAILED: ({ props, createdBy }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Virtual path creation failed for</span> spa :{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment, initiated by {createdBy}.
+    </Text>
+  ),
+  VIRTUAL_PATH_CREATED: ({ props, createdBy, message }: TWebPropActivityStream): JSX.Element => {
+    const pathValue = message.match(/ - (.+?)\s/)?.[1]; // Extracting the path value after ' - '
+    return (
+      <Text className="activityStream">
+        <span style={{ fontWeight: '600' }}>Virtual path : {pathValue} created successfully</span>{' '}
+        for spa: <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+        <span style={{ fontWeight: '600' }}>{props.env}</span> environment, initiated by {createdBy}.{' '}
+        <br />
+      </Text>
+    );
+  },
 
+  VIRTUAL_PATH_DELETION_FAILED: ({
+    props,
+    createdBy,
+    message
+  }: TWebPropActivityStream): JSX.Element => {
+    const pathValue = message.match(/ - (.+?)\s/)?.[1]; // Extracting the path value after ' - '
+    return (
+      <Text className="activityStream">
+        <span style={{ fontWeight: '600' }}>Virtual path : {pathValue} deletion failed for</span>{' '}
+        spa : <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+        <span style={{ fontWeight: '600' }}>{props.env} </span> environment, initiated by {createdBy}
+        .
+      </Text>
+    );
+  },
+  VIRTUAL_PATH_DELETED: ({ props, createdBy, message }: TWebPropActivityStream): JSX.Element => {
+    const pathValue = message.match(/ - (.+?)\s/)?.[1]; // Extracting the path value after ' - '
+    return (
+      <Text className="activityStream">
+        <span style={{ fontWeight: '600' }}>Virtual path : {pathValue} deleted successfully</span>{' '}
+        for spa: <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+        <span style={{ fontWeight: '600' }}>{props.env}</span> environment, initiated by {createdBy}.{' '}
+        <br />
+      </Text>
+    );
+  },
   CMDB_UPDATED: ({ props, propertyIdentifier, createdBy }: TWebPropActivityStream): JSX.Element => {
     const { applicationIdentifier } = props;
     const isApplicationLevel = applicationIdentifier !== 'NA';
