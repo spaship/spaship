@@ -1577,19 +1577,6 @@ export class ApplicationService {
       }
     } catch (error) {
       this.logger.error('DeleteVirtualPath', error);
-      await this.analyticsService.createActivityStream(
-        propertyIdentifier,
-        Action.VIRTUAL_PATH_DELETION_FAILED,
-        application.env,
-        identifier,
-        `virtual path - ${request.virtualPath} deletetion failed for ${identifier}.`,
-        request.createdBy,
-        Source.MANAGER,
-        JSON.stringify(request)
-      );
-      this.exceptionService.internalServerErrorException({
-        message: 'Error in creating the virutal path, please contact with the SPAship team or try again later.'
-      });
     }
     try {
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false }, application);
