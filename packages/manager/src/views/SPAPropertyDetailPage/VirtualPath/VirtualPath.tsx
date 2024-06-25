@@ -137,8 +137,8 @@ export const VirtualPath = ({
       >
         <DeleteVirtualPath
           env={environment}
+          refetch={refetch}
           onClose={() => handlePopUpClose('deleteVirtualPath')}
-          refetch={refetch()}
           propertyIdentifier={propertyIdentifier || ''}
           identifier={identifier}
           data={popUp.deleteVirtualPath?.data}
