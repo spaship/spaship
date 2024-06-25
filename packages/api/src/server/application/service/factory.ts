@@ -292,8 +292,8 @@ export class ApplicationFactory {
 
   // @internal Generate Virtual Path For Deletion
   getVirtualPathForDeletion(requestPath: string): string {
-    const virtualpath = `/${requestPath.replace(/^\/+/g, '').replace(/\/+$/, '')}`;
-    return virtualpath.split('/').map(encodeURIComponent).join('%2F');
+    const virtualpath = `${requestPath.replace(/^\/+/g, '').replace(/\/+$/, '')}`;
+    return virtualpath;
   }
 
   // @internal Generate the repository url
