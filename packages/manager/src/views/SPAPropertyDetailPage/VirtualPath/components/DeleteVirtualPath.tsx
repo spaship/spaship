@@ -200,7 +200,6 @@ export const DeleteVirtualPath = ({
           />
         </SplitItem>
       </Split>
-
       <SplitItem isFilled style={{ width: '100%' }}>
         <Controller
           control={control}

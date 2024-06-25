@@ -23,7 +23,6 @@ type Props = {
   applicationIdentifier?: string;
   action?: string;
   isGlobal?: boolean;
-  createdBy?: string;
 };
 type DeploymentKindProps = {
   activity: TWebPropActivityStream;
