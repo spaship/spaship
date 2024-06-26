@@ -2,23 +2,24 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
-import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import {
   ActionGroup,
   Button,
   Form,
   FormGroup,
-  FormSelect,
-  FormSelectOption,
   Split,
   SplitItem,
   TextInput,
   Tooltip
 } from '@patternfly/react-core';
 
+import { useAddVirtualPath } from '@app/services/spaProperty';
 import { InfoCircleIcon } from '@patternfly/react-icons';
+import { AxiosError } from 'axios';
+import toast from 'react-hot-toast';
 
 const envValidation = /^[a-zA-Z0-9-]+$/;
+const pathValidation = /^\/+|\/+$/;
 
 export const schema = yup.object({
   propertyIdentifier: yup.string().label('Web property').trim(),
@@ -33,7 +34,7 @@ export const schema = yup.object({
       'Source File Path should not start or end with a slash',
       (value) => {
         if (value) {
-          return !/^\/+|\/+$/.test(value);
+          return !pathValidation.test(value);
         }
         return true;
       }
@@ -48,7 +49,7 @@ export const schema = yup.object({
       'Target File Path should not start or end with a slash',
       (value) => {
         if (value) {
-          return !/^\/+|\/+$/.test(value);
+          return !pathValidation.test(value);
         }
         return true;
       }
@@ -66,19 +67,19 @@ export const schema = yup.object({
 export interface FormData extends yup.InferType<typeof schema> {}
 
 type Props = {
-  onSubmit: (data: FormData) => void;
   onClose: () => void;
   propertyIdentifier: string;
   identifier: string;
   env: string;
+  refetch: () => void;
 };
 
 export const CreateVirtualPath = ({
-  onSubmit,
   onClose,
   propertyIdentifier,
   identifier,
-  env
+  env,
+  refetch
 }: Props): JSX.Element => {
   const {
     control,
@@ -88,13 +89,37 @@ export const CreateVirtualPath = ({
     mode: 'onBlur',
     resolver: yupResolver(schema)
   });
-  const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
-  const webPropertiesKeys = Object.keys(webProperties.data || {});
+
   const virtualPath = '';
   const basePath = '';
 
+  const createVirtualPath = useAddVirtualPath();
+
+  const handleVirtualPath = async (addData: any) => {
+    if (!propertyIdentifier) return;
+
+    try {
+      await createVirtualPath
+        .mutateAsync({
+          ...addData
+        })
+        .then(() => {
+          refetch();
+        });
+
+      toast.success('Virtual path created successfully');
+      onClose();
+    } catch (error) {
+      if (error instanceof AxiosError && error.response && error.response.status === 403) {
+        toast.error("You don't have access to perform this action");
+        onClose();
+      } else {
+        toast.error('Failed to create virtual path');
+      }
+    }
+  };
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form onSubmit={handleSubmit(handleVirtualPath)}>
       <Split hasGutter>
         <SplitItem isFilled style={{ width: '100%' }}>
           <Controller
@@ -159,16 +184,7 @@ export const CreateVirtualPath = ({
             defaultValue=""
             render={({ field, fieldState: { error } }) => (
               <FormGroup
-                label={
-                  <>
-                    Virtual Path
-                    <Tooltip content="Symlink virtualPath path should be /{spa-path}/{virtualPath-path}">
-                      <span>
-                        &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
-                      </span>
-                    </Tooltip>
-                  </>
-                }
+                label="Virtual Path"
                 isRequired
                 fieldId="virtualPath"
                 validated={error ? 'error' : 'default'}
@@ -197,7 +213,7 @@ export const CreateVirtualPath = ({
                 label={
                   <>
                     Base Path
-                    <Tooltip content="Symlink basePath path should be /{spa-path}/{basePath-path}">
+                    <Tooltip content="Base path should be path of the application">
                       <span>
                         &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
                       </span>
@@ -228,6 +244,33 @@ export const CreateVirtualPath = ({
           control={control}
           name="env"
           defaultValue={env}
+          render={({ field, fieldState: { error } }) => (
+            <FormGroup
+              label="Environment"
+              isRequired
+              fieldId="env"
+              validated={error ? 'error' : 'default'}
+              helperTextInvalid={error?.message}
+            >
+              <TextInput
+                isRequired
+                placeholder="Environment"
+                type="text"
+                id="env"
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                isDisabled
+              />
+            </FormGroup>
+          )}
+        />
+      </SplitItem>
+      {/* <SplitItem isFilled style={{ width: '100%' }}>
+        <Controller
+          control={control}
+          name="env"
+          defaultValue={env}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <FormGroup
               label="Select Environment"
@@ -250,7 +293,7 @@ export const CreateVirtualPath = ({
             </FormGroup>
           )}
         />
-      </SplitItem>
+      </SplitItem> */}
 
       <ActionGroup>
         <Button

@@ -467,8 +467,8 @@ const activities = {
       <Text className="activityStream">
         <span style={{ fontWeight: '600' }}>Virtual path : {pathValue} created successfully</span>{' '}
         for spa: <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-        <span style={{ fontWeight: '600' }}>{props.env}</span> environment, initiated by {createdBy}.{' '}
-        <br />
+        <span style={{ fontWeight: '600' }}>{props.env}</span> environment, initiated by {createdBy}
+        . <br />
       </Text>
     );
   },
@@ -483,8 +483,8 @@ const activities = {
       <Text className="activityStream">
         <span style={{ fontWeight: '600' }}>Virtual path : {pathValue} deletion failed for</span>{' '}
         spa : <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-        <span style={{ fontWeight: '600' }}>{props.env} </span> environment, initiated by {createdBy}
-        .
+        <span style={{ fontWeight: '600' }}>{props.env} </span> environment, initiated by{' '}
+        {createdBy}.
       </Text>
     );
   },
@@ -494,8 +494,8 @@ const activities = {
       <Text className="activityStream">
         <span style={{ fontWeight: '600' }}>Virtual path : {pathValue} deleted successfully</span>{' '}
         for spa: <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-        <span style={{ fontWeight: '600' }}>{props.env}</span> environment, initiated by {createdBy}.{' '}
-        <br />
+        <span style={{ fontWeight: '600' }}>{props.env}</span> environment, initiated by {createdBy}
+        . <br />
       </Text>
     );
   },

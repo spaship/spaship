@@ -1,5 +1,4 @@
 import { usePopUp } from '@app/hooks';
-import { useAddVirtualPath } from '@app/services/spaProperty';
 
 import {
   Button,
@@ -15,8 +14,6 @@ import {
 } from '@patternfly/react-core';
 import { CubesIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import { AxiosError } from 'axios';
-import toast from 'react-hot-toast';
 import { CreateVirtualPath } from './components/CreateVirtualPath';
 import { DeleteVirtualPath } from './components/DeleteVirtualPath';
 
@@ -40,32 +37,6 @@ export const VirtualPath = ({
     'deleteVirtualPath'
   ] as const);
 
-  const createVirtualPath = useAddVirtualPath();
-
-  const handleVirtualPath = async (addData: any) => {
-    if (!propertyIdentifier) return;
-
-    try {
-      await createVirtualPath
-        .mutateAsync({
-          ...addData
-        })
-        .then(() => {
-          refetch();
-        });
-
-      toast.success('Virtual path created successfully');
-      handlePopUpClose('createVirtualPath');
-    } catch (error) {
-      if (error instanceof AxiosError && error.response && error.response.status === 403) {
-        toast.error("You don't have access to perform this action");
-        handlePopUpClose('createVirtualPath');
-      } else {
-        toast.error('Failed to create virtual path');
-      }
-    }
-  };
-
   return (
     <Card className="pf-u-mb-md">
       <div className="pf-u-m-md">
@@ -85,7 +56,7 @@ export const VirtualPath = ({
           </SplitItem>
         </Split>
         <div>
-          {data?.virtualPath?.length !== 0 ? (
+          {data?.virtualPaths?.length !== 0 ? (
             <Table aria-label="VirtualPath-Static-Table" className="pf-u-mt-md">
               <Thead noWrap>
                 <Tr>
@@ -138,9 +109,9 @@ export const VirtualPath = ({
         <CreateVirtualPath
           env={environment}
           onClose={() => handlePopUpClose('createVirtualPath')}
-          onSubmit={handleVirtualPath}
           propertyIdentifier={propertyIdentifier || ''}
           identifier={identifier}
+          refetch={refetch}
         />
       </Modal>
       <Modal

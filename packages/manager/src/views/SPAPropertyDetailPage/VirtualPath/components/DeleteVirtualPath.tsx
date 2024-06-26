@@ -2,22 +2,17 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
-import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import {
   ActionGroup,
   Button,
   Form,
   FormGroup,
-  FormSelect,
-  FormSelectOption,
   Split,
   SplitItem,
-  TextInput,
-  Tooltip
+  TextInput
 } from '@patternfly/react-core';
 
 import { useDeleteVirtualPath } from '@app/services/spaProperty';
-import { InfoCircleIcon } from '@patternfly/react-icons';
 import { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 
@@ -66,8 +61,6 @@ export const DeleteVirtualPath = ({
     resolver: yupResolver(schema)
   });
 
-  const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
-  const webPropertiesKeys = Object.keys(webProperties.data || {});
   const deleteVirtualPathData = useDeleteVirtualPath();
 
   const onSubmit = async (formData: any) => {
@@ -159,16 +152,7 @@ export const DeleteVirtualPath = ({
             defaultValue={data?.basePath}
             render={({ field, fieldState: { error } }) => (
               <FormGroup
-                label={
-                  <>
-                    Base Path
-                    <Tooltip content="Symlink virtualPath path should be /{spa-path}/{virtualPath-path}">
-                      <span>
-                        &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
-                      </span>
-                    </Tooltip>
-                  </>
-                }
+                label="Base Path"
                 isRequired
                 fieldId="basePath"
                 validated={error ? 'error' : 'default'}
@@ -195,16 +179,7 @@ export const DeleteVirtualPath = ({
             defaultValue={data.virtualPath}
             render={({ field, fieldState: { error } }) => (
               <FormGroup
-                label={
-                  <>
-                    Virtual Path
-                    <Tooltip content="Symlink basePath path should be /{spa-path}/{basePath-path}">
-                      <span>
-                        &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
-                      </span>
-                    </Tooltip>
-                  </>
-                }
+                label="Virtual Path"
                 isRequired
                 fieldId="virtualPath"
                 validated={error ? 'error' : 'default'}
@@ -225,31 +200,30 @@ export const DeleteVirtualPath = ({
           />
         </SplitItem>
       </Split>
+
       <SplitItem isFilled style={{ width: '100%' }}>
         <Controller
           control={control}
           name="env"
           defaultValue={env}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
+          render={({ field, fieldState: { error } }) => (
             <FormGroup
-              label="Select Environment"
-              fieldId="select-env"
-              validated={error ? 'error' : 'default'}
+              label="Environment"
               isRequired
+              fieldId="env"
+              validated={error ? 'error' : 'default'}
               helperTextInvalid={error?.message}
             >
-              <FormSelect
-                label="Select Environment"
-                aria-label="FormSelect Input"
-                onChange={onChange}
-                value={value}
+              <TextInput
+                isRequired
+                placeholder="Environment"
+                type="text"
+                id="env"
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
                 isDisabled
-              >
-                <FormSelectOption key={1} label="Please select an environment" isDisabled />
-                {webPropertiesKeys.map((envName) => (
-                  <FormSelectOption key={envName} value={envName} label={envName} />
-                ))}
-              </FormSelect>
+              />
             </FormGroup>
           )}
         />
