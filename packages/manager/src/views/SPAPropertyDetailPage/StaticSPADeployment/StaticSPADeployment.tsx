@@ -53,6 +53,7 @@ import toast from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
 import { ApplicationStatus } from '../../WebPropertyDetailPage/components/SSR/ApplicationStatus';
 import { Lighthouse } from '../Lighthouse/Lighthouse';
+import { VirtualPath } from '../VirtualPath/VirtualPath';
 
 const INTERNAL_URL_LENGTH = 40;
 const SLICE_VAL_LENGTH = 20;
@@ -371,6 +372,13 @@ export const StaticSPADeployment = (): JSX.Element => {
           </Tbody>
         </Table>
         <br />
+        <VirtualPath
+          propertyIdentifier={selectedData?.propertyIdentifier || ''}
+          identifier={selectedData?.identifier}
+          environment={selectedData?.env}
+          refetch={refetch}
+          data={selectedData}
+        />
         <Symlink
           propertyIdentifier={propertyIdentifier}
           selectedData={selectedData}

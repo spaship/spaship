@@ -1,6 +1,5 @@
 /* eslint-disable no-nested-ternary */
-/* eslint-disable react/jsx-key, no-underscore-dangle, react/require-default-props */
-
+/* eslint-disable no-underscore-dangle */
 import { useFormatDate } from '@app/hooks';
 import { useGetWebPropActivityStream } from '@app/services/analytics';
 import { TWebPropActivityStream } from '@app/services/analytics/types';
@@ -93,13 +92,15 @@ const activities = {
   APPLICATION_DEPLOYMENT_STARTED: ({
     props,
     propertyIdentifier,
-    isGlobal
+    isGlobal,
+    createdBy
   }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}>Deployment started</span> for property :{' '}
       <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment, initiated by&nbsp;
+      {createdBy}.
       {isGlobal && (
         <Link
           href={{
@@ -112,6 +113,7 @@ const activities = {
       )}
     </Text>
   ),
+
   APPLICATION_DEPLOYMENT_PROCESSING: ({
     props,
     propertyIdentifier,
@@ -185,7 +187,8 @@ const activities = {
     props,
     propertyIdentifier,
     isGlobal,
-    payload
+    payload,
+    createdBy
   }: TWebPropActivityStream): JSX.Element => {
     const buildId = payload === 'NA' ? '' : JSON.parse(payload).buildName;
     return (
@@ -194,7 +197,7 @@ const activities = {
         <span style={{ fontWeight: '600' }}> ID : {buildId}</span> for property :{' '}
         <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
         <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-        <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
+        <span style={{ fontWeight: '600' }}>{props.env} </span> environment by {createdBy}.
         {isGlobal && (
           <Link
             style={{ textDecoration: 'underline' }}
@@ -294,11 +297,12 @@ const activities = {
   PROPERTY_CREATED: ({
     props,
     propertyIdentifier,
-    isGlobal
+    isGlobal,
+    createdBy
   }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
-      <span style={{ fontWeight: '600' }}> Property : {propertyIdentifier} </span> has been
-      created.&nbsp;
+      <span style={{ fontWeight: '600' }}> Property : {propertyIdentifier} </span> has been created
+      by {createdBy}.&nbsp;
       {isGlobal && (
         <Link
           href={{
@@ -311,24 +315,32 @@ const activities = {
       )}
     </Text>
   ),
-  APIKEY_CREATED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
+  APIKEY_CREATED: ({
+    props,
+    propertyIdentifier,
+    createdBy
+  }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}> API key created </span> for property :{' '}
       <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment by {createdBy}.
     </Text>
   ),
-  APIKEY_DELETED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => (
+  APIKEY_DELETED: ({
+    props,
+    propertyIdentifier,
+    createdBy
+  }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}> API key deleted </span> for property :{' '}
       <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span>for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment by {createdBy}.
     </Text>
   ),
-  ENV_SYNCED: ({ props }: TWebPropActivityStream): JSX.Element => (
+  ENV_SYNCED: ({ props, createdBy }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}> Sync completed</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment by {createdBy}
     </Text>
   ),
   APPLICATION_DELETED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
@@ -337,37 +349,41 @@ const activities = {
       <span style={{ fontWeight: '600' }}>{props.env}</span> for Misc: {message}
     </Text>
   ),
-  ENV_CREATED: ({ props }: TWebPropActivityStream): JSX.Element => (
+  ENV_CREATED: ({ props, createdBy }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
-      <span style={{ fontWeight: '600' }}>{props.env}</span> environment has been created.
+      <span style={{ fontWeight: '600' }}>{props.env}</span> environment has been created by{' '}
+      {createdBy}.
     </Text>
   ),
-  ENV_DELETED: ({ props }: TWebPropActivityStream): JSX.Element => (
+  ENV_DELETED: ({ props, createdBy }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
-      <span style={{ fontWeight: '600' }}>{props.env}</span> environment has been deleted.
+      <span style={{ fontWeight: '600' }}>{props.env}</span> environment has been deleted by{' '}
+      {createdBy}.
     </Text>
   ),
-  PERMISSION_CREATED: ({ message }: TWebPropActivityStream): JSX.Element => (
+  PERMISSION_CREATED: ({ message, createdBy }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}>
         {toPascalCase(message?.split(' ')[0]).replace('_', ' ')}
       </span>{' '}
       access has been {message?.split(' ')[2]} for {message?.split(' ')[4]}
+      by {createdBy}.
     </Text>
   ),
-  PERMISSION_DELETED: ({ message }: TWebPropActivityStream): JSX.Element => (
+  PERMISSION_DELETED: ({ message, createdBy }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}>
         {toPascalCase(message?.split(' ')[0]).replace('_', ' ')}
       </span>{' '}
-      access has been {message?.split(' ')[2]} for {message?.split(' ')[4]}
+      access has been {message?.split(' ')[2]} for {message?.split(' ')[4]} by {createdBy}.
     </Text>
   ),
-  APPLICATION_CONFIG_UPDATED: ({ props }: TWebPropActivityStream): JSX.Element => (
+  APPLICATION_CONFIG_UPDATED: ({ props, createdBy }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
-      <span style={{ fontWeight: '600' }}>Configuration Updated</span> for{' '}
+      <span style={{ fontWeight: '600' }}>Configuration </span> for{' '}
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> in{' '}
-      <span style={{ fontWeight: '600' }}>{props.env}</span> env.
+      <span style={{ fontWeight: '600' }}>{props.env}</span> env has been successfully updated by{' '}
+      {createdBy}
     </Text>
   ),
 
@@ -389,13 +405,14 @@ const activities = {
   ),
   LIGHTHOUSE_REPORT_GENERATION_STARTED: ({
     props,
-    propertyIdentifier
+    propertyIdentifier,
+    createdBy
   }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}>Report generation started</span> for property :{' '}
       <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span> and spa :{' '}
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment by {createdBy}.
     </Text>
   ),
   LIGHTHOUSE_REPORT_GENERATION_FAILED: ({
@@ -409,11 +426,11 @@ const activities = {
       <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
     </Text>
   ),
-  SYMLINK_CREATED: ({ props }: TWebPropActivityStream): JSX.Element => (
+  SYMLINK_CREATED: ({ props, createdBy }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}>Symlink created successfully for</span> spa :{' '}
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment by {createdBy}.
     </Text>
   ),
   SYMLINK_CREATION_FAILED: ({ props }: TWebPropActivityStream): JSX.Element => (
@@ -423,36 +440,81 @@ const activities = {
       <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
     </Text>
   ),
-  SYMLINK_CREATION_SCHEDULED: ({ props }: TWebPropActivityStream): JSX.Element => (
+  SYMLINK_CREATION_SCHEDULED: ({ props, createdBy }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}>Symlink creation is scheduled for</span> spa :{' '}
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment by {createdBy}.
     </Text>
   ),
-  SYMLINK_DELETED: ({ props }: TWebPropActivityStream): JSX.Element => (
+  SYMLINK_DELETED: ({ props, createdBy }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}>Symlink deleted successfully for</span> spa :{' '}
       <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env} </span> environment.&nbsp;
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment by {createdBy}.
     </Text>
   ),
+  VIRTUAL_PATH_CREATION_FAILED: ({ props, createdBy }: TWebPropActivityStream): JSX.Element => (
+    <Text className="activityStream">
+      <span style={{ fontWeight: '600' }}>Virtual path creation failed for</span> spa :{' '}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env} </span> environment, initiated by {createdBy}.
+    </Text>
+  ),
+  VIRTUAL_PATH_CREATED: ({ props, createdBy, message }: TWebPropActivityStream): JSX.Element => {
+    const pathValue = message.match(/ - (.+?)\s/)?.[1]; // Extracting the path value after ' - '
+    return (
+      <Text className="activityStream">
+        <span style={{ fontWeight: '600' }}>Virtual path : {pathValue} created successfully</span>{' '}
+        for spa: <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+        <span style={{ fontWeight: '600' }}>{props.env}</span> environment, initiated by {createdBy}
+        . <br />
+      </Text>
+    );
+  },
 
-  CMDB_UPDATED: ({ props, propertyIdentifier }: TWebPropActivityStream): JSX.Element => {
+  VIRTUAL_PATH_DELETION_FAILED: ({
+    props,
+    createdBy,
+    message
+  }: TWebPropActivityStream): JSX.Element => {
+    const pathValue = message.match(/ - (.+?)\s/)?.[1]; // Extracting the path value after ' - '
+    return (
+      <Text className="activityStream">
+        <span style={{ fontWeight: '600' }}>Virtual path : {pathValue} deletion failed for</span>{' '}
+        spa : <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+        <span style={{ fontWeight: '600' }}>{props.env} </span> environment, initiated by{' '}
+        {createdBy}.
+      </Text>
+    );
+  },
+  VIRTUAL_PATH_DELETED: ({ props, createdBy, message }: TWebPropActivityStream): JSX.Element => {
+    const pathValue = message.match(/ - (.+?)\s/)?.[1]; // Extracting the path value after ' - '
+    return (
+      <Text className="activityStream">
+        <span style={{ fontWeight: '600' }}>Virtual path : {pathValue} deleted successfully</span>{' '}
+        for spa: <span style={{ fontWeight: '600' }}>{props.applicationIdentifier}</span> for{' '}
+        <span style={{ fontWeight: '600' }}>{props.env}</span> environment, initiated by {createdBy}
+        . <br />
+      </Text>
+    );
+  },
+  CMDB_UPDATED: ({ props, propertyIdentifier, createdBy }: TWebPropActivityStream): JSX.Element => {
     const { applicationIdentifier } = props;
     const isApplicationLevel = applicationIdentifier !== 'NA';
     return (
       <Text className="activityStream">
-        <span style={{ fontWeight: '600' }}>CMDB code updated successfully for</span>&nbsp;
+        <span style={{ fontWeight: '600' }}>CMDB code for</span>&nbsp;
         {isApplicationLevel ? (
           <>
-            spa: <span style={{ fontWeight: '600' }}>{applicationIdentifier}</span>
+            spa: <span style={{ fontWeight: '600' }}>{applicationIdentifier}</span>&nbsp;
           </>
         ) : (
           <>
-            property: <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span>.
+            property: <span style={{ fontWeight: '600' }}>{propertyIdentifier}</span>&nbsp;
           </>
         )}
+        has been successfully updated by {createdBy}
       </Text>
     );
   }
@@ -489,13 +551,11 @@ export const ActivityStream = ({
         data?.pages?.map((page) =>
           page.map((activity: TWebPropActivityStream) => {
             const modifiedActivity = { ...activity, isGlobal };
-
             return (
-              <Grid hasGutter className="pf-u-mb-sm">
+              <Grid key={activity._id} hasGutter className="pf-u-mb-sm">
                 <GridItem span={2}>
                   <div>
                     <p
-                      // className="pf-u-md-sm"
                       style={{
                         color: '#151515',
                         fontFamily: 'Red Hat Display',
@@ -575,6 +635,5 @@ ActivityStream.defaultProps = {
   propertyIdentifier: '',
   applicationIdentifier: '',
   action: '',
-
   isGlobal: false
 };

@@ -105,7 +105,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ botName }) => {
     );
     eventSource.onopen = () => {
       // eslint-disable-next-line no-console
-      console.log('Connection established.');
+      console.info('Connection established.');
     };
     let fullMessage = '';
     eventSource.onmessage = (event) => {

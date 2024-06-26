@@ -13,6 +13,7 @@ export type TWebPropActivityStream = {
   action: string;
   branch: string;
   createdAt: string;
+  createdBy?: string;
   _id: string;
   message: string;
   latestActivityHead: string;

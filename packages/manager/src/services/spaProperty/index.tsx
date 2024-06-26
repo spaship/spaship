@@ -4,5 +4,7 @@ export {
   useGetStatusForAnApplication,
   useAddSymlink,
   useDeleteSymlink,
-  useAutoEnableSymlink
+  useAutoEnableSymlink,
+  useAddVirtualPath,
+  useDeleteVirtualPath
 } from './queries';
