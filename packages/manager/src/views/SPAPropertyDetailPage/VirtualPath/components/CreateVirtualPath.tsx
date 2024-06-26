@@ -2,7 +2,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
-import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import {
   ActionGroup,
   Button,
