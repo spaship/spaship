@@ -26,12 +26,12 @@ export const schema = yup.object({
   identifier: yup.string().label('Application Name').trim(),
   virtualPath: yup
     .string()
-    .label('Source File Path')
+    .label('Virtual Path')
     .trim()
     .required()
     .test(
       'no-leading-or-trailing-slashes',
-      'Source File Path should not start or end with a slash',
+      'Virtual Path should not start or end with a slash',
       (value) => {
         if (value) {
           return !pathValidation.test(value);
@@ -41,12 +41,12 @@ export const schema = yup.object({
     ),
   basePath: yup
     .string()
-    .label('Target File Path')
+    .label('Base Path')
     .trim()
     .required()
     .test(
       'no-leading-or-trailing-slashes',
-      'Target File Path should not start or end with a slash',
+      'Base Path should not start or end with a slash',
       (value) => {
         if (value) {
           return !pathValidation.test(value);

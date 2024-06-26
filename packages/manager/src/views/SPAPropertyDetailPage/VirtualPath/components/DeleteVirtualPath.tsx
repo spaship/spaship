@@ -21,8 +21,8 @@ const envValidation = /^[a-zA-Z0-9-]+$/;
 export const schema = yup.object({
   propertyIdentifier: yup.string().label('Web property').trim(),
   identifier: yup.string().label('Application Name').trim(),
-  basePath: yup.string().label('Source File Path').trim().required(),
-  virtualPath: yup.string().label('Target File Path').trim().required(),
+  basePath: yup.string().label('Base Path').trim().required(),
+  virtualPath: yup.string().label('Target Path').trim().required(),
   env: yup
     .string()
     .label('Environment Name')
