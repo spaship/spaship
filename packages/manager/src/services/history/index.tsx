@@ -1,0 +1,1 @@
+export { useGetHistoryData } from './queries';
