@@ -41,7 +41,7 @@ const actions: { [key: string]: () => JSX.Element } = {
 };
 
 const getActionDescription = (action: string): JSX.Element =>
-  actions[action as keyof typeof actions]?.() || {action};
+  actions[action as keyof typeof actions]?.() || { action };
 
 export const History = ({ propertyIdentifier, applicationIdentifier }: Props): JSX.Element => {
   const {
