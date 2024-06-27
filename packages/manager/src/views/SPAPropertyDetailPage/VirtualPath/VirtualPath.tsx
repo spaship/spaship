@@ -129,21 +129,6 @@ export const VirtualPath = ({
           data={popUp.deleteVirtualPath?.data}
         />
       </Modal>
-      <Modal
-        title="Delete Virtual Path"
-        variant={ModalVariant.medium}
-        isOpen={popUp.deleteVirtualPath.isOpen}
-        onClose={() => handlePopUpClose('deleteVirtualPath')}
-      >
-        <DeleteVirtualPath
-          env={environment}
-          refetch={refetch}
-          onClose={() => handlePopUpClose('deleteVirtualPath')}
-          propertyIdentifier={propertyIdentifier || ''}
-          identifier={identifier}
-          data={popUp.deleteVirtualPath?.data}
-        />
-      </Modal>
     </Card>
   );
 };
