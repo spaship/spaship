@@ -13,7 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { THistoryData } from '@app/services/history/types';
-import { BundleIcon, GithubIcon, InfoAltIcon } from '@patternfly/react-icons';
+import { BuildIcon, BundleIcon, GithubIcon, InfoAltIcon } from '@patternfly/react-icons';
 
 const perPageOptions = [
   { title: '10', value: 10 },
@@ -26,22 +26,39 @@ type Props = {
   applicationIdentifier?: string;
 };
 
-const actions: { [key: string]: () => JSX.Element } = {
+const actions: { [key: string]: (message: string) => JSX.Element } = {
   APIKEY_CREATED: () => <>Api key created</>,
-  APPLICATION_DEPLOYMENT_STARTED: () => (
-    <>
-      <BundleIcon /> Application deployment created
-    </>
-  ),
+  APPLICATION_DEPLOYMENT_STARTED: (message: string) => {
+    if (message.includes('[Workflow 3.0]')) {
+      return (
+        <>
+          <GithubIcon /> Application deployment started
+        </>
+      );
+    } else if (message.includes('Containerized')) {
+      return (
+        <>
+          <BuildIcon /> Application deployment started
+        </>
+      );
+    } else {
+      return (
+        <>
+          <BundleIcon /> Application deployment started
+        </>
+      );
+    }
+  },
+
   APPLICATION_BUILD_STARTED: () => (
     <>
-      <GithubIcon /> Application deployment created
+      <GithubIcon /> Application deployment started
     </>
   )
 };
 
-const getActionDescription = (action: string): JSX.Element =>
-  actions[action as keyof typeof actions]?.() || { action };
+const getActionDescription = (action: string, message: string): JSX.Element =>
+  actions[action as keyof typeof actions]?.(message) || <>{action}</>;
 
 export const History = ({ propertyIdentifier, applicationIdentifier }: Props): JSX.Element => {
   const {
@@ -55,8 +72,11 @@ export const History = ({ propertyIdentifier, applicationIdentifier }: Props): J
   const end = start + itemsPerPage;
 
   const filteredData = historyData?.filter(
-    (item: THistoryData) => item.source === 'MANAGER' || item.source === 'CLI'
+    (item: THistoryData) =>
+      (item.source === 'MANAGER' || item.source === 'CLI' || item.source === 'GIT') &&
+      !(item.action === 'APPLICATION_DEPLOYMENT_STARTED' && item.message.includes('[Workflow 3.0]'))
   );
+
   const paginatedData = filteredData
     ?.sort((a, b) => (new Date(b.createdAt) as any) - (new Date(a.createdAt) as any))
     .slice(start, end);
@@ -134,7 +154,7 @@ export const History = ({ propertyIdentifier, applicationIdentifier }: Props): J
               {paginatedData?.map((item: THistoryData) => (
                 <Tr key={item.createdAt}>
                   <Td textCenter>{new Date(item.createdAt).toLocaleString()}</Td>
-                  <Td textCenter>{getActionDescription(item.action)}</Td>
+                  <Td textCenter>{getActionDescription(item.action, item.message)}</Td>
                   <Td textCenter>{item.createdBy}</Td>
 
                   {!applicationIdentifier && <Td textCenter>{item.props.applicationIdentifier}</Td>}

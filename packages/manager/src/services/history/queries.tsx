@@ -6,13 +6,19 @@ const fetchHistoryData = async (
   propertyIdentifier: string,
   applicationIdentifier?: string
 ): Promise<THistoryData[]> => {
+  const params: { propertyIdentifier: string; actions: string; applicationIdentifier?: string } = {
+    propertyIdentifier,
+    actions: 'APIKEY_CREATED,APPLICATION_DEPLOYMENT_STARTED,APPLICATION_BUILD_STARTED'
+  };
+
+  if (applicationIdentifier) {
+    params.applicationIdentifier = applicationIdentifier;
+  }
+
   const { data } = await orchestratorReq.get('analytics/history', {
-    params: {
-      propertyIdentifier,
-      applicationIdentifier,
-      actions: 'APIKEY_CREATED,APPLICATION_DEPLOYMENT_STARTED,APPLICATION_BUILD_STARTED'
-    }
+    params
   });
+
   return data?.data;
 };
 
