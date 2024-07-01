@@ -1,3 +1,5 @@
+/* eslint-disable react/destructuring-assignment */
+
 import React, { SetStateAction, useState } from 'react';
 import { useGetHistoryData } from '@app/services/history';
 import {
@@ -28,6 +30,7 @@ type Props = {
 
 const actions: { [key: string]: (message: string) => JSX.Element } = {
   APIKEY_CREATED: () => <>Api key created</>,
+
   APPLICATION_DEPLOYMENT_STARTED: (message: string) => {
     if (message.includes('[Workflow 3.0]')) {
       return (
@@ -35,19 +38,19 @@ const actions: { [key: string]: (message: string) => JSX.Element } = {
           <GithubIcon /> Application deployment started
         </>
       );
-    } else if (message.includes('Containerized')) {
+    }
+    if (message.includes('Containerized')) {
       return (
         <>
           <BuildIcon /> Application deployment started
         </>
       );
-    } else {
-      return (
-        <>
-          <BundleIcon /> Application deployment started
-        </>
-      );
     }
+    return (
+      <>
+        <BundleIcon /> Application deployment started
+      </>
+    );
   },
 
   APPLICATION_BUILD_STARTED: () => (
@@ -58,7 +61,7 @@ const actions: { [key: string]: (message: string) => JSX.Element } = {
 };
 
 const getActionDescription = (action: string, message: string): JSX.Element =>
-  actions[action as keyof typeof actions]?.(message) || <>{action}</>;
+  actions[action as keyof typeof actions]?.(message) || { action };
 
 export const History = ({ propertyIdentifier, applicationIdentifier }: Props): JSX.Element => {
   const {
@@ -151,17 +154,19 @@ export const History = ({ propertyIdentifier, applicationIdentifier }: Props): J
               </Tr>
             </Thead>
             <Tbody>
-              {paginatedData?.map((item: THistoryData) => (
-                <Tr key={item.createdAt}>
-                  <Td textCenter>{new Date(item.createdAt).toLocaleString()}</Td>
-                  <Td textCenter>{getActionDescription(item.action, item.message)}</Td>
-                  <Td textCenter>{item.createdBy}</Td>
+              {paginatedData?.map(
+                ({ createdAt, action, message, createdBy, props, source }: THistoryData) => (
+                  <Tr key={createdAt}>
+                    <Td textCenter>{new Date(createdAt).toLocaleString()}</Td>
+                    <Td textCenter>{getActionDescription(action, message)}</Td>
+                    <Td textCenter>{createdBy}</Td>
 
-                  {!applicationIdentifier && <Td textCenter>{item.props.applicationIdentifier}</Td>}
-                  <Td textCenter>{item.props.env}</Td>
-                  <Td textCenter>{item.source}</Td>
-                </Tr>
-              ))}
+                    {!applicationIdentifier && <Td textCenter>{props.applicationIdentifier}</Td>}
+                    <Td textCenter>{props.env}</Td>
+                    <Td textCenter>{source}</Td>
+                  </Tr>
+                )
+              )}
             </Tbody>
           </Table>
         </CardBody>
