@@ -266,34 +266,6 @@ export const CreateVirtualPath = ({
           )}
         />
       </SplitItem>
-      {/* <SplitItem isFilled style={{ width: '100%' }}>
-        <Controller
-          control={control}
-          name="env"
-          defaultValue={env}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
-            <FormGroup
-              label="Select Environment"
-              fieldId="select-env"
-              validated={error ? 'error' : 'default'}
-              isRequired
-              helperTextInvalid={error?.message}
-            >
-              <FormSelect
-                label="Select Environment"
-                aria-label="FormSelect Input"
-                onChange={onChange}
-                value={value}
-              >
-                <FormSelectOption key="default" label="Please select an environment" isDisabled />
-                {webPropertiesKeys.map((envName) => (
-                  <FormSelectOption key={envName} value={envName} label={envName} />
-                ))}
-              </FormSelect>
-            </FormGroup>
-          )}
-        />
-      </SplitItem> */}
 
       <ActionGroup>
         <Button

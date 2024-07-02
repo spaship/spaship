@@ -5,13 +5,14 @@ import { Banner } from '@app/components';
 import { useTabs } from '@app/hooks';
 import { pageLinks } from '@app/links';
 import { useGetEphemeralListForProperty } from '@app/services/ephemeral';
-import { CogIcon, CubeIcon, PackageIcon } from '@patternfly/react-icons';
+import { CogIcon, CubeIcon, HistoryIcon, PackageIcon } from '@patternfly/react-icons';
 
 import { Dashboard } from './components/Dashboard';
 import { Ephemeral } from './components/Ephemeral';
 
 import { Settings } from '../Settings/Settings';
 import { Applications } from './components/Applications';
+import { History } from '../History/History';
 
 export const WebPropertyDetailPage = (): JSX.Element => {
   const { query } = useRouter();
@@ -19,7 +20,7 @@ export const WebPropertyDetailPage = (): JSX.Element => {
 
   const propertyIdentifier = (query?.propertyIdentifier as string) || '';
 
-  const { openTab, handleTabChange } = useTabs(4, Number(initialTab || '0'));
+  const { openTab, handleTabChange } = useTabs(5, Number(initialTab || '0'));
 
   // api calls
   const ephemeralPreview = useGetEphemeralListForProperty(propertyIdentifier);
@@ -108,6 +109,20 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             aria-label="Settings"
           >
             {openTab === 3 && <Settings />}
+          </Tab>
+          <Tab
+            eventKey={4}
+            title={
+              <>
+                <TabTitleIcon>
+                  <HistoryIcon />
+                </TabTitleIcon>
+                <TabTitleText>History</TabTitleText>
+              </>
+            }
+            aria-label="History"
+          >
+            {openTab === 4 && <History propertyIdentifier={propertyIdentifier} />}
           </Tab>
         </Tabs>
       </PageSection>

@@ -4,13 +4,14 @@ import { useTabs } from '@app/hooks';
 import { pageLinks } from '@app/links';
 import { useGetTotalDeploymentsForApps } from '@app/services/analytics';
 import { List, PageSection, Tab, Tabs, TabTitleIcon, TabTitleText } from '@patternfly/react-core';
-import { BuildIcon, BundleIcon, CogIcon, PackageIcon } from '@patternfly/react-icons';
+import { BuildIcon, BundleIcon, CogIcon, HistoryIcon, PackageIcon } from '@patternfly/react-icons';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { Dashboard } from '../WebPropertyDetailPage/components/Dashboard';
 import { ContainerizedSPADeployment } from './ContainerizedSPADeployment/ContainerizedSPADeployment';
 import { SPASettingsPage } from './SPASettingsPage/SPASettingsPage';
 import { StaticSPADeployment } from './StaticSPADeployment/StaticSPADeployment';
+import { History } from '../History/History';
 
 export const SPAPropertyDetailPage = (): JSX.Element => {
   const router = useRouter();
@@ -22,7 +23,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
     toast.error(`Sorry cannot find ${spaProperty}`);
     router.push(`/properties/${propertyIdentifier}`);
   }
-  const { handleTabChange, openTab } = useTabs(4, Number(initialTab || '0'));
+  const { handleTabChange, openTab } = useTabs(5, Number(initialTab || '0'));
 
   return (
     <>
@@ -92,6 +93,25 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             aria-label="SPA-detailed-Settings"
           >
             {openTab === 3 && <SPASettingsPage />}
+          </Tab>
+          <Tab
+            eventKey={4}
+            title={
+              <>
+                <TabTitleIcon>
+                  <HistoryIcon />
+                </TabTitleIcon>
+                <TabTitleText>History</TabTitleText>
+              </>
+            }
+            aria-label="History"
+          >
+            {openTab === 4 && (
+              <History
+                propertyIdentifier={propertyIdentifier}
+                applicationIdentifier={spaProperty}
+              />
+            )}
           </Tab>
         </Tabs>
       </PageSection>
