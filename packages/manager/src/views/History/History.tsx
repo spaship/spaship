@@ -27,19 +27,21 @@ type Props = {
   propertyIdentifier: string;
   applicationIdentifier?: string;
 };
+const CONTAINERIZED = 'Containerized';
+const WORKFLOW = '[Workflow 3.0]';
 
 const actions: { [key: string]: (message: string) => JSX.Element } = {
   APIKEY_CREATED: () => <>Api key created</>,
 
   APPLICATION_DEPLOYMENT_STARTED: (message: string) => {
-    if (message.includes('[Workflow 3.0]')) {
+    if (message.includes(WORKFLOW)) {
       return (
         <>
           <GithubIcon /> Application deployment started
         </>
       );
     }
-    if (message.includes('Containerized')) {
+    if (message.includes(CONTAINERIZED)) {
       return (
         <>
           <BuildIcon /> Application deployment started
@@ -77,7 +79,7 @@ export const History = ({ propertyIdentifier, applicationIdentifier }: Props): J
   const filteredData = historyData?.filter(
     (item: THistoryData) =>
       (item.source === 'MANAGER' || item.source === 'CLI' || item.source === 'GIT') &&
-      !(item.action === 'APPLICATION_DEPLOYMENT_STARTED' && item.message.includes('[Workflow 3.0]'))
+      !(item.action === 'APPLICATION_DEPLOYMENT_STARTED' && item.message.includes(WORKFLOW))
   );
 
   const paginatedData = filteredData
