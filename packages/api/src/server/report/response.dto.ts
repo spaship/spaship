@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Application } from '../application/entity';
+import { Application, PodList } from '../application/entity';
 
 export class ReportDetails {
   @ApiProperty()
@@ -44,7 +44,7 @@ export class EnvironmentDetails {
   applications: Application[];
 
   @ApiProperty()
-  podlist: String[];
+  podList: PodList[];
 
   @ApiProperty()
   createdBy: Date;

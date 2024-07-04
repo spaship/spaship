@@ -100,6 +100,12 @@ export class OperatorSymlinkMetadata {
   target: string;
 }
 
+export class PodList {
+  cluster: string;
+
+  pods: string[];
+}
+
 export class OperatorSymlinkEnvironment {
   websiteName: string;
 
