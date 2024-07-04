@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { LoggerService } from 'src/configuration/logger/service';
 import { ApplicationService } from 'src/server/application/service';
 import { DEPLOYMENT_DETAILS } from 'src/configuration';
+import { PodList } from 'src/server/application/entity';
 import { ApplicationDetails, EnvironmentDetails, ReportDetails } from '../response.dto';
 
 @Injectable()
@@ -68,22 +69,29 @@ export class ReportFactory {
           appDetails.createdAt = application.createdAt;
           appDetails.updatedAt = application.updatedAt;
           if (exclude !== podlist && application.isContainerized) {
-            let podList = await this.applicationService.getListOfPods(
+            let podResponse = await this.applicationService.getListOfPods(
               property.identifier,
               envDetails.identifier,
               application.identifier,
               DEPLOYMENT_DETAILS.type.containerized
             );
-            podList = podList.filter((item) => typeof item !== 'string');
-            envDetails.podlist = envDetails.podlist ? [...envDetails.podlist, ...podList] : [...podList];
+            podResponse = podResponse.filter((item) => typeof item !== 'string');
+            const podList = this.transformPodlist(podResponse);
+            envDetails.podList = envDetails.podList ? [...envDetails.podList, ...podList] : [...podList];
           }
           applications.push(appDetails);
         }
         envDetails.applications = applications;
         if (exclude !== podlist) {
-          let podList = await this.applicationService.getListOfPods(property.identifier, envDetails.identifier, 'NA', DEPLOYMENT_DETAILS.type.static);
-          podList = podList.filter((item) => typeof item !== 'string');
-          envDetails.podlist = envDetails.podlist ? [...envDetails.podlist, ...podList] : [...podList];
+          let podResponse = await this.applicationService.getListOfPods(
+            property.identifier,
+            envDetails.identifier,
+            'NA',
+            DEPLOYMENT_DETAILS.type.static
+          );
+          podResponse = podResponse.filter((item) => typeof item !== 'string');
+          const podList = this.transformPodlist(podResponse);
+          envDetails.podList = envDetails.podList ? [...envDetails.podList, ...podList] : [...podList];
         }
         envDetails.createdBy = env.createdBy;
         envDetails.updatedBy = env.updatedBy;
@@ -99,5 +107,16 @@ export class ReportFactory {
       response.push(reportDetails);
     }
     return response;
+  }
+
+  private transformPodlist(response: String[]) {
+    const podList = [];
+    for (const item of response as any) {
+      const tmpList = new PodList();
+      tmpList.cluster = item.con;
+      tmpList.pods = item.pods;
+      podList.push(tmpList);
+    }
+    return podList;
   }
 }
