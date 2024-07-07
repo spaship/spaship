@@ -11,9 +11,10 @@ import {
   SelectOption,
   SelectOptionObject,
   Spinner,
-  Title
+  Title,
+  Button
 } from '@patternfly/react-core';
-import { CubesIcon } from '@patternfly/react-icons';
+import { CubesIcon, ArrowUpIcon } from '@patternfly/react-icons';
 import { useEffect, useState } from 'react';
 
 type Props = {
@@ -98,36 +99,33 @@ export const ViewLogs = ({
   useEffect(() => {
     refetch().then(() => {
       setIsLogsLoading(false);
+      const logContainer = document.getElementById('log-container');
+      if (logContainer) {
+        logContainer.scrollTop = logContainer.scrollHeight;
+      }
     });
   }, [refetch, selectedId]);
 
   const isEmptyStateVisible = !idList || idList.length === 0 || idList.includes('No Pods found');
   const buildLogsforNonGitSSRDeployment = !isGit && type === 1;
+
+  const scrollToTop = () => {
+    const logContainer = document.getElementById('log-container');
+    if (logContainer) {
+      logContainer.scrollTop = 0;
+    }
+  };
+
   return (
-    <div style={{ color: '#fff', backgroundColor: '#212427' }}>
-      <div className="pf-u-mb-md pf-u-mt-md">
-        {toPascalCase(type === 0 ? logType.POD : logType.BUILD)} Logs for <b>{spaName}</b>
-      </div>
-      {buildLogsforNonGitSSRDeployment ? (
-        <EmptyState>
-          <EmptyStateIcon icon={CubesIcon} />
-          <Title headingLevel="h4" size="lg">
-            Build logs are unavailable for SSR deployments
-          </Title>
-        </EmptyState>
-      ) : isEmptyStateVisible ? (
-        <EmptyState>
-          <EmptyStateIcon icon={CubesIcon} />
-          <Title headingLevel="h4" size="lg">
-            No {toPascalCase(type === 0 ? logType.POD : logType.BUILD)} logs found for{' '}
-            <b>{spaName}</b> spa.
-          </Title>
-        </EmptyState>
-      ) : (
-        idList && (
-          <>
+    <div style={{ color: '#fff', backgroundColor: '#212427', height: '100vh', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <div style={{ flexShrink: 0 }}>
+          <div className="pf-u-mb-md pf-u-mt-md">
+            {toPascalCase(type === 0 ? logType.POD : logType.BUILD)} Logs for <b>{spaName}</b>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
             <Select
-              style={{ color: '#fff', backgroundColor: '#212427' }}
+              style={{ color: '#fff', backgroundColor: '#212427', marginRight: '1rem' }}
               className="select-log-ids"
               variant="single"
               aria-label="Select Input"
@@ -153,30 +151,46 @@ export const ViewLogs = ({
                     />
                   ))}
             </Select>
-            {isLogsLoading ? (
-              <EmptyState>
-                {' '}
-                <Spinner className="pf-u-mt-lg" />
-              </EmptyState>
-            ) : logs ? (
-              <CodeBlock
-                className="pf-u-mt-md"
-                style={{ color: '#fff', backgroundColor: '#333333' }}
-              >
-                {NewlineText(logs)}
-              </CodeBlock>
-            ) : (
-              <EmptyState>
-                <EmptyStateIcon icon={CubesIcon} />
-                <Title headingLevel="h4" size="lg">
-                  No {toPascalCase(type === 0 ? logType.POD : logType.BUILD)} logs found for{' '}
-                  <b>{spaName}</b> spa.
-                </Title>
-              </EmptyState>
-            )}
-          </>
-        )
-      )}
+            <Button variant="plain" onClick={scrollToTop}>
+              <ArrowUpIcon />
+            </Button>
+          </div>
+        </div>
+        <div id="log-container" style={{ overflowY: 'auto', flexGrow: 1 }}>
+          {buildLogsforNonGitSSRDeployment ? (
+            <EmptyState>
+              <EmptyStateIcon icon={CubesIcon} />
+              <Title headingLevel="h4" size="lg">
+                Build logs are unavailable for SSR deployments
+              </Title>
+            </EmptyState>
+          ) : isEmptyStateVisible ? (
+            <EmptyState>
+              <EmptyStateIcon icon={CubesIcon} />
+              <Title headingLevel="h4" size="lg">
+                No {toPascalCase(type === 0 ? logType.POD : logType.BUILD)} logs found for{' '}
+                <b>{spaName}</b> spa.
+              </Title>
+            </EmptyState>
+          ) : idList && isLogsLoading ? (
+            <EmptyState>
+              <Spinner className="pf-u-mt-lg" />
+            </EmptyState>
+          ) : logs ? (
+            <CodeBlock className="pf-u-mt-md" style={{ color: '#fff', backgroundColor: '#333333' }}>
+              {NewlineText(logs)}
+            </CodeBlock>
+          ) : (
+            <EmptyState>
+              <EmptyStateIcon icon={CubesIcon} />
+              <Title headingLevel="h4" size="lg">
+                No {toPascalCase(type === 0 ? logType.POD : logType.BUILD)} logs found for{' '}
+                <b>{spaName}</b> spa.
+              </Title>
+            </EmptyState>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
