@@ -52,15 +52,13 @@ export const CreateStaticApp: React.FC<CreateStaticAppProps> = ({
 }) => {
   const [fileValue, setFileValue] = useState<File | string>('');
   const [filename, setFilename] = useState('');
-  const [isFileLoading, setIsFileLoading] = useState(false);
 
   const {
     control,
     handleSubmit,
     setValue,
     formState: { isSubmitting, errors },
-    trigger,
-    watch
+    trigger
   } = useForm<FormData>({
     defaultValues: { path: '/', upload: null },
     mode: 'onBlur',
@@ -101,14 +99,14 @@ export const CreateStaticApp: React.FC<CreateStaticAppProps> = ({
     }
   };
 
-  const handleFileChange = async (value: File | string, filename: string) => {
+  const handleFileChange = async (value: File | string, fileName: string) => {
     setValue('upload', [value], { shouldValidate: true });
     setFileValue(value);
-    setFilename(filename);
+    setFilename(fileName);
     await trigger('upload'); // Manually trigger validation on file change
   };
 
-  const watchAllFields = watch(); // Watch all fields
+  // const watchAllFields = watch(); // Watch all fields
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -206,7 +204,7 @@ export const CreateStaticApp: React.FC<CreateStaticAppProps> = ({
           <Controller
             control={control}
             name="upload"
-            render={({ field, fieldState: { error } }) => (
+            render={({ fieldState: { error } }) => (
               <FormGroup
                 label="Upload file"
                 fieldId="file-upload"
@@ -219,7 +217,6 @@ export const CreateStaticApp: React.FC<CreateStaticAppProps> = ({
                   value={fileValue}
                   filename={filename}
                   onChange={handleFileChange}
-                  isLoading={isFileLoading}
                   dropzoneProps={{
                     accept: '.zip,.tgz,.gzip,.gz,.rar,.tar'
                   }}
