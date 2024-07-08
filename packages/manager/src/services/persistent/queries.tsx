@@ -1,6 +1,6 @@
 import { orchestratorReq } from '@app/config/orchestratorReq';
 import { useMutation, useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query';
-import { TCreateEnvDTO, TDeleteEnvDTO, TEnv } from './types';
+import { TCreateEnvDTO, TCreateStaticAppOutput, TDeleteEnvDTO, TEnv } from './types';
 
 const persistentEnvQueryKeys = {
   list: (webPropertyIdentifier: string) => ['persistent-env', webPropertyIdentifier] as const

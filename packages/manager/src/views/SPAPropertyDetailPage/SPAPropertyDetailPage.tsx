@@ -28,7 +28,7 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
   return (
     <>
       <Banner
-        title={propertyIdentifier.replace('-', ' ')}
+        title={spaProperty.replace('-', ' ')}
         backRef={{
           pathname: pageLinks.webPropertyDetailPage,
           query: {

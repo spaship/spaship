@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { useCreateStaticApp, useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
+import React, { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Button,
@@ -9,17 +10,19 @@ import {
   FormSelectOption,
   Split,
   SplitItem,
-  TextInput
+  TextInput,
+  FileUpload
 } from '@patternfly/react-core';
 import { AxiosError } from 'axios';
-import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import * as yup from 'yup';
+import { useGetWebPropertyGroupedByEnv, useCreateStaticApp } from '@app/services/persistent';
 
-interface Props {
+interface CreateStaticAppProps {
   onClose: () => void;
   propertyIdentifier: string;
 }
+
 const schema = yup.object({
   name: yup.string().required().label('Application Name'),
   path: yup
@@ -27,22 +30,38 @@ const schema = yup.object({
     .matches(/^[a-zA-Z0-9/-]+$/, 'Only letters, numbers, forward slash and dashes are allowed')
     .required(),
   env: yup.string().required().label('Environment'),
-  ref: yup.string(),
-  upload: yup.mixed().test('fileType', 'Only ZIP files allowed', (value) => {
-    if (!value) return true;
-    return value && value[0]?.type === 'application/zip';
-  })
+  ref: yup.string().required().label('Reference'),
+  upload: yup
+    .mixed()
+    .required('A file is required')
+    .test('fileType', 'Invalid file type', (value) => {
+      const allowedExtensions = ['zip', 'tgz', 'gzip', 'gz', 'rar', 'tar'];
+      if (value && value.length > 0) {
+        const fileExtension = value[0]?.name.split('.').pop();
+        return allowedExtensions.includes(fileExtension);
+      }
+      return false;
+    })
 });
 
-export type FormData = yup.InferType<typeof schema>;
+type FormData = yup.InferType<typeof schema>;
 
-export const CreateStaticApp = ({ onClose, propertyIdentifier }: Props): JSX.Element => {
+export const CreateStaticApp: React.FC<CreateStaticAppProps> = ({
+  onClose,
+  propertyIdentifier
+}) => {
+  const [fileValue, setFileValue] = useState<File | string>('');
+  const [filename, setFilename] = useState('');
+  const [isFileLoading, setIsFileLoading] = useState(false);
+
   const {
     control,
     handleSubmit,
     setValue,
-    formState: { isSubmitting }
-  } = useForm<any>({
+    formState: { isSubmitting, errors },
+    trigger,
+    watch
+  } = useForm<FormData>({
     defaultValues: { path: '/', upload: null },
     mode: 'onBlur',
     resolver: yupResolver(schema)
@@ -52,7 +71,7 @@ export const CreateStaticApp = ({ onClose, propertyIdentifier }: Props): JSX.Ele
   const webPropertiesKeys = Object.keys(webProperties.data || {});
   const createStaticSpa = useCreateStaticApp();
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: FormData) => {
     try {
       const formData = new FormData();
       formData.append('propertyIdentifier', propertyIdentifier);
@@ -64,8 +83,8 @@ export const CreateStaticApp = ({ onClose, propertyIdentifier }: Props): JSX.Ele
       if (data.upload && data.upload[0]) {
         formData.append('upload', data.upload[0], data.upload[0].name);
       }
-      await createStaticSpa.mutateAsync(formData);
 
+      await createStaticSpa.mutateAsync(formData);
       onClose();
       toast.success('Deployed application successfully');
     } catch (error) {
@@ -74,21 +93,26 @@ export const CreateStaticApp = ({ onClose, propertyIdentifier }: Props): JSX.Ele
         onClose();
       } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
         toast.error(
-          "Given Image URL doesn't exists on the source registry, please provide a valid imageUrl."
+          "Given Image URL doesn't exist on the source registry, please provide a valid image URL."
         );
       } else {
-        toast.error('Failed to deploy  application');
+        toast.error('Failed to deploy application');
       }
     }
   };
 
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { files } = e.target;
-    setValue('upload', files);
+  const handleFileChange = async (value: File | string, filename: string) => {
+    setValue('upload', [value], { shouldValidate: true });
+    setFileValue(value);
+    setFilename(filename);
+    await trigger('upload'); // Manually trigger validation on file change
   };
+
+  const watchAllFields = watch(); // Watch all fields
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
+      <h1>Create a Static App Deployment</h1>
       <Split hasGutter>
         <SplitItem isFilled style={{ width: '100%' }}>
           <Controller
@@ -128,12 +152,10 @@ export const CreateStaticApp = ({ onClose, propertyIdentifier }: Props): JSX.Ele
                 <FormSelect
                   label="Select Environment"
                   aria-label="FormSelect Input"
-                  onChange={(event) => {
-                    onChange(event);
-                  }}
+                  onChange={onChange}
                   value={value}
                 >
-                  <FormSelectOption key={1} label="Please select an environment" isDisabled />
+                  <FormSelectOption key="default" label="Please select an environment" isDisabled />
                   {webPropertiesKeys.map((envName) => (
                     <FormSelectOption key={envName} value={envName} label={envName} />
                   ))}
@@ -167,43 +189,52 @@ export const CreateStaticApp = ({ onClose, propertyIdentifier }: Props): JSX.Ele
             name="path"
             render={({ field, fieldState: { error } }) => (
               <FormGroup
-                label="path"
-                fieldId="ref"
+                label="Path"
+                fieldId="path"
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
               >
-                <TextInput placeholder="path" type="text" id="path" {...field} />
+                <TextInput placeholder="Path" type="text" id="path" {...field} />
               </FormGroup>
             )}
           />
         </SplitItem>
       </Split>
+
       <Split hasGutter>
         <SplitItem isFilled style={{ width: '100%' }}>
           <Controller
             control={control}
             name="upload"
-            render={({ field }) => (
+            render={({ field, fieldState: { error } }) => (
               <FormGroup
-                label="Upload ZIP file"
+                label="Upload file"
                 fieldId="file-upload"
-                helperText="Only ZIP files allowed"
+                helperText="Allowed file types: zip, tgz, gzip, gz, rar, tar"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
               >
-                <input
-                  type="file"
-                  accept=".zip"
-                  onChange={(e) => {
-                    field.onChange(e);
-                    onFileChange(e);
-                  }}
+                <FileUpload
                   id="file-upload"
+                  value={fileValue}
+                  filename={filename}
+                  onChange={handleFileChange}
+                  isLoading={isFileLoading}
+                  dropzoneProps={{
+                    accept: '.zip,.tgz,.gzip,.gz,.rar,.tar'
+                  }}
                 />
               </FormGroup>
             )}
           />
         </SplitItem>
       </Split>
-      <Button isLoading={isSubmitting} isDisabled={isSubmitting} type="submit">
+      <Button
+        isLoading={isSubmitting}
+        isDisabled={isSubmitting || Object.keys(errors).length > 0}
+        type="submit"
+        style={{ width: '20%' }}
+      >
         Submit
       </Button>
     </Form>
