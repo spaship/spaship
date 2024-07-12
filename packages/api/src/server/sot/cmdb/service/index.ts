@@ -94,10 +94,10 @@ export class CMDBService {
     propertyDetails.cmdbCode = cmdbRequest.cmdbCode;
     propertyDetails.severity = cmdbRequest.severity;
     if (previousCMDB !== cmdbRequest.cmdbCode) {
-      const { buildEnvironment, fileOriginalName, zipPath } = await this.environmentFactory.getArchivePath(propertyDetails, envDetails[0]);
+      const { buildEnvironment, orginalFileName, zipPath } = await this.environmentFactory.getArchivePath(propertyDetails, envDetails[0]);
       for (const env of envDetails) {
         try {
-          await this.environmentFactory.configureEnvironment(buildEnvironment, fileOriginalName, zipPath, propertyDetails, env, true);
+          await this.environmentFactory.configureEnvironment(buildEnvironment, orginalFileName, zipPath, propertyDetails, env, true);
         } catch (err) {
           this.exceptionService.internalServerErrorException(err);
         }

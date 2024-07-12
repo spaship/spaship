@@ -41,7 +41,7 @@ export class EnvironmentFactory {
    */
   async configureEnvironment(
     buildEnvironment: CreateApplicationDto,
-    fileOriginalName: string,
+    orginalFileName: string,
     zipPath: string,
     propertyRequest: Property,
     environmentRequest: Environment,
@@ -50,7 +50,7 @@ export class EnvironmentFactory {
     try {
       await this.applicationService.deployApplication(
         buildEnvironment,
-        fileOriginalName,
+        orginalFileName,
         zipPath,
         propertyRequest.identifier,
         environmentRequest.env,
@@ -78,8 +78,8 @@ export class EnvironmentFactory {
     };
     this.logger.log('SpashipFile', JSON.stringify(spashipFile));
     const { baseDir } = DIRECTORY_CONFIGURATION;
-    const fileOriginalName = propertyRequest.identifier;
-    const tmpDir = `${baseDir}/${fileOriginalName.split('.')[0]}-${Date.now()}`;
+    const orginalFileName = propertyRequest.identifier;
+    const tmpDir = `${baseDir}/${orginalFileName.split('.')[0]}-${Date.now()}`;
     try {
       await fs.mkdirSync(`${tmpDir}`, { recursive: true });
       await fs.writeFileSync(path.join(tmpDir, 'spaship.txt'), JSON.stringify(spashipFile, null, '\t'));
@@ -92,7 +92,7 @@ export class EnvironmentFactory {
     } catch (err) {
       this.exceptionService.internalServerErrorException(err);
     }
-    return { buildEnvironment, fileOriginalName, zipPath };
+    return { buildEnvironment, orginalFileName, zipPath };
   }
 
   // @internal Delete the environment from the property namespace
