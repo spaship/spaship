@@ -283,7 +283,8 @@ export class ApplicationService {
     propertyIdentifier: string,
     env: string,
     version: number = 1,
-    autoSync: boolean = false
+    autoSync: boolean = false,
+    rebuild: boolean = false
   ): Promise<any> {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     const identifier = this.applicationFactory.getIdentifier(applicationRequest.name);
@@ -335,6 +336,7 @@ export class ApplicationService {
         formData.append('spa', fileStream);
         formData.append('description', `${propertyIdentifier}_${env}`);
         formData.append('website', propertyIdentifier);
+        if (rebuild) formData.append('rebuild', 'true');
         const response = await this.applicationFactory.deploymentRequest(formData, con.baseurl);
         this.logger.log('OperatorResponse', JSON.stringify(response.data));
         if (autoSync && environment.sync !== 'NA') {
