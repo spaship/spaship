@@ -3,6 +3,7 @@ import { IDataServices } from 'src/repository/data-services.abstract';
 import { Action } from 'src/server/analytics/entity';
 import { AnalyticsService } from 'src/server/analytics/service';
 import { Application } from 'src/server/application/entity';
+import { EnvironmentFactory } from 'src/server/environment/service/factory';
 import { ExceptionsService } from 'src/server/exceptions/service';
 import { Property, Source } from 'src/server/property/entity';
 import { CMDBDTO, CMDBResponse } from '../dto';
@@ -14,7 +15,8 @@ export class CMDBService {
     private readonly cmdbFactory: CMDBFactory,
     private readonly dataServices: IDataServices,
     private readonly exceptionService: ExceptionsService,
-    private readonly analyticsService: AnalyticsService
+    private readonly analyticsService: AnalyticsService,
+    private readonly environmentFactory: EnvironmentFactory
   ) {}
 
   /* @internal
@@ -86,9 +88,21 @@ export class CMDBService {
     const { propertyIdentifier } = cmdbRequest;
     const propertyDetails = (await this.dataServices.property.getByAny({ identifier: propertyIdentifier }))[0];
     if (!propertyDetails) this.exceptionService.badRequestException({ message: 'Property not found.' });
+    const envDetails = await this.dataServices.environment.getByAny({ propertyIdentifier });
+    if (!envDetails) this.exceptionService.badRequestException({ message: `No related Environment found for ${propertyIdentifier}.` });
     const previousCMDB = propertyDetails.cmdbCode;
     propertyDetails.cmdbCode = cmdbRequest.cmdbCode;
     propertyDetails.severity = cmdbRequest.severity;
+    if (previousCMDB !== cmdbRequest.cmdbCode) {
+      const { buildEnvironment, orginalFileName, zipPath } = await this.environmentFactory.getArchivePath(propertyDetails, envDetails[0]);
+      for (const env of envDetails) {
+        try {
+          await this.environmentFactory.configureEnvironment(buildEnvironment, orginalFileName, zipPath, propertyDetails, env, true);
+        } catch (err) {
+          this.exceptionService.internalServerErrorException(err);
+        }
+      }
+    }
     await this.dataServices.property.updateOne({ identifier: propertyIdentifier }, propertyDetails);
     try {
       await this.analyticsService.createActivityStream(

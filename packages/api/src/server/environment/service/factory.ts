@@ -36,40 +36,63 @@ export class EnvironmentFactory {
   }
 
   /* @internal
-   * Environment initialization and the config creation
+   * Environment initialization, rebuild and the config creation
    * Creation of environment in the cluster
    */
-  async initializeEnvironment(propertyRequest: Property, environmentRequest: Environment) {
-    const initializeEnvironment = new CreateApplicationDto();
-    initializeEnvironment.name = 'envInit';
-    initializeEnvironment.ref = '0.0.0';
-    initializeEnvironment.path = '.';
-    const spashipFile = {
-      websiteVersion: 'v1',
-      websiteName: propertyRequest.identifier,
-      name: initializeEnvironment.name,
-      mapping: initializeEnvironment.path,
-      environments: [{ name: environmentRequest.env, updateRestriction: false, exclude: false, ns: propertyRequest.namespace }]
-    };
-    this.logger.log('SpashipFile', JSON.stringify(spashipFile));
-    const { baseDir } = DIRECTORY_CONFIGURATION;
-    const fileOriginalName = propertyRequest.identifier;
-    const tmpDir = `${baseDir}/${fileOriginalName.split('.')[0]}-${Date.now()}`;
-    await fs.mkdirSync(`${tmpDir}`, { recursive: true });
-    await fs.writeFileSync(path.join(tmpDir, 'spaship.txt'), JSON.stringify(spashipFile, null, '\t'));
-    const zipPath = path.join(tmpDir, `../SPAship${Date.now()}.zip`);
-    await zip(tmpDir, zipPath);
+  async configureEnvironment(
+    buildEnvironment: CreateApplicationDto,
+    orginalFileName: string,
+    zipPath: string,
+    propertyRequest: Property,
+    environmentRequest: Environment,
+    rebuild: boolean = false
+  ) {
     try {
       await this.applicationService.deployApplication(
-        initializeEnvironment,
-        fileOriginalName,
+        buildEnvironment,
+        orginalFileName,
         zipPath,
         propertyRequest.identifier,
-        environmentRequest.env
+        environmentRequest.env,
+        1,
+        false,
+        rebuild
       );
     } catch (err) {
       this.exceptionService.internalServerErrorException(err);
     }
+  }
+
+  // @internal Get the Archive Path to create the distribution
+  async getArchivePath(propertyRequest: Property, environmentRequest: Environment) {
+    const buildEnvironment = new CreateApplicationDto();
+    buildEnvironment.name = 'envInit';
+    buildEnvironment.ref = '0.0.0';
+    buildEnvironment.path = '.';
+    const spashipFile = {
+      websiteVersion: 'v1',
+      websiteName: propertyRequest.identifier,
+      name: buildEnvironment.name,
+      mapping: buildEnvironment.path,
+      environments: [{ name: environmentRequest.env, updateRestriction: false, exclude: false, ns: propertyRequest.namespace }]
+    };
+    this.logger.log('SpashipFile', JSON.stringify(spashipFile));
+    const { baseDir } = DIRECTORY_CONFIGURATION;
+    const orginalFileName = propertyRequest.identifier;
+    const tmpDir = `${baseDir}/${orginalFileName.split('.')[0]}-${Date.now()}`;
+    try {
+      await fs.mkdirSync(`${tmpDir}`, { recursive: true });
+      await fs.writeFileSync(path.join(tmpDir, 'spaship.txt'), JSON.stringify(spashipFile, null, '\t'));
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err);
+    }
+    const zipPath = path.join(tmpDir, `../SPAship${Date.now()}.zip`);
+    try {
+      await zip(tmpDir, zipPath);
+    } catch (err) {
+      this.exceptionService.internalServerErrorException(err);
+    }
+    return { buildEnvironment, orginalFileName, zipPath };
   }
 
   // @internal Delete the environment from the property namespace
