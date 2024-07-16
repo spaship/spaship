@@ -83,6 +83,8 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
           message: `${email} is not authorized to perform this action, please connect with ${propertyIdentifier} owner.`
         });
     }
+    // @internal It'll add the created by for the deployment request in the queries, as we're getting the request in the form-body
+    if (context.getArgs()[0].route.path.startsWith(AUTH_LISTING.deploymentBaseURL)) context.getArgs()[0].query.createdBy = email;
     // @internal It'll extract the Name of the Creator specificity for the Property Creation Request
     if (context.getArgs()[0].route.path === AUTH_LISTING.propertyBaseURL)
       context.getArgs()[0].body.creatorName = JSON.parse(JSON.stringify(payload)).name;
