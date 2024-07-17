@@ -88,13 +88,14 @@ export class ApplicationService {
     applicationPath: string,
     propertyIdentifier: string,
     env: string,
-    createdBy: string
+    createdBy: string,
+    source: string = Source.CLI
   ): Promise<ApplicationResponse> {
     const environment = (await this.dataServices.environment.getByAny({ propertyIdentifier, env }))[0];
     if (!environment) this.exceptionService.badRequestException({ message: 'Invalid Property & Environment. Please check the Deployment URL.' });
     applicationRequest.path = this.applicationFactory.getPath(applicationRequest.path);
     const identifier = this.applicationFactory.getIdentifier(applicationRequest.name);
-    env = await this.createEphemeralEnvironment(applicationRequest, propertyIdentifier, env, createdBy);
+    env = await this.createEphemeralEnvironment(applicationRequest, propertyIdentifier, env, createdBy, source);
     let applicationDetails = (
       await this.dataServices.application.getByAny({ propertyIdentifier, env, identifier, isContainerized: false, isGit: false })
     )[0];
@@ -133,7 +134,7 @@ export class ApplicationService {
       identifier,
       `Deployment started for ${applicationRequest.name} at ${env}`,
       createdBy,
-      Source.CLI,
+      source,
       JSON.stringify(applicationRequest)
     );
     const existingSPA = (await this.dataServices.application.getByAny({ propertyIdentifier, identifier }))[0];
@@ -227,7 +228,13 @@ export class ApplicationService {
     }
   }
 
-  private async createEphemeralEnvironment(applicationRequest: CreateApplicationDto, propertyIdentifier: string, env: string, createdBy: string) {
+  private async createEphemeralEnvironment(
+    applicationRequest: CreateApplicationDto,
+    propertyIdentifier: string,
+    env: string,
+    createdBy: string,
+    source: string = Source.CLI
+  ) {
     if (this.applicationFactory.isEphemeral(applicationRequest)) {
       const actionEnabled = !!applicationRequest.actionId;
       const { actionId } = applicationRequest;
@@ -263,7 +270,7 @@ export class ApplicationService {
         'NA',
         `${env} created for ${propertyIdentifier}.`,
         createdBy,
-        Source.CLI,
+        source,
         JSON.stringify(applicationRequest)
       );
     }

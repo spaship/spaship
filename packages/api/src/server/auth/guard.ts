@@ -6,6 +6,7 @@ import jwt_decode from 'jwt-decode';
 import { AUTH_DETAILS, AUTH_LISTING, GIT_AUTH, GLOBAL_PREFIX } from 'src/configuration';
 import { IDataServices } from 'src/repository/data-services.abstract';
 import { ExceptionsService } from 'src/server/exceptions/service';
+import { Source } from '../property/entity';
 
 @Injectable()
 export class AuthenticationGuard extends AuthGuard('jwt') {
@@ -84,7 +85,10 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
         });
     }
     // @internal It'll add the created by for the deployment request in the queries, as we're getting the request in the form-body
-    if (context.getArgs()[0].route.path.startsWith(AUTH_LISTING.deploymentBaseURL)) context.getArgs()[0].query.createdBy = email;
+    if (context.getArgs()[0].route.path.startsWith(AUTH_LISTING.deploymentBaseURL)) {
+      context.getArgs()[0].query.source = Source.MANAGER;
+      context.getArgs()[0].query.createdBy = email;
+    }
     // @internal It'll extract the Name of the Creator specificity for the Property Creation Request
     if (context.getArgs()[0].route.path === AUTH_LISTING.propertyBaseURL)
       context.getArgs()[0].body.creatorName = JSON.parse(JSON.stringify(payload)).name;
