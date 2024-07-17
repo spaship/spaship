@@ -1506,8 +1506,8 @@ export class ApplicationService {
     }
     try {
       const mappingRequest = new SaveVirtualPathRequest();
-      mappingRequest.incoming_path = request.virtualPath;
-      mappingRequest.mapped_with = request.basePath;
+      mappingRequest.incoming_path = data.virtualPath;
+      mappingRequest.mapped_with = data.basePath;
       for (const router of application.routerUrl) {
         const { hostname } = new URL(router);
         const localMemoryUpdateResponse = await this.applicationFactory.savePathMappingToLocalMemory(mappingRequest, hostname);
