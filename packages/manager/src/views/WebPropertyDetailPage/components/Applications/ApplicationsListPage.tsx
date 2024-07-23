@@ -366,7 +366,10 @@ export const Applications = (): JSX.Element => {
         isOpen={popUp.addApplication.isOpen}
         onClose={() => handlePopUpClose('addApplication')}
       >
-        <AddDeployment propertyIdentifier={propertyIdentifier} />
+        <AddDeployment
+          propertyIdentifier={propertyIdentifier}
+          onClose={() => handlePopUpClose('addApplication')}
+        />
       </Modal>
     </div>
   );

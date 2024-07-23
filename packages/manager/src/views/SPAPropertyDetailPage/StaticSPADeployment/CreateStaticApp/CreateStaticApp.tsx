@@ -90,9 +90,7 @@ export const CreateStaticApp: React.FC<CreateStaticAppProps> = ({
         toast.error("You don't have access to perform this action");
         onClose();
       } else if (error instanceof AxiosError && error.response && error.response.status === 400) {
-        toast.error(
-          "Given Image URL doesn't exist on the source registry, please provide a valid image URL."
-        );
+        toast.error('Please provide the valid input file.');
       } else {
         toast.error('Failed to deploy application');
       }
@@ -103,10 +101,8 @@ export const CreateStaticApp: React.FC<CreateStaticAppProps> = ({
     setValue('upload', [value], { shouldValidate: true });
     setFileValue(value);
     setFilename(fileName);
-    await trigger('upload'); // Manually trigger validation on file change
+    await trigger('upload');
   };
-
-  // const watchAllFields = watch(); // Watch all fields
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>

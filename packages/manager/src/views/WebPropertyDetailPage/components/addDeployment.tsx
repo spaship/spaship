@@ -16,13 +16,24 @@ import { AddContainerizedDeployment } from './AddContainerizedDeployment';
 
 interface AddDeploymentProps {
   propertyIdentifier: string;
+  onClose: () => void;
 }
 
-export const AddDeployment = ({ propertyIdentifier }: AddDeploymentProps): JSX.Element => {
+export const AddDeployment = ({ propertyIdentifier, onClose }: AddDeploymentProps): JSX.Element => {
   const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
     'createStaticDeployment',
     'createSSRDeployment'
   ] as const);
+
+  const handleCloseStaticDeployment = () => {
+    handlePopUpClose('createStaticDeployment');
+    onClose();
+  };
+
+  const handleCloseContainerizedDeployment = () => {
+    handlePopUpClose('createSSRDeployment');
+    onClose();
+  };
 
   return (
     <>
@@ -61,24 +72,24 @@ export const AddDeployment = ({ propertyIdentifier }: AddDeploymentProps): JSX.E
         title="Create new app"
         variant={ModalVariant.large}
         isOpen={popUp.createStaticDeployment.isOpen}
-        onClose={() => handlePopUpClose('createStaticDeployment')}
+        onClose={handleCloseStaticDeployment}
         style={{ minHeight: '600px' }}
       >
         <CreateStaticApp
           propertyIdentifier={propertyIdentifier}
-          onClose={() => handlePopUpClose('createStaticDeployment')}
+          onClose={handleCloseStaticDeployment}
         />
       </Modal>
       <Modal
         title="Create Deployment"
         variant={ModalVariant.large}
         isOpen={popUp.createSSRDeployment.isOpen}
-        onClose={() => handlePopUpClose('createSSRDeployment')}
+        onClose={handleCloseContainerizedDeployment}
         style={{ minHeight: '600px' }}
       >
         <AddContainerizedDeployment
           propertyIdentifier={propertyIdentifier}
-          onClose={() => handlePopUpClose('createSSRDeployment')}
+          onClose={handleCloseContainerizedDeployment}
         />
       </Modal>
     </>
