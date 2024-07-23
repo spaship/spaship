@@ -36,7 +36,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { EmptyInfo } from '../EmptyInfo';
-import { AddDeplyoment } from '../addDeployment';
+import { AddDeployment } from '../AddDeployment';
 import { ApplicationDetailsSection } from './ApplicationDetailsSection';
 
 const URL_LENGTH_LIMIT = 100;
@@ -63,7 +63,7 @@ export const Applications = (): JSX.Element => {
   const webPropertiesKeys: string[] = Object.keys(webProperties?.data || {});
   const countOfSpas: Record<string, any> = useGetSPAProperties(propertyIdentifier, '');
   const isCountOfSpasListEmpty: boolean = Object.keys(countOfSpas).length === 0;
-  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['createSSRDeployment'] as const);
+  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp(['addApplication'] as const);
   const [page, setPage] = useState<number>(1);
   const [perPage, setPerPage] = useState<number>(10);
   const [selectedAppIdentifier, setSelectedAppIdentifier] = useState<string>('');
@@ -262,7 +262,7 @@ export const Applications = (): JSX.Element => {
       Object.values(countOfSpas.data || {}).length === 0 ? (
         <>
           <Split hasGutter className="pf-u-mt-md">
-            <Button onClick={() => handlePopUpOpen('createSSRDeployment')}>Add application</Button>
+            <Button onClick={() => handlePopUpOpen('addApplication')}>Add application</Button>
           </Split>
           <EmptyInfo propertyIdentifier={propertyIdentifier} />
         </>
@@ -304,9 +304,7 @@ export const Applications = (): JSX.Element => {
                 </Select>
               </SplitItem>
               <SplitItem>
-                <Button onClick={() => handlePopUpOpen('createSSRDeployment')}>
-                  Add application
-                </Button>
+                <Button onClick={() => handlePopUpOpen('addApplication')}>Add application</Button>
               </SplitItem>
 
               <SplitItem
@@ -363,16 +361,12 @@ export const Applications = (): JSX.Element => {
         </>
       )}
       <Modal
-        title="Create Containerized Deployment"
+        title="Create Deployment"
         variant={ModalVariant.large}
-        isOpen={popUp.createSSRDeployment.isOpen}
-        onClose={() => handlePopUpClose('createSSRDeployment')}
-        style={{ minHeight: '600px' }}
+        isOpen={popUp.addApplication.isOpen}
+        onClose={() => handlePopUpClose('addApplication')}
       >
-        <AddDeplyoment
-          propertyIdentifier={propertyIdentifier}
-          onClose={() => handlePopUpClose('createSSRDeployment')}
-        />
+        <AddDeployment propertyIdentifier={propertyIdentifier} />
       </Modal>
     </div>
   );

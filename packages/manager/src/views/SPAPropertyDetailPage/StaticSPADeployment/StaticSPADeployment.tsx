@@ -54,7 +54,7 @@ import { useSession } from 'next-auth/react';
 import { ApplicationStatus } from '../../WebPropertyDetailPage/components/SSR/ApplicationStatus';
 import { Lighthouse } from '../Lighthouse/Lighthouse';
 import { VirtualPath } from '../VirtualPath/VirtualPath';
-import { CreateStaticApp } from '../StaticSPADeployment.tsx/CreateStaticApp';
+import { CreateStaticApp } from './CreateStaticApp';
 
 const INTERNAL_URL_LENGTH = 40;
 const SLICE_VAL_LENGTH = 20;

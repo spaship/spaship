@@ -1,63 +1,86 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Switch, Tooltip } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
-import Link from 'next/link';
 import React from 'react';
-import { SSRForm } from './SSR/SsrForm';
-import { Workflow3 } from './workflow3.0';
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  Grid,
+  GridItem,
+  Modal,
+  ModalVariant
+} from '@patternfly/react-core';
 
-interface Props {
-  onClose: () => void;
+import { usePopUp } from '@app/hooks';
+import { CreateStaticApp } from '@app/views/SPAPropertyDetailPage/StaticSPADeployment/CreateStaticApp';
+import { AddContainerizedDeployment } from './AddContainerizedDeployment';
+
+interface AddDeploymentProps {
   propertyIdentifier: string;
 }
 
-export const AddDeplyoment = ({ onClose, propertyIdentifier }: Props): JSX.Element => {
-  const [isChecked, setIsChecked] = React.useState<boolean>(true);
-  const [isWorkflowSubmitted, setIsWorkflowSubmitted] = React.useState<boolean>(false);
-
-  const handleChange = (checked: boolean) => {
-    setIsChecked(checked);
-  };
+export const AddDeployment = ({ propertyIdentifier }: AddDeploymentProps): JSX.Element => {
+  const { handlePopUpClose, handlePopUpOpen, popUp } = usePopUp([
+    'createStaticDeployment',
+    'createSSRDeployment'
+  ] as const);
 
   return (
-    <div>
-      <Switch
-        id="simple-switch"
-        label="From Git Repo"
-        labelOff="From Container"
-        isChecked={isChecked}
-        onChange={handleChange}
-        className="pf-u-mr-md pf-u-mb-md"
-      />
-      <Tooltip
-        content={
-          !isChecked ? (
-            <div>
-              Containerized deployment for Supporting the SSR capability. It is assumed the
-              container for this app is already available. For a more direct and interactive
-              deployment experience,toggle the switch to From Git Repo
-            </div>
-          ) : (
-            <div>
-              Provide your application&apos;s repository details, and SPAship will handle the entire
-              build and deployment process. No more external CIs are needed! Enjoy a more direct and
-              interactive deployment experience. To know more check SPAship get started section{' '}
-              <Link href="/documents">here</Link>
-            </div>
-          )
-        }
+    <>
+      <div style={{ padding: '16px', maxWidth: '1000px', margin: '0 auto' }}>
+        <p>
+          <strong>Welcome!</strong> You&apos;re about to add a new application. Please select an
+          option :<span style={{ fontWeight: 'bold' }}>Static Deployment</span> for a
+          straightforward setup or{' '}
+          <span style={{ fontWeight: 'bold' }}>Containerized Deployment</span> for a more flexible,
+          container-based approach.
+        </p>
+
+        <Grid hasGutter sm={12} md={6} lg={6} className="pf-u-mt-md">
+          <GridItem>
+            <Card isSelectable onClick={() => handlePopUpOpen('createStaticDeployment')}>
+              <CardHeader>
+                <CardTitle style={{ color: '#06c', fontSize: '18px' }}>Static Deployment</CardTitle>
+              </CardHeader>
+              <CardBody>Click to initiate a static deployment process.</CardBody>
+            </Card>
+          </GridItem>
+
+          <GridItem>
+            <Card isSelectable onClick={() => handlePopUpOpen('createSSRDeployment')}>
+              <CardHeader>
+                <CardTitle style={{ color: '#06c', fontSize: '18px' }}>
+                  Containerized Deployment
+                </CardTitle>
+              </CardHeader>
+              <CardBody>Click to initiate a containerized deployment process.</CardBody>
+            </Card>
+          </GridItem>
+        </Grid>
+      </div>
+      <Modal
+        title="Create new app"
+        variant={ModalVariant.large}
+        isOpen={popUp.createStaticDeployment.isOpen}
+        onClose={() => handlePopUpClose('createStaticDeployment')}
+        style={{ minHeight: '600px' }}
       >
-        <InfoCircleIcon style={{ marginLeft: '10px', color: '#6A6E73' }} />
-      </Tooltip>
-      {!isChecked ? (
-        <SSRForm propertyIdentifier={propertyIdentifier} onClose={() => onClose()} />
-      ) : (
-        <Workflow3
+        <CreateStaticApp
           propertyIdentifier={propertyIdentifier}
-          onClose={() => onClose()}
-          onSubmitWorkflow={() => setIsWorkflowSubmitted(true)}
+          onClose={() => handlePopUpClose('createStaticDeployment')}
         />
-      )}
-    </div>
+      </Modal>
+      <Modal
+        title="Create Deployment"
+        variant={ModalVariant.large}
+        isOpen={popUp.createSSRDeployment.isOpen}
+        onClose={() => handlePopUpClose('createSSRDeployment')}
+        style={{ minHeight: '600px' }}
+      >
+        <AddContainerizedDeployment
+          propertyIdentifier={propertyIdentifier}
+          onClose={() => handlePopUpClose('createSSRDeployment')}
+        />
+      </Modal>
+    </>
   );
 };
