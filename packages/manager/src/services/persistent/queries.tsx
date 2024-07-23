@@ -1,6 +1,6 @@
 import { orchestratorReq } from '@app/config/orchestratorReq';
 import { useMutation, useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query';
-import { TCreateEnvDTO, TDeleteEnvDTO, TEnv } from './types';
+import { TCreateEnvDTO, TCreateStaticAppOutput, TDeleteEnvDTO, TEnv } from './types';
 
 const persistentEnvQueryKeys = {
   list: (webPropertyIdentifier: string) => ['persistent-env', webPropertyIdentifier] as const
@@ -91,6 +91,34 @@ const deleteEphemeralEnv = async (deleteData: string[]): Promise<TDeleteEnvDTO> 
 export const useDeleteEphemeralEnv = (propertyIdentifier?: string) => {
   const queryClient = useQueryClient();
   return useMutation(deleteEphemeralEnv, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(webPropertyKeys.list);
+      if (propertyIdentifier) {
+        queryClient.invalidateQueries(webPropertyKeys.id(propertyIdentifier));
+      }
+    }
+  });
+};
+
+const formDataToObject = (formData: FormData): Record<string, string> =>
+  Array.from(formData.entries()).reduce((object, [key, value]) => {
+    /* eslint-disable no-param-reassign */
+    object[key] = value as string;
+    return object;
+  }, {} as Record<string, string>);
+
+const createStaticApp = async (dto: FormData): Promise<TCreateStaticAppOutput> => {
+  const formDataObject = formDataToObject(dto);
+  const { data } = await orchestratorReq.post(
+    `/applications/deploy/${formDataObject.propertyIdentifier}/${formDataObject.env}`,
+    dto
+  );
+  return data.data;
+};
+
+export const useCreateStaticApp = (propertyIdentifier?: string) => {
+  const queryClient = useQueryClient();
+  return useMutation(createStaticApp, {
     onSuccess: () => {
       queryClient.invalidateQueries(webPropertyKeys.list);
       if (propertyIdentifier) {

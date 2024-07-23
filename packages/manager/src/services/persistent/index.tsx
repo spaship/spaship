@@ -2,5 +2,6 @@ export {
   useGetPersistentEnvList,
   useGetEnvList,
   useGetWebPropertyGroupedByEnv,
-  useAddEnv
+  useAddEnv,
+  useCreateStaticApp
 } from './queries';
