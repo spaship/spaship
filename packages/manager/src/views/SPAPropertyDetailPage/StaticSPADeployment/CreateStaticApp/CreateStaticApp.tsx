@@ -23,11 +23,12 @@ interface CreateStaticAppProps {
   propertyIdentifier: string;
 }
 
+const regexPathPattern = /^[a-zA-Z0-9/-]+$/;
 const schema = yup.object({
   name: yup.string().required().label('Application Name'),
   path: yup
     .string()
-    .matches(/^[a-zA-Z0-9/-]+$/, 'Only letters, numbers, forward slash and dashes are allowed')
+    .matches(regexPathPattern, 'Only letters, numbers, forward slash and dashes are allowed')
     .required(),
   env: yup.string().required().label('Environment'),
   ref: yup.string().required().label('Reference'),
