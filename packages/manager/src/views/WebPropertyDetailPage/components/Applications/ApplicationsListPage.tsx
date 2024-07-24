@@ -36,7 +36,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { EmptyInfo } from '../EmptyInfo';
-import { AddDeployment } from '../AddDeployment';
+import { AddDeployment } from '../AddDeployments';
 import { ApplicationDetailsSection } from './ApplicationDetailsSection';
 
 const URL_LENGTH_LIMIT = 100;
