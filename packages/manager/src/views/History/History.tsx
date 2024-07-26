@@ -32,7 +32,7 @@ const WORKFLOW = '[Workflow 3.0]';
 
 const actions: { [key: string]: (message: string) => JSX.Element } = {
   APIKEY_CREATED: () => <>Api key created</>,
-
+  APIKEY_DELETED: () => <>Api key deleted</>,
   APPLICATION_DEPLOYMENT_STARTED: (message: string) => {
     if (message.includes(WORKFLOW)) {
       return (
@@ -132,7 +132,7 @@ export const History = ({ propertyIdentifier, applicationIdentifier }: Props): J
             <Thead>
               <Tr>
                 <Th textCenter modifier="wrap">
-                  Time
+                  Date & Time
                 </Th>
                 <Th textCenter modifier="wrap">
                   Event
