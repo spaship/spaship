@@ -111,6 +111,7 @@ export const VirtualPath = ({
           onClose={() => handlePopUpClose('createVirtualPath')}
           propertyIdentifier={propertyIdentifier || ''}
           identifier={identifier}
+          basePath={data?.path}
           refetch={refetch}
         />
       </Modal>
