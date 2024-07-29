@@ -39,21 +39,7 @@ export const schema = yup.object({
         return true;
       }
     ),
-  basePath: yup
-    .string()
-    .label('Base Path')
-    .trim()
-    .required()
-    .test(
-      'no-leading-or-trailing-slashes',
-      'Base Path should not start or end with a slash',
-      (value) => {
-        if (value) {
-          return !pathValidation.test(value);
-        }
-        return true;
-      }
-    ),
+  basePath: yup.string().label('Base Path').trim().required(),
   env: yup
     .string()
     .label('Environment Name')
@@ -71,6 +57,7 @@ type Props = {
   propertyIdentifier: string;
   identifier: string;
   env: string;
+  basePath: string;
   refetch: () => void;
 };
 
@@ -79,6 +66,7 @@ export const CreateVirtualPath = ({
   propertyIdentifier,
   identifier,
   env,
+  basePath,
   refetch
 }: Props): JSX.Element => {
   const {
@@ -91,7 +79,6 @@ export const CreateVirtualPath = ({
   });
 
   const virtualPath = '';
-  const basePath = '';
 
   const createVirtualPath = useAddVirtualPath();
 
@@ -180,34 +167,8 @@ export const CreateVirtualPath = ({
         <SplitItem isFilled style={{ width: '100%' }}>
           <Controller
             control={control}
-            name="virtualPath"
-            defaultValue=""
-            render={({ field, fieldState: { error } }) => (
-              <FormGroup
-                label="Virtual Path"
-                isRequired
-                fieldId="virtualPath"
-                validated={error ? 'error' : 'default'}
-                helperTextInvalid={error?.message}
-              >
-                <TextInput
-                  isRequired
-                  placeholder={virtualPath}
-                  type="text"
-                  id="virtualPath"
-                  value={field.value}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                />
-              </FormGroup>
-            )}
-          />
-        </SplitItem>
-        <SplitItem isFilled style={{ width: '100%' }}>
-          <Controller
-            control={control}
             name="basePath"
-            defaultValue=""
+            defaultValue={basePath}
             render={({ field, fieldState: { error } }) => (
               <FormGroup
                 label={
@@ -230,6 +191,33 @@ export const CreateVirtualPath = ({
                   placeholder={basePath}
                   type="text"
                   id="basePath"
+                  value={field.value}
+                  // onChange={field.onChange}
+                  // onBlur={field.onBlur}
+                  isDisabled
+                />
+              </FormGroup>
+            )}
+          />
+        </SplitItem>
+        <SplitItem isFilled style={{ width: '100%' }}>
+          <Controller
+            control={control}
+            name="virtualPath"
+            defaultValue=""
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label="Virtual Path"
+                isRequired
+                fieldId="virtualPath"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
+                <TextInput
+                  isRequired
+                  placeholder={virtualPath}
+                  type="text"
+                  id="virtualPath"
                   value={field.value}
                   onChange={field.onChange}
                   onBlur={field.onBlur}

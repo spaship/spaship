@@ -8,7 +8,8 @@ const fetchHistoryData = async (
 ): Promise<THistoryData[]> => {
   const params: { propertyIdentifier: string; actions: string; applicationIdentifier?: string } = {
     propertyIdentifier,
-    actions: 'APIKEY_CREATED,APPLICATION_DEPLOYMENT_STARTED,APPLICATION_BUILD_STARTED'
+    actions:
+      'APIKEY_CREATED,APPLICATION_DEPLOYMENT_STARTED,APPLICATION_BUILD_STARTED,APIKEY_DELETED'
   };
 
   if (applicationIdentifier) {

@@ -343,12 +343,13 @@ const activities = {
       <span style={{ fontWeight: '600' }}>{props.env} </span> environment by {createdBy}
     </Text>
   ),
-  APPLICATION_DELETED: ({ props, message }: TWebPropActivityStream): JSX.Element => (
+  APPLICATION_DELETED: ({ props, createdBy }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
-      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier} has been deleted</span> for{' '}
-      <span style={{ fontWeight: '600' }}>{props.env}</span> for Misc: {message}
+      <span style={{ fontWeight: '600' }}>{props.applicationIdentifier} has been deleted </span> for{' '}
+      <span style={{ fontWeight: '600' }}>{props.env}</span> environment by {createdBy}.
     </Text>
   ),
+
   ENV_CREATED: ({ props, createdBy }: TWebPropActivityStream): JSX.Element => (
     <Text className="activityStream">
       <span style={{ fontWeight: '600' }}>{props.env}</span> environment has been created by{' '}
