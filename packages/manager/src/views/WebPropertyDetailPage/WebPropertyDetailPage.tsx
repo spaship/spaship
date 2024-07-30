@@ -101,20 +101,6 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             title={
               <>
                 <TabTitleIcon>
-                  <CogIcon />
-                </TabTitleIcon>
-                <TabTitleText>Settings</TabTitleText>
-              </>
-            }
-            aria-label="Settings"
-          >
-            {openTab === 3 && <Settings />}
-          </Tab>
-          <Tab
-            eventKey={4}
-            title={
-              <>
-                <TabTitleIcon>
                   <HistoryIcon />
                 </TabTitleIcon>
                 <TabTitleText>History</TabTitleText>
@@ -122,7 +108,21 @@ export const WebPropertyDetailPage = (): JSX.Element => {
             }
             aria-label="History"
           >
-            {openTab === 4 && <History propertyIdentifier={propertyIdentifier} />}
+            {openTab === 3 && <History propertyIdentifier={propertyIdentifier} />}
+          </Tab>
+          <Tab
+            eventKey={4}
+            title={
+              <>
+                <TabTitleIcon>
+                  <CogIcon />
+                </TabTitleIcon>
+                <TabTitleText>Settings</TabTitleText>
+              </>
+            }
+            aria-label="Settings"
+          >
+            {openTab === 4 && <Settings />}
           </Tab>
         </Tabs>
       </PageSection>

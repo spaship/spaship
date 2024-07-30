@@ -620,6 +620,7 @@ export const StaticSPADeployment = (): JSX.Element => {
       >
         <CreateStaticApp
           propertyIdentifier={propertyIdentifier}
+          applicationIdentifier={spaProperty}
           onClose={() => handlePopUpClose('createStaticApp')}
         />
       </Modal>

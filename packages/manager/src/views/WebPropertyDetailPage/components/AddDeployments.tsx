@@ -77,6 +77,7 @@ export const AddDeployment = ({ propertyIdentifier, onClose }: AddDeploymentProp
       >
         <CreateStaticApp
           propertyIdentifier={propertyIdentifier}
+          applicationIdentifier=""
           onClose={handleCloseStaticDeployment}
         />
       </Modal>

@@ -26,7 +26,7 @@ export const DeploymentStatsCard = () => {
       <CardHeader className="card-header">Deployment stats</CardHeader>
       <CardBody>
         <p className="sub-text">
-          <span className="large-text">{monthlyDeployments}</span> in past 30 days
+          <span className="large-text">{monthlyDeployments}</span> secs in past 30 days
         </p>
         <Text component={TextVariants.p} className="average-time">
           Average Time to Deploy
