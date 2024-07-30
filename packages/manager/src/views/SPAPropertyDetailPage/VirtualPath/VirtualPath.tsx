@@ -24,7 +24,10 @@ type Props = {
   refetch: any;
   data: any;
 };
-
+type VirtualPathItemType = {
+  basePath: string;
+  virtualPath: string;
+};
 export const VirtualPath = ({
   propertyIdentifier,
   identifier,
@@ -56,7 +59,7 @@ export const VirtualPath = ({
           </SplitItem>
         </Split>
         <div>
-          {data?.virtualPaths?.length !== 0 ? (
+          {data?.virtualPaths && data?.virtualPaths?.length !== 0 ? (
             <Table aria-label="VirtualPath-Static-Table" className="pf-u-mt-md">
               <Thead noWrap>
                 <Tr>
@@ -71,8 +74,11 @@ export const VirtualPath = ({
               </Thead>
 
               <Tbody>
-                {data?.virtualPaths?.map((virtualpathItem: any) => (
-                  <Tr key={virtualpathItem.basePath} className={virtualpathItem.basePath}>
+                {data?.virtualPaths?.map((virtualpathItem: VirtualPathItemType, index: number) => (
+                  <Tr
+                    key={virtualpathItem.basePath}
+                    className={index % 2 === 0 ? 'even-row' : 'odd-row'}
+                  >
                     <Td dataLabel={virtualpathItem?.basePath} style={{ wordBreak: 'break-all' }}>
                       {virtualpathItem.basePath}
                     </Td>

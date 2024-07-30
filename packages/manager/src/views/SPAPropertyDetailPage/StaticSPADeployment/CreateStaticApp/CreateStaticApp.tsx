@@ -21,6 +21,7 @@ import { useGetWebPropertyGroupedByEnv, useCreateStaticApp } from '@app/services
 interface CreateStaticAppProps {
   onClose: () => void;
   propertyIdentifier: string;
+  applicationIdentifier: string;
 }
 
 const regexPathPattern = /^[a-zA-Z0-9/-]+$/;
@@ -49,7 +50,8 @@ type FormData = yup.InferType<typeof schema>;
 
 export const CreateStaticApp: React.FC<CreateStaticAppProps> = ({
   onClose,
-  propertyIdentifier
+  propertyIdentifier,
+  applicationIdentifier
 }) => {
   const [fileValue, setFileValue] = useState<File | string>('');
   const [filename, setFilename] = useState('');
@@ -113,6 +115,7 @@ export const CreateStaticApp: React.FC<CreateStaticAppProps> = ({
           <Controller
             control={control}
             name="name"
+            defaultValue={applicationIdentifier}
             render={({ field, fieldState: { error } }) => (
               <FormGroup
                 label="Application Name"
@@ -127,6 +130,7 @@ export const CreateStaticApp: React.FC<CreateStaticAppProps> = ({
                   type="text"
                   id="property-name"
                   {...field}
+                  isDisabled={applicationIdentifier !== ''}
                 />
               </FormGroup>
             )}
@@ -172,8 +176,9 @@ export const CreateStaticApp: React.FC<CreateStaticAppProps> = ({
                 fieldId="ref"
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
+                isRequired
               >
-                <TextInput placeholder="Reference" type="text" id="ref" {...field} />
+                <TextInput placeholder="Reference" type="text" id="ref" {...field} isRequired />
               </FormGroup>
             )}
           />
@@ -188,8 +193,9 @@ export const CreateStaticApp: React.FC<CreateStaticAppProps> = ({
                 fieldId="path"
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
+                isRequired
               >
-                <TextInput placeholder="Path" type="text" id="path" {...field} />
+                <TextInput placeholder="Path" type="text" id="path" {...field} isRequired />
               </FormGroup>
             )}
           />
@@ -208,6 +214,7 @@ export const CreateStaticApp: React.FC<CreateStaticAppProps> = ({
                 helperText="Allowed file types: zip, tgz, gzip, gz, rar, tar"
                 validated={error ? 'error' : 'default'}
                 helperTextInvalid={error?.message}
+                isRequired
               >
                 <FileUpload
                   id="file-upload"
@@ -217,6 +224,7 @@ export const CreateStaticApp: React.FC<CreateStaticAppProps> = ({
                   dropzoneProps={{
                     accept: '.zip,.tgz,.gzip,.gz,.rar,.tar'
                   }}
+                  isRequired
                 />
               </FormGroup>
             )}

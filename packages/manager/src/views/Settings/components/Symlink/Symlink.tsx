@@ -139,7 +139,7 @@ export const Symlink = ({
           </SplitItem>
         </Split>
         <div>
-          {selectedData?.symlink?.length !== 0 ? (
+          {selectedData?.symlink && selectedData?.symlink?.length !== 0 ? (
             <Table aria-label="Symlink-Static-Table" className="pf-u-mt-md">
               <Thead noWrap>
                 <Tr>

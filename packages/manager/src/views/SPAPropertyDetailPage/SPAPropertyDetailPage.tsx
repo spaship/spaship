@@ -80,22 +80,9 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
           >
             {openTab === 2 && <Dashboard type="spa" />}
           </Tab>
+
           <Tab
             eventKey={3}
-            title={
-              <>
-                <TabTitleIcon>
-                  <CogIcon />
-                </TabTitleIcon>
-                <TabTitleText>Settings</TabTitleText>
-              </>
-            }
-            aria-label="SPA-detailed-Settings"
-          >
-            {openTab === 3 && <SPASettingsPage />}
-          </Tab>
-          <Tab
-            eventKey={4}
             title={
               <>
                 <TabTitleIcon>
@@ -106,12 +93,26 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
             }
             aria-label="History"
           >
-            {openTab === 4 && (
+            {openTab === 3 && (
               <History
                 propertyIdentifier={propertyIdentifier}
                 applicationIdentifier={spaProperty}
               />
             )}
+          </Tab>
+          <Tab
+            eventKey={4}
+            title={
+              <>
+                <TabTitleIcon>
+                  <CogIcon />
+                </TabTitleIcon>
+                <TabTitleText>Settings</TabTitleText>
+              </>
+            }
+            aria-label="SPA-detailed-Settings"
+          >
+            {openTab === 4 && <SPASettingsPage />}
           </Tab>
         </Tabs>
       </PageSection>
