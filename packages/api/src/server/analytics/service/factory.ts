@@ -254,6 +254,6 @@ export class AnalyticsFactory {
   ): Promise<Object[]> {
     const matchQuery = { propertyIdentifier, 'props.applicationIdentifier': applicationIdentifier, action: { $in: actions } };
     Object.keys(matchQuery).forEach((key) => matchQuery[key] === undefined && delete matchQuery[key]);
-    return [{ $match: matchQuery }, { $skip: skip }, { $limit: limit }];
+    return [{ $match: matchQuery }, { $sort: { createdAt: -1 } }, { $skip: skip }, { $limit: limit }];
   }
 }
