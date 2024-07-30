@@ -32,7 +32,7 @@ export class AgendaService implements OnApplicationBootstrap {
       const { propertyIdentifier, env } = job.attrs.data;
       if (!env.includes('ephemeral')) this.exceptionService.badRequestException({ message: 'Only Ephemeral Environment can be deleted.' });
       try {
-        const response = await this.environmentService.deleteEnvironment(propertyIdentifier, env);
+        const response = await this.environmentService.deleteEnvironment(propertyIdentifier, env, 'Scheduled Action');
         this.loggerService.log('DeletedProps', JSON.stringify(response));
       } catch (err) {
         this.loggerService.error('DeletePropsError', err);

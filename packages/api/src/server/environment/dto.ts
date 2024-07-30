@@ -62,3 +62,7 @@ export class SyncEnvironmentDto {
   @IsNotEmpty()
   createdBy: string;
 }
+
+export class DeleteEnvironmentDTO {
+  createdBy: string;
+}
