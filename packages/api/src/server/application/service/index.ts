@@ -247,7 +247,7 @@ export class ApplicationService {
           propertyIdentifier,
           actionEnabled,
           actionId,
-          'NA',
+          createdBy,
           applicationRequest.expiresIn
         );
         await this.checkDeploymentRecord(propertyIdentifier, Cluster.PREPROD);
