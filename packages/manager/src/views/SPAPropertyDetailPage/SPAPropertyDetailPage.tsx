@@ -114,6 +114,25 @@ export const SPAPropertyDetailPage = (): JSX.Element => {
           >
             {openTab === 4 && <SPASettingsPage />}
           </Tab>
+          <Tab
+            eventKey={4}
+            title={
+              <>
+                <TabTitleIcon>
+                  <HistoryIcon />
+                </TabTitleIcon>
+                <TabTitleText>History</TabTitleText>
+              </>
+            }
+            aria-label="History"
+          >
+            {openTab === 4 && (
+              <History
+                propertyIdentifier={propertyIdentifier}
+                applicationIdentifier={spaProperty}
+              />
+            )}
+          </Tab>
         </Tabs>
       </PageSection>
     </>
