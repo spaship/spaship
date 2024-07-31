@@ -12,7 +12,8 @@ import {
   SelectOptionObject,
   Spinner,
   Title,
-  Button
+  Button,
+  Tooltip
 } from '@patternfly/react-core';
 import { CubesIcon, ArrowUpIcon } from '@patternfly/react-icons';
 import { useEffect, useState } from 'react';
@@ -93,8 +94,11 @@ export const ViewLogs = ({
 
   useEffect(() => {
     setIsLogsLoading(true);
+  }, [type]);
+
+  useEffect(() => {
     setSelectedId(idList && idList[idList.length - 1]);
-  }, [idList, type]);
+  }, [idList]);
 
   useEffect(() => {
     refetch().then(() => {
@@ -151,9 +155,11 @@ export const ViewLogs = ({
                     />
                   ))}
             </Select>
-            <Button variant="plain" onClick={scrollToTop}>
-              <ArrowUpIcon />
-            </Button>
+            <Tooltip content="Scroll to the top" position="bottom">
+              <Button className="logs_scroll_to_top" variant="plain" onClick={scrollToTop}>
+                <ArrowUpIcon style={{ color: '#fff' }} />
+              </Button>
+            </Tooltip>
           </div>
         </div>
         <div id="log-container" style={{ overflowY: 'auto', flexGrow: 1 }}>

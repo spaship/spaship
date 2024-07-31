@@ -124,6 +124,20 @@ export const WebPropertyDetailPage = (): JSX.Element => {
           >
             {openTab === 4 && <Settings />}
           </Tab>
+          <Tab
+            eventKey={4}
+            title={
+              <>
+                <TabTitleIcon>
+                  <HistoryIcon />
+                </TabTitleIcon>
+                <TabTitleText>History</TabTitleText>
+              </>
+            }
+            aria-label="History"
+          >
+            {openTab === 4 && <History propertyIdentifier={propertyIdentifier} />}
+          </Tab>
         </Tabs>
       </PageSection>
     </>
