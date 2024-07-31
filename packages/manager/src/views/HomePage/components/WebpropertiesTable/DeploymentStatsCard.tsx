@@ -34,7 +34,10 @@ export const DeploymentStatsCard = () => {
         <Split hasGutter className="pf-u-pt-md">
           <SplitItem isFilled>
             <div className="item-text">
-              {quarterlyDeployments}
+              {quarterlyDeployments}&nbsp;
+              <span className="sub-text" style={{ color: '#000' }}>
+                secs
+              </span>
               <Text component={TextVariants.p} className="sub-text">
                 Past 90 days
               </Text>
@@ -42,7 +45,10 @@ export const DeploymentStatsCard = () => {
           </SplitItem>
           <SplitItem isFilled>
             <div className="item-text">
-              {halfYearlyDeployments}
+              {halfYearlyDeployments}&nbsp;
+              <span className="sub-text" style={{ color: '#000' }}>
+                secs
+              </span>
               <Text component={TextVariants.p} className="sub-text">
                 Past 180 days
               </Text>
@@ -50,7 +56,10 @@ export const DeploymentStatsCard = () => {
           </SplitItem>
           <SplitItem isFilled>
             <div className="item-text">
-              {yearlyDeployments}
+              {yearlyDeployments}&nbsp;
+              <span className="sub-text" style={{ color: '#000' }}>
+                secs
+              </span>
               <Text component={TextVariants.p} className="sub-text">
                 Past 365 days
               </Text>
