@@ -285,3 +285,13 @@ body {
   font-weight: 700;
   font-family: 'RedHatText';
 }
+
+.pf-c-drawer__panel-main > div > div > div.pf-c-drawer__actions-right > div > button > svg {
+  color: #fff;
+}
+.logs_scroll_to_top {
+  top: 40px;
+  position: absolute;
+  right: 0;
+  margin: 1rem;
+}
