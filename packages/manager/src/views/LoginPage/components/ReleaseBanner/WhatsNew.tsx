@@ -1,6 +1,7 @@
 import packageJson from '@jsonPath';
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import * as React from 'react';
+import './WhatsNew.css';
 
 interface IWhatsNewProp {
   confirm: () => void;
@@ -37,16 +38,73 @@ const WhatsNew = ({ broadCastFlag, confirm }: IWhatsNewProp) => {
         href="https://source.redhat.com/groups/public/spaship/blog_article/whats_new_in_spaship_"
         rel="noreferrer"
       >
-        SPAship Souce Page Release Notes
+        SPAship Source Page Release Notes
       </a>
       <br />
       <br />
-      &bull; We have implemented a dynamic &quot;What&apos;s New&quot; page that automatically
-      appears as a pop-up modal following each release, ensuring users are promptly informed of
-      changes. Additionally, a dedicated Release Notes icon now resides in the top right of the
-      navbar, granting users the ability to revisit the &quot;What&apos;s New&quot; page at their
-      convenience, facilitating thorough review or clarification of updates.
-      <img src="/img/release3-1-snapshot.png" alt="release-3-1-snapshot" />
+
+      <div className="update-section">
+        <div className="inline-header">
+          <h2>Add New Static App:</h2>
+          <p>Easily create new static apps directly from the Manager.</p>
+        </div>
+        <div className="image-row">
+          <div className="image-container">
+            <img src="/img/webProperty_static.png" alt="Add New Static App" />
+            <p className="image-subtitle">Properties Page: Create deployments directly.</p>
+          </div>
+          <div className="image-container">
+            <img src="/img/property_static.png" alt="Add New Static App" />
+            <p className="image-subtitle">SPA Detail Page: Deploy static apps.</p>
+          </div>
+        </div>
+        <div className="image-container">
+          <img src="/img/static_form.png" alt="Add New Static App" />
+          <p className="image-subtitle">Static Deployment Form: View the form layout.</p>
+        </div>
+      </div>
+
+      <div className="update-section">
+        <div className="inline-header">
+          <h2>Virtual Path Support:</h2>
+          <p>Introduce Virtual Path support with seamless creation and deletion options.</p>
+        </div>
+        <div className="image-container">
+          <img src="/img/VirtualPath.png" alt="Virtual Path Support" />
+          <p className="image-subtitle">Virtual Path Support: Manage paths easily.</p>
+        </div>
+      </div>
+
+      <div className="update-section">
+        <div className="inline-header">
+          <h2>Enhanced Activity Stream:</h2>
+          <p>Get user detailed insights into SPA creation and updates within property and spa.</p>
+        </div>
+        <div className="image-container">
+          <img src="/img/activity_stream.png" alt="Activity Stream" />
+          <p className="image-subtitle">
+            Enhanced Activity Stream: Insights into SPA creation and updates.
+          </p>
+        </div>
+      </div>
+
+      <div className="update-section">
+        <div className="inline-header">
+          <h2>History Section:</h2>
+          <p>Access a comprehensive history of all activities within the SPAship Manager.</p>
+        </div>
+        <div className="image-container">
+          <img src="/img/history.png" alt="History Section" />
+          <p className="image-subtitle">History Section: Review all activities.</p>
+        </div>
+      </div>
+
+      <div className="update-section">
+        <div className="inline-header">
+          <h2>Updated Release Notes:</h2>
+          <p>View the latest changes with a refreshed release note screenshot.</p>
+        </div>
+      </div>
     </Modal>
   );
 };
