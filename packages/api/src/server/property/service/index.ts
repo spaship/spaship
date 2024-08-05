@@ -92,8 +92,24 @@ export class PropertyService {
     // @internal TODO : removing the auto initialization, to be discussed on it further
     // await this.environmentFactory.initializeEnvironment(property, environment);
     await this.permissionService.provideInitialAccess(property.identifier, createPropertyDto.createdBy, createPropertyDto.creatorName);
-    await this.analyticsService.createActivityStream(createPropertyDto.identifier, Action.PROPERTY_CREATED);
-    await this.analyticsService.createActivityStream(createPropertyDto.identifier, Action.ENV_CREATED, createPropertyDto.env);
+    await this.analyticsService.createActivityStream(
+      createPropertyDto.identifier,
+      Action.PROPERTY_CREATED,
+      'NA',
+      'NA',
+      `property created by ${createPropertyDto.createdBy}`,
+      createPropertyDto.createdBy,
+      Source.MANAGER
+    );
+    await this.analyticsService.createActivityStream(
+      createPropertyDto.identifier,
+      Action.ENV_CREATED,
+      createPropertyDto.env,
+      'NA',
+      `property created by ${createPropertyDto.createdBy}`,
+      createPropertyDto.createdBy,
+      Source.MANAGER
+    );
     return this.getPropertyDetails(createPropertyDto.identifier);
   }
 
