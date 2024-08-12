@@ -81,7 +81,7 @@ export const EditCmdbDetails = ({
       if (fetchPromise) {
         fetchPromise.then((data) => {
           setCmdbData(data);
-          if (data.length === 0) {
+          if (data?.length === 0) {
             setCmdbError(true);
           } else {
             setCmdbError(false);
@@ -162,7 +162,7 @@ export const EditCmdbDetails = ({
                   placeholder="Enter cmdb code"
                   type="text"
                   id="property-cmdb"
-                  value={cmdbData.length > 0 ? cmdbData[0]?.code : cmdbCode}
+                  value={cmdbData?.length > 0 ? cmdbData[0]?.code : cmdbCode}
                   onChange={(value) => {
                     setCmdbCode(value);
                     field.onChange(value);
@@ -216,7 +216,7 @@ export const EditCmdbDetails = ({
                   placeholder="Severity of the application"
                   type="text"
                   id="property-sev"
-                  value={cmdbData.length > 0 ? cmdbData[0]?.severity || 'NA' : 'NA'}
+                  value={cmdbData?.length > 0 ? cmdbData[0]?.severity || 'NA' : 'NA'}
                   isDisabled
                   onChange={field.onChange}
                 />
