@@ -86,7 +86,7 @@ export const AddWebPropertyPage = (): JSX.Element => {
       if (fetchPromise) {
         fetchPromise.then((data) => {
           setCmdbData(data);
-          if (data.length === 0) {
+          if (data?.length === 0) {
             setCmdbError(true);
           } else {
             setCmdbError(false);

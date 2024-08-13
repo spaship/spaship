@@ -90,13 +90,11 @@ export const CmdbDetails = ({
                 </Td>
 
                 <Td>
-                  {applicationIdentifier && (
-                    <Button
-                      icon={<PencilAltIcon />}
-                      variant="link"
-                      onClick={() => handlePopUpOpen('editCmdbCode')}
-                    />
-                  )}
+                  <Button
+                    icon={<PencilAltIcon />}
+                    variant="link"
+                    onClick={() => handlePopUpOpen('editCmdbCode')}
+                  />
                 </Td>
               </Tr>
               <Tr>
