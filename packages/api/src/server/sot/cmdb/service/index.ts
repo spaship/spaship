@@ -41,10 +41,10 @@ export class CMDBService {
    * Update CMDB code for specifc applications
    */
   async updateApplicationCMDBCode(cmdbRequest: CMDBDTO): Promise<Application[]> {
-    const appplicationIdentifier = cmdbRequest.applicationIdentifier;
+    const { applicationIdentifier } = cmdbRequest;
     const { propertyIdentifier } = cmdbRequest;
     const search = {
-      identifier: appplicationIdentifier,
+      identifier: applicationIdentifier,
       propertyIdentifier
     };
     const applicationDetails = await this.dataServices.application.getByAny(search);
@@ -56,7 +56,7 @@ export class CMDBService {
         {
           propertyIdentifier,
           env: application.env,
-          identifier: appplicationIdentifier,
+          identifier: applicationIdentifier,
           isContainerized: application.isContainerized,
           isGit: application.isGit
         },
@@ -68,8 +68,8 @@ export class CMDBService {
         propertyIdentifier,
         Action.CMDB_UPDATED,
         'NA',
-        appplicationIdentifier,
-        `${appplicationIdentifier} CMDB Code updated`,
+        applicationIdentifier,
+        `${applicationIdentifier} CMDB Code updated`,
         cmdbRequest.createdBy,
         Source.MANAGER,
         JSON.stringify(cmdbRequest)
@@ -94,16 +94,18 @@ export class CMDBService {
     propertyDetails.cmdbCode = cmdbRequest.cmdbCode;
     propertyDetails.severity = cmdbRequest.severity;
     if (previousCMDB !== cmdbRequest.cmdbCode) {
+      await this.dataServices.property.updateOne({ identifier: propertyIdentifier }, propertyDetails);
       const { buildEnvironment, orginalFileName, zipPath } = await this.environmentFactory.getArchivePath(propertyDetails, envDetails[0]);
       for (const env of envDetails) {
         try {
           await this.environmentFactory.configureEnvironment(buildEnvironment, orginalFileName, zipPath, propertyDetails, env, true);
         } catch (err) {
+          propertyDetails.cmdbCode = previousCMDB;
+          await this.dataServices.property.updateOne({ identifier: propertyIdentifier }, propertyDetails);
           this.exceptionService.internalServerErrorException(err);
         }
       }
     }
-    await this.dataServices.property.updateOne({ identifier: propertyIdentifier }, propertyDetails);
     try {
       await this.analyticsService.createActivityStream(
         propertyIdentifier,
