@@ -6,16 +6,19 @@ import {
   Card,
   CardBody,
   CardHeader,
+  EmptyState,
+  EmptyStateIcon,
   Pagination,
   PaginationVariant,
   Spinner,
   Split,
   SplitItem,
+  Title,
   Tooltip
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { THistoryData } from '@app/services/history/types';
-import { BuildIcon, BundleIcon, GithubIcon, InfoAltIcon } from '@patternfly/react-icons';
+import { BuildIcon, BundleIcon, CubesIcon, GithubIcon, InfoAltIcon } from '@patternfly/react-icons';
 
 const perPageOptions = [
   { title: '10', value: 10 },
@@ -86,7 +89,12 @@ export const History = ({ propertyIdentifier, applicationIdentifier }: Props): J
     ?.sort((a, b) => (new Date(b.createdAt) as any) - (new Date(a.createdAt) as any))
     .slice(start, end);
 
-  if (isLoading) return <Spinner />;
+  if (isLoading)
+    return (
+      <Card>
+        <Spinner />
+      </Card>
+    );
   if (error) return <div>Error loading history data</div>;
 
   const handlePageChange = (event: any, pageNumber: SetStateAction<number>) => {
@@ -97,82 +105,91 @@ export const History = ({ propertyIdentifier, applicationIdentifier }: Props): J
     setItemsPerPage(perPage);
     setPage(1);
   };
-
   return (
     <div className="pf-u-p-lg">
-      <Card>
-        <Split>
-          <SplitItem>
-            <CardHeader>
-              User Actions History &nbsp;
-              <Tooltip
-                content="Note: This section displays actions performed by users from different sources, including
+      {filteredData?.length ? (
+        <Card>
+          <Split>
+            <SplitItem>
+              <CardHeader>
+                User Actions History &nbsp;
+                <Tooltip
+                  content="Note: This section displays actions performed by users from different sources, including
           API key creation, application deployment for Static and Containerized application"
-              >
-                <InfoAltIcon />
-              </Tooltip>
-            </CardHeader>
-          </SplitItem>
-          <SplitItem isFilled>
-            <Pagination
-              itemCount={filteredData?.length || 0}
-              perPage={itemsPerPage}
-              page={page}
-              onSetPage={handlePageChange}
-              variant={PaginationVariant.top}
-              onPerPageSelect={handlePerPageSelect}
-              perPageOptions={perPageOptions}
-              dropDirection="down"
-            />
-          </SplitItem>
-        </Split>
+                >
+                  <InfoAltIcon />
+                </Tooltip>
+              </CardHeader>
+            </SplitItem>
+            <SplitItem isFilled>
+              <Pagination
+                itemCount={filteredData?.length || 0}
+                perPage={itemsPerPage}
+                page={page}
+                onSetPage={handlePageChange}
+                variant={PaginationVariant.top}
+                onPerPageSelect={handlePerPageSelect}
+                perPageOptions={perPageOptions}
+                dropDirection="down"
+              />
+            </SplitItem>
+          </Split>
 
-        <CardBody>
-          <Table aria-label="History table">
-            <Thead>
-              <Tr>
-                <Th textCenter modifier="wrap">
-                  Date & Time
-                </Th>
-                <Th textCenter modifier="wrap">
-                  Event
-                </Th>
-                <Th textCenter modifier="wrap">
-                  Action by
-                </Th>
-
-                {!applicationIdentifier && (
+          <CardBody>
+            <Table aria-label="History table">
+              <Thead>
+                <Tr>
                   <Th textCenter modifier="wrap">
-                    Application Identifier
+                    Date & Time
                   </Th>
+                  <Th textCenter modifier="wrap">
+                    Event
+                  </Th>
+                  <Th textCenter modifier="wrap">
+                    Action by
+                  </Th>
+
+                  {!applicationIdentifier && (
+                    <Th textCenter modifier="wrap">
+                      Application Identifier
+                    </Th>
+                  )}
+
+                  <Th textCenter modifier="wrap">
+                    Environment
+                  </Th>
+                  <Th textCenter modifier="wrap">
+                    Source
+                  </Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {paginatedData?.map(
+                  ({ createdAt, action, message, createdBy, props, source }: THistoryData) => (
+                    <Tr key={createdAt}>
+                      <Td textCenter>{new Date(createdAt).toLocaleString()}</Td>
+                      <Td textCenter>{getActionDescription(action, message)}</Td>
+                      <Td textCenter>{createdBy}</Td>
+
+                      {!applicationIdentifier && <Td textCenter>{props.applicationIdentifier}</Td>}
+                      <Td textCenter>{props.env}</Td>
+                      <Td textCenter>{source}</Td>
+                    </Tr>
+                  )
                 )}
-
-                <Th textCenter modifier="wrap">
-                  Environment
-                </Th>
-                <Th textCenter modifier="wrap">
-                  Source
-                </Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {paginatedData?.map(
-                ({ createdAt, action, message, createdBy, props, source }: THistoryData) => (
-                  <Tr key={createdAt}>
-                    <Td textCenter>{new Date(createdAt).toLocaleString()}</Td>
-                    <Td textCenter>{getActionDescription(action, message)}</Td>
-                    <Td textCenter>{createdBy}</Td>
-
-                    {!applicationIdentifier && <Td textCenter>{props.applicationIdentifier}</Td>}
-                    <Td textCenter>{props.env}</Td>
-                    <Td textCenter>{source}</Td>
-                  </Tr>
-                )
-              )}
-            </Tbody>
-          </Table>
-        </CardBody>
-      </Card>
+              </Tbody>
+            </Table>
+          </CardBody>
+        </Card>
+      ) : (
+        <EmptyState>
+          <EmptyStateIcon icon={CubesIcon} />
+          <Title headingLevel="h4" size="lg">
+            No historical data found for the{' '}
+            {propertyIdentifier ? propertyIdentifier : applicationIdentifier}
+          </Title>
+        </EmptyState>
+      )}{' '}
     </div>
   );
 };
