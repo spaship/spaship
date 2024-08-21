@@ -185,8 +185,7 @@ export const History = ({ propertyIdentifier, applicationIdentifier }: Props): J
         <EmptyState>
           <EmptyStateIcon icon={CubesIcon} />
           <Title headingLevel="h4" size="lg">
-            No historical data found for the{' '}
-            {propertyIdentifier ? propertyIdentifier : applicationIdentifier}
+            No historical data found for the {propertyIdentifier || applicationIdentifier}
           </Title>
         </EmptyState>
       )}{' '}
