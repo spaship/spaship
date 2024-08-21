@@ -122,7 +122,7 @@ export const WebpropertiesTable = (): JSX.Element => {
         )}
       </CardBody>
       <Pagination
-        itemCount={paginatedData?.length || 0}
+        itemCount={filteredData?.length || 0}
         perPage={itemsPerPage}
         page={page}
         onSetPage={handlePageChange}
