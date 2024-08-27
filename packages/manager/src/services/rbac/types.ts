@@ -53,6 +53,7 @@ export type TMemberforSPA = {
   APIKEY_DELETION: boolean;
   APIKEY_CREATION: boolean;
   APPLICATION_CREATION: boolean;
+  PROPERTY_CMDB_UPDATE: boolean;
 };
 export type TpermissionDetails = {
   name: string;

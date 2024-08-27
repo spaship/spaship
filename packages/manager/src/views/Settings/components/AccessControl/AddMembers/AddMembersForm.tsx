@@ -50,7 +50,8 @@ const columnNames2: ColumnNames = {
   PERMISSION_DELETION: 'PERMISSION_DELETION',
   ENV_CREATION: 'ENV_CREATION',
   ENV_SYNC: 'ENV_SYNC',
-  APPLICATION_CREATION: 'APPLICATION_CREATION '
+  APPLICATION_CREATION: 'APPLICATION_CREATION ',
+  PROPERTY_CMDB_UPDATE: 'PROPERTY_CMDB_UPDATE'
 };
 const userRole: UserRoleDTO = {
   User: ['APIKEY_CREATION', 'ENV_CREATION', 'ENV_SYNC', 'APPLICATION_CREATION'],
@@ -61,7 +62,8 @@ const userRole: UserRoleDTO = {
     'ENV_SYNC',
     'PERMISSION_CREATION',
     'PERMISSION_DELETION',
-    'APPLICATION_CREATION'
+    'APPLICATION_CREATION',
+    'PROPERTY_CMDB_UPDATE'
   ]
 };
 export const AddMembersForm = ({ onClose }: Props): JSX.Element => {
@@ -305,9 +307,13 @@ export const AddMembersForm = ({ onClose }: Props): JSX.Element => {
             <TableComposable className="pf-u-mb-lg">
               <Thead noWrap>
                 <Tr>
-                  {Object.values(columnNames2).map((column) => (
-                    <Th key={column}>{toPascalCase(column)}</Th>
-                  ))}
+                  {Object.values(columnNames2).map((column) => {
+                    const columnNameTable3 =
+                      column === 'PROPERTY_CMDB_UPDATE'
+                        ? 'CMDB Update (Property)'
+                        : toPascalCase(column);
+                    return <Th key={column}>{columnNameTable3}</Th>;
+                  })}
                 </Tr>
               </Thead>
               <Tbody>
@@ -322,7 +328,8 @@ export const AddMembersForm = ({ onClose }: Props): JSX.Element => {
                         { id: 'PERMISSION_DELETION', value: i.PERMISSION_DELETION },
                         { id: 'ENV_CREATION', value: i.ENV_CREATION },
                         { id: 'ENV_SYNC', value: i.ENV_SYNC },
-                        { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION }
+                        { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION },
+                        { id: 'PROPERTY_CMDB_UPDATE', value: i.PROPERTY_CMDB_UPDATE }
                       ].map((item) => (
                         <Td key={item.id}>
                           <Checkbox
@@ -388,9 +395,13 @@ export const AddMembersForm = ({ onClose }: Props): JSX.Element => {
                       <TableComposable>
                         <Thead noWrap>
                           <Tr>
-                            {Object.values(columnNames2).map((column) => (
-                              <Th key={column}>{toPascalCase(column)}</Th>
-                            ))}
+                            {Object.values(columnNames2).map((column) =>
+                              column !== 'PROPERTY_CMDB_UPDATE' ? (
+                                <Th key={column}>{toPascalCase(column)}</Th>
+                              ) : (
+                                <Th key={column}>CMDB Update (Property)</Th>
+                              )
+                            )}
                           </Tr>
                         </Thead>
                         <Tbody>
@@ -407,7 +418,8 @@ export const AddMembersForm = ({ onClose }: Props): JSX.Element => {
                                       { id: 'PERMISSION_DELETION', value: i.PERMISSION_DELETION },
                                       { id: 'ENV_CREATION', value: i.ENV_CREATION },
                                       { id: 'ENV_SYNC', value: i.ENV_SYNC },
-                                      { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION }
+                                      { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION },
+                                      { id: 'PROPERTY_CMDB_UPDATE', value: i.PROPERTY_CMDB_UPDATE }
                                     ].map((item) => (
                                       <Td key={item.id}>
                                         <Checkbox
@@ -496,9 +508,13 @@ export const AddMembersForm = ({ onClose }: Props): JSX.Element => {
             <TableComposable>
               <Thead noWrap>
                 <Tr>
-                  {Object.values(columnNames2).map((column) => (
-                    <Th key={column}>{toPascalCase(column)}</Th>
-                  ))}
+                  {Object.values(columnNames2).map((column) => {
+                    const columnNameTable1 =
+                      column === 'PROPERTY_CMDB_UPDATE'
+                        ? 'CMDB Update (Property)'
+                        : toPascalCase(column);
+                    return <Th key={column}>{columnNameTable1}</Th>;
+                  })}
                 </Tr>
               </Thead>
               <Tbody>
@@ -513,7 +529,8 @@ export const AddMembersForm = ({ onClose }: Props): JSX.Element => {
                         { id: 'PERMISSION_DELETION', value: i.PERMISSION_DELETION },
                         { id: 'ENV_CREATION', value: i.ENV_CREATION },
                         { id: 'ENV_SYNC', value: i.ENV_SYNC },
-                        { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION }
+                        { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION },
+                        { id: 'PROPERTY_CMDB_UPDATE', value: i.PROPERTY_CMDB_UPDATE }
                       ].map((item) => (
                         <Td key={item.id}>
                           <Checkbox
@@ -561,9 +578,13 @@ export const AddMembersForm = ({ onClose }: Props): JSX.Element => {
                       <TableComposable>
                         <Thead noWrap>
                           <Tr>
-                            {Object.values(columnNames2).map((column) => (
-                              <Th key={column}>{toPascalCase(column)}</Th>
-                            ))}
+                            {Object.values(columnNames2).map((column) => {
+                              const columnNameTable =
+                                column === 'PROPERTY_CMDB_UPDATE'
+                                  ? 'CMDB Update (Property)'
+                                  : toPascalCase(column);
+                              return <Th key={column}>{columnNameTable}</Th>;
+                            })}
                           </Tr>
                         </Thead>
                         <Tbody>
@@ -580,7 +601,8 @@ export const AddMembersForm = ({ onClose }: Props): JSX.Element => {
                                       { id: 'PERMISSION_DELETION', value: i.PERMISSION_DELETION },
                                       { id: 'ENV_CREATION', value: i.ENV_CREATION },
                                       { id: 'ENV_SYNC', value: i.ENV_SYNC },
-                                      { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION }
+                                      { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION },
+                                      { id: 'PROPERTY_CMDB_UPDATE', value: i.PROPERTY_CMDB_UPDATE }
                                     ].map((item) => (
                                       <Td key={item.id}>
                                         <Checkbox
