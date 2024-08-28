@@ -66,17 +66,18 @@ export class EnvironmentFactory {
   // @internal Get the Archive Path to create the distribution
   async getArchivePath(propertyRequest: Property, environmentRequest: Environment) {
     const buildEnvironment = new CreateApplicationDto();
-    buildEnvironment.name = 'envInit';
+    buildEnvironment.name = 'spaship-rebuld';
     buildEnvironment.ref = '0.0.0';
-    buildEnvironment.path = '.';
+    buildEnvironment.path = 'spaship-rebuld';
     const spashipFile = {
       websiteVersion: 'v1',
       websiteName: propertyRequest.identifier,
       name: buildEnvironment.name,
       mapping: buildEnvironment.path,
+      cmdbCode: propertyRequest.cmdbCode || 'SPAS-001',
       environments: [{ name: environmentRequest.env, updateRestriction: false, exclude: false, ns: propertyRequest.namespace }]
     };
-    this.logger.log('SpashipFile', JSON.stringify(spashipFile));
+    this.logger.log('SpashipFile-Temp', JSON.stringify(spashipFile));
     const { baseDir } = DIRECTORY_CONFIGURATION;
     const orginalFileName = propertyRequest.identifier;
     const tmpDir = `${baseDir}/${orginalFileName.split('.')[0]}-${Date.now()}`;
