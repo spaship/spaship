@@ -240,7 +240,7 @@ export const AccessControl = ({ propertyIdentifier }: { propertyIdentifier: stri
 
       <Modal
         title="Add Members"
-        width="100%"
+        variant={ModalVariant.large}
         isOpen={popUp.addMembers.isOpen}
         onClose={() => handlePopUpClose('addMembers')}
       >
@@ -249,7 +249,7 @@ export const AccessControl = ({ propertyIdentifier }: { propertyIdentifier: stri
 
       <Modal
         title="Configure Access"
-        width="100%"
+        variant={ModalVariant.large}
         isOpen={popUp.configureAccess.isOpen}
         onClose={() => handlePopUpClose('configureAccess')}
       >
@@ -264,7 +264,7 @@ export const AccessControl = ({ propertyIdentifier }: { propertyIdentifier: stri
       </Modal>
       <Modal
         title={`Editing Access for ${editMemberName}`}
-        width="100%"
+        variant={ModalVariant.large}
         isOpen={popUp.editMemberAccess.isOpen}
         onClose={() => handlePopUpClose('editMemberAccess')}
       >

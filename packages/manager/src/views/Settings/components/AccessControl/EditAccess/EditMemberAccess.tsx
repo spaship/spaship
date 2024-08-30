@@ -29,7 +29,6 @@ type GroupItem1 = {
   APIKEY_DELETION: boolean;
   APIKEY_CREATION: boolean;
   APPLICATION_CREATION: boolean;
-  PROPERTY_CMDB_UPDATE: boolean;
   [key: string]: boolean | string;
 };
 type UserDataDTO = {
@@ -56,8 +55,7 @@ const columnNames: ColumnNames = {
   PERMISSION_DELETION: 'PERMISSION_DELETION',
   ENV_CREATION: 'ENV_CREATION',
   ENV_SYNC: 'ENV_SYNC',
-  APPLICATION_CREATION: 'APPLICATION_CREATION',
-  PROPERTY_CMDB_UPDATE: 'PROPERTY_CMDB_UPDATE'
+  APPLICATION_CREATION: 'APPLICATION_CREATION'
 };
 // TODO(akhilmhdh): Migrate to react-hook-form later. Removes a lot of boilerplate in this page
 export const EditMemberAccess = ({
@@ -166,7 +164,6 @@ export const EditMemberAccess = ({
                   <Th>{toPascalCase(columnNames.ENV_CREATION)}</Th>
                   <Th>{toPascalCase(columnNames.ENV_SYNC)}</Th>
                   <Th>{toPascalCase(columnNames.APPLICATION_CREATION)}</Th>
-                  <Th>CMDB Update (Property)</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -181,8 +178,7 @@ export const EditMemberAccess = ({
                         { id: 'PERMISSION_DELETION', value: i.PERMISSION_DELETION },
                         { id: 'ENV_CREATION', value: i.ENV_CREATION },
                         { id: 'ENV_SYNC', value: i.ENV_SYNC },
-                        { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION },
-                        { id: 'PROPERTY_CMDB_UPDATE', value: i.PROPERTY_CMDB_UPDATE }
+                        { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION }
                       ].map((item) => (
                         <Td key={item.id}>
                           <Checkbox
