@@ -581,7 +581,6 @@ export const AddMembersForm = ({ onClose }: Props): JSX.Element => {
                                       { id: 'ENV_CREATION', value: i.ENV_CREATION },
                                       { id: 'ENV_SYNC', value: i.ENV_SYNC },
                                       { id: 'APPLICATION_CREATION', value: i.APPLICATION_CREATION }
-                              
                                     ].map((item) => (
                                       <Td key={item.id}>
                                         <Checkbox
