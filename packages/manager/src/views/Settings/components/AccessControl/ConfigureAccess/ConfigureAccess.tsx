@@ -30,8 +30,7 @@ const columnNames = {
   PERMISSION_DELETION: 'PERMISSION_DELETION',
   ENV_CREATION: 'ENV_CREATION',
   ENV_SYNC: 'ENV_SYNC',
-  APPLICATION_CREATION: 'APPLICATION_CREATION',
-  PROPERTY_CMDB_UPDATE: 'PROPERTY_CMDB_UPDATE'
+  APPLICATION_CREATION: 'APPLICATION_CREATION'
 };
 export const ConfigureAccess = ({
   onClose,
@@ -197,14 +196,6 @@ export const ConfigureAccess = ({
                       name="APPLICATION_CREATION"
                     />
                   </Td>
-                  <Td>
-                    <Checkbox
-                      isChecked={i.PROPERTY_CMDB_UPDATE}
-                      onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                      id="PROPERTY_CMDB_UPDATE"
-                      name="PROPERTY_CMDB_UPDATE"
-                    />
-                  </Td>
                 </Tr>
               ))}
           </Tbody>
@@ -301,14 +292,6 @@ export const ConfigureAccess = ({
                               onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
                               id="APPLICATION_CREATION"
                               name="APPLICATION_CREATION"
-                            />
-                          </Td>
-                          <Td>
-                            <Checkbox
-                              isChecked={i.PROPERTY_CMDB_UPDATE}
-                              onChange={(checked, e) => handleChange(checked, e, i.name, i.email)}
-                              id="PROPERTY_CMDB_UPDATE"
-                              name="PROPERTY_CMDB_UPDATE"
                             />
                           </Td>
                         </Tr>
