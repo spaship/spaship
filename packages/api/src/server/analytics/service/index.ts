@@ -95,8 +95,8 @@ export class AnalyticsService {
     return response;
   }
 
-  async getDeploymentCount(propertyIdentifier?: string): Promise<DeploymentCount[]> {
-    const query = await this.analyticsFactory.getDeploymentCountQuery(propertyIdentifier);
+  async getDeploymentCount(propertyIdentifier?: string, source?: string, action?: string): Promise<DeploymentCount[]> {
+    const query = await this.analyticsFactory.getDeploymentCountQuery(propertyIdentifier, source, action);
     const response = await this.dataServices.activityStream.aggregate(query);
     if (!response) this.exceptionService.badRequestException({ message: 'No Analytics Present.' });
     return response;
