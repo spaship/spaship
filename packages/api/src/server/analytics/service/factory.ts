@@ -10,10 +10,11 @@ export class AnalyticsFactory {
     return [{ $match: searchQuery }, { $group: groupQuery }, { $project: projectionQuery }];
   }
 
-  async getDeploymentCountQuery(propertyIdentifier?: string): Promise<Object> {
+  async getDeploymentCountQuery(propertyIdentifier?: string, source?: string, action?: string): Promise<Object> {
     let searchQuery;
-    if (!propertyIdentifier) searchQuery = { action: Action.APPLICATION_DEPLOYED };
-    else searchQuery = { action: Action.APPLICATION_DEPLOYED, propertyIdentifier };
+    searchQuery = { action: action || Action.APPLICATION_DEPLOYED };
+    if (propertyIdentifier) searchQuery = { ...searchQuery, propertyIdentifier };
+    if (source) searchQuery = { ...searchQuery, source };
     const groupQuery = { _id: { propertyIdentifier: '$propertyIdentifier', action: '$action' }, count: { $sum: 1 } };
     const projectionQuery = { _id: 0, propertyIdentifier: '$_id.propertyIdentifier', action: '$_id.action', count: '$count' };
     return this.buildAggregationQuery(searchQuery, groupQuery, projectionQuery);

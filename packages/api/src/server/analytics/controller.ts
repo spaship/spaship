@@ -33,8 +33,12 @@ export class AnalyticsController {
   @Get('/deployment/count')
   @ApiCreatedResponse({ status: 200, description: 'Get the Deployment Count for all the Properties.', type: DeploymentCount, isArray: true })
   @ApiOperation({ description: 'Get the Deployment Count for all the Properties.' })
-  async getDeploymentCount(@Query('propertyIdentifier') propertyIdentifier: string): Promise<DeploymentCount[]> {
-    return this.analyticsService.getDeploymentCount(propertyIdentifier);
+  async getDeploymentCount(
+    @Query('propertyIdentifier') propertyIdentifier: string,
+    @Query('source') source: string,
+    @Query('action') action: string
+  ): Promise<DeploymentCount[]> {
+    return this.analyticsService.getDeploymentCount(propertyIdentifier, source, action);
   }
 
   @Get('/deployment/env')
