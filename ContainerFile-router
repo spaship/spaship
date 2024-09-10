@@ -1,29 +1,36 @@
 FROM registry.redhat.io/rhel9/nodejs-20-minimal as build
-WORKDIR /usr/src/spaship
 
-COPY lerna.json ./
-COPY package.json ./
-COPY packages ./packages
+USER 1001
+
+WORKDIR /opt/app-root/src/spaship
+
+COPY --chown=1001:0 lerna.json ./
+COPY --chown=1001:0 package.json ./
+COPY --chown=1001:0 packages ./packages
+COPY --chown=1001:0 package-lock.json ./
+
 
 RUN cd packages/common && \
     npm install && \
     npm link && \
     cd ../router && \
     npm link @spaship/common && \
-    rm -rf /root/.npm
+    rm -rf /opt/app-root/src/.npm
 
 
-WORKDIR /usr/src/spaship/packages/router
+WORKDIR /opt/app-root/src/spaship/packages/router
 
 
 FROM registry.redhat.io/rhel9/nodejs-20-minimal
 
-WORKDIR /usr/src/spaship/packages
+USER 1001
 
-COPY --from=build /usr/src/spaship/packages/common ./common
-COPY --from=build /usr/src/spaship/packages/router ./router
+WORKDIR /opt/app-root/src/spaship/packages
 
-WORKDIR /usr/src/spaship/packages/router
+COPY --from=build /opt/app-root/src/spaship/packages/common ./common
+COPY --from=build /opt/app-root/src/spaship/packages/router ./router
+
+WORKDIR /opt/app-root/src/spaship/packages/router
 
 EXPOSE 8765
 
