@@ -1,4 +1,4 @@
-FROM node:22-alpine as build
+FROM registry.redhat.io/rhel9/nodejs-20-minimal as build
 WORKDIR /usr/src/spaship
 
 COPY lerna.json ./
@@ -16,7 +16,7 @@ RUN cd packages/common && \
 WORKDIR /usr/src/spaship/packages/router
 
 
-FROM node:22-alpine
+FROM registry.redhat.io/rhel9/nodejs-20-minimal
 
 WORKDIR /usr/src/spaship/packages
 
