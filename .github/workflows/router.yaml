@@ -1,0 +1,72 @@
+name: SPAship router build and push into container repo
+
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - '*'
+    paths:
+      - '*'
+  workflow_dispatch:
+    inputs:
+      tagsuffix:
+        description: Tag suffix for the image
+        required: false
+      ugroup:
+        description: Docker User Group[keep it set to the default if you are unsure]
+        required: false
+
+jobs:
+  push_to_registry:
+    name: Push Docker image to Registries
+    env:
+      IMAGE_NAME: "router"
+      REGISTRY_NAMESPACE: "spaship"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inject slug/short variables
+        uses: rlespinasse/github-slug-action@v3.x
+
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Login to Quay.io
+        uses: docker/login-action@v1
+        with:
+          registry: quay.io
+          username: ${{ secrets.CI_QUAY_USERNAME }}
+          password: ${{ secrets.CI_QUAY_TOKEN }}
+
+      - name: Set tag suffix
+        id: set_tag_suffix
+        run: |
+          if [[ -z "${{ github.event.inputs.tagsuffix }}" ]]; then
+            echo "TAG_SUFFIX=" >> $GITHUB_ENV
+          else
+            echo "TAG_SUFFIX=-${{ github.event.inputs.tagsuffix }}" >> $GITHUB_ENV
+          fi
+
+      - name: Set docker user group
+        id: set_docker_user_group
+        run: |
+          if [[ -z "${{ github.event.inputs.ugroup }}" ]]; then
+            echo "USERGROUP=1002590000" >> $GITHUB_ENV
+          else
+            echo "USERGROUP=${{ github.event.inputs.ugroup }}" >> $GITHUB_ENV
+          fi
+
+      - name: Build and push into repository
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./ContainerFile-router
+          push: ${{ github.event_name != 'pull_request' }}
+          build-args: |
+            USERGROUP=${{ env.USERGROUP }}
+          tags: |
+            quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{env.GITHUB_REF_SLUG}}${{ env.TAG_SUFFIX }}
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
