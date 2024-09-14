@@ -36,12 +36,26 @@ async function updateDirCache() {
 
 
 const customRouter = function (req) {
+
+  log.info({
+        step: 'customRouter start',
+        headers: req.headers,
+        url: req.url,
+        method: req.method
+     }, 'Request entering customRouter');
+
   let url = req.url.replace(/\/+/g, "/"); // Avoid duplicate slash issue
+
 
   for (let mapping of pathMappingsData.pathMappings) {
     if (mapping.virtualPath === url) {
       url = mapping.mappedTo;
       req.url = url; // Update the request URL
+      log.info({
+            step: 'path mapping',
+            originalUrl: mapping.virtualPath,
+            mappedUrl: url
+          }, 'URL mapped');
       break;
     }
   }
@@ -121,7 +135,7 @@ const customRouter = function (req) {
     targetUrl = routeHost + req.url;
   }
   log.debug({ router: { incUrl: url, targetUrl, "reqUrl": req.url,"routeHost":routeHost} }, `Routing to targetUrl`);
-
+  log.info({step: 'customRouter end',routeHost,targetUrl,headers: req.headers}, 'Request leaving customRouter');
   return routeHost;
 };
 
@@ -134,6 +148,10 @@ let options = {
   logProvider: () => log,
   autoRewrite: true,
   onProxyRes: (proxyRes, req) => {
+
+    log.info({step: 'onProxyRes start',statusCode: proxyRes.statusCode,headers: proxyRes.headers,
+    url: req.url,method: req.method }, 'Response received from Apache pod');
+
     if (proxyRes.statusCode >= 301 && proxyRes.statusCode <= 308 && proxyRes.headers["location"]) {
       // When the origin responds with a redirect it's location contains the flat path.
       // This needs to be converted back to the url path. The original conversion is stored
@@ -143,16 +161,36 @@ let options = {
       let flatPath = req.headers["x-spaship-flat-path"];
       let urpPath = req.headers["x-spaship-url-path"];
 
+      log.info({step: 'before location modification',
+            location,
+            flatPath,
+            urlPath
+            }, 'Location header before modification');
+
       if (flatPath && urpPath) {
         location = location.replace(flatPath, urpPath);
+        log.info({
+                step: 'after location modification',
+                newLocation: location
+              }, 'Location header after modification');
       }
 
       proxyRes.headers["location"] = location;
     }
+    log.info({
+        step: 'onProxyRes end',
+        finalHeaders: proxyRes.headers
+      }, 'Final response headers');
   },
 };
 
 const pathProxy = (req, res, next) => {
+    log.info({
+        step: 'pathProxy start',
+        headers: req.headers,
+        url: req.url,
+        method: req.method
+      }, 'Incoming request from OpenShift router');
   const forwardedHost = config.get("forwarded_host");
   const xForwaredHost = req.headers["x-forwarded-host"];
   const host = req.headers["host"];
@@ -173,6 +211,13 @@ const pathProxy = (req, res, next) => {
 
 
 function isInternalRequest(req, res, next) {
+
+log.info({
+    step: 'isInternalRequest',
+    headers: req.headers,
+    url: req.url,
+    method: req.method
+  }, 'Checking if request is internal');
   const allowedHostsConfig = config.get("allowed_hosts");
   if (!allowedHostsConfig) {
     log.info('No allowed hosts configured, restricting all requests to /spaship-proxy/api/v1');
@@ -207,6 +252,21 @@ async function start() {
   // Start proxy server on port
   let app = express();
   app.use('/spaship-proxy/api/v1',isInternalRequest,apiRoutes);
+
+  app.use((req, res, next) => {
+    const originalJson = res.json;
+    res.json = function(...args) {
+      log.info({
+        step: 'final response',
+        statusCode: res.statusCode,
+        headers: res.getHeaders(),
+        body: args[0]
+      }, 'Final response sent to client');
+      originalJson.apply(this, args);
+    };
+    next();
+  });
+
   app.use(pathProxy);
   server = app.listen(config.get("port"));
 }
