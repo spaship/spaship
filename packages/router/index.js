@@ -159,7 +159,7 @@ let options = {
 
       let location = proxyRes.headers["location"];
       let flatPath = req.headers["x-spaship-flat-path"];
-      let urpPath = req.headers["x-spaship-url-path"];
+      let urlPath = req.headers["x-spaship-url-path"];
 
       log.info({step: 'before location modification',
             location,
@@ -167,8 +167,8 @@ let options = {
             urlPath
             }, 'Location header before modification');
 
-      if (flatPath && urpPath) {
-        location = location.replace(flatPath, urpPath);
+      if (flatPath && urlPath) {
+        location = location.replace(flatPath, urlPath);
         log.info({
                 step: 'after location modification',
                 newLocation: location
@@ -205,7 +205,7 @@ const pathProxy = (req, res, next) => {
   } else if (xForwaredHost !== host) {
     options.hostRewrite = xForwaredHost;
   }
-
+  // options.protocolRewrite = "https"
   return createProxyMiddleware(options)(req, res, next);
 };
 
