@@ -126,6 +126,31 @@ export class CreateApplicationDto {
   @IsBoolean()
   reDeployment: boolean;
 
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  requiredCpu: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  requiredMemory: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  limitCpu: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  limitMemory: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  replicas: string;
+
   createdBy: string;
 }
 
@@ -174,6 +199,16 @@ export class ContainerizedDeploymentRequest {
   port: number;
 
   cmdbCode: string;
+
+  requiredCpu: string;
+
+  requiredMemory: string;
+
+  limitCpu: string;
+
+  limitMemory: string;
+
+  replicas: string;
 }
 
 export class ContainerizedDeploymentResponse {

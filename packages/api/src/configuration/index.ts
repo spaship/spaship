@@ -9,7 +9,12 @@ export const EPHEMERAL_ENV = {
 
 export const CONTAINERIZED_DEPLOYMENT_DETAILS = {
   port: 3000,
-  configSecret: process.env.SPASHIP_CONFIG_SECRET || 'spashipWorkflowSecret'
+  configSecret: process.env.SPASHIP_CONFIG_SECRET || 'spashipWorkflowSecret',
+  requiredCpu: process.env.requiredCpu || '200m',
+  requiredMemory: process.env.requiredMemory || '256Mi',
+  limitCpu: process.env.limitCpu || '300m',
+  limitMemory: process.env.limitMemory || '512Mi',
+  replicas: process.env.replicas || '1'
 };
 
 export const AUTH_DETAILS = {

@@ -467,6 +467,11 @@ export class ApplicationService {
       applicationDetails.port = applicationRequest.port || applicationDetails.port || CONTAINERIZED_DEPLOYMENT_DETAILS.port;
       applicationDetails.accessUrl = this.applicationFactory.getAccessUrl(deploymentConnection, applicationRequest, propertyIdentifier, env, true);
       applicationDetails.routerUrl = this.applicationFactory.getRouterUrl(deploymentConnection, applicationRequest, propertyIdentifier, env);
+      applicationDetails.requiredCpu = applicationRequest.requiredCpu || applicationDetails.requiredCpu;
+      applicationDetails.requiredMemory = applicationRequest.requiredMemory || applicationDetails.requiredMemory;
+      applicationDetails.limitCpu = applicationRequest.limitCpu || applicationDetails.limitCpu;
+      applicationDetails.limitMemory = applicationRequest.limitMemory || applicationDetails.limitMemory;
+      applicationDetails.replicas = applicationRequest.replicas || applicationDetails.replicas;
       applicationDetails.updatedBy = applicationRequest.createdBy;
       this.logger.log('ContainerizedApplicationUpdatedDetails', JSON.stringify(applicationDetails));
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: true, isGit: false }, applicationDetails);
@@ -748,6 +753,11 @@ export class ApplicationService {
         ? [...applicationDetails.mergeDetails, { id: applicationRequest.mergeId, createdAt: currentTime }]
         : applicationDetails.mergeDetails;
       applicationDetails.gitProjectId = applicationRequest.gitProjectId || applicationDetails.gitProjectId;
+      applicationDetails.requiredCpu = applicationRequest.requiredCpu || applicationDetails.requiredCpu;
+      applicationDetails.requiredMemory = applicationRequest.requiredMemory || applicationDetails.requiredMemory;
+      applicationDetails.limitCpu = applicationRequest.limitCpu || applicationDetails.limitCpu;
+      applicationDetails.limitMemory = applicationRequest.limitMemory || applicationDetails.limitMemory;
+      applicationDetails.replicas = applicationRequest.replicas || applicationDetails.replicas;
       applicationDetails.updatedBy = applicationRequest.createdBy;
       await this.dataServices.application.updateOne({ propertyIdentifier, env, identifier, isContainerized: true, isGit: true }, applicationDetails);
     }
