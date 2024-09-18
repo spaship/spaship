@@ -55,6 +55,21 @@ export class Application {
   @Prop({})
   healthCheckPath: string;
 
+  @Prop({})
+  requiredCpu: string;
+
+  @Prop({})
+  requiredMemory: string;
+
+  @Prop({})
+  limitCpu: string;
+
+  @Prop({})
+  limitMemory: string;
+
+  @Prop({})
+  replicas: string;
+
   @Prop({ default: 1 })
   version: number;
 
