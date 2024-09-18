@@ -14,7 +14,7 @@ export const CONTAINERIZED_DEPLOYMENT_DETAILS = {
   requiredMemory: process.env.requiredMemory || '256Mi',
   limitCpu: process.env.limitCpu || '300m',
   limitMemory: process.env.limitMemory || '512Mi',
-  replicas: process.env.replicas || '1',
+  replicas: process.env.replicas || '1'
 };
 
 export const AUTH_DETAILS = {
