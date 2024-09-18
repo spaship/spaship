@@ -31,6 +31,16 @@ export class Application {
 
   healthCheckPath: string;
 
+  requiredCpu: string;
+
+  requiredMemory: string;
+
+  limitCpu: string;
+
+  limitMemory: string;
+
+  replicas: string;
+
   version: number;
 
   port: number;
