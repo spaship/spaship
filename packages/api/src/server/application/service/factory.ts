@@ -525,6 +525,11 @@ export class ApplicationFactory {
     containerizedApplicationRequest.port = applicationRequest.port || CONTAINERIZED_DEPLOYMENT_DETAILS.port;
     containerizedApplicationRequest.cmdbCode = cmdbCode;
     containerizedApplicationRequest.severity = severity;
+    containerizedApplicationRequest.requiredCpu = applicationRequest.requiredCpu || '200m';
+    containerizedApplicationRequest.requiredMemory = applicationRequest.requiredMemory || '256Mi';
+    containerizedApplicationRequest.limitCpu = applicationRequest.limitCpu || '300m';
+    containerizedApplicationRequest.limitMemory = applicationRequest.limitMemory || '512Mi';
+    containerizedApplicationRequest.replicas = applicationRequest.replicas || '1';
     return containerizedApplicationRequest;
   }
 
@@ -587,6 +592,11 @@ export class ApplicationFactory {
     containerizedRequest.healthCheckPath = applicationDetails.healthCheckPath;
     containerizedRequest.port = applicationDetails.port || 3000;
     containerizedRequest.cmdbCode = this.getCMDBCode(cmdbCode);
+    containerizedRequest.requiredCpu = applicationDetails.requiredCpu;
+    containerizedRequest.requiredMemory = applicationDetails.requiredMemory;
+    containerizedRequest.limitCpu = applicationDetails.limitCpu;
+    containerizedRequest.limitMemory = applicationDetails.limitMemory;
+    containerizedRequest.replicas = applicationDetails.replicas;
     return containerizedRequest;
   }
 
@@ -836,7 +846,12 @@ export class ApplicationFactory {
       applicationDetails.contextDir === applicationRequest.contextDir &&
       applicationDetails.dockerFileName === applicationRequest.dockerFileName &&
       applicationDetails.healthCheckPath === applicationRequest.healthCheckPath &&
-      JSON.stringify(applicationDetails.buildArgs) === JSON.stringify(applicationRequest.buildArgs)
+      JSON.stringify(applicationDetails.buildArgs) === JSON.stringify(applicationRequest.buildArgs) &&
+      applicationDetails.requiredCpu === applicationRequest.requiredCpu &&
+      applicationDetails.requiredMemory === applicationRequest.requiredMemory &&
+      applicationDetails.limitCpu === applicationRequest.limitCpu &&
+      applicationDetails.limitMemory === applicationRequest.limitMemory &&
+      applicationDetails.replicas === applicationRequest.replicas
     ) {
       this.logger.log(
         'ApplicationCheck',
@@ -888,7 +903,12 @@ export class ApplicationFactory {
       applicationDetails.path === applicationRequest.path &&
       applicationDetails.port === applicationRequest.port &&
       applicationDetails.imageUrl === applicationRequest.imageUrl &&
-      applicationDetails.healthCheckPath === applicationRequest.healthCheckPath
+      applicationDetails.healthCheckPath === applicationRequest.healthCheckPath &&
+      applicationDetails.requiredCpu === applicationRequest.requiredCpu &&
+      applicationDetails.requiredMemory === applicationRequest.requiredMemory &&
+      applicationDetails.limitCpu === applicationRequest.limitCpu &&
+      applicationDetails.limitMemory === applicationRequest.limitMemory &&
+      applicationDetails.replicas === applicationRequest.replicas
     ) {
       this.logger.log(
         'ApplicationCheckForContainerizedDeployment',
