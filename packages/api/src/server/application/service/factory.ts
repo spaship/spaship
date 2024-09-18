@@ -525,11 +525,11 @@ export class ApplicationFactory {
     containerizedApplicationRequest.port = applicationRequest.port || CONTAINERIZED_DEPLOYMENT_DETAILS.port;
     containerizedApplicationRequest.cmdbCode = cmdbCode;
     containerizedApplicationRequest.severity = severity;
-    containerizedApplicationRequest.requiredCpu = applicationRequest.requiredCpu || '200m';
-    containerizedApplicationRequest.requiredMemory = applicationRequest.requiredMemory || '256Mi';
-    containerizedApplicationRequest.limitCpu = applicationRequest.limitCpu || '300m';
-    containerizedApplicationRequest.limitMemory = applicationRequest.limitMemory || '512Mi';
-    containerizedApplicationRequest.replicas = applicationRequest.replicas || '1';
+    containerizedApplicationRequest.requiredCpu = applicationRequest.requiredCpu || CONTAINERIZED_DEPLOYMENT_DETAILS.requiredCpu;
+    containerizedApplicationRequest.requiredMemory = applicationRequest.requiredMemory || CONTAINERIZED_DEPLOYMENT_DETAILS.requiredMemory;
+    containerizedApplicationRequest.limitCpu = applicationRequest.limitCpu || CONTAINERIZED_DEPLOYMENT_DETAILS.limitCpu;
+    containerizedApplicationRequest.limitMemory = applicationRequest.limitMemory || CONTAINERIZED_DEPLOYMENT_DETAILS.limitMemory;
+    containerizedApplicationRequest.replicas = applicationRequest.replicas || CONTAINERIZED_DEPLOYMENT_DETAILS.replicas;
     return containerizedApplicationRequest;
   }
 
