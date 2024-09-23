@@ -90,10 +90,42 @@ const schema = yup.object({
     })
     .label('Port'),
   replicas: yup.string().label('Replicas'),
-  requiredCpu: yup.string().label('CPU Required'),
-  requiredMemory: yup.string().label('Memory Required'),
-  limitCpu: yup.string().label('CPU Limit'),
-  limitMemory: yup.string().label('Memory Limit')
+  requiredCpu: yup.string().required('CPU Required is required').label('CPU Required'),
+  limitCpu: yup
+    .string()
+    .required('CPU Limit is required')
+    .label('CPU Limit')
+    .test(
+      'is-less-than-or-equal-to',
+      'Required CPU value must be less than or equal to CPU Limit value',
+      function isLimitCpuValid(value) {
+        const { requiredCpu } = this.parent; // Access sibling fields
+        if (!requiredCpu || !value) return true; // Skip validation if either field is not set
+
+        const requiredCpuValue = parseInt(requiredCpu, 10); // Add radix parameter
+        const limitCpuValue = parseInt(value, 10); // Add radix parameter
+
+        return requiredCpuValue <= limitCpuValue; // Compare the two values
+      }
+    ),
+  requiredMemory: yup.string().required('Memory Required is required').label('Memory Required'),
+  limitMemory: yup
+    .string()
+    .required('Memory Limit is required')
+    .label('Memory Limit')
+    .test(
+      'is-less-than-or-equal-to',
+      'Required Memory value must be less than or equal to Memory Limit value',
+      function isLimitMemoryValid(value) {
+        const { requiredMemory } = this.parent; // Access sibling fields
+        if (!requiredMemory || !value) return true; // Skip validation if either field is not set
+
+        const requiredMemoryValue = parseInt(requiredMemory, 10); // Add radix parameter
+        const limitMemoryValue = parseInt(value, 10); // Add radix parameter
+
+        return requiredMemoryValue <= limitMemoryValue; // Compare the two values
+      }
+    )
 });
 
 interface Props {
@@ -132,7 +164,7 @@ export const Workflow3 = ({
     mode: 'onBlur',
     resolver: yupResolver(schema)
   });
-  const formValues = watch(); // Get all form values
+  const formValues = watch();
   const [step, setStep] = useState<number>(1);
   const createSsrSpaProperty = useAddSsrSpaProperty();
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
@@ -143,7 +175,6 @@ export const Workflow3 = ({
   const [appValidateMessage, setAppValidateMessage] = useState('');
 
   const onSubmit = async (data: FormData) => {
-    console.log('gewiuwekuf', data);
     if (step === 6) {
       const toastId = toast.loading('Submitting form...');
       const newdata = {
@@ -507,6 +538,12 @@ export const Workflow3 = ({
                   5
                 </span>
                 MP+ Configuration
+                {(errors.limitCpu || errors.limitMemory || errors.replicas) && (
+                  <span>
+                    &nbsp;
+                    <ExclamationCircleIcon style={{ color: '#c9190b' }} />
+                  </span>
+                )}
               </Button>
             </li>
             <li>
@@ -1328,10 +1365,10 @@ export const Workflow3 = ({
                           helperTextInvalid={error?.message}
                         >
                           <FormSelect {...field} aria-label="FormSelect Required CPU Input">
-                            {requiredCpuOption.map((option, index) => (
+                            {requiredCpuOption.map((option) => (
                               <FormSelectOption
                                 isDisabled={option.disabled}
-                                key={index}
+                                key={option.value}
                                 value={option.value}
                                 label={option.label}
                               />
@@ -1353,14 +1390,14 @@ export const Workflow3 = ({
                           helperTextInvalid={error?.message}
                         >
                           <FormSelect
-                            {...field} // Spread the field props
+                            {...field}
                             aria-label="FormSelect Cpu limit Input"
                             ouiaId="BasicFormSelect"
                           >
-                            {limitCpuOption.map((option, index) => (
+                            {limitCpuOption.map((option) => (
                               <FormSelectOption
                                 isDisabled={option.disabled}
-                                key={index}
+                                key={option.value}
                                 value={option.value}
                                 label={option.label}
                               />
@@ -1384,10 +1421,10 @@ export const Workflow3 = ({
                           helperTextInvalid={error?.message}
                         >
                           <FormSelect {...field} aria-label="FormSelect Required Memory Input">
-                            {requiredMemoryOption.map((option, index) => (
+                            {requiredMemoryOption.map((option) => (
                               <FormSelectOption
                                 isDisabled={option.disabled}
-                                key={index}
+                                key={option.value}
                                 value={option.value}
                                 label={option.label}
                               />
@@ -1409,14 +1446,14 @@ export const Workflow3 = ({
                           helperTextInvalid={error?.message}
                         >
                           <FormSelect
-                            {...field} // Spread the field props
+                            {...field}
                             aria-label="FormSelect Memory limit Input"
                             ouiaId="BasicFormSelect"
                           >
-                            {limitMemoryOption.map((option, index) => (
+                            {limitMemoryOption.map((option) => (
                               <FormSelectOption
                                 isDisabled={option.disabled}
-                                key={index}
+                                key={option.value}
                                 value={option.value}
                                 label={option.label}
                               />
@@ -1440,14 +1477,14 @@ export const Workflow3 = ({
                           helperTextInvalid={error?.message}
                         >
                           <FormSelect
-                            {...field} // Spread the field props
+                            {...field}
                             aria-label="FormSelect Input"
                             ouiaId="BasicFormSelect"
                           >
-                            {replicasOption.map((option, index) => (
+                            {replicasOption.map((option) => (
                               <FormSelectOption
                                 isDisabled={option.disabled}
-                                key={index}
+                                key={option.value}
                                 value={option.value}
                                 label={option.label}
                               />
