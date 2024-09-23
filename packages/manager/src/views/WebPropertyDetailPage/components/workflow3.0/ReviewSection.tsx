@@ -1,7 +1,15 @@
-/* eslint-disable react/no-array-index-key */
-import { Button, FormGroup, Split, SplitItem, TextInput, Tooltip } from '@patternfly/react-core';
+import React, { FC } from 'react';
+import {
+  Split,
+  SplitItem,
+  FormGroup,
+  Tooltip,
+  TextInput,
+  Button,
+  FormSelect,
+  FormSelectOption
+} from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
-import { FC } from 'react';
 
 interface KeyValuePair {
   key: string;
@@ -28,6 +36,13 @@ interface FormValues {
   limitCpu?: string;
   limitMemory?: string;
 }
+
+interface ReplicaOption {
+  value: string;
+  label: string;
+  disabled?: boolean;
+}
+
 interface FormErrors {
   [key: string]: {
     message?: string;
@@ -380,7 +395,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
             <FormGroup label="CPU Required" isRequired fieldId="requiredCpu">
               <TextInput
                 isRequired
-                value={formValues.requiredCpu}
+                value={formValues.name}
                 type="text"
                 id="requiredCpu"
                 isDisabled
@@ -389,13 +404,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           </SplitItem>
           <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
             <FormGroup label="CPU Limit" isRequired fieldId="limitCpu">
-              <TextInput
-                isRequired
-                value={formValues.limitCpu}
-                type="text"
-                id="limitCpu"
-                isDisabled
-              />
+              <TextInput isRequired value={formValues.name} type="text" id="limitCpu" isDisabled />
             </FormGroup>
           </SplitItem>
         </Split>
@@ -404,7 +413,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
             <FormGroup label="Memory Required" isRequired fieldId="requiredMemory">
               <TextInput
                 isRequired
-                value={formValues.requiredMemory}
+                value={formValues.name}
                 type="text"
                 id="requiredMemory"
                 isDisabled
@@ -415,7 +424,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
             <FormGroup label="Memory Limit" isRequired fieldId="limitCpu">
               <TextInput
                 isRequired
-                value={formValues.limitMemory}
+                value={formValues.name}
                 type="text"
                 id="limitMemory"
                 isDisabled
@@ -427,13 +436,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
         <Split hasGutter>
           <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
             <FormGroup label="Number of replicas" isRequired fieldId="replicas">
-              <TextInput
-                isRequired
-                value={formValues.replicas}
-                type="text"
-                id="replicas"
-                isDisabled
-              />
+              <TextInput isRequired value={formValues.name} type="text" id="replicas" isDisabled />
             </FormGroup>
           </SplitItem>
         </Split>
@@ -447,6 +450,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
       >
         Back
       </Button>
+      {console.log('errors', repoValidateMessage, appValidateMessage, Object.keys(errors))}
       <Button variant="primary" type="submit" isDisabled={isSubmitDisabled}>
         Submit
       </Button>
