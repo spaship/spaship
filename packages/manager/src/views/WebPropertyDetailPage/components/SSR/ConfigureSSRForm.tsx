@@ -18,6 +18,13 @@ import { AxiosError } from 'axios';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import * as yup from 'yup';
+import {
+  limitCpuOption,
+  limitMemoryOption,
+  replicasOption,
+  requiredCpuOption,
+  requiredMemoryOption
+} from '../workflow3.0/options';
 import { TDataContainerized, TDataWorkflow } from '../workflow3.0/types';
 
 const schema = yup.object({
@@ -54,7 +61,44 @@ const schema = yup.object({
       key: yup.string().trim().required().label('Configuration Key'),
       value: yup.string().trim().required().label('Configuration Value')
     })
-  )
+  ),
+  replicas: yup.string().label('Replicas'),
+  requiredCpu: yup.string().required('CPU Required is required').label('CPU Required'),
+  limitCpu: yup
+    .string()
+    .required('CPU Limit is required')
+    .label('CPU Limit')
+    .test(
+      'is-less-than-or-equal-to',
+      'Required CPU value must be less than or equal to CPU Limit value',
+      function isLimitCpuValid(value) {
+        const { requiredCpu } = this.parent; // Access sibling fields
+        if (!requiredCpu || !value) return true; // Skip validation if either field is not set
+
+        const requiredCpuValue = parseInt(requiredCpu, 10); // Add radix parameter
+        const limitCpuValue = parseInt(value, 10); // Add radix parameter
+
+        return requiredCpuValue <= limitCpuValue; // Compare the two values
+      }
+    ),
+  requiredMemory: yup.string().required('Memory Required is required').label('Memory Required'),
+  limitMemory: yup
+    .string()
+    .required('Memory Limit is required')
+    .label('Memory Limit')
+    .test(
+      'is-less-than-or-equal-to',
+      'Required Memory value must be less than or equal to Memory Limit value',
+      function isLimitMemoryValid(value) {
+        const { requiredMemory } = this.parent; // Access sibling fields
+        if (!requiredMemory || !value) return true; // Skip validation if either field is not set
+
+        const requiredMemoryValue = parseInt(requiredMemory, 10); // Add radix parameter
+        const limitMemoryValue = parseInt(value, 10); // Add radix parameter
+
+        return requiredMemoryValue <= limitMemoryValue; // Compare the two values
+      }
+    )
 });
 
 type Props = {
@@ -90,7 +134,12 @@ export const ConfigureSSRForm = ({
       config: keyValuePairsGenerator({ dataProps }),
       port: dataProps.port ? dataProps.port : 3000,
       path: dataProps.path ? dataProps.path : '/',
-      healthCheckPath: dataProps.healthCheckPath ? dataProps.healthCheckPath : '/'
+      healthCheckPath: dataProps.healthCheckPath ? dataProps.healthCheckPath : '/',
+      replicas: dataProps.replicas ? dataProps.replicas : '1',
+      requiredCpu: dataProps.requiredCpu ? dataProps.requiredCpu : '200m',
+      requiredMemory: dataProps.requiredMemory ? dataProps.requiredMemory : '256Mi',
+      limitCpu: dataProps.limitCpu ? dataProps.limitCpu : '300m',
+      limitMemory: dataProps.limitMemory ? dataProps.limitMemory : '512Mi'
     }
   });
 
@@ -485,6 +534,150 @@ export const ConfigureSSRForm = ({
           </SplitItem>
         </Split>
       )}
+
+      <Split hasGutter>
+        <SplitItem isFilled className="pf-u-mr-md pf-u-mb-lg" style={{ width: '100%' }}>
+          <Controller
+            control={control}
+            name="requiredCpu"
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label="CPU Required"
+                fieldId="requiredCpu"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
+                <FormSelect {...field} aria-label="FormSelect Required CPU Input">
+                  {requiredCpuOption.map((option) => (
+                    <FormSelectOption
+                      isDisabled={option.disabled}
+                      key={option.value} // Use a unique value as the key
+                      value={option.value}
+                      label={option.label}
+                    />
+                  ))}
+                </FormSelect>
+              </FormGroup>
+            )}
+          />
+        </SplitItem>
+        <SplitItem isFilled className="pf-u-mr-md pf-u-mb-lg" style={{ width: '100%' }}>
+          <Controller
+            control={control}
+            name="limitCpu"
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label="CPU Limit"
+                fieldId="limitCpu"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
+                <FormSelect
+                  {...field} // Spread the field props
+                  aria-label="FormSelect CPU Limit Input"
+                  ouiaId="BasicFormSelect"
+                >
+                  {limitCpuOption.map((option) => (
+                    <FormSelectOption
+                      isDisabled={option.disabled}
+                      key={option.value} // Use a unique value as the key
+                      value={option.value}
+                      label={option.label}
+                    />
+                  ))}
+                </FormSelect>
+              </FormGroup>
+            )}
+          />
+        </SplitItem>
+      </Split>
+      <Split hasGutter>
+        <SplitItem isFilled className="pf-u-mr-md pf-u-mb-lg" style={{ width: '100%' }}>
+          <Controller
+            control={control}
+            name="requiredMemory"
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label="Memory Required"
+                fieldId="requiredMemory"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
+                <FormSelect {...field} aria-label="FormSelect Required Memory Input">
+                  {requiredMemoryOption.map((option) => (
+                    <FormSelectOption
+                      isDisabled={option.disabled}
+                      key={option.value}
+                      value={option.value}
+                      label={option.label}
+                    />
+                  ))}
+                </FormSelect>
+              </FormGroup>
+            )}
+          />
+        </SplitItem>
+        <SplitItem isFilled className="pf-u-mr-md pf-u-mb-lg" style={{ width: '100%' }}>
+          <Controller
+            control={control}
+            name="limitMemory"
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label="Memory Limit"
+                fieldId="limitMemory"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
+                <FormSelect
+                  {...field} // Spread the field props
+                  aria-label="FormSelect Memory limit Input"
+                  ouiaId="BasicFormSelect"
+                >
+                  {limitMemoryOption.map((option) => (
+                    <FormSelectOption
+                      isDisabled={option.disabled}
+                      key={option.value}
+                      value={option.value}
+                      label={option.label}
+                    />
+                  ))}
+                </FormSelect>
+              </FormGroup>
+            )}
+          />
+        </SplitItem>
+      </Split>
+      <Split hasGutter>
+        <SplitItem isFilled style={{ width: '100%' }}>
+          <Controller
+            control={control}
+            name="replicas"
+            render={({ field, fieldState: { error } }) => (
+              <FormGroup
+                label="Select Number of Replicas"
+                fieldId="replicas"
+                validated={error ? 'error' : 'default'}
+                helperTextInvalid={error?.message}
+              >
+                <FormSelect
+                  {...field} // Spread the field props
+                  aria-label="FormSelect Input"
+                  ouiaId="BasicFormSelect"
+                >
+                  {replicasOption.map((option) => (
+                    <FormSelectOption
+                      isDisabled={option.disabled}
+                      key={option.value}
+                      value={option.value}
+                      label={option.label}
+                    />
+                  ))}
+                </FormSelect>
+              </FormGroup>
+            )}
+          />
+        </SplitItem>
+      </Split>
 
       <Split hasGutter>
         <div

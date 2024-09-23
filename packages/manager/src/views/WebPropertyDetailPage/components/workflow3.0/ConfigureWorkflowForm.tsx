@@ -2,7 +2,6 @@
 import { useGetWebPropertyGroupedByEnv } from '@app/services/persistent';
 import { useAddSsrSpaProperty, useValidateSsrSpaProperty } from '@app/services/ssr';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Base64 } from 'js-base64';
 import {
   Alert,
   Button,
@@ -19,10 +18,18 @@ import {
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon, InfoCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { AxiosError } from 'axios';
+import { Base64 } from 'js-base64';
 import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import * as yup from 'yup';
+import {
+  limitCpuOption,
+  limitMemoryOption,
+  replicasOption,
+  requiredCpuOption,
+  requiredMemoryOption
+} from './options';
 import { TDataContainerized, TDataWorkflow } from './types';
 import './workflow.css';
 
@@ -88,7 +95,44 @@ const schema = yup.object({
       const portNumber = parseInt(value?.toString() || '', 10);
       return portNumber <= 65536;
     })
-    .label('Port')
+    .label('Port'),
+  replicas: yup.string().label('Replicas'),
+  requiredCpu: yup.string().required('CPU Required is required').label('CPU Required'),
+  limitCpu: yup
+    .string()
+    .required('CPU Limit is required')
+    .label('CPU Limit')
+    .test(
+      'is-less-than-or-equal-to',
+      'Required CPU value must be less than or equal to CPU Limit value',
+      function isLimitCpuValid(value) {
+        const { requiredCpu } = this.parent; // Access sibling fields
+        if (!requiredCpu || !value) return true; // Skip validation if either field is not set
+
+        const requiredCpuValue = parseInt(requiredCpu, 10); // Add radix parameter
+        const limitCpuValue = parseInt(value, 10); // Add radix parameter
+
+        return requiredCpuValue <= limitCpuValue; // Compare the two values
+      }
+    ),
+  requiredMemory: yup.string().required('Memory Required is required').label('Memory Required'),
+  limitMemory: yup
+    .string()
+    .required('Memory Limit is required')
+    .label('Memory Limit')
+    .test(
+      'is-less-than-or-equal-to',
+      'Required Memory value must be less than or equal to Memory Limit value',
+      function isLimitMemoryValid(value) {
+        const { requiredMemory } = this.parent; // Access sibling fields
+        if (!requiredMemory || !value) return true; // Skip validation if either field is not set
+
+        const requiredMemoryValue = parseInt(requiredMemory, 10); // Add radix parameter
+        const limitMemoryValue = parseInt(value, 10); // Add radix parameter
+
+        return requiredMemoryValue <= limitMemoryValue; // Compare the two values
+      }
+    )
 });
 
 interface Props {
@@ -115,6 +159,7 @@ export const ConfigureWorkflowForm = ({
     setValue,
     getValues,
     trigger,
+    watch,
     formState: { errors, dirtyFields, touchedFields }
   } = useForm<FormData>({
     defaultValues: {
@@ -134,7 +179,12 @@ export const ConfigureWorkflowForm = ({
       path: dataProps && dataProps.path ? dataProps.path : '/',
       healthCheckPath: dataProps && dataProps.healthCheckPath ? dataProps.healthCheckPath : '/',
       dockerFileName:
-        dataProps && dataProps.dockerFileName ? dataProps.dockerFileName : 'Dockerfile'
+        dataProps && dataProps.dockerFileName ? dataProps.dockerFileName : 'Dockerfile',
+      replicas: dataProps.replicas,
+      requiredCpu: dataProps.requiredCpu,
+      requiredMemory: dataProps.requiredMemory,
+      limitCpu: dataProps.limitCpu,
+      limitMemory: dataProps.limitMemory
     },
 
     mode: 'onBlur',
@@ -317,11 +367,13 @@ export const ConfigureWorkflowForm = ({
   useEffect(() => {
     setEnabledStates(secretFields.map((pair) => pair.isSecret));
   }, [secretFields]);
+
   const [showPasswordPlaceholders, setShowPasswordPlaceholders] = useState(
     secretFields.map(() => true)
   );
+
   const onSubmit = async (data: FormData) => {
-    if (step === 5) {
+    if (step === 6) {
       const toastId = toast.loading('Submitting form...');
       const newdata = {
         ...data,
@@ -372,6 +424,9 @@ export const ConfigureWorkflowForm = ({
       }
     }
   };
+
+  const formValues = watch(); // Get all form values
+
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Grid>
@@ -460,6 +515,27 @@ export const ConfigureWorkflowForm = ({
                   style={{ backgroundColor: step === 5 ? '#FDB716' : '#ccc', color: '#000' }}
                 >
                   5
+                </span>
+                MP+ Configuration
+                {(errors.limitCpu || errors.limitMemory || errors.replicas) && (
+                  <span>
+                    &nbsp;
+                    <ExclamationCircleIcon style={{ color: '#c9190b' }} />
+                  </span>
+                )}
+              </Button>
+            </li>
+            <li>
+              <Button
+                variant="link"
+                onClick={() => handleClick(6)}
+                style={{ color: step === 6 ? '#FDB716' : 'black' }}
+              >
+                <span
+                  className="step-number"
+                  style={{ backgroundColor: step === 6 ? '#FDB716' : '#ccc', color: '#000' }}
+                >
+                  6
                 </span>
                 Review
               </Button>
@@ -1378,366 +1454,278 @@ export const ConfigureWorkflowForm = ({
             <>
               <div>
                 <Split hasGutter>
+                  <SplitItem isFilled className="pf-u-mr-md pf-u-mb-lg" style={{ width: '100%' }}>
+                    <Controller
+                      control={control}
+                      name="requiredCpu"
+                      render={({ field, fieldState: { error } }) => (
+                        <FormGroup
+                          label="CPU Required"
+                          fieldId="requiredCpu"
+                          validated={error ? 'error' : 'default'}
+                          helperTextInvalid={error?.message}
+                        >
+                          <FormSelect {...field} aria-label="FormSelect Required CPU Input">
+                            {requiredCpuOption.map((option) => (
+                              <FormSelectOption
+                                isDisabled={option.disabled}
+                                key={option.value} // Use a unique value as the key
+                                value={option.value}
+                                label={option.label}
+                              />
+                            ))}
+                          </FormSelect>
+                        </FormGroup>
+                      )}
+                    />
+                  </SplitItem>
+                  <SplitItem isFilled className="pf-u-mr-md pf-u-mb-lg" style={{ width: '100%' }}>
+                    <Controller
+                      control={control}
+                      name="limitCpu"
+                      render={({ field, fieldState: { error } }) => (
+                        <FormGroup
+                          label="CPU Limit"
+                          fieldId="limitCpu"
+                          validated={error ? 'error' : 'default'}
+                          helperTextInvalid={error?.message}
+                        >
+                          <FormSelect
+                            {...field} // Spread the field props
+                            aria-label="FormSelect CPU Limit Input"
+                            ouiaId="BasicFormSelect"
+                          >
+                            {limitCpuOption.map((option) => (
+                              <FormSelectOption
+                                isDisabled={option.disabled}
+                                key={option.value} // Use a unique value as the key
+                                value={option.value}
+                                label={option.label}
+                              />
+                            ))}
+                          </FormSelect>
+                        </FormGroup>
+                      )}
+                    />
+                  </SplitItem>
+                </Split>
+                <Split hasGutter>
+                  <SplitItem isFilled className="pf-u-mr-md pf-u-mb-lg" style={{ width: '100%' }}>
+                    <Controller
+                      control={control}
+                      name="requiredMemory"
+                      render={({ field, fieldState: { error } }) => (
+                        <FormGroup
+                          label="Memory Required"
+                          fieldId="requiredMemory"
+                          validated={error ? 'error' : 'default'}
+                          helperTextInvalid={error?.message}
+                        >
+                          <FormSelect {...field} aria-label="FormSelect Required Memory Input">
+                            {requiredMemoryOption.map((option) => (
+                              <FormSelectOption
+                                isDisabled={option.disabled}
+                                key={option.value}
+                                value={option.value}
+                                label={option.label}
+                              />
+                            ))}
+                          </FormSelect>
+                        </FormGroup>
+                      )}
+                    />
+                  </SplitItem>
+                  <SplitItem isFilled className="pf-u-mr-md pf-u-mb-lg" style={{ width: '100%' }}>
+                    <Controller
+                      control={control}
+                      name="limitMemory"
+                      render={({ field, fieldState: { error } }) => (
+                        <FormGroup
+                          label="Memory Limit"
+                          fieldId="limitMemory"
+                          validated={error ? 'error' : 'default'}
+                          helperTextInvalid={error?.message}
+                        >
+                          <FormSelect
+                            {...field} // Spread the field props
+                            aria-label="FormSelect Memory limit Input"
+                            ouiaId="BasicFormSelect"
+                          >
+                            {limitMemoryOption.map((option) => (
+                              <FormSelectOption
+                                isDisabled={option.disabled}
+                                key={option.value}
+                                value={option.value}
+                                label={option.label}
+                              />
+                            ))}
+                          </FormSelect>
+                        </FormGroup>
+                      )}
+                    />
+                  </SplitItem>
+                </Split>
+                <Split hasGutter>
                   <SplitItem isFilled style={{ width: '100%' }}>
                     <Controller
                       control={control}
-                      name="repoUrl"
+                      name="replicas"
                       render={({ field, fieldState: { error } }) => (
                         <FormGroup
-                          style={{ color: '#000' }}
-                          label={
-                            <>
-                              Repository URL
-                              <Tooltip
-                                content={
-                                  <div>
-                                    Public gitlab/github repository URL of the application, for
-                                    example:&nbsp;
-                                    <em>https://github.com/spaship/spaship</em>
-                                  </div>
-                                }
-                              >
-                                <span>
-                                  &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
-                                </span>
-                              </Tooltip>
-                            </>
-                          }
-                          isRequired
-                          fieldId="repoUrl"
+                          label="Select Number of Replicas"
+                          fieldId="replicas"
                           validated={error ? 'error' : 'default'}
                           helperTextInvalid={error?.message}
                         >
-                          <TextInput
-                            isRequired
-                            placeholder="Enter Repository URL"
-                            type="text"
-                            id="repoUrl"
-                            {...field}
-                            isDisabled
-                          />
-                        </FormGroup>
-                      )}
-                    />
-                  </SplitItem>
-                </Split>
-                <Split hasGutter>
-                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-                    <Controller
-                      control={control}
-                      name="contextDir"
-                      render={({ field, fieldState: { error } }) => (
-                        <FormGroup
-                          style={{ color: '#000' }}
-                          label={
-                            <>
-                              Context Directory
-                              <Tooltip
-                                content={
-                                  <div>
-                                    For mono repo, specify the name of the directory where the
-                                    application exists example, <b>package/home</b> default will be{' '}
-                                    <b>/</b>
-                                  </div>
-                                }
-                              >
-                                <span>
-                                  &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
-                                </span>
-                              </Tooltip>
-                            </>
-                          }
-                          isRequired
-                          fieldId="contextDir"
-                          validated={error ? 'error' : 'default'}
-                          helperTextInvalid={error?.message}
-                        >
-                          <TextInput
-                            isRequired
-                            placeholder="Enter Context Directory"
-                            type="text"
-                            id="contextDir"
-                            {...field}
-                            isDisabled
-                          />
-                        </FormGroup>
-                      )}
-                    />
-                  </SplitItem>
-                </Split>
-                <Split hasGutter>
-                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-                    <Controller
-                      control={control}
-                      name="gitRef"
-                      render={({ field, fieldState: { error } }) => (
-                        <FormGroup
-                          style={{ color: '#000' }}
-                          label="Git Branch"
-                          fieldId="gitRef"
-                          validated={error ? 'error' : 'default'}
-                          helperTextInvalid={error?.message}
-                        >
-                          <TextInput
-                            placeholder="Git Branch"
-                            type="text"
-                            id="branch"
-                            {...field}
-                            isDisabled
-                          />
-                        </FormGroup>
-                      )}
-                    />
-                  </SplitItem>
-                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-                    <Controller
-                      control={control}
-                      name="dockerFileName"
-                      render={({ field, fieldState: { error } }) => (
-                        <FormGroup
-                          style={{ color: '#000' }}
-                          label="Enter Dockerfile name"
-                          fieldId="dockerFileName"
-                          validated={error ? 'error' : 'default'}
-                          helperTextInvalid={error?.message}
-                          isRequired
-                        >
-                          <TextInput
-                            placeholder="dockerfile name"
-                            type="text"
-                            id="dockerFileName"
-                            {...field}
-                            isDisabled
-                          />
-                        </FormGroup>
-                      )}
-                    />
-                  </SplitItem>
-                </Split>
-                <Split hasGutter>
-                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-                    <Controller
-                      control={control}
-                      name="name"
-                      render={({ field, fieldState: { error } }) => (
-                        <FormGroup
-                          label="Application Name"
-                          isRequired
-                          fieldId="property-name"
-                          validated={error ? 'error' : 'default'}
-                          helperTextInvalid={error?.message}
-                        >
-                          <TextInput
-                            isRequired
-                            placeholder="Please enter application name"
-                            type="text"
-                            id="property-name"
-                            {...field}
-                            isDisabled
-                          />
-                        </FormGroup>
-                      )}
-                    />
-                  </SplitItem>
-                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-                    <Controller
-                      control={control}
-                      name="env"
-                      render={({ field, fieldState: { error } }) => (
-                        <FormGroup
-                          label="Select Environment"
-                          fieldId="select-env"
-                          validated={error ? 'error' : 'default'}
-                          isRequired
-                          helperTextInvalid={error?.message}
-                        >
-                          <TextInput
-                            isRequired
-                            placeholder="Please select an environment"
-                            type="text"
-                            id="path"
-                            {...field}
-                            style={{ marginRight: '0px' }}
-                            isDisabled
-                          />
-                        </FormGroup>
-                      )}
-                    />
-                  </SplitItem>
-                </Split>
-                <Split hasGutter>
-                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-                    <Controller
-                      control={control}
-                      name="path"
-                      rules={{ required: 'Path is required' }}
-                      render={({ field, fieldState: { error } }) => {
-                        const handleChange = (e: string) => {
-                          const pathValue = e;
-                          const healthCheckPathValue = getValues('healthCheckPath');
-                          if (healthCheckPathValue === field.value) {
-                            setValue('healthCheckPath', pathValue);
-                            trigger('healthCheckPath');
-                          }
-                          field.onChange(e);
-                        };
-                        return (
-                          <FormGroup
-                            style={{ color: '#000' }}
-                            label={
-                              <>
-                                Path
-                                <Tooltip
-                                  content={
-                                    <div>
-                                      This will be the context path is your application.
-                                      <br /> Please note that this should match the homepage
-                                      attribute of the package.json file.
-                                    </div>
-                                  }
-                                >
-                                  <span>
-                                    &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
-                                  </span>
-                                </Tooltip>
-                              </>
-                            }
-                            isRequired
-                            fieldId="path"
-                            validated={error ? 'error' : 'default'}
-                            helperTextInvalid={error?.message}
+                          <FormSelect
+                            {...field} // Spread the field props
+                            aria-label="FormSelect Input"
+                            ouiaId="BasicFormSelect"
                           >
-                            <TextInput
-                              isRequired
-                              placeholder="Path"
-                              type="text"
-                              id="path"
-                              value={field.value}
-                              onChange={handleChange}
-                              onBlur={() => trigger('path')}
-                              style={{ marginRight: '0px' }}
-                              isDisabled
-                            />
-                          </FormGroup>
-                        );
-                      }}
-                    />
-                  </SplitItem>
-                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-                    <Controller
-                      control={control}
-                      name="healthCheckPath"
-                      rules={{ required: 'Health Check Path is required' }}
-                      render={({ field, fieldState: { error } }) => (
-                        <FormGroup
-                          style={{ color: '#000' }}
-                          label={
-                            <>
-                              Health Check Path
-                              <Tooltip
-                                content={
-                                  <div>
-                                    By default, it will pick the value of the Path attribute, used
-                                    for application liveness checking for monitoring and auto
-                                    redeployment on failure.
-                                  </div>
-                                }
-                              >
-                                <span>
-                                  &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
-                                </span>
-                              </Tooltip>
-                            </>
-                          }
-                          isRequired
-                          fieldId="healthCheckPath"
-                          validated={error ? 'error' : 'default'}
-                          helperTextInvalid={error?.message}
-                        >
-                          <TextInput
-                            isRequired
-                            placeholder="Enter health Check Path"
-                            type="text"
-                            id="healthCheckPath"
-                            {...field}
-                            isDisabled
-                            onBlur={() => trigger('healthCheckPath')}
-                            style={{ marginRight: '0px' }}
-                          />
+                            {replicasOption.map((option) => (
+                              <FormSelectOption
+                                isDisabled={option.disabled}
+                                key={option.value}
+                                value={option.value}
+                                label={option.label}
+                              />
+                            ))}
+                          </FormSelect>
                         </FormGroup>
                       )}
                     />
                   </SplitItem>
                 </Split>
+              </div>
+
+              <div style={{ bottom: '0px', position: 'absolute', width: '100%' }}>
+                <Button
+                  variant="primary"
+                  type="button"
+                  onClick={handleBack}
+                  style={{ margin: '10px 10px 10px 0px' }}
+                >
+                  Back
+                </Button>
+                <Button
+                  variant="primary"
+                  type="button"
+                  onClick={handleNext}
+                  style={{ margin: '10px 10px 10px 0px' }}
+                >
+                  Next
+                </Button>
+              </div>
+            </>
+          )}
+          {step === 6 && (
+            <>
+              <div>
+                <Split hasGutter>
+                  <SplitItem isFilled style={{ width: '100%' }}>
+                    <FormGroup label="Repository URL" fieldId="repoUrl">
+                      <TextInput
+                        type="text"
+                        id="repoUrl"
+                        value={formValues.repoUrl} // Assuming formValues is the object holding the data
+                        isDisabled
+                      />
+                    </FormGroup>
+                  </SplitItem>
+                </Split>
+
                 <Split hasGutter>
                   <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-                    <Controller
-                      control={control}
-                      name="ref"
-                      render={({ field, fieldState: { error } }) => (
-                        <FormGroup
-                          style={{ color: '#000' }}
-                          label="Reference"
-                          fieldId="ref"
-                          validated={error ? 'error' : 'default'}
-                          helperTextInvalid={error?.message}
-                        >
-                          <TextInput
-                            placeholder="Reference"
-                            type="text"
-                            id="ref"
-                            {...field}
-                            isDisabled
-                          />
-                        </FormGroup>
-                      )}
-                    />
-                  </SplitItem>
-                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-                    <Controller
-                      control={control}
-                      name="port"
-                      render={({ field, fieldState: { error } }) => (
-                        <FormGroup
-                          label={
-                            <>
-                              Port
-                              <Tooltip
-                                content={
-                                  <div>
-                                    Specify the port number mentioned in your Dockerfile&apos;s
-                                    EXPOSE instruction, on which the container accepts incoming HTTP
-                                    requests.
-                                  </div>
-                                }
-                              >
-                                <span>
-                                  &nbsp; <InfoCircleIcon style={{ color: '#6A6E73' }} />
-                                </span>
-                              </Tooltip>
-                            </>
-                          }
-                          isRequired
-                          fieldId="port"
-                          validated={error ? 'error' : 'default'}
-                          helperTextInvalid={error?.message}
-                        >
-                          <TextInput
-                            isRequired
-                            placeholder="Enter port"
-                            type="text"
-                            id="port"
-                            {...field}
-                            isDisabled
-                          />
-                        </FormGroup>
-                      )}
-                    />
+                    <FormGroup label="Context Directory" fieldId="contextDir">
+                      <TextInput
+                        type="text"
+                        id="contextDir"
+                        value={formValues.contextDir} // Assuming formValues is the object holding the data
+                        isDisabled
+                      />
+                    </FormGroup>
                   </SplitItem>
                 </Split>
+
+                <Split hasGutter>
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <FormGroup label="Git Branch" fieldId="gitRef">
+                      <TextInput type="text" id="gitRef" value={formValues.gitRef} isDisabled />
+                    </FormGroup>
+                  </SplitItem>
+
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <FormGroup label="Dockerfile Name" fieldId="dockerFileName">
+                      <TextInput
+                        type="text"
+                        id="dockerFileName"
+                        value={formValues.dockerFileName}
+                        isDisabled
+                      />
+                    </FormGroup>
+                  </SplitItem>
+                </Split>
+
+                <Split hasGutter>
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <FormGroup label="Application Name" fieldId="property-name">
+                      <TextInput
+                        type="text"
+                        id="property-name"
+                        value={formValues.name} // Assuming formValues holds the data
+                        isDisabled
+                      />
+                    </FormGroup>
+                  </SplitItem>
+
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <FormGroup label="Select Environment" fieldId="select-env">
+                      <TextInput type="text" id="select-env" value={formValues.env} isDisabled />
+                    </FormGroup>
+                  </SplitItem>
+                </Split>
+
+                <Split hasGutter>
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <FormGroup label="Path" fieldId="path">
+                      <TextInput type="text" id="path" value={formValues.path} isDisabled />
+                    </FormGroup>
+                  </SplitItem>
+
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <FormGroup label="Health Check Path" fieldId="healthCheckPath">
+                      <TextInput
+                        type="text"
+                        id="healthCheckPath"
+                        value={formValues.healthCheckPath}
+                        isDisabled
+                      />
+                    </FormGroup>
+                  </SplitItem>
+                </Split>
+
+                <Split hasGutter>
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <FormGroup label="Reference" fieldId="ref">
+                      <TextInput
+                        type="text"
+                        id="ref"
+                        value={formValues.ref} // Assuming formValues holds the data
+                        isDisabled
+                      />
+                    </FormGroup>
+                  </SplitItem>
+
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <FormGroup label="Port" fieldId="port">
+                      <TextInput type="text" id="port" value={formValues.port} isDisabled />
+                    </FormGroup>
+                  </SplitItem>
+                </Split>
+
                 {configFields.length !== 0 && (
                   <Split hasGutter>
-                    <div className="form-header">
+                    <div className="pf-u-mr-md pf-u-mt-lg">
                       Configuration
                       <Tooltip
                         content={
@@ -1982,6 +1970,68 @@ export const ConfigureWorkflowForm = ({
                     </SplitItem>
                   </Split>
                 ))}
+                <Split hasGutter>
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <FormGroup label="CPU Limit" isRequired fieldId="requiredCpu">
+                      <TextInput
+                        isRequired
+                        value={formValues.requiredCpu}
+                        type="text"
+                        id="requiredCpu"
+                        isDisabled
+                      />
+                    </FormGroup>
+                  </SplitItem>
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <FormGroup label="CPU Limit" isRequired fieldId="limitCpu">
+                      <TextInput
+                        isRequired
+                        value={formValues.limitCpu}
+                        type="text"
+                        id="limitCpu"
+                        isDisabled
+                      />
+                    </FormGroup>
+                  </SplitItem>
+                </Split>
+                <Split hasGutter>
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <FormGroup label="Memory Limit" isRequired fieldId="requiredMemory">
+                      <TextInput
+                        isRequired
+                        value={formValues.requiredMemory}
+                        type="text"
+                        id="requiredMemory"
+                        isDisabled
+                      />
+                    </FormGroup>
+                  </SplitItem>
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <FormGroup label="CPU Limit" isRequired fieldId="limitCpu">
+                      <TextInput
+                        isRequired
+                        value={formValues.limitMemory}
+                        type="text"
+                        id="limitMemory"
+                        isDisabled
+                      />
+                    </FormGroup>
+                  </SplitItem>
+                </Split>
+
+                <Split hasGutter>
+                  <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
+                    <FormGroup label="Number of replicas" isRequired fieldId="replicas">
+                      <TextInput
+                        isRequired
+                        value={formValues.replicas}
+                        type="text"
+                        id="replicas"
+                        isDisabled
+                      />
+                    </FormGroup>
+                  </SplitItem>
+                </Split>
               </div>
               <Button
                 variant="primary"
