@@ -25,13 +25,6 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import * as yup from 'yup';
 import ReviewSection from './ReviewSection';
-import {
-  limitCpuOption,
-  limitMemoryOption,
-  replicasOption,
-  requiredCpuOption,
-  requiredMemoryOption
-} from './options';
 import './workflow.css';
 
 const schema = yup.object({
@@ -97,42 +90,10 @@ const schema = yup.object({
     })
     .label('Port'),
   replicas: yup.string().label('Replicas'),
-  requiredCpu: yup.string().required('CPU Required is required').label('CPU Required'),
-  limitCpu: yup
-    .string()
-    .required('CPU Limit is required')
-    .label('CPU Limit')
-    .test(
-      'is-less-than-or-equal-to',
-      'Required CPU value must be less than or equal to CPU Limit value',
-      function isLimitCpuValid(value) {
-        const { requiredCpu } = this.parent; // Access sibling fields
-        if (!requiredCpu || !value) return true; // Skip validation if either field is not set
-
-        const requiredCpuValue = parseInt(requiredCpu, 10); // Add radix parameter
-        const limitCpuValue = parseInt(value, 10); // Add radix parameter
-
-        return requiredCpuValue <= limitCpuValue; // Compare the two values
-      }
-    ),
-  requiredMemory: yup.string().required('Memory Required is required').label('Memory Required'),
-  limitMemory: yup
-    .string()
-    .required('Memory Limit is required')
-    .label('Memory Limit')
-    .test(
-      'is-less-than-or-equal-to',
-      'Required Memory value must be less than or equal to Memory Limit value',
-      function isLimitMemoryValid(value) {
-        const { requiredMemory } = this.parent; // Access sibling fields
-        if (!requiredMemory || !value) return true; // Skip validation if either field is not set
-
-        const requiredMemoryValue = parseInt(requiredMemory, 10); // Add radix parameter
-        const limitMemoryValue = parseInt(value, 10); // Add radix parameter
-
-        return requiredMemoryValue <= limitMemoryValue; // Compare the two values
-      }
-    )
+  requiredCpu: yup.string().label('CPU Required'),
+  requiredMemory: yup.string().label('Memory Required'),
+  limitCpu: yup.string().label('CPU Limit'),
+  limitMemory: yup.string().label('Memory Limit')
 });
 
 interface Props {
@@ -171,7 +132,7 @@ export const Workflow3 = ({
     mode: 'onBlur',
     resolver: yupResolver(schema)
   });
-  const formValues = watch();
+  const formValues = watch(); // Get all form values
   const [step, setStep] = useState<number>(1);
   const createSsrSpaProperty = useAddSsrSpaProperty();
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
@@ -182,6 +143,7 @@ export const Workflow3 = ({
   const [appValidateMessage, setAppValidateMessage] = useState('');
 
   const onSubmit = async (data: FormData) => {
+    console.log('gewiuwekuf', data);
     if (step === 6) {
       const toastId = toast.loading('Submitting form...');
       const newdata = {
@@ -399,6 +361,62 @@ export const Workflow3 = ({
     setEnabledStates(secretFields.map((pair) => pair.isSecret));
   }, [secretFields]);
 
+  const replicasOption = [
+    { value: 'please choose', label: 'Select one', disabled: true },
+    { value: '1', label: '1', disabled: false },
+    { value: '2', label: '2', disabled: false },
+    { value: '3', label: '3', disabled: false },
+    { value: '4', label: '4', disabled: false },
+    { value: '5', label: '5', disabled: false },
+    { value: '6', label: '6', disabled: false }
+  ];
+  const requiredCpuOption = [
+    { value: '200m', label: '200m', disabled: false },
+    { value: '300m', label: '300m', disabled: false },
+    { value: '400m', label: '400m', disabled: false },
+    { value: '500m', label: '500m', disabled: false },
+    { value: '600m', label: '600m', disabled: false },
+    { value: '700m', label: '700m', disabled: false },
+    { value: '800m', label: '800m', disabled: false },
+    { value: '900m', label: '900m', disabled: false },
+    { value: '1000m', label: '1000m', disabled: false },
+    { value: '1100m', label: '1100m', disabled: false },
+    { value: '1200m', label: '1200m', disabled: false },
+    { value: '1300m', label: '1300m', disabled: false },
+    { value: '1400m', label: '1400m', disabled: false },
+    { value: '1500m', label: '1500m', disabled: false }
+  ];
+  const limitCpuOption = [
+    { value: '300m', label: '300m', disabled: false },
+    { value: '400m', label: '400m', disabled: false },
+    { value: '500m', label: '500m', disabled: false },
+    { value: '600m', label: '600m', disabled: false },
+    { value: '700m', label: '700m', disabled: false },
+    { value: '800m', label: '800m', disabled: false },
+    { value: '900m', label: '900m', disabled: false },
+    { value: '1000m', label: '1000m', disabled: false },
+    { value: '1100m', label: '1100m', disabled: false },
+    { value: '1200m', label: '1200m', disabled: false },
+    { value: '1300m', label: '1300m', disabled: false },
+    { value: '1400m', label: '1400m', disabled: false },
+    { value: '1500m', label: '1500m', disabled: false }
+  ];
+  const requiredMemoryOption = [
+    { value: '256Mi', label: '256Mi', disabled: false },
+    { value: '512Mi', label: '512Mi', disabled: false },
+    { value: '768Mi', label: '768Mi', disabled: false },
+    { value: '1024Mi', label: '1024Mi', disabled: false },
+    { value: '1280Mi', label: '1280Mi', disabled: false },
+    { value: '1536Mi', label: '1536Mi', disabled: false }
+  ];
+  const limitMemoryOption = [
+    { value: '256Mi', label: '256Mi', disabled: false },
+    { value: '512Mi', label: '512Mi', disabled: false },
+    { value: '768Mi', label: '768Mi', disabled: false },
+    { value: '1024Mi', label: '1024Mi', disabled: false },
+    { value: '1280Mi', label: '1280Mi', disabled: false },
+    { value: '1536Mi', label: '1536Mi', disabled: false }
+  ];
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Grid>
@@ -489,12 +507,6 @@ export const Workflow3 = ({
                   5
                 </span>
                 MP+ Configuration
-                {(errors.limitCpu || errors.limitMemory || errors.replicas) && (
-                  <span>
-                    &nbsp;
-                    <ExclamationCircleIcon style={{ color: '#c9190b' }} />
-                  </span>
-                )}
               </Button>
             </li>
             <li>
@@ -1316,10 +1328,10 @@ export const Workflow3 = ({
                           helperTextInvalid={error?.message}
                         >
                           <FormSelect {...field} aria-label="FormSelect Required CPU Input">
-                            {requiredCpuOption.map((option) => (
+                            {requiredCpuOption.map((option, index) => (
                               <FormSelectOption
                                 isDisabled={option.disabled}
-                                key={option.value}
+                                key={index}
                                 value={option.value}
                                 label={option.label}
                               />
@@ -1341,14 +1353,14 @@ export const Workflow3 = ({
                           helperTextInvalid={error?.message}
                         >
                           <FormSelect
-                            {...field}
+                            {...field} // Spread the field props
                             aria-label="FormSelect Cpu limit Input"
                             ouiaId="BasicFormSelect"
                           >
-                            {limitCpuOption.map((option) => (
+                            {limitCpuOption.map((option, index) => (
                               <FormSelectOption
                                 isDisabled={option.disabled}
-                                key={option.value}
+                                key={index}
                                 value={option.value}
                                 label={option.label}
                               />
@@ -1372,10 +1384,10 @@ export const Workflow3 = ({
                           helperTextInvalid={error?.message}
                         >
                           <FormSelect {...field} aria-label="FormSelect Required Memory Input">
-                            {requiredMemoryOption.map((option) => (
+                            {requiredMemoryOption.map((option, index) => (
                               <FormSelectOption
                                 isDisabled={option.disabled}
-                                key={option.value}
+                                key={index}
                                 value={option.value}
                                 label={option.label}
                               />
@@ -1397,14 +1409,14 @@ export const Workflow3 = ({
                           helperTextInvalid={error?.message}
                         >
                           <FormSelect
-                            {...field}
+                            {...field} // Spread the field props
                             aria-label="FormSelect Memory limit Input"
                             ouiaId="BasicFormSelect"
                           >
-                            {limitMemoryOption.map((option) => (
+                            {limitMemoryOption.map((option, index) => (
                               <FormSelectOption
                                 isDisabled={option.disabled}
-                                key={option.value}
+                                key={index}
                                 value={option.value}
                                 label={option.label}
                               />
@@ -1428,14 +1440,14 @@ export const Workflow3 = ({
                           helperTextInvalid={error?.message}
                         >
                           <FormSelect
-                            {...field}
+                            {...field} // Spread the field props
                             aria-label="FormSelect Input"
                             ouiaId="BasicFormSelect"
                           >
-                            {replicasOption.map((option) => (
+                            {replicasOption.map((option, index) => (
                               <FormSelectOption
                                 isDisabled={option.disabled}
-                                key={option.value}
+                                key={index}
                                 value={option.value}
                                 label={option.label}
                               />
