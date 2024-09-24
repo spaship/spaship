@@ -10,6 +10,7 @@ import {
   TextContent,
   TextVariants
 } from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { UseQueryResult } from '@tanstack/react-query';
 import Link from 'next/link';
 
@@ -61,70 +62,115 @@ export const Analytics = ({
               }}
             >
               <CardBody>
-                <Text className="dashboard-card">{TotalDeployment}</Text>
+                <Grid>
+                  <GridItem span={8}>
+                    <Text component={TextVariants.p} className="dashboard-card">
+                      {TotalProperty}
+                    </Text>
+                  </GridItem>
+                  <GridItem
+                    span={4}
+                    style={{ display: 'flex', justifyContent: 'end', color: '#0066cc' }}
+                  >
+                    <ExternalLinkAltIcon />
+                  </GridItem>
+                </Grid>
 
-                <Text component={TextVariants.h2} style={{ fontFamily: 'Red Hat Text' }}>
-                  Total Deployments
-                </Text>
+                <Text component={TextVariants.h2}>Total Web Properties</Text>
                 <div
                   style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    gap: '6%',
                     marginTop: '24px'
                   }}
-                  className="dashboard-card-subheadings"
                 >
-                  {TotalDeploymentCardFields.map((field) => (
-                    <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
-                      <Text
-                        component={TextVariants.p}
-                        style={{ fontSize: '18px', color: '#151515' }}
-                      >
-                        {TotalDeploymentData.data
-                          ?.filter((ele) => ele.env === field.toLocaleLowerCase())
-                          .map((ele) => ele.count)}
-                      </Text>
-                      <Text
-                        component={TextVariants.p}
-                        style={{
-                          fontSize: '14px',
-                          fontWeight: 400,
-                          color: '#3C3F42'
-                        }}
-                      >
-                        {field}
-                      </Text>
-                    </div>
-                  ))}
-
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <Text component={TextVariants.p} style={{ fontSize: '18px', color: '#151515' }}>
-                      {TotalDeploymentData.data
-                        ?.filter(
-                          (ele) =>
-                            !TotalDeploymentCardFields.map((str) =>
-                              str.toLocaleLowerCase()
-                            ).includes(ele.env)
-                        )
-                        .reduce((acc, ele) => acc + ele.count, 0)}
-                    </Text>
-                    <Text
-                      component={TextVariants.p}
-                      style={{
-                        fontSize: '14px',
-                        fontWeight: 400,
-                        color: '#3C3F42'
-                      }}
-                    >
-                      Others
-                    </Text>
-                  </div>
+                  <Text component={TextVariants.p} className="dashboard-card-subheadings">
+                    {totalTimeSaved} hrs
+                  </Text>
+                  <Text
+                    component={TextVariants.p}
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: 400,
+                      color: '#3C3F42'
+                    }}
+                  >
+                    Total Time Saved
+                  </Text>
                 </div>
               </CardBody>
             </Card>
           </a>
         </Link>
+      </GridItem>
+      <GridItem>
+        <Card
+          // isSelectable
+          isFullHeight
+          style={{
+            overflow: 'auto',
+            scrollbarWidth: 'none',
+            borderRight: '1px  solid #D2D2D2'
+          }}
+        >
+          <CardBody>
+            <Text className="dashboard-card">{TotalDeployment}</Text>
+
+            <Text component={TextVariants.h2} style={{ fontFamily: 'Red Hat Text' }}>
+              Total Deployments
+            </Text>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '6%',
+                marginTop: '24px'
+              }}
+              className="dashboard-card-subheadings"
+            >
+              {TotalDeploymentCardFields.map((field) => (
+                <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <Text component={TextVariants.p} style={{ fontSize: '18px', color: '#151515' }}>
+                    {TotalDeploymentData.data
+                      ?.filter((ele) => ele.env === field.toLocaleLowerCase())
+                      .map((ele) => ele.count)}
+                  </Text>
+                  <Text
+                    component={TextVariants.p}
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: 400,
+                      color: '#3C3F42'
+                    }}
+                  >
+                    {field}
+                  </Text>
+                </div>
+              ))}
+
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <Text component={TextVariants.p} style={{ fontSize: '18px', color: '#151515' }}>
+                  {TotalDeploymentData.data
+                    ?.filter(
+                      (ele) =>
+                        !TotalDeploymentCardFields.map((str) => str.toLocaleLowerCase()).includes(
+                          ele.env
+                        )
+                    )
+                    .reduce((acc, ele) => acc + ele.count, 0)}
+                </Text>
+                <Text
+                  component={TextVariants.p}
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 400,
+                    color: '#3C3F42'
+                  }}
+                >
+                  Others
+                </Text>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
       </GridItem>
       <GridItem>
         <Card
@@ -175,47 +221,7 @@ export const Analytics = ({
           </CardBody>
         </Card>
       </GridItem>
-      <GridItem>
-        <Link href={pageLinks.webPropertyListPage}>
-          <a className="text-decoration-none">
-            <Card
-              isSelectable
-              isFullHeight
-              style={{
-                overflow: 'auto',
-                scrollbarWidth: 'none',
-                borderRight: '1px  solid #D2D2D2'
-              }}
-            >
-              <CardBody>
-                <Text component={TextVariants.p} className="dashboard-card">
-                  {TotalProperty}
-                </Text>
-                <Text component={TextVariants.h2}>Total Web Properties</Text>
-                <div
-                  style={{
-                    marginTop: '24px'
-                  }}
-                >
-                  <Text component={TextVariants.p} className="dashboard-card-subheadings">
-                    {totalTimeSaved} hrs
-                  </Text>
-                  <Text
-                    component={TextVariants.p}
-                    style={{
-                      fontSize: '14px',
-                      fontWeight: 400,
-                      color: '#3C3F42'
-                    }}
-                  >
-                    Total Time Saved
-                  </Text>
-                </div>
-              </CardBody>
-            </Card>
-          </a>
-        </Link>
-      </GridItem>
+
       <GridItem>
         <Card
           isFullHeight
