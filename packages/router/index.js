@@ -148,39 +148,47 @@ let options = {
   logProvider: () => log,
   autoRewrite: true,
   onProxyRes: (proxyRes, req) => {
+    try {
+      log.info({
+        step: 'onProxyRes start', statusCode: proxyRes.statusCode, headers: proxyRes.headers,
+        url: req.url, method: req.method
+      }, 'Response received from Apache pod');
 
-    log.info({step: 'onProxyRes start',statusCode: proxyRes.statusCode,headers: proxyRes.headers,
-    url: req.url,method: req.method }, 'Response received from Apache pod');
+      if (proxyRes.statusCode >= 301 && proxyRes.statusCode <= 308 && proxyRes.headers["location"]) {
+        // When the origin responds with a redirect it's location contains the flat path.
+        // This needs to be converted back to the url path. The original conversion is stored
+        // in the request headers to quickly restore just the spa portion of the path back to original
 
-    if (proxyRes.statusCode >= 301 && proxyRes.statusCode <= 308 && proxyRes.headers["location"]) {
-      // When the origin responds with a redirect it's location contains the flat path.
-      // This needs to be converted back to the url path. The original conversion is stored
-      // in the request headers to quickly restore just the spa portion of the path back to original
+        let location = proxyRes.headers["location"];
+        let flatPath = req.headers["x-spaship-flat-path"];
+        let urlPath = req.headers["x-spaship-url-path"];
 
-      let location = proxyRes.headers["location"];
-      let flatPath = req.headers["x-spaship-flat-path"];
-      let urlPath = req.headers["x-spaship-url-path"];
-
-      log.info({step: 'before location modification',
-            location,
-            flatPath,
-            urlPath
-            }, 'Location header before modification');
-
-      if (flatPath && urlPath) {
-        location = location.replace(flatPath, urlPath);
         log.info({
-                step: 'after location modification',
-                newLocation: location
-              }, 'Location header after modification');
-      }
+          step: 'before location modification',
+          location,
+          flatPath,
+          urlPath
+        }, 'Location header before modification');
 
-      proxyRes.headers["location"] = location;
-    }
-    log.info({
+        if (flatPath && urlPath) {
+          location = location.replace(flatPath, urlPath);
+          log.info({
+            step: 'after location modification',
+            newLocation: location
+          }, 'Location header after modification');
+        }
+
+        proxyRes.headers["location"] = location;
+      }
+      log.info({
         step: 'onProxyRes end',
         finalHeaders: proxyRes.headers
       }, 'Final response headers');
+    }catch (error) {
+      log.error({step: 'onProxyRes error', error: error.message}, 'Error in onProxyRes');
+      proxyRes.statusCode = 500;
+      proxyRes.statusMessage = 'Upstream server error';
+    }
   },
 };
 
