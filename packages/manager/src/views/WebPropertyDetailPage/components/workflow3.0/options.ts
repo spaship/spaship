@@ -25,12 +25,7 @@ export const requiredCpuOption: Option[] = [
   { value: '700m', label: '700m', disabled: false },
   { value: '800m', label: '800m', disabled: false },
   { value: '900m', label: '900m', disabled: false },
-  { value: '1000m', label: '1000m', disabled: false },
-  { value: '1100m', label: '1100m', disabled: false },
-  { value: '1200m', label: '1200m', disabled: false },
-  { value: '1300m', label: '1300m', disabled: false },
-  { value: '1400m', label: '1400m', disabled: false },
-  { value: '1500m', label: '1500m', disabled: false }
+  { value: '1000m', label: '1000m', disabled: false }
 ];
 
 export const limitCpuOption: Option[] = [
@@ -41,12 +36,7 @@ export const limitCpuOption: Option[] = [
   { value: '700m', label: '700m', disabled: false },
   { value: '800m', label: '800m', disabled: false },
   { value: '900m', label: '900m', disabled: false },
-  { value: '1000m', label: '1000m', disabled: false },
-  { value: '1100m', label: '1100m', disabled: false },
-  { value: '1200m', label: '1200m', disabled: false },
-  { value: '1300m', label: '1300m', disabled: false },
-  { value: '1400m', label: '1400m', disabled: false },
-  { value: '1500m', label: '1500m', disabled: false }
+  { value: '1000m', label: '1000m', disabled: false }
 ];
 
 export const requiredMemoryOption: Option[] = [
