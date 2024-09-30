@@ -377,7 +377,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
         )}
         <Split hasGutter>
           <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-            <FormGroup label="CPU Limit" isRequired fieldId="requiredCpu">
+            <FormGroup label="CPU Required" isRequired fieldId="requiredCpu">
               <TextInput
                 isRequired
                 value={formValues.requiredCpu}
@@ -401,7 +401,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
         </Split>
         <Split hasGutter>
           <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-            <FormGroup label="Memory Limit" isRequired fieldId="requiredMemory">
+            <FormGroup label="Memory Required" isRequired fieldId="requiredMemory">
               <TextInput
                 isRequired
                 value={formValues.requiredMemory}
@@ -412,7 +412,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
             </FormGroup>
           </SplitItem>
           <SplitItem isFilled style={{ width: '100%' }} className="pf-u-mr-md pf-u-mt-lg">
-            <FormGroup label="CPU Limit" isRequired fieldId="limitCpu">
+            <FormGroup label="Memory Limit" isRequired fieldId="limitCpu">
               <TextInput
                 isRequired
                 value={formValues.limitMemory}
