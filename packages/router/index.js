@@ -119,10 +119,6 @@ const customRouter = function (req) {
 
     routeHost = config.get("target");
 
-    if (routeUrl.endsWith('.js')) {
-      req.headers['Content-Type'] = 'application/javascript';
-    }
-
     log.debug(
       {
         router: {
@@ -209,7 +205,10 @@ const pathProxy = (req, res, next) => {
   const forwardedHost = config.get("forwarded_host");
   const xForwaredHost = req.headers["x-forwarded-host"];
   const host = req.headers["host"];
-
+  
+  if (req.url && req.url.endsWith('.js')) {
+    req.headers['Content-Type'] = 'application/javascript';
+  }
   //
   /**
    * If forwarded_host is found in config, use it as host
