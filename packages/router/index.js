@@ -203,7 +203,7 @@ const pathProxy = (req, res, next) => {
   const xForwaredHost = req.headers["x-forwarded-host"];
   const host = req.headers["host"];
 
-  if (req.url && req.url.endsWith('.js')) {
+  if (req.url && req.url.endsWith('.mjs')) {
     req.headers['Content-Type'] = 'application/javascript';
   }
   //
