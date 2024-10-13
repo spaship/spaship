@@ -45,9 +45,6 @@ const customRouter = function (req) {
      }, 'Request entering customRouter');
 
   let url = req.url.replace(/\/+/g, "/"); // Avoid duplicate slash issue
-   if (routeUrl.endsWith('.js')) {
-      req.headers['Content-Type'] = 'application/javascript';
-    }
 
   for (let mapping of pathMappingsData.pathMappings) {
     if (mapping.virtualPath === url) {
@@ -205,7 +202,7 @@ const pathProxy = (req, res, next) => {
   const forwardedHost = config.get("forwarded_host");
   const xForwaredHost = req.headers["x-forwarded-host"];
   const host = req.headers["host"];
-  
+
   if (req.url && req.url.endsWith('.js')) {
     req.headers['Content-Type'] = 'application/javascript';
   }
