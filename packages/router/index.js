@@ -45,7 +45,9 @@ const customRouter = function (req) {
      }, 'Request entering customRouter');
 
   let url = req.url.replace(/\/+/g, "/"); // Avoid duplicate slash issue
-
+   if (routeUrl.endsWith('.js')) {
+      req.headers['Content-Type'] = 'application/javascript';
+    }
 
   for (let mapping of pathMappingsData.pathMappings) {
     if (mapping.virtualPath === url) {
@@ -114,7 +116,12 @@ const customRouter = function (req) {
     req.url = routeUrl;
     req.headers["x-spaship-flat-path"] = matchedFlatDir;
     req.headers["x-spaship-url-path"] = spaPath;
+
     routeHost = config.get("target");
+
+    if (routeUrl.endsWith('.js')) {
+      req.headers['Content-Type'] = 'application/javascript';
+    }
 
     log.debug(
       {
