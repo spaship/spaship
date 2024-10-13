@@ -114,6 +114,10 @@ const customRouter = function (req) {
     req.headers["x-spaship-flat-path"] = matchedFlatDir;
     req.headers["x-spaship-url-path"] = spaPath;
 
+    if (req.url && req.url.endsWith('.mjs')) {
+      req.headers['Content-Type'] = 'application/javascript';
+    }
+    
     routeHost = config.get("target");
 
     log.debug(
