@@ -1,5 +1,5 @@
 import { HttpModule } from '@nestjs/axios';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { LoggerService } from 'src/configuration/logger/service';
 import { AgendaService } from 'src/server/agenda/service';
 import { AnalyticsFactory } from 'src/server/analytics/service/factory';
@@ -18,6 +18,7 @@ import { LighthouseService } from 'src/server/lighthouse/service';
 import { DataServicesModule } from '../../../repository/data-services.module';
 import { ApplicationFactory } from './factory';
 import { ApplicationService } from '.';
+import { FileUploadMiddleware } from 'src/configuration/middleware/fileUpload';
 
 @Module({
   imports: [DataServicesModule, HttpModule],
@@ -42,4 +43,8 @@ import { ApplicationService } from '.';
   ],
   exports: [ApplicationFactory, ApplicationService]
 })
-export class ApplicationModule {}
+export class ApplicationModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(FileUploadMiddleware).forRoutes({ path: '/applications/deploy/:propertyIdentifier/:env', method: RequestMethod.POST });
+  }
+}
