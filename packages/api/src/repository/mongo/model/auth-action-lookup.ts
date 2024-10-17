@@ -13,6 +13,9 @@ export class AuthActionLookup {
   @Prop({ required: true })
   method: string;
 
+  @Prop({ required: true })
+  criteria: string[];
+
   @Prop({ required: true, default: true })
   isActive: boolean;
 }
