@@ -22,7 +22,7 @@ export class PermissionService {
     private readonly permissionFactory: PermissionFactory,
     private readonly loggerService: LoggerService,
     private readonly analyticsService: AnalyticsService
-  ) {}
+  ) { }
 
   /* @internal
    * Get the list of the Permissions
@@ -52,29 +52,49 @@ export class PermissionService {
    * Every Permissions is related to a perticular property
    * Save the details related to the Permissions
    */
-  async createPermission(createPermissionDto: CreatePermissionDto): Promise<Permission[]> {
-    const permissions = this.permissionFactory.createNewPermissions(createPermissionDto);
+  async createPermission(createPermissionDto: CreatePermissionDto): Promise<any> {
+    const authActions = await this.dataServices.authActionLookup.getAll();
+    const permissions = this.permissionFactory.createNewPermissions(createPermissionDto, authActions);
     const authActionLookup = new Set((await this.dataServices.authActionLookup.getAll()).map((action) => action.name));
-    const savedPermissions = [];
+    const grantedPermissions = [];
+    const deniedPermissions = [];
     this.loggerService.log('CreatePermissions', JSON.stringify(permissions));
     for (const permission of permissions) {
+      if(permission.action === 'APPLICATION_DEPLOYMENT'){
+        const checkGranterAccess = {
+          email: createPermissionDto.createdBy,
+          action: permission.action,
+          'target.propertyIdentifier': permission.target.propertyIdentifier,
+          'target.cluster': permission.target.cluster,
+          'target.applicationIdentifier': permission.target.applicationIdentifier
+        }
+        Object.keys(checkGranterAccess).forEach((key) => { if (checkGranterAccess[key] === undefined || checkGranterAccess[key] === '') { delete checkGranterAccess[key]; } });
+        const granterAuth = (await this.dataServices.permission.getByAny(checkGranterAccess))[0];
+        if(!granterAuth) {
+          deniedPermissions.push(permission);
+          continue;
+        }
+      }
       try {
-        const checkUserPermission = (
-          await this.dataServices.permission.getByAny({
-            email: permission.email,
-            action: permission.action,
-            propertyIdentifier: permission.propertyIdentifier
-          })
-        )[0];
+        const checkAuth = {
+          email: permission.email,
+          action: permission.action,
+          'target.propertyIdentifier': permission.target.propertyIdentifier,
+          'target.cluster': permission.target.cluster,
+          'target.applicationIdentifier': permission.target.applicationIdentifier
+        }
+        Object.keys(checkAuth).forEach((key) => { if (checkAuth[key] === undefined || checkAuth[key] === '') { delete checkAuth[key]; } });
+        const checkUserPermission = (await this.dataServices.permission.getByAny(checkAuth))[0];
         if (!checkUserPermission && authActionLookup.has(permission.action)) {
           await this.dataServices.permission.create(permission);
-          savedPermissions.push(permission);
+          grantedPermissions.push(permission);
         }
       } catch (err) {
         this.loggerService.error('CreatePermissions', err);
       }
     }
-    for (const tmpPermission of savedPermissions) {
+
+    for (const tmpPermission of grantedPermissions) {
       await this.analyticsService.createActivityStream(
         createPermissionDto.propertyIdentifier,
         Action.PERMISSION_CREATED,
@@ -86,7 +106,7 @@ export class PermissionService {
         JSON.stringify(tmpPermission)
       );
     }
-    return savedPermissions;
+    return { grantedPermissions, deniedPermissions};
   }
 
   // @internal Provide intial access for the Property Creator
@@ -96,7 +116,7 @@ export class PermissionService {
     const createPermissionDto = new CreatePermissionDto();
     const permissionDetails = new PermissionDetailsDto();
     permissionDetails.name = creatorName;
-    permissionDetails.actions = role.actions;
+    //permissionDetails.accessRights = role.actions;
     permissionDetails.email = createdBy;
     createPermissionDto.permissionDetails = [permissionDetails];
     createPermissionDto.propertyIdentifier = propertyIdentifier;
@@ -106,19 +126,40 @@ export class PermissionService {
   }
 
   // @internal Delete the permission from the records
-  async deletePermission(deletePermissionDto: DeletePermissionDto): Promise<Permission[]> {
-    const permissions = this.permissionFactory.deletePermissions(deletePermissionDto);
+  async deletePermission(deletePermissionDto: DeletePermissionDto): Promise<any> {
+    const authActions = await this.dataServices.authActionLookup.getAll();
+    const permissions = this.permissionFactory.deletePermissions(deletePermissionDto, authActions);
     this.loggerService.log('DeletePermissions', JSON.stringify(permissions));
-    const deletedRecords = [];
+    const deletedPermissions = [];
+    const deniedPermissions = [];
     for (const permission of permissions) {
+      if(permission.action === 'APPLICATION_DEPLOYMENT'){
+        const checkGranterAccess = {
+          email: deletePermissionDto.createdBy,
+          action: permission.action,
+          'target.propertyIdentifier': permission.target.propertyIdentifier,
+          'target.cluster': permission.target.cluster,
+          'target.applicationIdentifier': permission.target.applicationIdentifier
+        }
+        Object.keys(checkGranterAccess).forEach((key) => { if (checkGranterAccess[key] === undefined || checkGranterAccess[key] === '') { delete checkGranterAccess[key]; } });
+        const granterAuth = (await this.dataServices.permission.getByAny(checkGranterAccess))[0];
+        if(!granterAuth) {
+          deniedPermissions.push(permission);
+          continue;
+        }
+      }
       try {
-        const response = await this.dataServices.permission.delete({
+        const checkAuth = {
           email: permission.email,
           action: permission.action,
-          propertyIdentifier: permission.propertyIdentifier
-        });
+          'target.propertyIdentifier': permission.target.propertyIdentifier,
+          'target.cluster': permission.target.cluster,
+          'target.applicationIdentifier': permission.target.applicationIdentifier
+        }
+        Object.keys(checkAuth).forEach((key) => { if (checkAuth[key] === undefined || checkAuth[key] === '') { delete checkAuth[key]; } });
+        const response = await this.dataServices.permission.delete(checkAuth);
         if (response) {
-          deletedRecords.push(permission);
+          deletedPermissions.push(permission);
           await this.analyticsService.createActivityStream(
             deletePermissionDto.propertyIdentifier,
             Action.PERMISSION_DELETED,
@@ -134,10 +175,7 @@ export class PermissionService {
         this.loggerService.error('DeletePermission', err);
       }
     }
-    if (deletedRecords.length === 0)
-      this.exceptionService.badRequestException({
-        message: `No Deletable Permission found for ${deletePermissionDto.propertyIdentifier}.`
-      });
-    return deletedRecords;
+
+    return { deletedPermissions, deniedPermissions};
   }
 }
