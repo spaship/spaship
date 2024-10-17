@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Target } from 'src/server/permission/entity';
 
 export type PermissionDocument = Permission & Document;
 
@@ -10,8 +11,8 @@ export class Permission {
   @Prop({ required: true })
   email: string;
 
-  @Prop({ required: true })
-  propertyIdentifier: string;
+  @Prop({ type: 'object' })
+  target: Target;
 
   @Prop({ required: true })
   action: string;
