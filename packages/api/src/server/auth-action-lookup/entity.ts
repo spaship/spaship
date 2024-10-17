@@ -5,5 +5,7 @@ export class AuthActionLookup {
 
   method: string;
 
+  criteria: string[];
+
   isActive: boolean;
 }
