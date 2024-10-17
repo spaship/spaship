@@ -1,8 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Body, Controller, Delete, Get, Param, Post, Query, UploadedFile, UseGuards } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { diskStorage } from 'multer';
-import { DIRECTORY_CONFIGURATION, VALIDATION } from '../../configuration';
 import { AuthenticationGuard } from '../auth/guard';
 import { ExceptionsService } from '../exceptions/service';
 import { Application } from './entity';
@@ -45,21 +42,6 @@ export class ApplicationController {
   }
 
   @Post('/deploy/:propertyIdentifier/:env')
-  @UseInterceptors(
-    FileInterceptor('upload', {
-      dest: DIRECTORY_CONFIGURATION.baseDir,
-      storage: diskStorage({
-        destination: DIRECTORY_CONFIGURATION.baseDir,
-        filename: (req, file, callback) => {
-          callback(null, `${Date.now()}-${file.originalname.replace(VALIDATION.FILE, '_')}`);
-        }
-      }),
-      fileFilter: (req, file, cb) => {
-        file.filename = `${Date.now()}-${file.originalname.replace(VALIDATION.FILE, '_')}`;
-        cb(null, true);
-      }
-    })
-  )
   @ApiCreatedResponse({ status: 201, description: 'Application deployed successfully.', type: ApplicationResponse })
   async createApplication(@UploadedFile() file, @Body() applicationDto: CreateApplicationDto, @Param() params, @Query() queries): Promise<any> {
     if (!this.applicationFactory.getIdentifier(applicationDto.name))

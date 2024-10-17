@@ -1,4 +1,3 @@
-
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import * as multer from 'multer';
 import { DIRECTORY_CONFIGURATION, VALIDATION } from 'src/Configuration';
@@ -8,7 +7,7 @@ export class FileUploadMiddleware implements NestMiddleware {
   use(req: any, res: any, next: () => void) {
     const storage = multer.diskStorage({
       destination: DIRECTORY_CONFIGURATION.baseDir,
-      filename: (req, file, callback) => {
+      filename: (request, file, callback) => {
         const filename = `${Date.now()}-${file.originalname.replace(VALIDATION.FILE, '_')}`;
         callback(null, filename);
       }
@@ -16,7 +15,7 @@ export class FileUploadMiddleware implements NestMiddleware {
 
     const upload = multer({
       storage,
-      fileFilter: (req, file, cb) => {
+      fileFilter: (request, file, cb) => {
         file.filename = `${Date.now()}-${file.originalname.replace(VALIDATION.FILE, '_')}`;
         cb(null, true);
       }

@@ -15,10 +15,10 @@ import { CMDBFactory } from 'src/server/sot/cmdb/service/factory';
 import { CMDBService } from 'src/server/sot/cmdb/service';
 import { LighthouseFactory } from 'src/server/lighthouse/service/factory';
 import { LighthouseService } from 'src/server/lighthouse/service';
+import { FileUploadMiddleware } from 'src/configuration/middleware/fileUpload';
 import { DataServicesModule } from '../../../repository/data-services.module';
 import { ApplicationFactory } from './factory';
 import { ApplicationService } from '.';
-import { FileUploadMiddleware } from 'src/configuration/middleware/fileUpload';
 
 @Module({
   imports: [DataServicesModule, HttpModule],
