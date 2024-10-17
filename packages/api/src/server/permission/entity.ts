@@ -3,7 +3,7 @@ export class Permission {
 
   email: string;
 
-  propertyIdentifier: string;
+  target: Target;
 
   action: string;
 
@@ -12,4 +12,12 @@ export class Permission {
   updatedBy: string;
 
   isActive: boolean;
+}
+
+export class Target {
+  propertyIdentifier: string;
+
+  cluster: string;
+
+  applicationIdentifier: string;
 }

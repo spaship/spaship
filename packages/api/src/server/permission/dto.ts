@@ -48,7 +48,18 @@ export class PermissionDetailsDto {
 
   @ApiProperty()
   @IsArray()
-  actions: string[];
+  accessRights: AccessRights[];
+}
+
+export class AccessRights {
+  @ApiProperty()
+  action: string;
+
+  @ApiProperty()
+  cluster: string;
+
+  @ApiProperty()
+  applicationIdentifier: string;
 }
 
 export class DeletePermissionDetailsDto {
@@ -60,5 +71,5 @@ export class DeletePermissionDetailsDto {
 
   @ApiProperty()
   @IsArray()
-  actions: string[];
+  accessRights: AccessRights[];
 }
