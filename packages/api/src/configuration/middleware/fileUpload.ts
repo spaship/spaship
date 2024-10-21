@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import * as multer from 'multer';
-import { DIRECTORY_CONFIGURATION, VALIDATION } from 'src/Configuration';
+import { DIRECTORY_CONFIGURATION, VALIDATION } from '..';
 
 @Injectable()
 export class FileUploadMiddleware implements NestMiddleware {
