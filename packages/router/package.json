@@ -27,7 +27,7 @@
   "dependencies": {
     "@spaship/common": "file:../common",
     "express": "^4.17.1",
-    "http-proxy-middleware": "^2.0.0",
+    "http-proxy-middleware": "^2.0.7",
     "lodash": "^4.17.15",
     "nconf": "^0.12.0"
   },
