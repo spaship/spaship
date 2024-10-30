@@ -305,7 +305,7 @@ export class ApplicationService {
     const { baseDir } = DIRECTORY_CONFIGURATION;
     let tmpDir = `${baseDir}/${identifier.split('.')[0]}-${Date.now()}-extracted`;
     await fs.mkdirSync(`${tmpDir}`, { recursive: true });
-    const unzipCommand = `7z x ${path.resolve(applicationPath)} -o${tmpDir}`;
+    const unzipCommand = `7z x ${path.resolve(applicationPath)} -o${tmpDir} -aoa`;
     const execPromise = await util.promisify(exec);
     try {
       await execPromise(unzipCommand);
@@ -315,7 +315,7 @@ export class ApplicationService {
        */
       if (fileOrginalName.endsWith('tar.gz') || fileOrginalName.endsWith('tgz')) {
         const nestedOutputDirectory = `${baseDir}/${identifier.split('.')[0]}-${Date.now()}-extracted`;
-        const nestedUnzipCommand = `7z x ${path.resolve(tmpDir)}/*.tar -o${nestedOutputDirectory}`;
+        const nestedUnzipCommand = `7z x ${path.resolve(tmpDir)}/*.tar -o${nestedOutputDirectory} -aoa`;
         try {
           await execPromise(nestedUnzipCommand);
           tmpDir = nestedOutputDirectory;
