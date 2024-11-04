@@ -180,11 +180,11 @@ export const ConfigureWorkflowForm = ({
       healthCheckPath: dataProps && dataProps.healthCheckPath ? dataProps.healthCheckPath : '/',
       dockerFileName:
         dataProps && dataProps.dockerFileName ? dataProps.dockerFileName : 'Dockerfile',
-      replicas: dataProps.replicas,
-      requiredCpu: dataProps.requiredCpu,
-      requiredMemory: dataProps.requiredMemory,
-      limitCpu: dataProps.limitCpu,
-      limitMemory: dataProps.limitMemory
+      replicas: dataProps.replicas ?? '1',
+      requiredCpu: dataProps.requiredCpu ?? '200m',
+      requiredMemory: dataProps.requiredMemory ?? '256Mi',
+      limitCpu: dataProps.limitCpu ?? '300m',
+      limitMemory: dataProps.limitMemory ?? '512Mi'
     },
 
     mode: 'onBlur',
