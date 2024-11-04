@@ -190,7 +190,7 @@ export const ConfigureWorkflowForm = ({
     mode: 'onBlur',
     resolver: yupResolver(schema)
   });
-  
+
   const [step, setStep] = useState<number>(1);
   const createSsrSpaProperty = useAddSsrSpaProperty();
   const webProperties = useGetWebPropertyGroupedByEnv(propertyIdentifier);
