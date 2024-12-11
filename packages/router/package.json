@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "SPASHIP_LOG_LEVEL=debug SPASHIP_LOG_FORMAT=pretty npx jest --restoreMocks --passWithNoTests",
-    "start": "[ -f ../../.env ] && source ../../.env; node $NODE_DEBUG_OPTION --max-http-header-size=16384 index.js"
+    "start": "[ -f ../../.env ] && source ../../.env; node $NODE_DEBUG_OPTION --max-http-header-size=33554432 index.js"
   },
   "repository": {
     "type": "git",
