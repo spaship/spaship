@@ -58,7 +58,8 @@ export const AUTH_LISTING = {
   propertyBaseURL: '/api/v1/property',
   gitDeploymentBaseURL: '/api/v1/applications/git/deploy',
   gitEnvListBaseURL: '/api/v1/environment/git',
-  hourSavedAnalyticsBaseURL: '/api/v1/analytics/deployment/time-saved'
+  hourSavedAnalyticsBaseURL: '/api/v1/analytics/deployment/time-saved',
+  proxyServiceBaseURL: '/api/v1/proxy'
 };
 
 const ROVER_AUTH_DETAILS = {
