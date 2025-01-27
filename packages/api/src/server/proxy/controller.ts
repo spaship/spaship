@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ProxyService } from './service';
+import { AuthGuard } from '@nestjs/passport';
+import { AuthenticationGuard } from '../auth/guard';
 
 @Controller('proxy')
 @ApiTags('ProxyController')
+@UseGuards(AuthenticationGuard)
 export class ProxyController {
   constructor(private readonly proxyService: ProxyService) {}
 
