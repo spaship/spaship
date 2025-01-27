@@ -44,6 +44,8 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
       if (url.startsWith(AUTH_LISTING.gitDeploymentBaseURL) || url.startsWith(AUTH_LISTING.gitEnvListBaseURL))
         return this.validateGitRequest(bearerToken);
       if (context.getArgs()[0].method === 'GET') return this.validateGetRequest(bearerToken);
+      // TODO : to be removed
+      if (url.startsWith(AUTH_LISTING.proxyServiceBaseURL)) return this.validateGetRequest(bearerToken);
     }
     const secret: string = this.getSecretKey();
     const options: Object = { secret, algorithms: ['RS256'] };
