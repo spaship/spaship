@@ -234,3 +234,8 @@ export enum SYMLINK {
   CREATE = 'CREATE_SYMLINK',
   DELETE_TARGET = 'DELETE_TARGET'
 }
+
+export const PROXY_CHECK = {
+  authToken: process.env.SPASHIP_PROXY_AUTH,
+  url: process.env.SPASHIP_PROXY_URL
+};

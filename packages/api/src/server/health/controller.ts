@@ -19,4 +19,10 @@ export class HealthController {
   public async getDatabaseHealth() {
     return this.healthService.databaseStatus();
   }
+
+  @Get('proxy')
+  @ApiOperation({ description: 'Get the Health Status of the database.' })
+  public async getProxy() {
+    return await this.healthService.apiStatus();
+  }
 }
