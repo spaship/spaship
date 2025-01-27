@@ -39,6 +39,8 @@ import { RoverController } from './server/sot/rover/controller';
 import { RoverModule } from './server/sot/rover/service/module';
 import { WebhookController } from './server/webhook/controller';
 import { WebhookModule } from './server/webhook/service/module';
+import { ProxyModule } from './server/proxy/service/module';
+import { ProxyController } from './server/proxy/controller';
 
 @Module({
   imports: [
@@ -64,7 +66,8 @@ import { WebhookModule } from './server/webhook/service/module';
     CMDBModule,
     LighthouseModule,
     FeedbackModule,
-    ReportModule
+    ReportModule,
+    ProxyModule
   ],
   controllers: [
     ApikeyController,
@@ -83,7 +86,8 @@ import { WebhookModule } from './server/webhook/service/module';
     CMDBController,
     LighthouseController,
     FeedbackController,
-    ReportController
+    ReportController,
+    ProxyController
   ],
   providers: []
 })
