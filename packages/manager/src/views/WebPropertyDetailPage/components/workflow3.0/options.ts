@@ -1,12 +1,8 @@
 // options.ts
 
-export interface Option {
-  value: string;
-  label: string;
-  disabled: boolean;
-}
+import { TOption } from './ConfigureWorkflowForm/types';
 
-export const replicasOption: Option[] = [
+export const replicasOption: TOption[] = [
   { value: 'please choose', label: 'Select one', disabled: true },
   { value: '1', label: '1', disabled: false },
   { value: '2', label: '2', disabled: false },
@@ -16,7 +12,7 @@ export const replicasOption: Option[] = [
   { value: '6', label: '6', disabled: false }
 ];
 
-export const requiredCpuOption: Option[] = [
+export const requiredCpuOption: TOption[] = [
   { value: '200m', label: '200m', disabled: false },
   { value: '300m', label: '300m', disabled: false },
   { value: '400m', label: '400m', disabled: false },
@@ -28,7 +24,7 @@ export const requiredCpuOption: Option[] = [
   { value: '1000m', label: '1000m', disabled: false }
 ];
 
-export const limitCpuOption: Option[] = [
+export const limitCpuOption: TOption[] = [
   { value: '300m', label: '300m', disabled: false },
   { value: '400m', label: '400m', disabled: false },
   { value: '500m', label: '500m', disabled: false },
@@ -39,7 +35,7 @@ export const limitCpuOption: Option[] = [
   { value: '1000m', label: '1000m', disabled: false }
 ];
 
-export const requiredMemoryOption: Option[] = [
+export const requiredMemoryOption: TOption[] = [
   { value: '256Mi', label: '256Mi', disabled: false },
   { value: '512Mi', label: '512Mi', disabled: false },
   { value: '768Mi', label: '768Mi', disabled: false },
@@ -48,7 +44,7 @@ export const requiredMemoryOption: Option[] = [
   { value: '1536Mi', label: '1536Mi', disabled: false }
 ];
 
-export const limitMemoryOption: Option[] = [
+export const limitMemoryOption: TOption[] = [
   { value: '256Mi', label: '256Mi', disabled: false },
   { value: '512Mi', label: '512Mi', disabled: false },
   { value: '768Mi', label: '768Mi', disabled: false },

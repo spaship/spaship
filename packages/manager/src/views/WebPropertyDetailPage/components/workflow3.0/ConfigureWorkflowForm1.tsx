@@ -147,7 +147,7 @@ type MapItem = {
 };
 
 export type FormData = yup.InferType<typeof schema>;
-export const ConfigureWorkflowForm = ({
+export const ConfigureWorkflowForm1 = ({
   onClose,
   propertyIdentifier,
   dataProps,
