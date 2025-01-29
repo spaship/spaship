@@ -33,4 +33,10 @@ export class ProxyController {
   public async deleteProxy(@Param('incidentId') incidentId: string) {
     return await this.proxyService.deleteIncident(incidentId);
   }
+
+  @Get('components')
+  @ApiOperation({ description: 'Get the components.' })
+  public async getComponenets() {
+    return await this.proxyService.fetchComponents();
+  }
 }
