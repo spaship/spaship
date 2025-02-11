@@ -8,7 +8,7 @@ metadata:
   description: UI for the SPAShip to manage and deploy SPAs.
   annotations:
     github.com/project-slug: 'spaship/spaship'
-    servicenow.com/appcode: SPAS-002
+    servicenow.com/appcode: SPAS-003
   tags:
     - spaship
     - developers
@@ -17,5 +17,4 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: group:redhat/spaship-devs
   system: devex/spaship

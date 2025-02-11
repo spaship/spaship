@@ -1,0 +1,11 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: spaship
+spec:
+  targets:
+    - ./packages/api/catalog-info.yaml
+    - ./catalog/systems/SPAship.yaml
+    - ./packages/cli/catalog-info.yaml
+    - ./packages/manager/catalog-info.yaml

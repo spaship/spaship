@@ -1,0 +1,17 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: spaship
+  title: SPAship
+  namespace: devex
+  description: SPAship is an open source platform for deploying, integrating, and managing single-page apps (SPAs).
+  tags:
+    - javascript
+    - nodejs
+    - spaship
+    - developer-experience
+    - platform-engineering
+  annotations:
+    servicenow.com/appcode: SPAS-001
+spec:
+  domain: uxe/platform-engineering
