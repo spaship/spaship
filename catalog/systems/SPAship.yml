@@ -1,4 +1,3 @@
----
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
@@ -7,21 +6,12 @@ metadata:
   namespace: devex
   description: SPAship is an open source platform for deploying, integrating, and managing single-page apps (SPAs).
   tags:
-    - digital-experience
     - javascript
     - nodejs
     - spaship
     - developer-experience
-  links:
-  - url: https://spaship.redhat.com
-    title: Production
-  - url: https://spaship.stage.redhat.com
-    title: Stage
-  - url: https://spaship.qa.redhat.com
-    title: QA
-  - url: https://redhat-internal.slack.com/archives/C04F5PRKEMC
-    title: Slack
-    icon: chat
+    - platform-engineering
+  annotations:
+    servicenow.com/appcode: SPAS-001
 spec:
-  owner: user:redhat/npatil
-  domain: devex/platform-engineering
+  domain: uxe/platform-engineering

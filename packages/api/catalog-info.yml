@@ -17,5 +17,4 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: group:redhat/spaship-devs
   system: devex/spaship
