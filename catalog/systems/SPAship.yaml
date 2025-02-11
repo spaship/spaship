@@ -15,3 +15,4 @@ metadata:
     servicenow.com/appcode: SPAS-001
 spec:
   domain: uxe/platform-engineering
+  owner: group:redhat/spaship-devs

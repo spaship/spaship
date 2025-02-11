@@ -15,6 +15,7 @@ metadata:
     - developers
     - xe
 spec:
-  type: service
+  type: library
   lifecycle: production
   system: devex/spaship
+  owner: group:redhat/spaship-devs
