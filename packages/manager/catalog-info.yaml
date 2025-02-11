@@ -15,6 +15,7 @@ metadata:
     - nodejs
     - xe
 spec:
-  type: service
+  type: website
   lifecycle: production
   system: devex/spaship
+  owner: group:redhat/spaship-devs

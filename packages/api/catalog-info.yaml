@@ -18,3 +18,4 @@ spec:
   type: service
   lifecycle: production
   system: devex/spaship
+  owner: group:redhat/spaship-devs
