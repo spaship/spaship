@@ -29,6 +29,7 @@ import {
   GitDeploymentRequestDTO,
   SaveVirtualPathRequest,
   SymlinkDTO,
+  UpdateConfigOrSecretRequest,
   VirtualPathDTO
 } from '../request.dto';
 import { ApplicationFactory } from './factory';
@@ -792,13 +793,30 @@ export class ApplicationService {
           { propertyIdentifier, env, identifier, isContainerized: true, isGit: true },
           applicationDetails
         );
+
+        // @internal To trigger the config after the deployment
+        const deletedConfigKeys = await this.applicationFactory.getDeletedKeys(applicationDetails.config || {}, applicationRequest.config || {});
+        const applicationConfigRequest = await this.applicationFactory.transformRequestToApplicationConfig(
+          propertyIdentifier,
+          identifier,
+          applicationDetails.env,
+          applicationRequest.config
+        );
+        const containerizedDeploymentRequestForOperator = await this.applicationFactory.createContainerizedOperatorConfigRequest(
+          applicationConfigRequest,
+          property.namespace,
+          deletedConfigKeys
+        );
+        this.logger.log('ConfigUpdateRequestToOperator', JSON.stringify(containerizedDeploymentRequestForOperator));
+
         this.manageBuildAndDeployment(
           applicationDetails,
           statusRequest,
           response.buildName,
           con.baseurl,
           applicationRequest.commitId,
-          applicationRequest.mergeId
+          applicationRequest.mergeId,
+          containerizedDeploymentRequestForOperator
         );
       } else {
         await this.analyticsService.createActivityStream(
@@ -825,9 +843,10 @@ export class ApplicationService {
     buildName: string,
     baseurl: string,
     commitId: string,
-    mergeId: string
+    mergeId: string,
+    containerizedDeploymentRequestForOperator
   ) {
-    await this.startBuildInterval(application, buildName, statusRequest, baseurl, commitId, mergeId);
+    await this.startBuildInterval(application, buildName, statusRequest, baseurl, commitId, mergeId, containerizedDeploymentRequestForOperator);
   }
 
   // @internal Check build periodically & update the status
@@ -837,7 +856,8 @@ export class ApplicationService {
     statusRequest: GitApplicationStatusRequest,
     baseurl: string,
     commitId: string,
-    mergeId: string
+    mergeId: string,
+    containerizedDeploymentRequestForOperator: UpdateConfigOrSecretRequest
   ) {
     let buildCheck = false;
     const buildInterval = setInterval(async () => {
@@ -847,7 +867,7 @@ export class ApplicationService {
       if (buildStatus?.data === STATUS.BUILD_COMPLETED) {
         this.logger.log('BuildStatus', `Build Successfully Completed for ${buildName} [Workflow 3.0]`);
         buildCheck = true;
-        this.startDeploymentInterval(application, statusRequest, baseurl, buildName, commitId, mergeId);
+        this.startDeploymentInterval(application, statusRequest, baseurl, buildName, commitId, mergeId, containerizedDeploymentRequestForOperator);
         await clearInterval(buildInterval);
       } else if (buildStatus?.data === STATUS.BUILD_FAILED) {
         buildCheck = true;
@@ -931,7 +951,8 @@ export class ApplicationService {
     baseurl: string,
     buildName: string,
     commitId: string,
-    mergeId: string
+    mergeId: string,
+    containerizedDeploymentRequestForOperator: UpdateConfigOrSecretRequest
   ) {
     let deploymentCheck = false;
     const deploymentInterval = setInterval(async () => {
@@ -970,6 +991,14 @@ export class ApplicationService {
           envDetails.cluster,
           DEPLOYMENT_DETAILS.type.containerized
         );
+
+        // @internal Update the Pod once again
+        try {
+          this.applicationFactory.containerizedConfigUpdate(containerizedDeploymentRequestForOperator, baseurl);
+        } catch (error) {
+          this.logger.error('ConfigUpdateError', error);
+        }
+
         try {
           if (applicationDetails.autoGenerateLHReport)
             this.lighthouseService.generateLighthouseReport(
