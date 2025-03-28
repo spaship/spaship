@@ -3,11 +3,11 @@ import { TerminusModule } from '@nestjs/terminus';
 import { LoggerService } from 'src/configuration/logger/service';
 import { HttpModule } from '@nestjs/axios';
 import { ExceptionsService } from 'src/server/exceptions/service';
-import { HealthService } from '.';
+import { ProxyService } from '.';
 
 @Module({
   imports: [TerminusModule, HttpModule],
-  providers: [TerminusModule, HealthService, LoggerService, ExceptionsService],
-  exports: [HealthService]
+  providers: [TerminusModule, ProxyService, LoggerService, ExceptionsService],
+  exports: [ProxyService]
 })
-export class HealthModule {}
+export class ProxyModule {}
