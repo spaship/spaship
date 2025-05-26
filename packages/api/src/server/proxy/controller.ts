@@ -15,6 +15,12 @@ export class ProxyController {
     return this.proxyService.fetchIncidents();
   }
 
+  @Get('incidents/:incidentId')
+  @ApiOperation({ description: 'Get an incident.' })
+  public async getStatusPageIncident(@Param('incidentId') incidentId: string) {
+    return this.proxyService.fetchIncident(incidentId);
+  }
+
   @Post('incidents')
   @ApiOperation({ description: 'Create a new incident.' })
   public async createProxy(@Body() data: any) {

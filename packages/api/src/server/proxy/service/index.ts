@@ -32,6 +32,22 @@ export class ProxyService {
     }
   }
 
+  async fetchIncident(id: string) {
+    try {
+      const baseUrl = await this.getBaseUrl();
+      const authToken = await this.getAuthToken();
+      const response = await this.httpService.axiosRef.get(`${baseUrl}/incidents/${id}`, {
+        headers: { Authorization: authToken }
+      });
+      this.logger.log('Fetched incidents', response.data);
+      return response.data;
+    } catch (err) {
+      this.logger.error('Error fetching incidents', err);
+      this.exceptionsService.badRequestException({ message: 'Failed to fetch incidents.' });
+      return [];
+    }
+  }
+
   async fetchComponents() {
     try {
       const baseUrl = await this.getBaseUrl();
