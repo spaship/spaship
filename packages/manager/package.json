@@ -75,7 +75,7 @@
     "simplebar-react": "^2.4.3",
     "victory": "^36.7.0",
     "victory-zoom-container": "^36.6.8",
-    "yup": "0.32.11"
+    "yup": "1.0.0"
   },
   "devDependencies": {
     "@types/node": "18.11.9",
