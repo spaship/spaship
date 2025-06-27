@@ -35,7 +35,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "axios": "0.27.2",
+    "axios": "0.28.0",
     "memfs": "3.4.13",
     "supertest": "^7.0.0",
     "swagger-ui-express": "^5.0.0",
