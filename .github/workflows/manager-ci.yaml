@@ -60,6 +60,9 @@ jobs:
             NEXT_PUBLIC_SPASHIP_CLI_INSTRUCTIONS=${{ secrets.CLI_INSTRUCTIONS }}
             NEXT_PUBLIC_SPASHIP_DOCBOT_FEEDBACK=${{ secrets.DOCSBOT_FEEDBACK_URL }}
             NEXT_PUBLIC_SPASHIP_QUERY_STREAM_URL=${{ secrets.DOCSBOT_STREAM_URL }}
+            NEXT_PUBLIC_SPASHIP_DOCBOT_FEEDBACK=${{ secrets.DOCSBOT_FEEDBACK_URL }}
+            NEXT_PUBLIC_DOC_URL=${{ secrets.DOCS_URL }}
+            NEXT_PUBLIC_SPASHIP_GUIDE=${{ secrets.DOCS_URL }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:dev-${{env.GITHUB_REF_SLUG}}
       - name: Image digest
@@ -85,6 +88,8 @@ jobs:
             NEXT_PUBLIC_SPASHIP_CLI_INSTRUCTIONS=${{ secrets.CLI_INSTRUCTIONS }}
             NEXT_PUBLIC_SPASHIP_DOCBOT_FEEDBACK=${{ secrets.DOCSBOT_FEEDBACK_URL }}
             NEXT_PUBLIC_SPASHIP_QUERY_STREAM_URL=${{ secrets.DOCSBOT_STREAM_URL }}
+            NEXT_PUBLIC_DOC_URL=${{ secrets.DOCS_URL }}
+            NEXT_PUBLIC_SPASHIP_GUIDE=${{ secrets.DOCS_URL }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:qa-${{env.GITHUB_REF_SLUG}}
       - name: Image digest
@@ -110,6 +115,8 @@ jobs:
             NEXT_PUBLIC_SPASHIP_CLI_INSTRUCTIONS=${{ secrets.CLI_INSTRUCTIONS }}
             NEXT_PUBLIC_SPASHIP_DOCBOT_FEEDBACK=${{ secrets.DOCSBOT_FEEDBACK_URL }}
             NEXT_PUBLIC_SPASHIP_QUERY_STREAM_URL=${{ secrets.DOCSBOT_STREAM_URL }}
+            NEXT_PUBLIC_DOC_URL=${{ secrets.DOCS_URL }}
+            NEXT_PUBLIC_SPASHIP_GUIDE=${{ secrets.DOCS_URL }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:stage-${{env.GITHUB_REF_SLUG}}
       - name: Image digest
@@ -135,6 +142,8 @@ jobs:
             NEXT_PUBLIC_SPASHIP_CLI_INSTRUCTIONS=${{ secrets.CLI_INSTRUCTIONS }}
             NEXT_PUBLIC_SPASHIP_DOCBOT_FEEDBACK=${{ secrets.DOCSBOT_FEEDBACK_URL }}
             NEXT_PUBLIC_SPASHIP_QUERY_STREAM_URL=${{ secrets.DOCSBOT_STREAM_URL }}
+            NEXT_PUBLIC_DOC_URL=${{ secrets.DOCS_URL }}
+            NEXT_PUBLIC_SPASHIP_GUIDE=${{ secrets.DOCS_URL }}
           tags: |
             quay.io/${{ env.REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:prod-${{env.GITHUB_REF_SLUG}}
       - name: Image digest
