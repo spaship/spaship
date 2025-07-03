@@ -1,9 +1,9 @@
 export const env = {
   PUBLIC_SPASHIP_ORCHESTRATOR_BASE_URL: process.env.NEXT_PUBLIC_SPASHIP_API_BASE_URL,
   PUBLIC_GITHUB_URL: process.env.NEXT_PUBLIC_GITHUB_URL || 'https://github.com/spaship/spaship',
-  PUBLIC_DOC_URL: process.env.NEXT_PUBLIC_DOC_URL || 'https://spaship.io',
+  PUBLIC_DOC_URL: process.env.NEXT_PUBLIC_DOC_URL || 'https://github.com/spaship/spaship',
   PUBLIC_SPASHIP_GUIDE:
-    process.env.NEXT_PUBLIC_SPASHIP_GUIDE || 'https://spaship.io/docs/introduction',
+    process.env.NEXT_PUBLIC_SPASHIP_GUIDE || 'https://github.com/spaship/spaship',
   PUBLIC_SPASHIP_REPORT_BUG:
     process.env.NEXT_PUBLIC_SPASHIP_REPORT_BUG ||
     'https://github.com/spaship/spaship/issues/new?assignees=&labels=bug&template=bug-report.md&title=%5BBug%5D%3A',
