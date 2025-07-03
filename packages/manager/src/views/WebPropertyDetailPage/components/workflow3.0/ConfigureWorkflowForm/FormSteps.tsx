@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import {
   Button,
@@ -11,7 +12,7 @@ import {
   Alert
 } from '@patternfly/react-core';
 import { Controller, useFormContext } from 'react-hook-form';
-import { InfoCircleIcon, TimesCircleIcon } from '@patternfly/react-icons';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 import { TFieldConfig, TFormStepProps } from './types';
 import { fieldsConfig } from './FieldsConfig';
 

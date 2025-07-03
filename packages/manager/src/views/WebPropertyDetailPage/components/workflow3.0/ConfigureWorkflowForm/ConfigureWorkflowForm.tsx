@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-console */
+/* eslint-disable react/jsx-props-no-spreading */
 import { Wizard, Button } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';

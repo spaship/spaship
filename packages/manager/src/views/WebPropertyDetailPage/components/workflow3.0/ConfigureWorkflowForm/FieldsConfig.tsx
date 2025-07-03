@@ -6,6 +6,7 @@ import {
   requiredCpuOption,
   requiredMemoryOption
 } from '../options';
+
 export const fieldsConfig: TStepConfig[] = [
   {
     step: 1,
