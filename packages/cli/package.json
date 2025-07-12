@@ -29,11 +29,11 @@
   },
   "dependencies": {
     "@oclif/command": "^1.8.16",
-    "@oclif/config": "^1.13.3",
+    "@oclif/config": "^1.18.17",
     "@oclif/plugin-help": "^3.3.1",
     "@spaship/common": "^0.14.0",
     "ajv": "^8.6.3",
-    "archiver": "^5.0.0",
+    "archiver": "^7.0.0",
     "axios": "^0.27.0",
     "chalk": "^4.1.1",
     "cosmiconfig": "^8.0.0",
@@ -46,7 +46,7 @@
     "nconf": "^0.12.0",
     "ora": "^5.0.0",
     "pretty-bytes": "^5.3.0",
-    "read-package-json": "^4.1.1",
+    "read-package-json": "^7.0.1",
     "read-pkg-up": "^7.0.0",
     "uuid": "^8.3.2"
   },
