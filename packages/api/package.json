@@ -53,12 +53,12 @@
     "mongoose-autopopulate": "^1.0.1",
     "multer": "^1.4.5-lts.1",
     "reflect-metadata": "^0.1.13",
-    "rimraf": "^3.0.2",
+    "rimraf": "^4.3.1",
     "rxjs": "^7.2.0",
     "swagger-ui-express": "^4.5.0",
     "uuid": "^9.0.0",
     "zip": "^1.2.0",
-    "zip-a-folder": "^1.1.5"
+    "zip-a-folder": "^3.1.7"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.1.7",
