@@ -60,7 +60,12 @@ export default NextAuth({
     KeycloakProvider({
       clientId: env.SPASHIP_AUTH_KEYCLOAK_ID,
       clientSecret: env.SPASHIP_AUTH_KEYCLOAK_SECRET,
-      issuer: env.SPASHIP_AUTH_KEYCLOAK_ISSUER
+      issuer: env.SPASHIP_AUTH_KEYCLOAK_ISSUER,
+      authorization: {
+        params: {
+          scope: 'openid'
+        }
+      }
     })
   ],
   callbacks: {
