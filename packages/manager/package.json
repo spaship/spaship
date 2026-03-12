@@ -54,7 +54,7 @@
     "@patternfly/react-styles": "4.92.6",
     "@patternfly/react-table": "4.112.39",
     "@tanstack/react-query": "4.24.4",
-    "axios": "0.27.2",
+    "axios": "1.8.2",
     "dayjs": "1.11.7",
     "highcharts": "^11.1.0",
     "js-base64": "^3.7.5",
