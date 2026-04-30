@@ -1,6 +1,7 @@
 const assert = require("assert");
 const nock = require("nock");
 const FormData = require("form-data");
+const { URL } = require("url");
 const DeployService = require("../../src/services/deployService");
 
 describe("deployService", () => {
@@ -28,7 +29,7 @@ describe("deployService", () => {
     nock(mockData.host).post(mockData.path).reply(200, mockData.response);
 
     const response = await DeployService.upload(
-      mockData.host + mockData.path,
+      new URL(mockData.host + mockData.path),
       mockData.data,
       mockData.apiKey,
       () => {}
@@ -60,7 +61,7 @@ describe("deployService", () => {
     nock(mockData.host).post(mockData.path).reply(200, mockData.response);
 
     const response = await DeployService.upload(
-      mockData.host + mockData.path,
+      new URL(mockData.host + mockData.path),
       mockData.data,
       mockData.apiKey,
       () => {}
@@ -88,7 +89,7 @@ describe("deployService", () => {
 
     (async () => {
       await assert.rejects(async () => {
-        await DeployService.upload(mockData.host + mockData.path, mockData.data, mockData.apiKey, () => {});
+        await DeployService.upload(new URL(mockData.host + mockData.path), mockData.data, mockData.apiKey, () => {});
       });
     })();
   });
@@ -113,7 +114,7 @@ describe("deployService", () => {
 
     (async () => {
       await assert.rejects(async () => {
-        await DeployService.upload(mockData.host + mockData.path, mockData.data, mockData.apiKey, () => {});
+        await DeployService.upload(new URL(mockData.host + mockData.path), mockData.data, mockData.apiKey, () => {});
       });
     })();
   });
