@@ -1,6 +1,6 @@
 {
   "name": "@spaship/router",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "SPAship path proxy. Proxies paths to the right SPA location or pass to different origin.",
   "main": "index.js",
   "scripts": {
@@ -35,7 +35,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "axios": "0.27.2",
+    "axios": "^1.15.0",
     "memfs": "3.4.13",
     "supertest": "^7.0.0",
     "swagger-ui-express": "^5.0.0",
