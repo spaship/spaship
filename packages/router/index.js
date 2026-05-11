@@ -15,15 +15,22 @@ let topLevelDirsCache = [];
 log.debug(config.get(), "router configuration");
 
 async function updateDirCache() {
-  // Load directory names into memory
-  const freshDirs = await fsp.readdir(config.get("webroot"));
+  let freshDirs;
+  try {
+    freshDirs = await fsp.readdir(config.get("webroot"));
+  } catch (err) {
+    if (err.code === "ENOENT") {
+      log.warn({ webroot: config.get("webroot"), err }, "webroot directory does not exist yet, skipping dir cache update");
+      return;
+    }
+    throw err;
+  }
 
   const added = difference(freshDirs, topLevelDirsCache);
   const removed = difference(topLevelDirsCache, freshDirs);
 
   // update cache
   topLevelDirsCache = freshDirs;
-
 
   // Sort them by name length from longest to shortest, for most specific match wins matching policy
   topLevelDirsCache.sort((a, b) => b.length - a.length);
