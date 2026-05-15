@@ -70,6 +70,8 @@ jobs:
           context: .
           file: ./ContainerFile-router
           push: ${{ github.event_name != 'pull_request' }}
+          pull: true
+          no-cache: true
           build-args: |
             USERGROUP=${{ env.USERGROUP }}
           tags: |
