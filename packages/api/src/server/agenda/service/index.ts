@@ -6,6 +6,9 @@ import { SymlinkDTO } from 'src/server/application/request.dto';
 import { EnvironmentService } from '../../environment/service';
 import { ExceptionsService } from '../../exceptions/service';
 
+// Preserves dynamic import() at runtime so TypeScript/CJS doesn't convert it to require()
+const dynamicImport = new Function('specifier', 'return import(specifier)');
+
 @Injectable()
 export class AgendaService implements OnApplicationBootstrap {
   public agenda: any;
@@ -19,8 +22,8 @@ export class AgendaService implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap() {
-    const { Agenda } = await import('agenda');
-    const { MongoBackend } = await import('@agendajs/mongo-backend');
+    const { Agenda } = await dynamicImport('agenda');
+    const { MongoBackend } = await dynamicImport('@agendajs/mongo-backend');
     this.agenda = new Agenda({
       backend: new MongoBackend({
         address: DATA_BASE_CONFIGURATION.mongoConnectionString,
