@@ -1,5 +1,4 @@
 import { Inject, Injectable, OnApplicationBootstrap, forwardRef } from '@nestjs/common';
-import { Agenda } from 'agenda';
 import { DATA_BASE_CONFIGURATION, JOB } from 'src/configuration';
 import { LoggerService } from 'src/configuration/logger/service';
 import { ApplicationService } from 'src/server/application/service';
@@ -9,7 +8,7 @@ import { ExceptionsService } from '../../exceptions/service';
 
 @Injectable()
 export class AgendaService implements OnApplicationBootstrap {
-  public agenda: Agenda;
+  public agenda: any;
 
   constructor(
     private readonly loggerService: LoggerService,
@@ -20,8 +19,13 @@ export class AgendaService implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap() {
-    this.agenda = await new Agenda({
-      db: { address: DATA_BASE_CONFIGURATION.mongoConnectionString, collection: 'agenda' },
+    const { Agenda } = await import('agenda');
+    const { MongoBackend } = await import('@agendajs/mongo-backend');
+    this.agenda = new Agenda({
+      backend: new MongoBackend({
+        address: DATA_BASE_CONFIGURATION.mongoConnectionString,
+        collection: 'agenda'
+      }),
       processEvery: '30 seconds'
     });
     await this.agenda.start();
