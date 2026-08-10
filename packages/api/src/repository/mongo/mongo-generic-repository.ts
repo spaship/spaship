@@ -20,11 +20,11 @@ export class MongoGenericRepository<T> implements IGenericRepository<T> {
   }
 
   getByAny(obj: T): Promise<T[]> {
-    return this._repository.find(obj, null, { lean: true }).populate(this._populateOnFind).exec();
+    return this._repository.find(obj).lean().populate(this._populateOnFind).exec();
   }
 
   getByOptions(obj: T, sort: any, skip: number, limit: number): Promise<T[]> {
-    return this._repository.find(obj, null, { lean: true }).sort(sort).skip(skip).limit(limit).populate(this._populateOnFind).exec();
+    return this._repository.find(obj).lean().sort(sort).skip(skip).limit(limit).populate(this._populateOnFind).exec();
   }
 
   create(item: T): Promise<T> {
