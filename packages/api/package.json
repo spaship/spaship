@@ -95,7 +95,8 @@
   },
   "overrides": {
     "flatted": "^3.4.2",
-    "lodash": "^4.18.1"
+    "lodash": "^4.18.1",
+    "axios": "$axios"
   },
   "jest": {
     "moduleFileExtensions": [
