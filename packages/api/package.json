@@ -98,7 +98,8 @@
     "lodash": "^4.18.1",
     "axios": "$axios",
     "form-data": "^4.0.6",
-    "@babel/traverse": "^7.23.2"
+    "@babel/traverse": "^7.23.2",
+    "archiver": "^7.0.1"
   },
   "jest": {
     "moduleFileExtensions": [
