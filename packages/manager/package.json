@@ -54,7 +54,7 @@
     "@patternfly/react-styles": "4.92.6",
     "@patternfly/react-table": "4.112.39",
     "@tanstack/react-query": "4.24.4",
-    "axios": "1.15.2",
+    "axios": "1.19.0",
     "core-js-pure": "^3.50.0",
     "dayjs": "1.11.7",
     "highcharts": "^11.1.0",
@@ -103,6 +103,14 @@
     "typescript": "4.9.5"
   },
   "overrides": {
-    "axios": "$axios"
+    "axios": "$axios",
+    "form-data": "^4.0.6",
+    "lodash": "^4.18.1",
+    "lodash-es": "^4.18.1",
+    "nanoid": "^3.3.18",
+    "braces": "^3.0.3",
+    "micromatch": "^4.0.8",
+    "flatted": "^3.4.4",
+    "picomatch": "^2.3.2"
   }
 }

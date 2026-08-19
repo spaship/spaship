@@ -36,7 +36,7 @@
     "@spaship/common": "^0.14.0",
     "agenda": "^6.0.0",
     "@agendajs/mongo-backend": "^4.0.3",
-    "axios": "^1.15.0",
+    "axios": "^1.19.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.4",
     "cookie-parser": "^1.4.6",
@@ -99,7 +99,11 @@
     "axios": "$axios",
     "form-data": "^4.0.6",
     "@babel/traverse": "^7.23.2",
-    "archiver": "^7.0.1"
+    "archiver": "^7.0.1",
+    "brace-expansion": "^2.1.4",
+    "readdir-glob": {
+      "minimatch": "^5.1.9"
+    }
   },
   "jest": {
     "moduleFileExtensions": [
